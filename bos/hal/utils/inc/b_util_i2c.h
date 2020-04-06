@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_mod_event.h
+ * \file        b_util_i2c.h
  * \version     v0.0.1
- * \date        2019/06/05
+ * \date        2020/04/01
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  * 
- * Copyright (c) 2019 Bean
+ * Copyright (c) 2020 Bean
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,43 +28,44 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_MOD_EVENT_H__
-#define __B_MOD_EVENT_H__
+#ifndef __B_UTIL_I2C_H__
+#define __B_UTIL_I2C_H__
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include "b_config.h"
-#if _EVENT_MANAGE_ENABLE
+#include "b_config.h" 
+#include "b_hal_gpio.h"
+
 /** 
- * \addtogroup BABYOS
+ * \addtogroup B_UTILS
  * \{
  */
 
 /** 
- * \addtogroup MODULES
+ * \addtogroup I2C
  * \{
  */
 
 /** 
- * \addtogroup EVENT
+ * \defgroup I2C_Exported_TypesDefinitions
  * \{
  */
-
-/** 
- * \defgroup EVENT_Exported_TypesDefinitions
- * \{
- */
-typedef void (*pEventHandler_t)(void);  
-
 typedef struct
 {
-    uint8_t enable;
-    volatile uint8_t trigger;
-    pEventHandler_t phandler;
-}bEventInfo_t;
+    bHalGPIOInstance_t sda;
+    bHalGPIOInstance_t clk;
+}bUtilI2C_t;    
+/**
+ * \}
+ */
+   
+/** 
+ * \defgroup I2C_Exported_Defines
+ * \{
+ */
 
 
 /**
@@ -72,25 +73,17 @@ typedef struct
  */
    
 /** 
- * \defgroup EVENT_Exported_Defines
+ * \defgroup I2C_Exported_Macros
  * \{
  */
+
 
 /**
  * \}
  */
    
 /** 
- * \defgroup EVENT_Exported_Macros
- * \{
- */
-   
-/**
- * \}
- */
-   
-/** 
- * \defgroup EVENT_Exported_Variables
+ * \defgroup I2C_Exported_Variables
  * \{
  */
    
@@ -99,25 +92,19 @@ typedef struct
  */
    
 /** 
- * \defgroup EVENT_Exported_Functions
+ * \defgroup I2C_Exported_Functions
  * \{
  */
-int bEventIsIdle(void); 
-int bEventTrigger(uint8_t number);
-int bEventRegist(uint8_t number, pEventHandler_t phandler);
 
+void bUtilI2C_Start(bUtilI2C_t i2c);
+void bUtilI2C_Stop(bUtilI2C_t i2c);
+int bUtilI2C_ACK(bUtilI2C_t i2c);
+void bUtilI2C_mACK(bUtilI2C_t i2c);
+void bUtilI2C_WriteByte(bUtilI2C_t i2c, uint8_t dat);
+uint8_t bUtilI2C_ReadByte(bUtilI2C_t i2c);
+int bUtilI2C_WriteData(bUtilI2C_t i2c, uint8_t dev, uint8_t addr, uint8_t dat);
+uint8_t bUtilI2C_ReadData(bUtilI2C_t i2c, uint8_t dev, uint8_t addr);
 
-///<Called in bExec()
-void bEventCore(void);
-
-/**
- * \}
- */
- 
- 
-/**
- * \}
- */
 
 /**
  * \}
@@ -126,14 +113,18 @@ void bEventCore(void);
 /**
  * \}
  */
-#endif
+
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 	}
 #endif
+ 
+#endif
 
-#endif  
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+/************************ Copyright (c) 2020 Bean *****END OF FILE****/
 
 

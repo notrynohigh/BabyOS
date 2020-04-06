@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_mod_event.h
+ * \file        b_mod_heap.h
  * \version     v0.0.1
- * \date        2019/06/05
+ * \date        2020/04/02
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
@@ -28,16 +28,16 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_MOD_EVENT_H__
-#define __B_MOD_EVENT_H__
+#ifndef __B_MOD_HEAP_H__
+#define __B_MOD_HEAP_H__
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include "b_config.h"
-#if _EVENT_MANAGE_ENABLE
+#include "b_config.h"  
+#if _HEAP_ENABLE
 /** 
  * \addtogroup BABYOS
  * \{
@@ -49,22 +49,14 @@
  */
 
 /** 
- * \addtogroup EVENT
+ * \addtogroup HEAP
  * \{
  */
 
 /** 
- * \defgroup EVENT_Exported_TypesDefinitions
+ * \defgroup HEAP_Exported_TypesDefinitions
  * \{
  */
-typedef void (*pEventHandler_t)(void);  
-
-typedef struct
-{
-    uint8_t enable;
-    volatile uint8_t trigger;
-    pEventHandler_t phandler;
-}bEventInfo_t;
 
 
 /**
@@ -72,16 +64,50 @@ typedef struct
  */
    
 /** 
- * \defgroup EVENT_Exported_Defines
+ * \defgroup HEAP_Exported_Defines
  * \{
  */
-
+#define HEAP_ADDRESS          _EX_HEAP_ADDRESS     
+#define HEAP_SIZE             _HEAP_SIZE    
 /**
  * \}
  */
    
 /** 
- * \defgroup EVENT_Exported_Macros
+ * \defgroup HEAP_Exported_Macros
+ * \{
+ */
+#define configTOTAL_HEAP_SIZE       HEAP_SIZE
+#define portBYTE_ALIGNMENT			8
+
+#if portBYTE_ALIGNMENT == 8
+	#define portBYTE_ALIGNMENT_MASK ( 0x0007 )
+#endif
+
+#ifndef mtCOVERAGE_TEST_MARKER
+	#define mtCOVERAGE_TEST_MARKER()
+#endif
+
+#ifndef configASSERT
+	#define configASSERT( x )
+	#define configASSERT_DEFINED 0
+#else
+	#define configASSERT_DEFINED 1
+#endif
+
+#ifndef traceMALLOC
+    #define traceMALLOC( pvAddress, uiSize )
+#endif
+
+#ifndef traceFREE
+    #define traceFREE( pvAddress, uiSize )
+#endif 
+/**
+ * \}
+ */
+   
+/** 
+ * \defgroup HEAP_Exported_Variables
  * \{
  */
    
@@ -90,31 +116,11 @@ typedef struct
  */
    
 /** 
- * \defgroup EVENT_Exported_Variables
+ * \defgroup HEAP_Exported_Functions
  * \{
  */
-   
-/**
- * \}
- */
-   
-/** 
- * \defgroup EVENT_Exported_Functions
- * \{
- */
-int bEventIsIdle(void); 
-int bEventTrigger(uint8_t number);
-int bEventRegist(uint8_t number, pEventHandler_t phandler);
-
-
-///<Called in bExec()
-void bEventCore(void);
-
-/**
- * \}
- */
- 
- 
+void *bMalloc(uint32_t xWantedSize);
+void bFree( void *pv );
 /**
  * \}
  */
@@ -126,14 +132,18 @@ void bEventCore(void);
 /**
  * \}
  */
+
+/**
+ * \}
+ */
+
 #endif
 
 #ifdef __cplusplus
 	}
 #endif
-
+ 
 #endif  
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
-
+/************************ Copyright (c) 2020 Bean *****END OF FILE****/
 

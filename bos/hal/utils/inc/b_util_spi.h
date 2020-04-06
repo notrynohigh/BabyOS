@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_mod_event.h
+ * \file        b_util_spi.h
  * \version     v0.0.1
- * \date        2019/06/05
+ * \date        2020/04/01
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  * 
- * Copyright (c) 2019 Bean
+ * Copyright (c) 2020 Bean
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,43 +28,47 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_MOD_EVENT_H__
-#define __B_MOD_EVENT_H__
+#ifndef __B_UTIL_SPI_H__
+#define __B_UTIL_SPI_H__
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include "b_config.h"
-#if _EVENT_MANAGE_ENABLE
+#include "b_config.h" 
+#include "b_hal_gpio.h"
+
 /** 
- * \addtogroup BABYOS
+ * \addtogroup B_UTILS
  * \{
  */
 
 /** 
- * \addtogroup MODULES
+ * \addtogroup SPI
  * \{
  */
 
 /** 
- * \addtogroup EVENT
+ * \defgroup SPI_Exported_TypesDefinitions
  * \{
  */
-
-/** 
- * \defgroup EVENT_Exported_TypesDefinitions
- * \{
- */
-typedef void (*pEventHandler_t)(void);  
-
 typedef struct
 {
-    uint8_t enable;
-    volatile uint8_t trigger;
-    pEventHandler_t phandler;
-}bEventInfo_t;
+    bHalGPIOInstance_t miso;
+    bHalGPIOInstance_t mosi;
+    bHalGPIOInstance_t clk;
+    uint8_t CPOL;
+    uint8_t CPHA;
+}bUtilSPI_t;    
+/**
+ * \}
+ */
+   
+/** 
+ * \defgroup SPI_Exported_Defines
+ * \{
+ */
 
 
 /**
@@ -72,25 +76,17 @@ typedef struct
  */
    
 /** 
- * \defgroup EVENT_Exported_Defines
+ * \defgroup SPI_Exported_Macros
  * \{
  */
+
 
 /**
  * \}
  */
    
 /** 
- * \defgroup EVENT_Exported_Macros
- * \{
- */
-   
-/**
- * \}
- */
-   
-/** 
- * \defgroup EVENT_Exported_Variables
+ * \defgroup SPI_Exported_Variables
  * \{
  */
    
@@ -99,22 +95,13 @@ typedef struct
  */
    
 /** 
- * \defgroup EVENT_Exported_Functions
+ * \defgroup SPI_Exported_Functions
  * \{
  */
-int bEventIsIdle(void); 
-int bEventTrigger(uint8_t number);
-int bEventRegist(uint8_t number, pEventHandler_t phandler);
 
 
-///<Called in bExec()
-void bEventCore(void);
+uint8_t bUtilSPI_WriteRead(bUtilSPI_t spi, uint8_t dat);
 
-/**
- * \}
- */
- 
- 
 /**
  * \}
  */
@@ -126,14 +113,14 @@ void bEventCore(void);
 /**
  * \}
  */
-#endif
 
 #ifdef __cplusplus
 	}
 #endif
+ 
+#endif
 
-#endif  
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+/************************ Copyright (c) 2020 Bean *****END OF FILE****/
 
 

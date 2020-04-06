@@ -143,7 +143,7 @@
 
 
 //<e> KV Enable/Disable
-#define _KV_ENABLE             	    1
+#define _KV_ENABLE             	    0
 //<o> Key/Value Pair Max Number
 #define _KV_PAIR_NUMBER             32
 //</e>
@@ -167,6 +167,17 @@
 #define _MENU_ENABLE                0
 //<o> Menu Item Number
 #define _MENU_ITEM_NUMBER           10
+//</e>
+
+//<e> Heap4 Enable/Disable
+#define _HEAP_ENABLE                0
+//<o> Heap Size
+#define _HEAP_SIZE                  1024
+//<e> External SDRAM ?
+#define _EX_SDRAM_ENABLE            0
+//<o> Heap Address
+#define _EX_HEAP_ADDRESS            0xC0000000
+//</e>
 //</e>
 
 

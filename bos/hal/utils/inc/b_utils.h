@@ -39,6 +39,8 @@
 #include "b_util_delay.h" 
 #include "b_util_at.h" 
 #include "b_util_asyntx.h" 
+#include "b_util_i2c.h"
+#include "b_util_spi.h"
 /** 
  * \addtogroup B_UTILS
  * \{

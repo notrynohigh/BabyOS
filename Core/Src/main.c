@@ -76,7 +76,10 @@ static void MX_SPI3_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+void TestLog()
+{
+    b_log_i("hello world\r\n");
+}
 /* USER CODE END 0 */
 
 /**
@@ -87,7 +90,7 @@ static void MX_SPI3_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-    uint8_t buf[16];
+
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -121,18 +124,13 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   bInit();
-  
-  bKV_Init(W25QXX, 0, 4096 * 4, 4096);
-  bKV_Set("name", (uint8_t *)"BabyOS", 7);
-  bKV_Get("name", buf);
-  b_log("name: %s\r\n", buf);
   while (1)
   {
       bExec();
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
+      BOS_PERIODIC_TASK(TestLog, 1000);
   }
   /* USER CODE END 3 */
 

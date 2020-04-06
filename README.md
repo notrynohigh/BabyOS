@@ -2,9 +2,33 @@
 
 # BabyOS
 
-![logo](https://github.com/notrynohigh/BabyOS/raw/master/doc/2.png)
+![logo](https://gitee.com/notrynohigh/BabyOS/raw/master/doc/2.png)
 
-##  BabyOS是什么？
+
+# 目录
+
+- [BabyOS](#BabyOS)
+    - [BabyOS是什么](#BabyOS是什么)
+    - [适用项目](#适用项目)
+    - [前世今生](#前世今生)
+        - [功耗的考量](#功耗的考量)
+        - [缩短开发周期](#缩短开发周期)
+    - [使用方法](#使用方法)
+        - [添加文件](#添加文件)
+        - [增加系统定时器](#增加系统定时器)
+        - [选择功能模块](#选择功能模块)
+        - [注册设备](#注册设备)
+        - [使用范例](#使用范例)
+            - [指定硬件接口](#指定硬件接口)
+            - [基于SPIFLASH使用KV功能](#基于SPIFLASH使用KV功能)
+    - [BabyOS教程](#BabyOS教程)
+    - [BabyOS私有协议上位机Demo](#BabyOS私有协议上位机Demo)
+    - [Baby如何成长](#Baby如何成长)
+    - [友情项目](#友情项目)
+    - [更新记录](#更新记录)
+
+
+##  BabyOS是什么
 
 ```
 ______________________________________________
@@ -19,6 +43,8 @@ _/____/___(___(_(___/_(___/_(____/___(____/___
 
 BabyOS适用于MCU项目，她是一套管理功能模块和外设驱动的框架。
 
+![frame](https://gitee.com/notrynohigh/BabyOS/raw/master/doc/frame.png)
+
 **对项目而言，缩短开发周期**。项目开发时选择适用的功能模块及驱动。直接进入功能代码编写的阶段。
 
 **对工程师而言，减少重复工作**。调试过的功能模块和驱动代码放入BabyOS中进行管理，以后项目可以直接使用，去掉重复调试的工作。
@@ -27,7 +53,9 @@ BabyOS适用于MCU项目，她是一套管理功能模块和外设驱动的框�
 
 ## 适用项目
 
-**使用裸机开发的项目推荐基于BabyOS进行**。
+使用裸机开发的项目推荐基于BabyOS进行。
+
+使用操作系统开发的项目，BabyOS可作为功能库及驱动库使用。
 
 ​        
 
@@ -37,72 +65,66 @@ BabyOS适用于MCU项目，她是一套管理功能模块和外设驱动的框�
 
  ................
 
-目前使用MCU裸机开发的项目不会很庞大，大多有两个要求：**开发时间**和**产品功耗**。99.874%产品是电池供电，功耗是重点考虑对象。工程师开发的多个项目之间总会碰到相同的功能点，那么是否可以有套代码框架可以容纳已经做过的功能点，去掉重复的工作，加快产品或者demo的开发。
+使用MCU裸机开发的项目大多有两个要求：**产品功耗**和**开发周期**
 
 ### 功耗的考量
 
-出于功耗考虑，对外设的操作是：唤醒外设，操作，最后进入休眠。这样的操作形式和文件的操作很类似，文件的操作步骤是打开到编辑到关闭。
+出于功耗考虑，对外设的操作是：唤醒外设，操作，最后进入休眠。这样的操作形式和文件的操作很类似，文件的操作步骤是打开到编辑到关闭。因此将外设的操作看作是对文件的操作进行。驱动中打开和关闭对应着唤醒和睡眠。
 
-因此将外设的操作看作是对文件的操作进行。每个外设打开后返回一个描述符，后续代码中对外设的操作都是基于这个描述符进行。关闭外设后回收描述符。
+### 缩短开发周期
 
-所以外设的驱动中打开和关闭的操作执行对设备的唤醒和睡眠。利用描述符来操作外设还有一个好处是，当更换外设后，只需更换驱动接口，业务部分的代码不需要变动。
+项目中，有较多使用率高的功能模块，例如：UTC、错误管理、电池电量、存储数据、上位机通信、固件升级等等。同时也有很多常用的芯片、传感器等。BabyOS便是将这些使用率高的功能模块以及常用的芯片、传感器驱动进行收集并管理。新项目启动时，以搭积木的方式完成一部分工作以此来缩短开发时间。
 
-### 快速开发
-
-小型项目的开发中，有较多使用率高的功能模块，例如：UTC、错误管理、电池电量、存储数据、上位机通信、固件升级等等。将这些功能都做成不依赖于硬件的模块交给BabyOS管理。将调试好的外设驱动也交给BabyOS管理。再次启动项目时，通过配置文件，选择当前项目使用的功能模块。以搭积木的方式缩短开发时间。
-
-![frame](https://github.com/notrynohigh/BabyOS/raw/master/doc/frame.jpg)
-
-​       
+ 
 
 ## 使用方法
 
-###   1、添加文件
+###   添加文件
 
- bos/core/         核心文件全部添加至工程
+bos/core/         核心文件全部添加至工程
 
-bos/config/		配置文件及设备列表文件，添加至工程
+bos/config/       配置文件及设备列表文件，全部添加至工程
 
-bos/driver/       选择需要的驱动添加至工程
+bos/driver/       选择需要的驱动添加至工程，将b_hal.h内定义的硬件接口取消注释
 
-bos/hal/hal/      硬件抽象层，将用到的接口添加至工程，根据具体平台进行修改
+bos/hal/hal/      硬件抽象层，将需要的文件添加至工程，根据具体平台进行修改
 
-bos/hal/utils/    底层实用代码，添加至工程
+bos/hal/utils/    底层实用代码，全部添加至工程
 
 bos/modules/   功能模块，全部添加至工程
 
-bos/thirdparty/ 第三方开源代码，将用到的添加至工程
+bos/thirdparty/ 第三方开源代码，将需要的添加至工程
 
-### 2、增加系统定时器
+### 增加系统定时器
 
 例如使用滴答定时器，中断服务函数调用：void bHalIncSysTick(void);
 
 注：定时器的周期与b_config.h里_TICK_FRQ_HZ要匹配
 
-###   3、选择功能模块
+###   选择功能模块
 
 b_config.h进行配置，根据自己的需要选择功能模块。
 
-![config](https://github.com/notrynohigh/BabyOS/raw/master/doc/1.png)
+![config](https://gitee.com/notrynohigh/BabyOS/raw/master/doc/1.png)
 
-###   4、列出需要使用的设备
+###   注册设备
 
 b_device_list.h，在里面添加使用的外设。例如项目只需要使用SPIFlash，那么添加如下代码： 
 
 ```c
-//           设备        驱动接口      描述
+//           设备        驱动          描述
 B_DEVICE_REG(W25QXX, bW25X_Driver, "flash")
 //如果没有注册任何设备，取消B_DEVICE_REG(null, bNullDriver, "null")的注释    
 //B_DEVICE_REG(null, bNullDriver, "null")   
 ```
 
-###   5、使用范例  
+###   使用范例  
 
 以b_kv功能模块为例，先在b_config里面使能b_kv。
 
-#### 5.1、指定硬件接口
+#### 取消硬件接口的注释
 
-b_hal.h中定义SPI Flash的硬件接口：
+b_hal.h中取消如下部分的注释，并根据实际连接图修改GPIO和SPI号
 
 ```C
 #define HAL_W25X_SPI                    B_HAL_SPI_2
@@ -110,7 +132,7 @@ b_hal.h中定义SPI Flash的硬件接口：
 #define HAL_W25X_CS_PIN                 B_HAL_PIN12
 ```
 
-修改硬件抽象层b_hal_spi.c内SPI的操作（依赖硬件平台）
+修改硬件抽象层b_hal_spi.c内SPI的操作（依赖硬件平台，使用STM32 HAL库为例）
 
 ```C
 uint8_t bHalSPI_SendReceiveByte(uint8_t no, uint8_t dat)
@@ -128,7 +150,7 @@ uint8_t bHalSPI_SendReceiveByte(uint8_t no, uint8_t dat)
 }
 ```
 
-修改硬件抽象层b_hal_gpio.c内IO的操作（依赖硬件平台）
+修改硬件抽象层b_hal_gpio.c内IO的操作（依赖硬件平台，使用STM32 HAL库为例）
 
 ```C
 void bHalGPIO_WritePin(uint8_t port, uint8_t pin, uint8_t s)
@@ -138,7 +160,7 @@ void bHalGPIO_WritePin(uint8_t port, uint8_t pin, uint8_t s)
 }
 ```
 
-#### 5.2、基于SPIFLASH使用KV功能
+#### 基于SPIFLASH使用KV功能
 
 ```c
 #include "b_os.h"    //头文件
@@ -197,13 +219,13 @@ https://github.com/notrynohigh/BabyOS/wiki
 
 
 
-### BabyOS教程
+## BabyOS教程
 
 <https://gitee.com/notrynohigh/BabyOS_Example>
 
 
 
-### BabyOS私有协议上位机Demo
+## BabyOS私有协议上位机Demo
 
 <https://gitee.com/notrynohigh/BabyOS_Protocol>
 
@@ -221,7 +243,7 @@ github：<https://github.com/notrynohigh/BabyOS>
 
 
 
-# 友情项目
+## 友情项目
 
 BabyOS包含了第三方开源代码，这部分代码都是MCU项目中比较实用的。
 
@@ -241,16 +263,16 @@ b_trace功能模块基于开源项目CmBacktrace,<https://gitee.com/Armink/CmBac
 
 开发小组群：
 
-![qqg](https://github.com/notrynohigh/BabyOS/raw/master/doc/qqg.png)
+![qq](https://gitee.com/notrynohigh/BabyOS/raw/master/doc/qq.png)
 
 
 
 ## 更新记录
 
-| 日期    | 新增项                                                    | 备注                                                         |
-| ------- | --------------------------------------------------------- | ------------------------------------------------------------ |
-| 2019.12 | 功能模块：FIFO, AT, Nr_micro_shell, Lunar calendar        | [详情见wiki](https://github.com/notrynohigh/BabyOS/wiki/2019%E5%B9%B412%E6%9C%88%E6%9B%B4%E6%96%B0%E8%AF%B4%E6%98%8E) |
-| 2020.01 | 功能模块：KV存储                                          | [详情见wiki](https://github.com/notrynohigh/BabyOS/wiki/2020%E5%B9%B41%E6%9C%88%E6%9B%B4%E6%96%B0%E8%AF%B4%E6%98%8E) |
-| 2020.02 | 功能模块：Xmodem128, Ymodem, FlexibleButton 驱动：xpt2046 | [详情见wiki](https://github.com/notrynohigh/BabyOS/wiki/2020%E5%B9%B42%E6%9C%88%E6%9B%B4%E6%96%B0%E8%AF%B4%E6%98%8E) |
-| 2020.03 | 功能模块：b_log, b_gui, b_menu, b_trace 驱动：ssd1289     | [详情见wiki](https://github.com/notrynohigh/BabyOS/wiki/2020%E5%B9%B43%E6%9C%88%E6%9B%B4%E6%96%B0%E8%AF%B4%E6%98%8E) |
+| 日期    | 新增项                                                       | 备注 |
+| ------- | ------------------------------------------------------------ | ---- |
+| 2019.12 | 功能模块：FIFO, AT, Nr_micro_shell, Lunar calendar           |      |
+| 2020.01 | 功能模块：KV存储                                             |      |
+| 2020.02 | 功能模块：Xmodem128, Ymodem, FlexibleButton 驱动：xpt2046    |      |
+| 2020.03 | 功能模块：b_log, b_gui, b_menu, b_trace，b_heap 驱动：ssd1289 ili9341 |      |
 

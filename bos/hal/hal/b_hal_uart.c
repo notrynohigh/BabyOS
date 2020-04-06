@@ -74,10 +74,25 @@
  * \defgroup UART_Private_Variables
  * \{
  */
-extern UART_HandleTypeDef huart1;
+static uint8_t  bHalUart1Buffer[UART_1_RXBUF_LEN];
+static uint8_t  bHalUart2Buffer[UART_2_RXBUF_LEN];
+ 
+static bHalUartRxInfo_t  bHalUartRxInfo[B_HAL_UART_NUMBER] = {
+    [B_HAL_UART_1] = {
+        .pbuf = bHalUart1Buffer,
+        .l_tick = 0,
+        .index = 0,
+        .max_len = UART_1_RXBUF_LEN,
+    },
+    [B_HAL_UART_2] = {
+        .pbuf = bHalUart2Buffer,
+        .l_tick = 0,
+        .index = 0,
+        .max_len = UART_2_RXBUF_LEN,
+    },    
+    // add more ...
+};
 
-static bHalUartRxInfo_t  bHalUartRxInfo[B_HAL_UART_NUMBER];
-static volatile uint8_t bHalUartInitFlag = 0;
 /**
  * \}
  */
@@ -113,38 +128,37 @@ void bHalUartSend(uint8_t no, uint8_t *pbuf, uint16_t len)
         case B_HAL_UART_1:
             HAL_UART_Transmit(&huart1, pbuf, len, 0xfff);
             break;
+        case B_HAL_UART_2:
+    
+            break;        
         default:
             break;
     }
 }
 
-void bHalUartRegIdleCallback(uint8_t no, pUartIdleCallback f)
+/**
+ * \brief Uart idle detection callbacks
+ * \param no Uart number \ref bHalUartNumber_t
+ * \param pbuf Pointer to the data buffer
+ * \param len Amount of data in the buffer
+ */
+__weak void bHalUartIdleCallback(uint8_t no, uint8_t *pbuf, uint16_t len)
 {
-    if(bHalUartInitFlag == 0)
-    {
-        memset(bHalUartRxInfo, 0, sizeof(bHalUartRxInfo));
-        bHalUartInitFlag = 1;
-    }
-    if(no >= B_HAL_UART_NUMBER)
-    {
-        return;
-    }
-    bHalUartRxInfo[no].fCallback = f;
+    ;
 }
 
+/**
+ * \brief Determine idle events. Called in bExec()
+ */
 void bHalUartDetectIdle()
 {
     uint32_t c_tick = bUtilGetTick();
     uint8_t i = 0;
     for(i = 0;i < B_HAL_UART_NUMBER;i++)
     {
-        if(bHalUartRxInfo[i].fCallback == NULL)
-        {
-            continue;
-        }
         if(c_tick - bHalUartRxInfo[i].l_tick >= 3 && bHalUartRxInfo[i].index > 0)
         {
-            bHalUartRxInfo[i].fCallback((uint8_t *)bHalUartRxInfo[i].buf, bHalUartRxInfo[i].index);
+            bHalUartIdleCallback(i, bHalUartRxInfo[i].pbuf, bHalUartRxInfo[i].index);
             bHalUartRxInfo[i].index = 0;
         }
     }
@@ -153,23 +167,22 @@ void bHalUartDetectIdle()
 
 
 /**
- * \brief Rx Transfer completed callbacks.
+ * \brief This function handles Uart rx 1Byte interrupts.
  * \param no Uart number \ref bHalUartNumber_t
  * \param dat The received data
  */ 
-void bHalUartRxIrqCallback(uint8_t no, uint8_t dat)
+void bHalUartRxIRQ_Handler(uint8_t no, uint8_t dat)
 {
     if(no >= B_HAL_UART_NUMBER)
     {
         return;
     }
-    if(bHalUartRxInfo[no].index < UART_BUF_LEN)
+    if(bHalUartRxInfo[no].index < bHalUartRxInfo[no].max_len)
     {
-        bHalUartRxInfo[no].buf[bHalUartRxInfo[no].index] = dat;
+        bHalUartRxInfo[no].pbuf[bHalUartRxInfo[no].index] = dat;
         bHalUartRxInfo[no].index += 1;
     }
-    bHalUartRxInfo[no].l_tick = bUtilGetTick();
-    
+    bHalUartRxInfo[no].l_tick = bUtilGetTick(); 
 }
 
 

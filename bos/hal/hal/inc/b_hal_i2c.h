@@ -100,6 +100,10 @@ typedef enum
 
 void bHalI2C_SendByte(uint8_t no, uint8_t dev_addr, uint8_t dat);
 uint8_t bHalI2C_ReceiveByte(uint8_t no, uint8_t dev_addr);
+
+int bHalI2C_MemWrite(uint8_t no, uint8_t dev_addr, uint16_t mem_addr, uint8_t *pbuf, uint16_t len);
+int bHalI2C_MemRead(uint8_t no, uint8_t dev_addr, uint16_t mem_addr, uint8_t *pbuf, uint16_t len);
+
 /**
  * \}
  */

@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_mod_event.h
+ * \file        b_util_spi.c
  * \version     v0.0.1
- * \date        2019/06/05
+ * \date        2020/04/01
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  * 
- * Copyright (c) 2019 Bean
+ * Copyright (c) 2020 Bean
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,112 +28,129 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_MOD_EVENT_H__
-#define __B_MOD_EVENT_H__
-
-#ifdef __cplusplus
- extern "C" {
-#endif
-
+   
 /*Includes ----------------------------------------------*/
-#include "b_config.h"
-#if _EVENT_MANAGE_ENABLE
+#include "b_util_spi.h"   
+
 /** 
- * \addtogroup BABYOS
+ * \addtogroup B_UTILS
  * \{
  */
 
 /** 
- * \addtogroup MODULES
+ * \addtogroup SPI
  * \{
  */
 
 /** 
- * \addtogroup EVENT
+ * \defgroup SPI_Private_TypesDefinitions
  * \{
  */
-
+   
+/**
+ * \}
+ */
+   
 /** 
- * \defgroup EVENT_Exported_TypesDefinitions
+ * \defgroup SPI_Private_Defines
  * \{
  */
-typedef void (*pEventHandler_t)(void);  
+   
+/**
+ * \}
+ */
+   
+/** 
+ * \defgroup SPI_Private_Macros
+ * \{
+ */
+   
+/**
+ * \}
+ */
+   
+/** 
+ * \defgroup SPI_Private_Variables
+ * \{
+ */
 
-typedef struct
+
+/**
+ * \}
+ */
+   
+/** 
+ * \defgroup SPI_Private_FunctionPrototypes
+ * \{
+ */
+   
+/**
+ * \}
+ */
+   
+/** 
+ * \defgroup SPI_Private_Functions
+ * \{
+ */
+
+
+/**
+ * \}
+ */
+   
+/** 
+ * \addtogroup SPI_Exported_Functions
+ * \{
+ */
+
+uint8_t bUtilSPI_WriteRead(bUtilSPI_t spi, uint8_t dat)
 {
-    uint8_t enable;
-    volatile uint8_t trigger;
-    pEventHandler_t phandler;
-}bEventInfo_t;
+    uint8_t polarity = (spi.CPOL == 0) ? 0 : 1;
+    uint8_t init_p = polarity;
+    uint8_t i = 0;
+    bHalGPIO_WritePin(spi.clk.port, spi.clk.pin, polarity);
+    if(spi.CPHA)
+    {
+        polarity = polarity ^ 0x01;
+        bHalGPIO_WritePin(spi.clk.port, spi.clk.pin, polarity);
+    }
+	for(i = 0;i < 8;i++)
+	{
+        bHalGPIO_WritePin(spi.mosi.port, spi.mosi.pin, dat & 0x80);
+        dat <<= 1;
+        polarity = polarity ^ 0x01;
+        bHalGPIO_WritePin(spi.clk.port, spi.clk.pin, polarity);
 
-
-/**
- * \}
- */
-   
-/** 
- * \defgroup EVENT_Exported_Defines
- * \{
- */
-
-/**
- * \}
- */
-   
-/** 
- * \defgroup EVENT_Exported_Macros
- * \{
- */
-   
-/**
- * \}
- */
-   
-/** 
- * \defgroup EVENT_Exported_Variables
- * \{
- */
-   
-/**
- * \}
- */
-   
-/** 
- * \defgroup EVENT_Exported_Functions
- * \{
- */
-int bEventIsIdle(void); 
-int bEventTrigger(uint8_t number);
-int bEventRegist(uint8_t number, pEventHandler_t phandler);
-
-
-///<Called in bExec()
-void bEventCore(void);
-
-/**
- * \}
- */
- 
- 
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-#endif
-
-#ifdef __cplusplus
+        if(bHalGPIO_ReadPin(spi.miso.port, spi.miso.pin))
+        {
+            dat++;
+        }
+           
+        polarity = polarity ^ 0x01;
+        bHalGPIO_WritePin(spi.clk.port, spi.clk.pin, polarity);
 	}
-#endif
+    if(init_p != polarity)
+    {
+        polarity = polarity ^ 0x01;
+        bHalGPIO_WritePin(spi.clk.port, spi.clk.pin, polarity);
+    }
+    return dat;
 
-#endif  
+}
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+
+/**
+ * \}
+ */
+
+/************************ Copyright (c) 2020 Bean *****END OF FILE****/
 
 
