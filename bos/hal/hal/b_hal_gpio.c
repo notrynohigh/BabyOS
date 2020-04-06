@@ -72,10 +72,17 @@
  * \defgroup GPIO_Private_Variables
  * \{
  */
+#ifdef STM32F030x6
+static GPIO_TypeDef *GPIO_PortTable[] = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOF};
+const static uint16_t GPIO_PinTable[] = {GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_5, 
+                                        GPIO_PIN_6, GPIO_PIN_7, GPIO_PIN_8, GPIO_PIN_9, GPIO_PIN_10, GPIO_PIN_11, 
+                                        GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14, GPIO_PIN_15, GPIO_PIN_All};
+#else
 static GPIO_TypeDef *GPIO_PortTable[] = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF, GPIOG};
 const static uint16_t GPIO_PinTable[] = {GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_5, 
                                         GPIO_PIN_6, GPIO_PIN_7, GPIO_PIN_8, GPIO_PIN_9, GPIO_PIN_10, GPIO_PIN_11, 
                                         GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14, GPIO_PIN_15, GPIO_PIN_All};
+#endif
 
 /**
  * \}

@@ -36,8 +36,12 @@
 #endif
 
 /*Includes ----------------------------------------------*/
-#include "b_config.h" 
+#include "b_config.h"
+#ifdef STM32F030x6
+#include "stm32f0xx_hal.h"
+#else	 
 #include "stm32f1xx_hal.h"
+#endif	 
 
 #include "b_hal_uart.h"
 #include "b_hal_lcd.h"
