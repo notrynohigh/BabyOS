@@ -65,12 +65,14 @@ typedef struct
 #define MEMP_SIZE (((MEMP_MAX_SIZE) >> 2) << 2)
 #define MEMP_UNIT_NUM ((MEMP_SIZE) / (MEMP_BLOCK_SIZE))
 
-#if defined(__CC_ARM)
+#if defined(__CC_ARM) 												/* ARM Compiler V5*/
 __align(4) static uint8_t bMempBuf[MEMP_SIZE];
-#elif defined(__ICCARM__)
+#elif (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6000000)) 	/* ARM Compiler V6 */
+__attribute__((aligned(4))) static uint8_t bMempBuf[MEMP_SIZE];
+#elif defined(__ICCARM__) 											/* IAR Compiler */
 #pragma data_alignment = 4
 static uint8_t bMempBuf[MEMP_SIZE];
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) 											/* GNU Compiler */
 static uint8_t bMempBuf[MEMP_SIZE];
 __attribute__((aligned(4)));
 #endif
