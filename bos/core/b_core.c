@@ -363,6 +363,33 @@ int bModifyHalIf(uint32_t dev_no, uint32_t type_size, uint32_t off, const uint8_
     return bDeviceModifyHalIf(dev_no, off, pval, len);
 }
 
+uint8_t bFdIsReadable(int fd)
+{
+    if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+    {
+        return 0;
+    }
+    return bDeviceIsReadable(bCoreFdTable[fd].number);
+}
+
+uint8_t bFdIsWritable(int fd)
+{
+    if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+    {
+        return 0;
+    }
+    return bDeviceIsWritable(bCoreFdTable[fd].number);
+}
+
+uint8_t bFdIsAbnormal(int fd)
+{
+    if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+    {
+        return 0;
+    }
+    return bDeviceIsAbnormal(bCoreFdTable[fd].number);
+}
+
 /**
  * \}
  */

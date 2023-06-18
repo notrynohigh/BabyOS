@@ -459,6 +459,7 @@ int bLIS3DH_Init(bDriverInterface_t *pdrv)
     }
     bQueueInit(&bLis3dhRunInfo[pdrv->drv_no].q, (uint8_t *)&bLis3dhRunInfo[pdrv->drv_no].data[0],
                sizeof(bGsensor3Axis_t), 32);
+    bDRIVER_SET_READBUF(pdrv, &bLis3dhRunInfo[pdrv->drv_no].q);
     _bLis3dhDefaultCfg(pdrv);
     _bLis3dhClearFifo(pdrv);
     return 0;

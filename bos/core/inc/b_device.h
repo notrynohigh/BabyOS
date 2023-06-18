@@ -105,6 +105,11 @@ int bDeviceISNormal(uint32_t dev_no);
 int bDeviceModifyHalIf(uint32_t dev_no, uint32_t offset, const uint8_t *pVal, uint8_t size);
 int bDeviceReadMessage(uint32_t dev_no, bDeviceMsg_t *pmsg);
 int bDeviceWriteMessage(uint32_t dev_no, bDeviceMsg_t *pmsg);
+
+uint8_t bDeviceIsReadable(uint32_t dev_no);
+uint8_t bDeviceIsWritable(uint32_t dev_no);
+uint8_t bDeviceIsAbnormal(uint32_t dev_no);
+
 /**
  * \}
  */

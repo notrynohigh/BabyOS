@@ -230,4 +230,15 @@ config WIFI_RECV_BUF_LEN
     default 1024
     depends on _WIFI_ENABLE    
 
+config _SELECT_ENABLE
+    bool "Select Enable/Disable"
+    default n
+    depends on _BOS_MODULES_ENABLE
+
+config SELECT_FDS_NUMBER
+    int "Select-fds Max-Number"
+    default 32
+    depends on _SELECT_ENABLE
+
+
 endmenu

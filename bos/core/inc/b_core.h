@@ -114,6 +114,10 @@ int bReinit(uint32_t dev_no);
 int bModifyHalIf(uint32_t dev_no, uint32_t type_size, uint32_t off, const uint8_t *pval,
                  uint8_t len);
 
+uint8_t bFdIsReadable(int fd);
+uint8_t bFdIsWritable(int fd);
+uint8_t bFdIsAbnormal(int fd);
+
 /**
  * \}
  */

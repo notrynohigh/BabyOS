@@ -145,6 +145,15 @@ uint8_t bQueueIsFull(bQueueInstance_t *pinstance)
     return (pinstance->number >= pinstance->item_num);
 }
 
+uint8_t bQueueIsEmpty(bQueueInstance_t *pinstance)
+{
+    if (pinstance == NULL)
+    {
+        return 1;
+    }
+    return (pinstance->number == 0);
+}
+
 int bQueueDynCreate(bQueueInstance_t *pinstance, uint16_t item_size, uint16_t item_num)
 {
 #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1

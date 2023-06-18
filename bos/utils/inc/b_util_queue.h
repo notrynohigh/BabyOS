@@ -93,6 +93,7 @@ int bQueuePush(bQueueInstance_t *pinstance, void *data);
 int bQueuePop(bQueueInstance_t *pinstance, void *data);
 int bQueuePeek(bQueueInstance_t *pinstance, void *data);
 uint8_t bQueueIsFull(bQueueInstance_t *pinstance);
+uint8_t bQueueIsEmpty(bQueueInstance_t *pinstance);
 int     bQueueDynCreate(bQueueInstance_t *pinstance, uint16_t item_size, uint16_t item_num);
 int     bQueueDynDelete(bQueueInstance_t *pinstance);
 /**

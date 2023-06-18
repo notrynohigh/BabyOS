@@ -375,6 +375,60 @@ int bDeviceWriteMessage(uint32_t dev_no, bDeviceMsg_t *pmsg)
     return 0;
 }
 
+uint8_t bDeviceIsReadable(uint32_t dev_no)
+{
+    uint8_t retval = 0;
+    if (dev_no >= B_REG_DEV_NUMBER)
+    {
+        return retval;
+    }
+    if (bDriverInterfaceTable[dev_no].read == NULL)
+    {
+        return retval;
+    }
+    if (bDriverInterfaceTable[dev_no].preadbuf == NULL)
+    {
+        retval = 1;
+    }
+    else if (bQueueIsEmpty(bDriverInterfaceTable[dev_no].preadbuf) == 0)
+    {
+        retval = 1;
+    }
+    return retval;
+}
+
+uint8_t bDeviceIsWritable(uint32_t dev_no)
+{
+    uint8_t retval = 0;
+    if (dev_no >= B_REG_DEV_NUMBER)
+    {
+        return retval;
+    }
+    if (bDriverInterfaceTable[dev_no].write == NULL)
+    {
+        return retval;
+    }
+    if (bDriverInterfaceTable[dev_no].pwritebuf == NULL)
+    {
+        retval = 1;
+    }
+    else if (bQueueIsEmpty(bDriverInterfaceTable[dev_no].pwritebuf) == 0)
+    {
+        retval = 1;
+    }
+    return retval;
+}
+
+uint8_t bDeviceIsAbnormal(uint32_t dev_no)
+{
+    uint8_t retval = 1;
+    if (dev_no >= B_REG_DEV_NUMBER)
+    {
+        return retval;
+    }
+    return (bDriverInterfaceTable[dev_no].status != 0);
+}
+
 /**
  * \}
  */

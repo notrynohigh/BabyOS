@@ -129,6 +129,7 @@ struct pt
 #define PT_BEGIN(pt)            \
     {                           \
         char PT_YIELD_FLAG = 1; \
+        (void)PT_YIELD_FLAG;    \
         LC_RESUME((pt)->lc)
 
 /**
