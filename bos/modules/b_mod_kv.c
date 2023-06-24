@@ -162,11 +162,11 @@ typedef struct
  */
 #if (defined(_KV_ENCRYPT_ENABLE) && (_KV_ENCRYPT_ENABLE == 1))
 static int _bWriteEncrypt(int fd, uint8_t *pbuf, uint32_t len)
-{    
-    uint32_t i = 0;
-    int ret = 0;
-    uint8_t tmp = 0;
-    for(i = 0;i < len;i++)
+{
+    uint32_t i   = 0;
+    int      ret = 0;
+    uint8_t  tmp = 0;
+    for (i = 0; i < len; i++)
     {
         tmp = pbuf[i];
         tmp ^= _KV_ENCRYPT_KEY;
@@ -176,11 +176,11 @@ static int _bWriteEncrypt(int fd, uint8_t *pbuf, uint32_t len)
 }
 
 static int _bReadEncrypt(int fd, uint8_t *pbuf, uint32_t len)
-{    
-    uint32_t i = 0;
-    int ret = 0;
-    uint8_t tmp = 0;
-    for(i = 0;i < len;i++)
+{
+    uint32_t i   = 0;
+    int      ret = 0;
+    uint8_t  tmp = 0;
+    for (i = 0; i < len; i++)
     {
         ret = bRead(fd, &tmp, sizeof(uint8_t));
         tmp ^= _KV_ENCRYPT_KEY;
@@ -189,17 +189,42 @@ static int _bReadEncrypt(int fd, uint8_t *pbuf, uint32_t len)
     return ret;
 }
 
-#define IF_READ  _bReadEncrypt
+#define IF_READ _bReadEncrypt
 #define IF_WRITE _bWriteEncrypt
 
 #else
 
-#define IF_READ  bRead
+#define IF_READ bRead
 #define IF_WRITE bWrite
 
 #endif
 
+#if (defined(_KV_MD5_ENABLE) && (_KV_MD5_ENABLE == 1))
 
+#else
+static void _bKVKey2hex8(const char *key, uint8_t *pdes)
+{
+    int i = 0;
+    if (strlen(key) >= 8)
+    {
+        memcpy(pdes, key, 8);
+    }
+    else
+    {
+        for (i = 0; i < 8; i++)
+        {
+            if (i < strlen(key))
+            {
+                pdes[i] = key[i];
+            }
+            else
+            {
+                pdes[i] = i;
+            }
+        }
+    }
+}
+#endif
 
 static int _bKVReadSectorHead(bKVInstance_t *pinstance, uint32_t sector_index,
                               bKVSectorHead_t *phead)
@@ -216,7 +241,7 @@ static int _bKVReadSectorHead(bKVInstance_t *pinstance, uint32_t sector_index,
         return -1;
     }
     bLseek(fd, pinstance->address + sector_index * pinstance->erase_size);
-    IF_READ(fd, (uint8_t *)phead, sizeof(bKVSectorHead_t));  
+    IF_READ(fd, (uint8_t *)phead, sizeof(bKVSectorHead_t));
     bClose(fd);
     return 0;
 }
@@ -319,7 +344,6 @@ static int _bKVSetDataState(bKVInstance_t *pinstance, uint32_t addr, bKVDataStat
         wdata = B_KV_DELETED_FLAG;
         wdata <<= 24;
     }
-    b_log("wdata:0x%x addr:0x%x\r\n", wdata, addr);
     fd = bOpen(pinstance->dev, BCORE_FLAG_RW);
     if (fd < 0)
     {
@@ -329,7 +353,6 @@ static int _bKVSetDataState(bKVInstance_t *pinstance, uint32_t addr, bKVDataStat
     bLseek(fd, addr);
     retval = IF_WRITE(fd, (uint8_t *)&wdata, sizeof(uint32_t));
     bClose(fd);
-    b_log("write retval %d \r\n", retval);
     if (retval < 0)
     {
         return -1;
@@ -517,8 +540,6 @@ static int _bKVSectorDefrag(bKVInstance_t *pinstance)
     _bKVFindMessyEmptySector(pinstance, &mindex, &eindex, pinstance->write_index);
     pinstance->write_index = -1;  // 置write_index无效，准备寻找新的区块
 
-    b_log("find: e %d m %d\r\n", eindex, mindex);
-
     if (pinstance->empty_count > 1)
     {
         if (eindex != -1)
@@ -541,9 +562,6 @@ static int _bKVSectorDefrag(bKVInstance_t *pinstance)
             }
         }
     }
-
-    b_log("ret:%d windex:%d off:%d\r\n", retval, pinstance->write_index, pinstance->write_offset);
-
     return retval;
 }
 
@@ -637,17 +655,18 @@ static int _bKVFindKey(bKVInstance_t *pinstance, const char *key, uint32_t *padd
         uint8_t  md5[8];
         uint64_t key_md5;
     } key_md5_value;
+#if (defined(_KV_MD5_ENABLE) && (_KV_MD5_ENABLE == 1))
     md5_hex_8((uint8_t *)key, strlen(key), key_md5_value.md5);
+#else
+    _bKVKey2hex8(key, key_md5_value.md5);
+#endif
     f_range = (pinstance->erase_size == 0) ? pinstance->total_size : pinstance->erase_size;
-    b_log("frange:%d md5:0x%x\r\n", f_range, key_md5_value.key_md5);
     for (i = 0; i < B_KV_SECTOR_NUM(pinstance); i++)
     {
         if (0 > _bKVReadSectorHead(pinstance, i, &sector_head))
         {
             return -1;
         }
-        b_log("%d state:0x%x 0x%x 0x%x\r\n", i, sector_head.state[0], sector_head.state[1],
-              sector_head.state[2]);
         if (sector_head.state[KV_SECTOR_STA_FULL] == B_KV_STA_JOINT)
         {
             continue;
@@ -895,7 +914,11 @@ static int _bKVWriteJointData(bKVInstance_t *pinstance, uint32_t addr, const cha
     bKVDataHead_t head;
     head.flag    = B_KV_FLAG;
     head.joint_f = 1;
+#if (defined(_KV_MD5_ENABLE) && (_KV_MD5_ENABLE == 1))
     md5_hex_8((uint8_t *)key, strlen(key), head.key_md5.md5);
+#else
+    _bKVKey2hex8(key, head.key_md5.md5);
+#endif
     head.crc       = crc_calculate(ALGO_CRC32, pbuf, len);
     head.key_len   = strlen(key);
     head.value_len = len;
@@ -927,9 +950,9 @@ static int _bKVWriteJointData(bKVInstance_t *pinstance, uint32_t addr, const cha
         IF_WRITE(fd, (uint8_t *)&empty_addr, sizeof(uint32_t));
         bLseek(fd, empty_addr + sizeof(bKVSectorHead_t));
         IF_WRITE(fd, pbuf + w_index,
-               ((len - w_index) > B_KV_SECTOR_DATA_SIZE(pinstance))
-                   ? B_KV_SECTOR_DATA_SIZE(pinstance)
-                   : (len - w_index));
+                 ((len - w_index) > B_KV_SECTOR_DATA_SIZE(pinstance))
+                     ? B_KV_SECTOR_DATA_SIZE(pinstance)
+                     : (len - w_index));
         bClose(fd);
         w_index += B_KV_SECTOR_DATA_SIZE(pinstance);
     }
@@ -976,7 +999,6 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
 
     // 寻找是否已存在，存在并且值相同，则直接返回
     retval = _bKVFindKey(pinstance, key, (uint32_t *)&old_addr);
-    b_log("find key %s retval:%d\r\n", key, retval);
     if (retval == 0)
     {
         if ((old_addr > pinstance->address &&
@@ -1006,7 +1028,6 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
             ((len + B_KV_SECTOR_DATA_SIZE(pinstance) - 1) / B_KV_SECTOR_DATA_SIZE(pinstance));
         kv_len = sizeof(bKVDataHead_t) + B_SIZE_ALIGNMENT(strlen(key), 4) + empty_num * 4;
     }
-    b_log("kv_len:%d valid:%d empty_num:%d old_addr:0x%x\r\n", kv_len, valid, empty_num, old_addr);
     // 判断可用区块是否满足
     if (kv_len > valid)
     {
@@ -1026,7 +1047,6 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
     // 如果用到联合区块，判断可用空块是否足够
     if (empty_num > 0)
     {
-        b_log("joint data\r\n");
         if (old_addr != -1)
         {
             _bKVReadDataHead(pinstance, old_addr, &head);
@@ -1057,7 +1077,6 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
                 _bKVSetSectorState(pinstance, pinstance->write_index, KV_SECTOR_STA_MESSY, 0);
             }
         }
-        b_log("retval:%d\r\n", retval);
         if (retval < 0)
         {
             return retval;
@@ -1067,7 +1086,6 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
     // 写入数据
     w_addr = pinstance->address + pinstance->write_index * pinstance->erase_size +
              pinstance->write_offset;
-    b_log("write addr:0x%x\r\n", w_addr);
     // 联合区块写入
     if (empty_num > 0)
     {
@@ -1081,7 +1099,11 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
     {
         head.flag    = B_KV_FLAG;
         head.joint_f = 0;
+#if (defined(_KV_MD5_ENABLE) && (_KV_MD5_ENABLE == 1))
         md5_hex_8((uint8_t *)key, strlen(key), head.key_md5.md5);
+#else
+        _bKVKey2hex8(key, head.key_md5.md5);
+#endif
         head.crc       = crc_calculate(ALGO_CRC32, pbuf, len);
         head.key_len   = strlen(key);
         head.value_len = len;
@@ -1191,13 +1213,11 @@ int bKVInit(bKVInstance_t *pinstance)
         }
     }
     pinstance->init_f = 1;
-    b_log("b_kv:%d %d\r\n", pinstance->write_index, pinstance->empty_count);
 
     // 确定当前可写入区块，空闲区域偏移量
     if (pinstance->write_index >= 0)
     {
         _bKVFindWriteOffset(pinstance);
-        b_log(":::%d %d\r\n", pinstance->write_index, pinstance->write_offset);
         return 0;
     }
     return _bKVSectorDefrag(pinstance);
@@ -1225,13 +1245,11 @@ int bKVGetValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf, uint32
         return -3;
     }
     retval = _bKVFindKey(pinstance, key, &address);
-    b_log("find %s retval %d addr:0x%x\r\n", key, retval, address);
     if (retval < 0)
     {
         return retval;
     }
     _bKVReadDataHead(pinstance, address, &data_head);
-    b_log("len:%d value_len:%d\r\n", len, data_head.value_len);
     if (len < data_head.value_len)
     {
         return -4;
@@ -1258,8 +1276,8 @@ int bKVSetValue(bKVInstance_t *pinstance, const char *key, const uint8_t *pbuf, 
     if (pinstance->init_f != 1)
     {
         return -2;
-    }   
-    return _bKVAddValue(pinstance, key, pbuf, len);
+    }
+    return _bKVAddValue(pinstance, key, (uint8_t *)pbuf, len);
 }
 
 int bKVDeleteValue(bKVInstance_t *pinstance, const char *key)

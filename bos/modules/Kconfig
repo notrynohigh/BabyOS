@@ -31,6 +31,7 @@ config _MODBUS_ENABLE
     depends on _BOS_MODULES_ENABLE
     select _BOS_ALGO_ENABLE
     select _ALGO_CRC_ENABLE
+    select _ALGO_CRC16_MODBUS_ENABLE
 
 config MODBUS_BUF_SIZE
     int "Modbus Buffer Size"
@@ -86,6 +87,12 @@ config _KV_ENABLE
     depends on _BOS_MODULES_ENABLE
     select _BOS_ALGO_ENABLE
     select _ALGO_CRC_ENABLE
+    select _ALGO_CRC32_ENABLE
+
+config _KV_MD5_ENABLE
+    bool "KV MD5 Enable/Disable"
+    default n
+    depends on _KV_ENABLE
     select _ALGO_MD5_ENABLE
 
 config _KV_ENCRYPT_ENABLE
@@ -145,6 +152,7 @@ config _IAP_ENABLE
     depends on _BOS_MODULES_ENABLE
     select _BOS_ALGO_ENABLE
     select _ALGO_CRC_ENABLE
+    select _ALGO_CRC32_ENABLE
 
 config MCUFLASH_BASE_ADDR
     hex "McuFlash Base Address"

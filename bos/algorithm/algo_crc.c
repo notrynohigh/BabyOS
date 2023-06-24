@@ -84,7 +84,7 @@
  * \defgroup CRC_Private_Functions
  * \{
  */
-
+#if (defined(_ALGO_CRC8_ENABLE) && (_ALGO_CRC8_ENABLE == 1))
 /*
  * Name:    CRC-8               x8+x2+x+1
  *          Initial value 0x00
@@ -107,7 +107,9 @@ uint8_t crc8_d(uint8_t crc_8, uint8_t *data, uint32_t length, uint8_t flag)
     }
     return crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC8_ITU_ENABLE) && (_ALGO_CRC8_ITU_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-8/ITU           x8+x2+x+1
  *          Initial value 0x00
@@ -133,7 +135,9 @@ uint8_t crc8_itu(uint8_t crc_8, uint8_t *data, uint32_t length, uint8_t flag)
     }
     return crc ^ 0x55;
 }
+#endif
 
+#if (defined(_ALGO_CRC8_ROHC_ENABLE) && (_ALGO_CRC8_ROHC_ENABLE == 1))
 /*
  * Name:    CRC-8/ROHC          x8+x2+x+1
  *          Initial value 0xff
@@ -156,7 +160,9 @@ uint8_t crc8_rohc(uint8_t crc_8, uint8_t *data, uint32_t length, uint8_t flag)
     }
     return crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC8_MAXIM_ENABLE) && (_ALGO_CRC8_MAXIM_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-8/MAXIM         x8+x5+x4+1
  *          Initial value 0x00
@@ -180,7 +186,9 @@ uint8_t crc8_maxim(uint8_t crc_8, uint8_t *data, uint32_t length, uint8_t flag)
     }
     return crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC16_IBM_ENABLE) && (_ALGO_CRC16_IBM_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/IBM          x16+x15+x2+1
  *          Initial value 0x00
@@ -203,7 +211,9 @@ uint16_t crc16_ibm(uint16_t crc_16, uint8_t *data, uint32_t length, uint8_t flag
     }
     return crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC16_MAXIM_ENABLE) && (_ALGO_CRC16_MAXIM_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/MAXIM          x16+x15+x2+1
  *          Initial value 0x00
@@ -229,7 +239,9 @@ uint16_t crc16_maxim(uint16_t crc_16, uint8_t *data, uint32_t length, uint8_t fl
     }
     return ~crc;  // crc^0xffff
 }
+#endif
 
+#if (defined(_ALGO_CRC16_USB_ENABLE) && (_ALGO_CRC16_USB_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/USB          x16+x15+x2+1
  *          Initial value 0xffff
@@ -255,7 +267,9 @@ uint16_t crc16_usb(uint16_t crc_16, uint8_t *data, uint32_t length, uint8_t flag
     }
     return ~crc;  // crc^0xffff
 }
+#endif
 
+#if (defined(_ALGO_CRC16_MODBUS_ENABLE) && (_ALGO_CRC16_MODBUS_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/MODBUS       x16+x15+x2+1
  *          Initial value 0xffff
@@ -278,7 +292,9 @@ uint16_t crc16_modbus(uint16_t crc_16, uint8_t *data, uint32_t length, uint8_t f
     }
     return crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC16_CCITT_ENABLE) && (_ALGO_CRC16_CCITT_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/CCITT        x16+x12+x5+1
  *          Initial value 0x00
@@ -301,7 +317,9 @@ uint16_t crc16_ccitt(uint16_t crc_16, uint8_t *data, uint32_t length, uint8_t fl
     }
     return crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC16_CCITT_FALSE_ENABLE) && (_ALGO_CRC16_CCITT_FALSE_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/CCITT-FALSE   x16+x12+x5+1
  *          Initial value 0xffff
@@ -324,7 +342,9 @@ uint16_t crc16_ccitt_false(uint16_t crc_16, uint8_t *data, uint32_t length, uint
     }
     return crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC16_X25_ENABLE) && (_ALGO_CRC16_X25_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/X25          x16+x12+x5+1
  *          Initial value 0xffff
@@ -350,7 +370,9 @@ uint16_t crc16_x25(uint16_t crc_16, uint8_t *data, uint32_t length, uint8_t flag
     }
     return ~crc;  // crc^Xorout
 }
+#endif
 
+#if (defined(_ALGO_CRC16_XMODEM_ENABLE) && (_ALGO_CRC16_XMODEM_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/XMODEM       x16+x12+x5+1
  *          Initial value 0x00
@@ -373,7 +395,9 @@ uint16_t crc16_xmodem(uint16_t crc_16, uint8_t *data, uint32_t length, uint8_t f
     }
     return crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC16_DNP_ENABLE) && (_ALGO_CRC16_DNP_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-16/DNP          x16+x13+x12+x11+x10+x8+x6+x5+x2+1
  *          Initial value 0x00
@@ -399,7 +423,9 @@ uint16_t crc16_dnp(uint16_t crc_16, uint8_t *data, uint32_t length, uint8_t flag
     }
     return ~crc;  // crc^Xorout
 }
+#endif
 
+#if (defined(_ALGO_CRC32_ENABLE) && (_ALGO_CRC32_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-32  x32+x26+x23+x22+x16+x12+x11+x10+x8+x7+x5+x4+x2+x+1
  *          Initial value 0xffffffff
@@ -425,7 +451,9 @@ uint32_t crc32_d(uint32_t crc_32, uint8_t *data, uint32_t length, uint8_t flag)
     }
     return ~crc;
 }
+#endif
 
+#if (defined(_ALGO_CRC32_MPEG2_ENABLE) && (_ALGO_CRC32_MPEG2_ENABLE == 1))
 /******************************************************************************
  * Name:    CRC-32/MPEG-2  x32+x26+x23+x22+x16+x12+x11+x10+x8+x7+x5+x4+x2+x+1
  *          Initial value 0xffffffff
@@ -448,6 +476,7 @@ uint32_t crc32_mpeg_2(uint32_t crc_32, uint8_t *data, uint32_t length, uint8_t f
     }
     return crc;
 }
+#endif
 
 /**
  * \}
@@ -490,81 +519,111 @@ uint32_t crc_calculate(uint8_t type, uint8_t *pbuf, uint32_t len)
     }
     switch (type)
     {
+#if (defined(_ALGO_CRC8_ENABLE) && (_ALGO_CRC8_ENABLE == 1))
         case ALGO_CRC8:
         {
             retval = crc8_d(crc_val & 0xff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC8_ITU_ENABLE) && (_ALGO_CRC8_ITU_ENABLE == 1))
         case ALGO_CRC8_ITU:
         {
             retval = crc8_itu(crc_val & 0xff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC8_ROHC_ENABLE) && (_ALGO_CRC8_ROHC_ENABLE == 1))
         case ALGO_CRC8_ROHC:
         {
             retval = crc8_rohc(crc_val & 0xff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC8_MAXIM_ENABLE) && (_ALGO_CRC8_MAXIM_ENABLE == 1))
         case ALGO_CRC8_MAXIM:
         {
             retval = crc8_maxim(crc_val & 0xff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_IBM_ENABLE) && (_ALGO_CRC16_IBM_ENABLE == 1))
         case ALGO_CRC16_IBM:
         {
             retval = crc16_ibm(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_MAXIM_ENABLE) && (_ALGO_CRC16_MAXIM_ENABLE == 1))
         case ALGO_CRC16_MAXIM:
         {
             retval = crc16_maxim(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_USB_ENABLE) && (_ALGO_CRC16_USB_ENABLE == 1))
         case ALGO_CRC16_USB:
         {
             retval = crc16_usb(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_MODBUS_ENABLE) && (_ALGO_CRC16_MODBUS_ENABLE == 1))
         case ALGO_CRC16_MODBUS:
         {
             retval = crc16_modbus(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_CCITT_ENABLE) && (_ALGO_CRC16_CCITT_ENABLE == 1))
         case ALGO_CRC16_CCITT:
         {
             retval = crc16_ccitt(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_CCITT_FALSE_ENABLE) && (_ALGO_CRC16_CCITT_FALSE_ENABLE == 1))
         case ALGO_CRC16_CCITT_FALSE:
         {
             retval = crc16_ccitt_false(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_X25_ENABLE) && (_ALGO_CRC16_X25_ENABLE == 1))
         case ALGO_CRC16_X25:
         {
             retval = crc16_x25(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_XMODEM_ENABLE) && (_ALGO_CRC16_XMODEM_ENABLE == 1))
         case ALGO_CRC16_XMODEM:
         {
             retval = crc16_xmodem(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_DNP_ENABLE) && (_ALGO_CRC16_DNP_ENABLE == 1))
         case ALGO_CRC16_DNP:
         {
             retval = crc16_dnp(crc_val & 0xffff, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC32_ENABLE) && (_ALGO_CRC32_ENABLE == 1))
         case ALGO_CRC32:
         {
             retval = crc32_d(crc_val, pbuf, len, 0);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC32_MPEG2_ENABLE) && (_ALGO_CRC32_MPEG2_ENABLE == 1))
         case ALGO_CRC32_MPEG2:
         {
             retval = crc32_mpeg_2(crc_val, pbuf, len, 0);
         }
         break;
+#endif
         default:
             break;
     }
@@ -595,81 +654,112 @@ void crc_calculate_sbs(algo_crc_sbs_t *phandle, uint8_t *pbuf, uint32_t len)
 
     switch (phandle->type)
     {
+#if (defined(_ALGO_CRC8_ENABLE) && (_ALGO_CRC8_ENABLE == 1))
         case ALGO_CRC8:
         {
             retval = crc8_d(crc_val & 0xff, pbuf, len, flag);
         }
         break;
+#endif
+
+#if (defined(_ALGO_CRC8_ITU_ENABLE) && (_ALGO_CRC8_ITU_ENABLE == 1))
         case ALGO_CRC8_ITU:
         {
             retval = crc8_itu(crc_val & 0xff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC8_ROHC_ENABLE) && (_ALGO_CRC8_ROHC_ENABLE == 1))
         case ALGO_CRC8_ROHC:
         {
             retval = crc8_rohc(crc_val & 0xff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC8_MAXIM_ENABLE) && (_ALGO_CRC8_MAXIM_ENABLE == 1))
         case ALGO_CRC8_MAXIM:
         {
             retval = crc8_maxim(crc_val & 0xff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_IBM_ENABLE) && (_ALGO_CRC16_IBM_ENABLE == 1))
         case ALGO_CRC16_IBM:
         {
             retval = crc16_ibm(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_MAXIM_ENABLE) && (_ALGO_CRC16_MAXIM_ENABLE == 1))
         case ALGO_CRC16_MAXIM:
         {
             retval = crc16_maxim(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_USB_ENABLE) && (_ALGO_CRC16_USB_ENABLE == 1))
         case ALGO_CRC16_USB:
         {
             retval = crc16_usb(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_MODBUS_ENABLE) && (_ALGO_CRC16_MODBUS_ENABLE == 1))
         case ALGO_CRC16_MODBUS:
         {
             retval = crc16_modbus(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_CCITT_ENABLE) && (_ALGO_CRC16_CCITT_ENABLE == 1))
         case ALGO_CRC16_CCITT:
         {
             retval = crc16_ccitt(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_CCITT_FALSE_ENABLE) && (_ALGO_CRC16_CCITT_FALSE_ENABLE == 1))
         case ALGO_CRC16_CCITT_FALSE:
         {
             retval = crc16_ccitt_false(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_X25_ENABLE) && (_ALGO_CRC16_X25_ENABLE == 1))
         case ALGO_CRC16_X25:
         {
             retval = crc16_x25(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_XMODEM_ENABLE) && (_ALGO_CRC16_XMODEM_ENABLE == 1))
         case ALGO_CRC16_XMODEM:
         {
             retval = crc16_xmodem(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC16_DNP_ENABLE) && (_ALGO_CRC16_DNP_ENABLE == 1))
         case ALGO_CRC16_DNP:
         {
             retval = crc16_dnp(crc_val & 0xffff, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC32_ENABLE) && (_ALGO_CRC32_ENABLE == 1))
         case ALGO_CRC32:
         {
             retval = crc32_d(crc_val, pbuf, len, flag);
         }
         break;
+#endif
+#if (defined(_ALGO_CRC32_MPEG2_ENABLE) && (_ALGO_CRC32_MPEG2_ENABLE == 1))
         case ALGO_CRC32_MPEG2:
         {
             retval = crc32_mpeg_2(crc_val, pbuf, len, flag);
         }
         break;
+#endif
         default:
         {
             retval = crc_val;
