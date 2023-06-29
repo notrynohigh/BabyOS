@@ -1069,6 +1069,7 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
             if (((old_addr - pinstance->address) / pinstance->erase_size) != pinstance->write_index)
             {
                 retval = _bKVSetDataState(pinstance, old_addr, KV_DATA_STA_MODIFY, 0xffffff);
+                _bKVSetSectorState(pinstance, (old_addr - pinstance->address) / pinstance->erase_size, KV_SECTOR_STA_MESSY, 0);
             }
             else
             {
