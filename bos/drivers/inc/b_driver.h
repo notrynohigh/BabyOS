@@ -41,7 +41,7 @@ extern "C" {
 #include "b_driver_cmd.h"
 #include "b_section.h"
 #include "hal/inc/b_hal.h"
-#include "utils/inc/b_util_queue.h"
+#include "utils/inc/b_util_fifo.h"
 /**
  * \addtogroup BABYOS
  * \{
@@ -61,6 +61,9 @@ extern "C" {
  * \defgroup DRIVER_Exported_TypesDefinitions
  * \{
  */
+
+typedef bFIFO_Instance_t bDriverCache_t;
+
 typedef struct bDriverIf
 {
     int status;
@@ -70,11 +73,11 @@ typedef struct bDriverIf
     int (*ctl)(struct bDriverIf *pdrv, uint8_t cmd, void *param);
     int (*write)(struct bDriverIf *pdrv, uint32_t offset, uint8_t *pbuf, uint32_t len);
     int (*read)(struct bDriverIf *pdrv, uint32_t offset, uint8_t *pbuf, uint32_t len);
-    void             *hal_if;
-    const char       *pdes;
-    uint32_t          drv_no;
-    bQueueInstance_t *preadbuf;
-    bQueueInstance_t *pwritebuf;
+    void          *hal_if;
+    const char    *pdes;
+    uint32_t       drv_no;
+    bDriverCache_t r_cache;
+    bDriverCache_t w_cache;
     union
     {
         uint32_t v;
@@ -129,36 +132,36 @@ typedef struct
 #define bDRIVER_HALIF_INSTANCE(drv_name, drv_no) _bDRIVER_HALIF_INSTANCE(drv_name, drv_no)
 #define bDRIVER_HALIF_NUM(halif_type, drv_name) _bDRIVER_HALIF_NUM(halif_type, drv_name)
 
-#define _bDRIVER_STRUCT_INIT(pdrv, drv_name, init_f)                        \
-    do                                                                      \
-    {                                                                       \
-        pdrv->status     = 0;                                               \
-        pdrv->init       = init_f;                                          \
-        pdrv->open       = NULL;                                            \
-        pdrv->close      = NULL;                                            \
-        pdrv->ctl        = NULL;                                            \
-        pdrv->write      = NULL;                                            \
-        pdrv->read       = NULL;                                            \
-        pdrv->preadbuf   = NULL;                                            \
-        pdrv->pwritebuf  = NULL;                                            \
-        pdrv->hal_if     = _bDRIVER_HALIF_INSTANCE(drv_name, pdrv->drv_no); \
-        pdrv->_private.v = 0;                                               \
+#define _bDRIVER_STRUCT_INIT(pdrv, drv_name, init_f)                          \
+    do                                                                        \
+    {                                                                         \
+        pdrv->status       = 0;                                               \
+        pdrv->init         = init_f;                                          \
+        pdrv->open         = NULL;                                            \
+        pdrv->close        = NULL;                                            \
+        pdrv->ctl          = NULL;                                            \
+        pdrv->write        = NULL;                                            \
+        pdrv->read         = NULL;                                            \
+        pdrv->r_cache.pbuf = NULL;                                            \
+        pdrv->w_cache.pbuf = NULL;                                            \
+        pdrv->hal_if       = _bDRIVER_HALIF_INSTANCE(drv_name, pdrv->drv_no); \
+        pdrv->_private.v   = 0;                                               \
     } while (0)
 #define bDRIVER_STRUCT_INIT(pdrv, drv_name, init_f) _bDRIVER_STRUCT_INIT(pdrv, drv_name, init_f)
 
 #define bDRIVER_GET_HALIF(name, type, pdrv) type *name = (type *)((pdrv)->hal_if)
 #define bDRIVER_GET_PRIVATE(name, type, pdrv) type *name = (type *)((pdrv)->_private._p)
 
-#define bDRIVER_SET_READBUF(pdrv, prbuf) \
-    do                                   \
-    {                                    \
-        pdrv->preadbuf = prbuf;          \
+#define bDRIVER_SET_READCACHE(pdrv, pbuf, buf_size) \
+    do                                              \
+    {                                               \
+        bFIFO_Init(&pdrv->r_cache, pbuf, buf_size); \
     } while (0)
 
-#define bDRIVER_SET_WRITEBUF(pdrv, pwbuf) \
-    do                                    \
-    {                                     \
-        pdrv->pwritebuf = pwbuf;          \
+#define bDRIVER_SET_WRITECACHE(pdrv, pbuf, buf_size) \
+    do                                               \
+    {                                                \
+        bFIFO_Init(&pdrv->w_cache, pbuf, buf_size);  \
     } while (0)
 
 /**

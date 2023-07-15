@@ -80,6 +80,7 @@ typedef bFIFO_Info_t bFIFO_Instance_t;
  * \{
  */
 ///< pinstance \ref bFIFO_INSTANCE
+int bFIFO_Init(bFIFO_Instance_t *pinstance, void *pbuf, uint16_t size);
 int bFIFO_Write(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size);
 int bFIFO_Read(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size);
 int bFIFO_Length(bFIFO_Instance_t *pinstance, uint16_t *plen);

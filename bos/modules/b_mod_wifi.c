@@ -34,9 +34,12 @@
 
 #include "b_section.h"
 #include "core/inc/b_core.h"
+#include "core/inc/b_queue.h"
+#include "core/inc/b_sem.h"
+#include "core/inc/b_task.h"
 #include "drivers/inc/b_driver.h"
-#include "thirdparty/pt/pt.h"
-#include "utils/inc/b_utils.h"
+#include "utils/inc/b_util_log.h"
+#include "utils/inc/b_util_memp.h"
 
 #if (defined(_WIFI_ENABLE) && (_WIFI_ENABLE == 1))
 /**
@@ -145,9 +148,17 @@ typedef struct
  * \{
  */
 
-bQUEUE_INSTANCE(bModWifiQueue, sizeof(bWifiQItem_t), WIFI_Q_LEN);
-PT_INSTANCE(bModWifiPT);
 static bWifiDevice_t bWifiDeviceTable[WIFI_DEVICE_NUMBER];
+
+B_TASK_CREATE_ATTR(bWifiTaskAttr);
+
+static uint8_t bWifiQBuf[sizeof(bWifiQItem_t) * WIFI_Q_LEN];
+B_QUEUE_CREATE_ATTR(bWifiQueueAttr, bWifiQBuf, sizeof(bWifiQBuf));
+static bQueueId_t bWifiQueue = NULL;
+
+B_SEM_CREATE_ATTR(bWifiSemAttr);
+static bSemId_t bWifiSem = NULL;
+
 /**
  * \}
  */
@@ -317,6 +328,7 @@ static void _bWifiEventHandler(bWifiModuleEvent_t event, void *arg, void (*relea
     {
         pdev->result = event;
         cmd          = *((uint8_t *)arg);
+        bSemRelease(bWifiSem);
     }
 
     if (event == WIFI_DRV_EVT_CMD_OK)
@@ -429,7 +441,7 @@ static void _bWifiEventHandler(bWifiModuleEvent_t event, void *arg, void (*relea
     }
 }
 
-static int _bModWifiTask(struct pt *pt)
+PT_THREAD(_bWifiModTask)(struct pt *pt, void *arg)
 {
     static bWifiQItem_t item;
     void               *param = NULL;
@@ -437,10 +449,13 @@ static int _bModWifiTask(struct pt *pt)
     PT_BEGIN(pt);
     while (1)
     {
-        if (bQueuePop(&bModWifiQueue, &item) < 0)
+        bQueueGetBlock(pt, bWifiQueue, &item, 0xffffffff);
+        if (PT_WAIT_IS_TIMEOUT(pt))
         {
             return -1;
         }
+        b_log("q get : %d\r\n", item.type);
+        bSemAcquireNonblock(bWifiSem);
         wait                = 1;
         item.handle->result = -1;
         if (item.type == WIFI_CONFIG_STA)
@@ -653,7 +668,7 @@ static int _bModWifiTask(struct pt *pt)
         }
         if (wait == 1)
         {
-            PT_WAIT_UNTIL_FOREVER(pt, item.handle->result >= 0);
+            bSemAcquireBlock(pt, bWifiSem, 30000);
         }
         if (item.release)
         {
@@ -663,13 +678,6 @@ static int _bModWifiTask(struct pt *pt)
     }
     PT_END(pt);
 }
-
-static void _bModWifiPolling()
-{
-    _bModWifiTask(&bModWifiPT);
-}
-
-BOS_REG_POLLING_FUNC(_bModWifiPolling);
 
 /**
  * \}
@@ -683,7 +691,9 @@ BOS_REG_POLLING_FUNC(_bModWifiPolling);
 int bWifiInit()
 {
     memset(bWifiDeviceTable, 0, sizeof(bWifiDeviceTable));
-    PT_INIT(&bModWifiPT);
+    bTaskCreate("wifi task", _bWifiModTask, NULL, &bWifiTaskAttr);
+    bWifiQueue = bQueueCreate(WIFI_Q_LEN, sizeof(bWifiQItem_t), &bWifiQueueAttr);
+    bWifiSem   = bSemCreate(1, 0, &bWifiSemAttr);
     return 0;
 }
 
@@ -772,7 +782,7 @@ int bWifiSetMode(bWifiHandle_t handle, uint8_t mode, const bWifiApInfo_t *pinfo)
         item.release = bFree;
         memcpy(item.param, pinfo, sizeof(bWifiApInfo_t));
     }
-    if (0 > bQueuePush(&bModWifiQueue, &item))
+    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
     {
         if (item.param != NULL)
         {
@@ -802,7 +812,7 @@ int bWifiJoinAp(bWifiHandle_t handle, const bWifiApInfo_t *pinfo)
 
     item.type   = WIFI_JOINAP_START;
     item.handle = handle;
-    if (0 > bQueuePush(&bModWifiQueue, &item))
+    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
     {
         if (item.param != NULL)
         {
@@ -825,7 +835,7 @@ int bWifiPing(bWifiHandle_t handle)
     item.handle  = handle;
     item.param   = NULL;
     item.release = NULL;
-    return bQueuePush(&bModWifiQueue, &item);
+    return bQueuePutNonblock(bWifiQueue, &item);
 }
 
 bWifiConnHandle_t bWifiSetupServer(bWifiHandle_t handle, uint8_t type, uint16_t port)
@@ -868,7 +878,7 @@ bWifiConnHandle_t bWifiSetupServer(bWifiHandle_t handle, uint8_t type, uint16_t 
     }
     item.release              = bFree;
     *((uint16_t *)item.param) = port;
-    if (0 > bQueuePush(&bModWifiQueue, &item))
+    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
     {
         bFree(item.param);
         _bWifiDeleteNetCtx(plist);
@@ -920,7 +930,7 @@ bWifiConnHandle_t bWifiConnectServer(bWifiHandle_t handle, uint8_t type, const c
     ((bWifiServerInfo_t *)item.param)->port = port;
     memcpy(((bWifiServerInfo_t *)item.param)->ip, ip,
            sizeof(((bWifiServerInfo_t *)item.param)->ip));
-    if (0 > bQueuePush(&bModWifiQueue, &item))
+    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
     {
         bFree(item.param);
         _bWifiDeleteNetCtx(plist);
@@ -952,7 +962,7 @@ int bWifiConnectClose(bWifiConnHandle_t conn)
     ((bWifiServerInfo_t *)item.param)->port = pconn->pctx->port;
     memcpy(((bWifiServerInfo_t *)item.param)->ip, pconn->pctx->ip,
            sizeof(((bWifiServerInfo_t *)item.param)->ip));
-    if (0 > bQueuePush(&bModWifiQueue, &item))
+    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
     {
         bFree(item.param);
         return -1;
@@ -979,7 +989,7 @@ int bWifiConnSend(bWifiConnHandle_t conn, uint8_t *pbuf, uint16_t len)
     retval = bFIFO_Write(&pconn->pctx->sfifo, pbuf, len);
     if (retval > 0)
     {
-        bQueuePush(&bModWifiQueue, &item);
+        bQueuePutNonblock(bWifiQueue, &item);
     }
     return retval;
 }
@@ -1012,7 +1022,7 @@ int bWifiMqttConnect(bWifiHandle_t handle, bWifiMqtt_t *mqtt)
     memset(item.param, 0, sizeof(bWifiMqtt_t));
     memcpy(item.param, mqtt, sizeof(bWifiMqtt_t));
     item.release = bFree;
-    if (0 > bQueuePush(&bModWifiQueue, &item))
+    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
     {
         bFree(item.param);
         return -1;
@@ -1041,7 +1051,7 @@ int bWifiMqttSub(bWifiHandle_t handle, const char *topic, uint8_t qos)
     pch[0] = qos;
     memcpy(pch + 1, topic, strlen(topic));
     item.release = bFree;
-    if (0 > bQueuePush(&bModWifiQueue, &item))
+    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
     {
         bFree(item.param);
         return -1;
@@ -1072,7 +1082,7 @@ int bWifiMqttPub(bWifiHandle_t handle, const char *topic, uint8_t qos, uint8_t *
     memcpy(pch + 1 + strlen(topic) + 1, &len, sizeof(len));
     memcpy(pch + 1 + strlen(topic) + 1 + sizeof(len), pbuf, len);
     item.release = bFree;
-    if (0 > bQueuePush(&bModWifiQueue, &item))
+    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
     {
         bFree(item.param);
         return -1;

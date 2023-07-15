@@ -37,7 +37,6 @@ extern "C" {
 
 /*Includes ----------------------------------------------*/
 #include "drivers/inc/b_driver.h"
-#include "utils/inc/b_util_queue.h"
 /**
  * \addtogroup B_DRIVER
  * \{
@@ -112,7 +111,6 @@ typedef struct
     bLis3dhFifoMode_t fm;
     uint8_t           int_polarity;
     bGsensor3Axis_t   data[32];
-    bQueueInstance_t  q;
 } bList3dhPrivate_t;
 
 /**

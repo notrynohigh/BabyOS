@@ -58,6 +58,7 @@ struct pt
     uint32_t tick;
     uint32_t time_ms;
     uint32_t wait;
+    int32_t  retval;
 };
 
 #define PT_WAITING 0
@@ -67,6 +68,11 @@ struct pt
 
 #define PT_INSTANCE(name) static struct pt name
 
+#define PT_RETVAL_OK 0
+#define PT_RETVAL_FAIL -1
+#define PT_RETVAL_TIMEOUT -2
+
+#define PT_WAIT_IS_TIMEOUT(pt) (((pt)->retval) == PT_RETVAL_TIMEOUT)
 /**
  * \name Initialization
  * @{
@@ -91,6 +97,7 @@ struct pt
         LC_INIT((pt)->tick);    \
         LC_INIT((pt)->time_ms); \
         LC_INIT((pt)->wait);    \
+        LC_INIT((pt)->retval);  \
     } while (0)
 
 /** @} */
@@ -186,11 +193,16 @@ struct pt
             (pt)->tick    = bHalGetSysTick();                                   \
             (pt)->time_ms = MS2TICKS(timeout);                                  \
             (pt)->wait    = 1;                                                  \
+            (pt)->retval  = PT_RETVAL_OK;                                       \
         }                                                                       \
         LC_SET((pt)->lc);                                                       \
         if (!((condition) || (bHalGetSysTick() - (pt)->tick) >= (pt)->time_ms)) \
         {                                                                       \
             return PT_WAITING;                                                  \
+        }                                                                       \
+        if ((bHalGetSysTick() - (pt)->tick) >= (pt)->time_ms)                   \
+        {                                                                       \
+            (pt)->retval = PT_RETVAL_TIMEOUT;                                   \
         }                                                                       \
         (pt)->wait = 0;                                                         \
     } while (0)
@@ -208,7 +220,7 @@ struct pt
  */
 #define PT_WAIT_WHILE(pt, cond) PT_WAIT_UNTIL_FOREVER((pt), !(cond))
 
-#define PT_DELAY_MS(pt, ms) PT_WAIT_UNTIL(pt, 0, ms)
+#define PT_DELAY_MS(pt, ms) PT_WAIT_UNTIL((pt), 0, (ms))
 
 /** @} */
 

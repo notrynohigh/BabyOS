@@ -70,6 +70,19 @@
  * \{
  */
 
+int bFIFO_Init(bFIFO_Instance_t *pinstance, void *pbuf, uint16_t size)
+{
+    if (pinstance == NULL || pbuf == NULL || size == 0)
+    {
+        return -1;
+    }
+    pinstance->pbuf    = (uint8_t *)pbuf;
+    pinstance->size    = size;
+    pinstance->r_index = 0;
+    pinstance->w_index = 0;
+    return 0;
+}
+
 int bFIFO_Length(bFIFO_Instance_t *pinstance, uint16_t *plen)
 {
     if (pinstance == NULL || plen == NULL)

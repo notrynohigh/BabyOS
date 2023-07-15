@@ -130,4 +130,5 @@ FS功能模块是基于FatFS和LittleFS,方便用户使用:
 | 2023.04 | 增加b_mod_wifi去对接各个WIFI模块                             |      |
 | 2023.05 | 将utc时间从基准时间2000年改为1970年<br>utc增加设置和读取utc时间接口。tick增加溢出计数，提供uint64_t类型的tick值获取接口 |      |
 | 2023.06 | bMalloc和bFree可选择是否打印申请者和释放者信息<br>修复队列bug ; b_hal_it 增加中断注册和调用接口 ; 增加io多路转发select功能 |      |
+| 2023.07 | core 目录，增加b_task b_timer b_queue b_sem                  |      |
 

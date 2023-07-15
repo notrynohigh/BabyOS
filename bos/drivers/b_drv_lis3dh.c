@@ -388,7 +388,7 @@ static void _bLis3dhItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *p
                        Digit2mgTable[_private->fs][_private->opmode];
             tmp.z_mg = (tmp.z_mg >> DataShiftTable[_private->opmode]) *
                        Digit2mgTable[_private->fs][_private->opmode];
-            bQueuePush(&_private->q, &tmp);
+            bFIFO_Write(&pdrv->r_cache, (uint8_t *)&tmp, sizeof(bGsensor3Axis_t));
         }
     }
 }
@@ -420,7 +420,7 @@ static int _bLis3dhRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
 
     for (i = 0; i < c; i++)
     {
-        if (bQueuePop(&_private->q, &ptmp[i]) == 0)
+        if (bFIFO_Read(&pdrv->r_cache, (uint8_t *)&ptmp[i], sizeof(bGsensor3Axis_t)) > 0)
         {
             ;
         }
@@ -457,11 +457,12 @@ int bLIS3DH_Init(bDriverInterface_t *pdrv)
     {
         return -1;
     }
-    bQueueInit(&bLis3dhRunInfo[pdrv->drv_no].q, (uint8_t *)&bLis3dhRunInfo[pdrv->drv_no].data[0],
-               sizeof(bGsensor3Axis_t), 32);
-    bDRIVER_SET_READBUF(pdrv, &bLis3dhRunInfo[pdrv->drv_no].q);
     _bLis3dhDefaultCfg(pdrv);
     _bLis3dhClearFifo(pdrv);
+
+    bDRIVER_SET_READCACHE(pdrv, &bLis3dhRunInfo[pdrv->drv_no].data[0],
+                          sizeof(bLis3dhRunInfo[pdrv->drv_no].data));
+
     return 0;
 }
 

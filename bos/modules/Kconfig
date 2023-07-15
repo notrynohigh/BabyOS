@@ -125,11 +125,6 @@ config MENU_ITEM_NUMBER
     default 10
     depends on _MENU_ENABLE
 
-config _TIMER_ENABLE
-    bool "Soft-timer Enable/Disable"
-    default n
-    depends on _BOS_MODULES_ENABLE
-
 config _PWM_ENABLE
     bool "Soft-pwm Enable/Disable"
     default n

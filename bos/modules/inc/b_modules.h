@@ -51,7 +51,6 @@ extern "C" {
 #include "b_mod_select.h"
 #include "b_mod_shell.h"
 #include "b_mod_state.h"
-#include "b_mod_timer.h"
 #include "b_mod_trace.h"
 #include "b_mod_wifi.h"
 #include "b_mod_xm128.h"

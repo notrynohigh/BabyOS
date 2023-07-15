@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_util_queue.h
+ * \file        b_sem.h
  * \version     v0.0.1
- * \date        2019/12/23
+ * \date        2019/06/05
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
@@ -28,74 +28,88 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_UTIL_QUEUE_H__
-#define __B_UTIL_QUEUE_H__
+#ifndef __B_SEM_H__
+#define __B_SEM_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include "b_type.h"
+#include <stdint.h>
+#include <string.h>
+
+#include "thirdparty/pt/pt.h"
+#include "utils/inc/b_util_list.h"
+
 /**
- * \addtogroup B_UTILS
+ * \addtogroup BABYOS
  * \{
  */
 
 /**
- * \addtogroup QUEUE
+ * \addtogroup CORE
  * \{
  */
 
 /**
- * \defgroup QUEUE_Exported_TypesDefinitions
+ * \addtogroup SEM
  * \{
  */
+
+/**
+ * \defgroup SEM_Exported_TypesDefinitions
+ * \{
+ */
+
+typedef void *bSemId_t;
+
 typedef struct
 {
-    uint8_t *pbuf;
-    uint16_t item_size;
-    uint16_t item_num;
-    uint16_t number;
-    uint16_t r_index;
-    uint16_t w_index;
-} bQueueInfo_t;
-
-typedef bQueueInfo_t bQueueInstance_t;
-/**
- * \}
- */
-
-/**
- * \defgroup QUEUE_Exported_Defines
- * \{
- */
-#define bQUEUE_INSTANCE(name, _item_size, _item_num)      \
-    static uint8_t   queue##name[_item_size * _item_num]; \
-    bQueueInstance_t name = {.pbuf      = queue##name,    \
-                             .item_size = _item_size,     \
-                             .item_num  = _item_num,      \
-                             .r_index   = 0,              \
-                             .w_index   = 0,              \
-                             .number    = 0};
+    uint32_t         value;
+    uint32_t         value_max;
+    struct list_head list;
+} bSemAttr_t;
 
 /**
  * \}
  */
 
 /**
- * \defgroup QUEUE_Exported_Functions
+ * \defgroup SEM_Exported_Definitions
  * \{
  */
-///< pinstance \ref bQUEUE_INSTANCE
-int bQueueInit(bQueueInstance_t *pinstance, uint8_t *pbuf, uint16_t item_size, uint16_t item_num);
-int bQueuePush(bQueueInstance_t *pinstance, void *data);
-int bQueuePop(bQueueInstance_t *pinstance, void *data);
-int bQueuePeek(bQueueInstance_t *pinstance, void *data);
-uint8_t bQueueIsFull(bQueueInstance_t *pinstance);
-uint8_t bQueueIsEmpty(bQueueInstance_t *pinstance);
-int     bQueueDynCreate(bQueueInstance_t *pinstance, uint16_t item_size, uint16_t item_num);
-int     bQueueDynDelete(bQueueInstance_t *pinstance);
+
+#define B_SEM_CREATE_ATTR(attr_name) static bSemAttr_t attr_name = {.value = 0}
+
+#define B_SEM_ACQUIRE(pt, sem_id, timeout) \
+    PT_WAIT_UNTIL((pt), bSemAcquireNonblock((sem_id)) == 0, (timeout))
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup SEM_Exported_Functions
+ * \{
+ */
+
+/// 创建信号量
+/// \param[in]     max_count     信号量最大数量.
+/// \param[in]     initial_count 信号量初始数量
+/// \param[in]     attr          通过B_SEM_CREATE_ATTR创建，再传入
+/// \return 信号量ID
+bSemId_t bSemCreate(uint32_t max_count, uint32_t initial_count, bSemAttr_t *attr);
+int      bSemAcquireNonblock(bSemId_t id);
+int      bSemRelease(bSemId_t id);
+uint32_t bSemGetCount(bSemId_t id);
+
+#define bSemAcquireBlock(pt, id, timeout) B_SEM_ACQUIRE(pt, id, timeout)
+
+/**
+ * \}
+ */
+
 /**
  * \}
  */
@@ -113,4 +127,5 @@ int     bQueueDynDelete(bQueueInstance_t *pinstance);
 #endif
 
 #endif
+
 /************************ Copyright (c) 2019 Bean *****END OF FILE****/

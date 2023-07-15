@@ -34,8 +34,12 @@
 
 #include <stdio.h>
 
-#include "thirdparty/pt/pt.h"
-#include "utils/inc/b_util_list.h"
+#include "core/inc/b_sem.h"
+#include "core/inc/b_task.h"
+#include "utils/inc/b_util_log.h"
+#include "utils/inc/b_util_memp.h"
+#include "utils/inc/b_util_uart.h"
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -140,7 +144,10 @@ bDRIVER_HALIF_TABLE(bESP12F_HalIf_t, DRIVER_NAME);
 
 static bEsp12fPrivate_t bEspRunInfo[bDRIVER_HALIF_NUM(bESP12F_HalIf_t, DRIVER_NAME)];
 
-PT_INSTANCE(bEsp12fPT);
+B_TASK_CREATE_ATTR(bEsp12fTaskAttr);
+B_SEM_CREATE_ATTR(bEsp12fSemAttr);
+
+static bSemId_t bEsp12fSem = NULL;
 
 /**
  * \}
@@ -736,6 +743,7 @@ static int _bEspUartIdleCb(uint8_t *pbuf, uint16_t len, void *arg)
         if (strstr((char *)pbuf, pack->resp) != NULL)
         {
             pack->ack = AT_CMD_ACK_DONE;
+            bSemRelease(bEsp12fSem);
         }
     }
     return _bEspRecHandler(arg, pbuf, len);
@@ -773,7 +781,7 @@ static void _bEspResult(uint8_t index, uint8_t result)
     }
 }
 
-static int _bEspMainTask(struct pt *pt)
+PT_THREAD(_bEsp12fTask)(struct pt *pt, void *arg)
 {
     static uint8_t index  = 0;
     uint16_t       retval = 0;
@@ -794,15 +802,8 @@ static int _bEspMainTask(struct pt *pt)
         retval = (*(bEspRunInfo[index].pcmd))(index, &bEspRunInfo[index].param);
         if (retval > 0)
         {
-            PT_WAIT_UNTIL(pt, bEspRunInfo[index].at_ack.ack == AT_CMD_ACK_DONE, retval);
-            if (bEspRunInfo[index].at_ack.ack == AT_CMD_ACK_DONE)
-            {
-                retval = 0;
-            }
-            else
-            {
-                retval = 1;
-            }
+            bSemAcquireBlock(pt, bEsp12fSem, retval * 2);
+            retval = PT_WAIT_IS_TIMEOUT(pt);
         }
         if (retval == 0)
         {
@@ -819,17 +820,10 @@ static int _bEspMainTask(struct pt *pt)
             }
             index = (index + 1) % (bDRIVER_HALIF_NUM(bESP12F_HalIf_t, DRIVER_NAME));
         }
-        PT_DELAY_MS(pt, 500);
+        bTaskDelayMs(pt, 500);
     }
     PT_END(pt);
 }
-
-static void _bEspPolling()
-{
-    _bEspMainTask(&bEsp12fPT);
-}
-
-BOS_REG_POLLING_FUNC(_bEspPolling);
 
 //----------------------------------------------------------------------------------------------
 
@@ -1022,7 +1016,9 @@ int bESP12F_Init(bDriverInterface_t *pdrv)
                              _bEspUartIdleCb, &(bEspRunInfo[index]));
     bUtilUartBind(*((bESP12F_HalIf_t *)pdrv->hal_if), &(bEspRunInfo[index].uart));
 
-    PT_INIT(&bEsp12fPT);
+    bTaskCreate("esp12f", _bEsp12fTask, NULL, &bEsp12fTaskAttr);
+    bEsp12fSem = bSemCreate(1, 0, &bEsp12fSemAttr);
+
     return 0;
 }
 

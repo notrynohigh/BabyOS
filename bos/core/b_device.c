@@ -377,7 +377,8 @@ int bDeviceWriteMessage(uint32_t dev_no, bDeviceMsg_t *pmsg)
 
 uint8_t bDeviceIsReadable(uint32_t dev_no)
 {
-    uint8_t retval = 0;
+    uint8_t  retval = 0;
+    uint16_t len    = 0;
     if (dev_no >= B_REG_DEV_NUMBER)
     {
         return retval;
@@ -386,20 +387,22 @@ uint8_t bDeviceIsReadable(uint32_t dev_no)
     {
         return retval;
     }
-    if (bDriverInterfaceTable[dev_no].preadbuf == NULL)
+    if (bDriverInterfaceTable[dev_no].r_cache.pbuf == NULL)
     {
         retval = 1;
     }
-    else if (bQueueIsEmpty(bDriverInterfaceTable[dev_no].preadbuf) == 0)
+    else
     {
-        retval = 1;
+        bFIFO_Length(&bDriverInterfaceTable[dev_no].r_cache, &len);
+        retval = (len > 0);
     }
     return retval;
 }
 
 uint8_t bDeviceIsWritable(uint32_t dev_no)
 {
-    uint8_t retval = 0;
+    uint8_t  retval = 0;
+    uint16_t len    = 0;
     if (dev_no >= B_REG_DEV_NUMBER)
     {
         return retval;
@@ -408,13 +411,14 @@ uint8_t bDeviceIsWritable(uint32_t dev_no)
     {
         return retval;
     }
-    if (bDriverInterfaceTable[dev_no].pwritebuf == NULL)
+    if (bDriverInterfaceTable[dev_no].w_cache.pbuf == NULL)
     {
         retval = 1;
     }
-    else if (bQueueIsEmpty(bDriverInterfaceTable[dev_no].pwritebuf) == 0)
+    else
     {
-        retval = 1;
+        bFIFO_Length(&bDriverInterfaceTable[dev_no].w_cache, &len);
+        retval = (len > 0);
     }
     return retval;
 }

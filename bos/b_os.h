@@ -73,6 +73,10 @@ extern "C" {
 
 #include "core/inc/b_core.h"
 #include "core/inc/b_device.h"
+#include "core/inc/b_task.h"
+#include "core/inc/b_timer.h"
+#include "core/inc/b_sem.h"
+#include "core/inc/b_queue.h"
 #include "drivers/inc/b_driver.h"
 #include "utils/inc/b_utils.h"
 
