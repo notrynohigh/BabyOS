@@ -31,7 +31,9 @@
 
 /*Includes ----------------------------------------------*/
 #include "utils/inc/b_util_memp.h"
+
 #include "utils/inc/b_util_log.h"
+
 
 #if (defined(_MEMP_ENABLE) && (_MEMP_ENABLE == 1))
 
@@ -228,8 +230,6 @@ static uint32_t _bGetFreeSize()
 #if (defined(_MEMP_MONITOR_ENABLE) && (_MEMP_MONITOR_ENABLE == 1))
 static void *_bMalloc(uint32_t size)
 {
-    int              valid_index = -1;
-    bMempUnitHead_t *phead       = (bMempUnitHead_t *)bMempBuf;
     _bMempInit();
     if (size == 0)
     {
@@ -247,10 +247,8 @@ static void _bFree(void *paddr)
     _bMempFree((uint32_t)paddr);
 }
 #else
-void *bMalloc(uint32_t size)
+void          *bMalloc(uint32_t size)
 {
-    int              valid_index = -1;
-    bMempUnitHead_t *phead       = (bMempUnitHead_t *)bMempBuf;
     _bMempInit();
     if (size == 0)
     {
@@ -282,14 +280,14 @@ __WEAKDEF void bMallocFailedHook()
 
 #if (defined(_MEMP_MONITOR_ENABLE) && (_MEMP_MONITOR_ENABLE == 1))
 
-void* bMallocPlus(uint32_t size, const char* func, int line)
+void *bMallocPlus(uint32_t size, const char *func, int line)
 {
-    void* ptr = _bMalloc(size);
+    void *ptr = _bMalloc(size);
     b_log("malloc in %s, %d, size %d, address %p\r\n", func, line, size, ptr);
     return ptr;
 }
 
-void bFreePlus(void* ptr, const char* func, int line)
+void bFreePlus(void *ptr, const char *func, int line)
 {
     _bFree(ptr);
     b_log("free in %s, %d, address %p\r\n", func, line, ptr);

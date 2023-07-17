@@ -158,6 +158,11 @@ static bSemId_t bEsp12fSem = NULL;
  * \{
  */
 
+static void _bEspMemFree(void *p)
+{
+    bFree(p);
+}
+
 static uint8_t _bEspNumLen(uint32_t n)
 {
     uint32_t t   = 1;
@@ -172,34 +177,6 @@ static uint8_t _bEspNumLen(uint32_t n)
         len++;
     }
     return len;
-}
-
-static char *_bEspStrStr(uint8_t *pbuf, uint16_t len, const char *str)
-{
-    if (pbuf == NULL || len == 0 || str == NULL)
-    {
-        return NULL;
-    }
-    uint16_t str_len = strlen(str);
-    uint16_t i, j;
-    for (i = 0; i < len; i++)
-    {
-        if (pbuf[i] == str[0])
-        {
-            for (j = 0; j < str_len; j++)
-            {
-                if (pbuf[i + j] != str[j])
-                {
-                    break;
-                }
-            }
-            if (j >= str_len)
-            {
-                return ((char *)&pbuf[i]);
-            }
-        }
-    }
-    return NULL;
 }
 
 static void _bAtCmdSetResp(uint8_t index, char *p)
@@ -689,7 +666,7 @@ static int _bEspRecHandler(bEsp12fPrivate_t *pinfo, uint8_t *pbuf, uint16_t len)
                     pdata->release   = NULL;
                     if (pinfo->cb.cb)
                     {
-                        pinfo->cb.cb(WIFI_DRV_EVT_DATA, pdata, bFree, pinfo->cb.user_data);
+                        pinfo->cb.cb(WIFI_DRV_EVT_DATA, pdata, _bEspMemFree, pinfo->cb.user_data);
                     }
                 }
             }
@@ -707,10 +684,10 @@ static int _bEspRecHandler(bEsp12fPrivate_t *pinfo, uint8_t *pbuf, uint16_t len)
             {
                 pmqttdata->len     = rlen;
                 pmqttdata->pbuf    = bMalloc(rlen);
-                pmqttdata->release = bFree;
+                pmqttdata->release = _bEspMemFree;
                 if (pmqttdata->pbuf == NULL)
                 {
-                    bFree(pmqttdata);
+                    _bEspMemFree(pmqttdata);
                 }
                 else
                 {
@@ -719,13 +696,14 @@ static int _bEspRecHandler(bEsp12fPrivate_t *pinfo, uint8_t *pbuf, uint16_t len)
                     memcpy(pmqttdata->pbuf, p, rlen);
                     if (pinfo->cb.cb)
                     {
-                        pinfo->cb.cb(WIFI_DRV_EVT_MQTT_DATA, pmqttdata, bFree, pinfo->cb.user_data);
+                        pinfo->cb.cb(WIFI_DRV_EVT_MQTT_DATA, pmqttdata, _bEspMemFree,
+                                     pinfo->cb.user_data);
                     }
                 }
             }
             else
             {
-                bFree(pmqttdata);
+                _bEspMemFree(pmqttdata);
             }
         }
     }
@@ -735,7 +713,6 @@ static int _bEspRecHandler(bEsp12fPrivate_t *pinfo, uint8_t *pbuf, uint16_t len)
 
 static int _bEspUartIdleCb(uint8_t *pbuf, uint16_t len, void *arg)
 {
-    int retval = 0;
     b_log("%s\r\n", pbuf);
     bEsp12fAtCmdAck_t *pack = &(((bEsp12fPrivate_t *)arg)->at_ack);
     if (pack->ack == AT_CMD_ACK_WAIT)
@@ -1005,8 +982,7 @@ static int _bEspCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
  */
 int bESP12F_Init(bDriverInterface_t *pdrv)
 {
-    bEsp12fPrivate_t *pinfo = NULL;
-    uint8_t           index = pdrv->drv_no;
+    uint8_t index = pdrv->drv_no;
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bESP12F_Init);
     pdrv->ctl = _bEspCtl;
     memset(&bEspRunInfo[index], 0, sizeof(bEsp12fPrivate_t));

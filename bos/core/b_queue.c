@@ -113,6 +113,7 @@ static bQueueAttr_t *_bQueueFind(bQueueId_t id)
         {
             break;
         }
+        pattr = NULL;
     }
     return pattr;
 }
@@ -130,6 +131,10 @@ bQueueId_t bQueueCreate(uint32_t msg_count, uint32_t msg_size, bQueueAttr_t *att
     if (attr == NULL || attr->mq_mem == NULL || (attr->mq_size < (msg_count * msg_size)))
     {
         return NULL;
+    }
+    if (_bQueueFind(attr) != NULL)
+    {
+        return attr;
     }
     attr->number    = 0;
     attr->r_index   = 0;

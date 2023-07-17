@@ -82,7 +82,9 @@
  * \defgroup PWM_Private_Variables
  * \{
  */
-static bSoftPwmInstance_t *pSoftPwm = NULL;
+
+static LIST_HEAD(bSoftPwmListHead);
+
 /**
  * \}
  */
@@ -100,35 +102,40 @@ static bSoftPwmInstance_t *pSoftPwm = NULL;
  * \defgroup PWM_Private_Functions
  * \{
  */
+
+static uint8_t _bPwmInstanceIsExist(bSoftPwmInstance_t *pPwmInstance)
+{
+    struct list_head   *pos = NULL;
+    bSoftPwmInstance_t *tmp = NULL;
+    list_for_each(pos, &bSoftPwmListHead)
+    {
+        tmp = list_entry(pos, bSoftPwmInstance_t, list);
+        if (tmp == pPwmInstance)
+        {
+            break;
+        }
+        tmp = NULL;
+    }
+    return (tmp == pPwmInstance);
+}
+
 static int _bSoftPwmDelete(bSoftPwmInstance_t *pPwmInstance)
 {
-    bSoftPwmStruct_t *ptmp = pSoftPwm;
-    if (ptmp == NULL)
+    if (_bPwmInstanceIsExist(pPwmInstance))
     {
-        return -1;
-    }
-    if (pSoftPwm == pPwmInstance)
-    {
-        pSoftPwm = pSoftPwm->next;
+        __list_del(pPwmInstance->list.prev, pPwmInstance->list.next);
         return 0;
-    }
-    while (ptmp)
-    {
-        if (ptmp->next == pPwmInstance)
-        {
-            ptmp->next = pPwmInstance->next;
-            return 0;
-        }
-        ptmp = ptmp->next;
     }
     return -1;
 }
 
 static void _bSoftPwmCore()
 {
-    bSoftPwmStruct_t *ptmp = pSoftPwm;
-    while (ptmp)
+    struct list_head   *pos  = NULL;
+    bSoftPwmInstance_t *ptmp = NULL;
+    list_for_each(pos, &bSoftPwmListHead)
     {
+        ptmp = list_entry(pos, bSoftPwmInstance_t, list);
         if (ptmp->flag == 0)
         {
             if (bHalGetSysTick() - ptmp->tick >= MS2TICKS(ptmp->ccr))
@@ -159,7 +166,6 @@ static void _bSoftPwmCore()
                 ptmp->tick = bHalGetSysTick();
             }
         }
-        ptmp = ptmp->next;
     }
 }
 
@@ -180,19 +186,13 @@ int bSoftPwmStart(bSoftPwmInstance_t *pPwmInstance, pPwmHandler handler)
     {
         return -1;
     }
-    if (pSoftPwm == NULL)
-    {
-        pSoftPwm           = pPwmInstance;
-        pPwmInstance->next = NULL;
-    }
-    else
-    {
-        pPwmInstance->next = pSoftPwm->next;
-        pSoftPwm->next     = pPwmInstance;
-    }
     pPwmInstance->handler = handler;
     pPwmInstance->tick    = bHalGetSysTick();
     pPwmInstance->flag    = 0;
+    if (_bPwmInstanceIsExist(pPwmInstance) == 0)
+    {
+        list_add(&pPwmInstance->list, &bSoftPwmListHead);
+    }
     return 0;
 }
 

@@ -112,6 +112,7 @@ static bTaskAttr_t *_bTaskFind(bTaskId_t id)
         {
             break;
         }
+        pattr = NULL;
     }
     return pattr;
 }
@@ -147,6 +148,10 @@ bTaskId_t bTaskCreate(const char *name, bTaskFunc_t func, void *argument, bTaskA
     if (attr == NULL || func == NULL)
     {
         return NULL;
+    }
+    if (_bTaskFind(attr) != NULL)
+    {
+        return attr;
     }
     attr->name   = (name == NULL) ? B_TASK_DEFAULT_NAME : name;
     attr->func   = func;

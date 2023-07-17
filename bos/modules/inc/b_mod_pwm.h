@@ -42,6 +42,8 @@ extern "C" {
 
 #if (defined(_PWM_ENABLE) && (_PWM_ENABLE == 1))
 
+#include "utils/inc/b_util_list.h"
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -66,13 +68,13 @@ typedef void (*pPwmHandler)(uint8_t type);
 
 typedef struct bSoftPwmStruct
 {
-    uint32_t               repeat;
-    uint32_t               tick;
-    uint32_t               period;
-    uint32_t               ccr;
-    pPwmHandler            handler;
-    uint32_t               flag;
-    struct bSoftPwmStruct *next;
+    uint32_t         repeat;
+    uint32_t         tick;
+    uint32_t         period;
+    uint32_t         ccr;
+    pPwmHandler      handler;
+    uint32_t         flag;
+    struct list_head list;
 } bSoftPwmStruct_t;
 
 typedef bSoftPwmStruct_t bSoftPwmInstance_t;

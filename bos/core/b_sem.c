@@ -113,6 +113,7 @@ static bSemAttr_t *_bSemFind(bSemId_t id)
         {
             break;
         }
+        pattr = NULL;
     }
     return pattr;
 }
@@ -131,6 +132,10 @@ bSemId_t bSemCreate(uint32_t max_count, uint32_t initial_count, bSemAttr_t *attr
     if (attr == NULL)
     {
         return NULL;
+    }
+    if (_bSemFind(attr) != NULL)
+    {
+        return attr;
     }
     attr->value     = initial_count;
     attr->value_max = max_count;

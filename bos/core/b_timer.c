@@ -112,6 +112,7 @@ static bTimerAttr_t *_bTimerFind(bTimerId_t id)
         {
             break;
         }
+        pattr = NULL;
     }
     return pattr;
 }
@@ -157,6 +158,10 @@ bTimerId_t bTimerCreate(bTimerFunc_t func, bTimerType_t type, void *argument, bT
     if (attr == NULL || func == NULL)
     {
         return NULL;
+    }
+    if (_bTimerFind(attr) != NULL)
+    {
+        return attr;
     }
     attr->func   = func;
     attr->arg    = argument;
