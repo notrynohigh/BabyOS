@@ -74,6 +74,9 @@
  * \{
  */
 bDRIVER_HALIF_TABLE(b24CXX_HalIf_t, DRIVER_NAME);
+
+static b24CXXPrivate_t b24CXXRunInfo[bDRIVER_HALIF_NUM(b24CXX_HalIf_t, DRIVER_NAME)];
+
 /**
  * \}
  */
@@ -94,30 +97,32 @@ bDRIVER_HALIF_TABLE(b24CXX_HalIf_t, DRIVER_NAME);
 
 static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
-    uint8_t  l_c = off % 8;
-    uint16_t i   = 0;
+    uint32_t i = 0, l_c = 0;
     bDRIVER_GET_HALIF(_if, b24CXX_HalIf_t, pdrv);
+    bDRIVER_GET_PRIVATE(_priv, b24CXXPrivate_t, pdrv);
+
+    l_c = off % (_priv->page_size);
     if (len <= l_c)
     {
-        bHalI2CMemWrite(_if, off, 1 + ((off & 0xff00) != 0), pbuf, len);
+        bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, len);
     }
     else
     {
-        bHalI2CMemWrite(_if, off, 1 + ((off & 0xff00) != 0), pbuf, l_c);
+        bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, l_c);
         bHalDelayMs(5);
         off += l_c;
         pbuf += l_c;
         len -= l_c;
-        for (i = 0; i < len / 8; i++)
+        for (i = 0; i < len / (_priv->page_size); i++)
         {
-            bHalI2CMemWrite(_if, off, 1 + ((off & 0xff00) != 0), pbuf, 8);
+            bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, _priv->page_size);
             bHalDelayMs(5);
-            off += 8;
-            pbuf += 8;
+            off += _priv->page_size;
+            pbuf += _priv->page_size;
         }
-        if ((len % 8) > 0)
+        if ((len % _priv->page_size) > 0)
         {
-            bHalI2CMemWrite(_if, off, 1 + ((off & 0xff00) != 0), pbuf, (len % 8));
+            bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, (len % _priv->page_size));
             bHalDelayMs(5);
         }
     }
@@ -127,8 +132,47 @@ static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
 static int _b24CXXRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
     bDRIVER_GET_HALIF(_if, b24CXX_HalIf_t, pdrv);
-    bHalI2CMemRead(_if, off, 1 + ((off & 0xff00) != 0), pbuf, len);
+    bDRIVER_GET_PRIVATE(_priv, b24CXXPrivate_t, pdrv);
+    bHalI2CMemRead(_if, off, 1 + (_priv->capacity > 256), pbuf, len);
     return len;
+}
+
+static int _b24CXXCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
+{
+    bDRIVER_GET_PRIVATE(_priv, b24CXXPrivate_t, pdrv);
+    switch (cmd)
+    {
+        case bCMD_EE_SET_CAPACITY:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            _priv->capacity = *((uint32_t *)param);
+        }
+        break;
+        case bCMD_EE_GET_CAPACITY:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            *((uint32_t *)param) = _priv->capacity;
+        }
+        break;
+        case bCMD_EE_PAGE_SIZE:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            _priv->page_size = *((uint32_t *)param);
+        }
+        break;
+        default:
+            break;
+    }
+    return 0;
 }
 
 /**
@@ -144,6 +188,12 @@ int b24CXX_Init(bDriverInterface_t *pdrv)
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, b24CXX_Init);
     pdrv->read  = _b24CXXRead;
     pdrv->write = _b24CXXWrite;
+    pdrv->ctl   = _b24CXXCtl;
+
+    b24CXXRunInfo[pdrv->drv_no].capacity  = 256;
+    b24CXXRunInfo[pdrv->drv_no].page_size = 8;
+    pdrv->_private._p                     = &b24CXXRunInfo[pdrv->drv_no];
+
     return 0;
 }
 
