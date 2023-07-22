@@ -88,16 +88,18 @@ typedef struct
  */
 uint8_t bMcuI2CReadByte(const bHalI2CIf_t *i2c_if);
 int     bMcuI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t dat);
-int     bMcuI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, const uint8_t *pbuf,
-                        uint16_t len);
-int     bMcuI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t *pbuf, uint16_t len);
+int     bMcuI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
+                        const uint8_t *pbuf, uint16_t len);
+int     bMcuI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
+                       uint8_t *pbuf, uint16_t len);
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 uint8_t bHalI2CReadByte(const bHalI2CIf_t *i2c_if);
 int     bHalI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t dat);
-int     bHalI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, const uint8_t *pbuf,
-                        uint16_t len);
-int     bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t *pbuf, uint16_t len);
+int     bHalI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
+                        const uint8_t *pbuf, uint16_t len);
+int     bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
+                       uint8_t *pbuf, uint16_t len);
 
 /**
  * \}

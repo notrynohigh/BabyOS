@@ -99,25 +99,25 @@ static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
     bDRIVER_GET_HALIF(_if, b24CXX_HalIf_t, pdrv);
     if (len <= l_c)
     {
-        bHalI2CMemWrite(_if, off, pbuf, len);
+        bHalI2CMemWrite(_if, off, 1 + ((off & 0xff00) != 0), pbuf, len);
     }
     else
     {
-        bHalI2CMemWrite(_if, off, pbuf, l_c);
+        bHalI2CMemWrite(_if, off, 1 + ((off & 0xff00) != 0), pbuf, l_c);
         bHalDelayMs(5);
         off += l_c;
         pbuf += l_c;
         len -= l_c;
         for (i = 0; i < len / 8; i++)
         {
-            bHalI2CMemWrite(_if, off, pbuf, 8);
+            bHalI2CMemWrite(_if, off, 1 + ((off & 0xff00) != 0), pbuf, 8);
             bHalDelayMs(5);
             off += 8;
             pbuf += 8;
         }
         if ((len % 8) > 0)
         {
-            bHalI2CMemWrite(_if, off, pbuf, (len % 8));
+            bHalI2CMemWrite(_if, off, 1 + ((off & 0xff00) != 0), pbuf, (len % 8));
             bHalDelayMs(5);
         }
     }
@@ -127,7 +127,7 @@ static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
 static int _b24CXXRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
     bDRIVER_GET_HALIF(_if, b24CXX_HalIf_t, pdrv);
-    bHalI2CMemRead(_if, off, pbuf, len);
+    bHalI2CMemRead(_if, off, 1 + ((off & 0xff00) != 0), pbuf, len);
     return len;
 }
 
