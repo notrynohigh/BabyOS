@@ -101,7 +101,7 @@ static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
     bDRIVER_GET_HALIF(_if, b24CXX_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, b24CXXPrivate_t, pdrv);
 
-    l_c = off % (_priv->page_size);
+    l_c = _priv->page_size - off % (_priv->page_size);
     if (len <= l_c)
     {
         bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, len);
