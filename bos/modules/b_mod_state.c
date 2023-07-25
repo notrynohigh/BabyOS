@@ -32,7 +32,10 @@
 /*Includes ----------------------------------------------*/
 #include "modules/inc/b_mod_state.h"
 
+#include <string.h>
+
 #include "b_section.h"
+
 #if (defined(_STATE_ENABLE) && (_STATE_ENABLE == 1))
 /**
  * \addtogroup BABYOS
@@ -54,7 +57,7 @@
  * \{
  */
 static bStateInfo_t *pbStateInfo = NULL;
-
+static LIST_HEAD(bStateHead);
 bSECTION_DEF_FLASH(b_mod_state, bStateInfo_t *);
 /**
  * \}
@@ -66,14 +69,53 @@ bSECTION_DEF_FLASH(b_mod_state, bStateInfo_t *);
  */
 static void _bStatePolling()
 {
-    if (pbStateInfo == NULL)
+    bStateAttr_t     *attr = NULL;
+    struct list_head *pos  = NULL;
+    if (pbStateInfo != NULL)
     {
-        return;
+        B_SAFE_INVOKE(pbStateInfo->handler);
     }
-    B_SAFE_INVOKE(pbStateInfo->handler);
+    list_for_each(pos, &bStateHead)
+    {
+        attr = list_entry(pos, bStateAttr_t, list);
+        if (attr->info != NULL)
+        {
+            B_SAFE_INVOKE(attr->info->handler);
+        }
+    }
 }
 
 BOS_REG_POLLING_FUNC(_bStatePolling);
+
+static bStateAttr_t *_bStateFindAttr(const char *name)
+{
+    bStateAttr_t     *attr = NULL;
+    struct list_head *pos  = NULL;
+    list_for_each(pos, &bStateHead)
+    {
+        attr = list_entry(pos, bStateAttr_t, list);
+        if (strcmp(attr->name, name) == 0)
+        {
+            return attr;
+        }
+    }
+    return NULL;
+}
+
+static bStateInfo_t *_bStateFindInfo(bStateAttr_t *attr, uint32_t state)
+{
+    bStateInfo_t     *info = NULL;
+    struct list_head *pos  = NULL;
+    list_for_each(pos, &attr->state)
+    {
+        info = list_entry(pos, bStateInfo_t, list);
+        if (info->state == state)
+        {
+            return info;
+        }
+    }
+    return NULL;
+}
 
 /**
  * \}
@@ -151,6 +193,137 @@ int bGetCurrentState()
         return -1;
     }
     return pbStateInfo->state;
+}
+
+///-----------------------------------------------------
+
+int bStateCreate(const char *name, bStateAttr_t *attr)
+{
+    bStateAttr_t *attr_tmp = NULL;
+    if (name == NULL || attr == NULL)
+    {
+        return -1;
+    }
+    attr_tmp = _bStateFindAttr(name);
+    if (attr_tmp == NULL)
+    {
+        attr->name = name;
+        attr->info = NULL;
+        list_add(&attr->list, &bStateHead);
+        INIT_LIST_HEAD(&attr->state);
+        return 0;
+    }
+    return -1;
+}
+
+int bStateAdd(const char *name, bStateInfo_t *pinfo)
+{
+    bStateAttr_t *attr = NULL;
+    if (name == NULL || pinfo == NULL)
+    {
+        return -1;
+    }
+    attr = _bStateFindAttr(name);
+    if (attr == NULL)
+    {
+        return -1;
+    }
+    if (_bStateFindInfo(attr, pinfo->state) == NULL)
+    {
+        list_add(&pinfo->list, &attr->state);
+        return 0;
+    }
+    return -1;
+}
+
+int bStateTransferExt(const char *name, uint32_t state)
+{
+    bStateAttr_t *attr = NULL;
+    bStateInfo_t *info = NULL;
+    if (name == NULL)
+    {
+        return -1;
+    }
+    attr = _bStateFindAttr(name);
+    if (attr == NULL)
+    {
+        return -1;
+    }
+
+    info = _bStateFindInfo(attr, state);
+    if (info == NULL)
+    {
+        return -1;
+    }
+
+    if (attr->info == NULL)
+    {
+        B_SAFE_INVOKE(info->enter, info->state);
+    }
+    else if (attr->info->state == state)
+    {
+        ;
+    }
+    else
+    {
+        B_SAFE_INVOKE(attr->info->exit);
+        B_SAFE_INVOKE(info->enter, attr->info->state);
+    }
+    attr->info = info;
+    return 0;
+}
+
+int bStateInvokeEventExt(const char *name, uint32_t event, void *arg)
+{
+    bStateAttr_t *attr = NULL;
+    int           i    = 0;
+    if (name == NULL)
+    {
+        return -1;
+    }
+    attr = _bStateFindAttr(name);
+    if (attr == NULL)
+    {
+        return -1;
+    }
+    if (attr->info == NULL)
+    {
+        return -1;
+    }
+
+    if (attr->info->event_table.p_event_table == NULL || attr->info->event_table.number == 0)
+    {
+        return -2;
+    }
+
+    for (i = 0; i < attr->info->event_table.number; i++)
+    {
+        if (attr->info->event_table.p_event_table[i].event == event)
+        {
+            B_SAFE_INVOKE(attr->info->event_table.p_event_table[i].handler, event, arg);
+            break;
+        }
+    }
+    return 0;
+}
+
+int bGetCurrentStateExt(const char *name)
+{
+    bStateAttr_t *attr = NULL;
+    if (name == NULL)
+    {
+        return -1;
+    }
+    attr = _bStateFindAttr(name);
+    if (attr == NULL)
+    {
+        return -1;
+    }
+    if (attr->info == NULL)
+    {
+        return -1;
+    }
+    return attr->info->state;
 }
 
 /**

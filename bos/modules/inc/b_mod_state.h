@@ -39,6 +39,7 @@ extern "C" {
 #include <stdint.h>
 
 #include "b_config.h"
+#include "utils/inc/b_util_list.h"
 
 #if (defined(_STATE_ENABLE) && (_STATE_ENABLE == 1))
 /**
@@ -85,7 +86,16 @@ typedef struct
     pStateExitHandler_t  exit;
     pStateHandler_t      handler;
     bStateEventTable_t   event_table;
+    struct list_head     list;
 } bStateInfo_t;
+
+typedef struct
+{
+    const char      *name;
+    bStateInfo_t    *info;
+    struct list_head list;
+    struct list_head state;
+} bStateAttr_t;
 
 /**
  * \}
@@ -95,9 +105,18 @@ typedef struct
  * \defgroup STATE_Exported_Defines
  * \{
  */
+
+/// 注册状态至主状态机
 #define bSTATE_REG_INSTANCE(state_info)                                                   \
     bSECTION_ITEM_REGISTER_FLASH(b_mod_state, bStateInfo_t *, CONCAT_2(b_, state_info)) = \
         &state_info
+
+#define bSTATE_CREATE_ATTR(attr_name) \
+    static bStateAttr_t attr_name = { \
+        .name = NULL,                 \
+        .info = NULL,                 \
+    }
+
 /**
  * \}
  */
@@ -109,6 +128,16 @@ typedef struct
 int bStateTransfer(uint32_t state);
 int bStateInvokeEvent(uint32_t event, void *arg);
 int bGetCurrentState(void);
+
+//----------------------------------------------------------
+// \param name 创建状态机的名字
+// \param attr 使用 bSTATE_CREATE_ATTR 创建后传入。
+int bStateCreate(const char *name, bStateAttr_t *attr);
+int bStateAdd(const char *name, bStateInfo_t *pinfo);
+int bStateTransferExt(const char *name, uint32_t state);
+int bStateInvokeEventExt(const char *name, uint32_t event, void *arg);
+int bGetCurrentStateExt(const char *name);
+
 /**
  * \}
  */
