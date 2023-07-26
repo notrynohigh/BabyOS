@@ -127,4 +127,9 @@
         ._if.spi = B_HAL_SPI_3, .cs = {B_HAL_GPIOC, B_HAL_PIN9}, .is_simulation = 0, \
     }
 
+#define HAL_RS485_IF                                                  \
+    {                                                                 \
+        .port = B_HAL_GPIOD, .pin = B_HAL_PIN7, .uart = B_HAL_UART_2, \
+    }
+
 #endif

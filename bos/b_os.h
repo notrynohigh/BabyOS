@@ -73,12 +73,13 @@ extern "C" {
 
 #include "core/inc/b_core.h"
 #include "core/inc/b_device.h"
+#include "core/inc/b_queue.h"
+#include "core/inc/b_sem.h"
 #include "core/inc/b_task.h"
 #include "core/inc/b_timer.h"
-#include "core/inc/b_sem.h"
-#include "core/inc/b_queue.h"
 #include "drivers/inc/b_driver.h"
 #include "utils/inc/b_utils.h"
+
 
 #if _BOS_MODULES_ENABLE
 #include "modules/inc/b_modules.h"
@@ -96,6 +97,7 @@ extern "C" {
 #include "drivers/inc/b_drv_mcuflash.h"
 #include "drivers/inc/b_drv_oled.h"
 #include "drivers/inc/b_drv_pcf8574.h"
+#include "drivers/inc/b_drv_rs485.h"
 #include "drivers/inc/b_drv_sd.h"
 #include "drivers/inc/b_drv_spiflash.h"
 #include "drivers/inc/b_drv_ssd1289.h"

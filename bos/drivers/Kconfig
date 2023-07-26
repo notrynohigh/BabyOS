@@ -14,9 +14,11 @@ config MATRIX_KEYS_COLUMNS
     default 4
 
 config ESP12F_UART_RX_BUF_LEN
-    int "Uart Rx Buffer Length"
+    int "ESP12F Uart Rx Buffer Length"
     default 1024
 
-
+config RS485_RX_BUF_LEN
+    int "RS485 Rx Buffer Length"
+    default 128
 
 endmenu
