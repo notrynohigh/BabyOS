@@ -127,7 +127,10 @@ extern "C" {
 #if ((defined(_DEBUG_ENABLE)) && (_DEBUG_ENABLE == 1))
 void bLogOut(uint8_t type, const char *ptr_file, const char *ptr_func, uint32_t line,
              const char *fmt, ...);
-void bLogOutput(void *p);
+
+// 非串口打印日志时，用户重新实现此函数。
+void bLogOutputBytes(uint8_t *pbuf, uint16_t len);
+
 #endif
 /**
  * \}

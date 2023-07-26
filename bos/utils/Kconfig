@@ -2,11 +2,6 @@ menu "Utils Configuration"
 config _DEBUG_ENABLE
     bool "Debug Enable/Disable"
     default y
-config LOG_UART
-    int "0-7:(B_HAL_UART_1-8) 8:(B_HAL_LPUART_1)"
-    default 0
-    depends on _DEBUG_ENABLE
-    range 0 8
 
 choice
     prompt "log level"
@@ -24,6 +19,22 @@ config LOG_BUF_SIZE
     int "Log Buffer Size (B)"
     default 256
     depends on _DEBUG_ENABLE
+
+choice
+    prompt "log output channel"
+    depends on _DEBUG_ENABLE
+    default _LOG_VIA_UART
+    config _LOG_VIA_UART
+        bool "print logs via serial port"
+    config _LOG_VIA_USER_SPECIFIED
+        bool "print logs via user-specified"
+endchoice
+
+config LOG_UART
+    int "0-7:(B_HAL_UART_1-8) 8:(B_HAL_LPUART_1)"
+    default 0
+    depends on _LOG_VIA_UART
+    range 0 8
 
 config _MEMP_ENABLE
     bool "MemoryPool Enable/Disable"

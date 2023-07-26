@@ -116,16 +116,40 @@ static const char    bLogPrefix[3]     = {'I', 'W', 'E'};
 #define B_FPUTC int fputc(int c, FILE *f)
 #endif
 
+__WEAKDEF void bLogOutputBytes(uint8_t *pbuf, uint16_t len)
+{
+#if defined(LOG_UART)
+    bHalUartSend((bHalUartNumber_t)LOG_UART, pbuf, len);
+#else
+    (void)pbuf;
+    (void)len;
+#endif
+}
+
 B_FPUTC
 {
     uint8_t ch = c & 0xff;
 #if defined(LOG_UART)
     bHalUartSend((bHalUartNumber_t)LOG_UART, &ch, 1);
+#elif defined(_LOG_VIA_USER_SPECIFIED) && (_LOG_VIA_USER_SPECIFIED == 1)
+    bLogOutputBytes(&ch, 1);
 #else
     (void)ch;
 #endif
     return c;
 }
+
+static void _bLogOutput(void *p)
+{
+#if defined(LOG_UART)
+    bHalUartSend((bHalUartNumber_t)LOG_UART, p, strlen(p));
+#elif defined(_LOG_VIA_USER_SPECIFIED) && (_LOG_VIA_USER_SPECIFIED == 1)
+    bLogOutputBytes(p, strlen(p));
+#else
+    (void)p;
+#endif
+}
+
 /**
  * \}
  */
@@ -134,15 +158,6 @@ B_FPUTC
  * \addtogroup LOG_Exported_Functions
  * \{
  */
-
-void bLogOutput(void *p)
-{
-#if defined(LOG_UART)
-    bHalUartSend((bHalUartNumber_t)LOG_UART, p, strlen(p));
-#else
-    (void)p;
-#endif
-}
 
 /**
  * \brief Create and output string
@@ -215,7 +230,7 @@ void bLogOut(uint8_t type, const char *ptr_file, const char *ptr_func, uint32_t 
     {
         return;
     }
-    bLogOutput(pbuf);
+    _bLogOutput(pbuf);
 }
 
 /**
