@@ -48,6 +48,23 @@ extern "C" {
  */
 
 /**
+ * \defgroup MATRIXKEYS_Exported_Definitions
+ * \{
+ */
+
+#ifndef MATRIX_KEYS_ROWS
+#define MATRIX_KEYS_ROWS 2
+#endif
+
+#ifndef MATRIX_KEYS_COLUMNS
+#define MATRIX_KEYS_COLUMNS 2
+#endif
+
+/**
+ * \}
+ */
+
+/**
  * \defgroup MATRIXKEYS_Exported_TypesDefinitions
  * \{
  */
