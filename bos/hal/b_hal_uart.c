@@ -30,7 +30,7 @@
  */
 /*Includes ----------------------------------------------*/
 #include "hal/inc/b_hal.h"
-
+#include "b_section.h"
 /**
  * \addtogroup B_HAL
  * \{
@@ -39,6 +39,101 @@
 /**
  * \addtogroup UART
  * \{
+ */
+
+/**
+ * \defgroup UART_Private_Variables
+ * \{
+ */
+
+static LIST_HEAD(bHalUartListHead);
+
+/**
+ * \}
+ */
+
+/**
+ * \addtogroup UART_Private_Functions
+ * \{
+ */
+
+static bHalUartIdleAttr_t *_bHalUartAttrFind(bHalUartNumber_t uart)
+{
+    struct list_head   *pos   = NULL;
+    bHalUartIdleAttr_t *pattr = NULL;
+    list_for_each(pos, &bHalUartListHead)
+    {
+        pattr = list_entry(pos, bHalUartIdleAttr_t, list);
+        if (pattr->uart == uart)
+        {
+            return pattr;
+        }
+    }
+    return NULL;
+}
+
+static void _bHalItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *param, void *user_data)
+{
+    bHalUartIdleAttr_t *pattr = (bHalUartIdleAttr_t *)user_data;
+    int                 i     = 0;
+    if (pattr == NULL || pattr->pbuf == NULL)
+    {
+        return;
+    }
+    for (i = 0; i < param->_uart.len; i++)
+    {
+        if (pattr->index < pattr->len)
+        {
+            pattr->pbuf[pattr->index] = param->_uart.pbuf[i];
+            pattr->index += 1;
+        }
+    }
+}
+
+static void _bHalUartDetectIdle()
+{
+    struct list_head   *pos    = NULL;
+    bHalUartIdleAttr_t *pattr  = NULL;
+    int                 retval = -1;
+    list_for_each(pos, &bHalUartListHead)
+    {
+        pattr = list_entry(pos, bHalUartIdleAttr_t, list);
+        if (pattr->index > 0)
+        {
+            if (pattr->l_index == 0)
+            {
+                pattr->l_index = pattr->index;
+                pattr->l_tick  = bHalGetSysTick();
+            }
+            else
+            {
+                if (pattr->index != pattr->l_index)
+                {
+                    pattr->l_index = pattr->index;
+                    pattr->l_tick  = bHalGetSysTick();
+                }
+                else if (bHalGetSysTick() - pattr->l_tick > pattr->idle_ms)
+                {
+                    if (pattr->callback)
+                    {
+                        retval = pattr->callback(pattr->pbuf, pattr->index, pattr->user_data);
+                        if (retval >= 0 || pattr->index == pattr->len)
+                        {
+                            memset(pattr->pbuf, 0, pattr->len);
+                            pattr->index = 0;
+                        }
+                    }
+                    pattr->l_tick = bHalGetSysTick();
+                }
+            }
+        }
+    }
+}
+
+BOS_REG_POLLING_FUNC(_bHalUartDetectIdle);
+
+/**
+ * \}
  */
 
 /**
@@ -56,24 +151,6 @@ __WEAKDEF int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
     return -1;
 }
 
-__WEAKDEF int bMcuUartEnableRXIrq(bHalUartNumber_t uart)
-{
-    return -1;
-}
-__WEAKDEF int bMcuUartDisableRXIrq(bHalUartNumber_t uart)
-{
-    return -1;
-}
-__WEAKDEF int bMcuUartEnableTXEIrq(bHalUartNumber_t uart)
-{
-    return -1;
-}
-__WEAKDEF int bMcuUartDisableTXEIrq(bHalUartNumber_t uart)
-{
-    return -1;
-}
-
-
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 
@@ -82,34 +159,33 @@ int bHalUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     return bMcuUartSend(uart, pbuf, len);
 }
 
-
 int bHalReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
 {
     return bMcuReceive(uart, pbuf, len);
 }
 
-
-int bHalUartEnableRXIrq(bHalUartNumber_t uart)
+int bHalUartReceiveIdle(bHalUartNumber_t uart, bHalUartIdleAttr_t *attr)
 {
-	return 0;
+    int                 retval = -1;
+    bHalUartIdleAttr_t *pattr  = _bHalUartAttrFind(uart);
+    if (pattr != NULL || attr == NULL || attr->pbuf == NULL)
+    {
+        return -1;
+    }
+    attr->uart         = uart;
+    attr->it.it        = B_HAL_IT_UART_RX;
+    attr->it.index     = uart;
+    attr->it.handler   = _bHalItHandler;
+    attr->it.user_data = attr;
+    attr->index        = 0;
+    attr->l_index      = 0;
+    attr->l_tick       = 0;
+    if (0 == (retval = bHalItRegister(&attr->it)))
+    {
+        list_add(&attr->list, &bHalUartListHead);
+    }
+    return retval;
 }
-
-int bHalUartDisableRXIrq(bHalUartNumber_t uart)
-{
-	return 0;
-}
-
-int bHalUartEnableTXEIrq(bHalUartNumber_t uart)
-{
-	return 0;
-}
-
-int bHalUartDisableTXEIrq(bHalUartNumber_t uart)
-{
-	return 0;
-}
-
-
 
 /**
  * \}

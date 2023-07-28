@@ -28,6 +28,9 @@
  * SOFTWARE.
  *******************************************************************************
  */
+
+#if 0  // 已废弃，其功能已融入 b_hal_uart
+
 #ifndef __B_UTIL_UART_H__
 #define __B_UTIL_UART_H__
 
@@ -146,5 +149,7 @@ uint16_t bUtilUartReceivedSize2(uint8_t uart_no);
 #endif
 
 #endif
+
+#endif  // 已废弃，其功能已融入 b_hal_uart
 
 /************************ Copyright (c) 2020 Bean *****END OF FILE****/

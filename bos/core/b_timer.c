@@ -126,7 +126,7 @@ static void _bTimerCore()
         pattr = list_entry(pos, bTimerAttr_t, list);
         if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
         {
-            if (bHalGetSysTickPlus() >= pattr->tick)
+            if (bHalGetSysTick() - pattr->tick > MS2TICKS(pattr->cycle))
             {
                 pattr->func(pattr->arg);
                 if (pattr->type == B_TIMER_ONCE)
@@ -135,7 +135,7 @@ static void _bTimerCore()
                 }
                 else
                 {
-                    pattr->tick += MS2TICKS(pattr->cycle);
+                    pattr->tick = bHalGetSysTick();
                 }
             }
         }
@@ -184,7 +184,7 @@ int bTimerStart(bTimerId_t id, uint32_t ms)
         return -1;
     }
     pattr->cycle  = ms;
-    pattr->tick   = bHalGetSysTickPlus() + MS2TICKS(ms);
+    pattr->tick   = bHalGetSysTick();
     pattr->enable = 1;
     return 0;
 }

@@ -49,7 +49,13 @@
 
 typedef struct
 {
-    uint8_t buf[RS485_RX_BUF_LEN];
+#if defined(RS485_CACHE_BUF_LEN) && (RS485_CACHE_BUF_LEN > 0)
+    uint8_t cache_buf[RS485_CACHE_BUF_LEN];
+#else
+    bRS485Callback_t cb;
+#endif
+    uint8_t            buf[RS485_RX_BUF_LEN];
+    bHalUartIdleAttr_t attr;
 } bRS485Private_t;
 
 /**
@@ -98,10 +104,19 @@ static bRS485Private_t bRS485RunInfo[bDRIVER_HALIF_NUM(bRS485_HalIf_t, DRIVER_NA
  * \{
  */
 
-static void _bHalItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *param, void *user_data)
+static int _bHalUartIdleCallback(uint8_t *pbuf, uint16_t len, void *user_data)
 {
     bDriverInterface_t *pdrv = (bDriverInterface_t *)user_data;
-    bFIFO_Write(&pdrv->r_cache, param->_uart.pbuf, param->_uart.len);
+#if defined(RS485_CACHE_BUF_LEN) && (RS485_CACHE_BUF_LEN > 0)
+    bFIFO_Write(&pdrv->r_cache, pbuf, len);
+#else
+    bRS485Private_t *p = (bRS485Private_t *)pdrv->_private._p;
+    if (p->cb)
+    {
+        p->cb(pbuf, len);
+    }
+#endif
+    return 0;
 }
 
 static int _bRS485Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
@@ -111,7 +126,11 @@ static int _bRS485Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, ui
     {
         return -1;
     }
+
+#if defined(RS485_CACHE_BUF_LEN) && (RS485_CACHE_BUF_LEN > 0)
     rlen = bFIFO_Read(&pdrv->r_cache, pbuf, len);
+#endif
+
     return rlen;
 }
 
@@ -128,6 +147,22 @@ static int _bRS485Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
     return len;
 }
 
+static int _bRS485Ctl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
+{
+    bRS485Private_t *p = (bRS485Private_t *)pdrv->_private._p;
+    switch (cmd)
+    {
+        case bCMD_485_REG_CALLBACK:
+        {
+            p->cb = param;
+        }
+        break;
+        default:
+            break;
+    }
+    return 0;
+}
+
 /**
  * \}
  */
@@ -141,16 +176,20 @@ int bRS485_Init(bDriverInterface_t *pdrv)
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bRS485_Init);
     pdrv->read  = _bRS485Read;
     pdrv->write = _bRS485Write;
+    pdrv->ctl   = _bRS485Ctl;
 
     pdrv->_private._p = &bRS485RunInfo[pdrv->drv_no];
     memset(pdrv->_private._p, 0, sizeof(bRS485Private_t));
 
-    bDRIVER_SET_READCACHE(pdrv, &bRS485RunInfo[pdrv->drv_no].buf[0],
-                          sizeof(bRS485RunInfo[pdrv->drv_no].buf));
+#if defined(RS485_CACHE_BUF_LEN) && (RS485_CACHE_BUF_LEN > 0)
+    bDRIVER_SET_READCACHE(pdrv, bRS485RunInfo[pdrv->drv_no].cache_buf, RS485_CACHE_BUF_LEN);
+#else
+    bRS485RunInfo[pdrv->drv_no].cb = NULL;
+#endif
 
-    bHAL_IT_REGISTER(rs485_it, B_HAL_IT_UART_RX, bHalIf_RS485[pdrv->drv_no].uart, _bHalItHandler,
-                     pdrv);
-
+    bHAL_UART_INIT_ATTR(&bRS485RunInfo[pdrv->drv_no].attr, bRS485RunInfo[pdrv->drv_no].buf,
+                        RS485_RX_BUF_LEN, 50, _bHalUartIdleCallback, pdrv);
+    bHalUartReceiveIdle(bHalIf_RS485[pdrv->drv_no].uart, &bRS485RunInfo[pdrv->drv_no].attr);
     bHalGpioWritePin(bHalIf_RS485[pdrv->drv_no].port, bHalIf_RS485[pdrv->drv_no].pin, 0);
     return 0;
 }

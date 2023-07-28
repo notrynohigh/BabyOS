@@ -77,8 +77,8 @@ typedef struct
     bTimerFunc_t     func;
     void            *arg;
     uint8_t          enable;
-    uint64_t         tick;
-    uint64_t         cycle;
+    uint32_t         tick;
+    uint32_t         cycle;
     bTimerType_t     type;
     struct list_head list;
 } bTimerAttr_t;

@@ -105,8 +105,9 @@ typedef struct
     uint8_t               mux_enable;
     uint8_t               retry;
     uint8_t               ctl_cmd;
+    uint8_t               uart_buf[ESP12F_UART_RX_BUF_LEN];
+    bHalUartIdleAttr_t    attr;
     bWifiModuleCallback_t cb;
-    bUitlUartInstance_t   uart;
     bEsp12fAtCmdAck_t     at_ack;
     bEsp12fAtCmd_t       *pcmd;
     bEsp12fCmdParam_t     param;
@@ -988,9 +989,9 @@ int bESP12F_Init(bDriverInterface_t *pdrv)
     memset(&bEspRunInfo[index], 0, sizeof(bEsp12fPrivate_t));
     pdrv->_private._p = &bEspRunInfo[index];
 
-    bUTIL_UART_INIT_INSTANCE((&(bEspRunInfo[index].uart)), ESP12F_UART_RX_BUF_LEN, 200,
-                             _bEspUartIdleCb, &(bEspRunInfo[index]));
-    bUtilUartBind(*((bESP12F_HalIf_t *)pdrv->hal_if), &(bEspRunInfo[index].uart));
+    bHAL_UART_INIT_ATTR(&bEspRunInfo[index].attr, bEspRunInfo[index].uart_buf,
+                        ESP12F_UART_RX_BUF_LEN, 200, _bEspUartIdleCb, &(bEspRunInfo[index]));
+    bHalUartReceiveIdle(bHalIf_ESP12F[index], &bEspRunInfo[index].attr);
 
     bTaskCreate("esp12f", _bEsp12fTask, NULL, &bEsp12fTaskAttr);
     bEsp12fSem = bSemCreate(1, 0, &bEsp12fSemAttr);

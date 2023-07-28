@@ -38,6 +38,9 @@ extern "C" {
 /*Includes ----------------------------------------------*/
 #include <stdint.h>
 
+#include "hal/inc/b_hal_it.h"
+#include "utils/inc/b_util_list.h"
+
 /**
  * \addtogroup B_HAL
  * \{
@@ -67,6 +70,59 @@ typedef enum
     B_HAL_UART_NUMBER
 } bHalUartNumber_t;
 
+typedef int (*bHalUartIdleCallback_t)(uint8_t *pbuf, uint16_t len, void *user_data);
+
+typedef struct
+{
+    bHalUartNumber_t       uart;
+    bHalIt_t               it;
+    uint8_t               *pbuf;
+    uint16_t               len;
+    uint16_t               idle_ms;
+    bHalUartIdleCallback_t callback;
+    void                  *user_data;
+    volatile uint16_t      index;
+    volatile uint16_t      l_index;
+    volatile uint32_t      l_tick;
+    struct list_head       list;
+} bHalUartIdleAttr_t;
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup UART_Exported_Definitions
+ * \{
+ */
+/// 创建 attr
+#define bHAL_UART_CREATE_ATTR(name, buf_len, ms, cb, ud) \
+    static uint8_t            bBuf##name[buf_len];       \
+    static bHalUartIdleAttr_t name = {                   \
+        .pbuf      = bBuf##name,                         \
+        .len       = buf_len,                            \
+        .idle_ms   = ms,                                 \
+        .callback  = cb,                                 \
+        .user_data = ud,                                 \
+        .index     = 0,                                  \
+        .l_index   = 0,                                  \
+        .l_tick    = 0,                                  \
+    }
+
+/// 对已有的attr进行初始化
+#define bHAL_UART_INIT_ATTR(pattr, buf, buf_len, ms, cb, ud) \
+    do                                                       \
+    {                                                        \
+        (pattr)->pbuf      = buf;                            \
+        (pattr)->len       = buf_len;                        \
+        (pattr)->idle_ms   = ms;                             \
+        (pattr)->callback  = cb;                             \
+        (pattr)->user_data = ud;                             \
+        (pattr)->index     = 0;                              \
+        (pattr)->l_index   = 0;                              \
+        (pattr)->l_tick    = 0;                              \
+    } while (0)
+
 /**
  * \}
  */
@@ -83,6 +139,9 @@ int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len);
 int bHalUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len);
 int bHalReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len);
 
+/// attr 通过 bHAL_UART_CREATE_ATTR 创建后传入。
+/// 或者已有attr变量，通过 bHAL_UART_INIT_ATTR 初始化后传入。
+int bHalUartReceiveIdle(bHalUartNumber_t uart, bHalUartIdleAttr_t *attr);
 /**
  * \}
  */

@@ -79,10 +79,8 @@ typedef union
 typedef enum
 {
     B_HAL_IT_EXTI = 0x4954,
-    B_HAL_IT_UART_RX,
-    B_HAL_IT_UART_TX,
-    B_HAL_IT_UART_RX_DMA_CPL,
-    B_HAL_IT_UART_TX_DMA_CPL,
+    B_HAL_IT_UART_RX,  // 串口中断接收 或 DMA接收
+    B_HAL_IT_UART_TX,  // 串口发送中断 或 DMA 发送完成中断
 } bHalItNumber_t;
 
 typedef struct b_hal_it
