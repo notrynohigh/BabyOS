@@ -73,8 +73,6 @@ extern "C" {
 #include "modules/inc/b_modules.h"
 #endif
 
-#include "drivers/inc/b_drv_led.h"
-
 // thirdparty
 #include "thirdparty/pt/pt.h"
 
