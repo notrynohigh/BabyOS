@@ -32,8 +32,9 @@
 /*Includes ----------------------------------------------*/
 #include "core/inc/b_queue.h"
 
-#include "b_section.h"
 #include "hal/inc/b_hal.h"
+
+#if (defined(_QUEUE_ENABLE) && (_QUEUE_ENABLE == 1))
 
 /**
  * \addtogroup BABYOS
@@ -126,7 +127,7 @@ static bQueueAttr_t *_bQueueFind(bQueueId_t id)
  * \addtogroup QUEUE_Exported_Functions
  * \{
  */
-bQueueId_t bQueueCreate(uint32_t msg_count, uint32_t msg_size, bQueueAttr_t *attr)
+bQueueId_t bQueueCreate(uint8_t msg_count, uint8_t msg_size, bQueueAttr_t *attr)
 {
     if (attr == NULL || attr->mq_mem == NULL || (attr->mq_size < (msg_count * msg_size)))
     {
@@ -149,6 +150,7 @@ int bQueuePutNonblock(bQueueId_t id, const void *msg_ptr)
 {
     bQueueAttr_t *attr = NULL;
     uint8_t      *pbuf = NULL;
+    uint16_t      i    = 0;
     if (id == NULL || msg_ptr == NULL)
     {
         return -1;
@@ -163,7 +165,7 @@ int bQueuePutNonblock(bQueueId_t id, const void *msg_ptr)
         return -2;
     }
     pbuf = (uint8_t *)attr->mq_mem;
-    memcpy(&pbuf[attr->w_index * attr->msg_size], msg_ptr, attr->msg_size);
+    B_MEM_COPY(&pbuf[attr->w_index * attr->msg_size], msg_ptr, attr->msg_size);
     attr->w_index = (attr->w_index + 1) % attr->msg_count;
     attr->number += 1;
     return 0;
@@ -173,6 +175,7 @@ int bQueueGetNonblock(bQueueId_t id, void *msg_ptr)
 {
     bQueueAttr_t *attr = NULL;
     uint8_t      *pbuf = NULL;
+    uint16_t      i    = 0;
     if (id == NULL || msg_ptr == NULL)
     {
         return -1;
@@ -187,13 +190,13 @@ int bQueueGetNonblock(bQueueId_t id, void *msg_ptr)
         return -3;
     }
     pbuf = (uint8_t *)attr->mq_mem;
-    memcpy(msg_ptr, &pbuf[attr->r_index * attr->msg_size], attr->msg_size);
+    B_MEM_COPY(msg_ptr, &pbuf[attr->r_index * attr->msg_size], attr->msg_size);
     attr->r_index = (attr->r_index + 1) % attr->msg_count;
     attr->number -= 1;
     return 0;
 }
 
-uint32_t bQueueGetCapacity(bQueueId_t id)
+uint8_t bQueueGetCapacity(bQueueId_t id)
 {
     bQueueAttr_t *attr = NULL;
     if (id == NULL)
@@ -208,7 +211,7 @@ uint32_t bQueueGetCapacity(bQueueId_t id)
     return attr->msg_count;
 }
 
-uint32_t bQueueGetMsgSize(bQueueId_t id)
+uint8_t bQueueGetMsgSize(bQueueId_t id)
 {
     bQueueAttr_t *attr = NULL;
     if (id == NULL)
@@ -223,7 +226,7 @@ uint32_t bQueueGetMsgSize(bQueueId_t id)
     return attr->msg_size;
 }
 
-uint32_t bQueueGetCount(bQueueId_t id)
+uint8_t bQueueGetCount(bQueueId_t id)
 {
     bQueueAttr_t *attr = NULL;
     if (id == NULL)
@@ -238,7 +241,7 @@ uint32_t bQueueGetCount(bQueueId_t id)
     return attr->number;
 }
 
-uint32_t bQueueGetSpace(bQueueId_t id)
+uint8_t bQueueGetSpace(bQueueId_t id)
 {
     bQueueAttr_t *attr = NULL;
     if (id == NULL)
@@ -298,5 +301,7 @@ int bQueueDelete(bQueueId_t id)
 /**
  * \}
  */
+
+#endif
 
 /************************ Copyright (c) 2019 Bean *****END OF FILE****/

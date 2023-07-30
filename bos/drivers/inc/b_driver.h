@@ -36,12 +36,10 @@ extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
-
 #include "b_driver_cmd.h"
-#include "b_section.h"
+#include "b_type.h"
 #include "hal/inc/b_hal.h"
-#include "utils/inc/b_util_fifo.h"
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -62,59 +60,45 @@ extern "C" {
  * \{
  */
 
-typedef bFIFO_Instance_t bDriverCache_t;
+typedef struct
+{
+    struct bDriverIf *pdrv;
+    uint16_t          offset;
+    uint8_t          *pbuf;
+    uint16_t          len;
+} bOptParam_t;
+
+typedef struct
+{
+    struct bDriverIf *pdrv;
+    uint8_t           cmd;
+    void             *param;
+} bCtlParam_t;
 
 typedef struct bDriverIf
 {
-    int status;
+    uint8_t  flag : 2;
+    uint8_t  status : 2;  // 0: normal 1:open  2: error
+    uint8_t  drv_no : 4;
+    uint16_t offset;
     int (*init)(struct bDriverIf *pdrv);
-    int (*open)(struct bDriverIf *pdrv);
-    int (*close)(struct bDriverIf *pdrv);
-    int (*ctl)(struct bDriverIf *pdrv, uint8_t cmd, void *param);
-    int (*write)(struct bDriverIf *pdrv, uint32_t offset, uint8_t *pbuf, uint32_t len);
-    int (*read)(struct bDriverIf *pdrv, uint32_t offset, uint8_t *pbuf, uint32_t len);
-    void          *hal_if;
-    const char    *pdes;
-    uint32_t       drv_no;
-    bDriverCache_t r_cache;
-    bDriverCache_t w_cache;
+    int (*ctl)(bCtlParam_t *param);
+    int (*write)(bOptParam_t *param);
+    int (*read)(bOptParam_t *param);
+    void *hal_if;
     union
     {
-        uint32_t v;
+        uint16_t v;
         void    *_p;
     } _private;
 } bDriverInterface_t;
 
+typedef int (*bDriverInit_t)(struct bDriverIf *pdrv);
+
 typedef enum
 {
-    B_DRIVER_NULL = 0,
-    B_DRIVER_24CXX,
-    B_DRIVER_DS18B20,
-    B_DRIVER_ESP12F,
-    B_DRIVER_FM25CL,
-    B_DRIVER_ILI9320,
-    B_DRIVER_ILI9341,
-    B_DRIVER_KEY,
-    B_DRIVER_LIS3DH,
-    B_DRIVER_MATRIXKEYS,
-    B_DRIVER_MCUFLASH,
-    B_DRIVER_OLED,
-    B_DRIVER_PCF8574,
-    B_DRIVER_RS485,
-    B_DRIVER_SD,
-    B_DRIVER_SPIFLASH,
-    B_DRIVER_SSD1289,
-    B_DRIVER_ST7789,
-    B_DRIVER_TESTFLASH,
-    B_DRIVER_XPT2046,
     B_DRIVER_NUMBER
 } bDriverNumber_t;
-
-typedef struct
-{
-    bDriverNumber_t drv_number;
-    int (*init)(bDriverInterface_t *pdrv);
-} bDriverRegInit_t;
 
 /**
  * \}
@@ -124,64 +108,21 @@ typedef struct
  * \defgroup DRIVER_Exported_Defines
  * \{
  */
-#define _bDRIVER_HALIF_TABLE(halif_type, drv_name) \
-    HALIF_KEYWORD halif_type bHalIf_##drv_name[] = {HAL_##drv_name##_IF}
-#define _bDRIVER_HALIF_INSTANCE(drv_name, drv_no) (void *)&bHalIf_##drv_name[drv_no]
-#define _bDRIVER_HALIF_NUM(halif_type, drv_name) (sizeof(bHalIf_##drv_name) / sizeof(halif_type))
 
-#define bDRIVER_HALIF_TABLE(halif_type, drv_name) _bDRIVER_HALIF_TABLE(halif_type, drv_name)
-#define bDRIVER_HALIF_INSTANCE(drv_name, drv_no) _bDRIVER_HALIF_INSTANCE(drv_name, drv_no)
-#define bDRIVER_HALIF_NUM(halif_type, drv_name) _bDRIVER_HALIF_NUM(halif_type, drv_name)
-
-#define _bDRIVER_STRUCT_INIT(pdrv, drv_name, init_f)                          \
-    do                                                                        \
-    {                                                                         \
-        pdrv->status       = 0;                                               \
-        pdrv->init         = init_f;                                          \
-        pdrv->open         = NULL;                                            \
-        pdrv->close        = NULL;                                            \
-        pdrv->ctl          = NULL;                                            \
-        pdrv->write        = NULL;                                            \
-        pdrv->read         = NULL;                                            \
-        pdrv->r_cache.pbuf = NULL;                                            \
-        pdrv->w_cache.pbuf = NULL;                                            \
-        pdrv->hal_if       = _bDRIVER_HALIF_INSTANCE(drv_name, pdrv->drv_no); \
-        pdrv->_private.v   = 0;                                               \
+#define _bDRIVER_STRUCT_INIT(pdrv) \
+    do                             \
+    {                              \
+        pdrv->status     = 0;      \
+        pdrv->ctl        = NULL;   \
+        pdrv->write      = NULL;   \
+        pdrv->read       = NULL;   \
+        pdrv->_private.v = 0;      \
     } while (0)
-#define bDRIVER_STRUCT_INIT(pdrv, drv_name, init_f) _bDRIVER_STRUCT_INIT(pdrv, drv_name, init_f)
+#define bDRIVER_STRUCT_INIT(pdrv) _bDRIVER_STRUCT_INIT(pdrv)
 
 #define bDRIVER_GET_HALIF(name, type, pdrv) type *name = (type *)((pdrv)->hal_if)
 #define bDRIVER_GET_PRIVATE(name, type, pdrv) type *name = (type *)((pdrv)->_private._p)
 
-#define bDRIVER_SET_READCACHE(pdrv, pbuf, buf_size) \
-    do                                              \
-    {                                               \
-        bFIFO_Init(&pdrv->r_cache, pbuf, buf_size); \
-    } while (0)
-
-#define bDRIVER_SET_WRITECACHE(pdrv, pbuf, buf_size) \
-    do                                               \
-    {                                                \
-        bFIFO_Init(&pdrv->w_cache, pbuf, buf_size);  \
-    } while (0)
-
-/**
- * \}
- */
-
-/**
- * \defgroup DRIVER_Exported_Macros
- * \{
- */
-#define bDRIVER_REG_INIT_0(drv_num, init_f)                                                    \
-    bSECTION_ITEM_REGISTER_FLASH(driver_init_0, bDriverRegInit_t, CONCAT_2(init0, init_f)) = { \
-        drv_num, init_f}
-
-#define bDRIVER_REG_INIT(drv_num, init_f)                                                   \
-    bSECTION_ITEM_REGISTER_FLASH(driver_init, bDriverRegInit_t, CONCAT_2(init, init_f)) = { \
-        drv_num, init_f}
-
-#define bDRIVER_REG_INIT_1 bDRIVER_REG_INIT
 /**
  * \}
  */

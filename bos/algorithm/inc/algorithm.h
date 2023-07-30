@@ -42,13 +42,6 @@ extern "C" {
  * \{
  */
 
-#include "algo_base64.h"
-#include "algo_crc.h"
-#include "algo_hmac_sha1.h"
-#include "algo_md5.h"
-#include "algo_sort.h"
-#include "algo_utf8_unicode.h"
-
 /**
  * \}
  */

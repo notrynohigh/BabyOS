@@ -83,13 +83,15 @@ struct list_head
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_add(struct list_head *new, struct list_head *prev, struct list_head *next)
-{
-    next->prev = new;
-    new->next  = next;
-    new->prev  = prev;
-    WRITE_ONCE(prev->next, new);
-}
+
+#define __list_add(_new, _prev, _next)     \
+    do                                     \
+    {                                      \
+        (_next)->prev = (_new);            \
+        (_new)->next  = (_next);           \
+        (_new)->prev  = (_prev);           \
+        WRITE_ONCE((_prev)->next, (_new)); \
+    } while (0)
 
 /**
  * list_add - add a new entry
@@ -99,10 +101,7 @@ static inline void __list_add(struct list_head *new, struct list_head *prev, str
  * Insert a new entry after the specified head.
  * This is good for implementing stacks.
  */
-static inline void list_add(struct list_head *new, struct list_head *head)
-{
-    __list_add(new, head, head->next);
-}
+#define list_add(new, head) __list_add((new), (head), (head)->next)
 
 /**
  * list_add_tail - add a new entry
@@ -112,10 +111,8 @@ static inline void list_add(struct list_head *new, struct list_head *head)
  * Insert a new entry before the specified head.
  * This is useful for implementing queues.
  */
-static inline void list_add_tail(struct list_head *new, struct list_head *head)
-{
-    __list_add(new, head->prev, head);
-}
+
+#define list_add_tail(new, head) __list_add((new), (head)->prev, (head))
 
 /*
  * Delete a list entry by making the prev/next entries
@@ -124,50 +121,44 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_del(struct list_head *prev, struct list_head *next)
-{
-    next->prev = prev;
-    WRITE_ONCE(prev->next, next);
-}
+
+#define __list_del(_prev, _next)            \
+    do                                      \
+    {                                       \
+        (_next)->prev = (_prev);            \
+        WRITE_ONCE((_prev)->next, (_next)); \
+    } while (0)
 
 /**
  * list_is_first -- tests whether @list is the first entry in list @head
  * @list: the entry to test
  * @head: the head of the list
  */
-static inline int list_is_first(const struct list_head *list, const struct list_head *head)
-{
-    return list->prev == head;
-}
+
+#define list_is_first(list, head) ((list)->prev == (head))
 
 /**
  * list_is_last - tests whether @list is the last entry in list @head
  * @list: the entry to test
  * @head: the head of the list
  */
-static inline int list_is_last(const struct list_head *list, const struct list_head *head)
-{
-    return list->next == head;
-}
+
+#define list_is_last(list, head) ((list)->next == (head))
 
 /**
  * list_is_head - tests whether @list is the list @head
  * @list: the entry to test
  * @head: the head of the list
  */
-static inline int list_is_head(const struct list_head *list, const struct list_head *head)
-{
-    return list == head;
-}
+
+#define list_is_head(list, head) ((list) == (head))
 
 /**
  * list_empty - tests whether a list is empty
  * @head: the list to test.
  */
-static inline int list_empty(const struct list_head *head)
-{
-    return head->next == head;
-}
+
+#define list_empty(head) ((head)->next == (head))
 
 /**
  * list_for_each	-	iterate over a list
@@ -212,20 +203,6 @@ static inline int list_empty(const struct list_head *head)
  */
 #define list_for_each_prev_safe(pos, n, head) \
     for (pos = (head)->prev, n = pos->prev; !list_is_head(pos, (head)); pos = n, n = pos->prev)
-
-/**
- * list_count_nodes - count nodes in the list
- * @head:	the head for your list.
- */
-static inline uint32_t list_count_nodes(struct list_head *head)
-{
-    struct list_head *pos;
-    uint32_t          count = 0;
-
-    list_for_each(pos, head) count++;
-
-    return count;
-}
 
 /**
  * \}

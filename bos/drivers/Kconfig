@@ -2,38 +2,9 @@
 
 menu "Drivers Configuration"
 
-config PCF8574_DEFAULT_OUTPUT
-    int "PCF8574 Default Output Value"
-    default 0
 
-config MATRIX_KEYS_ROWS
-    int "Maximum number of rows of matrix keys"
-    default 4
-config MATRIX_KEYS_COLUMNS
-    int "Maximum number of columns of matrix keys"
-    default 4
-
-config ESP12F_UART_RX_BUF_LEN
-    int "ESP12F Uart Rx Buffer Length"
-    default 1024
-
-config RS485_RX_BUF_LEN
-    int "RS485 Rx Buffer Length"
-    default 128
-
-choice
-    prompt "485 receive data processing method"
-    default _485_USE_CALLBACK
-    config _485_USE_CALLBACK
-        bool "using callback"
-    config _485_USE_SELECT
-        bool "waiting for data using select"
-endchoice
-
-config RS485_CACHE_BUF_LEN
-    int "size of cached buffer"
-    default 1024
-    depends on _485_USE_SELECT
-
+config _XXXXX_ENABLE
+    bool "XXXXXX Enable/Disable"
+    default n
 
 endmenu

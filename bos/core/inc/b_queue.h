@@ -36,11 +36,11 @@ extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
-#include <string.h>
-
+#include "b_config.h"
 #include "thirdparty/pt/pt.h"
 #include "utils/inc/b_util_list.h"
+
+#if (defined(_QUEUE_ENABLE) && (_QUEUE_ENABLE == 1))
 
 /**
  * \addtogroup BABYOS
@@ -66,13 +66,13 @@ typedef void *bQueueId_t;
 
 typedef struct
 {
-    uint32_t         number;
-    uint32_t         r_index;
-    uint32_t         w_index;
-    uint32_t         msg_count;
-    uint32_t         msg_size;
+    uint8_t          number;
+    uint8_t          r_index;
+    uint8_t          w_index;
+    uint8_t          msg_count;
+    uint8_t          msg_size;
     void            *mq_mem;
-    uint32_t         mq_size;
+    uint16_t         mq_size;
     struct list_head list;
 } bQueueAttr_t;
 
@@ -108,15 +108,15 @@ typedef struct
 /// \param[in]     msg_size      队列消息的大小，单位字节
 /// \param[in]     attr          通过B_QUEUE_CREATE_ATTR创建，再传入
 /// \return 消息队列ID
-bQueueId_t bQueueCreate(uint32_t msg_count, uint32_t msg_size, bQueueAttr_t *attr);
+bQueueId_t bQueueCreate(uint8_t msg_count, uint8_t msg_size, bQueueAttr_t *attr);
 
 int bQueuePutNonblock(bQueueId_t id, const void *msg_ptr);
 int bQueueGetNonblock(bQueueId_t id, void *msg_ptr);
 
-uint32_t bQueueGetCapacity(bQueueId_t id);
-uint32_t bQueueGetMsgSize(bQueueId_t id);
-uint32_t bQueueGetCount(bQueueId_t id);
-uint32_t bQueueGetSpace(bQueueId_t id);
+uint8_t bQueueGetCapacity(bQueueId_t id);
+uint8_t bQueueGetMsgSize(bQueueId_t id);
+uint8_t bQueueGetCount(bQueueId_t id);
+uint8_t bQueueGetSpace(bQueueId_t id);
 
 int bQueueReset(bQueueId_t id);
 int bQueueDelete(bQueueId_t id);
@@ -139,6 +139,8 @@ int bQueueDelete(bQueueId_t id);
 /**
  * \}
  */
+
+#endif
 
 #ifdef __cplusplus
 }

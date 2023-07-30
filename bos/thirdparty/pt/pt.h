@@ -55,10 +55,10 @@
 struct pt
 {
     lc_t     lc;
-    uint32_t tick;
-    uint32_t time_ms;
-    uint32_t wait;
-    int32_t  retval;
+    uint16_t tick;
+    uint16_t time_ms;
+    uint8_t  wait;
+    int8_t   retval;
 };
 
 #define PT_WAITING 0

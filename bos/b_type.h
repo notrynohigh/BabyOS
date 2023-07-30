@@ -36,9 +36,6 @@ extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
 /**
  * \addtogroup BABYOS
  * \{
@@ -49,20 +46,19 @@ extern "C" {
  * \{
  */
 
+typedef unsigned char     uint8_t;
+typedef unsigned int      uint16_t;
+typedef unsigned long int uint32_t;
+
+typedef signed char     int8_t;
+typedef signed int      int16_t;
+typedef signed long int int32_t;
+
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
 
 #define IS_NULL(p) ((p) == NULL)
-
-#define B_SAFE_INVOKE(f, ...) \
-    do                        \
-    {                         \
-        if (f != NULL)        \
-        {                     \
-            f(__VA_ARGS__);   \
-        }                     \
-    } while (0)
 
 #define B_SET_BIT(REG, BIT) ((REG) |= (BIT))
 #define B_CLEAR_BIT(REG, BIT) ((REG) &= ~(BIT))
@@ -72,25 +68,29 @@ extern "C" {
 #define B_MODIFY_REG(REG, CLEARMASK, SETMASK) \
     B_WRITE_REG((REG), (((B_READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
 
-#if defined(__CC_ARM)
-#define __WEAKDEF __attribute__((weak))
-#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-#define __WEAKDEF __attribute__((weak))
-#elif defined(__GNUC__)
-#define __WEAKDEF __attribute__((weak))
-#elif defined(__ICCARM__)
-#if __ICCARM_V8
-#define __WEAKDEF __attribute__((weak))
-#else
-#define __WEAKDEF _Pragma("__weak")
-#endif
-#else
-#define __WEAKDEF __attribute__((weak))
-#endif
+#define __WEAKDEF
 
 #define B_SIZE_ALIGNMENT(size, align) (((size) + (align)-1) & ~((align)-1))
 
 #define B_OFFSET_OF(type, member) ((uint32_t)(&((type *)0)->member))
+
+#define B_MEM_SET(p, v, l)             \
+    do                                 \
+    {                                  \
+        for (i = 0; i < l; i++)        \
+        {                              \
+            ((uint8_t *)(p))[i] = (v); \
+        }                              \
+    } while (0)
+
+#define B_MEM_COPY(des, src, len)                          \
+    do                                                     \
+    {                                                      \
+        for (i = 0; i < (len); i++)                        \
+        {                                                  \
+            ((uint8_t *)(des))[i] = ((uint8_t *)(src))[i]; \
+        }                                                  \
+    } while (0)
 
 /**
  * \}

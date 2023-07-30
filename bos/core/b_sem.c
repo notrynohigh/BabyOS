@@ -32,8 +32,9 @@
 /*Includes ----------------------------------------------*/
 #include "core/inc/b_sem.h"
 
-#include "b_section.h"
 #include "hal/inc/b_hal.h"
+
+#if (defined(_SEM_ENABLE) && (_SEM_ENABLE == 1))
 
 /**
  * \addtogroup BABYOS
@@ -127,7 +128,7 @@ static bSemAttr_t *_bSemFind(bSemId_t id)
  * \{
  */
 
-bSemId_t bSemCreate(uint32_t max_count, uint32_t initial_count, bSemAttr_t *attr)
+bSemId_t bSemCreate(uint8_t max_count, uint8_t initial_count, bSemAttr_t *attr)
 {
     if (attr == NULL)
     {
@@ -178,7 +179,7 @@ int bSemRelease(bSemId_t id)
     return 0;
 }
 
-uint32_t bSemGetCount(bSemId_t id)
+uint8_t bSemGetCount(bSemId_t id)
 {
     bSemAttr_t *attr = NULL;
     if (id == NULL)
@@ -204,5 +205,7 @@ uint32_t bSemGetCount(bSemId_t id)
 /**
  * \}
  */
+
+#endif
 
 /************************ Copyright (c) 2019 Bean *****END OF FILE****/

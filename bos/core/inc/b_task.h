@@ -36,11 +36,9 @@ extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
-#include <string.h>
-
+#include "b_config.h"
 #include "thirdparty/pt/pt.h"
-#include "utils/inc/b_util_list.h"
+#if (defined(_TASK_ENABLE) && (_TASK_ENABLE == 1))
 /**
  * \addtogroup BABYOS
  * \{
@@ -61,10 +59,8 @@ extern "C" {
  * \{
  */
 
-typedef void *bTaskId_t;
-
 /**
-PT_THREAD(test_task)(struct pt *pt, void *arg)
+PT_THREAD(test_task)(struct pt *pt)
 {
     PT_BEGIN(pt);
     while (1)
@@ -74,16 +70,13 @@ PT_THREAD(test_task)(struct pt *pt, void *arg)
     PT_END(pt);
 }
 */
-typedef char (*bTaskFunc_t)(struct pt *pt, void *arg);
+typedef char (*bTaskFunc_t)(struct pt *pt);
 
 typedef struct
 {
-    const char      *name;
-    bTaskFunc_t      func;
-    void            *arg;
-    uint8_t          enable;
-    struct pt        task_pt;
-    struct list_head list;
+    bTaskFunc_t func;
+    uint8_t     enable;
+    struct pt   task_pt;
 } bTaskAttr_t;
 
 /**
@@ -95,8 +88,7 @@ typedef struct
  * \{
  */
 
-#define B_TASK_CREATE_ATTR(attr_name) \
-    static bTaskAttr_t attr_name = {.name = NULL, .func = NULL, .arg = NULL}
+#define B_TASK_CREATE_ATTR(attr_name) static bTaskAttr_t attr_name
 
 #define B_TASK_DELAY_XMS(pt, ms) PT_DELAY_MS(pt, ms)
 
@@ -110,34 +102,40 @@ typedef struct
  */
 
 /// 创建任务
-/// \param[in]     name          任务名
-/// \param[in]     func          任务执行函数 \ref bTaskFunc_t
-/// \param[in]     argument      自定义参数
 /// \param[in]     attr          通过B_TASK_CREATE_ATTR创建，再传入
-/// \return 任务ID
-bTaskId_t bTaskCreate(const char *name, bTaskFunc_t func, void *argument, bTaskAttr_t *attr);
-
-/// 销毁任务
-void bTaskRemove(bTaskId_t id);
+#define bTaskCreate(attr, _func)   \
+    do                             \
+    {                              \
+        (attr)->enable = 1;        \
+        (attr)->func   = _func;    \
+        PT_INIT(&(attr)->task_pt); \
+    } while (0)
 
 /// 暂停任务
-void bTaskSuspend(bTaskId_t id);
+#define bTaskSuspend(attr)  \
+    do                      \
+    {                       \
+        (attr)->enable = 0; \
+    } while (0)
 
 /// 恢复任务
-void bTaskResume(bTaskId_t id);
-
-/// 获取id对应的任务名。id为NULL表示获取当前任务
-const char *bTaskGetName(bTaskId_t id);
-
-/// 获取当前运行任务的id
-bTaskId_t bTaskGetId(void);
+#define bTaskResume(attr)   \
+    do                      \
+    {                       \
+        (attr)->enable = 1; \
+    } while (0)
 
 /// task中延时函数, 这里只是为了保证接口的名字与其他接口一致。
 #define bTaskDelayMs(pt, ms) B_TASK_DELAY_XMS(pt, ms)
 
-/**
- * \}
- */
+#define bTaskRun(attr)                      \
+    do                                      \
+    {                                       \
+        if ((attr)->enable)                 \
+        {                                   \
+            (attr)->func(&(attr)->task_pt); \
+        }                                   \
+    } while (0)
 
 /**
  * \}
@@ -150,6 +148,12 @@ bTaskId_t bTaskGetId(void);
 /**
  * \}
  */
+
+/**
+ * \}
+ */
+
+#endif
 
 #ifdef __cplusplus
 }

@@ -22,7 +22,7 @@ def mconfig(argv):
     kconf_list = "mainmenu " + "\"BabyOS Configuration\" \n"
     kconf_list += "source " + "\"" + argv[1] + "/core/Kconfig" + "\"" + "\n" 
     kconf_list += "source " + "\"" + argv[1] + "/hal/Kconfig" + "\"" + "\n"
-    kconf_list += "source " + "\"" + argv[1] + "/mcu/Kconfig" + "\"" + "\n"
+    # kconf_list += "source " + "\"" + argv[1] + "/mcu/Kconfig" + "\"" + "\n"
     kconf_list += "source " + "\"" + argv[1] + "/algorithm/Kconfig" + "\"" + "\n"
     kconf_list += "source " + "\"" + argv[1] + "/drivers/Kconfig" + "\"" + "\n"
     kconf_list += "source " + "\"" + argv[1] + "/modules/Kconfig" + "\"" + "\n"

@@ -36,11 +36,11 @@ extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
-#include <string.h>
-
+#include "b_config.h"
 #include "thirdparty/pt/pt.h"
 #include "utils/inc/b_util_list.h"
+
+#if (defined(_SEM_ENABLE) && (_SEM_ENABLE == 1))
 
 /**
  * \addtogroup BABYOS
@@ -66,8 +66,8 @@ typedef void *bSemId_t;
 
 typedef struct
 {
-    uint32_t         value;
-    uint32_t         value_max;
+    uint8_t          value;
+    uint8_t          value_max;
     struct list_head list;
 } bSemAttr_t;
 
@@ -99,10 +99,10 @@ typedef struct
 /// \param[in]     initial_count 信号量初始数量
 /// \param[in]     attr          通过B_SEM_CREATE_ATTR创建，再传入
 /// \return 信号量ID
-bSemId_t bSemCreate(uint32_t max_count, uint32_t initial_count, bSemAttr_t *attr);
+bSemId_t bSemCreate(uint8_t max_count, uint8_t initial_count, bSemAttr_t *attr);
 int      bSemAcquireNonblock(bSemId_t id);
 int      bSemRelease(bSemId_t id);
-uint32_t bSemGetCount(bSemId_t id);
+uint8_t  bSemGetCount(bSemId_t id);
 
 #define bSemAcquireBlock(pt, id, timeout) B_SEM_ACQUIRE(pt, id, timeout)
 
@@ -121,6 +121,8 @@ uint32_t bSemGetCount(bSemId_t id);
 /**
  * \}
  */
+
+#endif
 
 #ifdef __cplusplus
 }

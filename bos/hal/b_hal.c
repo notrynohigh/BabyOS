@@ -31,10 +31,6 @@
 
 /*Includes ----------------------------------------------*/
 #include "hal/inc/b_hal.h"
-
-#include <stdio.h>
-#include <string.h>
-
 /**
  * \addtogroup B_HAL
  * \{
@@ -49,9 +45,7 @@
  * \defgroup HAL_Private_Variables
  * \{
  */
-static volatile uint32_t bSysTickOvr   = 0;
-static volatile uint32_t bSysTick      = 0;
-static uint32_t          bUsDelayParam = 10;
+static volatile uint16_t bSysTick      = 0;
 /**
  * \}
  */
@@ -60,16 +54,7 @@ static uint32_t          bUsDelayParam = 10;
  * \defgroup HAL_Private_Functions
  * \{
  */
-static void _bHalUpdateDelayParam()
-{
-    volatile uint32_t delay  = 100000 * bUsDelayParam;
-    volatile uint32_t tick_s = 0, tick_e = 0;
-    tick_s = bSysTick;
-    while (delay--)
-        ;
-    tick_e        = bSysTick;
-    bUsDelayParam = (uint32_t)((100.0 / (tick_e - tick_s)) * bUsDelayParam);
-}
+
 /**
  * \}
  */
@@ -78,54 +63,31 @@ static void _bHalUpdateDelayParam()
  * \addtogroup HAL_Exported_Functions
  * \{
  */
-__WEAKDEF void bHalUserInit()
-{
-    ;
-}
-
 void bHalInit()
 {
-    _bHalUpdateDelayParam();
-    bHalUserInit();
+    ;
 }
 
 void bHalIncSysTick()
 {
     bSysTick += 1;
-    if(bSysTick == 0)
-    {
-        bSysTickOvr += 1;
-    }
 }
 
-uint32_t bHalGetSysTick()
+uint16_t bHalGetSysTick()
 {
     return bSysTick;
 }
 
-uint64_t bHalGetSysTickPlus()
-{
-    uint64_t tick = bSysTickOvr;
-    tick = bSysTick + (tick << (8 * sizeof(uint32_t)));
-    return tick;
-}
-
 void bHalDelayMs(uint16_t xms)
 {
-    uint32_t tickstart = bSysTick;
-    uint32_t wait      = MS2TICKS(xms);
+    uint16_t tickstart = bSysTick;
+    uint16_t wait      = MS2TICKS(xms);
     while ((bSysTick - tickstart) < wait)
     {
         ;
     }
 }
 
-void bHalDelayUs(uint32_t xus)
-{
-    volatile uint32_t delay = xus * bUsDelayParam;
-    while (delay--)
-        ;
-}
 /**
  * \}
  */

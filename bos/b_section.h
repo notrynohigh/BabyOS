@@ -1,3 +1,4 @@
+#if 0
 /**
  *!
  * \file        b_section.h
@@ -36,7 +37,7 @@ extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
+#include "b_type.h"
 
 /**
  * \addtogroup BABYOS
@@ -107,12 +108,12 @@ typedef void (*pbPoling_t)(void);
 #if defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6000000))
 #define BOS_SECTION_DEF(section_name, data_type)      \
     extern data_type *CONCAT_2(section_name, $$Base); \
-    extern void *     CONCAT_2(section_name, $$Limit)
+    extern void      *CONCAT_2(section_name, $$Limit)
 
 #elif defined(__GNUC__)
 #define BOS_SECTION_DEF(section_name, data_type)        \
     extern data_type *CONCAT_2(__start_, section_name); \
-    extern void *     CONCAT_2(__stop_, section_name)
+    extern void      *CONCAT_2(__stop_, section_name)
 
 #elif defined(__ICCARM__)
 #define BOS_SECTION_DEF(section_name, data_type) \
@@ -185,6 +186,8 @@ typedef void (*pbPoling_t)(void);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

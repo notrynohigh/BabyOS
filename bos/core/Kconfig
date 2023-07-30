@@ -10,3 +10,21 @@ config FW_VERSION
 config FW_NAME
     string "Firware Name"
     default "BabyOS"
+
+config _QUEUE_ENABLE
+    bool "queue enable"
+    default n
+
+config _SEM_ENABLE
+    bool "semaphore enable"
+    default n    
+
+config _TASK_ENABLE
+    bool "task enable"
+    default n   
+
+config _TIMER_ENABLE
+    bool "timer enable"
+    default n  
+
+    

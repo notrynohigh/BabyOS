@@ -37,15 +37,7 @@ extern "C" {
 
 /*Includes ----------------------------------------------*/
 #include "b_config.h"
-#include "b_hal_flash.h"
-#include "b_hal_gpio.h"
-#include "b_hal_i2c.h"
 #include "b_hal_if.h"
-#include "b_hal_it.h"
-#include "b_hal_qspi.h"
-#include "b_hal_sdio.h"
-#include "b_hal_spi.h"
-#include "b_hal_uart.h"
 
 /**
  * \addtogroup B_HAL
@@ -62,32 +54,6 @@ extern "C" {
  * \{
  */
 
-typedef struct
-{
-    union
-    {
-        uint32_t rw_addr;
-        struct
-        {
-            bHalGPIOInstance_t data;
-            bHalGPIOInstance_t rs;
-            bHalGPIOInstance_t rd;
-            bHalGPIOInstance_t wr;
-            bHalGPIOInstance_t cs;
-        } _io;
-        struct
-        {
-            bHalGPIOInstance_t rs;
-            bHalSPIIf_t        _spi;
-        } _spi;
-    } _if;
-    uint8_t if_type;  // 0: _io  1: rw_addr  2: _spi
-} bLCD_HalIf_t;
-
-#define LCD_IF_TYPE_IO (0)
-#define LCD_IF_TYPE_RWADDR (1)
-#define LCD_IF_TYPE_SPI (2)
-
 /**
  * \}
  */
@@ -98,12 +64,6 @@ typedef struct
  */
 #define MS2TICKS(m) (m / (1000 / TICK_FRQ_HZ))
 #define TICKS2MS(t) (t * (1000 / TICK_FRQ_HZ))
-
-#if (defined(_HALIF_VARIABLE_ENABLE) && (_HALIF_VARIABLE_ENABLE == 1))
-#define HALIF_KEYWORD static
-#else
-#define HALIF_KEYWORD const static
-#endif
 
 /**
  * \}
@@ -121,9 +81,7 @@ void bHalUserInit(void);
 
 void     bHalInit(void);
 void     bHalDelayMs(uint16_t xms);
-void     bHalDelayUs(uint32_t xus);
-uint32_t bHalGetSysTick(void);
-uint64_t bHalGetSysTickPlus(void);
+uint16_t bHalGetSysTick(void);
 
 /**
  * \}

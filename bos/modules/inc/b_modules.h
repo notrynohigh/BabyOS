@@ -36,25 +36,7 @@ extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include "b_mod_adchub.h"
-#include "b_mod_button.h"
-#include "b_mod_error.h"
-#include "b_mod_fs.h"
-#include "b_mod_gui.h"
-#include "b_mod_iap.h"
-#include "b_mod_kv.h"
-#include "b_mod_menu.h"
-#include "b_mod_modbus.h"
-#include "b_mod_param.h"
-#include "b_mod_protocol.h"
-#include "b_mod_pwm.h"
-#include "b_mod_select.h"
-#include "b_mod_shell.h"
-#include "b_mod_state.h"
-#include "b_mod_trace.h"
-#include "b_mod_wifi.h"
-#include "b_mod_xm128.h"
-#include "b_mod_ymodem.h"
+
 
 
 #ifdef __cplusplus
