@@ -45,7 +45,7 @@
  * \defgroup HAL_Private_Variables
  * \{
  */
-static volatile uint16_t bSysTick      = 0;
+static volatile uint16_t bSysTick = 0;
 /**
  * \}
  */
@@ -78,11 +78,10 @@ uint16_t bHalGetSysTick()
     return bSysTick;
 }
 
-void bHalDelayMs(uint16_t xms)
+void bHalDelay(uint16_t xtick)
 {
     uint16_t tickstart = bSysTick;
-    uint16_t wait      = MS2TICKS(xms);
-    while ((bSysTick - tickstart) < wait)
+    while ((bSysTick - tickstart) < xtick)
     {
         ;
     }

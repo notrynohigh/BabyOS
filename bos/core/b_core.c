@@ -32,7 +32,6 @@
 /*Includes ----------------------------------------------*/
 #include "core/inc/b_core.h"
 
-#include "core/inc/b_device.h"
 #include "hal/inc/b_hal.h"
 
 /**
@@ -118,7 +117,7 @@
 int bInit()
 {
     bHalInit();
-    return bDeviceInit();
+    return 0;
 }
 
 /**
@@ -131,6 +130,100 @@ int bExec()
 {
     return 0;
 }
+
+#if (defined(_QUEUE_ENABLE) && (_QUEUE_ENABLE == 1))
+
+int8_t bQueuePutNonblock(void *queue, const void *msg_ptr)
+{
+    bQueueAttr_t *attr = (bQueueAttr_t *)queue;
+    uint8_t       i    = 0;
+    uint8_t      *pbuf = NULL;
+    if (queue == NULL || msg_ptr == NULL)
+    {
+        return -1;
+    }
+    if (attr->number >= attr->msg_count)
+    {
+        return -2;
+    }
+    pbuf = (uint8_t *)attr->mq_mem;
+    B_MEM_COPY(&pbuf[attr->w_index * attr->msg_size], msg_ptr, attr->msg_size);
+    if (attr->w_index == 0xf)
+    {
+        attr->w_index = 0;
+    }
+    else
+    {
+        attr->w_index += 1;
+    }
+    attr->number += 1;
+    return 0;
+}
+
+int8_t bQueueGetNonblock(void *queue, void *msg_ptr)
+{
+    bQueueAttr_t *attr = (bQueueAttr_t *)queue;
+    uint8_t       i    = 0;
+    uint8_t      *pbuf = NULL;
+    if (queue == NULL || msg_ptr == NULL)
+    {
+        return -1;
+    }
+    if (attr->number == 0)
+    {
+        return -3;
+    }
+    pbuf = (uint8_t *)attr->mq_mem;
+    B_MEM_COPY(msg_ptr, &pbuf[attr->r_index * attr->msg_size], attr->msg_size);
+    if (attr->r_index == 0xf)
+    {
+        attr->r_index = 0;
+    }
+    else
+    {
+        attr->r_index += 1;
+    }
+    attr->number -= 1;
+    return 0;
+}
+
+#endif
+
+#if (defined(_SEM_ENABLE) && (_SEM_ENABLE == 1))
+
+int8_t bSemAcquireNonblock(bSemAttr_t *sem)
+{
+    if (sem == NULL || sem->value == 0)
+    {
+        return -1;
+    }
+    sem->value -= 1;
+    return 0;
+}
+
+int8_t bSemRelease(bSemAttr_t *sem)
+{
+    if (sem == NULL)
+    {
+        return -1;
+    }
+    if (sem->value < sem->value_max)
+    {
+        sem->value += 1;
+    }
+    return 0;
+}
+
+uint8_t bSemGetCount(bSemAttr_t *sem)
+{
+    if (sem == NULL)
+    {
+        return 0;
+    }
+    return sem->value;
+}
+
+#endif
 
 /**
  * \}

@@ -1,6 +1,6 @@
 menu "Hal Configuration"
-config TICK_FRQ_HZ
-    int "Tick Frequncy HZ"
-    default 1000
+config TICK_MS
+    int "How many milliseconds is 1 tick?"
+    default 50
 
 endmenu

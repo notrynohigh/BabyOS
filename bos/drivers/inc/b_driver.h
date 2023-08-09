@@ -60,46 +60,6 @@ extern "C" {
  * \{
  */
 
-typedef struct
-{
-    struct bDriverIf *pdrv;
-    uint16_t          offset;
-    uint8_t          *pbuf;
-    uint16_t          len;
-} bOptParam_t;
-
-typedef struct
-{
-    struct bDriverIf *pdrv;
-    uint8_t           cmd;
-    void             *param;
-} bCtlParam_t;
-
-typedef struct bDriverIf
-{
-    uint8_t  flag : 2;
-    uint8_t  status : 2;  // 0: normal 1:open  2: error
-    uint8_t  drv_no : 4;
-    uint16_t offset;
-    int (*init)(struct bDriverIf *pdrv);
-    int (*ctl)(bCtlParam_t *param);
-    int (*write)(bOptParam_t *param);
-    int (*read)(bOptParam_t *param);
-    void *hal_if;
-    union
-    {
-        uint16_t v;
-        void    *_p;
-    } _private;
-} bDriverInterface_t;
-
-typedef int (*bDriverInit_t)(struct bDriverIf *pdrv);
-
-typedef enum
-{
-    B_DRIVER_NUMBER
-} bDriverNumber_t;
-
 /**
  * \}
  */
@@ -108,20 +68,6 @@ typedef enum
  * \defgroup DRIVER_Exported_Defines
  * \{
  */
-
-#define _bDRIVER_STRUCT_INIT(pdrv) \
-    do                             \
-    {                              \
-        pdrv->status     = 0;      \
-        pdrv->ctl        = NULL;   \
-        pdrv->write      = NULL;   \
-        pdrv->read       = NULL;   \
-        pdrv->_private.v = 0;      \
-    } while (0)
-#define bDRIVER_STRUCT_INIT(pdrv) _bDRIVER_STRUCT_INIT(pdrv)
-
-#define bDRIVER_GET_HALIF(name, type, pdrv) type *name = (type *)((pdrv)->hal_if)
-#define bDRIVER_GET_PRIVATE(name, type, pdrv) type *name = (type *)((pdrv)->_private._p)
 
 /**
  * \}

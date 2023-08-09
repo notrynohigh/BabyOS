@@ -2,14 +2,12 @@
 FW_VERSION=80303
 FW_NAME="BabyOS"
 # _QUEUE_ENABLE is not set
-# _SEM_ENABLE is not set
-_TASK_ENABLE=y
-# _TIMER_ENABLE is not set
+_SEM_ENABLE=y
 
 #
 # Hal Configuration
 #
-TICK_FRQ_HZ=1000
+TICK_MS=50
 # end of Hal Configuration
 
 #

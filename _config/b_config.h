@@ -5,8 +5,8 @@
 #define HW_VERSION 211212
 #define FW_VERSION 80303
 #define FW_NAME "BabyOS"
-#define _TASK_ENABLE 1
-#define TICK_FRQ_HZ 20
+#define _SEM_ENABLE 1
+#define TICK_MS 50
 #define _BOS_ALGO_ENABLE 1
 #define _BOS_MODULES_ENABLE 1
 #define _DEBUG_ENABLE 1

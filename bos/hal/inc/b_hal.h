@@ -62,8 +62,6 @@ extern "C" {
  * \defgroup HAL_Exported_Defines
  * \{
  */
-#define MS2TICKS(m) (m / (1000 / TICK_FRQ_HZ))
-#define TICKS2MS(t) (t * (1000 / TICK_FRQ_HZ))
 
 /**
  * \}
@@ -80,7 +78,7 @@ void bHalIncSysTick(void);
 void bHalUserInit(void);
 
 void     bHalInit(void);
-void     bHalDelayMs(uint16_t xms);
+void     bHalDelay(uint16_t xtick);
 uint16_t bHalGetSysTick(void);
 
 /**

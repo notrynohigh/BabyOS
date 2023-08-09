@@ -17,14 +17,6 @@ config _QUEUE_ENABLE
 
 config _SEM_ENABLE
     bool "semaphore enable"
-    default n    
-
-config _TASK_ENABLE
-    bool "task enable"
-    default n   
-
-config _TIMER_ENABLE
-    bool "timer enable"
-    default n  
+    default n      
 
     

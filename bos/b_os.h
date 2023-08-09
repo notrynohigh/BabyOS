@@ -62,11 +62,6 @@ extern "C" {
 #endif
 
 #include "core/inc/b_core.h"
-#include "core/inc/b_device.h"
-#include "core/inc/b_queue.h"
-#include "core/inc/b_sem.h"
-#include "core/inc/b_task.h"
-#include "drivers/inc/b_driver.h"
 #include "utils/inc/b_utils.h"
 
 #if _BOS_MODULES_ENABLE

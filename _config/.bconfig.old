@@ -3,13 +3,11 @@ FW_VERSION=80303
 FW_NAME="BabyOS"
 # _QUEUE_ENABLE is not set
 # _SEM_ENABLE is not set
-# _TASK_ENABLE is not set
-# _TIMER_ENABLE is not set
 
 #
 # Hal Configuration
 #
-TICK_FRQ_HZ=1000
+TICK_MS=50
 # end of Hal Configuration
 
 #
@@ -33,15 +31,6 @@ _BOS_MODULES_ENABLE=y
 #
 # Thirdparty Configuration
 #
-# _CMBACKTRACE_ENABLE is not set
-# _NR_MICRO_SHELL_ENABLE is not set
-# _FLEXIBLEBUTTON_ENABLE is not set
-# _UGUI_ENABLE is not set
-# _FS_ENABLE is not set
-# _CJSON_ENABLE is not set
-# _COREMARK_ENABLE is not set
-# _UNITY_ENABLE is not set
-# end of Thirdparty Configuration
 
 #
 # Utils Configuration

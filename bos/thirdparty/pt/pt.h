@@ -56,9 +56,9 @@ struct pt
 {
     lc_t     lc;
     uint16_t tick;
-    uint16_t time_ms;
+    uint16_t time_tick;
     uint8_t  wait;
-    int8_t   retval;
+    uint8_t  retval;
 };
 
 #define PT_WAITING 0
@@ -69,8 +69,8 @@ struct pt
 #define PT_INSTANCE(name) static struct pt name
 
 #define PT_RETVAL_OK 0
-#define PT_RETVAL_FAIL -1
-#define PT_RETVAL_TIMEOUT -2
+#define PT_RETVAL_FAIL 1
+#define PT_RETVAL_TIMEOUT 2
 
 #define PT_WAIT_IS_TIMEOUT(pt) (((pt)->retval) == PT_RETVAL_TIMEOUT)
 /**
@@ -90,14 +90,14 @@ struct pt
  *
  * \hideinitializer
  */
-#define PT_INIT(pt)             \
-    do                          \
-    {                           \
-        LC_INIT((pt)->lc);      \
-        LC_INIT((pt)->tick);    \
-        LC_INIT((pt)->time_ms); \
-        LC_INIT((pt)->wait);    \
-        LC_INIT((pt)->retval);  \
+#define PT_INIT(pt)               \
+    do                            \
+    {                             \
+        LC_INIT((pt)->lc);        \
+        LC_INIT((pt)->tick);      \
+        LC_INIT((pt)->time_tick); \
+        LC_INIT((pt)->wait);      \
+        LC_INIT((pt)->retval);    \
     } while (0)
 
 /** @} */
@@ -133,10 +133,10 @@ struct pt
  *
  * \hideinitializer
  */
-#define PT_BEGIN(pt)            \
-    {                           \
-        char PT_YIELD_FLAG = 1; \
-        (void)PT_YIELD_FLAG;    \
+#define PT_BEGIN(pt)                        \
+    {                                       \
+        char PT_YIELD_FLAG = 1;             \
+        PT_YIELD_FLAG      = PT_YIELD_FLAG; \
         LC_RESUME((pt)->lc)
 
 /**
@@ -185,26 +185,26 @@ struct pt
         }                                    \
     } while (0)
 
-#define PT_WAIT_UNTIL(pt, condition, timeout)                                   \
-    do                                                                          \
-    {                                                                           \
-        if ((pt)->wait == 0)                                                    \
-        {                                                                       \
-            (pt)->tick    = bHalGetSysTick();                                   \
-            (pt)->time_ms = MS2TICKS(timeout);                                  \
-            (pt)->wait    = 1;                                                  \
-            (pt)->retval  = PT_RETVAL_OK;                                       \
-        }                                                                       \
-        LC_SET((pt)->lc);                                                       \
-        if (!((condition) || (bHalGetSysTick() - (pt)->tick) >= (pt)->time_ms)) \
-        {                                                                       \
-            return PT_WAITING;                                                  \
-        }                                                                       \
-        if ((bHalGetSysTick() - (pt)->tick) >= (pt)->time_ms)                   \
-        {                                                                       \
-            (pt)->retval = PT_RETVAL_TIMEOUT;                                   \
-        }                                                                       \
-        (pt)->wait = 0;                                                         \
+#define PT_WAIT_UNTIL(pt, condition, timeout)                                     \
+    do                                                                            \
+    {                                                                             \
+        if ((pt)->wait == 0)                                                      \
+        {                                                                         \
+            (pt)->tick      = bHalGetSysTick();                                   \
+            (pt)->time_tick = timeout;                                            \
+            (pt)->wait      = 1;                                                  \
+            (pt)->retval    = PT_RETVAL_OK;                                       \
+        }                                                                         \
+        LC_SET((pt)->lc);                                                         \
+        if (!((condition) || (bHalGetSysTick() - (pt)->tick) >= (pt)->time_tick)) \
+        {                                                                         \
+            return PT_WAITING;                                                    \
+        }                                                                         \
+        if ((bHalGetSysTick() - (pt)->tick) >= (pt)->time_tick)                   \
+        {                                                                         \
+            (pt)->retval = PT_RETVAL_TIMEOUT;                                     \
+        }                                                                         \
+        (pt)->wait = 0;                                                           \
     } while (0)
 
 /**
@@ -220,7 +220,7 @@ struct pt
  */
 #define PT_WAIT_WHILE(pt, cond) PT_WAIT_UNTIL_FOREVER((pt), !(cond))
 
-#define PT_DELAY_MS(pt, ms) PT_WAIT_UNTIL((pt), 0, (ms))
+#define PT_DELAY_XTICK(pt, tick) PT_WAIT_UNTIL((pt), 0, (tick))
 
 /** @} */
 
