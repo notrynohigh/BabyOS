@@ -145,7 +145,7 @@ static uint8_t bMB_SendBuff[MODBUS_BUF_SIZE];
 static uint16_t _bMBCRC16(uint8_t *pucFrame, uint16_t usLen)
 {
     uint32_t crc_ret = crc_calculate(ALGO_CRC16_MODBUS, pucFrame, usLen);
-    return ((uint16_t)(crc_ret & 0xffff))
+    return ((uint16_t)(crc_ret & 0xffff));
 }
 
 static int _bMB_CheckRTUReadACK(uint8_t *psrc, uint16_t len)

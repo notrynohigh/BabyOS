@@ -70,7 +70,7 @@ typedef struct
  */
 #if (defined(_PROTO_ENCRYPT_ENABLE) && (_PROTO_ENCRYPT_ENABLE == 1))
 #define _PROTO_TEA_DELTA 0x9e3779b9
-const static uint32_t Keys[4] = {_SECRET_KEY1, _SECRET_KEY2, _SECRET_KEY3, _SECRET_KEY4};
+const static uint32_t Keys[4] = {SECRET_KEY1, SECRET_KEY2, SECRET_KEY3, SECRET_KEY4};
 #endif
 /**
  * \}

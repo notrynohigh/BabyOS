@@ -124,7 +124,7 @@ static void _bOLED_WriteCmd(bDriverInterface_t *pdrv, uint8_t cmd)
     }
     else
     {
-        ret = bHalI2CMemWrite(&_if->_if._i2c, 0x00, &cmd, 1);
+        ret = bHalI2CMemWrite(&_if->_if._i2c, 0x00, 1, &cmd, 1);
     }
     (void)ret;
 }
@@ -140,7 +140,7 @@ static void _bOLED_WriteData(bDriverInterface_t *pdrv, uint8_t dat)
     }
     else
     {
-        ret = bHalI2CMemWrite(&_if->_if._i2c, 0x40, &dat, 1);
+        ret = bHalI2CMemWrite(&_if->_if._i2c, 0x40, 1, &dat, 1);
     }
     (void)ret;
 }

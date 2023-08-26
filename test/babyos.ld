@@ -110,6 +110,15 @@ SECTIONS
     . = ALIGN(4);
   } 
 
+  .b_mod_param :
+  {
+    . = ALIGN(4);
+    PROVIDE(__start_b_mod_param = .);
+    KEEP(*(SORT(.b_mod_state*)))
+    PROVIDE(__stop_b_mod_param = .);
+    . = ALIGN(4);
+  } 
+
   /* BabyOS Section ---------end----*/
 
   .fini           :

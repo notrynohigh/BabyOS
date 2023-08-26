@@ -61,7 +61,7 @@ void      _UG_ImageUpdate(UG_WINDOW* wnd, UG_OBJECT* obj);
 void      _UG_PutChar(char chr, UG_S16 x, UG_S16 y, UG_COLOR fc, UG_COLOR bc, const UG_FONT* font);
 
 /* Pointer to the gui */
-static UG_GUI* gui;
+static UG_GUI* gui = NULL;
 
 #ifdef USE_FONT_4X6
 __UG_FONT_DATA unsigned char font_4x6[256][6] = {
@@ -14932,6 +14932,11 @@ void UG_DriverDisable(UG_U8 type)
 void UG_Update(void)
 {
     UG_WINDOW* wnd;
+
+    if(gui == NULL)
+    {
+        return;
+    }
 
     /* Is somebody waiting for this update? */
     if (gui->state & UG_SATUS_WAIT_FOR_UPDATE)

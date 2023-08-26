@@ -62,4 +62,6 @@
 #define CMB_CPU_PLATFORM_TYPE 1
 #endif
 
+#endif
+
 #endif /* _CMB_CFG_H_ */

@@ -158,7 +158,7 @@ static int _bLis3dhReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data
     else
     {
         reg = reg | 0x80;
-        bHalI2CMemRead(&_if->_if._i2c, reg, data, len);
+        bHalI2CMemRead(&_if->_if._i2c, reg, 1, data, len);
     }
     return 0;
 }
@@ -176,7 +176,7 @@ static int _bLis3dhWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *dat
     }
     else
     {
-        bHalI2CMemWrite(&_if->_if._i2c, reg, data, len);
+        bHalI2CMemWrite(&_if->_if._i2c, reg, 1, data, len);
     }
     return 0;
 }
