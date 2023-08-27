@@ -37,8 +37,9 @@ extern "C" {
 
 /*Includes ----------------------------------------------*/
 #include <stdint.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -58,9 +59,9 @@ extern "C" {
 #define B_SAFE_INVOKE(f, ...) \
     do                        \
     {                         \
-        if (f != NULL)        \
+        if ((f) != NULL)      \
         {                     \
-            f(__VA_ARGS__);   \
+            (f)(__VA_ARGS__); \
         }                     \
     } while (0)
 

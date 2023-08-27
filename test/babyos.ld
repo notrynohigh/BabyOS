@@ -114,10 +114,20 @@ SECTIONS
   {
     . = ALIGN(4);
     PROVIDE(__start_b_mod_param = .);
-    KEEP(*(SORT(.b_mod_state*)))
+    KEEP(*(SORT(.b_mod_param*)))
     PROVIDE(__stop_b_mod_param = .);
     . = ALIGN(4);
   } 
+
+  .b_srv_protocol :
+  {
+    . = ALIGN(4);
+    PROVIDE(__start_b_srv_protocol = .);
+    KEEP(*(SORT(.b_srv_protocol*)))
+    PROVIDE(__stop_b_srv_protocol = .);
+    . = ALIGN(4);
+  } 
+
 
   /* BabyOS Section ---------end----*/
 

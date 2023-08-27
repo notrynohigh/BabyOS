@@ -1,0 +1,13 @@
+#服务配置
+menu "Services Configuration"
+
+config _BOS_SERVICES_ENABLE
+    bool "Services Enable/Disable"
+    default y
+
+config _PROTOCOL_SERVICE_ENABLE
+    bool "Protocol Service Enable/Disable"
+    default n
+    depends on _BOS_SERVICES_ENABLE
+
+endmenu

@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_mod_ymodem.h
+ * \file        b_services.h
  * \version     v0.0.1
- * \date        2020/02/12
+ * \date        2023/08/26
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2020 Bean
+ * Copyright (c) 2023 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,85 +28,16 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_MOD_YMODEM_H__
-#define __B_MOD_YMODEM_H__
+#ifndef __B_SERVICES_H__
+#define __B_SERVICES_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
 
-#include "b_config.h"
-
-#if (defined(_YMODEM_ENABLE) && (_YMODEM_ENABLE == 1))
-
-#include "b_mod_proto_type.h"
-
-/**
- * \addtogroup BABYOS
- * \{
- */
-
-/**
- * \addtogroup MODULES
- * \{
- */
-
-/**
- * \addtogroup YMODEM
- * \{
- */
-
-/**
- * \defgroup YMODEM_Exported_TypesDefinitions
- * \{
- */
-
-/**
- * \}
- */
-
-/**
- * \defgroup YMODEM_Exported_Defines
- * \{
- */
-
-#define YMODEM_SOH 0x01
-#define YMODEM_STX 0x02
-#define YMODEM_EOT 0x04
-#define YMODEM_ACK 0x06
-#define YMODEM_NAK 0x15
-#define YMODEM_CAN 0x18
-#define YMODEM_C 0x43
-
-/**
- * \}
- */
-
-/**
- * \defgroup YMODEM_Exported_Functions
- * \{
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-#endif
+#include "b_srv_protocol.h"
 
 #ifdef __cplusplus
 }
@@ -114,4 +45,4 @@ extern "C" {
 
 #endif
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+/************************ Copyright (c) 2023 Bean *****END OF FILE****/

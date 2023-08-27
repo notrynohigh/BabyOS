@@ -28,6 +28,7 @@ def mconfig(argv):
     kconf_list += "source " + "\"" + argv[1] + "/modules/Kconfig" + "\"" + "\n"
     kconf_list += "source " + "\"" + argv[1] + "/thirdparty/Kconfig" + "\"" + "\n"
     kconf_list += "source " + "\"" + argv[1] + "/utils/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + argv[1] + "/services/Kconfig" + "\"" + "\n"
     print(kconf_list)
     kconf_fd.write(kconf_list)
     kconf_fd.close()

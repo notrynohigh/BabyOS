@@ -42,6 +42,8 @@ extern "C" {
 
 #if (defined(_MODBUS_ENABLE) && (_MODBUS_ENABLE == 1))
 
+#include "b_mod_proto_type.h"
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -61,40 +63,27 @@ extern "C" {
  * \defgroup MODBUS_Exported_TypesDefinitions
  * \{
  */
+#pragma pack(1)
 typedef struct
 {
-    uint8_t   func;
-    uint8_t   reg_num;
-    uint16_t *reg_value;
-} bMB_ReadResult_t;
-
-typedef struct
-{
-    uint8_t  func;
-    uint16_t reg;
+    uint8_t  slave_addr;
+    uint8_t  reserved1;
+    uint16_t base_reg;
     uint16_t reg_num;
-} bMB_WriteResult_t;
+    uint16_t reserved2;
+    uint16_t reg_value[1];
+} bModbusWrite_t;
 
 typedef struct
 {
-    uint8_t type;  // 0: read     1:write
-    union
-    {
-        bMB_ReadResult_t  r_result;
-        bMB_WriteResult_t w_result;
-    } result;
-} bMB_SlaveDeviceData_t;
+    uint8_t  slave_addr;
+    uint8_t  reserved;
+    uint16_t base_reg;
+    uint16_t reg_num;
+} bModbusRead_t;
 
-typedef void (*pMB_Send_t)(uint8_t *pbuf, uint16_t len);
-typedef void (*pMB_Callback_t)(bMB_SlaveDeviceData_t *pdata);
+#pragma pack()
 
-typedef struct
-{
-    pMB_Send_t     f;
-    pMB_Callback_t cb;
-} bMB_Info_t;
-
-typedef bMB_Info_t bModbusInstance_t;
 /**
  * \}
  */
@@ -103,10 +92,9 @@ typedef bMB_Info_t bModbusInstance_t;
  * \defgroup MODBUS_Exported_Defines
  * \{
  */
-
-#define bMODBUS_INSTANCE(name, pSendData, pCallback) \
-    bModbusInstance_t name = {.f = pSendData, .cb = pCallback};
-
+#define MODBUS_RTU_READ_REGS (0x3)
+#define MODBUS_RTU_WRITE_REGS (0x10)
+#define MODBUS_RTU_WRITE_REG (0x06)
 /**
  * \}
  */
@@ -124,12 +112,7 @@ typedef bMB_Info_t bModbusInstance_t;
  * \defgroup MODBUS_Exported_Functions
  * \{
  */
-///< pModbusInstance \ref  bMODBUS_INSTANCE
-int bMB_ReadRegs(bModbusInstance_t *pModbusInstance, uint8_t addr, uint8_t func, uint16_t reg,
-                 uint16_t num);
-int bMB_WriteRegs(bModbusInstance_t *pModbusInstance, uint8_t addr, uint8_t func, uint16_t reg,
-                  uint16_t num, uint16_t *reg_value);
-int bMB_FeedReceivedData(bModbusInstance_t *pModbusInstance, uint8_t *pbuf, uint16_t len);
+
 /**
  * \}
  */

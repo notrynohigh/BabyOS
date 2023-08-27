@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_mod_protocol.h
- * \version     v0.1.0
- * \date        2020/03/15
+ * \file        b_srv_protocol.h
+ * \version     v0.0.1
+ * \date        2023/08/27
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2020 Bean
+ * Copyright (c) 2023 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_MOD_PROTOCOL_H__
-#define __B_MOD_PROTOCOL_H__
+#ifndef __B_SRV_PROTOCOL_H__
+#define __B_SRV_PROTOCOL_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,9 +40,9 @@ extern "C" {
 
 #include "b_config.h"
 
-#if (defined(_PROTO_ENABLE) && (_PROTO_ENABLE == 1))
+#if (defined(_PROTOCOL_SERVICE_ENABLE) && (_PROTOCOL_SERVICE_ENABLE == 1))
 
-#include "b_mod_proto_type.h"
+#include "modules/inc/b_mod_proto_type.h"
 
 /**
  * \addtogroup BABYOS
@@ -50,7 +50,7 @@ extern "C" {
  */
 
 /**
- * \addtogroup MODULES
+ * \addtogroup SERVICES
  * \{
  */
 
@@ -63,42 +63,17 @@ extern "C" {
  * \defgroup PROTOCOL_Exported_TypesDefinitions
  * \{
  */
-#if PROTO_FID_SIZE == 1
-typedef uint8_t bProtoID_t;
-#define INVALID_ID 0XFF
-#elif PROTO_FID_SIZE == 2
-typedef uint16_t bProtoID_t;
-#define INVALID_ID 0XFFFF
-#else
-typedef uint32_t bProtoID_t;
-#define INVALID_ID 0XFFFFFFFF
-#endif
 
-#if PROTO_FLEN_SIZE == 1
-typedef uint8_t bProtoLen_t;
-#else
-typedef uint16_t bProtoLen_t;
-#endif
-
-/**
-|      |                    |                     |       |          |       |
-| :--- | ------------------ | ------------------- | ----- | -------- | ----- |
-| Head | Device ID          | Len（cmd+param）    | Cmd   |  Param   | Check |
-| 0xFE | sizeof(bProtoID_t) | sizeof(bProtoLen_t) | 1Byte | 0~nBytes | 1Byte |
-*/
-#pragma pack(1)
+typedef void *bProtSrvId_t;
 
 typedef struct
 {
-    uint8_t     head;
-    bProtoID_t  device_id;
-    bProtoLen_t len;
-    uint8_t     cmd;
-} bProtocolHead_t;
+    const char     *name;
+    bProtocolAttr_t attr;
+} bProtSrvAttr_t;
 
-#pragma pack()
-
-typedef int (*pdispatch)(uint8_t cmd, uint8_t *param, bProtoLen_t param_len);
+typedef int (*bProtSrvCallback_t)(bProtoCbParam_t *param);
+typedef int (*bProtSrvGetInfo_t)(bProtoInfoType_t type, uint8_t *buf, uint16_t buf_len);
 
 /**
  * \}
@@ -109,7 +84,16 @@ typedef int (*pdispatch)(uint8_t cmd, uint8_t *param, bProtoLen_t param_len);
  * \{
  */
 
-#define PROTOCOL_HEAD 0xFE
+// proto_name \ref "bos": babyos私有协议
+//                 "modbus", "xmodem128", "ymodem"
+// callback \ref bProtSrvCallback_t
+#define B_PROT_SRV_CREATE_ATTR(attr_name, proto_name, _callback) \
+    static bProtSrvAttr_t attr_name = {                          \
+        .name          = proto_name,                             \
+        .attr.callback = _callback,                              \
+        .attr.parse    = NULL,                                   \
+        .attr.package  = NULL,                                   \
+    }
 
 /**
  * \}
@@ -119,6 +103,20 @@ typedef int (*pdispatch)(uint8_t cmd, uint8_t *param, bProtoLen_t param_len);
  * \defgroup PROTOCOL_Exported_Functions
  * \{
  */
+// attr \ref B_PROT_SRV_CREATE_ATTR
+// pfunc 提供函数给协议层获取信息
+bProtSrvId_t bProtSrvInit(bProtSrvAttr_t *attr, bProtSrvGetInfo_t func);
+
+// in/i_len 需要解析的数据和数据长度
+// out/o_len 已经组包完成，需要回复的数据
+// retval 返回值是，out中的有效数据长度。-1表示打包失败
+int bProtSrvParse(bProtSrvId_t id, uint8_t *in, uint8_t i_len, uint8_t *out, uint16_t o_len);
+
+// cmd 是需要打包什么数据 \ref bProtoCmd_t
+// buf 打包后的数据存放区
+// buf_len buf的长度
+// retval buf中有效数据长度，-1表示打包失败
+int bProtSrvPackage(bProtSrvId_t id, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len);
 
 /**
  * \}
@@ -135,6 +133,7 @@ typedef int (*pdispatch)(uint8_t cmd, uint8_t *param, bProtoLen_t param_len);
 /**
  * \}
  */
+
 #endif
 
 #ifdef __cplusplus
@@ -143,4 +142,4 @@ typedef int (*pdispatch)(uint8_t cmd, uint8_t *param, bProtoLen_t param_len);
 
 #endif
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+/************************ Copyright (c) 2023 Bean *****END OF FILE****/

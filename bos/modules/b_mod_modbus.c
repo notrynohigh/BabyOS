@@ -37,7 +37,6 @@
 #include <string.h>
 
 #include "algorithm/inc/algo_crc.h"
-#include "utils/inc/b_util_log.h"
 
 /**
  * \addtogroup BABYOS
@@ -67,7 +66,7 @@ typedef struct
     uint16_t reg;  // Big endian
     uint16_t num;  // Big endian
     uint16_t crc;  // Little endian
-} bMB_RTU_ReadRegs_t;
+} bModbusReadRegs_t;
 
 typedef struct
 {
@@ -75,7 +74,7 @@ typedef struct
     uint8_t func;
     uint8_t len;
     uint8_t buf[1];
-} bMB_RTU_ReadRegsAck_t;
+} bModbusReadRegsAck_t;
 
 typedef struct
 {
@@ -84,8 +83,17 @@ typedef struct
     uint16_t reg;  // Big endian
     uint16_t num;  // Big endian
     uint8_t  len;
-    uint8_t  param[1];
-} bMB_RTU_WriteRegs_t;
+    uint16_t param[1];
+} bModbusWriteRegs_t;
+
+typedef struct
+{
+    uint8_t  addr;
+    uint8_t  func;
+    uint16_t reg;  // Big endian
+    uint16_t value;
+    uint16_t crc;  // Little endian
+} bModbusWriteReg_t;
 
 typedef struct
 {
@@ -94,7 +102,16 @@ typedef struct
     uint16_t reg;  // Big endian
     uint16_t num;  // Big endian
     uint16_t crc;  // Little endian
-} bMB_RTU_WriteRegsAck_t;
+} bModbusWriteRegsAck_t;
+
+typedef struct
+{
+    uint8_t  addr;
+    uint8_t  func;
+    uint16_t reg;  // Big endian
+    uint16_t value;
+    uint16_t crc;  // Little endian
+} bModbusWriteRegAck_t;
 
 #pragma pack()
 /**
@@ -123,7 +140,7 @@ typedef struct
  * \defgroup MODBUS_Private_Variables
  * \{
  */
-static uint8_t bMB_SendBuff[MODBUS_BUF_SIZE];
+
 /**
  * \}
  */
@@ -148,47 +165,137 @@ static uint16_t _bMBCRC16(uint8_t *pucFrame, uint16_t usLen)
     return ((uint16_t)(crc_ret & 0xffff));
 }
 
-static int _bMB_CheckRTUReadACK(uint8_t *psrc, uint16_t len)
+static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
 {
-    if (psrc == NULL)
-    {
-        return -1;
-    }
-    bMB_RTU_ReadRegsAck_t *phead = (bMB_RTU_ReadRegsAck_t *)psrc;
+    int              ret   = -1;
+    int              len   = 0;
+    bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
+    bProtoCbParam_t  param;
 
-    if ((sizeof(bMB_RTU_ReadRegsAck_t) - 1 + phead->len + 2) > len)
+    if (i_len < 2)
     {
         return -1;
     }
 
-    uint16_t crc  = _bMBCRC16(psrc, sizeof(bMB_RTU_ReadRegsAck_t) - 1 + phead->len);
-    uint16_t crc2 = ((uint16_t *)(psrc + sizeof(bMB_RTU_ReadRegsAck_t) - 1 + phead->len))[0];
-    if (crc != crc2)
+    if (in[1] == MODBUS_RTU_READ_REGS)
     {
-        b_log_e("crc error %x %x\r\n", crc, crc2);
-        return -1;
+        bModbusReadRegsAck_t *r_ack = (bModbusReadRegsAck_t *)in;
+        len                         = sizeof(bModbusReadRegsAck_t) - 1 + r_ack->len + 2;
+        if (i_len < len)
+        {
+            return -1;
+        }
+        param._modbus.slave_id  = r_ack->addr;
+        param._modbus.func_code = r_ack->func;
+        param._modbus.base_reg  = 0;
+        param._modbus.reg_num   = r_ack->len / 2;
+        param._modbus.reg_value = (uint16_t *)r_ack->buf;
+        B_SAFE_INVOKE(pattr->callback, &param);
     }
+    else if (in[1] == MODBUS_RTU_WRITE_REG)
+    {
+        bModbusWriteRegAck_t *w_1_ack = (bModbusWriteRegAck_t *)in;
+        len                           = sizeof(bModbusWriteRegAck_t);
+        if (i_len < len)
+        {
+            return -1;
+        }
+        param._modbus.slave_id  = w_1_ack->addr;
+        param._modbus.func_code = w_1_ack->func;
+        param._modbus.base_reg  = L2B_B2L_16b(w_1_ack->reg);
+        param._modbus.reg_num   = 1;
+        param._modbus.reg_value = (uint16_t *)&w_1_ack->value;
+        B_SAFE_INVOKE(pattr->callback, &param);
+    }
+    else if (in[1] == MODBUS_RTU_WRITE_REGS)
+    {
+        bModbusWriteRegsAck_t *w_ack = (bModbusWriteRegsAck_t *)in;
+        len                          = sizeof(bModbusWriteRegsAck_t);
+        if (i_len < len)
+        {
+            return -1;
+        }
+        param._modbus.slave_id  = w_ack->addr;
+        param._modbus.func_code = w_ack->func;
+        param._modbus.base_reg  = L2B_B2L_16b(w_ack->reg);
+        param._modbus.reg_num   = L2B_B2L_16b(w_ack->num);
+        param._modbus.reg_value = NULL;
+        B_SAFE_INVOKE(pattr->callback, &param);
+    }
+
     return 0;
 }
 
-static int _bMB_CheckRTUWriteACK(uint8_t *psrc, uint16_t len)
+static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
-    if (psrc == NULL)
+    int              ret   = -1;
+    int              i     = 0;
+    int              len   = 0;
+    uint16_t         crc   = 0;
+    bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
+    if (buf == NULL || buf_len == 0)
     {
         return -1;
     }
-    if (sizeof(bMB_RTU_WriteRegsAck_t) > len)
+
+    if (cmd == B_MODBUS_CMD_READ_REG)
     {
-        return -1;
+        bModbusRead_t *param = (bModbusRead_t *)buf;
+        len                  = sizeof(bModbusRead_t) + 2;
+        if (buf_len < len)
+        {
+            return -1;
+        }
+        param->base_reg = L2B_B2L_16b(param->base_reg);
+        param->reg_num  = L2B_B2L_16b(param->reg_num);
+        param->reserved = MODBUS_RTU_READ_REGS;
     }
-    uint16_t crc  = _bMBCRC16(psrc, sizeof(bMB_RTU_WriteRegsAck_t) - 2);
-    uint16_t crc2 = ((uint16_t *)(psrc + (sizeof(bMB_RTU_WriteRegsAck_t) - 2)))[0];
-    if (crc != crc2)
+    else if (cmd == B_MODBUS_CMD_WRITE_REG)
     {
-        b_log_e("crc error %x %x\r\n", crc, crc2);
-        return -1;
+        bModbusWrite_t *param = (bModbusWrite_t *)buf;
+        if (param->reg_num == 0)
+        {
+            return -1;
+        }
+        if (param->reg_num == 1)
+        {
+            len = sizeof(bModbusWriteReg_t);
+        }
+        else
+        {
+            len = sizeof(bModbusWriteRegs_t) + param->reg_num * 2;
+        }
+        if (buf_len < len)
+        {
+            return -1;
+        }
+        param->base_reg = L2B_B2L_16b(param->base_reg);
+        if (param->reg_num == 1)
+        {
+            bModbusWriteReg_t *frame = (bModbusWriteReg_t *)buf;
+            frame->func              = MODBUS_RTU_WRITE_REG;
+            frame->value             = param->reg_value[0];
+        }
+        else
+        {
+            bModbusWriteRegs_t *frame = (bModbusWriteRegs_t *)buf;
+            frame->len                = param->reg_num * 2;
+            param->reg_num            = L2B_B2L_16b(param->reg_num);
+            for (i = 0; i < frame->len; i++)
+            {
+                ((uint8_t *)frame->param)[i] = ((uint8_t *)param->reg_value)[i];
+            }
+        }
     }
-    return 0;
+
+    if (len > 0)
+    {
+        crc          = _bMBCRC16(buf, len - 2);
+        buf[len - 2] = ((crc >> 0) & 0xff);
+        buf[len - 1] = ((crc >> 8) & 0xff);
+    }
+
+    return len;
 }
 
 /**
@@ -200,108 +307,7 @@ static int _bMB_CheckRTUWriteACK(uint8_t *psrc, uint16_t len)
  * \{
  */
 
-/**
- * \brief Modbus RTU Read Regiter
- * \param pModbusInstance Pointr to the modbus instance
- * \param addr Device address
- * \param func Function code
- * \param reg  Register address
- * \param num  the number of Register to be read
- * \retval Result
- *          \arg 0  OK
- *          \arg -1 ERR
- */
-int bMB_ReadRegs(bModbusInstance_t *pModbusInstance, uint8_t addr, uint8_t func, uint16_t reg,
-                 uint16_t num)
-{
-    bMB_RTU_ReadRegs_t wd;
-    if (pModbusInstance == NULL)
-    {
-        return -1;
-    }
-    wd.addr = addr;
-    wd.func = func;
-    wd.reg  = L2B_B2L_16b(reg);
-    wd.num  = L2B_B2L_16b(num);
-    wd.crc  = _bMBCRC16((uint8_t *)&wd, sizeof(bMB_RTU_ReadRegs_t) - sizeof(wd.crc));
-    pModbusInstance->f((uint8_t *)&wd, sizeof(bMB_RTU_ReadRegs_t));
-    return 0;
-}
-
-/**
- * \brief Modbus write regs
- * \param pModbusInstance Pointr to the modbus instance
- * \param addr Device address
- * \param func Function code
- * \param reg  Register address
- * \param num  The number of Register to write to
- * \param reg_value  Pointer to the register value
- * \retval Result
- *          \arg 0  OK
- *          \arg -1 ERR
- */
-int bMB_WriteRegs(bModbusInstance_t *pModbusInstance, uint8_t addr, uint8_t func, uint16_t reg,
-                  uint16_t num, uint16_t *reg_value)
-{
-    bMB_RTU_WriteRegs_t *phead   = (bMB_RTU_WriteRegs_t *)bMB_SendBuff;
-    int                  i       = 0;
-    uint16_t             tmp_len = 0;
-    if (pModbusInstance == NULL || reg_value == NULL)
-    {
-        return -1;
-    }
-    phead->addr = addr;
-    phead->func = func;
-    phead->reg  = L2B_B2L_16b(reg);
-    phead->num  = L2B_B2L_16b(num);
-    phead->len  = num * 2;
-    memcpy(phead->param, (uint8_t *)reg_value, phead->len);
-    for (i = 0; i < num; i++)
-    {
-        ((uint16_t *)phead->param)[i] = L2B_B2L_16b(((uint16_t *)phead->param)[i]);
-    }
-    tmp_len                                 = sizeof(bMB_RTU_WriteRegs_t) - 1 + phead->len;
-    ((uint16_t *)&bMB_SendBuff[tmp_len])[0] = _bMBCRC16(bMB_SendBuff, tmp_len);
-    pModbusInstance->f(bMB_SendBuff, tmp_len + 2);
-    return 0;
-}
-
-int bMB_FeedReceivedData(bModbusInstance_t *pModbusInstance, uint8_t *pbuf, uint16_t len)
-{
-    bMB_SlaveDeviceData_t   _data;
-    int                     i      = 0;
-    int                     retval = -1;
-    bMB_RTU_ReadRegsAck_t  *pr     = (bMB_RTU_ReadRegsAck_t *)pbuf;
-    bMB_RTU_WriteRegsAck_t *pw     = (bMB_RTU_WriteRegsAck_t *)pbuf;
-    if (pbuf == NULL)
-    {
-        return -1;
-    }
-    if (_bMB_CheckRTUReadACK(pbuf, len) == 0)
-    {
-        _data.type                      = 0;
-        _data.result.r_result.func      = pr->func;
-        _data.result.r_result.reg_num   = pr->len / 2;
-        _data.result.r_result.reg_value = (uint16_t *)pr->buf;
-
-        for (i = 0; i < _data.result.r_result.reg_num; i++)
-        {
-            _data.result.r_result.reg_value[i] = L2B_B2L_16b(_data.result.r_result.reg_value[i]);
-        }
-        pModbusInstance->cb(&_data);
-        retval = 0;
-    }
-    else if (_bMB_CheckRTUWriteACK(pbuf, len) == 0)
-    {
-        _data.type                    = 1;
-        _data.result.w_result.func    = pw->func;
-        _data.result.w_result.reg     = L2B_B2L_16b(pw->reg);
-        _data.result.w_result.reg_num = L2B_B2L_16b(pw->num);
-        pModbusInstance->cb(&_data);
-        retval = 0;
-    }
-    return retval;
-}
+bPROTOCOL_REG_INSTANCE("modbus", _bModbusRTUParse, _bModbusRTUPackage);
 
 /**
  * \}

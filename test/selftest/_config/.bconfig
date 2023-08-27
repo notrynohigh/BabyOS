@@ -161,3 +161,10 @@ _MEMP_ENABLE=y
 MEMP_MAX_SIZE=10240
 # _MEMP_MONITOR_ENABLE is not set
 # end of Utils Configuration
+
+#
+# Services Configuration
+#
+_BOS_SERVICES_ENABLE=y
+_PROTOCOL_SERVICE_ENABLE=y
+# end of Services Configuration

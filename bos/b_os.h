@@ -48,6 +48,10 @@ extern "C" {
 #define _BOS_MODULES_ENABLE (0)
 #endif
 
+#ifndef _BOS_SERVICES_ENABLE
+#define _BOS_SERVICES_ENABLE (0)
+#endif
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -80,6 +84,9 @@ extern "C" {
 #include "drivers/inc/b_driver.h"
 #include "utils/inc/b_utils.h"
 
+#if _BOS_SERVICES_ENABLE
+#include "services/inc/b_services.h"
+#endif
 
 #if _BOS_MODULES_ENABLE
 #include "modules/inc/b_modules.h"

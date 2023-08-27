@@ -39,7 +39,8 @@ $(SOURCE_ROOT)/bos/drivers/sfud/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/ugui/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/coremark/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/cjson/*.c  \
-$(SOURCE_ROOT)/bos/thirdparty/unity/*.c 
+$(SOURCE_ROOT)/bos/thirdparty/unity/*.c  \
+$(SOURCE_ROOT)/bos/services/*.c
 
 BOS_DRV_SOURCE_DIR = \
 $(SOURCE_ROOT)/bos/drivers/*.c

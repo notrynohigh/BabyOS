@@ -42,6 +42,8 @@ extern "C" {
 
 #if (defined(_XMODEM128_ENABLE) && (_XMODEM128_ENABLE == 1))
 
+#include "b_mod_proto_type.h"
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -61,9 +63,6 @@ extern "C" {
  * \defgroup XMODEM128_Exported_TypesDefinitions
  * \{
  */
-
-typedef void (*pcb_t)(uint16_t number, uint8_t *pbuf);
-typedef void (*psend)(uint8_t cmd);
 
 /**
  * \}
@@ -88,11 +87,6 @@ typedef void (*psend)(uint8_t cmd);
  * \defgroup XMODEM128_Exported_Functions
  * \{
  */
-
-int bXmodem128Init(pcb_t fcb, psend fs);
-int bXmodem128Parse(uint8_t *pbuf, uint8_t len);
-int bXmodem128Start(void);
-int bXmodem128Stop(void);
 
 /**
  * \}

@@ -112,6 +112,8 @@
 #define LOG_UART 0
 #define _MEMP_ENABLE 1
 #define MEMP_MAX_SIZE 10240
+#define _BOS_SERVICES_ENABLE 1
+#define _PROTOCOL_SERVICE_ENABLE 1
 
 
 #include "b_type.h" 
