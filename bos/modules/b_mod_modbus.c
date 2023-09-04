@@ -167,8 +167,9 @@ static uint16_t _bMBCRC16(uint8_t *pucFrame, uint16_t usLen)
 
 static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
 {
-    int              ret   = -1;
     int              len   = 0;
+    int              i     = 0;
+    uint8_t          tmp   = 0;
     bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
     bProtoCbParam_t  param;
 
@@ -189,6 +190,12 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         param._modbus.func_code = r_ack->func;
         param._modbus.base_reg  = 0;
         param._modbus.reg_num   = r_ack->len / 2;
+        for (i = 0; i < param._modbus.reg_num; i++)
+        {
+            tmp                   = r_ack->buf[i * 2];
+            r_ack->buf[i * 2]     = r_ack->buf[i * 2 + 1];
+            r_ack->buf[i * 2 + 1] = tmp;
+        }
         param._modbus.reg_value = (uint16_t *)r_ack->buf;
         B_SAFE_INVOKE(pattr->callback, &param);
     }
@@ -204,6 +211,7 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         param._modbus.func_code = w_1_ack->func;
         param._modbus.base_reg  = L2B_B2L_16b(w_1_ack->reg);
         param._modbus.reg_num   = 1;
+        w_1_ack->value          = L2B_B2L_16b(w_1_ack->value);
         param._modbus.reg_value = (uint16_t *)&w_1_ack->value;
         B_SAFE_INVOKE(pattr->callback, &param);
     }
@@ -228,11 +236,9 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
 
 static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
-    int              ret   = -1;
-    int              i     = 0;
-    int              len   = 0;
-    uint16_t         crc   = 0;
-    bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
+    int      i   = 0;
+    int      len = 0;
+    uint16_t crc = 0;
     if (buf == NULL || buf_len == 0)
     {
         return -1;
@@ -274,16 +280,17 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
         {
             bModbusWriteReg_t *frame = (bModbusWriteReg_t *)buf;
             frame->func              = MODBUS_RTU_WRITE_REG;
-            frame->value             = param->reg_value[0];
+            frame->value             = L2B_B2L_16b(param->reg_value[0]);
         }
         else
         {
             bModbusWriteRegs_t *frame = (bModbusWriteRegs_t *)buf;
             frame->len                = param->reg_num * 2;
+            frame->func               = MODBUS_RTU_WRITE_REGS;
             param->reg_num            = L2B_B2L_16b(param->reg_num);
             for (i = 0; i < frame->len; i++)
             {
-                ((uint8_t *)frame->param)[i] = ((uint8_t *)param->reg_value)[i];
+                frame->param[i] = L2B_B2L_16b((param->reg_value)[i]);
             }
         }
     }

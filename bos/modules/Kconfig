@@ -35,11 +35,6 @@ config _MODBUS_ENABLE
     select _BOS_SERVICES_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
 
-config MODBUS_BUF_SIZE
-    int "Modbus Buffer Size"
-    default 200
-    depends on _MODBUS_ENABLE
-
 config _PROTO_ENABLE
     bool "Protocol Enable/Disable"
     default n
