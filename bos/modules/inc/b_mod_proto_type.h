@@ -95,6 +95,7 @@ typedef int (*bProtoGetInfo_t)(bProtoInfoType_t type, uint8_t *buf, uint16_t buf
 
 typedef struct
 {
+    uint32_t         reserved;
     bProtoParse_t    parse;
     bProtoPackage_t  package;
     bProtoGetInfo_t  get_info;

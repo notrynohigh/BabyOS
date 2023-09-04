@@ -196,12 +196,34 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
         }
         else if (param._ymodem.param != NULL)
         {
-            out[0] = YMODEM_ACK;
-            ret    = 1;
+            if (param._ymodem.seq == 0)
+            {
+                out[0]          = YMODEM_ACK;
+                out[1]          = YMODEM_C;
+                pattr->reserved = 0;
+                ret             = 2;
+            }
+            else
+            {
+                out[0] = YMODEM_ACK;
+                ret    = 1;
+            }
         }
         else
         {
-            ret = 0;
+            if (pattr->reserved == 0)
+            {
+                out[0]          = YMODEM_NAK;
+                pattr->reserved = 1;
+                ret             = 1;
+            }
+            else
+            {
+                out[0]          = YMODEM_ACK;
+                out[1]          = YMODEM_C;
+                pattr->reserved = 0;
+                ret             = 2;
+            }
         }
     }
     else

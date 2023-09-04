@@ -154,7 +154,7 @@ static int _bRS485Ctl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
     {
         case bCMD_485_REG_CALLBACK:
         {
-            p->cb = param;
+            p->cb = (bRS485Callback_t)param;
         }
         break;
         default:
