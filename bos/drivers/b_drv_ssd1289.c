@@ -194,20 +194,65 @@ static int _bSSD1289FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1,
     return 0;
 }
 
+static int _bSSD1289FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, uint16_t x2,
+                            uint16_t y2, uint8_t *color)
+{
+    int      i   = 0;
+    uint16_t tmp = 0;
+    if (x1 > x2)
+    {
+        tmp = x1;
+        x1  = x2;
+        x2  = tmp;
+    }
+    if (y1 > y2)
+    {
+        tmp = y1;
+        y1  = y2;
+        y2  = tmp;
+    }
+
+    if (x2 >= LCD_X_SIZE || y2 >= LCD_Y_SIZE)
+    {
+        return -1;
+    }
+
+    _bSSD1289SetWindow(pdrv, x1, y1, x2, y2);
+
+    for (i = 0; i < ((x2 - x1 + 1) * (y2 - y1 + 1)); i++)
+    {
+        _bLcdWriteData(pdrv, ((uint16_t *)color)[i]);
+    }
+    return 0;
+}
+
 static int _bSSD1289Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
-    int             retval = -1;
-    bLcdRectInfo_t *pinfo  = (bLcdRectInfo_t *)param;
+    int retval = -1;
     switch (cmd)
     {
         case bCMD_FILL_RECT:
+        {
+            bLcdRectInfo_t *pinfo = (bLcdRectInfo_t *)param;
             if (param == NULL)
             {
                 return -1;
             }
             retval =
                 _bSSD1289FillRect(pdrv, pinfo->x1, pinfo->y1, pinfo->x2, pinfo->y2, pinfo->color);
-            break;
+        }
+        break;
+        case bCMD_FILL_BMP:
+        {
+            bLcdBmpInfo_t *pinfo = (bLcdBmpInfo_t *)param;
+            if (param == NULL)
+            {
+                return -1;
+            }
+            retval =
+                _bSSD1289FillBmp(pdrv, pinfo->x1, pinfo->y1, pinfo->x2, pinfo->y2, pinfo->color);
+        }
+        break;
         default:
             break;
     }

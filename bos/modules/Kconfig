@@ -246,5 +246,41 @@ config SELECT_FDS_NUMBER
     default 32
     depends on _SELECT_ENABLE
 
+config _GUI_ENABLE
+    bool "GUI Enable/Disable"
+    default n
+    depends on _BOS_MODULES_ENABLE
+
+config _USE_UGUI
+    bool "Use Thirdparty/uGUI"
+    default y
+    depends on _GUI_ENABLE
+    select _UGUI_ENABLE
+
+choice
+    prompt "Color RGBXXX"
+    depends on _GUI_ENABLE
+    default _GUI_RGB_565
+config _GUI_RGB_888
+    bool "rgb888"
+config _GUI_RGB_565
+    bool "rgb565"
+endchoice
+
+config _USE_ARM_2D
+    bool "Use Thirdparty/arm-2d"
+    default n
+    depends on _GUI_ENABLE
+    select _ARM_2D_ENABLE
+
+config PFB_WIDTH
+    int "PFB block width"
+    default 16
+    depends on _USE_ARM_2D
+
+config PFB_HEIGHT
+    int "PFB block height"
+    default 16
+    depends on _USE_ARM_2D    
 
 endmenu

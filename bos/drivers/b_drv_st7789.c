@@ -257,20 +257,75 @@ static int _bST7789FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
     return 0;
 }
 
+static int _bST7789FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, uint16_t x2,
+                           uint16_t y2, uint8_t *color)
+{
+    int      i   = 0;
+    uint16_t tmp = 0;
+    if (x1 > x2)
+    {
+        tmp = x1;
+        x1  = x2;
+        x2  = tmp;
+    }
+    if (y1 > y2)
+    {
+        tmp = y1;
+        y1  = y2;
+        y2  = tmp;
+    }
+
+    if (x2 >= LCD_X_SIZE || y2 >= LCD_Y_SIZE)
+    {
+        return -1;
+    }
+
+    _bLcdWriteCmd(pdrv, 0x2a);
+    _bLcdWriteData(pdrv, x1 >> 8);
+    _bLcdWriteData(pdrv, x1);
+    _bLcdWriteData(pdrv, x2 >> 8);
+    _bLcdWriteData(pdrv, x2);
+    _bLcdWriteCmd(pdrv, 0x2b);
+    _bLcdWriteData(pdrv, y1 >> 8);
+    _bLcdWriteData(pdrv, y1);
+    _bLcdWriteData(pdrv, y2 >> 8);
+    _bLcdWriteData(pdrv, y2);
+    _bLcdWriteCmd(pdrv, 0x2C);
+
+    for (i = 0; i < ((x2 - x1 + 1) * (y2 - y1 + 1)); i++)
+    {
+        _bLcdWriteGRam(pdrv, ((uint16_t *)color)[i]);
+    }
+    return 0;
+}
+
 static int _bST7789Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
-    int             retval = -1;
-    bLcdRectInfo_t *pinfo  = (bLcdRectInfo_t *)param;
+    int retval = -1;
     switch (cmd)
     {
         case bCMD_FILL_RECT:
+        {
+            bLcdRectInfo_t *pinfo = (bLcdRectInfo_t *)param;
             if (param == NULL)
             {
                 return -1;
             }
             retval =
                 _bST7789FillRect(pdrv, pinfo->x1, pinfo->y1, pinfo->x2, pinfo->y2, pinfo->color);
-            break;
+        }
+        break;
+        case bCMD_FILL_BMP:
+        {
+            bLcdBmpInfo_t *pinfo = (bLcdBmpInfo_t *)param;
+            if (param == NULL)
+            {
+                return -1;
+            }
+            retval =
+                _bST7789FillBmp(pdrv, pinfo->x1, pinfo->y1, pinfo->x2, pinfo->y2, pinfo->color);
+        }
+        break;
         default:
             break;
     }

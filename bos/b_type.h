@@ -93,6 +93,13 @@ extern "C" {
 
 #define B_OFFSET_OF(type, member) ((uint32_t)(&((type *)0)->member))
 
+#define B_ASSERT(EXPR) \
+    if (!(EXPR))       \
+    {                  \
+        while (1)      \
+            ;          \
+    }
+
 /**
  * \}
  */

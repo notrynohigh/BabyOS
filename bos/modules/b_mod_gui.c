@@ -31,7 +31,7 @@
 
 /*Includes ----------------------------------------------*/
 #include "modules/inc/b_mod_gui.h"
-#if (defined(_UGUI_ENABLE) && (_UGUI_ENABLE == 1))
+#if (defined(_GUI_ENABLE) && (_GUI_ENABLE == 1))
 #include "core/inc/b_core.h"
 #include "drivers/inc/b_driver.h"
 #include "utils/inc/b_util_log.h"
@@ -85,9 +85,11 @@
 static bGUIInstance_t *pGUIHead    = NULL;
 static bGUIInstance_t *pGUICurrent = NULL;
 
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
 #if defined(GUI_FONT_XBF)
 UG_FONT         bGUI_XBF_Font;
 static uint32_t bGUI_XBF_FontDevice = 0;
+#endif
 #endif
 /**
  * \}
@@ -121,7 +123,7 @@ static bGUIInstance_t *_GUIId2Instance(uint32_t dev_no)
     return NULL;
 }
 
-static void _LCD_SetColorPixel(UG_S16 x, UG_S16 y, UG_COLOR c)
+static void _LCD_SetColorPixel(uint16_t x, uint16_t y, bGUIColor_t c)
 {
     int      fd    = -1;
     int      tmp_y = x;
@@ -146,11 +148,11 @@ static void _LCD_SetColorPixel(UG_S16 x, UG_S16 y, UG_COLOR c)
         return;
     }
     bLseek(fd, off * pGUICurrent->lcd_x_size + x);
-    bWrite(fd, (uint8_t *)&c, sizeof(UG_COLOR));
+    bWrite(fd, (uint8_t *)&c, sizeof(bGUIColor_t));
     bClose(fd);
 }
 
-static void _LCD_FillRect(UG_S16 x1, UG_S16 y1, UG_S16 x2, UG_S16 y2, UG_COLOR c)
+static void _LCD_FillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, bGUIColor_t c)
 {
     int            fd     = -1;
     int            retval = 0;
@@ -213,7 +215,9 @@ static void _bGUI_TouchExec()
         if (ad_val.x_ad < pGUICurrent->touch_ad_x[0] || ad_val.x_ad >= pGUICurrent->touch_ad_x[1] ||
             ad_val.y_ad < pGUICurrent->touch_ad_y[0] || ad_val.y_ad >= pGUICurrent->touch_ad_y[1])
         {
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
             UG_TouchUpdate(pGUICurrent->lcd_x_size, pGUICurrent->lcd_y_size, TOUCH_STATE_RELEASED);
+#endif
         }
         else
         {
@@ -227,9 +231,52 @@ static void _bGUI_TouchExec()
                 ad_val.x_ad = ad_val.y_ad;
                 ad_val.y_ad = pGUICurrent->lcd_x_size - 1 - tmp;
             }
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
             UG_TouchUpdate(ad_val.x_ad, ad_val.y_ad, TOUCH_STATE_PRESSED);
+#endif
         }
     }
+}
+
+static IMPL_PFB_ON_LOW_LV_RENDERING(_bGUIPFBRenderHandler)
+{
+    const arm_2d_tile_t *ptTile = &(ptPFB->tTile);
+
+    if (pGUICurrent == NULL)
+    {
+        return;
+    }
+
+    ARM_2D_UNUSED(pTarget);
+    ARM_2D_UNUSED(bIsNewFrame);
+
+    bGUIDrawBmp(ptTile->tRegion.tLocation.iX, ptTile->tRegion.tLocation.iY,
+                ptTile->tRegion.tSize.iWidth, ptTile->tRegion.tSize.iHeight, ptTile->pchBuffer);
+
+    arm_2d_helper_pfb_report_rendering_complete(&pGUICurrent->helper, (arm_2d_pfb_t *)ptPFB);
+}
+
+static IMPL_PFB_ON_DRAW(_bGUIPFBDrawHandler)
+{
+    ARM_2D_UNUSED(pTarget);
+    ARM_2D_UNUSED(bIsNewFrame);
+
+    arm_2d_region_t tBox = {
+        .tLocation = {30, 30},
+        .tSize     = {200, 100},
+    };
+
+    arm_2d_rgb16_fill_colour(ptTile, NULL, GLCD_COLOR_WHITE);
+
+    arm_2d_rgb16_fill_colour(ptTile, &tBox, GLCD_COLOR_BLACK);
+
+    tBox.tLocation.iX -= 10;
+    tBox.tLocation.iY -= 10;
+
+    arm_2d_rgb565_fill_colour_with_alpha(ptTile, &tBox, (arm_2d_color_rgb565_t){GLCD_COLOR_BLUE},
+                                         128);
+
+    return arm_fsm_rt_cpl;
 }
 
 static void _bGUI_Core()
@@ -238,9 +285,20 @@ static void _bGUI_Core()
     if (bHalGetSysTick() - tick > MS2TICKS(10))
     {
         tick = bHalGetSysTick();
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
         _bGUI_TouchExec();
+#endif
     }
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
     UG_Update();
+#endif
+
+#if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
+    if (pGUICurrent)
+    {
+        arm_2d_helper_pfb_task(&pGUICurrent->helper, NULL);
+    }
+#endif
 }
 
 BOS_REG_POLLING_FUNC(_bGUI_Core);
@@ -275,7 +333,8 @@ int bGUIRegist(bGUIInstance_t *pInstance)
         pInstance->pnext = pGUIHead->pnext;
         pGUIHead->pnext  = pInstance;
     }
-    pInstance->lcd_disp_dir            = LCD_DISP_V;
+    pInstance->lcd_disp_dir = LCD_DISP_V;
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
     pInstance->gui_handle.char_h_space = 0;
     pInstance->gui_handle.char_v_space = 0;
     UG_Init(&pInstance->gui_handle, _LCD_SetColorPixel, pInstance->lcd_x_size,
@@ -307,6 +366,41 @@ int bGUIRegist(bGUIInstance_t *pInstance)
     bGUI_XBF_Font.widths      = NULL;
     UG_FontSelect(&bGUI_XBF_Font);
 #endif
+#endif
+
+#if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
+    static uint8_t arm_2d_init_f = 0;
+    if (arm_2d_init_f == 0)
+    {
+        arm_2d_init_f = 1;
+        arm_2d_init();
+    }
+
+    if (ARM_2D_HELPER_PFB_INIT(&pInstance->helper,     //!< FPB Helper object
+                               pInstance->lcd_x_size,  //!< screen width
+                               pInstance->lcd_y_size,  //!< screen height
+                               bGUIColor_t,            //!< colour date type
+                               PFB_WIDTH,              //!< PFB block width
+                               PFB_HEIGHT,             //!< PFB block height
+                               1,                      //!< number of PFB in the PFB pool
+                               {
+                                   .evtOnLowLevelRendering =
+                                       {
+                                           //! callback for low level rendering
+                                           .fnHandler = &_bGUIPFBRenderHandler,
+                                       },
+                                   .evtOnDrawing =
+                                       {
+                                           //! callback for drawing GUI
+                                           .fnHandler = &_bGUIPFBDrawHandler,
+                                       },
+                               }) < 0)
+    {
+        //! error detected
+        B_ASSERT(0);
+    }
+#endif
+
     pGUICurrent = pInstance;
     return 0;
 }
@@ -336,7 +430,9 @@ int bGUISelect(uint32_t lcd_dev_no)
         return -1;
     }
     pGUICurrent = p;
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
     UG_SelectGUI(&p->gui_handle);
+#endif
     return 0;
 }
 
@@ -384,6 +480,7 @@ int bGUISetFontDevice(uint32_t dev_no)
     return 0;
 }
 
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
 int bGUIGetHandle(uint32_t lcd_dev_no, UG_GUI **p_gui_handle)
 {
     bGUIInstance_t *p = _GUIId2Instance(lcd_dev_no);
@@ -394,7 +491,56 @@ int bGUIGetHandle(uint32_t lcd_dev_no, UG_GUI **p_gui_handle)
     *p_gui_handle = &p->gui_handle;
     return 0;
 }
+#endif
 
+int bGUIDrawBmp(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t *bmp)
+{
+    int           fd     = -1;
+    int           i      = 0;
+    int           retval = 0;
+    bLcdBmpInfo_t info;
+    if (pGUICurrent == NULL || bmp == NULL || width == 0 || height == 0)
+    {
+        return -1;
+    }
+    fd = bOpen(pGUICurrent->lcd_dev_no, BCORE_FLAG_W);
+    if (fd < 0)
+    {
+        return -1;
+    }
+    info.x1    = x;
+    info.x2    = x + width - 1;
+    info.y1    = y;
+    info.y2    = y + height - 1;
+    info.color = (uint8_t *)bmp;
+    retval     = bCtl(fd, bCMD_FILL_BMP, &info);
+    bClose(fd);
+    if (retval >= 0)
+    {
+        return 0;
+    }
+    for (; info.x1 <= info.x2; info.x1++)
+    {
+        for (; info.y1 <= info.y2; info.y1++)
+        {
+            _LCD_SetColorPixel(info.x1, info.y1, ((uint16_t *)bmp)[i++]);
+        }
+    }
+    return 0;
+}
+
+#if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
+int bGUISetDrawHandler(uint32_t lcd_dev_no, arm_2d_helper_draw_handler_t *phandler)
+{
+    bGUIInstance_t *p = _GUIId2Instance(lcd_dev_no);
+    if (phandler == NULL || p == NULL)
+    {
+        return -1;
+    }
+    ARM_2D_HELPER_PFB_UPDATE_ON_DRAW_HANDLER(&p->helper, phandler);
+    return 0;
+}
+#endif
 /**
  * \}
  */

@@ -206,5 +206,9 @@ config _UNITY_ENABLE
     bool "Unity Enable/Disable"
     default n
 
+config _ARM_2D_ENABLE
+    bool "ARM-2D Enable/Disable"
+    default n
+
 
 endmenu

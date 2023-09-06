@@ -40,8 +40,17 @@ extern "C" {
 
 #include "b_config.h"
 
-#if (defined(_UGUI_ENABLE) && (_UGUI_ENABLE == 1))
+#if (defined(_GUI_ENABLE) && (_GUI_ENABLE == 1))
+
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
 #include "thirdparty/ugui/ugui.h"
+#endif
+
+#if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
+#include "thirdparty/arm-2d/helper/arm_2d_helper.h"
+#include "thirdparty/arm-2d/library/arm_2d.h"
+#endif
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -64,15 +73,20 @@ extern "C" {
 
 typedef struct bGUIStruct
 {
-    const uint32_t     lcd_dev_no;
-    const uint32_t     touch_dev_no;
-    const int          touch_type;
-    const uint16_t     lcd_x_size;
-    const uint16_t     lcd_y_size;
-    uint8_t            lcd_disp_dir;
-    uint16_t           touch_ad_x[2];
-    uint16_t           touch_ad_y[2];
-    UG_GUI             gui_handle;
+    const uint32_t lcd_dev_no;
+    const uint32_t touch_dev_no;
+    const int      touch_type;
+    const uint16_t lcd_x_size;
+    const uint16_t lcd_y_size;
+    uint8_t        lcd_disp_dir;
+    uint16_t       touch_ad_x[2];
+    uint16_t       touch_ad_y[2];
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
+    UG_GUI gui_handle;
+#endif
+#if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
+    arm_2d_helper_pfb_t helper;
+#endif
     struct bGUIStruct *pnext;
 } bGUIStruct_t;
 
@@ -86,6 +100,15 @@ typedef bGUIStruct_t bGUIInstance_t;
  * \defgroup GUI_Exported_Defines
  * \{
  */
+
+#if (defined(_GUI_RGB_888) && (_GUI_RGB_888 == 1))
+typedef uint32_t bGUIColor_t;
+#elif (defined(_GUI_RGB_565) && (_GUI_RGB_565 == 1))
+typedef uint16_t bGUIColor_t;
+#else
+typedef uint16_t bGUIColor_t;
+#endif
+
 #define TOUCH_TYPE_RES (0)
 #define TOUCH_TYPE_CAP (1)
 
@@ -115,7 +138,9 @@ typedef bGUIStruct_t bGUIInstance_t;
 int bGUIRegist(bGUIInstance_t *pInstance);
 
 // 通过屏的dev_no获取GUI句柄
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
 int bGUIGetHandle(uint32_t lcd_dev_no, UG_GUI **p_gui_handle);
+#endif
 
 // 选择当前操作的目标
 int bGUISelect(uint32_t lcd_dev_no);
@@ -129,6 +154,14 @@ int bGUIDispDir(uint32_t lcd_dev_no, uint8_t dir);
 
 // 如果将汉字字库存放在FLASH，通过此接口传入dev_no
 int bGUISetFontDevice(uint32_t dev_no);
+
+// 填充bmp数据
+int bGUIDrawBmp(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t *bmp);
+
+// set callback for drawing GUI
+#if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
+int bGUISetDrawHandler(uint32_t lcd_dev_no, arm_2d_helper_draw_handler_t *phandler);
+#endif
 
 /**
  * \}
