@@ -47,8 +47,9 @@ extern "C" {
 #endif
 
 #if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
-#include "thirdparty/arm-2d/helper/arm_2d_helper.h"
-#include "thirdparty/arm-2d/library/arm_2d.h"
+#include "thirdparty/arm-2d/bos_arm-2d/arm_2d.h"
+#include "thirdparty/arm-2d/bos_arm-2d/arm_2d_helper.h"
+#include "thirdparty/arm-2d/bos_arm-2d/arm_extra_controls.h"
 #endif
 
 /**
@@ -105,6 +106,8 @@ typedef bGUIStruct_t bGUIInstance_t;
 typedef uint32_t bGUIColor_t;
 #elif (defined(_GUI_RGB_565) && (_GUI_RGB_565 == 1))
 typedef uint16_t bGUIColor_t;
+#elif (defined(_GUI_RGB_8BIT) && (_GUI_RGB_8BIT == 1))
+typedef uint8_t bGUIColor_t;
 #else
 typedef uint16_t bGUIColor_t;
 #endif

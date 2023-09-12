@@ -265,6 +265,8 @@ config _GUI_RGB_888
     bool "rgb888"
 config _GUI_RGB_565
     bool "rgb565"
+config _GUI_RGB_8BIT
+    bool "rgb_8bit"    
 endchoice
 
 config _USE_ARM_2D
@@ -282,5 +284,49 @@ config PFB_HEIGHT
     int "PFB block height"
     default 16
     depends on _USE_ARM_2D    
+
+config __ARM_2D_HAS_ASYNC__
+    bool "Enable Asynchronous Programmers' model support"
+    default n
+    depends on _USE_ARM_2D
+
+config __ARM_2D_HAS_ANTI_ALIAS_TRANSFORM__
+    bool "Enable anti-alias support for all tranform operations."
+    default y
+    depends on _USE_ARM_2D
+
+config __ARM_2D_CFG_SUPPORT_COLOUR_CHANNEL_ACCESS__
+    bool "Enable support for accessing individual colour channels"
+    default y
+    depends on _USE_ARM_2D
+
+config __ARM_2D_CFG_OPTIMIZE_FOR_POINTER_LIKE_SHAPES_IN_TRANSFORM__
+    bool "Optimize the scaler version of transform operations for pointer-like resources"
+    default y
+    depends on _USE_ARM_2D
+
+config __LCD_PRINT_ENABLE
+    bool "__RTE_ACCELERATION_ARM_2D_EXTRA_LCD_PRINTF__"
+    default n
+    depends on _USE_ARM_2D
+
+config __LCD_PRINTF_CFG_TEXT_BUFFER_SIZE__
+    int "The size of the LCD printf text buffer <16-65535>"
+    default 16
+    range 16 65525
+    depends on _USE_ARM_2D  
+
+config __GLCD_CFG_SCEEN_WIDTH__
+    int "Width of the screen <8-32767>"
+    default 240
+    range 8 32767
+    depends on _USE_ARM_2D  
+
+config __GLCD_CFG_SCEEN_HEIGHT__
+    int "Height of the screen <8-32767>"
+    default 320
+    range 8 32767
+    depends on _USE_ARM_2D  
+
 
 endmenu

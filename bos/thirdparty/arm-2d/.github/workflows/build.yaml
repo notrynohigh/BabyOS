@@ -1,0 +1,36 @@
+name: Build documentation and pack
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, developing ]
+  pull_request:
+    branches: [ main, developing ]
+  release:
+    types: [published]
+jobs:
+  pack:
+    name: Generate pack
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          git fetch --tags --force
+
+      - uses: Open-CMSIS-Pack/gen-pack-action@main
+        with:
+          doxygen-version: 1.9.2
+          packchk-version: 1.3.96
+          gen-doc-script: ./documentation/gen_doc.sh
+          check-links-script: |
+            ./documentation/check_links.sh \
+              ./documentation/html/index.html \
+              ./documentation
+          doc-path: ./documentation/html
+          gen-pack-script: ./gen_pack.sh
+          gen-pack-output: ./output
+          gh-pages-branch: gh-pages
