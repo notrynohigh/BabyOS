@@ -12,9 +12,11 @@
 // #define USE_MULTITASKING
 
 /* Enable color mode */
-// #define USE_COLOR_RGB888   // RGB = 0xFF,0xFF,0xFF
+#if (defined(_GUI_RGB_888) && (_GUI_RGB_888 == 1))
+#define USE_COLOR_RGB888  // RGB = 0xFF,0xFF,0xFF
+#else
 #define USE_COLOR_RGB565  // RGB = 0bRRRRRGGGGGGBBBBB
-
+#endif
 /* Enable needed fonts here */
 // #define  USE_FONT_4X6
 // #define  USE_FONT_5X8

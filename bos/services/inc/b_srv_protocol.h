@@ -110,7 +110,7 @@ bProtSrvId_t bProtSrvInit(bProtSrvAttr_t *attr, bProtSrvGetInfo_t func);
 // in/i_len 需要解析的数据和数据长度
 // out/o_len 已经组包完成，需要回复的数据
 // retval 返回值是，out中的有效数据长度。-1表示打包失败
-int bProtSrvParse(bProtSrvId_t id, uint8_t *in, uint8_t i_len, uint8_t *out, uint16_t o_len);
+int bProtSrvParse(bProtSrvId_t id, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len);
 
 // cmd 是需要打包什么数据 \ref bProtoCmd_t
 // buf 打包后的数据存放区

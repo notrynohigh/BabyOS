@@ -123,7 +123,7 @@ static bGUIInstance_t *_GUIId2Instance(uint32_t dev_no)
     return NULL;
 }
 
-static void _LCD_SetColorPixel(uint16_t x, uint16_t y, bGUIColor_t c)
+static void _LCD_SetColorPixel(int16_t x, int16_t y, bGUIColor_t c)
 {
     int      fd    = -1;
     int      tmp_y = x;
