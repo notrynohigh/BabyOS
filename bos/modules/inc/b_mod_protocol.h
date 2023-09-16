@@ -80,6 +80,19 @@ typedef uint8_t bProtoLen_t;
 typedef uint16_t bProtoLen_t;
 #endif
 
+typedef enum
+{
+    PROTO_CMD_TEST = 0x1,
+    PROTO_CMD_UTC,
+    PROTO_CMD_FW_INFO,
+    PROTO_CMD_FDATA,
+    PROTO_CMD_OTA_RESULT,
+    PROTO_CMD_TRANS_FILE,
+} bProtocolCmd_t;
+
+#define PROTOCOL_NEED_DEFAULT_ACK(c) \
+    (c == PROTO_CMD_TEST || c == PROTO_CMD_UTC || PROTO_CMD_TRANS_FILE)
+
 /**
 |      |                    |                     |       |          |       |
 | :--- | ------------------ | ------------------- | ----- | -------- | ----- |
@@ -95,6 +108,53 @@ typedef struct
     bProtoLen_t len;
     uint8_t     cmd;
 } bProtocolHead_t;
+
+/// PROTO_CMD_TEST
+typedef struct
+{
+    char str[7];
+} bProtoTestParam_t;
+
+/// PROTO_CMD_UTC
+typedef struct
+{
+    uint32_t utc;
+} bProtoUTCParam_t;
+
+/// PROTO_CMD_FW_INFO
+typedef struct
+{
+    uint32_t size;
+    uint32_t f_crc32;
+    char     filename[64];
+} bProtoFWParam_t;
+
+/// PROTO_CMD_FDATA
+typedef struct
+{
+    uint16_t seq;
+} bProtoReqFDataParam_t;
+
+typedef struct
+{
+    uint16_t seq;
+    uint8_t  data[512];
+} bProtoFDataParam_t;
+
+/// PROTO_CMD_OTA_RESULT
+typedef struct
+{
+    uint8_t result;
+} bProtoOTAResultParam_t;
+
+/// PROTO_CMD_TRANS_FILE
+typedef struct
+{
+    uint32_t size;
+    uint32_t f_crc32;
+    uint32_t dev_no;
+    uint32_t offset;
+} bProtoTransFileParam_t;
 
 #pragma pack()
 
