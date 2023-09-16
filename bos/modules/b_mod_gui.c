@@ -238,47 +238,6 @@ static void _bGUI_TouchExec()
     }
 }
 
-static IMPL_PFB_ON_LOW_LV_RENDERING(_bGUIPFBRenderHandler)
-{
-    const arm_2d_tile_t *ptTile = &(ptPFB->tTile);
-
-    if (pGUICurrent == NULL)
-    {
-        return;
-    }
-
-    ARM_2D_UNUSED(pTarget);
-    ARM_2D_UNUSED(bIsNewFrame);
-
-    bGUIDrawBmp(ptTile->tRegion.tLocation.iX, ptTile->tRegion.tLocation.iY,
-                ptTile->tRegion.tSize.iWidth, ptTile->tRegion.tSize.iHeight, ptTile->pchBuffer);
-
-    arm_2d_helper_pfb_report_rendering_complete(&pGUICurrent->helper, (arm_2d_pfb_t *)ptPFB);
-}
-
-static IMPL_PFB_ON_DRAW(_bGUIPFBDrawHandler)
-{
-    ARM_2D_UNUSED(pTarget);
-    ARM_2D_UNUSED(bIsNewFrame);
-
-    arm_2d_region_t tBox = {
-        .tLocation = {30, 30},
-        .tSize     = {200, 100},
-    };
-
-    arm_2d_rgb16_fill_colour(ptTile, NULL, GLCD_COLOR_WHITE);
-
-    arm_2d_rgb16_fill_colour(ptTile, &tBox, GLCD_COLOR_BLACK);
-
-    tBox.tLocation.iX -= 10;
-    tBox.tLocation.iY -= 10;
-
-    arm_2d_rgb565_fill_colour_with_alpha(ptTile, &tBox, (arm_2d_color_rgb565_t){GLCD_COLOR_BLUE},
-                                         128);
-
-    return arm_fsm_rt_cpl;
-}
-
 static void _bGUI_Core()
 {
     static uint32_t tick = 0;
@@ -291,13 +250,6 @@ static void _bGUI_Core()
     }
 #if (defined(_USE_UGUI) && (_USE_UGUI == 1))
     UG_Update();
-#endif
-
-#if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
-    if (pGUICurrent)
-    {
-        arm_2d_helper_pfb_task(&pGUICurrent->helper, NULL);
-    }
 #endif
 }
 
@@ -367,40 +319,9 @@ int bGUIRegist(bGUIInstance_t *pInstance)
     UG_FontSelect(&bGUI_XBF_Font);
 #endif
 #endif
-
 #if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
-    static uint8_t arm_2d_init_f = 0;
-    if (arm_2d_init_f == 0)
-    {
-        arm_2d_init_f = 1;
-        arm_2d_init();
-    }
-
-    if (ARM_2D_HELPER_PFB_INIT(&pInstance->helper,     //!< FPB Helper object
-                               pInstance->lcd_x_size,  //!< screen width
-                               pInstance->lcd_y_size,  //!< screen height
-                               bGUIColor_t,            //!< colour date type
-                               PFB_WIDTH,              //!< PFB block width
-                               PFB_HEIGHT,             //!< PFB block height
-                               1,                      //!< number of PFB in the PFB pool
-                               {
-                                   .evtOnLowLevelRendering =
-                                       {
-                                           //! callback for low level rendering
-                                           .fnHandler = &_bGUIPFBRenderHandler,
-                                       },
-                                   .evtOnDrawing =
-                                       {
-                                           //! callback for drawing GUI
-                                           .fnHandler = &_bGUIPFBDrawHandler,
-                                       },
-                               }) < 0)
-    {
-        //! error detected
-        B_ASSERT(0);
-    }
+    arm_2d_init();
 #endif
-
     pGUICurrent = pInstance;
     return 0;
 }
@@ -530,17 +451,23 @@ int bGUIDrawBmp(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const u
 }
 
 #if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
-int bGUISetDrawHandler(uint32_t lcd_dev_no, arm_2d_helper_draw_handler_t *phandler)
+void Disp0_DrawBitmap(int16_t x, int16_t y, int16_t width, int16_t height, const uint8_t *bitmap)
 {
-    bGUIInstance_t *p = _GUIId2Instance(lcd_dev_no);
-    if (phandler == NULL || p == NULL)
-    {
-        return -1;
-    }
-    ARM_2D_HELPER_PFB_UPDATE_ON_DRAW_HANDLER(&p->helper, phandler);
-    return 0;
+    bGUIDrawBmp(x, y, width, height, bitmap);
 }
+
+int64_t arm_2d_helper_get_system_timestamp(void)
+{
+    return bHalGetSysTickPlus();
+}
+
+uint32_t arm_2d_helper_get_reference_clock_frequency(void)
+{
+    return TICK_FRQ_HZ;
+}
+
 #endif
+
 /**
  * \}
  */
