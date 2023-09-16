@@ -249,18 +249,41 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
     param._bos.param_len = phead->len - 1;
     B_SAFE_INVOKE(pattr->callback, &param);
 
-    return _bProtocolPack(pattr, phead->cmd, NULL, 0, out, o_len);
+    length = 0;
+    if (PROTOCOL_NEED_DEFAULT_ACK(param._bos.cmd))
+    {
+        length = _bProtocolPack(pattr, phead->cmd, NULL, 0, out, o_len);
+    }
+
+    return length;
 }
 
 static int _bProtocolPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
     int              ret   = -1;
     bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
+    uint8_t          tmp_buf[32];
+    uint16_t         tmp_size  = 0;
+    uint8_t          proto_cmd = 0;
     (void)pattr;
-    if (cmd >= B_PROTO_CMD_NUMBER)
+
+    if (cmd == B_BOS_REQ_FILE_DATA)
     {
-        ;
+        ((bProtoReqFDataParam_t *)tmp_buf)->seq = ((bProtoReqFDataParam_t *)buf)->seq;
+        tmp_size                                = sizeof(bProtoReqFDataParam_t);
+        proto_cmd                               = PROTO_CMD_FDATA;
     }
+    else if (cmd == B_BOS_TRANS_FILE_RESULT)
+    {
+        ((bProtoOTAResultParam_t *)tmp_buf)->result = ((bProtoOTAResultParam_t *)buf)->result;
+        tmp_size                                    = sizeof(bProtoOTAResultParam_t);
+        proto_cmd                                   = PROTO_CMD_OTA_RESULT;
+    }
+    else
+    {
+        return 0;
+    }
+    ret = _bProtocolPack(attr, proto_cmd, tmp_buf, tmp_size, buf, buf_len);
     return ret;
 }
 
