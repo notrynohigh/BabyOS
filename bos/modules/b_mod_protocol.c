@@ -218,7 +218,6 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
     bProtoID_t       id    = 0;
     int              length;
     uint8_t          crc;
-    bProtoCbParam_t  param;
 
     if (in == NULL || i_len < (sizeof(bProtocolHead_t) + 1))
     {
@@ -244,13 +243,32 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         b_log_e("crc error!%d %d", crc, in[length - 1]);
         return -1;
     }
-    param._bos.cmd       = phead->cmd;
-    param._bos.param     = &in[sizeof(bProtocolHead_t)];
-    param._bos.param_len = phead->len - 1;
-    B_SAFE_INVOKE(pattr->callback, &param);
+    if (phead->cmd == PROTO_CMD_TRANS_FILE)
+    {
+        bProtoFileInfo_t        info;
+        bProtoTransFileParam_t *param = (bProtoTransFileParam_t *)(&in[sizeof(bProtocolHead_t)]);
+
+        info.size   = param->size;
+        info.fcrc32 = param->f_crc32;
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_TRANS_FILE_INFO, &info);
+
+        bProtoFileLocation_t location;
+        location.dev    = param->dev_no;
+        location.offset = param->offset;
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_SET_FILE_LOCATION, &location);
+    }
+    else if (phead->cmd == PROTO_CMD_FDATA)
+    {
+        bProtoFileData_t    dat;
+        bProtoFDataParam_t *param = (bProtoFDataParam_t *)(&in[sizeof(bProtocolHead_t)]);
+        dat.offset                = param->seq * 512;
+        dat.size                  = 512;
+        dat.dat                   = param->data;
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_FILE_DATA, &dat);
+    }
 
     length = 0;
-    if (PROTOCOL_NEED_DEFAULT_ACK(param._bos.cmd))
+    if (PROTOCOL_NEED_DEFAULT_ACK(phead->cmd))
     {
         length = _bProtocolPack(pattr, phead->cmd, NULL, 0, out, o_len);
     }
@@ -261,21 +279,24 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
 static int _bProtocolPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
     int              ret   = -1;
-    bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
     uint8_t          tmp_buf[32];
     uint16_t         tmp_size  = 0;
     uint8_t          proto_cmd = 0;
-    (void)pattr;
 
-    if (cmd == B_BOS_REQ_FILE_DATA)
+    if (cmd == B_PROTO_REQ_FILE_DATA)
     {
-        ((bProtoReqFDataParam_t *)tmp_buf)->seq = ((bProtoReqFDataParam_t *)buf)->seq;
+        bProtoReqFileData_t req;
+        req.offset                              = ((bProtoReqFileData_t *)buf)->offset;
+        req.size                                = ((bProtoReqFileData_t *)buf)->size;
+        ((bProtoReqFDataParam_t *)tmp_buf)->seq = req.offset / 512;
         tmp_size                                = sizeof(bProtoReqFDataParam_t);
         proto_cmd                               = PROTO_CMD_FDATA;
     }
-    else if (cmd == B_BOS_TRANS_FILE_RESULT)
+    else if (cmd == B_PROTO_TRANS_FILE_RESULT)
     {
-        ((bProtoOTAResultParam_t *)tmp_buf)->result = ((bProtoOTAResultParam_t *)buf)->result;
+        uint8_t result                              = 0;
+        result                                      = buf[0];
+        ((bProtoOTAResultParam_t *)tmp_buf)->result = result;
         tmp_size                                    = sizeof(bProtoOTAResultParam_t);
         proto_cmd                                   = PROTO_CMD_OTA_RESULT;
     }

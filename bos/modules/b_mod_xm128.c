@@ -121,7 +121,7 @@ static int _bXmodem128Parse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
     int                 ret   = -1;
     bProtocolAttr_t    *pattr = (bProtocolAttr_t *)attr;
     bXmodem128Struct_t *phead = (bXmodem128Struct_t *)in;
-    bProtoCbParam_t     param;
+    bXYModemCbParam_t   param;
     if (phead->soh == XMODEM128_SOH && (phead->number | phead->xnumber) == 0xff &&
         i_len >= sizeof(bXmodem128Struct_t) &&
         _bXmodem128CalCheck(in, sizeof(bXmodem128Struct_t) - 1) == phead->check)
@@ -135,10 +135,10 @@ static int _bXmodem128Parse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
 
     if (ret != -1)
     {
-        param._xmodem.seq       = (ret == 0) ? phead->number : 0;
-        param._xmodem.param     = (ret == 0) ? phead->dat : NULL;
-        param._xmodem.param_len = (ret == 0) ? 128 : 0;
-        B_SAFE_INVOKE(pattr->callback, &param);
+        param.seq     = (ret == 0) ? phead->number : 0;
+        param.dat     = (ret == 0) ? phead->dat : NULL;
+        param.dat_len = (ret == 0) ? 128 : 0;
+        B_SAFE_INVOKE(pattr->callback, B_XYMODEM_DATA, &param);
     }
 
     if (out && o_len > 0)
@@ -168,18 +168,18 @@ static int _bXmodem128Parse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
 
 static int _bXmodem128Package(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
-    int ret   = -1;
+    int ret = -1;
     if (buf == NULL || buf_len == 0)
     {
         return -1;
     }
 
-    if (cmd == B_XMODEM_CMD_START)
+    if (cmd == B_XYMODEM_CMD_START)
     {
         buf[0] = XMODEM128_NAK;
         ret    = 1;
     }
-    if (cmd == B_XMODEM_CMD_STOP)
+    if (cmd == B_XYMODEM_CMD_STOP)
     {
         buf[0] = XMODEM128_CAN;
         ret    = 1;

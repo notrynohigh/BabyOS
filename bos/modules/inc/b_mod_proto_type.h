@@ -40,16 +40,85 @@ extern "C" {
 
 #include "b_section.h"
 
+#pragma pack(1)
+
+typedef struct
+{
+    uint8_t  seq;
+    uint8_t *dat;
+    uint16_t dat_len;
+} bXYModemCbParam_t;
+
+typedef struct
+{
+    uint8_t  slave_addr;
+    uint8_t  reserved1;
+    uint16_t base_reg;
+    uint16_t reg_num;
+    uint16_t reserved2;
+    uint16_t reg_value[1];
+} bModbusWrite_t;
+
+typedef struct
+{
+    uint8_t  slave_addr;
+    uint8_t  reserved;
+    uint16_t base_reg;
+    uint16_t reg_num;
+} bModbusRead_t;
+
+typedef struct
+{
+    uint8_t   slave_id;
+    uint8_t   func_code;
+    uint16_t  base_reg;
+    uint16_t  reg_num;
+    uint16_t *reg_value;
+} bModbusCbParm_t;
+
+typedef struct
+{
+    uint8_t  name[64];
+    uint32_t size;
+    uint32_t fcrc32;
+} bProtoFileInfo_t;
+
+typedef struct
+{
+    uint32_t dev;
+    uint32_t offset;
+} bProtoFileLocation_t;
+
+typedef struct
+{
+    uint32_t offset;
+    uint32_t size;
+} bProtoReqFileData_t;
+
+typedef struct
+{
+    uint32_t offset;
+    uint32_t size;
+    uint8_t *dat;
+} bProtoFileData_t;
+
+#define B_PROTO_TRANS_RESULT_OK 0
+#define B_PROTO_TRANS_RESULT_FAIL 1
+
+#pragma pack()
+
 typedef enum
 {
-    B_XMODEM_CMD_START,
-    B_XMODEM_CMD_STOP,
-    B_YMODEM_CMD_START,
-    B_YMODEM_CMD_STOP,
-    B_MODBUS_CMD_READ_REG,
-    B_MODBUS_CMD_WRITE_REG,
-    B_BOS_REQ_FILE_DATA,
-    B_BOS_TRANS_FILE_RESULT,
+    B_XYMODEM_CMD_START,        // package [null],
+    B_XYMODEM_CMD_STOP,         // package [null]
+    B_XYMODEM_DATA,             // callback [bXYModemCbParam_t]
+    B_MODBUS_CMD_READ_REG,      // pakage [bModbusRead_t], callback [bModbusCbParm_t]
+    B_MODBUS_CMD_WRITE_REG,     // pakage [bModbusWrite_t], callback [bModbusCbParm_t]
+    B_PROTO_TRANS_FILE_INFO,    // callback [bProtoFileInfo_t]
+    B_PROTO_SET_FILE_LOCATION,  // callback [bProtoFileLocation_t]
+    B_PROTO_REQ_FILE_DATA,      // package [bProtoReqFileData_t]
+    B_PROTO_FILE_DATA,          // callback [bProtoFileData_t]
+    B_PROTO_TRANS_FILE_RESULT,  // package [uint8_t]
     B_PROTO_CMD_NUMBER,
 } bProtoCmd_t;
 
@@ -59,38 +128,7 @@ typedef enum
     B_PROTO_INFO_NUMBER,
 } bProtoInfoType_t;
 
-typedef union
-{
-    struct
-    {
-        uint8_t  cmd;
-        uint8_t *param;
-        uint16_t param_len;
-    } _bos;
-    struct
-    {
-        uint8_t  seq;
-        uint8_t *param;
-        uint16_t param_len;
-    } _xmodem;
-
-    struct
-    {
-        uint8_t  seq;
-        uint8_t *param;
-        uint16_t param_len;
-    } _ymodem;
-    struct
-    {
-        uint8_t   slave_id;
-        uint8_t   func_code;
-        uint16_t  base_reg;
-        uint16_t  reg_num;
-        uint16_t *reg_value;
-    } _modbus;
-} bProtoCbParam_t;
-
-typedef int (*bProtoCallback_t)(bProtoCbParam_t *param);
+typedef int (*bProtoCallback_t)(bProtoCmd_t cmd, void *param);
 typedef int (*bProtoParse_t)(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len);
 typedef int (*bProtoPackage_t)(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len);
 typedef int (*bProtoGetInfo_t)(bProtoInfoType_t type, uint8_t *buf, uint16_t buf_len);
