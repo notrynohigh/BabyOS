@@ -144,9 +144,8 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
     int                 ret   = -1;
     bProtocolAttr_t    *pattr = (bProtocolAttr_t *)attr;
     bYmodem128Struct_t *phead = (bYmodem128Struct_t *)in;
-    bProtoCbParam_t     param;
+    bXYModemCbParam_t   param;
     uint16_t            crc = 0;
-    uint8_t             seq = 0;
     if (phead->soh == YMODEM_SOH && (phead->number | phead->xnumber) == 0xff &&
         i_len >= sizeof(bYmodem128Struct_t))
     {
@@ -154,10 +153,10 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
         if (((crc & 0xff00) >> 8) == in[sizeof(bYmodem128Struct_t) - 2] ||
             (crc & 0xff) == in[sizeof(bYmodem128Struct_t) - 1])
         {
-            param._ymodem.seq       = phead->number;
-            param._ymodem.param     = phead->dat;
-            param._ymodem.param_len = 128;
-            ret                     = 0;
+            param.seq     = phead->number;
+            param.dat     = phead->dat;
+            param.dat_len = 128;
+            ret           = 0;
         }
     }
     else if (phead->soh == YMODEM_STX && (phead->number | phead->xnumber) == 0xff &&
@@ -167,23 +166,23 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
         if (((crc & 0xff00) >> 8) == in[sizeof(bYmodem1kStruct_t) - 2] ||
             (crc & 0xff) == in[sizeof(bYmodem1kStruct_t) - 1])
         {
-            param._ymodem.seq       = phead->number;
-            param._ymodem.param     = phead->dat;
-            param._ymodem.param_len = 1024;
-            ret                     = 0;
+            param.seq     = phead->number;
+            param.dat     = phead->dat;
+            param.dat_len = 1024;
+            ret           = 0;
         }
     }
     else if (phead->soh == YMODEM_EOT)
     {
-        param._ymodem.seq       = 0;
-        param._ymodem.param     = NULL;
-        param._ymodem.param_len = 0;
-        ret                     = 0;
+        param.seq     = 0;
+        param.dat     = NULL;
+        param.dat_len = 0;
+        ret           = 0;
     }
 
     if (ret != -1)
     {
-        B_SAFE_INVOKE(pattr->callback, &param);
+        B_SAFE_INVOKE(pattr->callback, B_XYMODEM_DATA, &param);
     }
 
     if (out && o_len > 0)
@@ -194,9 +193,9 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
             out[0] = YMODEM_NAK;
             ret    = 1;
         }
-        else if (param._ymodem.param != NULL)
+        else if (param.dat != NULL)
         {
-            if (param._ymodem.seq == 0)
+            if (param.seq == 0)
             {
                 out[0]          = YMODEM_ACK;
                 out[1]          = YMODEM_C;
@@ -237,18 +236,17 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
 static int _bYmodemPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
     int              ret   = -1;
-    bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
     if (buf == NULL || buf_len == 0)
     {
         return -1;
     }
 
-    if (cmd == B_YMODEM_CMD_START)
+    if (cmd == B_XYMODEM_CMD_START)
     {
         buf[0] = YMODEM_C;
         ret    = 1;
     }
-    if (cmd == B_YMODEM_CMD_STOP)
+    if (cmd == B_XYMODEM_CMD_STOP)
     {
         buf[0] = YMODEM_CAN;
         ret    = 1;

@@ -72,7 +72,7 @@ typedef struct
     bProtocolAttr_t attr;
 } bProtSrvAttr_t;
 
-typedef int (*bProtSrvCallback_t)(bProtoCbParam_t *param);
+typedef int (*bProtSrvCallback_t)(bProtoCmd_t cmd, void *param);
 typedef int (*bProtSrvGetInfo_t)(bProtoInfoType_t type, uint8_t *buf, uint16_t buf_len);
 
 /**

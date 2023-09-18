@@ -171,7 +171,7 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
     int              i     = 0;
     uint8_t          tmp   = 0;
     bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
-    bProtoCbParam_t  param;
+    bModbusCbParm_t  param;
 
     if (i_len < 2)
     {
@@ -186,18 +186,18 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         {
             return -1;
         }
-        param._modbus.slave_id  = r_ack->addr;
-        param._modbus.func_code = r_ack->func;
-        param._modbus.base_reg  = 0;
-        param._modbus.reg_num   = r_ack->len / 2;
-        for (i = 0; i < param._modbus.reg_num; i++)
+        param.slave_id  = r_ack->addr;
+        param.func_code = r_ack->func;
+        param.base_reg  = 0;
+        param.reg_num   = r_ack->len / 2;
+        for (i = 0; i < param.reg_num; i++)
         {
             tmp                   = r_ack->buf[i * 2];
             r_ack->buf[i * 2]     = r_ack->buf[i * 2 + 1];
             r_ack->buf[i * 2 + 1] = tmp;
         }
-        param._modbus.reg_value = (uint16_t *)r_ack->buf;
-        B_SAFE_INVOKE(pattr->callback, &param);
+        param.reg_value = (uint16_t *)r_ack->buf;
+        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_READ_REG, &param);
     }
     else if (in[1] == MODBUS_RTU_WRITE_REG)
     {
@@ -207,13 +207,13 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         {
             return -1;
         }
-        param._modbus.slave_id  = w_1_ack->addr;
-        param._modbus.func_code = w_1_ack->func;
-        param._modbus.base_reg  = L2B_B2L_16b(w_1_ack->reg);
-        param._modbus.reg_num   = 1;
-        w_1_ack->value          = L2B_B2L_16b(w_1_ack->value);
-        param._modbus.reg_value = (uint16_t *)&w_1_ack->value;
-        B_SAFE_INVOKE(pattr->callback, &param);
+        param.slave_id  = w_1_ack->addr;
+        param.func_code = w_1_ack->func;
+        param.base_reg  = L2B_B2L_16b(w_1_ack->reg);
+        param.reg_num   = 1;
+        w_1_ack->value  = L2B_B2L_16b(w_1_ack->value);
+        param.reg_value = (uint16_t *)&w_1_ack->value;
+        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REG, &param);
     }
     else if (in[1] == MODBUS_RTU_WRITE_REGS)
     {
@@ -223,12 +223,12 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         {
             return -1;
         }
-        param._modbus.slave_id  = w_ack->addr;
-        param._modbus.func_code = w_ack->func;
-        param._modbus.base_reg  = L2B_B2L_16b(w_ack->reg);
-        param._modbus.reg_num   = L2B_B2L_16b(w_ack->num);
-        param._modbus.reg_value = NULL;
-        B_SAFE_INVOKE(pattr->callback, &param);
+        param.slave_id  = w_ack->addr;
+        param.func_code = w_ack->func;
+        param.base_reg  = L2B_B2L_16b(w_ack->reg);
+        param.reg_num   = L2B_B2L_16b(w_ack->num);
+        param.reg_value = NULL;
+        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REG, &param);
     }
 
     return 0;

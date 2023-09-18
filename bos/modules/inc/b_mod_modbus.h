@@ -63,26 +63,6 @@ extern "C" {
  * \defgroup MODBUS_Exported_TypesDefinitions
  * \{
  */
-#pragma pack(1)
-typedef struct
-{
-    uint8_t  slave_addr;
-    uint8_t  reserved1;
-    uint16_t base_reg;
-    uint16_t reg_num;
-    uint16_t reserved2;
-    uint16_t reg_value[1];
-} bModbusWrite_t;
-
-typedef struct
-{
-    uint8_t  slave_addr;
-    uint8_t  reserved;
-    uint16_t base_reg;
-    uint16_t reg_num;
-} bModbusRead_t;
-
-#pragma pack()
 
 /**
  * \}
