@@ -60,6 +60,12 @@ extern "C" {
 //<HALIF 1 LCD
 typedef bLCD_HalIf_t bST7789_HalIf_t;
 
+typedef struct
+{
+    uint16_t width;
+    uint16_t length;
+} bST7789Private_t;
+
 /**
  * \}
  */

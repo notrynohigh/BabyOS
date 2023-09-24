@@ -59,6 +59,13 @@ extern "C" {
  */
 //<HALIF 1 LCD
 typedef bLCD_HalIf_t bILI9320_HalIf_t;
+
+typedef struct
+{
+    uint16_t width;
+    uint16_t length;
+} bILI9320Private_t;
+
 /**
  * \}
  */

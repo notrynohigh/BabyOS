@@ -81,7 +81,9 @@ typedef struct
             bHalSPIIf_t        _spi;
         } _spi;
     } _if;
-    uint8_t if_type;  // 0: _io  1: rw_addr  2: _spi
+    // If reset pin is not used, set it to {B_HAL_GPIO_INVALID, B_HAL_PIN_INVALID}
+    bHalGPIOInstance_t reset;
+    uint8_t            if_type;  // 0: _io  1: rw_addr  2: _spi
 } bLCD_HalIf_t;
 
 #define LCD_IF_TYPE_IO (0)

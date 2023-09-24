@@ -270,11 +270,24 @@ int bGUIRegist(bGUIInstance_t *pInstance)
     {
         return -1;
     }
+
     if ((pInstance->touch_type != TOUCH_TYPE_RES && pInstance->touch_type != TOUCH_TYPE_CAP) &&
         pInstance->touch_dev_no != 0)
     {
         return -2;
     }
+
+    int fd = -1;
+    fd     = bOpen(pInstance->lcd_dev_no, BCORE_FLAG_RW);
+    if (fd != -1)
+    {
+        bLcdSize_t lsize;
+        lsize.width  = pInstance->lcd_x_size;
+        lsize.length = pInstance->lcd_y_size;
+        bCtl(fd, bCMD_SET_SIZE, &lsize);
+        bClose(fd);
+    }
+
     if (pGUIHead == NULL)
     {
         pGUIHead        = pInstance;
@@ -285,6 +298,7 @@ int bGUIRegist(bGUIInstance_t *pInstance)
         pInstance->pnext = pGUIHead->pnext;
         pGUIHead->pnext  = pInstance;
     }
+
     pInstance->lcd_disp_dir = LCD_DISP_V;
 #if (defined(_USE_UGUI) && (_USE_UGUI == 1))
     pInstance->gui_handle.char_h_space = 0;

@@ -91,6 +91,7 @@ typedef struct
 ///////////////////////////////////////////////////////////
 #define bCMD_FILL_RECT 0  // bLcdRectInfo_t
 #define bCMD_FILL_BMP 1   // bLcdBmpInfo_t
+#define bCMD_SET_SIZE 2   // bLcdSize_t
 
 typedef struct
 {
@@ -120,6 +121,12 @@ typedef struct
     uint16_t reg;
     uint16_t dat;
 } bLcdRWAddress_t;
+
+typedef struct
+{
+    uint16_t width;
+    uint16_t length;
+} bLcdSize_t;
 
 ///////////////////////////////////////////////////////////
 // Touch Command & Data Structure

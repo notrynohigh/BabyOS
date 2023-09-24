@@ -61,14 +61,6 @@
  * \{
  */
 #define DRIVER_NAME SSD1289
-
-#ifndef LCD_X_SIZE
-#define LCD_X_SIZE 240
-#endif
-
-#ifndef LCD_Y_SIZE
-#define LCD_Y_SIZE 320
-#endif
 /**
  * \}
  */
@@ -87,6 +79,9 @@
  * \{
  */
 bDRIVER_HALIF_TABLE(bSSD1289_HalIf_t, DRIVER_NAME);
+
+static bSSD1289Private_t bSSD1289RunInfo[bDRIVER_HALIF_NUM(bSSD1289_HalIf_t, DRIVER_NAME)];
+
 /**
  * \}
  */
@@ -167,6 +162,7 @@ static int _bSSD1289FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1,
 {
     int      i   = 0;
     uint16_t tmp = 0;
+    bDRIVER_GET_PRIVATE(prv, bSSD1289Private_t, pdrv);
     if (x1 > x2)
     {
         tmp = x1;
@@ -180,7 +176,7 @@ static int _bSSD1289FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1,
         y2  = tmp;
     }
 
-    if (x2 >= LCD_X_SIZE || y2 >= LCD_Y_SIZE)
+    if (x2 >= (prv->width) || y2 >= (prv->length))
     {
         return -1;
     }
@@ -199,6 +195,7 @@ static int _bSSD1289FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
 {
     int      i   = 0;
     uint16_t tmp = 0;
+    bDRIVER_GET_PRIVATE(prv, bSSD1289Private_t, pdrv);
     if (x1 > x2)
     {
         tmp = x1;
@@ -212,7 +209,7 @@ static int _bSSD1289FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
         y2  = tmp;
     }
 
-    if (x2 >= LCD_X_SIZE || y2 >= LCD_Y_SIZE)
+    if (x2 >= (prv->width) || y2 >= (prv->length))
     {
         return -1;
     }
@@ -229,6 +226,7 @@ static int _bSSD1289FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
 static int _bSSD1289Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     int retval = -1;
+    bDRIVER_GET_PRIVATE(prv, bSSD1289Private_t, pdrv);
     switch (cmd)
     {
         case bCMD_FILL_RECT:
@@ -253,6 +251,18 @@ static int _bSSD1289Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
                 _bSSD1289FillBmp(pdrv, pinfo->x1, pinfo->y1, pinfo->x2, pinfo->y2, pinfo->color);
         }
         break;
+        case bCMD_SET_SIZE:
+        {
+            bLcdSize_t *pinfo = (bLcdSize_t *)param;
+            if (param == NULL || prv == NULL)
+            {
+                return -1;
+            }
+            prv->width  = pinfo->width;
+            prv->length = pinfo->length;
+            retval      = 0;
+        }
+        break;
         default:
             break;
     }
@@ -261,10 +271,11 @@ static int _bSSD1289Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 
 static int _bSSD1289Write(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
-    uint16_t     x      = addr % LCD_X_SIZE;
-    uint16_t     y      = addr / LCD_X_SIZE;
+    bDRIVER_GET_PRIVATE(prv, bSSD1289Private_t, pdrv);
+    uint16_t     x      = addr % (prv->width);
+    uint16_t     y      = addr / (prv->width);
     bLcdWrite_t *pcolor = (bLcdWrite_t *)pbuf;
-    if (y >= LCD_Y_SIZE || pbuf == NULL || len < sizeof(bLcdWrite_t))
+    if (y >= (prv->length) || pbuf == NULL || len < sizeof(bLcdWrite_t))
     {
         return -1;
     }
@@ -285,8 +296,23 @@ int bSSD1289_Init(bDriverInterface_t *pdrv)
 {
 
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bSSD1289_Init);
-    pdrv->ctl   = _bSSD1289Ctl;
-    pdrv->write = _bSSD1289Write;
+    pdrv->ctl         = _bSSD1289Ctl;
+    pdrv->write       = _bSSD1289Write;
+    pdrv->_private._p = &bSSD1289RunInfo[pdrv->drv_no];
+
+    bSSD1289RunInfo[pdrv->drv_no].width  = 240;  // default
+    bSSD1289RunInfo[pdrv->drv_no].length = 320;  // default
+
+    if (((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.port != B_HAL_GPIO_INVALID &&
+        ((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.pin != B_HAL_PIN_INVALID)
+    {
+        bHalGpioWritePin(((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.port,
+                         ((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.pin, 0);
+        bHalDelayMs(100);
+        bHalGpioWritePin(((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.port,
+                         ((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.pin, 1);
+        bHalDelayMs(100);
+    }
 
     _SSD1289WriteReg(pdrv, 0x0007, 0x0021);
     _SSD1289WriteReg(pdrv, 0x0000, 0x0001);

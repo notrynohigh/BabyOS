@@ -63,13 +63,6 @@
 
 #define DRIVER_NAME ILI9341
 
-#ifndef LCD_X_SIZE
-#define LCD_X_SIZE 240
-#endif
-
-#ifndef LCD_Y_SIZE
-#define LCD_Y_SIZE 320
-#endif
 /**
  * \}
  */
@@ -88,6 +81,9 @@
  * \{
  */
 bDRIVER_HALIF_TABLE(bILI9341_HalIf_t, DRIVER_NAME);
+
+static bILI9341Private_t bILI9341RunInfo[bDRIVER_HALIF_NUM(bILI9341_HalIf_t, DRIVER_NAME)];
+
 /**
  * \}
  */
@@ -234,6 +230,7 @@ static int _bILI9341FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1,
 {
     int      i   = 0;
     uint16_t tmp = 0;
+    bDRIVER_GET_PRIVATE(prv, bILI9341Private_t, pdrv);
     if (x1 > x2)
     {
         tmp = x1;
@@ -247,7 +244,7 @@ static int _bILI9341FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1,
         y2  = tmp;
     }
 
-    if (x2 >= LCD_X_SIZE || y2 >= LCD_Y_SIZE)
+    if (x2 >= (prv->width) || y2 >= (prv->length))
     {
         return -1;
     }
@@ -276,6 +273,7 @@ static int _bILI9341FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
 {
     int      i   = 0;
     uint16_t tmp = 0;
+    bDRIVER_GET_PRIVATE(prv, bILI9341Private_t, pdrv);
     if (x1 > x2)
     {
         tmp = x1;
@@ -289,7 +287,7 @@ static int _bILI9341FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
         y2  = tmp;
     }
 
-    if (x2 >= LCD_X_SIZE || y2 >= LCD_Y_SIZE)
+    if (x2 >= (prv->width) || y2 >= (prv->length))
     {
         return -1;
     }
@@ -315,8 +313,8 @@ static int _bILI9341FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
 
 static int _bILI9341Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
-    int             retval = -1;
-    bLcdRectInfo_t *pinfo  = (bLcdRectInfo_t *)param;
+    int retval = -1;
+    bDRIVER_GET_PRIVATE(prv, bILI9341Private_t, pdrv);
     switch (cmd)
     {
         case bCMD_FILL_RECT:
@@ -341,6 +339,18 @@ static int _bILI9341Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
                 _bILI9341FillBmp(pdrv, pinfo->x1, pinfo->y1, pinfo->x2, pinfo->y2, pinfo->color);
         }
         break;
+        case bCMD_SET_SIZE:
+        {
+            bLcdSize_t *pinfo = (bLcdSize_t *)param;
+            if (param == NULL || prv == NULL)
+            {
+                return -1;
+            }
+            prv->width  = pinfo->width;
+            prv->length = pinfo->length;
+            retval      = 0;
+        }
+        break;
         default:
             break;
     }
@@ -349,10 +359,11 @@ static int _bILI9341Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 
 static int _bILI9341Write(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
-    uint16_t     x      = addr % LCD_X_SIZE;
-    uint16_t     y      = addr / LCD_X_SIZE;
+    bDRIVER_GET_PRIVATE(prv, bILI9341Private_t, pdrv);
+    uint16_t     x      = addr % (prv->width);
+    uint16_t     y      = addr / (prv->width);
     bLcdWrite_t *pcolor = (bLcdWrite_t *)pbuf;
-    if (y >= LCD_Y_SIZE || pbuf == NULL || len < sizeof(bLcdWrite_t))
+    if (y >= (prv->length) || pbuf == NULL || len < sizeof(bLcdWrite_t))
     {
         return -1;
     }
@@ -372,10 +383,24 @@ static int _bILI9341Write(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf
 
 int bILI9341_Init(bDriverInterface_t *pdrv)
 {
-
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bILI9341_Init);
-    pdrv->write = _bILI9341Write;
-    pdrv->ctl   = _bILI9341Ctl;
+    pdrv->write       = _bILI9341Write;
+    pdrv->ctl         = _bILI9341Ctl;
+    pdrv->_private._p = &bILI9341RunInfo[pdrv->drv_no];
+
+    bILI9341RunInfo[pdrv->drv_no].width  = 240;  // default
+    bILI9341RunInfo[pdrv->drv_no].length = 320;  // default
+
+    if (((bILI9341_HalIf_t *)pdrv->hal_if)->reset.port != B_HAL_GPIO_INVALID &&
+        ((bILI9341_HalIf_t *)pdrv->hal_if)->reset.pin != B_HAL_PIN_INVALID)
+    {
+        bHalGpioWritePin(((bILI9341_HalIf_t *)pdrv->hal_if)->reset.port,
+                         ((bILI9341_HalIf_t *)pdrv->hal_if)->reset.pin, 0);
+        bHalDelayMs(100);
+        bHalGpioWritePin(((bILI9341_HalIf_t *)pdrv->hal_if)->reset.port,
+                         ((bILI9341_HalIf_t *)pdrv->hal_if)->reset.pin, 1);
+        bHalDelayMs(100);
+    }
 
     if (_bILI9341CheckId(pdrv) < 0)
     {

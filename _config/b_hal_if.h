@@ -43,7 +43,7 @@
 
 #define HAL_ILI9320_IF                                       \
     {                                                        \
-        .if_type = 2,                                        \
+        .if_type = 2, .reset = {B_HAL_GPIOC, B_HAL_PIN7},    \
         ._if._spi._spi =                                     \
             {                                                \
                 .is_simulation = 0,                          \

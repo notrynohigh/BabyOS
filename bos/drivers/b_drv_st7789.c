@@ -61,14 +61,6 @@
  * \{
  */
 #define DRIVER_NAME ST7789
-
-#ifndef LCD_X_SIZE
-#define LCD_X_SIZE 240
-#endif
-
-#ifndef LCD_Y_SIZE
-#define LCD_Y_SIZE 320
-#endif
 /**
  * \}
  */
@@ -87,6 +79,9 @@
  * \{
  */
 bDRIVER_HALIF_TABLE(bST7789_HalIf_t, DRIVER_NAME);
+
+static bST7789Private_t bST7789RunInfo[bDRIVER_HALIF_NUM(bST7789_HalIf_t, DRIVER_NAME)];
+
 /**
  * \}
  */
@@ -220,6 +215,7 @@ static int _bST7789FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
 {
     int      i   = 0;
     uint16_t tmp = 0;
+    bDRIVER_GET_PRIVATE(prv, bST7789Private_t, pdrv);
     if (x1 > x2)
     {
         tmp = x1;
@@ -233,7 +229,7 @@ static int _bST7789FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
         y2  = tmp;
     }
 
-    if (x2 >= LCD_X_SIZE || y2 >= LCD_Y_SIZE)
+    if (x2 >= (prv->width) || y2 >= (prv->length))
     {
         return -1;
     }
@@ -262,6 +258,7 @@ static int _bST7789FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, u
 {
     int      i   = 0;
     uint16_t tmp = 0;
+    bDRIVER_GET_PRIVATE(prv, bST7789Private_t, pdrv);
     if (x1 > x2)
     {
         tmp = x1;
@@ -275,7 +272,7 @@ static int _bST7789FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, u
         y2  = tmp;
     }
 
-    if (x2 >= LCD_X_SIZE || y2 >= LCD_Y_SIZE)
+    if (x2 >= (prv->width) || y2 >= (prv->length))
     {
         return -1;
     }
@@ -302,6 +299,7 @@ static int _bST7789FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, u
 static int _bST7789Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     int retval = -1;
+    bDRIVER_GET_PRIVATE(prv, bST7789Private_t, pdrv);
     switch (cmd)
     {
         case bCMD_FILL_RECT:
@@ -326,6 +324,18 @@ static int _bST7789Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
                 _bST7789FillBmp(pdrv, pinfo->x1, pinfo->y1, pinfo->x2, pinfo->y2, pinfo->color);
         }
         break;
+        case bCMD_SET_SIZE:
+        {
+            bLcdSize_t *pinfo = (bLcdSize_t *)param;
+            if (param == NULL || prv == NULL)
+            {
+                return -1;
+            }
+            prv->width  = pinfo->width;
+            prv->length = pinfo->length;
+            retval      = 0;
+        }
+        break;
         default:
             break;
     }
@@ -334,10 +344,11 @@ static int _bST7789Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 
 static int _bST7789Write(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
-    uint16_t     x      = addr % LCD_X_SIZE;
-    uint16_t     y      = addr / LCD_X_SIZE;
+    bDRIVER_GET_PRIVATE(prv, bST7789Private_t, pdrv);
+    uint16_t     x      = addr % (prv->width);
+    uint16_t     y      = addr / (prv->width);
     bLcdWrite_t *pcolor = (bLcdWrite_t *)pbuf;
-    if (y >= LCD_Y_SIZE || pbuf == NULL || len < sizeof(bLcdWrite_t))
+    if (y >= (prv->length) || pbuf == NULL || len < sizeof(bLcdWrite_t))
     {
         return -1;
     }
@@ -358,8 +369,23 @@ static int _bST7789Write(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf,
 int bST7789_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bST7789_Init);
-    pdrv->write = _bST7789Write;
-    pdrv->ctl   = _bST7789Ctl;
+    pdrv->write       = _bST7789Write;
+    pdrv->ctl         = _bST7789Ctl;
+    pdrv->_private._p = &bST7789RunInfo[pdrv->drv_no];
+
+    bST7789RunInfo[pdrv->drv_no].width  = 240;  // default
+    bST7789RunInfo[pdrv->drv_no].length = 320;  // default
+
+    if (((bST7789_HalIf_t *)pdrv->hal_if)->reset.port != B_HAL_GPIO_INVALID &&
+        ((bST7789_HalIf_t *)pdrv->hal_if)->reset.pin != B_HAL_PIN_INVALID)
+    {
+        bHalGpioWritePin(((bST7789_HalIf_t *)pdrv->hal_if)->reset.port,
+                         ((bST7789_HalIf_t *)pdrv->hal_if)->reset.pin, 0);
+        bHalDelayMs(100);
+        bHalGpioWritePin(((bST7789_HalIf_t *)pdrv->hal_if)->reset.port,
+                         ((bST7789_HalIf_t *)pdrv->hal_if)->reset.pin, 1);
+        bHalDelayMs(100);
+    }
 
     if (_bST7789CheckId(pdrv) < 0)
     {
