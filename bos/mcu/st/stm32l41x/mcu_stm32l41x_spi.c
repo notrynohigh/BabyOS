@@ -129,14 +129,39 @@ uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
 
 int bMcuSpiSend(const bHalSPIIf_t *spi_if, const uint8_t *pbuf, uint16_t len)
 {
-    int i = 0;
+    int          i    = 0;
+    McuSpiReg_t *pSpi = NULL;
+
     if (IS_NULL(spi_if) || IS_NULL(pbuf))
     {
         return -1;
     }
-    for (i = 0; i < len; i++)
+
+    if (spi_if->_if.spi > B_HAL_SPI_3)
     {
-        bMcuSpiTransfer(spi_if, pbuf[i]);
+        return 0;
+    }
+    pSpi = SpiTable[spi_if->_if.spi];
+
+    B_SET_BIT(pSpi->CR2, (0x1 << 12));
+
+    /* Check if the SPI is already enabled */
+    if ((pSpi->CR1 & (0x1 << 6)) == 0)
+    {
+        /* Enable SPI peripheral */
+        B_SET_BIT(pSpi->CR1, 0x1 << 6);
+    }
+    for(i = 0;i < len;i++)
+    {
+        while (B_READ_BIT(pSpi->SR, (0x1 << 1)) == 0)
+        {
+            ;
+        }
+        *(volatile uint8_t *)&pSpi->DR = pbuf[i];
+    }
+    for (i = 0; i < 8; i++)
+    {
+        ;
     }
     return 0;
 }

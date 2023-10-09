@@ -133,14 +133,30 @@ uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
 
 int bMcuSpiSend(const bHalSPIIf_t *spi_if, const uint8_t *pbuf, uint16_t len)
 {
-    int i = 0;
+    int          i    = 0;
+    McuSpiReg_t *pSpi = NULL;
+
     if (IS_NULL(spi_if) || IS_NULL(pbuf))
     {
         return -1;
     }
+    pSpi = SpiTable[spi_if->_if.spi];
+    if ((pSpi->CR1 & (0x1 << 6)) == 0)
+    {
+        pSpi->CR1 |= (0x1 << 6);
+    }
+
     for (i = 0; i < len; i++)
     {
-        bMcuSpiTransfer(spi_if, pbuf[i]);
+        while ((pSpi->SR & 0x02) == 0)
+        {
+            ;
+        }
+        pSpi->DR = pbuf[i];
+    }
+    for (i = 0; i < 8; i++)
+    {
+        ;
     }
     return 0;
 }

@@ -128,6 +128,7 @@ static void _bLcdWriteData(bDriverInterface_t *pdrv, uint16_t dat)
 
 static void _bLcdWriteGRam(bDriverInterface_t *pdrv, uint16_t dat)
 {
+    uint8_t tmp[2];
     bDRIVER_GET_HALIF(_if, bST7789_HalIf_t, pdrv);
     if (_if->if_type == LCD_IF_TYPE_RWADDR || _if->if_type == LCD_IF_TYPE_IO)
     {
@@ -135,10 +136,11 @@ static void _bLcdWriteGRam(bDriverInterface_t *pdrv, uint16_t dat)
     }
     else if (_if->if_type == LCD_IF_TYPE_SPI)
     {
+        tmp[0] = (uint8_t)((dat & 0xff00) >> 8);
+        tmp[1] = (uint8_t)(dat & 0x00ff);
         bHalGpioWritePin(_if->_if._spi.rs.port, _if->_if._spi.rs.pin, 1);
         bHalGpioWritePin(_if->_if._spi._spi.cs.port, _if->_if._spi._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi._spi, ((uint8_t *)&dat) + 1, 1);
-        bHalSpiSend(&_if->_if._spi._spi, ((uint8_t *)&dat), 1);
+        bHalSpiSend(&_if->_if._spi._spi, tmp, 2);
         bHalGpioWritePin(_if->_if._spi._spi.cs.port, _if->_if._spi._spi.cs.pin, 1);
     }
 }
