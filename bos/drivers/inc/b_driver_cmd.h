@@ -86,6 +86,18 @@ typedef struct
     uint8_t fifo_length;
 } bGSensorFifo_t;
 
+typedef struct
+{
+    int32_t acc_arr[3];
+
+    int32_t gyro_arr[3];
+
+    int32_t mag_arr[3];
+
+    float temperature;
+
+} bICM20948_9Axis_t;
+
 ///////////////////////////////////////////////////////////
 // LCD  Command & Data Structure
 ///////////////////////////////////////////////////////////
