@@ -59,7 +59,7 @@ void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, b
 {
     uint32_t      mode_val   = 0;
     uint32_t      otype_val  = 0;
-    uint32_t      ospeed_val = 0;
+    uint32_t      ospeed_val = 3;
     uint32_t      pupd_val   = 0;
     McuGpioReg_t *pGpio      = (McuGpioReg_t *)(GPIO_REG_BASE + port * GPIO_REG_OFF);
 
@@ -78,7 +78,6 @@ void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, b
 
     if (pull != B_HAL_GPIO_NOPULL)
     {
-        mode_val = (pin == B_HAL_PINAll) ? 0x00000000 : 0;
         if (pull == B_HAL_GPIO_PULLUP)
         {
             pupd_val = (pin == B_HAL_PINAll) ? 0x55555555 : 1;

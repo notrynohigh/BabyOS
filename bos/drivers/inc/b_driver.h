@@ -107,6 +107,7 @@ typedef enum
     B_DRIVER_ST7789,
     B_DRIVER_TESTFLASH,
     B_DRIVER_XPT2046,
+		B_DRIVER_APDS9930,
     B_DRIVER_NUMBER
 } bDriverNumber_t;
 

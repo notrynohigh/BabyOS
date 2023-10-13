@@ -129,7 +129,13 @@
 
 #define HAL_RS485_IF                                                  \
     {                                                                 \
-        .port = B_HAL_GPIOD, .pin = B_HAL_PIN7, .uart = B_HAL_UART_2, \
+        .port = B_HAL_GPIOA, .pin = B_HAL_PIN0, .uart = B_HAL_UART_1, \
+    }
+
+#define HAL_APDS9930_IF                                                                             \
+    {                                                                                              \
+        .dev_addr = (0x39<<1), .is_simulation = 1, ._if.simulating_i2c.clk = {B_HAL_GPIOA, B_HAL_PIN6}, \
+        ._if.simulating_i2c.sda = {B_HAL_GPIOA, B_HAL_PIN5},                                       \
     }
 
 #endif
