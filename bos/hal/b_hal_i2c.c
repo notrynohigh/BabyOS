@@ -361,7 +361,7 @@ int bHalI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_ad
     {
         simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
         simulating_iic.clk = i2c_if->_if.simulating_i2c.clk;
-        _HalI2CIOWriteBuff(simulating_iic, i2c_if->dev_addr, mem_addr, mem_addr_size, pbuf, len);
+        retval = _HalI2CIOWriteBuff(simulating_iic, i2c_if->dev_addr, mem_addr, mem_addr_size, pbuf, len);
     }
     else
     {
@@ -383,7 +383,7 @@ int bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_add
     {
         simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
         simulating_iic.clk = i2c_if->_if.simulating_i2c.clk;
-        _HalI2CIOReadBuff(simulating_iic, i2c_if->dev_addr, mem_addr, mem_addr_size, pbuf, len);
+        retval = _HalI2CIOReadBuff(simulating_iic, i2c_if->dev_addr, mem_addr, mem_addr_size, pbuf, len);
     }
     else
     {
