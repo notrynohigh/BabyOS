@@ -222,14 +222,11 @@ static int _bAPDS9930WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
 
 	return 0;
 }
-uint8_t debug_id = 0;
 static uint8_t _bAPDS9930GetID(bDriverInterface_t *pdrv)
 {
     uint8_t id = 0;
     _bAPDS9930ReadRegs(pdrv, APDS9930_ID, &id, 1);
-		debug_id = id;
-    b_log("apds9930 id:%x\n", debug_id);
-
+    b_log("apds9930 id:%x\n", id);
     return id;
 }
 
@@ -274,7 +271,7 @@ static int _bAPDS9930Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
 			_bAPDS9930ReadRegs(pdrv, APDS9930_Ch1DATAL, (uint8_t *)&ptmp[i].ALS_Channel_1, 2);
 			_bAPDS9930ReadRegs(pdrv, APDS9930_PDATAL, 	(uint8_t *)&ptmp[i].Prox_data, 2);
     }
-    return (c * sizeof(bGsensor3Axis_t));
+    return (c * sizeof(bProximity_AmbientLightsensor_t));
 }
 
 /**
@@ -287,10 +284,12 @@ static int _bAPDS9930Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
  */
 int bAPDS9930_Init(bDriverInterface_t *pdrv)
 {
+		uint8_t id = 0;
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bAPDS9930_Init);
     pdrv->read       = _bAPDS9930Read;
     pdrv->_private.v = 0;
-		if ((_bAPDS9930GetID(pdrv)) != APDS9930_DEVICE_ID)
+		id = _bAPDS9930GetID(pdrv);
+		if ( (id != APDS9930_DEVICE_ID) && (id != 0x30) )
     {
         return -1;
     }
