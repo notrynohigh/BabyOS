@@ -1,7 +1,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_uart.h"
 
-#if defined(AT32F413)
+#if defined(AT32F413xB)
 #include "at32f413.h"
 
 static uint16_t rs485_send_data(usart_type *usart_x, const uint8_t *pbuf, uint16_t len)

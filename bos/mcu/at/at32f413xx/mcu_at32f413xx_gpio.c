@@ -41,7 +41,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_gpio.h"
 
-#if defined(AT32F413)
+#if defined(AT32F413xB)
 #include "at32f413.h"
 
 static int transfer_at32_gpioport(bHalGPIOPort_t port, gpio_type **at32gpioport_x)
