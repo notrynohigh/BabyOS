@@ -66,7 +66,7 @@ typedef struct
     uint16_t reg;  // Big endian
     uint16_t num;  // Big endian
     uint16_t crc;  // Little endian
-} bModbusReadRegs_t;
+} bModbusMasterSendReadRegs_t;
 
 typedef struct
 {
@@ -74,7 +74,7 @@ typedef struct
     uint8_t func;
     uint8_t len;
     uint8_t buf[1];
-} bModbusReadRegsAck_t;
+} bModbusMasterSendReadRegsAck_t;
 
 typedef struct
 {
@@ -84,7 +84,7 @@ typedef struct
     uint16_t num;  // Big endian
     uint8_t  len;
     uint16_t param[1];
-} bModbusWriteRegs_t;
+} bModbusMasterSendWriteRegs_t;
 
 typedef struct
 {
@@ -93,7 +93,7 @@ typedef struct
     uint16_t reg;  // Big endian
     uint16_t value;
     uint16_t crc;  // Little endian
-} bModbusWriteReg_t;
+} bModbusMasterSendWriteReg_t;
 
 typedef struct
 {
@@ -102,16 +102,71 @@ typedef struct
     uint16_t reg;  // Big endian
     uint16_t num;  // Big endian
     uint16_t crc;  // Little endian
-} bModbusWriteRegsAck_t;
+} bModbusMasterSendWriteRegsAck_t;
 
 typedef struct
 {
     uint8_t  addr;
     uint8_t  func;
     uint16_t reg;  // Big endian
-    uint16_t value;
+    uint16_t value; // Big endian
     uint16_t crc;  // Little endian
-} bModbusWriteRegAck_t;
+} bModbusMasterSendWriteRegAck_t;
+
+//----------------------------------------------------------------
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg; // Big endian
+    uint16_t num; // Big endian
+    uint16_t crc; // Little endian
+} bModbusSlaveRecvReadRegs_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint8_t len;
+    uint8_t buf[1];
+} bModbusSlaveRecvReadRegsAck_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg; // Big endian
+    uint16_t num; // Big endian
+    uint8_t len;
+    uint16_t param[1];
+} bModbusSlaveRecvWriteRegs_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg;   // Big endian
+    uint16_t value; // Big endian
+    uint16_t crc;   // Little endian
+} bModbusSlaveRecvWriteReg_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg; // Big endian
+    uint16_t num; // Big endian
+    uint16_t crc; // Little endian
+} bModbusSlaveRecvWriteRegsAck_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg;   // Big endian
+    uint16_t value; // Big endian
+    uint16_t crc;   // Little endian
+} bModbusSlaveRecvWriteRegAck_t;
 
 #pragma pack()
 /**
@@ -165,7 +220,7 @@ static uint16_t _bMBCRC16(uint8_t *pucFrame, uint16_t usLen)
     return ((uint16_t)(crc_ret & 0xffff));
 }
 
-static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
+static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
 {
     int              len   = 0;
     int              i     = 0;
@@ -180,8 +235,8 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
 
     if (in[1] == MODBUS_RTU_READ_REGS)
     {
-        bModbusReadRegsAck_t *r_ack = (bModbusReadRegsAck_t *)in;
-        len                         = sizeof(bModbusReadRegsAck_t) - 1 + r_ack->len + 2;
+        bModbusMasterSendReadRegsAck_t *r_ack = (bModbusMasterSendReadRegsAck_t *)in;
+        len = sizeof(bModbusMasterSendReadRegsAck_t) - 1 + r_ack->len + 2;
         if (i_len < len)
         {
             return -1;
@@ -201,8 +256,8 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
     }
     else if (in[1] == MODBUS_RTU_WRITE_REG)
     {
-        bModbusWriteRegAck_t *w_1_ack = (bModbusWriteRegAck_t *)in;
-        len                           = sizeof(bModbusWriteRegAck_t);
+        bModbusMasterSendWriteRegAck_t *w_1_ack = (bModbusMasterSendWriteRegAck_t *)in;
+        len = sizeof(bModbusMasterSendWriteRegAck_t);
         if (i_len < len)
         {
             return -1;
@@ -217,8 +272,8 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
     }
     else if (in[1] == MODBUS_RTU_WRITE_REGS)
     {
-        bModbusWriteRegsAck_t *w_ack = (bModbusWriteRegsAck_t *)in;
-        len                          = sizeof(bModbusWriteRegsAck_t);
+        bModbusMasterSendWriteRegsAck_t *w_ack = (bModbusMasterSendWriteRegsAck_t *)in;
+        len = sizeof(bModbusMasterSendWriteRegsAck_t);
         if (i_len < len)
         {
             return -1;
@@ -234,7 +289,7 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
     return 0;
 }
 
-static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
+static int _bModbusRTUMasterPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
     int      i   = 0;
     int      len = 0;
@@ -246,8 +301,8 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
 
     if (cmd == B_MODBUS_CMD_READ_REG)
     {
-        bModbusRead_t *param = (bModbusRead_t *)buf;
-        len                  = sizeof(bModbusRead_t) + 2;
+        bModbusMasterRead_t *param = (bModbusMasterRead_t *)buf;
+        len = sizeof(bModbusMasterRead_t) + 2;
         if (buf_len < len)
         {
             return -1;
@@ -258,18 +313,18 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
     }
     else if (cmd == B_MODBUS_CMD_WRITE_REG)
     {
-        bModbusWrite_t *param = (bModbusWrite_t *)buf;
+        bModbusMasterWrite_t *param = (bModbusMasterWrite_t *)buf;
         if (param->reg_num == 0)
         {
             return -1;
         }
         if (param->reg_num == 1)
         {
-            len = sizeof(bModbusWriteReg_t);
+            len = sizeof(bModbusMasterSendWriteReg_t);
         }
         else
         {
-            len = sizeof(bModbusWriteRegs_t) + param->reg_num * 2;
+            len = sizeof(bModbusMasterSendWriteRegs_t) + param->reg_num * 2;
         }
         if (buf_len < len)
         {
@@ -278,17 +333,17 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
         param->base_reg = L2B_B2L_16b(param->base_reg);
         if (param->reg_num == 1)
         {
-            bModbusWriteReg_t *frame = (bModbusWriteReg_t *)buf;
+            bModbusMasterSendWriteReg_t *frame = (bModbusMasterSendWriteReg_t *)buf;
             frame->func              = MODBUS_RTU_WRITE_REG;
             frame->value             = L2B_B2L_16b(param->reg_value[0]);
         }
         else
         {
-            bModbusWriteRegs_t *frame = (bModbusWriteRegs_t *)buf;
+            bModbusMasterSendWriteRegs_t *frame = (bModbusMasterSendWriteRegs_t *)buf;
             frame->len                = param->reg_num * 2;
             frame->func               = MODBUS_RTU_WRITE_REGS;
             param->reg_num            = L2B_B2L_16b(param->reg_num);
-            for (i = 0; i < frame->len; i++)
+            for (i = 0; i < frame->len / 2; i++)
             {
                 frame->param[i] = L2B_B2L_16b((param->reg_value)[i]);
             }
@@ -305,6 +360,104 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
     return len;
 }
 
+static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
+{
+    int i = 0;
+    uint16_t tmp = 0;
+    int len = 0;
+    uint16_t crc = 0;
+    bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
+    bModbusCbParm_t param;
+
+    if (i_len < 2)
+    {
+        return -1;
+    }
+
+    if (in[1] == MODBUS_RTU_READ_REGS)
+    {
+        bModbusSlaveRecvReadRegs_t *r = (bModbusSlaveRecvReadRegs_t *)in;
+        len = sizeof(bModbusSlaveRecvReadRegs_t);
+        if (i_len < len)
+        {
+            return -1;
+        }
+        param.slave_id = r->addr;
+        param.func_code = r->func;
+        param.base_reg = L2B_B2L_16b(r->reg);
+        param.reg_num = L2B_B2L_16b(r->num);
+        param.reg_value = NULL;
+
+        crc = _bMBCRC16((uint8_t *)&r->addr, len - 2);
+        if (crc == r->crc)
+        {
+            B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_READ_REG, &param);
+        }
+        else
+        {
+            return -2;
+        }
+    }
+    else if (in[1] == MODBUS_RTU_WRITE_REG)
+    {
+        bModbusSlaveRecvWriteReg_t *w_1 = (bModbusSlaveRecvWriteReg_t *)in;
+        len = sizeof(bModbusSlaveRecvWriteReg_t);
+        if (i_len < len)
+        {
+            return -1;
+        }
+        param.slave_id = w_1->addr;
+        param.func_code = w_1->func;
+        param.base_reg = L2B_B2L_16b(w_1->reg);
+        param.reg_num = 1;
+        tmp = L2B_B2L_16b(w_1->value);
+        param.reg_value = &tmp;
+
+        crc = _bMBCRC16((uint8_t *)&w_1->addr, len - 2);
+        if (crc == w_1->crc)
+        {
+            B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REG, &param);
+        }
+        else
+        {
+            return -2;
+        }
+    }
+    else if (in[1] == MODBUS_RTU_WRITE_REGS)
+    {
+        bModbusSlaveRecvWriteRegs_t *w = (bModbusSlaveRecvWriteRegs_t *)in;
+        len = sizeof(bModbusSlaveRecvWriteRegs_t) + w->len;
+        if (i_len < len)
+        {
+            return -1;
+        }
+        param.slave_id = w->addr;
+        param.func_code = w->func;
+        param.base_reg = L2B_B2L_16b(w->reg);
+        param.reg_num = L2B_B2L_16b(w->num);
+
+        if ((param.reg_num * 2) != w->len)
+        {
+            return -3;
+        }
+        crc = _bMBCRC16((uint8_t *)&w->addr, len - 2);
+        if (crc == w->param[param.reg_num])
+        {
+            for (i = 0; i < param.reg_num; i++)
+            {
+                (w->param)[i] = L2B_B2L_16b((w->param)[i]);
+            }
+            param.reg_value = w->param;
+            B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REG, &param);
+        }
+        else
+        {
+            return -2;
+        }
+    }
+
+    return 0;
+}
 /**
  * \}
  */
@@ -314,7 +467,7 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
  * \{
  */
 
-bPROTOCOL_REG_INSTANCE("modbus", _bModbusRTUParse, _bModbusRTUPackage);
+bPROTOCOL_REG_INSTANCE("modbus", _bModbusRTUMasterParse, _bModbusRTUMasterPackage);
 
 /**
  * \}

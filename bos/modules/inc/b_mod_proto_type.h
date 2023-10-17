@@ -57,7 +57,7 @@ typedef struct
     uint16_t reg_num;
     uint16_t reserved2;
     uint16_t reg_value[1];
-} bModbusWrite_t;
+} bModbusMasterWrite_t;
 
 typedef struct
 {
@@ -65,7 +65,7 @@ typedef struct
     uint8_t  reserved;
     uint16_t base_reg;
     uint16_t reg_num;
-} bModbusRead_t;
+} bModbusMasterRead_t;
 
 typedef struct
 {
@@ -109,16 +109,16 @@ typedef struct
 
 typedef enum
 {
-    B_XYMODEM_CMD_START,        // package [null],
-    B_XYMODEM_CMD_STOP,         // package [null]
-    B_XYMODEM_DATA,             // callback [bXYModemCbParam_t]
-    B_MODBUS_CMD_READ_REG,      // pakage [bModbusRead_t], callback [bModbusCbParm_t]
-    B_MODBUS_CMD_WRITE_REG,     // pakage [bModbusWrite_t], callback [bModbusCbParm_t]
-    B_PROTO_TRANS_FILE_INFO,    // callback [bProtoFileInfo_t]
-    B_PROTO_SET_FILE_LOCATION,  // callback [bProtoFileLocation_t]
-    B_PROTO_REQ_FILE_DATA,      // package [bProtoReqFileData_t]
-    B_PROTO_FILE_DATA,          // callback [bProtoFileData_t]
-    B_PROTO_TRANS_FILE_RESULT,  // package [uint8_t]
+    B_XYMODEM_CMD_START,       // package [null],
+    B_XYMODEM_CMD_STOP,        // package [null]
+    B_XYMODEM_DATA,            // callback [bXYModemCbParam_t]
+    B_MODBUS_CMD_READ_REG,     // pakage [bModbusMasterRead_t], callback [bModbusCbParm_t]
+    B_MODBUS_CMD_WRITE_REG,    // pakage [bModbusMasterWrite_t], callback [bModbusCbParm_t]
+    B_PROTO_TRANS_FILE_INFO,   // callback [bProtoFileInfo_t]
+    B_PROTO_SET_FILE_LOCATION, // callback [bProtoFileLocation_t]
+    B_PROTO_REQ_FILE_DATA,     // package [bProtoReqFileData_t]
+    B_PROTO_FILE_DATA,         // callback [bProtoFileData_t]
+    B_PROTO_TRANS_FILE_RESULT, // package [uint8_t]
     B_PROTO_CMD_NUMBER,
 } bProtoCmd_t;
 
