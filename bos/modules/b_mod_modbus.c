@@ -66,15 +66,15 @@ typedef struct
     uint16_t reg;  // Big endian
     uint16_t num;  // Big endian
     uint16_t crc;  // Little endian
-} bModbusReadRegs_t;
+} bModbusMasterSendReadRegs_t;
 
 typedef struct
 {
     uint8_t addr;
     uint8_t func;
     uint8_t len;
-    uint8_t buf[1];
-} bModbusReadRegsAck_t;
+    uint16_t param[1];
+} bModbusMasterSendReadRegsAck_t;
 
 typedef struct
 {
@@ -84,16 +84,16 @@ typedef struct
     uint16_t num;  // Big endian
     uint8_t  len;
     uint16_t param[1];
-} bModbusWriteRegs_t;
+} bModbusMasterSendWriteRegs_t;
 
 typedef struct
 {
     uint8_t  addr;
     uint8_t  func;
     uint16_t reg;  // Big endian
-    uint16_t value;
+    uint16_t value; // Big endian
     uint16_t crc;  // Little endian
-} bModbusWriteReg_t;
+} bModbusMasterSendWriteReg_t;
 
 typedef struct
 {
@@ -102,16 +102,71 @@ typedef struct
     uint16_t reg;  // Big endian
     uint16_t num;  // Big endian
     uint16_t crc;  // Little endian
-} bModbusWriteRegsAck_t;
+} bModbusMasterSendWriteRegsAck_t;
 
 typedef struct
 {
     uint8_t  addr;
     uint8_t  func;
     uint16_t reg;  // Big endian
-    uint16_t value;
+    uint16_t value; // Big endian
     uint16_t crc;  // Little endian
-} bModbusWriteRegAck_t;
+} bModbusMasterSendWriteRegAck_t;
+
+//----------------------------------------------------------------
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg; // Big endian
+    uint16_t num; // Big endian
+    uint16_t crc; // Little endian
+} bModbusSlaveRecvReadRegs_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint8_t len;
+    uint8_t buf[1];
+} bModbusSlaveRecvReadRegsAck_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg; // Big endian
+    uint16_t num; // Big endian
+    uint8_t len;
+    uint16_t param[1];
+} bModbusSlaveRecvWriteRegs_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg;   // Big endian
+    uint16_t value; // Big endian
+    uint16_t crc;   // Little endian
+} bModbusSlaveRecvWriteReg_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg; // Big endian
+    uint16_t num; // Big endian
+    uint16_t crc; // Little endian
+} bModbusSlaveRecvWriteRegsAck_t;
+
+typedef struct
+{
+    uint8_t addr;
+    uint8_t func;
+    uint16_t reg;   // Big endian
+    uint16_t value; // Big endian
+    uint16_t crc;   // Little endian
+} bModbusSlaveRecvWriteRegAck_t;
 
 #pragma pack()
 /**
@@ -165,11 +220,20 @@ static uint16_t _bMBCRC16(uint8_t *pucFrame, uint16_t usLen)
     return ((uint16_t)(crc_ret & 0xffff));
 }
 
-static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
+/**
+ * @description: 主机收到的MODBUS帧解析是否正确?即从机的发送,此为原始的大端输入,解析正确后转换为小端,调用回调来更新寄存器表
+ * @param {void} *attr
+ * @param {uint8_t} *in 收到的从机应答帧的头
+ * @param {uint16_t} i_len 收到的从机应答帧长度
+ * @param {uint8_t} *out
+ * @param {uint16_t} o_len
+ * @return {*} 0:正常 <0:不正常
+ */
+static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
 {
     int              len   = 0;
     int              i     = 0;
-    uint8_t          tmp   = 0;
+    uint16_t crc = 0;
     bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
     bModbusCbParm_t  param;
 
@@ -180,11 +244,16 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
 
     if (in[1] == MODBUS_RTU_READ_REGS)
     {
-        bModbusReadRegsAck_t *r_ack = (bModbusReadRegsAck_t *)in;
-        len                         = sizeof(bModbusReadRegsAck_t) - 1 + r_ack->len + 2;
+        bModbusMasterSendReadRegsAck_t *r_ack = (bModbusMasterSendReadRegsAck_t *)in;
+        len = sizeof(bModbusMasterSendReadRegsAck_t) + r_ack->len;
         if (i_len < len)
         {
             return -1;
+        }
+        crc = _bMBCRC16(in, len - 2);
+        if (crc != r_ack->param[r_ack->len / 2])
+        {
+            return -2;
         }
         param.slave_id  = r_ack->addr;
         param.func_code = r_ack->func;
@@ -192,20 +261,23 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         param.reg_num   = r_ack->len / 2;
         for (i = 0; i < param.reg_num; i++)
         {
-            tmp                   = r_ack->buf[i * 2];
-            r_ack->buf[i * 2]     = r_ack->buf[i * 2 + 1];
-            r_ack->buf[i * 2 + 1] = tmp;
+            r_ack->param[i] = L2B_B2L_16b(r_ack->param[i]);
         }
-        param.reg_value = (uint16_t *)r_ack->buf;
+        param.reg_value = (uint16_t *)r_ack->param;
         B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_READ_REG, &param);
     }
     else if (in[1] == MODBUS_RTU_WRITE_REG)
     {
-        bModbusWriteRegAck_t *w_1_ack = (bModbusWriteRegAck_t *)in;
-        len                           = sizeof(bModbusWriteRegAck_t);
+        bModbusMasterSendWriteRegAck_t *w_1_ack = (bModbusMasterSendWriteRegAck_t *)in;
+        len = sizeof(bModbusMasterSendWriteRegAck_t);
         if (i_len < len)
         {
             return -1;
+        }
+        crc = _bMBCRC16(in, len - 2);
+        if (crc != w_1_ack->crc)
+        {
+            return -2;
         }
         param.slave_id  = w_1_ack->addr;
         param.func_code = w_1_ack->func;
@@ -213,28 +285,45 @@ static int _bModbusRTUParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         param.reg_num   = 1;
         w_1_ack->value  = L2B_B2L_16b(w_1_ack->value);
         param.reg_value = (uint16_t *)&w_1_ack->value;
-        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REG, &param);
+        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
     }
     else if (in[1] == MODBUS_RTU_WRITE_REGS)
     {
-        bModbusWriteRegsAck_t *w_ack = (bModbusWriteRegsAck_t *)in;
-        len                          = sizeof(bModbusWriteRegsAck_t);
+        bModbusMasterSendWriteRegsAck_t *w_ack = (bModbusMasterSendWriteRegsAck_t *)in;
+        len = sizeof(bModbusMasterSendWriteRegsAck_t);
         if (i_len < len)
         {
             return -1;
+        }
+        crc = _bMBCRC16(in, len - 2);
+        if (crc != w_ack->crc)
+        {
+            return -2;
         }
         param.slave_id  = w_ack->addr;
         param.func_code = w_ack->func;
         param.base_reg  = L2B_B2L_16b(w_ack->reg);
         param.reg_num   = L2B_B2L_16b(w_ack->num);
         param.reg_value = NULL;
-        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REG, &param);
+        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+    }
+    else
+    {
+        return -3;
     }
 
     return 0;
 }
 
-static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
+/**
+ * @description:
+ * @param {void} *attr
+ * @param {bProtoCmd_t} cmd
+ * @param {uint8_t} *buf 该数组同时将读写的参数按照小端传入,具体是什么数据类型,依据CMD来决定,获取后重新按照大端组帧
+ * @param {uint16_t} buf_len 长度需要至少和相应CMD的数据结构大小相等
+ * @return {*}
+ */
+static int _bModbusRTUMasterPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
     int      i   = 0;
     int      len = 0;
@@ -246,53 +335,50 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
 
     if (cmd == B_MODBUS_CMD_READ_REG)
     {
-        bModbusRead_t *param = (bModbusRead_t *)buf;
-        len                  = sizeof(bModbusRead_t) + 2;
+        bModbusMasterRead_t *param = (bModbusMasterRead_t *)buf;
+        len = sizeof(bModbusMasterRead_t) + 2;
         if (buf_len < len)
         {
             return -1;
         }
         param->base_reg = L2B_B2L_16b(param->base_reg);
-        param->reg_num  = L2B_B2L_16b(param->reg_num);
+        param->reg_num = L2B_B2L_16b(param->reg_num);
         param->reserved = MODBUS_RTU_READ_REGS;
     }
     else if (cmd == B_MODBUS_CMD_WRITE_REG)
     {
-        bModbusWrite_t *param = (bModbusWrite_t *)buf;
-        if (param->reg_num == 0)
-        {
-            return -1;
-        }
-        if (param->reg_num == 1)
-        {
-            len = sizeof(bModbusWriteReg_t);
-        }
-        else
-        {
-            len = sizeof(bModbusWriteRegs_t) + param->reg_num * 2;
-        }
+        len = sizeof(bModbusMasterSendWriteReg_t);
         if (buf_len < len)
         {
             return -1;
         }
-        param->base_reg = L2B_B2L_16b(param->base_reg);
-        if (param->reg_num == 1)
+        bModbusMasterSendWriteReg_t *frame = (bModbusMasterSendWriteReg_t *)buf;
+        frame->func = MODBUS_RTU_WRITE_REG;
+        frame->reg = L2B_B2L_16b(frame->reg);
+        frame->value = L2B_B2L_16b(frame->value);
+    }
+    else if (cmd == B_MODBUS_CMD_WRITE_REGS)
+    {
+        bModbusMasterWriteRegs_t *param = (bModbusMasterWriteRegs_t *)buf;
+        len = sizeof(bModbusMasterWriteRegs_t) + param->reg_num * 2;
+        if (buf_len < len)
         {
-            bModbusWriteReg_t *frame = (bModbusWriteReg_t *)buf;
-            frame->func              = MODBUS_RTU_WRITE_REG;
-            frame->value             = L2B_B2L_16b(param->reg_value[0]);
+            return -1;
         }
-        else
+
+        bModbusMasterSendWriteRegs_t *frame = (bModbusMasterSendWriteRegs_t *)buf;
+        frame->len = param->reg_num * 2;
+        frame->func = MODBUS_RTU_WRITE_REGS;
+        frame->reg = L2B_B2L_16b(param->base_reg);
+        frame->num = L2B_B2L_16b(param->reg_num);
+        for (i = 0; i < frame->len / 2; i++)
         {
-            bModbusWriteRegs_t *frame = (bModbusWriteRegs_t *)buf;
-            frame->len                = param->reg_num * 2;
-            frame->func               = MODBUS_RTU_WRITE_REGS;
-            param->reg_num            = L2B_B2L_16b(param->reg_num);
-            for (i = 0; i < frame->len / 2; i++)
-            {
-                frame->param[i] = L2B_B2L_16b((param->reg_value)[i]);
-            }
+            frame->param[i] = L2B_B2L_16b(frame->param[i]);
         }
+    }
+    else
+    {
+        return -2;
     }
 
     if (len > 0)
@@ -306,6 +392,226 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
 }
 
 /**
+ * @description: 从机收到的MODBUS帧解析是否正确?即主机的发送,此为原始的大端输入,解析正确后转换为小端,调用回调来更新寄存器表
+ * @param {void} *attr
+ * @param {uint8_t} *in
+ * @param {uint16_t} i_len
+ * @param {uint8_t} *out
+ * @param {uint16_t} o_len
+ * @return {*} -1长度不对 -2帧头错误 -3校验错误 -4格式错误 -5操作非法地址
+ */
+static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
+{
+    int i = 0;
+    int len = 0;
+    uint16_t crc = 0;
+    bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
+    bModbusCbParm_t param;
+
+    if (i_len < 2)
+    {
+        return -1;
+    }
+
+    if ((in[0] != SLAVE_ADDR) && (in[0] != ALL_SLAVE_ADDR))
+    {
+        return -2;
+    }
+
+    if (in[1] == MODBUS_RTU_READ_REGS)
+    {
+        bModbusSlaveRecvReadRegs_t *r = (bModbusSlaveRecvReadRegs_t *)in;
+        len = sizeof(bModbusSlaveRecvReadRegs_t);
+        if (i_len < len)
+        {
+            return -1;
+        }
+        crc = _bMBCRC16(in, len - 2);
+        if (crc != r->crc)
+        {
+            return -3;
+        }
+        param.slave_id = r->addr;
+        param.func_code = r->func;
+        param.base_reg = L2B_B2L_16b(r->reg);
+        param.reg_num = L2B_B2L_16b(r->num);
+        if (param.reg_num > MODBUS_READ_REG_MAX)
+        {
+            return -4;
+        }
+        if ((param.base_reg >= MY_DEVICE_MODBUS_REG_NUM) || ((param.base_reg + param.reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
+        {
+            return -5;
+        }
+        param.reg_value = NULL;
+        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_READ_REG, &param);
+    }
+    else if (in[1] == MODBUS_RTU_WRITE_REG)
+    {
+        bModbusSlaveRecvWriteReg_t *w_1 = (bModbusSlaveRecvWriteReg_t *)in;
+        len = sizeof(bModbusSlaveRecvWriteReg_t);
+        if (i_len < len)
+        {
+            return -1;
+        }
+        crc = _bMBCRC16(in, len - 2);
+        if (crc != w_1->crc)
+        {
+            return -3;
+        }
+        param.slave_id = w_1->addr;
+        param.func_code = w_1->func;
+        param.base_reg = L2B_B2L_16b(w_1->reg);
+        param.reg_num = 1;
+        if (param.base_reg >= MY_DEVICE_MODBUS_REG_NUM)
+        {
+            return -5;
+        }
+        w_1->value = L2B_B2L_16b(w_1->value);
+        param.reg_value = &w_1->value;
+        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+    }
+    else if (in[1] == MODBUS_RTU_WRITE_REGS)
+    {
+        bModbusSlaveRecvWriteRegs_t *w = (bModbusSlaveRecvWriteRegs_t *)in;
+        len = sizeof(bModbusSlaveRecvWriteRegs_t) + w->len;
+        if (i_len < len)
+        {
+            return -1;
+        }
+        crc = _bMBCRC16(in, len - 2);
+        if (crc != w->param[w->len / 2])
+        {
+            return -3;
+        }
+        param.slave_id = w->addr;
+        param.func_code = w->func;
+        param.base_reg = L2B_B2L_16b(w->reg);
+        param.reg_num = L2B_B2L_16b(w->num);
+        if (param.reg_num > MODBUS_WRITE_REG_MAX)
+        {
+            return -4;
+        }
+        if ((param.reg_num * 2) != w->len)
+        {
+            return -4;
+        }
+        if ((param.base_reg >= MY_DEVICE_MODBUS_REG_NUM) || ((param.base_reg + param.reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
+        {
+            return -5;
+        }
+        for (i = 0; i < param.reg_num; i++)
+        {
+            (w->param)[i] = L2B_B2L_16b((w->param)[i]);
+        }
+        param.reg_value = w->param;
+        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+    }
+    else
+    {
+        return -4;
+    }
+
+    return 0;
+}
+
+/**
+ * @description: 将信息除去校验位按照位置还有小端存在buf内,该函数会判定格式后大小端转换
+ * @param {void} *attr
+ * @param {bProtoCmd_t} cmd
+ * @param {uint8_t} *buf 该数组同时将读写的参数按照小端传入,具体是什么数据类型,依据CMD来决定,判定帧格式成功后重新按照大端组帧
+ * @param {uint16_t} buf_len
+ * @return {*} -1长度不对 -2帧头错误 -3校验错误 -4格式错误 -5操作非法地址 -6调用错误
+ */
+static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
+{
+    uint16_t i = 0;
+    int len = 0;
+    uint16_t crc = 0;
+    if (buf == NULL || buf_len == 0)
+    {
+        return -1;
+    }
+
+    if ((buf[0] != SLAVE_ADDR) && (buf[0] == ALL_SLAVE_ADDR))
+    {
+        return -2;
+    }
+
+    if (cmd == B_MODBUS_CMD_READ_REG)
+    {
+        bModbusSlaveRead_t *param = (bModbusSlaveRead_t *)buf;
+        len = sizeof(bModbusSlaveRead_t) + param->len;
+        if (buf_len < len)
+        {
+            return -1;
+        }
+        if (param->reserved != MODBUS_RTU_READ_REGS)
+        {
+            return -4;
+        }
+        if ((param->len % 2 != 0) && (param->len != 0))
+        {
+            return -4;
+        }
+        for (i = 0; i < param->len / 2; i++)
+        {
+            param->reg_value[i] = L2B_B2L_16b(param->reg_value[i]);
+        }
+    }
+    else if (cmd == B_MODBUS_CMD_WRITE_REG)
+    {
+        bModbusSlaveWriteReg_t *frame = (bModbusSlaveWriteReg_t *)buf;
+        len = sizeof(bModbusSlaveWriteReg_t);
+        if (buf_len < len)
+        {
+            return -1;
+        }
+        if (frame->reserved != MODBUS_RTU_WRITE_REG)
+        {
+            return -4;
+        }
+        if (frame->base_reg >= MY_DEVICE_MODBUS_REG_NUM)
+        {
+            return -5;
+        }
+        frame->base_reg = L2B_B2L_16b(frame->base_reg);
+        frame->reg_value = L2B_B2L_16b(frame->reg_value);
+    }
+    else if (cmd == B_MODBUS_CMD_WRITE_REGS)
+    {
+        bModbusSlaveWriteRegs_t *frame = (bModbusSlaveWriteRegs_t *)buf;
+        len = sizeof(bModbusSlaveWriteRegs_t);
+        if (buf_len < len)
+        {
+            return -1;
+        }
+        if (frame->reserved != MODBUS_RTU_WRITE_REGS)
+        {
+            return -4;
+        }
+        if ((frame->base_reg >= MY_DEVICE_MODBUS_REG_NUM) || ((frame->base_reg + frame->reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
+        {
+            return -5;
+        }
+        frame->base_reg = L2B_B2L_16b(frame->base_reg);
+        frame->reg_num = L2B_B2L_16b(frame->reg_num);
+    }
+    else
+    {
+        return -6;
+    }
+
+    if (len > 0)
+    {
+        crc = _bMBCRC16(buf, len - 2);
+        buf[len - 2] = ((crc >> 0) & 0xff);
+        buf[len - 1] = ((crc >> 8) & 0xff);
+    }
+
+    return len;
+}
+/**
  * \}
  */
 
@@ -314,7 +620,8 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
  * \{
  */
 
-bPROTOCOL_REG_INSTANCE("modbus", _bModbusRTUParse, _bModbusRTUPackage);
+bPROTOCOL_REG_INSTANCE("modbus_master", _bModbusRTUMasterParse, _bModbusRTUMasterPackage);
+bPROTOCOL_REG_INSTANCE("modbus_slave", _bModbusRTUSlaveParse, _bModbusRTUSlavePackage);
 
 /**
  * \}
