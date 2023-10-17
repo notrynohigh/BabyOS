@@ -288,7 +288,7 @@ static int _bModbusRTUPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
             frame->len                = param->reg_num * 2;
             frame->func               = MODBUS_RTU_WRITE_REGS;
             param->reg_num            = L2B_B2L_16b(param->reg_num);
-            for (i = 0; i < frame->len; i++)
+            for (i = 0; i < frame->len / 2; i++)
             {
                 frame->param[i] = L2B_B2L_16b((param->reg_value)[i]);
             }
