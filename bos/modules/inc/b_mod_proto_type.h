@@ -53,19 +53,53 @@ typedef struct
 {
     uint8_t  slave_addr;
     uint8_t  reserved1;
-    uint16_t base_reg;
-    uint16_t reg_num;
-    uint16_t reserved2;
-    uint16_t reg_value[1];
-} bModbusMasterWrite_t;
+    uint16_t base_reg; // Little endian
+    uint16_t reg_value[1]; // Little endian
+} bModbusMasterWriteReg_t;
+
+typedef struct
+{
+    uint8_t  slave_addr;
+    uint8_t  reserved1;
+    uint16_t base_reg; // Little endian
+    uint16_t reg_num;  // Little endian
+    uint8_t reserved2;
+    uint16_t reg_value[1];// Little endian
+} bModbusMasterWriteRegs_t;
 
 typedef struct
 {
     uint8_t  slave_addr;
     uint8_t  reserved;
-    uint16_t base_reg;
-    uint16_t reg_num;
+    uint16_t base_reg; // Little endian
+    uint16_t reg_num;  // Little endian
 } bModbusMasterRead_t;
+
+typedef struct
+{
+    uint8_t slave_addr;
+    uint8_t reserved1;
+    uint16_t base_reg; // Little endian
+    uint16_t reg_value; // Little endian
+    uint16_t crc;       // Little endian
+} bModbusSlaveWriteReg_t;
+
+typedef struct
+{
+    uint8_t slave_addr;
+    uint8_t reserved1;
+    uint16_t base_reg;     // Little endian
+    uint16_t reg_num;      // Little endian
+    uint16_t crc;    // Little endian
+} bModbusSlaveWriteRegs_t;
+
+typedef struct
+{
+    uint8_t slave_addr;
+    uint8_t reserved;
+    uint8_t len;
+    uint16_t reg_value; // Little endian
+} bModbusSlaveRead_t;
 
 typedef struct
 {
@@ -113,7 +147,8 @@ typedef enum
     B_XYMODEM_CMD_STOP,        // package [null]
     B_XYMODEM_DATA,            // callback [bXYModemCbParam_t]
     B_MODBUS_CMD_READ_REG,     // pakage [bModbusMasterRead_t], callback [bModbusCbParm_t]
-    B_MODBUS_CMD_WRITE_REG,    // pakage [bModbusMasterWrite_t], callback [bModbusCbParm_t]
+    B_MODBUS_CMD_WRITE_REG,    // pakage [bModbusMasterWriteRegs_t], callback [bModbusCbParm_t]
+    B_MODBUS_CMD_WRITE_REGS,   // pakage [bModbusMasterWriteRegs_t], callback [bModbusCbParm_t]
     B_PROTO_TRANS_FILE_INFO,   // callback [bProtoFileInfo_t]
     B_PROTO_SET_FILE_LOCATION, // callback [bProtoFileLocation_t]
     B_PROTO_REQ_FILE_DATA,     // package [bProtoReqFileData_t]
