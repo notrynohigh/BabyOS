@@ -78,19 +78,19 @@ typedef struct
 typedef struct
 {
     uint8_t slave_addr;
-    uint8_t reserved1;
+    uint8_t reserved;
     uint16_t base_reg; // Little endian
     uint16_t reg_value; // Little endian
-    uint16_t crc;       // Little endian
+    uint16_t crc;       
 } bModbusSlaveWriteReg_t;
 
 typedef struct
 {
     uint8_t slave_addr;
-    uint8_t reserved1;
+    uint8_t reserved;
     uint16_t base_reg;     // Little endian
     uint16_t reg_num;      // Little endian
-    uint16_t crc;    // Little endian
+    uint16_t crc;   
 } bModbusSlaveWriteRegs_t;
 
 typedef struct
@@ -98,7 +98,7 @@ typedef struct
     uint8_t slave_addr;
     uint8_t reserved;
     uint8_t len;
-    uint16_t reg_value; // Little endian
+    uint16_t reg_value[1]; // Little endian
 } bModbusSlaveRead_t;
 
 typedef struct
