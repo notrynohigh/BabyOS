@@ -143,7 +143,7 @@ static int _bRS485Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
     bDRIVER_GET_HALIF(_if, bRS485_HalIf_t, pdrv);
     bHalGpioWritePin(_if->port, _if->pin, 1);
     bHalUartSend(_if->uart, pbuf, len);
-		bHalDelayUs(100); 
+    bHalDelayUs(100);
     bHalGpioWritePin(_if->port, _if->pin, 0);
     return len;
 }
@@ -156,6 +156,14 @@ static int _bRS485Ctl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
         case bCMD_485_REG_CALLBACK:
         {
             p->cb = (bRS485Callback_t)param;
+        }
+        break;
+        case bCMD_485_IDLE_MS:
+        {
+            if (param)
+            {
+                p->attr.idle_ms = *((uint16_t *)param);
+            }
         }
         break;
         default:
@@ -189,7 +197,7 @@ int bRS485_Init(bDriverInterface_t *pdrv)
 #endif
 
     bHAL_UART_INIT_ATTR(&bRS485RunInfo[pdrv->drv_no].attr, bRS485RunInfo[pdrv->drv_no].buf,
-                        RS485_RX_BUF_LEN, 50, _bHalUartIdleCallback, pdrv);
+                        RS485_RX_BUF_LEN, RS485_RX_IDLE_MS, _bHalUartIdleCallback, pdrv);
     bHalUartReceiveIdle(bHalIf_RS485[pdrv->drv_no].uart, &bRS485RunInfo[pdrv->drv_no].attr);
     bHalGpioWritePin(bHalIf_RS485[pdrv->drv_no].port, bHalIf_RS485[pdrv->drv_no].pin, 0);
     return 0;

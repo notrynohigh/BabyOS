@@ -21,6 +21,10 @@ config RS485_RX_BUF_LEN
     int "RS485 Rx Buffer Length"
     default 128
 
+config RS485_RX_IDLE_MS
+    int "RS485 Rx Idle Ms"
+    default 50
+
 choice
     prompt "485 receive data processing method"
     default _485_USE_CALLBACK
