@@ -105,9 +105,9 @@ typedef struct
 {
     uint8_t   slave_id;
     uint8_t   func_code;
-    uint16_t  base_reg;
-    uint16_t  reg_num;
-    uint16_t *reg_value;
+    uint16_t base_reg;   // Little endian
+    uint16_t reg_num;    // Little endian
+    uint16_t *reg_value; // Little endian
 } bModbusCbParm_t;
 
 typedef struct
