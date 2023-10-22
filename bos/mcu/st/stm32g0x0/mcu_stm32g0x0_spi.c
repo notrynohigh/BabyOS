@@ -102,7 +102,7 @@ uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
         return 0;
     }
     pSpi = SpiTable[spi_if->_if.spi];
-
+    tmp  = *(volatile uint8_t *)&pSpi->DR;
     B_SET_BIT(pSpi->CR2, (0x1 << 12));
 
     /* Check if the SPI is already enabled */

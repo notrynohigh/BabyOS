@@ -33,6 +33,8 @@ config STM32G0X0
     bool "STM32G0X0"
 config STM32L41X_L46X
     bool "STM32L41X_L46X"
+config STM32F40X
+    bool "STM32F40X"    
 endchoice
 
 #选择国民技术的芯片

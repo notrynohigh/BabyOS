@@ -110,6 +110,7 @@ uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
         return 0;
     }
     pSpi = SpiTable[spi_if->_if.spi];
+    tmp  = pSpi->DR;
     if ((pSpi->CR1 & (0x1 << 6)) == 0)
     {
         pSpi->CR1 |= (0x1 << 6);

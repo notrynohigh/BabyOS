@@ -61,6 +61,10 @@ typedef enum
     B_HAL_GPIOE,
     B_HAL_GPIOF,
     B_HAL_GPIOG,
+    B_HAL_GPIOH,
+    B_HAL_GPIOI,
+    B_HAL_GPIOJ,
+    B_HAL_GPIOK,
     B_HAL_GPIO_INVALID,
 } bHalGPIOPort_t;
 
@@ -138,7 +142,8 @@ typedef enum
     B_HAL_GPIO_EXIT_TRIG_INVALID
 } bHalGPIOExtiTrig_t;
 
-typedef void (*pbHalGpioExtiCallback_t)(bHalGPIOExtiLine_t line, bHalGPIOExtiTrig_t trig, void *arg);
+typedef void (*pbHalGpioExtiCallback_t)(bHalGPIOExtiLine_t line, bHalGPIOExtiTrig_t trig,
+                                        void *arg);
 
 typedef struct bHalGPIOExti
 {
