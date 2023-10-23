@@ -131,4 +131,7 @@ FS功能模块是基于FatFS和LittleFS,方便用户使用:
 | 2023.05 | 将utc时间从基准时间2000年改为1970年<br>utc增加设置和读取utc时间接口。tick增加溢出计数，提供uint64_t类型的tick值获取接口 |      |
 | 2023.06 | bMalloc和bFree可选择是否打印申请者和释放者信息<br>修复队列bug ; b_hal_it 增加中断注册和调用接口 ; 增加io多路转发select功能 |      |
 | 2023.07 | core 目录，增加b_task b_timer b_queue b_sem<br>b_util_uart废弃，其功能融入 b_hal_uart 往bos喂串口数据的唯一途径是bHalItInvoke |      |
+| 2023.08 | 修复语法问题，增加service层                                  |      |
+| 2023.09 | 增加第三方代码arm-2d，优化spi接口和屏驱动                    |      |
+| 2023.10 | 修复若干bug。增加mcu.py方便新增mcu，优化b_config.py当bos路径无效时提示重新输入 |      |
 

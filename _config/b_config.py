@@ -118,8 +118,21 @@ def check_path_exists(path):
         path_a = path
     return path_a
 
+def replace_string_in_file(filename, old_string, new_string):
+    with open(filename, 'r') as file:
+        content = file.read()
+        file.close()
+    old_string = old_string.strip()
+    new_string = new_string.strip()
+    if old_string != new_string:
+        content = content.replace(old_string, new_string)
+        with open(filename, 'w') as file:
+            file.write(content)
+            file.close()
 
 if __name__ == "__main__":
     bos_path = check_path_exists(sys.argv[1])
+    replace_string_in_file("b_config.bat", sys.argv[1], bos_path)
+    replace_string_in_file("b_config.sh", sys.argv[1], bos_path)
     mconfig(bos_path)
     cp_arm_2d_file(bos_path)
