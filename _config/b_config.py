@@ -17,25 +17,25 @@ def mconf_set_env(argv):
     os.environ["KCONFIG_AUTOHEADER"] = os.path.join("b_config.h")
     os.environ["CONFIG_"] = ""
 
-def mconfig(argv):
-    print(argv[0])
+def mconfig(path):
+    print(path)
     
     kconf_fd = open("Kconfig", 'w+')
     kconf_list = "mainmenu " + "\"BabyOS Configuration\" \n"
-    kconf_list += "source " + "\"" + argv[1] + "/core/Kconfig" + "\"" + "\n" 
-    kconf_list += "source " + "\"" + argv[1] + "/hal/Kconfig" + "\"" + "\n"
-    kconf_list += "source " + "\"" + argv[1] + "/mcu/Kconfig" + "\"" + "\n"
-    kconf_list += "source " + "\"" + argv[1] + "/algorithm/Kconfig" + "\"" + "\n"
-    kconf_list += "source " + "\"" + argv[1] + "/drivers/Kconfig" + "\"" + "\n"
-    kconf_list += "source " + "\"" + argv[1] + "/modules/Kconfig" + "\"" + "\n"
-    kconf_list += "source " + "\"" + argv[1] + "/thirdparty/Kconfig" + "\"" + "\n"
-    kconf_list += "source " + "\"" + argv[1] + "/utils/Kconfig" + "\"" + "\n"
-    kconf_list += "source " + "\"" + argv[1] + "/services/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + path + "/core/Kconfig" + "\"" + "\n" 
+    kconf_list += "source " + "\"" + path + "/hal/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + path + "/mcu/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + path + "/algorithm/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + path + "/drivers/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + path + "/modules/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + path + "/thirdparty/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + path + "/utils/Kconfig" + "\"" + "\n"
+    kconf_list += "source " + "\"" + path + "/services/Kconfig" + "\"" + "\n"
     print(kconf_list)
     kconf_fd.write(kconf_list)
     kconf_fd.close()
     
-    mconf_set_env(argv)
+    mconf_set_env(path)
     kconf = Kconfig(filename="./Kconfig")
     menuconfig(kconf)
     kconf.write_autoconf()
@@ -108,7 +108,18 @@ def cp_arm_2d_file(bos_dir):
         shutil.copy2(arm_2d_files[i], tmp_dir_files[i])
         process_includes(tmp_dir_files[i])
     
+def check_path_exists(path):
+    filepath = os.path.join(path, "b_os.h")
+    if not os.path.isfile(filepath):
+        print(path + " is invalid; Please enter the correct bos path:")
+        path_a = input(">> ")
+        path_a = check_path_exists(path_a)
+    else:
+        path_a = path
+    return path_a
+
 
 if __name__ == "__main__":
-    mconfig(sys.argv)
-    cp_arm_2d_file(sys.argv[1])
+    bos_path = check_path_exists(sys.argv[1])
+    mconfig(bos_path)
+    cp_arm_2d_file(bos_path)
