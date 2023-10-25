@@ -33,8 +33,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_i2c.h"
 
-#if (defined(STM32F10X_LD) || defined(STM32F10X_MD) || defined(STM32F10X_HD) || \
-     defined(STM32F10X_CL))
+#if defined(AT32F413xB)
 
 uint8_t bMcuI2CReadByte(const bHalI2CIf_t *i2c_if)
 {
