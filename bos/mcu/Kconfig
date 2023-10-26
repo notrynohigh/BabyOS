@@ -15,6 +15,8 @@ config VENDOR_WCH
     bool "WinChipHead"
 config VENDOR_HOLTEK
     bool "holtek"
+config VENDOR_ARTERY
+    bool "Artery"
 endchoice
 
 #选择ST的芯片
@@ -81,4 +83,12 @@ choice
     depends on VENDOR_HOLTEK
 config TH32F50343
     bool "TH32F50343"
+endchoice
+
+#选择雅特力的芯片
+choice
+    prompt "Select artery Chip"
+    depends on VENDOR_ARTERY
+config AT32F403A
+    bool "AT32F403A"
 endchoice

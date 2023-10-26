@@ -1,6 +1,6 @@
 /**
  *!
- * \file        mcu_stm32f10x_gpio.c
+ * \file        mcu_at32f403a_gpio.c
  * \version     v0.0.1
  * \date        2020/03/25
  * \author      Bean(notrynohigh@outlook.com)
