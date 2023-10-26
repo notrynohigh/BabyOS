@@ -97,6 +97,7 @@ static b24CXXPrivate_t b24CXXRunInfo[bDRIVER_HALIF_NUM(b24CXX_HalIf_t, DRIVER_NA
 
 static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
+	int	retval = -1;
     uint32_t i = 0, l_c = 0;
     bDRIVER_GET_HALIF(_if, b24CXX_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, b24CXXPrivate_t, pdrv);
@@ -104,37 +105,38 @@ static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
     l_c = _priv->page_size - off % (_priv->page_size);
     if (len <= l_c)
     {
-        bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, len);
+        retval = bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, len);
     }
     else
     {
-        bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, l_c);
+        retval = bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, l_c);
         bHalDelayMs(5);
         off += l_c;
         pbuf += l_c;
         len -= l_c;
         for (i = 0; i < len / (_priv->page_size); i++)
         {
-            bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, _priv->page_size);
+            retval = bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, _priv->page_size);
             bHalDelayMs(5);
             off += _priv->page_size;
             pbuf += _priv->page_size;
         }
         if ((len % _priv->page_size) > 0)
         {
-            bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, (len % _priv->page_size));
+            retval = bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, (len % _priv->page_size));
             bHalDelayMs(5);
         }
     }
-    return len;
+    return retval;
 }
 
 static int _b24CXXRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
+	int	retval = -1;
     bDRIVER_GET_HALIF(_if, b24CXX_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, b24CXXPrivate_t, pdrv);
-    bHalI2CMemRead(_if, off, 1 + (_priv->capacity > 256), pbuf, len);
-    return len;
+    retval = bHalI2CMemRead(_if, off, 1 + (_priv->capacity > 256), pbuf, len);
+    return retval; 
 }
 
 static int _b24CXXCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)

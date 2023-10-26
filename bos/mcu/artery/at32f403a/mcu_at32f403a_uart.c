@@ -187,6 +187,8 @@ typedef struct
   };
 } McuUartReg_t;
 
+#define McuUartReg_t usart_type
+
 #define MCU_UART1 ((McuUartReg_t *)UART1_BASE_ADDR)
 #define MCU_UART2 ((McuUartReg_t *)UART2_BASE_ADDR)
 #define MCU_UART3 ((McuUartReg_t *)UART3_BASE_ADDR)

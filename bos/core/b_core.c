@@ -309,7 +309,7 @@ int bCoreIsIdle()
  */
 int bInit()
 {
-    bHalInit();
+	bHalInit();
     b_log("______________________________________________\r\n");
     b_log("    ____                         __       __  \r\n");
     b_log("    /   )          /           /    )   /    \\\r\n");
