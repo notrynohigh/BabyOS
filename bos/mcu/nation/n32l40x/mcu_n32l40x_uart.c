@@ -92,6 +92,15 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
         }
         pUart->DAT = pbuf[i];
     }
+    timeout = 0x000B0000;
+    while (timeout > 0 && ((pUart->STS & (0x1 << 6)) == 0))
+    {
+        timeout--;
+    }
+    if (timeout <= 0)
+    {
+        return -2;
+    }
     return len;
 }
 

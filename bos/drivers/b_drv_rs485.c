@@ -143,7 +143,6 @@ static int _bRS485Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
     bDRIVER_GET_HALIF(_if, bRS485_HalIf_t, pdrv);
     bHalGpioWritePin(_if->port, _if->pin, 1);
     bHalUartSend(_if->uart, pbuf, len);
-    bHalDelayUs(100);
     bHalGpioWritePin(_if->port, _if->pin, 0);
     return len;
 }
