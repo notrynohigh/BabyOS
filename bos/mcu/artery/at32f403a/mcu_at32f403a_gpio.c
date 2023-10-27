@@ -1,6 +1,6 @@
 /**
  *!
- * \file        mcu_at32f403a_gpio.c
+ * \file        mcu_stm32f10x_gpio.c
  * \version     v0.0.1
  * \date        2020/03/25
  * \author      Bean(notrynohigh@outlook.com)
@@ -46,10 +46,10 @@
 
 void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, bHalGPIOPull_t pull)
 {
-    uint32_t      dir_val  = 0x44444444;  //default float input
+    uint32_t      dir_val  = 0x44444444;  // default float input
     uint32_t      pull_val = 0;
     McuGpioReg_t *pGpio    = (McuGpioReg_t *)(GPIO_REG_BASE + port * GPIO_REG_OFF);
-	
+
     if (!B_HAL_GPIO_ISVALID(port, pin))
     {
         return;
@@ -61,7 +61,7 @@ void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, b
     }
     else if (pull != B_HAL_GPIO_NOPULL)
     {
-        dir_val  = (pin == B_HAL_PINAll) ? 0x88888888 : 8;				// pull up or pull down
+        dir_val  = (pin == B_HAL_PINAll) ? 0x88888888 : 8;  // pull up or pull down
         pull_val = (pin == B_HAL_PINAll) ? 0xFFFF : (0X0001 << pin);
 
         if (pull == B_HAL_GPIO_PULLUP)
@@ -106,8 +106,7 @@ void bMcuGpioWritePin(bHalGPIOPort_t port, bHalGPIOPin_t pin, uint8_t s)
     {
         cs_val <<= 16;
     }
-		pGpio->scr = cs_val;
-
+    pGpio->scr = cs_val;
 }
 
 uint8_t bMcuGpioReadPin(bHalGPIOPort_t port, bHalGPIOPin_t pin)
