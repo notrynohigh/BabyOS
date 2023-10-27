@@ -164,6 +164,8 @@ typedef struct bHalGPIOExti
  */
 
 #define B_HAL_GPIO_ISVALID(port, pin) (port != B_HAL_GPIO_INVALID && pin != B_HAL_PIN_INVALID)
+#define B_HAL_GPIODIR_ISVALID(dir) (dir != B_HAL_GPIO_DIR_INVALID)
+#define B_HAL_GPIOPULL_ISVALID(pull) (pull != B_HAL_GPIO_PULL_INVALID)
 
 #define B_HAL_GPIO_ADD_EXTI_CALLBACK(_line, _trig, _cb, _arg) \
     static bHalGPIOExti_t exti_##_line = {                    \

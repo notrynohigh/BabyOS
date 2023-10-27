@@ -33,7 +33,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_it.h"
 
-#if defined(AT32F413xB)
+#if defined(AT32F413Cx)
 
 void bMcuIntEnable()
 {

@@ -141,10 +141,10 @@ B_FPUTC
 
 static void _bLogOutput(void *p)
 {
-#if defined(LOG_UART)
-    bHalUartSend((bHalUartNumber_t)LOG_UART, p, strlen(p));
-#elif defined(_LOG_VIA_USER_SPECIFIED) && (_LOG_VIA_USER_SPECIFIED == 1)
+#if defined(_LOG_VIA_USER_SPECIFIED) && (_LOG_VIA_USER_SPECIFIED == 1)
     bLogOutputBytes(p, strlen(p));
+#elif defined(LOG_UART)
+    bHalUartSend((bHalUartNumber_t) LOG_UART, p, strlen(p));
 #else
     (void)p;
 #endif
