@@ -38,7 +38,6 @@
 #if defined(AT32F413Cx)
 #pragma anon_unions       // 在使用匿名联合的地方添加这个指令
 #define UNUSED(x) (void)x /* to avoid gcc/g++ warnings */
-
 #define __IO volatile /*!< Defines 'read / write' permissions */
 
 #define FLASH_BASE ((uint32_t)0x08000000)
