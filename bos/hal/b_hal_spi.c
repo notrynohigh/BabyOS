@@ -83,9 +83,15 @@ static uint8_t _bHalSPIIOWriteRead(bHalSPIIO_t spi, uint8_t dat)
         {
             dat++;
         }
+        if(i == 7 && spi.CPHA == 1)
+        {
 
-        polarity = polarity ^ 0x01;
-        bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+        }
+        else
+        {
+            polarity = polarity ^ 0x01;
+            bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+        }
     }
     if (init_p != polarity)
     {
