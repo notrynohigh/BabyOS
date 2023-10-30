@@ -10,9 +10,6 @@
 #include "hal/inc/b_hal_uart.h"
 
 #if defined(AT32F413Cx)
-#if (defined(LOG_UART) && defined(RS485_UART) &&(LOG_UART == RS485_UART))
-#include "hal/inc/b_hal.h"
-#endif
 
 #pragma anon_unions       // 在使用匿名联合的地方添加这个指令
 #define UNUSED(x) (void)x /* to avoid gcc/g++ warnings */
@@ -166,7 +163,7 @@ typedef struct
 #define USART_TDBE_FLAG ((uint32_t)0x00000080) /*!< usart transmit data buffer empty flag */
 #define USART_TDC_FLAG ((uint32_t)0x00000040) /*!< usart transmit data complete flag */
 
-static McuUartReg_t *UartTable[] = { MCU_UART1, MCU_UART2, MCU_UART3 };
+static McuUartReg_t *UartTable[] = { MCU_UART1, MCU_UART2, MCU_UART3 }; // 注意UartTable内串口必须连续
 
 /**
  * @description: 注意UartTable内串口必须连续
@@ -185,10 +182,6 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     }
     pUart = UartTable[uart];
 
-#if (defined(LOG_UART) && defined(RS485_UART) &&(LOG_UART == RS485_UART))
-    bHalGpioWritePin(B_HAL_GPIOA, B_HAL_PIN1, 1);
-#endif
-
     while (t_len--)
     {
         while ((pUart->sts & USART_TDBE_FLAG) == 0)
@@ -197,10 +190,6 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     }
     while ((pUart->sts & USART_TDC_FLAG) == 0)
         ;
-
-#if (defined(LOG_UART) && defined(RS485_UART) &&(LOG_UART == RS485_UART))
-    bHalGpioWritePin(B_HAL_GPIOA, B_HAL_PIN1, 0);
-#endif
 
     return len;
 }
