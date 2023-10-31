@@ -79,7 +79,7 @@
 #define REG_VAL_BIT_DIAMOND_DMP_RST 0x04
 #define REG_ADD_PWR_MIGMT_1 0x06
 #define REG_VAL_ALL_RGE_RESET 0x80
-#define REG_VAL_RUN_MODE 0x01 // Non low-power mode
+#define REG_VAL_RUN_MODE 0x01  // Non low-power mode
 #define REG_ADD_LP_CONFIG 0x05
 #define REG_ADD_PWR_MGMT_1 0x06
 #define REG_ADD_PWR_MGMT_2 0x07
@@ -128,7 +128,8 @@
 
 /* user bank 3 register */
 #define REG_ADD_I2C_MST_CTRL 0x01
-#define REG_ADD_I2C_MST_CTRL_CLK_400KHZ 0x07 // Gives 345.6kHz and is recommended to achieve max 400kHz
+#define REG_ADD_I2C_MST_CTRL_CLK_400KHZ \
+    0x07  // Gives 345.6kHz and is recommended to achieve max 400kHz
 #define REG_ADD_I2C_SLV0_ADDR 0x03
 #define REG_ADD_I2C_SLV0_REG 0x04
 #define REG_ADD_I2C_SLV0_CTRL 0x05
@@ -182,15 +183,15 @@
         bICM20948_Mag_Read(pdrv, a, b, c, d); \
     } while (0);
 
-#define ICM20948_Mag_Write(a, b, c)          \
+#define ICM20948_Mag_Write(a, b, c)         \
     do                                      \
     {                                       \
         bICM20948_Mag_Write(pdrv, a, b, c); \
     } while (0);
 
-#define ICM20948_Mag_Reset()                \
-    do                                      \
-    {                                       \
+#define ICM20948_Mag_Reset()       \
+    do                             \
+    {                              \
         bICM20948_Mag_Reset(pdrv); \
     } while (0);
 
@@ -268,7 +269,7 @@ static int bICM20948WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *da
 
 static int ICM20948GetID(bDriverInterface_t *pdrv, uint8_t *id)
 {
-    int retval = 0;
+    int     retval = 0;
     uint8_t w_data = 0;
     uint8_t r_data = 0;
 
@@ -285,9 +286,10 @@ static int ICM20948GetID(bDriverInterface_t *pdrv, uint8_t *id)
     return retval;
 }
 
-int F_ICM20948_GetData(bDriverInterface_t *pdrv, int32_t *pData_acc, int32_t *pData_gyro, int32_t *pData_mag, float *tempreature)
+int F_ICM20948_GetData(bDriverInterface_t *pdrv, int32_t *pData_acc, int32_t *pData_gyro,
+                       int32_t *pData_mag, float *tempreature)
 {
-    int retval = -1;
+    int     retval = -1;
     uint8_t tempBuf[20];
     int16_t pDataRaw_x[3];
     int16_t pDataRaw_g[3];
@@ -331,17 +333,19 @@ int F_ICM20948_GetData(bDriverInterface_t *pdrv, int32_t *pData_acc, int32_t *pD
     return retval;
 }
 
-static void bICM20948_Mag_Read(bDriverInterface_t *pdrv, uint8_t I2CAddr, uint8_t RegAddr, uint8_t Len, uint8_t *pdata)
+static void bICM20948_Mag_Read(bDriverInterface_t *pdrv, uint8_t I2CAddr, uint8_t RegAddr,
+                               uint8_t Len, uint8_t *pdata)
 {
     uint8_t w_data = 0;
 
-    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_3); // swtich bank3
-    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_SLV0_ADDR, I2CAddr | I2C_ADD_ICM20948_AK09916_READ);
+    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_3);  // swtich bank3
+    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_SLV0_ADDR,
+                    I2CAddr | I2C_ADD_ICM20948_AK09916_READ);
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_SLV0_REG, RegAddr);
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_SLV0_CTRL, REG_VAL_BIT_SLV0_EN | Len);
     F_Delay_ms(10);
 
-    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0); // swtich bank0
+    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);  // swtich bank0
 
     for (uint8_t i = 0; i < Len; i++)
     {
@@ -349,12 +353,13 @@ static void bICM20948_Mag_Read(bDriverInterface_t *pdrv, uint8_t I2CAddr, uint8_
     }
 }
 
-static void bICM20948_Mag_Write(bDriverInterface_t *pdrv, uint8_t I2CAddr, uint8_t RegAddr, uint8_t data)
+static void bICM20948_Mag_Write(bDriverInterface_t *pdrv, uint8_t I2CAddr, uint8_t RegAddr,
+                                uint8_t data)
 {
     uint8_t w_data = 0;
     uint8_t r_data = 0;
 
-    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_3); // swtich bank3
+    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_3);  // swtich bank3
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_SLV0_ADDR, I2CAddr);
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_SLV0_REG, RegAddr);
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_SLV0_DO, data);
@@ -383,14 +388,15 @@ static void bICM20948_Mag_Reset(bDriverInterface_t *pdrv)
 
 static int _bICM20948Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
-    int retval = 0;
-    bICM20948_9Axis_t *ptmp = (bICM20948_9Axis_t *)pbuf;
+    int                retval = 0;
+    bICM20948_9Axis_t *ptmp   = (bICM20948_9Axis_t *)pbuf;
 
     if (len < sizeof(bICM20948_9Axis_t))
     {
         return 0;
     }
-    retval = F_ICM20948_GetData(pdrv, ptmp->acc_arr, ptmp->gyro_arr, ptmp->mag_arr, &ptmp->temperature);
+    retval =
+        F_ICM20948_GetData(pdrv, ptmp->acc_arr, ptmp->gyro_arr, ptmp->mag_arr, &ptmp->temperature);
     return retval;
 }
 /**
@@ -434,11 +440,14 @@ int bICM20948_Init(bDriverInterface_t *pdrv)
 
     // configure gyro
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_2);
-    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_GYRO_CONFIG_1, REG_VAL_BIT_GYRO_DLPCFG_6 | REG_VAL_BIT_GYRO_FS_2000DPS | REG_VAL_BIT_GYRO_DLPF);
+    F_IIC_WriteByte(
+        I2C_ADD_ICM20948, REG_ADD_GYRO_CONFIG_1,
+        REG_VAL_BIT_GYRO_DLPCFG_6 | REG_VAL_BIT_GYRO_FS_2000DPS | REG_VAL_BIT_GYRO_DLPF);
 
     // configure acc
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_ACCEL_SMPLRT_DIV_2, 0x00);
-    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_ACCEL_CONFIG, REG_VAL_BIT_ACCEL_DLPCFG_6 | REG_VAL_BIT_ACCEL_FS_4g | REG_VAL_BIT_ACCEL_DLPF);
+    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_ACCEL_CONFIG,
+                    REG_VAL_BIT_ACCEL_DLPCFG_6 | REG_VAL_BIT_ACCEL_FS_4g | REG_VAL_BIT_ACCEL_DLPF);
 
     // checkMag
     uint8_t ret[2];
