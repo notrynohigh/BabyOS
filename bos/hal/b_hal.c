@@ -92,7 +92,7 @@ void bHalInit()
 void bHalIncSysTick()
 {
     bSysTick += 1;
-    if(bSysTick == 0)
+    if (bSysTick == 0)
     {
         bSysTickOvr += 1;
     }
@@ -106,18 +106,13 @@ uint32_t bHalGetSysTick()
 uint64_t bHalGetSysTickPlus()
 {
     uint64_t tick = bSysTickOvr;
-    tick = bSysTick + (tick << (8 * sizeof(uint32_t)));
+    tick          = bSysTick + (tick << (8 * sizeof(uint32_t)));
     return tick;
 }
 
 void bHalDelayMs(uint16_t xms)
 {
-    uint32_t tickstart = bSysTick;
-    uint32_t wait      = MS2TICKS(xms);
-    while ((bSysTick - tickstart) < wait)
-    {
-        ;
-    }
+    bHalDelayUs(1000 * xms);
 }
 
 void bHalDelayUs(uint32_t xus)
