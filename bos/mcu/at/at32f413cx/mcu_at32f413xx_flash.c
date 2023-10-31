@@ -38,7 +38,7 @@
 #if defined(AT32F413Cx)
 #pragma anon_unions       // 在使用匿名联合的地方添加这个指令
 #define UNUSED(x) (void)x /* to avoid gcc/g++ warnings */
-#define __IO volatile /*!< Defines 'read / write' permissions */
+#define __IO volatile     /*!< Defines 'read / write' permissions */
 
 #define FLASH_BASE ((uint32_t)0x08000000)
 #define FLASH_BASE_ADDR (0x8000000UL)
@@ -63,23 +63,27 @@
 #define FLASH_SPIM_ERR_INT ((uint32_t)0x00000010) /*!< flash spim error interrupt */
 #define FLASH_SPIM_ODF_INT ((uint32_t)0x00000020) /*!< flash spim operate done interrupt */
 
-#define FLASH_OBF_FLAG ((uint32_t)0x00000001)          /*!< flash bank1 operate busy flag */
-#define FLASH_ODF_FLAG ((uint32_t)0x00000020)          /*!< flash bank1 operate done flag */
-#define FLASH_PRGMERR_FLAG ((uint32_t)0x00000004)      /*!< flash bank1 program error flag */
-#define FLASH_EPPERR_FLAG ((uint32_t)0x00000010)       /*!< flash bank1 erase/program protection error flag */
+#define FLASH_OBF_FLAG ((uint32_t)0x00000001)     /*!< flash bank1 operate busy flag */
+#define FLASH_ODF_FLAG ((uint32_t)0x00000020)     /*!< flash bank1 operate done flag */
+#define FLASH_PRGMERR_FLAG ((uint32_t)0x00000004) /*!< flash bank1 program error flag */
+#define FLASH_EPPERR_FLAG \
+    ((uint32_t)0x00000010) /*!< flash bank1 erase/program protection error flag */
 #define FLASH_SPIM_OBF_FLAG ((uint32_t)0x20000001)     /*!< flash spim operate busy flag */
 #define FLASH_SPIM_ODF_FLAG ((uint32_t)0x20000020)     /*!< flash spim operate done flag */
 #define FLASH_SPIM_PRGMERR_FLAG ((uint32_t)0x20000004) /*!< flash spim program error flag */
-#define FLASH_SPIM_EPPERR_FLAG ((uint32_t)0x20000010)  /*!< flash spim erase/program protection error flag */
-#define FLASH_USDERR_FLAG ((uint32_t)0x40000001)       /*!< flash user system data error flag */
+#define FLASH_SPIM_EPPERR_FLAG \
+    ((uint32_t)0x20000010) /*!< flash spim erase/program protection error flag */
+#define FLASH_USDERR_FLAG ((uint32_t)0x40000001) /*!< flash user system data error flag */
 
-#define FLASH_SLIB_START_SECTOR ((uint32_t)0x000007FF)      /*!< flash slib start sector */
-#define FLASH_SLIB_DATA_START_SECTOR ((uint32_t)0x003FF800) /*!< flash slib d-bus area start sector */
-#define FLASH_SLIB_END_SECTOR ((uint32_t)0xFFC00000)        /*!< flash slib end sector */
+#define FLASH_SLIB_START_SECTOR ((uint32_t)0x000007FF) /*!< flash slib start sector */
+#define FLASH_SLIB_DATA_START_SECTOR \
+    ((uint32_t)0x003FF800)                           /*!< flash slib d-bus area start sector */
+#define FLASH_SLIB_END_SECTOR ((uint32_t)0xFFC00000) /*!< flash slib end sector */
 
-#define ERASE_TIMEOUT ((uint32_t)0x40000000)            /*!< internal flash erase operation timeout */
-#define PROGRAMMING_TIMEOUT ((uint32_t)0x00100000)      /*!< internal flash program operation timeout */
-#define SPIM_ERASE_TIMEOUT ((uint32_t)0xFFFFFFFF)       /*!< spim erase operation timeout */
+#define ERASE_TIMEOUT ((uint32_t)0x40000000)       /*!< internal flash erase operation timeout */
+#define PROGRAMMING_TIMEOUT ((uint32_t)0x00100000) /*!< internal flash program operation timeout \
+                                                    */
+#define SPIM_ERASE_TIMEOUT ((uint32_t)0xFFFFFFFF)  /*!< spim erase operation timeout */
 #define SPIM_PROGRAMMING_TIMEOUT ((uint32_t)0x00100000) /*!< spim program operation timeout */
 #define OPERATION_TIMEOUT ((uint32_t)0x10000000)        /*!< flash common operation timeout */
 
@@ -89,7 +93,7 @@
 typedef enum
 {
     RESET = 0,
-    SET = !RESET
+    SET   = !RESET
 } flag_status;
 
 /**
@@ -98,7 +102,7 @@ typedef enum
 typedef enum
 {
     FALSE = 0,
-    TRUE = !FALSE
+    TRUE  = !FALSE
 } confirm_state;
 
 /**
@@ -106,7 +110,7 @@ typedef enum
  */
 typedef enum
 {
-    ERROR = 0,
+    ERROR   = 0,
     SUCCESS = !ERROR
 } error_status;
 
@@ -115,11 +119,11 @@ typedef enum
  */
 typedef enum
 {
-    FLASH_OPERATE_BUSY = 0x00,   /*!< flash status is operate busy */
-    FLASH_PROGRAM_ERROR = 0x01,  /*!< flash status is program error */
-    FLASH_EPP_ERROR = 0x02,      /*!< flash status is epp error */
-    FLASH_OPERATE_DONE = 0x03,   /*!< flash status is operate done */
-    FLASH_OPERATE_TIMEOUT = 0x04 /*!< flash status is operate timeout */
+    FLASH_OPERATE_BUSY    = 0x00, /*!< flash status is operate busy */
+    FLASH_PROGRAM_ERROR   = 0x01, /*!< flash status is program error */
+    FLASH_EPP_ERROR       = 0x02, /*!< flash status is epp error */
+    FLASH_OPERATE_DONE    = 0x03, /*!< flash status is operate done */
+    FLASH_OPERATE_TIMEOUT = 0x04  /*!< flash status is operate timeout */
 } flash_status_type;
 
 /**
@@ -527,16 +531,15 @@ typedef struct
 
 uint16_t flash_buf[SECTOR_SIZE / 2];
 
-static void flash_flag_clear(uint32_t flash_flag);
+static void              flash_flag_clear(uint32_t flash_flag);
 static flash_status_type flash_operation_status_get(void);
 static flash_status_type flash_operation_wait_for(uint32_t time_out);
 static flash_status_type flash_spim_operation_wait_for(uint32_t time_out);
-static void flash_unlock(void);
-static void flash_lock(void);
+static void              flash_unlock(void);
+static void              flash_lock(void);
 static flash_status_type flash_sector_erase(uint32_t raddr);
 static flash_status_type flash_halfword_program(uint32_t address, uint16_t data);
-static void flash_spim_dummy_read(void);
-
+static void              flash_spim_dummy_read(void);
 
 #if 1
 /** @defgroup FLASH_private_functions
@@ -562,14 +565,14 @@ static void flash_flag_clear(uint32_t flash_flag)
     flash_flag &= 0x8FFFFFFF;
     switch (flag_position)
     {
-    case 0x00000000:
-        FLASH->sts = flash_flag;
-        break;
-    case 0x20000000:
-        FLASH->sts3 = flash_flag;
-        break;
-    default:
-        break;
+        case 0x00000000:
+            FLASH->sts = flash_flag;
+            break;
+        case 0x20000000:
+            FLASH->sts3 = flash_flag;
+            break;
+        default:
+            break;
     }
 }
 
@@ -715,8 +718,8 @@ static flash_status_type flash_sector_erase(uint32_t raddr)
     if (raddr >= FLASH_SPIM_START_ADDR)
     {
         FLASH->ctrl3_bit.secers = TRUE;
-        FLASH->addr3 = raddr;
-        FLASH->ctrl3_bit.erstr = TRUE;
+        FLASH->addr3            = raddr;
+        FLASH->ctrl3_bit.erstr  = TRUE;
 
         /* wait for operation to be completed */
         status = flash_spim_operation_wait_for(SPIM_ERASE_TIMEOUT);
@@ -730,8 +733,8 @@ static flash_status_type flash_sector_erase(uint32_t raddr)
     else
     {
         FLASH->ctrl_bit.secers = TRUE;
-        FLASH->addr = raddr;
-        FLASH->ctrl_bit.erstr = TRUE;
+        FLASH->addr            = raddr;
+        FLASH->ctrl_bit.erstr  = TRUE;
 
         /* wait for operation to be completed */
         status = flash_operation_wait_for(ERASE_TIMEOUT);
@@ -756,7 +759,7 @@ static flash_status_type flash_halfword_program(uint32_t address, uint16_t data)
     /* spim : external flash */
     if (address >= FLASH_SPIM_START_ADDR)
     {
-        FLASH->ctrl3_bit.fprgm = TRUE;
+        FLASH->ctrl3_bit.fprgm    = TRUE;
         *(__IO uint16_t *)address = data;
         /* wait for operation to be completed */
         status = flash_spim_operation_wait_for(SPIM_PROGRAMMING_TIMEOUT);
@@ -769,7 +772,7 @@ static flash_status_type flash_halfword_program(uint32_t address, uint16_t data)
     }
     else
     {
-        FLASH->ctrl_bit.fprgm = TRUE;
+        FLASH->ctrl_bit.fprgm     = TRUE;
         *(__IO uint16_t *)address = data;
         /* wait for operation to be completed */
         status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
@@ -819,7 +822,7 @@ void flash_read(uint32_t read_addr, uint16_t *p_buffer, uint16_t num_read)
  */
 error_status flash_write_nocheck(uint32_t write_addr, uint16_t *p_buffer, uint16_t num_write)
 {
-    uint16_t i;
+    uint16_t          i;
     flash_status_type status = FLASH_OPERATE_DONE;
     for (i = 0; i < num_write; i++)
     {
@@ -839,7 +842,7 @@ int bMcuFlashInit()
 
 int bMcuFlashUnlock()
 {
-    int retval      = 0;
+    int retval    = 0;
     FLASH->unlock = FLASH_UNLOCK_KEY1;
     FLASH->unlock = FLASH_UNLOCK_KEY2;
     return retval;
@@ -847,14 +850,14 @@ int bMcuFlashUnlock()
 
 int bMcuFlashLock()
 {
-    int retval = 0;
+    int retval           = 0;
     FLASH->ctrl_bit.oplk = 1;
     return retval;
 }
 
 int bMcuFlashErase(uint32_t raddr, uint32_t pages)
 {
-    int retval = 0;
+    int               retval = 0;
     flash_status_type status = FLASH_OPERATE_DONE;
 
     raddr = FLASH_BASE_ADDR + raddr;
@@ -862,8 +865,8 @@ int bMcuFlashErase(uint32_t raddr, uint32_t pages)
     if (raddr >= FLASH_SPIM_START_ADDR)
     {
         FLASH->ctrl3_bit.secers = TRUE;
-        FLASH->addr3 = raddr;
-        FLASH->ctrl3_bit.erstr = TRUE;
+        FLASH->addr3            = raddr;
+        FLASH->ctrl3_bit.erstr  = TRUE;
 
         /* wait for operation to be completed */
         status = flash_spim_operation_wait_for(SPIM_ERASE_TIMEOUT);
@@ -877,8 +880,8 @@ int bMcuFlashErase(uint32_t raddr, uint32_t pages)
     else
     {
         FLASH->ctrl_bit.secers = TRUE;
-        FLASH->addr = raddr;
-        FLASH->ctrl_bit.erstr = TRUE;
+        FLASH->addr            = raddr;
+        FLASH->ctrl_bit.erstr  = TRUE;
 
         /* wait for operation to be completed */
         status = flash_operation_wait_for(ERASE_TIMEOUT);
@@ -901,21 +904,21 @@ int bMcuFlashErase(uint32_t raddr, uint32_t pages)
 
 int bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
 {
-    uint32_t offset_addr;
-    uint32_t sector_position;
-    uint16_t sector_offset;
-    uint16_t sector_remain;
-    uint16_t i;
-    flash_status_type status = FLASH_OPERATE_DONE;
-    uint32_t write_addr = FLASH_BASE + raddr;
-    uint16_t num_write = (len + 1) / 2;
-    uint16_t *p_buffer = (uint16_t *)pbuf;
+    uint32_t          offset_addr;
+    uint32_t          sector_position;
+    uint16_t          sector_offset;
+    uint16_t          sector_remain;
+    uint16_t          i;
+    flash_status_type status     = FLASH_OPERATE_DONE;
+    uint32_t          write_addr = FLASH_BASE + raddr;
+    uint16_t          num_write  = (len + 1) / 2;
+    uint16_t         *p_buffer   = (uint16_t *)pbuf;
 
     flash_unlock();
-    offset_addr = raddr;
+    offset_addr     = raddr;
     sector_position = offset_addr / SECTOR_SIZE;
-    sector_offset = (offset_addr % SECTOR_SIZE) / 2;
-    sector_remain = SECTOR_SIZE / 2 - sector_offset;
+    sector_offset   = (offset_addr % SECTOR_SIZE) / 2;
+    sector_remain   = SECTOR_SIZE / 2 - sector_offset;
     if (num_write <= sector_remain)
         sector_remain = num_write;
     while (1)
@@ -942,7 +945,8 @@ int bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
             {
                 flash_buf[i + sector_offset] = p_buffer[i];
             }
-            if (flash_write_nocheck(sector_position * SECTOR_SIZE + FLASH_BASE, flash_buf, SECTOR_SIZE / 2) != SUCCESS)
+            if (flash_write_nocheck(sector_position * SECTOR_SIZE + FLASH_BASE, flash_buf,
+                                    SECTOR_SIZE / 2) != SUCCESS)
                 return -3;
         }
         else

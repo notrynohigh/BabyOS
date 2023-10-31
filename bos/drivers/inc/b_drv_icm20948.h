@@ -40,40 +40,39 @@
 #define __B_DRV_ICM20948_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
 #include "drivers/inc/b_driver.h"
-    /**
-     * \addtogroup B_DRIVER
-     * \{
-     */
+/**
+ * \addtogroup B_DRIVER
+ * \{
+ */
 
-    /**
-     * \addtogroup ICM20948
-     * \{
-     */
+/**
+ * \addtogroup ICM20948
+ * \{
+ */
 
-    /**
-     * \defgroup ICM20948_Exported_TypesDefinitions
-     * \{
-     */
-    //<HALIF 1 I2C
-    typedef bHalI2CIf_t bICM20948_HalIf_t;
+/**
+ * \defgroup ICM20948_Exported_TypesDefinitions
+ * \{
+ */
+//<HALIF 1 I2C
+typedef bHalI2CIf_t bICM20948_HalIf_t;
 
-    /**
-     * \}
-     */
+/**
+ * \}
+ */
 
-    /**
-     * \}
-     */
+/**
+ * \}
+ */
 
-    /**
-     * \}
-     */
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 }
