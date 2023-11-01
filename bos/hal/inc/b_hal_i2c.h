@@ -74,6 +74,7 @@ typedef struct
         {
             bHalGPIOInstance_t clk;
             bHalGPIOInstance_t sda;
+            uint32_t           frq;
         } simulating_i2c;
     } _if;
 } bHalI2CIf_t;
