@@ -32,10 +32,6 @@
 /*Includes ----------------------------------------------*/
 #include "drivers/inc/b_drv_ICM20948.h"
 
-#include <string.h>
-
-#include "utils/inc/b_util_log.h"
-
 /**
  * \addtogroup B_DRIVER
  * \{
@@ -66,7 +62,6 @@
 #define I2C_ADD_ICM20948 0xD0
 #define I2C_ADD_ICM20948_AK09916 0x0C
 #define I2C_ADD_ICM20948_AK09916_READ 0x80
-
 /* user bank 0 register */
 #define REG_ADD_WHO_AM_I 0x00
 #define REG_VAL_WIA 0xEA
@@ -102,7 +97,6 @@
 #define REG_VAL_REG_BANK_1 0x10
 #define REG_VAL_REG_BANK_2 0x20
 #define REG_VAL_REG_BANK_3 0x30
-
 /* user bank 1 register */
 /* user bank 2 register */
 #define REG_ADD_GYRO_SMPLRT_DIV 0x00
@@ -125,7 +119,6 @@
 #define REG_VAL_BIT_ACCEL_FS_8g 0x04    /* bit[2:1] */
 #define REG_VAL_BIT_ACCEL_FS_16g 0x06   /* bit[2:1] */
 #define REG_VAL_BIT_ACCEL_DLPF 0x01     /* bit[0]   */
-
 /* user bank 3 register */
 #define REG_ADD_I2C_MST_CTRL 0x01
 #define REG_ADD_I2C_MST_CTRL_CLK_400KHZ \
@@ -140,10 +133,6 @@
 #define REG_ADD_I2C_SLV1_REG 0x08
 #define REG_ADD_I2C_SLV1_CTRL 0x09
 #define REG_ADD_I2C_SLV1_DO 0x0A
-
-/* define ICM-20948 Register  end */
-
-/* define ICM-20948 MAG Register  */
 #define REG_ADD_MAG_WIA1 0x00
 #define REG_VAL_MAG_WIA1 0x48
 #define REG_ADD_MAG_WIA2 0x01
@@ -158,12 +147,18 @@
 #define REG_VAL_MAG_MODE_50HZ 0x05
 #define REG_VAL_MAG_MODE_100HZ 0x08
 #define REG_VAL_MAG_MODE_ST 0x10
-
 #define REG_ADD_MAG_CNTL3 0x32
 #define REG_VAL_MAG_CNTL3_RESET 0x01
-
 #define TEMP_SENSITIVITY_REG 333.87f
 
+/**
+ * \}
+ */
+
+/**
+ * \defgroup ICM20948_Private_Macros
+ * \{
+ */
 #define F_IIC_WriteByte(a, b, c)                 \
     do                                           \
     {                                            \
@@ -202,18 +197,6 @@
     } while (0);
 
 #define F_Delay_ms(a) bHalDelayMs(a)
-
-/* define ICM-20948 MAG Register  end */
-/**
- * \}
- */
-
-/** Device Identification **/
-
-/**
- * \defgroup ICM20948_Private_Macros
- * \{
- */
 
 /**
  * \}
