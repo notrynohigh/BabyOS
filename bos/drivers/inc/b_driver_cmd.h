@@ -98,6 +98,13 @@ typedef struct
 
 } bICM20948_9Axis_t;
 
+typedef struct
+{
+    int16_t acc_arr[3];
+
+    int16_t gyro_arr[3];
+} bICM42688P_6Axis_t;
+
 ///////////////////////////////////////////////////////////
 // LCD  Command & Data Structure
 ///////////////////////////////////////////////////////////

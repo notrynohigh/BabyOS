@@ -1,177 +1,201 @@
-///**
-// * \file        b_drv_icm42688p.c
-// * \version     v0.0.1
-// * \date        2023-11-01
-// * \author      miniminiminini (405553848@qq.com)
-// * \brief
-// *
-// * Copyright (c) 2023 by miniminiminini. All Rights Reserved.
-// */
+/**
+ * \file        b_drv_icm42688p.c
+ * \version     v0.0.1
+ * \date        2023-11-01
+ * \author      miniminiminini (405553848@qq.com)
+ * \brief
+ *
+ * Copyright (c) 2023 by miniminiminini. All Rights Reserved.
+ */
 
-///* Includes ----------------------------------------------*/
-//#include "drivers/inc/b_drv_icm42688p.h"
+/* Includes ----------------------------------------------*/
+#include "drivers/inc/b_drv_icm42688p.h"
 
-///**
-// * \defgroup ICM42688P_Private_TypesDefinitions
-// * \{
-// */
+#include <string.h>
 
-///**
-// * }
-// */
+#include "utils/inc/b_util_log.h"
 
-///**
-// * \defgroup ICM42688P_Private_Defines
-// * \{
-// */
-//#define DRIVER_NAME ICM42688P
+/**
+ * \defgroup ICM42688P_Private_TypesDefinitions
+ * \{
+ */
 
-//#define POWER_MGMT 0x4E
-//#define DEVICE_CONFIG 0x11
-//#define DRIVE_CONFIG 0x13
-//#define WHO_AM_I 0x75
-//#define TEMP_DATA1 0x1D
-//#define TEMP_DATA0 0x1E
-//#define GYRO_CONFIG0 0x4F
-//#define ACCEL_CONFIG0 0x50
-//#define GYRO_CONFIG1 0x51
-//#define GYRO_ACCEL_CONFIG0 0x52
-//#define ACCEL_CONFIG1 0x53
-//#define XA_ST_DATA 0x3B
-//#define YA_ST_DATA 0x3C
-//#define ZA_ST_DATA 0x3D
-//#define BANK_SEL 0x76
-//#define ACCEL_DATA_X1 0x1F
-//#define ACCEL_DATA_X0 0x20
-//#define ACCEL_DATA_Y1 0x21
-//#define ACCEL_DATA_Y0 0x22
-//#define ACCEL_DATA_Z1 0x23
-//#define ACCEL_DATA_Z0 0x24
-//#define GYRO_DATA_X1 0x25
-//#define GYRO_DATA_X0 0x26
-//#define GYRO_DATA_Y1 0x27
-//#define GYRO_DATA_Y0 0x28
-//#define GYRO_DATA_Z1 0x29
-//#define GYRO_DATA_Z0 0x2A
+/**
+ * }
+ */
 
-///**
-// * }
-// */
+/**
+ * \defgroup ICM42688P_Private_Defines
+ * \{
+ */
+#define DRIVER_NAME ICM42688P
 
-///**
-// * \defgroup ICM42688P_Private_Macros
-// * \{
-// */
+#define ICM42688Q_ID 0x47
+#define POWER_MGMT 0x4E
+#define DEVICE_CONFIG 0x11
+#define DRIVE_CONFIG 0x13
+#define WHO_AM_I 0x75
+#define TEMP_DATA1 0x1D
+#define TEMP_DATA0 0x1E
+#define GYRO_CONFIG0 0x4F
+#define ACCEL_CONFIG0 0x50
+#define GYRO_CONFIG1 0x51
+#define GYRO_ACCEL_CONFIG0 0x52
+#define ACCEL_CONFIG1 0x53
+#define XA_ST_DATA 0x3B
+#define YA_ST_DATA 0x3C
+#define ZA_ST_DATA 0x3D
+#define BANK_SEL 0x76
+#define ACCEL_DATA_X1 0x1F
+#define ACCEL_DATA_X0 0x20
+#define ACCEL_DATA_Y1 0x21
+#define ACCEL_DATA_Y0 0x22
+#define ACCEL_DATA_Z1 0x23
+#define ACCEL_DATA_Z0 0x24
+#define GYRO_DATA_X1 0x25
+#define GYRO_DATA_X0 0x26
+#define GYRO_DATA_Y1 0x27
+#define GYRO_DATA_Y0 0x28
+#define GYRO_DATA_Z1 0x29
+#define GYRO_DATA_Z0 0x2A
+#define FIFO_CONFIG_INIT 0x16
+#define FIFO_CONFIGURATION 0x5F
+#define FIFO_DATA_REG 0x30
+#define FIFO_DATA_LEN 16
 
-///**
-// * }
-// */
+/**
+ * }
+ */
 
-///**
-// * \defgroup ICM42688P_Private_Variables
-// * \{
-// */
+/**
+ * \defgroup ICM42688P_Private_Macros
+ * \{
+ */
+#define U82U16(a, b) ((((a)&0xffff) << 8) | (((b)&0xffff) >> 8))
 
-///**
-// * }
-// */
+/**
+ * }
+ */
 
-///**
-// * \defgroup ICM42688P_Private_FunctionPrototypes
-// * \{
-// */
+/**
+ * \defgroup ICM42688P_Private_Variables
+ * \{
+ */
+bDRIVER_HALIF_TABLE(bICM42688P_HalIf_t, DRIVER_NAME);
 
-///**
-// * }
-// */
+/**
+ * }
+ */
 
-///**
-// * \defgroup ICM42688P_Private_Functions
-// * \{
-// */
+/**
+ * \defgroup ICM42688P_Private_FunctionPrototypes
+ * \{
+ */
 
-///**
-// * }
-// */
+/**
+ * }
+ */
 
-///**
-// * \defgroup ICM42688P_Exported_Functions
-// * \{
-// */
-//int bICM20948_Init(bDriverInterface_t *pdrv)
-//{
-//    uint8_t w_data = 0;
-//    uint8_t r_data = 0;
-//    uint8_t data[8];
+/**
+ * \defgroup ICM42688P_Private_Functions
+ * \{
+ */
+static int _bICM42688PReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+{
+    bDRIVER_GET_HALIF(_if, bICM42688P_HalIf_t, pdrv);
 
-//    bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM20948_Init);
-//    pdrv->read = _bICM20948Read;
+    bHalI2CMemRead(_if, reg, 1, data, len);
+    return 0;
+}
 
-//    if (ICM20948GetID(pdrv, &r_data) < 0)
-//    {
-//        return -1;
-//    }
-//    if (r_data != ICM20948_ID)
-//    {
-//        return -1;
-//    }
+static int _bICM42688PWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+{
+    bDRIVER_GET_HALIF(_if, bICM42688P_HalIf_t, pdrv);
 
-//    ICM20948_Mag_Reset();
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_3);
-//    /* Reset I2C master clock. */
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_MST_CTRL, 0);
+    bHalI2CMemWrite(_if, reg, 1, data, len);
+    return 0;
+}
 
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);
-//    bICM20948ReadRegs(pdrv, 0x03, &r_data, 1);
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_USER_CTRL, r_data | REG_VAL_BIT_I2C_MST_EN);
+static uint8_t _bICM42688PGetID(bDriverInterface_t *pdrv)
+{
+    uint8_t id = 0;
+    _bICM42688PReadRegs(pdrv, WHO_AM_I, &id, 1);
+    // b_log("ICM42688P id:0x%x\n", id);
+    return id;
+}
 
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_3);
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_MST_CTRL, REG_ADD_I2C_MST_CTRL_CLK_400KHZ);
-//    F_Delay_ms(10);
+static void _bICM42688PDefaultCfg(bDriverInterface_t *pdrv)
+{
+    uint8_t device_config_val      = 0x01;
+    uint8_t power_mgmt_val         = 0x1f;
+    uint8_t fifo_config_init_val   = 0x40;
+    uint8_t fifo_configuration_val = 0x03;
+    _bICM42688PWriteRegs(pdrv, DEVICE_CONFIG, &device_config_val, 1);
+    bHalDelayMs(100);
+    _bICM42688PWriteRegs(pdrv, POWER_MGMT, &power_mgmt_val, 1);
+    bHalDelayMs(25);
+    _bICM42688PWriteRegs(pdrv, FIFO_CONFIG_INIT, &fifo_config_init_val, 1);
+    _bICM42688PWriteRegs(pdrv, FIFO_CONFIGURATION, &fifo_configuration_val, 1);
+    bHalDelayMs(10);
+}
 
-//    // configure gyro
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_2);
-//    F_IIC_WriteByte(
-//        I2C_ADD_ICM20948, REG_ADD_GYRO_CONFIG_1,
-//        REG_VAL_BIT_GYRO_DLPCFG_6 | REG_VAL_BIT_GYRO_FS_2000DPS | REG_VAL_BIT_GYRO_DLPF);
+static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
+{
+    uint8_t             fifo_data[16];
+    bICM42688P_6Axis_t *ptmp = (bICM42688P_6Axis_t *)pbuf;
 
-//    // configure acc
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_ACCEL_SMPLRT_DIV_2, 0x00);
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_ACCEL_CONFIG,
-//                    REG_VAL_BIT_ACCEL_DLPCFG_6 | REG_VAL_BIT_ACCEL_FS_4g | REG_VAL_BIT_ACCEL_DLPF);
+    if (len < sizeof(bICM42688P_6Axis_t))
+    {
+        return -1;
+    }
+    _bICM42688PReadRegs(pdrv, FIFO_DATA_REG, fifo_data, FIFO_DATA_LEN);
+    ptmp->acc_arr[0]  = U82U16(fifo_data[1], fifo_data[2]);
+    ptmp->acc_arr[1]  = U82U16(fifo_data[3], fifo_data[4]);
+    ptmp->acc_arr[2]  = U82U16(fifo_data[5], fifo_data[6]);
+    ptmp->gyro_arr[0] = U82U16(fifo_data[7], fifo_data[8]);
+    ptmp->gyro_arr[1] = U82U16(fifo_data[9], fifo_data[10]);
+    ptmp->gyro_arr[2] = U82U16(fifo_data[11], fifo_data[12]);
 
-//    // checkMag
-//    uint8_t ret[2];
-//    ICM20948_Mag_Read(I2C_ADD_ICM20948_AK09916, REG_ADD_MAG_WIA1, 2, ret);
-//    if (!((ret[0] == REG_VAL_MAG_WIA1) && (ret[1] == REG_VAL_MAG_WIA2)))
-//    {
-//        return -2;
-//    }
-//    F_Delay_ms(10);
-//    ICM20948_Mag_Write(I2C_ADD_ICM20948_AK09916, REG_ADD_MAG_CNTL2, REG_VAL_MAG_MODE_100HZ);
-//    F_Delay_ms(10);
-//    ICM20948_Mag_Read(I2C_ADD_ICM20948_AK09916, REG_ADD_MAG_DATA, 8, data);
+    return 0;
+}
 
-//    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);
+/**
+ * }
+ */
 
-//    return 0;
-//}
+/**
+ * \defgroup ICM42688P_Exported_Functions
+ * \{
+ */
+int bICM42688P_Init(bDriverInterface_t *pdrv)
+{
+    bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM42688P_Init);
+    pdrv->read = _bICM42688PRead;
 
-//bDRIVER_REG_INIT(B_DRIVER_ICM20948, bICM20948_Init);
-///**
-// * }
-// */
+    if (_bICM42688PGetID(pdrv) != ICM42688Q_ID)
+    {
+        return -1;
+    }
+    _bICM42688PDefaultCfg(pdrv);
 
-///**
-// * }
-// */
+    return 0;
+}
 
-///**
-// * }
-// */
+bDRIVER_REG_INIT(B_DRIVER_ICM42688P, bICM42688P_Init);
+/**
+ * }
+ */
 
-///**
-// * }
-// */
+/**
+ * }
+ */
 
-///***** Copyright (c) 2023 miniminiminini *****END OF FILE*****/
+/**
+ * }
+ */
+
+/**
+ * }
+ */
+
+/***** Copyright (c) 2023 miniminiminini *****END OF FILE*****/

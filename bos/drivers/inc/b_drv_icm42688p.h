@@ -20,6 +20,7 @@ extern "C" {
  * \defgroup ICM42688P_Exported_TypesDefinitions
  * \{
  */
+typedef bHalI2CIf_t bICM42688P_HalIf_t;
 
 /**
  * }
