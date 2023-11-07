@@ -130,8 +130,9 @@ static void _bICM42688PDefaultCfg(bDriverInterface_t *pdrv)
     uint8_t power_mgmt_val         = 0x1f;
     uint8_t fifo_config_init_val   = 0x40;
     uint8_t fifo_configuration_val = 0x03;
+    bHalDelayMs(10);
     _bICM42688PWriteRegs(pdrv, DEVICE_CONFIG, &device_config_val, 1);
-    bHalDelayMs(100);
+    bHalDelayMs(60);
     _bICM42688PWriteRegs(pdrv, POWER_MGMT, &power_mgmt_val, 1);
     bHalDelayMs(25);
     _bICM42688PWriteRegs(pdrv, FIFO_CONFIG_INIT, &fifo_config_init_val, 1);
@@ -155,6 +156,8 @@ static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf
     ptmp->gyro_arr[0] = U82U16(fifo_data[7], fifo_data[8]);
     ptmp->gyro_arr[1] = U82U16(fifo_data[9], fifo_data[10]);
     ptmp->gyro_arr[2] = U82U16(fifo_data[11], fifo_data[12]);
+    // b_log("acc_dat:%d %d%d \n", ptmp->acc_arr[0], ptmp->acc_arr[1], ptmp->acc_arr[2]);
+    // b_log("gyro_dat:%d %d%d \n", ptmp->gyro_arr[0], ptmp->gyro_arr[1], ptmp->gyro_arr[2]);
 
     return 0;
 }
@@ -171,12 +174,11 @@ int bICM42688P_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM42688P_Init);
     pdrv->read = _bICM42688PRead;
-
+    _bICM42688PDefaultCfg(pdrv);
     if (_bICM42688PGetID(pdrv) != ICM42688Q_ID)
     {
         return -1;
     }
-    _bICM42688PDefaultCfg(pdrv);
 
     return 0;
 }
