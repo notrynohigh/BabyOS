@@ -58,6 +58,10 @@
 #define GYRO_DATA_Y0 0x28
 #define GYRO_DATA_Z1 0x29
 #define GYRO_DATA_Z0 0x2A
+#define INT_STATUS 0x2D
+#define GYRO_CONFIG0 0x4F
+#define ACCEL_CONFIG0 0x50
+#define GYRO_ACCEL_CONFIG0 0x52
 #define FIFO_CONFIG_INIT 0x16
 #define FIFO_CONFIGURATION 0x5F
 #define FIFO_DATA_REG 0x30
@@ -127,14 +131,23 @@ static uint8_t _bICM42688PGetID(bDriverInterface_t *pdrv)
 static void _bICM42688PDefaultCfg(bDriverInterface_t *pdrv)
 {
     uint8_t device_config_val      = 0x01;
-    uint8_t power_mgmt_val         = 0x1f;
+    uint8_t bank_sel_val           = 0x00;
+    uint8_t power_mgmt_val         = 0x0f;
+    uint8_t accel_config0_val      = 0x67;  // 0x03<<5|0x07
+    uint8_t gyro_config0_val       = 0x67;  // 0x03<<5|0x07
+    uint8_t gyro_accel_config0_val = 0x44;
     uint8_t fifo_config_init_val   = 0x40;
     uint8_t fifo_configuration_val = 0x03;
     bHalDelayMs(10);
     _bICM42688PWriteRegs(pdrv, DEVICE_CONFIG, &device_config_val, 1);
-    bHalDelayMs(60);
+    bHalDelayMs(50);
+    _bICM42688PWriteRegs(pdrv, BANK_SEL, &bank_sel_val, 1);
     _bICM42688PWriteRegs(pdrv, POWER_MGMT, &power_mgmt_val, 1);
-    bHalDelayMs(25);
+    bHalDelayMs(10);
+    _bICM42688PWriteRegs(pdrv, ACCEL_CONFIG0, &accel_config0_val, 1);
+    _bICM42688PWriteRegs(pdrv, GYRO_CONFIG0, &gyro_config0_val, 1);
+    _bICM42688PWriteRegs(pdrv, GYRO_ACCEL_CONFIG0, &gyro_accel_config0_val, 1);
+    bHalDelayMs(10);
     _bICM42688PWriteRegs(pdrv, FIFO_CONFIG_INIT, &fifo_config_init_val, 1);
     _bICM42688PWriteRegs(pdrv, FIFO_CONFIGURATION, &fifo_configuration_val, 1);
     bHalDelayMs(10);
@@ -142,6 +155,7 @@ static void _bICM42688PDefaultCfg(bDriverInterface_t *pdrv)
 
 static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
+    uint8_t             temp_data = 0;
     uint8_t             fifo_data[16];
     bICM42688P_6Axis_t *ptmp = (bICM42688P_6Axis_t *)pbuf;
 
@@ -149,15 +163,25 @@ static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf
     {
         return -1;
     }
-    _bICM42688PReadRegs(pdrv, FIFO_DATA_REG, fifo_data, FIFO_DATA_LEN);
-    ptmp->acc_arr[0]  = U82U16(fifo_data[1], fifo_data[2]);
-    ptmp->acc_arr[1]  = U82U16(fifo_data[3], fifo_data[4]);
-    ptmp->acc_arr[2]  = U82U16(fifo_data[5], fifo_data[6]);
-    ptmp->gyro_arr[0] = U82U16(fifo_data[7], fifo_data[8]);
-    ptmp->gyro_arr[1] = U82U16(fifo_data[9], fifo_data[10]);
-    ptmp->gyro_arr[2] = U82U16(fifo_data[11], fifo_data[12]);
-    // b_log("acc_dat:%d %d%d \n", ptmp->acc_arr[0], ptmp->acc_arr[1], ptmp->acc_arr[2]);
-    // b_log("gyro_dat:%d %d%d \n", ptmp->gyro_arr[0], ptmp->gyro_arr[1], ptmp->gyro_arr[2]);
+    _bICM42688PReadRegs(pdrv, INT_STATUS, &temp_data, 1);
+    // b_log("INT_STATUS=%02x\n", temp_data);
+    if (temp_data & 0x0a)
+    {
+        _bICM42688PReadRegs(pdrv, FIFO_DATA_REG, fifo_data, FIFO_DATA_LEN);
+        // b_log("pack_header=%02x\n", fifo_data[0]);//0x68
+        ptmp->acc_arr[0]  = U82U16(fifo_data[1], fifo_data[2]);
+        ptmp->acc_arr[1]  = U82U16(fifo_data[3], fifo_data[4]);
+        ptmp->acc_arr[2]  = U82U16(fifo_data[5], fifo_data[6]);
+        ptmp->gyro_arr[0] = U82U16(fifo_data[7], fifo_data[8]);
+        ptmp->gyro_arr[1] = U82U16(fifo_data[9], fifo_data[10]);
+        ptmp->gyro_arr[2] = U82U16(fifo_data[11], fifo_data[12]);
+        // b_log("acc_dat:%d %d%d \n", ptmp->acc_arr[0], ptmp->acc_arr[1], ptmp->acc_arr[2]);
+        // b_log("gyro_dat:%d %d%d \n", ptmp->gyro_arr[0], ptmp->gyro_arr[1], ptmp->gyro_arr[2]);
+    }
+    else
+    {
+        return -1;
+    }
 
     return 0;
 }
