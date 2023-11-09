@@ -9,16 +9,16 @@
  */
 
 /* Includes ----------------------------------------------*/
-
-/**
- * \defgroup QMC5883L_Private_TypesDefinitions
- * \{
- */
 #include "drivers/inc/b_drv_qmc5883l.h"
 
 #include <string.h>
 
 #include "utils/inc/b_util_log.h"
+
+/**
+ * \defgroup QMC5883L_Private_TypesDefinitions
+ * \{
+ */
 
 /**
  * }
@@ -55,7 +55,7 @@
  * \defgroup QMC5883L_Private_Macros
  * \{
  */
-#define LSBU82U16(a, b) ((((a)&0xffff) << 8) | (((b)&0xffff)))
+#define U82U16(msb, lsb) ((((msb)&0xffff) << 8) | (((lsb)&0xffff)))
 
 /**
  * }
@@ -157,9 +157,9 @@ static int _bQMC5883LRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     // _bQMC5883LReadRegs(pdrv, MAG_Z_REG_H, &mag_data[5], 1);
     // b_log("mag_reg_dat:0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", mag_data[0], mag_data[1],
     //       mag_data[2], mag_data[3], mag_data[4], mag_data[5]);
-    ptmp->mag_arr[0] = LSBU82U16(mag_data[1], mag_data[0]);
-    ptmp->mag_arr[1] = LSBU82U16(mag_data[3], mag_data[2]);
-    ptmp->mag_arr[2] = LSBU82U16(mag_data[5], mag_data[4]);
+    ptmp->mag_arr[0] = U82U16(mag_data[1], mag_data[0]);
+    ptmp->mag_arr[1] = U82U16(mag_data[3], mag_data[2]);
+    ptmp->mag_arr[2] = U82U16(mag_data[5], mag_data[4]);
     // b_log("mag_dat:0x%02x 0x%02x 0x%02x\n", ptmp->mag_arr[0], ptmp->mag_arr[1],
     // ptmp->mag_arr[2]);
 
