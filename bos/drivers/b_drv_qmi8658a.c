@@ -101,9 +101,17 @@ static int _bQMI8658AWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
     return 0;
 }
 
+static int _bQMI8658AClockPeriod(bDriverInterface_t *pdrv, uint16_t cnt)
+{
+    bDRIVER_GET_HALIF(_if, bQMI8658A_HalIf_t, pdrv);
+
+    return bHalI2CClockPeriod(_if, cnt);
+}
+
 static uint8_t _bQMI8658AGetID(bDriverInterface_t *pdrv)
 {
     uint8_t id = 0;
+    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AReadRegs(pdrv, WHO_AM_I, &id, 1);
     b_log("QMI8658A id:0x%x\n", id);
     return id;
@@ -111,6 +119,7 @@ static uint8_t _bQMI8658AGetID(bDriverInterface_t *pdrv)
 
 static int _bQMI8658ADefaultCfg(bDriverInterface_t *pdrv)
 {
+    _bQMI8658AClockPeriod(pdrv, 3);
 
     return 0;
 }

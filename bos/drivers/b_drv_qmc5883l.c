@@ -88,20 +88,24 @@ static int _bQMC5883LReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *da
 {
     bDRIVER_GET_HALIF(_if, bQMC5883L_HalIf_t, pdrv);
 
-    bHalI2CMemRead(_if, reg, 1, data, len);
-    return 0;
+    return bHalI2CMemRead(_if, reg, 1, data, len);
 }
 
 static int _bQMC5883LWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bQMC5883L_HalIf_t, pdrv);
 
-    bHalI2CMemWrite(_if, reg, 1, data, len);
-    return 0;
+    return bHalI2CMemWrite(_if, reg, 1, data, len);
 }
 
+static int _bQMC5883LClockPeriod(bDriverInterface_t *pdrv, uint16_t cnt)
+{
+    bDRIVER_GET_HALIF(_if, bQMC5883L_HalIf_t, pdrv);
+
+    return bHalI2CClockPeriod(_if, cnt);
+}
 // static void _bQMC5883LSOFTRESET(bDriverInterface_t *pdrv)
-//{
+// {
 //     uint8_t control_2_reg_val = 0xc0;
 //     _bQMC5883LWriteRegs(pdrv, CONTROL_2_REG, &control_2_reg_val, 1);
 // }
@@ -125,10 +129,18 @@ static int _bQMC5883LDefaultCfg(bDriverInterface_t *pdrv)
     //  _bQMC5883LSOFTRESET(pdrv);
     //  bHalDelayMs(60);
     //  _bQMC5883LWriteRegs(pdrv, CONTROL_2_REG, &control_2_reg_val, 1);
-    _bQMC5883LWriteRegs(pdrv, CONTROL_1_REG, &control_1_reg_val, 1);
     _bQMC5883LWriteRegs(pdrv, PERIOD_REG, &period_reg_val, 1);
-    _bQMC5883LWriteRegs(pdrv, 0x20, &cfg1_val, 1);
+
+    _bQMC5883LClockPeriod(pdrv, 3);
     _bQMC5883LWriteRegs(pdrv, 0x21, &cfg2_val, 1);
+
+    _bQMC5883LClockPeriod(pdrv, 3);
+    _bQMC5883LWriteRegs(pdrv, 0x20, &cfg1_val, 1);
+
+    _bQMC5883LClockPeriod(pdrv, 3);
+    _bQMC5883LWriteRegs(pdrv, CONTROL_1_REG, &control_1_reg_val, 1);
+
+    _bQMC5883LClockPeriod(pdrv, 3);
     _bQMC5883LReadRegs(pdrv, CONTROL_1_REG, &read_dat, 1);
     // b_log("config read=0x%x\n", read_dat);
 
@@ -213,11 +225,12 @@ static int _bQMC5883LCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
  * \defgroup QMC5883L_Exported_Functions
  * \{
  */
-int bQMC5883L_Init_0(bDriverInterface_t *pdrv)
-{
-    // _bQMC5883LSOFTRESET(pdrv);
-    return 0;
-}
+// int bQMC5883L_Init_0(bDriverInterface_t *pdrv)
+// {
+//     _bQMC5883LSOFTRESET(pdrv);
+//     bHalDelayMs(50);
+//     return 0;
+// }
 
 int bQMC5883L_Init(bDriverInterface_t *pdrv)
 {
@@ -232,7 +245,7 @@ int bQMC5883L_Init(bDriverInterface_t *pdrv)
     return 0;
 }
 
-bDRIVER_REG_INIT_0(B_DRIVER_QMC5883L, bQMC5883L_Init_0);
+// bDRIVER_REG_INIT_0(B_DRIVER_QMC5883L, bQMC5883L_Init_0);
 bDRIVER_REG_INIT(B_DRIVER_QMC5883L, bQMC5883L_Init);
 
 /**
