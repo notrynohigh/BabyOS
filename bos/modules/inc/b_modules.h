@@ -48,6 +48,7 @@ extern "C" {
 #include "b_mod_param.h"
 #include "b_mod_protocol.h"
 #include "b_mod_pwm.h"
+#include "b_mod_qrcode.h"
 #include "b_mod_select.h"
 #include "b_mod_shell.h"
 #include "b_mod_state.h"
