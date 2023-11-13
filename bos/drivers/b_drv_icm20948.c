@@ -159,17 +159,17 @@
  * \defgroup ICM20948_Private_Macros
  * \{
  */
-#define F_IIC_WriteByte(a, b, c)                 \
-    do                                           \
-    {                                            \
-        w_data = c;                              \
-        bICM20948WriteRegs(pdrv, b, &w_data, 1); \
+#define F_IIC_WriteByte(a, b, c)                  \
+    do                                            \
+    {                                             \
+        w_data = c;                               \
+        _bICM20948WriteRegs(pdrv, b, &w_data, 1); \
     } while (0);
 
-#define F_IIC_ReadByte(a, b, e)                     \
-    do                                              \
-    {                                               \
-        e = bICM20948ReadRegs(pdrv, b, &r_data, 1); \
+#define F_IIC_ReadByte(a, b, e)                      \
+    do                                               \
+    {                                                \
+        e = _bICM20948ReadRegs(pdrv, b, &r_data, 1); \
     } while (0);
 
 #define ICM20948_Mag_Read(a, b, c, d)         \
@@ -190,10 +190,10 @@
         bICM20948_Mag_Reset(pdrv); \
     } while (0);
 
-#define F_IIC_ReadBytes(a, b, c, d, e)        \
-    do                                        \
-    {                                         \
-        e = bICM20948ReadRegs(pdrv, b, c, d); \
+#define F_IIC_ReadBytes(a, b, c, d, e)         \
+    do                                         \
+    {                                          \
+        e = _bICM20948ReadRegs(pdrv, b, c, d); \
     } while (0);
 
 #define F_Delay_ms(a) bHalDelayMs(a)
@@ -227,7 +227,7 @@ bDRIVER_HALIF_TABLE(bICM20948_HalIf_t, DRIVER_NAME);
  */
 
 //----------------------------------------------------------------
-static int bICM20948ReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+static int _bICM20948ReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bICM20948_HalIf_t, pdrv);
     // reg = reg | 0x80;
@@ -241,7 +241,7 @@ static int bICM20948ReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *dat
     }
 }
 
-static int bICM20948WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+static int _bICM20948WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bICM20948_HalIf_t, pdrv);
 
@@ -250,12 +250,20 @@ static int bICM20948WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *da
     return len;
 }
 
-static int ICM20948GetID(bDriverInterface_t *pdrv, uint8_t *id)
+static int _bICM20948ClockPeriod(bDriverInterface_t *pdrv, uint16_t cnt)
+{
+    bDRIVER_GET_HALIF(_if, bICM20948_HalIf_t, pdrv);
+
+    return bHalI2CClockPeriod(_if, cnt);
+}
+
+static int _ICM20948GetID(bDriverInterface_t *pdrv, uint8_t *id)
 {
     int     retval = 0;
     uint8_t w_data = 0;
     uint8_t r_data = 0;
 
+    _bICM20948ClockPeriod(pdrv, 3);
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);
     F_IIC_ReadByte(I2C_ADD_ICM20948, REG_ADD_WHO_AM_I, retval);
 
@@ -332,7 +340,7 @@ static void bICM20948_Mag_Read(bDriverInterface_t *pdrv, uint8_t I2CAddr, uint8_
 
     for (uint8_t i = 0; i < Len; i++)
     {
-        bICM20948ReadRegs(pdrv, REG_ADD_EXT_SENS_DATA_00 + i, pdata + i, 1);
+        _bICM20948ReadRegs(pdrv, REG_ADD_EXT_SENS_DATA_00 + i, pdata + i, 1);
     }
 }
 
@@ -399,7 +407,7 @@ int bICM20948_Init(bDriverInterface_t *pdrv)
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM20948_Init);
     pdrv->read = _bICM20948Read;
 
-    if (ICM20948GetID(pdrv, &r_data) < 0)
+    if (_ICM20948GetID(pdrv, &r_data) < 0)
     {
         return -1;
     }
@@ -414,7 +422,7 @@ int bICM20948_Init(bDriverInterface_t *pdrv)
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_I2C_MST_CTRL, 0);
 
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);
-    bICM20948ReadRegs(pdrv, 0x03, &r_data, 1);
+    _bICM20948ReadRegs(pdrv, 0x03, &r_data, 1);
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_USER_CTRL, r_data | REG_VAL_BIT_I2C_MST_EN);
 
     F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_3);

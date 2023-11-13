@@ -125,6 +125,7 @@ static int _bQMC5883LDefaultCfg(bDriverInterface_t *pdrv)
     uint8_t period_reg_val    = 0x01;
     uint8_t cfg1_val          = 0x40;
     uint8_t cfg2_val          = 0x01;
+    _bQMC5883LClockPeriod(pdrv, 3);
     _bQMC5883LWriteRegs(pdrv, PERIOD_REG, &period_reg_val, 1);
     _bQMC5883LClockPeriod(pdrv, 3);
     _bQMC5883LWriteRegs(pdrv, 0x21, &cfg2_val, 1);

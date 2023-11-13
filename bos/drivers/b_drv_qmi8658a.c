@@ -114,7 +114,7 @@ static uint8_t _bQMI8658AGetID(bDriverInterface_t *pdrv)
     _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AReadRegs(pdrv, WHO_AM_I, &id, 1);
     _bQMI8658AClockPeriod(pdrv, 3);
-    b_log("QMI8658A id:0x%x\n", id);
+    // b_log("QMI8658A id:0x%x\n", id);
     return id;
 }
 
@@ -128,6 +128,7 @@ static int _bQMI8658ADefaultCfg(bDriverInterface_t *pdrv)
     uint8_t ctrl3_val = 0x64;  // Gyroscope Settings< ±2048dps 500Hz>
     uint8_t ctrl5_val =
         0x11;  // Sensor Data Processing Settings<Enable Gyroscope Accelerometer 低通滤波>
+    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AWriteRegs(pdrv, CTRL1, &ctrl1_val, 1);
     _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AWriteRegs(pdrv, CTRL7, &ctrl7_val, 1);
