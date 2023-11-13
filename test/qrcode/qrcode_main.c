@@ -10,8 +10,6 @@
 #include "../port.h"
 #include "b_os.h"
 
-#define QR_SIZE 21
-
 bQRCODE_INSTANCE(qrInstance, QRCODE_21X21, QRCODE_ECC_HIGH);
 
 int main()
@@ -22,9 +20,9 @@ int main()
     bQRCodeCreate(&qrInstance, "BabyOS", strlen("BabyOS"));
     
     int i = 0, j = 0;
-    for(i = 0;i < QR_SIZE;i++)
+    for(i = 0;i < qrInstance.qr.size;i++)
     {
-    	for(j = 0;j < QR_SIZE;j++)
+    	for(j = 0;j < qrInstance.qr.size;j++)
     	{
     		printf("%s", bQRCodeGetValue(&qrInstance, j, i) == 0 ? "  " : "**");
     	}
