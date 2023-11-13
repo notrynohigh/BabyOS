@@ -308,6 +308,12 @@ static int _HalI2CIOWriteBuff(bHalI2CIO_t i2c, uint8_t dev, uint16_t addr, uint8
     return 0;
 }
 
+/**
+ * \brief        有些iic器件以主机iic的clk为时钟进行delay操作,该函数提供对应的空操作时钟
+ * \param i2c
+ * \param cnt
+ * \return int
+ */
 static int _HalI2CIOClockPeriod(bHalI2CIO_t i2c, uint16_t cnt)
 {
     uint16_t i = 0;
