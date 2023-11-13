@@ -131,16 +131,16 @@ typedef struct
  * \defgroup QRCODE_Exported_Defines
  * \{
  */
-
 // qr_size \ref bQRCodeSize_t
 // qr_ecc \ref bQRCodeEcc_t
-#define bRQCODE_INSTANCE(name, qr_size, qr_ecc)                               \
+#define bQRCODE_INSTANCE(name, qr_size, qr_ecc)                               \
     uint8_t   modules_buf[((qr_size * 4 + 17) * (qr_size * 4 + 17) + 7) / 8]; \
     bQRCode_t name = {                                                        \
         .size = qr_size,                                                      \
         .buf  = &modules_buf[0],                                              \
         .ecc  = qr_ecc,                                                       \
     }
+
 
 /**
  * \}

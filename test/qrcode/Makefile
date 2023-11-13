@@ -39,12 +39,11 @@ $(SOURCE_ROOT)/bos/drivers/sfud/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/ugui/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/coremark/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/cjson/*.c  \
-$(SOURCE_ROOT)/bos/thirdparty/unity/*.c  \
 $(SOURCE_ROOT)/bos/thirdparty/qrcode/*.c  \
-$(SOURCE_ROOT)/bos/services/*.c
+$(SOURCE_ROOT)/bos/thirdparty/unity/*.c   
 
 BOS_DRV_SOURCE_DIR = \
-$(SOURCE_ROOT)/bos/drivers/*.c
+$(SOURCE_ROOT)/bos/drivers/b_drv_testflash.c
 
 EXAMPLE_SOURCE_DIR = \
 $(SOURCE_ROOT)/test/*.c \
