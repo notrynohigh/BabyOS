@@ -125,24 +125,16 @@ static int _bQMC5883LDefaultCfg(bDriverInterface_t *pdrv)
     uint8_t period_reg_val    = 0x01;
     uint8_t cfg1_val          = 0x40;
     uint8_t cfg2_val          = 0x01;
-    // uint8_t control_2_reg_val = 0x40;
-    //  _bQMC5883LSOFTRESET(pdrv);
-    //  bHalDelayMs(60);
-    //  _bQMC5883LWriteRegs(pdrv, CONTROL_2_REG, &control_2_reg_val, 1);
     _bQMC5883LWriteRegs(pdrv, PERIOD_REG, &period_reg_val, 1);
-
     _bQMC5883LClockPeriod(pdrv, 3);
     _bQMC5883LWriteRegs(pdrv, 0x21, &cfg2_val, 1);
-
     _bQMC5883LClockPeriod(pdrv, 3);
     _bQMC5883LWriteRegs(pdrv, 0x20, &cfg1_val, 1);
-
     _bQMC5883LClockPeriod(pdrv, 3);
     _bQMC5883LWriteRegs(pdrv, CONTROL_1_REG, &control_1_reg_val, 1);
-
     _bQMC5883LClockPeriod(pdrv, 3);
     _bQMC5883LReadRegs(pdrv, CONTROL_1_REG, &read_dat, 1);
-    // b_log("config read=0x%x\n", read_dat);
+    _bQMC5883LClockPeriod(pdrv, 3);
 
     if (read_dat != control_1_reg_val)
     {
@@ -161,6 +153,7 @@ static int _bQMC5883LRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
     _bQMC5883LReadRegs(pdrv, MAG_X_REG_L, mag_data, MAG_DATA_LEN);
+    _bQMC5883LClockPeriod(pdrv, 3);
     // _bQMC5883LReadRegs(pdrv, MAG_X_REG_L, &mag_data[0], 1);
     // _bQMC5883LReadRegs(pdrv, MAG_X_REG_H, &mag_data[1], 1);
     // _bQMC5883LReadRegs(pdrv, MAG_Y_REG_L, &mag_data[2], 1);
@@ -172,8 +165,7 @@ static int _bQMC5883LRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     ptmp->mag_arr[0] = U82U16(mag_data[1], mag_data[0]);
     ptmp->mag_arr[1] = U82U16(mag_data[3], mag_data[2]);
     ptmp->mag_arr[2] = U82U16(mag_data[5], mag_data[4]);
-    // b_log("mag_dat:0x%02x 0x%02x 0x%02x\n", ptmp->mag_arr[0], ptmp->mag_arr[1],
-    // ptmp->mag_arr[2]);
+    // b_log("mag_dat:%d %d %d\n", ptmp->mag_arr[0], ptmp->mag_arr[1], ptmp->mag_arr[2]);
 
     return 0;
 }
@@ -187,6 +179,7 @@ static int _bQMC5883LCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
         case bCMD_QMC5883L_WHETHER_NEWDATA_READY:
         {
             _bQMC5883LReadRegs(pdrv, STATUS_REG, &read_dat, 1);
+            _bQMC5883LClockPeriod(pdrv, 3);
             // b_log("0x%02d\n", read_dat);
             // if (read_dat & 0x06)
             // {
