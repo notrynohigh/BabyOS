@@ -40,12 +40,6 @@
 
 #if defined(_QRCODE_ENABLE) && _QRCODE_ENABLE == 1
 
-#ifndef __cplusplus
-typedef unsigned char bool;
-static const bool false = 0;
-static const bool true  = 1;
-#endif
-
 #include <stdint.h>
 
 // QR Code Format Encoding
@@ -86,7 +80,7 @@ int8_t qrcode_initText(QRCode *qrcode, uint8_t *modules, uint8_t version, uint8_
 int8_t qrcode_initBytes(QRCode *qrcode, uint8_t *modules, uint8_t version, uint8_t ecc,
                         uint8_t *data, uint16_t length);
 
-bool qrcode_getModule(QRCode *qrcode, uint8_t x, uint8_t y);
+int8_t qrcode_getModule(QRCode *qrcode, uint8_t x, uint8_t y);
 
 #ifdef __cplusplus
 }
