@@ -133,7 +133,7 @@ int bQRCodeCreate(bQRCode_t *pInstance, uint8_t *pdata, uint16_t data_len)
     if (_bQRCodeDataIsText(pdata, data_len))
     {
         retval = qrcode_initText(&(pInstance->qr), pInstance->buf, pInstance->size, pInstance->ecc,
-                                 pdata);
+                                 (const char *)pdata);
     }
     else
     {
