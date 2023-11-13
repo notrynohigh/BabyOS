@@ -210,5 +210,8 @@ config _ARM_2D_ENABLE
     bool "ARM-2D Enable/Disable"
     default n
 
+config _QRCODE_ENABLE
+    bool "QRcode Enable/Disable"
+    default n
 
 endmenu
