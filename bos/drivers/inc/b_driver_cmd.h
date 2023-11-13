@@ -111,6 +111,13 @@ typedef struct
 } bQMC5883L_3Axis_t;
 #define bCMD_QMC5883L_WHETHER_NEWDATA_READY 0
 
+typedef struct
+{
+    int16_t acc_arr[3];
+
+    int16_t gyro_arr[3];
+} bQMI8658A_6Axis_t;
+
 ///////////////////////////////////////////////////////////
 // LCD  Command & Data Structure
 ///////////////////////////////////////////////////////////
