@@ -113,9 +113,9 @@ typedef struct
 
 typedef struct
 {
-    int16_t acc_arr[3];
+    float acc_arr[3];  // m/s^2
 
-    int16_t gyro_arr[3];
+    float gyro_arr[3];  // rad/s
 } bQMI8658A_6Axis_t;
 
 ///////////////////////////////////////////////////////////

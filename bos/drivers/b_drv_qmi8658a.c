@@ -65,7 +65,7 @@
  * \defgroup QMI8658A_Private_Macros
  * \{
  */
-#define U82U16(msb, lsb) ((((msb)&0xffff) << 8) | (((lsb)&0xffff)))
+#define U8ToFloat(msb, lsb) ((float)((short)((((msb)&0xffff) << 8) | (((lsb)&0xffff)))))
 
 /**
  * }
@@ -124,7 +124,7 @@ static int _bQMI8658ADefaultCfg(bDriverInterface_t *pdrv)
         0x40;  // Serial Interface and Sensor Enable<串行接口（SPI或I 2 C）地址自动递增>
     uint8_t ctrl7_val =
         0x03;  // Enable Sensors and Configure Data Reads<Enable Gyroscope Accelerometer>
-    uint8_t ctrl2_val = 0x04;  // Accelerometer Settings<±2g  500Hz>
+    uint8_t ctrl2_val = 0x34;  // Accelerometer Settings<±16g  500Hz>
     uint8_t ctrl3_val = 0x64;  // Gyroscope Settings< ±2048dps 500Hz>
     uint8_t ctrl5_val =
         0x11;  // Sensor Data Processing Settings<Enable Gyroscope Accelerometer 低通滤波>
@@ -156,12 +156,12 @@ static int _bQMI8658ARead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AReadRegs(pdrv, GyrX_L, &axis6_data[6], 6);
     _bQMI8658AClockPeriod(pdrv, 3);
-    ptmp->acc_arr[0] = U82U16(axis6_data[1], axis6_data[0]);
-    ptmp->acc_arr[1] = U82U16(axis6_data[3], axis6_data[2]);
-    ptmp->acc_arr[2] = U82U16(axis6_data[5], axis6_data[4]);
-    ptmp->gyro_arr[0] = U82U16(axis6_data[7], axis6_data[6]);
-    ptmp->gyro_arr[1] = U82U16(axis6_data[9], axis6_data[8]);
-    ptmp->gyro_arr[2] = U82U16(axis6_data[11], axis6_data[10]);
+    ptmp->acc_arr[0]  = U8ToFloat(axis6_data[1], axis6_data[0]) * 16 * 9.8f / 65536;
+    ptmp->acc_arr[1]  = U8ToFloat(axis6_data[3], axis6_data[2]) * 16 * 9.8f / 65536;
+    ptmp->acc_arr[2]  = U8ToFloat(axis6_data[5], axis6_data[4]) * 16 * 9.8f / 65536;
+    ptmp->gyro_arr[0] = U8ToFloat(axis6_data[7], axis6_data[6]) * 2048 / 65536 / 57.3f;
+    ptmp->gyro_arr[1] = U8ToFloat(axis6_data[9], axis6_data[8]) * 2048 / 65536 / 57.3f;
+    ptmp->gyro_arr[2] = U8ToFloat(axis6_data[11], axis6_data[10]) * 2048 / 65536 / 57.3f;
     // b_log("acc_dat:0x%02x 0x%02x 0x%02x\n", ptmp->acc_arr[0], ptmp->acc_arr[1], ptmp->acc_arr[2]);
     // b_log("gyro_dat:0x%02x 0x%02x 0x%02x\n", ptmp->gyro_arr[0], ptmp->gyro_arr[1],
     //       ptmp->gyro_arr[2]);
