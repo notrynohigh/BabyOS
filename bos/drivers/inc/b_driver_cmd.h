@@ -107,7 +107,7 @@ typedef struct
 
 typedef struct
 {
-    int16_t mag_arr[3];
+    float mag_arr[3];
 } bQMC5883L_3Axis_t;
 #define bCMD_QMC5883L_WHETHER_NEWDATA_READY 0
 
