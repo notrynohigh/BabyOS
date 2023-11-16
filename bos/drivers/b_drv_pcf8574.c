@@ -101,7 +101,7 @@ static int _bPCF8574Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
 
-    tmp = bHalI2CReadByte(_if);
+    bHalI2CReadByte(_if, &tmp, 1);
     if (pbuf[0])
     {
         tmp |= 1 << off;
@@ -110,7 +110,7 @@ static int _bPCF8574Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     {
         tmp &= ~(1 << off);
     }
-    bHalI2CWriteByte(_if, tmp);
+    bHalI2CWriteByte(_if, &tmp, 1);
     return len;
 }
 
@@ -122,7 +122,7 @@ static int _bPCF8574Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
     {
         return -1;
     }
-    tmp = bHalI2CReadByte(_if);
+    bHalI2CReadByte(_if, &tmp, 1);
     if (tmp & (1 << off))
     {
         pbuf[0] = 1;
@@ -144,11 +144,12 @@ static int _bPCF8574Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
  */
 int bPCF8574_Init(bDriverInterface_t *pdrv)
 {
+    uint8_t tmp = PCF8574_DEFAULT_OUTPUT;
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bPCF8574_Init);
     bDRIVER_GET_HALIF(_if, bPCF8574_HalIf_t, pdrv);
     pdrv->read  = _bPCF8574Read;
     pdrv->write = _bPCF8574Write;
-    bHalI2CWriteByte(_if, PCF8574_DEFAULT_OUTPUT);
+    bHalI2CWriteByte(_if, &tmp, 1);
     return 0;
 }
 

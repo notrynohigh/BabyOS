@@ -101,19 +101,10 @@ static int _bQMI8658AWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
     return 0;
 }
 
-static int _bQMI8658AClockPeriod(bDriverInterface_t *pdrv, uint16_t cnt)
-{
-    bDRIVER_GET_HALIF(_if, bQMI8658A_HalIf_t, pdrv);
-
-    return bHalI2CClockPeriod(_if, cnt);
-}
-
 static uint8_t _bQMI8658AGetID(bDriverInterface_t *pdrv)
 {
     uint8_t id = 0;
-    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AReadRegs(pdrv, WHO_AM_I, &id, 1);
-    _bQMI8658AClockPeriod(pdrv, 3);
     // b_log("QMI8658A id:0x%x\n", id);
     return id;
 }
@@ -128,17 +119,11 @@ static int _bQMI8658ADefaultCfg(bDriverInterface_t *pdrv)
     uint8_t ctrl3_val = 0x64;  // Gyroscope Settings< ±2048dps 500Hz>
     uint8_t ctrl5_val =
         0x11;  // Sensor Data Processing Settings<Enable Gyroscope Accelerometer 低通滤波>
-    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AWriteRegs(pdrv, CTRL1, &ctrl1_val, 1);
-    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AWriteRegs(pdrv, CTRL7, &ctrl7_val, 1);
-    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AWriteRegs(pdrv, CTRL2, &ctrl2_val, 1);
-    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AWriteRegs(pdrv, CTRL3, &ctrl3_val, 1);
-    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AWriteRegs(pdrv, CTRL5, &ctrl5_val, 1);
-    _bQMI8658AClockPeriod(pdrv, 3);
     bHalDelayMs(100);
     return 0;
 }
@@ -152,10 +137,9 @@ static int _bQMI8658ARead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     {
         return -1;
     }
+
     _bQMI8658AReadRegs(pdrv, AccX_L, &axis6_data[0], 6);
-    _bQMI8658AClockPeriod(pdrv, 3);
     _bQMI8658AReadRegs(pdrv, GyrX_L, &axis6_data[6], 6);
-    _bQMI8658AClockPeriod(pdrv, 3);
     ptmp->acc_arr[0]  = U8ToFloat(axis6_data[1], axis6_data[0]) * 16 * 9.8f / 65536;
     ptmp->acc_arr[1]  = U8ToFloat(axis6_data[3], axis6_data[2]) * 16 * 9.8f / 65536;
     ptmp->acc_arr[2]  = U8ToFloat(axis6_data[5], axis6_data[4]) * 16 * 9.8f / 65536;
