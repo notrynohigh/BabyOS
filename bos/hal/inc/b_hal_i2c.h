@@ -101,7 +101,6 @@ int     bHalI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t me
                         const uint8_t *pbuf, uint16_t len);
 int     bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
                        uint8_t *pbuf, uint16_t len);
-int     bHalI2CClockPeriod(const bHalI2CIf_t *i2c_if, uint16_t cnt);
 /**
  * \}
  */

@@ -344,25 +344,6 @@ static int _HalI2CIOWriteBuff(bHalI2CIO_t i2c, uint8_t dev, uint16_t addr, uint8
 }
 
 /**
- * \brief        有些iic器件以主机iic的clk为时钟进行delay操作,该函数提供对应的空操作时钟
- * \param i2c
- * \param cnt
- * \return int
- */
-static int _HalI2CIOClockPeriod(bHalI2CIO_t i2c, uint16_t cnt)
-{
-    uint16_t i = 0;
-    _HalI2CIOStart(i2c);
-    for (i = 0; i < cnt; i++)
-    {
-        _HalI2CIOWriteByte(i2c, 0xFF);
-    }
-    _HalI2CIOStop(i2c);
-
-    return 0;
-}
-
-/**
  * \}
  */
 
@@ -483,28 +464,6 @@ int bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_add
     else
     {
         retval = bMcuI2CMemRead(i2c_if, mem_addr, mem_addr_size, pbuf, len);
-    }
-    return retval;
-}
-
-int bHalI2CClockPeriod(const bHalI2CIf_t *i2c_if, uint16_t cnt)
-{
-    int         retval = 0;
-    bHalI2CIO_t simulating_iic;
-    if ((IS_NULL(i2c_if)) || (cnt == 0))
-    {
-        return -1;
-    }
-    if (i2c_if->is_simulation == 1)
-    {
-        simulating_iic.clk = i2c_if->_if.simulating_i2c.clk;
-        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
-        simulating_iic.frq = i2c_if->_if.simulating_i2c.frq;
-        retval             = _HalI2CIOClockPeriod(simulating_iic, cnt);
-    }
-    else
-    {
-        return -1;
     }
     return retval;
 }
