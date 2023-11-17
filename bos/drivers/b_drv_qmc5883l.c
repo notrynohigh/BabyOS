@@ -167,12 +167,12 @@ static int _bQMC5883LRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     // _bQMC5883LReadRegs(pdrv, MAG_Y_REG_H, &mag_data[3], 1);
     // _bQMC5883LReadRegs(pdrv, MAG_Z_REG_L, &mag_data[4], 1);
     // _bQMC5883LReadRegs(pdrv, MAG_Z_REG_H, &mag_data[5], 1);
-    b_log("mag_reg_dat:0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", mag_data[0], mag_data[1],
-          mag_data[2], mag_data[3], mag_data[4], mag_data[5]);
+    // b_log("mag_reg_dat:0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", mag_data[0], mag_data[1],
+    //       mag_data[2], mag_data[3], mag_data[4], mag_data[5]);
     ptmp->mag_arr[0] = (float)((short)(U82U16(mag_data[1], mag_data[0]))) / 30.0f;
     ptmp->mag_arr[1] = (float)((short)(U82U16(mag_data[3], mag_data[2]))) / 30.0f;
     ptmp->mag_arr[2] = (float)((short)(U82U16(mag_data[5], mag_data[4]))) / 30.0f;
-    b_log("mag_dat:%f %f %f\n", ptmp->mag_arr[0], ptmp->mag_arr[1], ptmp->mag_arr[2]);
+    // b_log("mag_dat:%f %f %f\n", ptmp->mag_arr[0], ptmp->mag_arr[1], ptmp->mag_arr[2]);
 
     return 0;
 }
