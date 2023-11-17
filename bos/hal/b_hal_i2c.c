@@ -88,7 +88,6 @@ static uint32_t _HalCalculateI2CDelayUs(uint32_t i2cFrequency)
 static void _HalI2CIOStart(bHalI2CIO_t i2c)
 {
     uint32_t us = _HalCalculateI2CDelayUs(i2c.frq);
-    bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_OUTPUT, B_HAL_GPIO_NOPULL);
     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
     bHalDelayUs(us);
@@ -101,7 +100,6 @@ static void _HalI2CIOStart(bHalI2CIO_t i2c)
 static void _HalI2CIOStop(bHalI2CIO_t i2c)
 {
     uint32_t us = _HalCalculateI2CDelayUs(i2c.frq);
-    bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_OUTPUT, B_HAL_GPIO_NOPULL);
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
     bHalDelayUs(us);
     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
@@ -129,7 +127,9 @@ static int _HalI2CIOACK(bHalI2CIO_t i2c)
     {
         retval = 0;
     }
+    bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
     bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_OUTPUT, B_HAL_GPIO_NOPULL);
+    bHalDelayUs(us);
 
     return retval;
 }
