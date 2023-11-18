@@ -35,6 +35,16 @@ config _MODBUS_ENABLE
     select _BOS_SERVICES_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
 
+config MY_DEVICE_MODBUS_REG_NUM
+    int "The value of the maximum register"
+    default 36
+    depends on _MODBUS_ENABLE
+
+config SLAVE_ADDR
+    int "Slave address (modbus slave mode)"
+    default 1
+    depends on _MODBUS_ENABLE
+
 config _PROTO_ENABLE
     bool "Protocol Enable/Disable"
     default n
