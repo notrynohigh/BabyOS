@@ -88,6 +88,10 @@ typedef struct bDriverIf
 typedef enum
 {
     B_DRIVER_NULL = 0,
+    B_DRIVER_ICM20948,
+    B_DRIVER_ICM42688P,
+    B_DRIVER_QMC5883L,
+    B_DRIVER_QMI8658A,
     B_DRIVER_24CXX,
     B_DRIVER_DS18B20,
     B_DRIVER_ESP12F,
@@ -107,7 +111,7 @@ typedef enum
     B_DRIVER_ST7789,
     B_DRIVER_TESTFLASH,
     B_DRIVER_XPT2046,
-		B_DRIVER_APDS9930,
+    B_DRIVER_APDS9930,
     B_DRIVER_NUMBER
 } bDriverNumber_t;
 

@@ -1,6 +1,6 @@
 /**
  *!
- * \file        mcu_hc32l13x_i2c.c
+ * \file        mcu_stm32f10x_spi.c
  * \version     v0.0.1
  * \date        2020/03/25
  * \author      Bean(notrynohigh@outlook.com)
@@ -21,7 +21,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SI2CL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SSPIL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -31,30 +31,28 @@
 
 /*Includes ----------------------------------------------*/
 #include "b_config.h"
-#include "hal/inc/b_hal_i2c.h"
+#include "hal/inc/b_hal_spi.h"
 
-#if (defined(HC32L07X))
+#if defined(AT32F413Cx)
 
-int bMcuI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
+int bMcuSpiSetSpeed(const bHalSPIIf_t *spi_if, bHalSPISpeed_t speed)
 {
-    return -1;
+    return 0;
 }
 
-int bMcuI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
+uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
 {
-    return -1;
+    return 0;
 }
 
-int bMcuI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
-                    const uint8_t *pbuf, uint16_t len)
+int bMcuSpiSend(const bHalSPIIf_t *spi_if, const uint8_t *pbuf, uint16_t len)
 {
-    return -1;
+    return 0;
 }
 
-int bMcuI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
-                   uint8_t *pbuf, uint16_t len)
+int bMcuSpiReceive(const bHalSPIIf_t *spi_if, uint8_t *pbuf, uint16_t len)
 {
-    return -1;
+    return 0;
 }
 
 #endif

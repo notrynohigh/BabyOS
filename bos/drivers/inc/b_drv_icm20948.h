@@ -1,6 +1,14 @@
+/*
+ * @FilePath: \EIDEd:\GitHub\activeglove_at32f413_app\BabyOS\bos\drivers\inc\b_drv_icm20948.h
+ * @Author: miniminiminini
+ * @Date: 2023-10-10 16:00:36
+ * @LastEditors: miniminiminini
+ * @LastEditTime: 2023-10-10 16:08:11
+ * @Description: file content
+ */
 /**
  *!
- * \file        mcu_hc32l13x_i2c.c
+ * \file        b_drv_ICM20948.h
  * \version     v0.0.1
  * \date        2020/03/25
  * \author      Bean(notrynohigh@outlook.com)
@@ -21,41 +29,54 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SI2CL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************
  */
+#ifndef __B_DRV_ICM20948_H__
+#define __B_DRV_ICM20948_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*Includes ----------------------------------------------*/
-#include "b_config.h"
-#include "hal/inc/b_hal_i2c.h"
+#include "drivers/inc/b_driver.h"
+/**
+ * \addtogroup B_DRIVER
+ * \{
+ */
 
-#if (defined(HC32L07X))
+/**
+ * \addtogroup ICM20948
+ * \{
+ */
 
-int bMcuI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
-{
-    return -1;
+/**
+ * \defgroup ICM20948_Exported_TypesDefinitions
+ * \{
+ */
+//<HALIF 1 I2C
+typedef bHalI2CIf_t bICM20948_HalIf_t;
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+#ifdef __cplusplus
 }
-
-int bMcuI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
-{
-    return -1;
-}
-
-int bMcuI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
-                    const uint8_t *pbuf, uint16_t len)
-{
-    return -1;
-}
-
-int bMcuI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_addr_size,
-                   uint8_t *pbuf, uint16_t len)
-{
-    return -1;
-}
+#endif
 
 #endif
 

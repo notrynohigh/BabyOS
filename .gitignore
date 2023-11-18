@@ -52,3 +52,6 @@ Mkfile.old
 dkms.conf
 *.code-workspace
 *.vscode/
+
+.history
+

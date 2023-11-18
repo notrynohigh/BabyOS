@@ -1,6 +1,6 @@
 /**
  *!
- * \file        mcu_hc32l13x_i2c.c
+ * \file        mcu_stm32f10x_i2c.c
  * \version     v0.0.1
  * \date        2020/03/25
  * \author      Bean(notrynohigh@outlook.com)
@@ -33,7 +33,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_i2c.h"
 
-#if (defined(HC32L07X))
+#if defined(AT32F413Cx)
 
 int bMcuI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {

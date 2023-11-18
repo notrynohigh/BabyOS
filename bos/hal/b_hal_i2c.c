@@ -45,8 +45,9 @@
  */
 typedef struct
 {
-    bHalGPIOInstance_t sda;
     bHalGPIOInstance_t clk;
+    bHalGPIOInstance_t sda;
+    uint32_t           frq;
 } bHalI2CIO_t;
 /**
  * \}
@@ -56,66 +57,112 @@ typedef struct
  * \addtogroup I2C_Private_Functions
  * \{
  */
+// 计算I2C延时微秒数值的函数
+static uint32_t _HalCalculateI2CDelayUs(uint32_t i2cFrequency)
+{
+    if (i2cFrequency <= 100000)
+    {
+        // Standard Mode (100kHz)
+        return 5;
+    }
+    else if (i2cFrequency <= 200000)
+    {
+        return 2;
+    }
+    else if (i2cFrequency <= 400000)
+    {
+        // Fast Mode (400kHz)
+        return 1;
+    }
+    else if (i2cFrequency <= 1000000)
+    {
+        // Fast Mode Plus (1MHz)
+        return 1;
+    }
+    else
+    {
+        return 1;
+    }
+}
+
 static void _HalI2CIOStart(bHalI2CIO_t i2c)
 {
+    uint32_t us = _HalCalculateI2CDelayUs(i2c.frq);
     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
-    bHalDelayUs(1);
+    bHalDelayUs(us);
     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
-    bHalDelayUs(1);
+    bHalDelayUs(us);
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
+    bHalDelayUs(us);
 }
 
 static void _HalI2CIOStop(bHalI2CIO_t i2c)
 {
-    bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
-    bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
-    bHalDelayUs(1);
-    bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
-    bHalDelayUs(1);
+    uint32_t us = _HalCalculateI2CDelayUs(i2c.frq);
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
+    bHalDelayUs(us);
     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
+    bHalDelayUs(us);
+    bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
+    bHalDelayUs(us);
+    bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
+    bHalDelayUs(us);
 }
 
 static int _HalI2CIOACK(bHalI2CIO_t i2c)
 {
-    uint8_t tmp = 0xff;
+    int      retval = -1;
+    uint32_t us     = _HalCalculateI2CDelayUs(i2c.frq);
+    bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
     bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_INPUT, B_HAL_GPIO_NOPULL);
-    bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
-    bHalDelayUs(1);
+    bHalDelayUs(us);
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
-    do
+    bHalDelayUs(us);
+    if (bHalGpioReadPin(i2c.sda.port, i2c.sda.pin))
     {
-        tmp--;
-        bHalDelayUs(10);
-    } while ((bHalGpioReadPin(i2c.sda.port, i2c.sda.pin) != 0x0) && (tmp > 0));
-    if (tmp == 0)
+        retval = -1;
+    }
+    else
     {
-        _HalI2CIOStop(i2c);
-        bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_OUTPUT, B_HAL_GPIO_NOPULL);
-        return -1;
+        retval = 0;
     }
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
     bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_OUTPUT, B_HAL_GPIO_NOPULL);
-    return 0;
+    bHalDelayUs(us);
+
+    return retval;
 }
 
 static void _HalI2CIOmACK(bHalI2CIO_t i2c)
 {
+    uint32_t us = _HalCalculateI2CDelayUs(i2c.frq);
     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
+    bHalDelayUs(us);
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
-    bHalDelayUs(1);
+    bHalDelayUs(us);
     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
-    bHalDelayUs(1);
+    bHalDelayUs(us);
+    bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
+}
+
+static void _HalI2CIOmNACK(bHalI2CIO_t i2c)
+{
+    uint32_t us = _HalCalculateI2CDelayUs(i2c.frq);
+    bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
+    bHalDelayUs(us);
+    bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
+    bHalDelayUs(us);
+    bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
+    bHalDelayUs(us);
 }
 
 static void _HalI2CIOWriteByte(bHalI2CIO_t i2c, uint8_t dat)
 {
-    uint8_t i = 0;
-    bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
+    uint8_t  i  = 0;
+    uint32_t us = _HalCalculateI2CDelayUs(i2c.frq);
     for (i = 0; i < 8; i++)
     {
-        bHalDelayUs(1);
         if (dat & 0x80)
         {
             bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
@@ -125,36 +172,48 @@ static void _HalI2CIOWriteByte(bHalI2CIO_t i2c, uint8_t dat)
             bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
         }
         bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
-        bHalDelayUs(1);
+        bHalDelayUs(us);
         bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
+        if (i == 7)
+        {
+            bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
+        }
         dat <<= 1;
+        bHalDelayUs(us);
     }
 }
 
-static uint8_t _HalI2CIOReadByte(bHalI2CIO_t i2c)
+static uint8_t _HalI2CIOReadByte(bHalI2CIO_t i2c, uint8_t mack)
 {
-    uint8_t i = 0, tmp = 0;
+    uint8_t  i = 0, tmp = 0;
+    uint32_t us = _HalCalculateI2CDelayUs(i2c.frq);
     bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_INPUT, B_HAL_GPIO_NOPULL);
-    bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
-    bHalDelayUs(1);
+    bHalDelayUs(us);
     for (i = 0; i < 8; i++)
     {
-        bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
         tmp <<= 1;
+        bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
+        bHalDelayUs(us);
         if (bHalGpioReadPin(i2c.sda.port, i2c.sda.pin))
         {
             tmp++;
         }
-        bHalDelayUs(1);
         bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
-        bHalDelayUs(1);
+        bHalDelayUs(us);
     }
     bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_OUTPUT, B_HAL_GPIO_NOPULL);
+    bHalDelayUs(us);
+    if (mack == 0)
+        _HalI2CIOmNACK(i2c);
+    else
+        _HalI2CIOmACK(i2c);
+
     return tmp;
 }
 
-static int _HalI2CIOWriteData(bHalI2CIO_t i2c, uint8_t dev, uint8_t dat)
+static int _HalI2CIOWriteData(bHalI2CIO_t i2c, uint8_t dev, uint8_t *pdat, uint16_t len)
 {
+    uint16_t i;
     _HalI2CIOStart(i2c);
     _HalI2CIOWriteByte(i2c, dev);
     if (_HalI2CIOACK(i2c) < 0)
@@ -162,33 +221,45 @@ static int _HalI2CIOWriteData(bHalI2CIO_t i2c, uint8_t dev, uint8_t dat)
         _HalI2CIOStop(i2c);
         return -1;
     }
-    _HalI2CIOWriteByte(i2c, dat);
-    if (_HalI2CIOACK(i2c) < 0)
+
+    for (i = 0; i < len; i++)
     {
-        _HalI2CIOStop(i2c);
-        return -1;
+        _HalI2CIOWriteByte(i2c, pdat[i]);
+        if (_HalI2CIOACK(i2c) < 0)
+        {
+            _HalI2CIOStop(i2c);
+            return -1;
+        }
     }
+
     _HalI2CIOStop(i2c);
     return 0;
 }
 
-static uint8_t _HalI2CIOReadData(bHalI2CIO_t i2c, uint8_t dev)
+static int _HalI2CIOReadData(bHalI2CIO_t i2c, uint8_t dev, uint8_t *pdat, uint16_t len)
 {
-    uint8_t tmp;
+    uint16_t i;
     _HalI2CIOStart(i2c);
     _HalI2CIOWriteByte(i2c, dev | 0x1);
     if (_HalI2CIOACK(i2c) < 0)
     {
         _HalI2CIOStop(i2c);
-        return 0;
+        return -1;
     }
-    tmp = _HalI2CIOReadByte(i2c);
+
+    for (i = 0; i < (len - 1); i++)
+    {
+        *pdat = _HalI2CIOReadByte(i2c, 1);
+        pdat++;
+    }
+
+    *pdat = _HalI2CIOReadByte(i2c, 0);
     _HalI2CIOStop(i2c);
-    return tmp;
+    return 0;
 }
 
 static int _HalI2CIOReadBuff(bHalI2CIO_t i2c, uint8_t dev, uint16_t addr, uint8_t addr_size,
-                             uint8_t *pdat, uint8_t len)
+                             uint8_t *pdat, uint16_t len)
 {
     _HalI2CIOStart(i2c);
     _HalI2CIOWriteByte(i2c, dev);
@@ -223,10 +294,9 @@ static int _HalI2CIOReadBuff(bHalI2CIO_t i2c, uint8_t dev, uint16_t addr, uint8_
     }
     while (len-- > 1)
     {
-        *pdat++ = _HalI2CIOReadByte(i2c);
-        _HalI2CIOmACK(i2c);
+        *pdat++ = _HalI2CIOReadByte(i2c, 1);
     }
-    *pdat++ = _HalI2CIOReadByte(i2c);
+    *pdat++ = _HalI2CIOReadByte(i2c, 0);
 
     _HalI2CIOStop(i2c);
     return 0;
@@ -272,6 +342,7 @@ static int _HalI2CIOWriteBuff(bHalI2CIO_t i2c, uint8_t dev, uint16_t addr, uint8
     _HalI2CIOStop(i2c);
     return 0;
 }
+
 /**
  * \}
  */
@@ -280,13 +351,12 @@ static int _HalI2CIOWriteBuff(bHalI2CIO_t i2c, uint8_t dev, uint16_t addr, uint8
  * \addtogroup I2C_Exported_Functions
  * \{
  */
-
-__WEAKDEF uint8_t bMcuI2CReadByte(const bHalI2CIf_t *i2c_if)
+__WEAKDEF int bMcuI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
-    return 0;
+    return -1;
 }
 
-__WEAKDEF int bMcuI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t dat)
+__WEAKDEF int bMcuI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
     return -1;
 }
@@ -306,9 +376,9 @@ __WEAKDEF int bMcuI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 
-uint8_t bHalI2CReadByte(const bHalI2CIf_t *i2c_if)
+int bHalI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
-    uint8_t     tmp = 0;
+    int         retval = 0;
     bHalI2CIO_t simulating_iic;
     if (IS_NULL(i2c_if))
     {
@@ -316,18 +386,19 @@ uint8_t bHalI2CReadByte(const bHalI2CIf_t *i2c_if)
     }
     if (i2c_if->is_simulation == 1)
     {
-        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
         simulating_iic.clk = i2c_if->_if.simulating_i2c.clk;
-        tmp                = _HalI2CIOReadData(simulating_iic, i2c_if->dev_addr);
+        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
+        simulating_iic.frq = i2c_if->_if.simulating_i2c.frq;
+        retval             = _HalI2CIOReadData(simulating_iic, i2c_if->dev_addr, pbuf, len);
     }
     else
     {
-        tmp = bMcuI2CReadByte(i2c_if);
+        retval = bMcuI2CReadByte(i2c_if, pbuf, len);
     }
-    return tmp;
+    return retval;
 }
 
-int bHalI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t dat)
+int bHalI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
     int         retval = 0;
     bHalI2CIO_t simulating_iic;
@@ -337,13 +408,14 @@ int bHalI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t dat)
     }
     if (i2c_if->is_simulation == 1)
     {
-        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
         simulating_iic.clk = i2c_if->_if.simulating_i2c.clk;
-        retval             = _HalI2CIOWriteData(simulating_iic, i2c_if->dev_addr, dat);
+        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
+        simulating_iic.frq = i2c_if->_if.simulating_i2c.frq;
+        retval             = _HalI2CIOWriteData(simulating_iic, i2c_if->dev_addr, pbuf, len);
     }
     else
     {
-        retval = bMcuI2CWriteByte(i2c_if, dat);
+        retval = bMcuI2CWriteByte(i2c_if, pbuf, len);
     }
     return retval;
 }
@@ -359,8 +431,9 @@ int bHalI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_ad
     }
     if (i2c_if->is_simulation == 1)
     {
-        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
         simulating_iic.clk = i2c_if->_if.simulating_i2c.clk;
+        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
+        simulating_iic.frq = i2c_if->_if.simulating_i2c.frq;
         retval = _HalI2CIOWriteBuff(simulating_iic, i2c_if->dev_addr, mem_addr, mem_addr_size, pbuf,
                                     len);
     }
@@ -382,8 +455,9 @@ int bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_add
     }
     if (i2c_if->is_simulation == 1)
     {
-        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
         simulating_iic.clk = i2c_if->_if.simulating_i2c.clk;
+        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
+        simulating_iic.frq = i2c_if->_if.simulating_i2c.frq;
         retval =
             _HalI2CIOReadBuff(simulating_iic, i2c_if->dev_addr, mem_addr, mem_addr_size, pbuf, len);
     }
@@ -393,7 +467,6 @@ int bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_add
     }
     return retval;
 }
-
 /**
  * \}
  */

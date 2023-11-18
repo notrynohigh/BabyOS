@@ -35,12 +35,12 @@
 
 #if (defined(STM32L41X_L46X))
 
-uint8_t bMcuI2CReadByte(const bHalI2CIf_t *i2c_if)
+int bMcuI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
-    return 0;
+    return -1;
 }
 
-int bMcuI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t dat)
+int bMcuI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
     return -1;
 }

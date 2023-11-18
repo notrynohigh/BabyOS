@@ -86,6 +86,38 @@ typedef struct
     uint8_t fifo_length;
 } bGSensorFifo_t;
 
+typedef struct
+{
+    int32_t acc_arr[3];
+
+    int32_t gyro_arr[3];
+
+    int32_t mag_arr[3];
+
+    float temperature;
+
+} bICM20948_9Axis_t;
+
+typedef struct
+{
+    int16_t acc_arr[3];
+
+    int16_t gyro_arr[3];
+} bICM42688P_6Axis_t;
+
+typedef struct
+{
+    float mag_arr[3];
+} bQMC5883L_3Axis_t;
+#define bCMD_QMC5883L_WHETHER_NEWDATA_READY 0
+
+typedef struct
+{
+    float acc_arr[3];  // m/s^2
+
+    float gyro_arr[3];  // rad/s
+} bQMI8658A_6Axis_t;
+
 ///////////////////////////////////////////////////////////
 // LCD  Command & Data Structure
 ///////////////////////////////////////////////////////////
