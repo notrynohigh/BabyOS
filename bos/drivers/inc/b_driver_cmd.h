@@ -274,6 +274,19 @@ typedef struct
 } bProximity_AmbientLightsensor_t;
 
 ///////////////////////////////////////////////////////////
+// MAC Device Command and Param
+///////////////////////////////////////////////////////////
+#define bCMD_MAC_ADDRESS 0        // bMacAddress_t
+#define bCMD_GET_LINK_STATE 1     // uint8_t  0 or 1 (linked)
+#define bCMD_LINK_STATE_CHANGE 2  // uint8_t  0 or 1 (linked)
+#define bCMD_REG_BUF_LIST 3       // bHalBufList_t
+
+typedef struct
+{
+    uint8_t address[6];
+} bMacAddress_t;
+
+///////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////
 

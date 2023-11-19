@@ -149,6 +149,16 @@ extern "C" {
 
 #endif
 
+#define b_log_hex(buf, len)                  \
+    for (int ihex = 0; ihex < (len); ihex++) \
+    {                                        \
+        if ((ihex % 16) == 0)                \
+        {                                    \
+            b_log("\n");                     \
+        }                                    \
+        b_log("%02x ", (buf)[ihex]);         \
+    }
+
 /**
  * \}
  */

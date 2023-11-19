@@ -338,5 +338,37 @@ config __GLCD_CFG_SCEEN_HEIGHT__
     range 8 32767
     depends on _USE_ARM_2D  
 
+config _NETIF_ENABLE
+    bool "NETIF Enable/Disable"
+    default n
+    depends on _BOS_MODULES_ENABLE
+
+config NETIF_LINK_CHECK_INTERVAL
+    int "Netif Check Link Time Interval (ms)"
+    default 200
+    depends on _NETIF_ENABLE
+
+config NETIF_CHECKSUM_BY_HARDWARE
+    bool "HECKSUM_BY_HARDWARE enabled"
+    default n
+    depends on _NETIF_ENABLE
+
+config UDP_ENABLE
+    bool "UDP Eanble/Disable"
+    default n    
+    depends on _NETIF_ENABLE
+ 
+config MEMP_NUM_TCP_PCB_LISTEN
+    int "Value for MEMP_NUM_TCP_PCB_LISTEN"
+    default 4    
+    depends on _NETIF_ENABLE
+
+config TCP_SND_QUEUELEN
+    int "TCP_SND_QUEUELEN"
+    default 8
+    depends on _NETIF_ENABLE
+
+
+
 
 endmenu

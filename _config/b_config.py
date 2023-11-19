@@ -4,6 +4,7 @@
 import os, sys
 import shutil
 import re
+import importlib
 from kconfiglib import Kconfig
 from menuconfig import menuconfig
 
@@ -55,59 +56,6 @@ def mconfig(path):
     
     os.remove("Kconfig")
 
-def find_files(dirs, des):
-    source_file = []
-    source_file_des = []
-    for d in dirs:
-        files = os.listdir(d)
-        for file_name in files:
-            # 检查文件扩展名是否为.c或.h
-            if file_name.endswith('.c') or file_name.endswith('.h') or file_name.endswith('.inc'):
-                # 构建源文件和目标文件的完整路径
-                source_file.append(os.path.join(d, file_name))
-                source_file_des.append(os.path.join(des, file_name))
-    return source_file,source_file_des
-
-def clear_directory(directory):
-    # 获取目录中的所有文件和子目录
-    for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        # 判断是否是文件
-        if os.path.isfile(file_path):
-            # 删除文件
-            os.remove(file_path)
-        # 如果是子目录，则递归清空子目录中的文件
-        elif os.path.isdir(file_path):
-            clear_directory(file_path)
-
-def process_includes(file_path):
-    with open(file_path, 'r') as f:
-        content = f.read()
-    # 使用正则表达式匹配所有#include语句，并去掉路径部分
-    pattern = r'#include\s+"(\.\./)*(\S*/)*(.+?)"'
-    content = re.sub(pattern, r'#include "\3"', content)
-    with open(file_path, 'w') as f:
-        f.write(content)
-
-
-def cp_arm_2d_file(bos_dir):
-    arm_2d_dir = bos_dir + "/thirdparty/arm-2d/"
-    tmp_dir = arm_2d_dir + "bos_arm-2d/"
-    if not os.path.exists(tmp_dir):
-        os.makedirs(tmp_dir)
-    else:
-        print("bos_arm-2d exist !")
-        return
-    arm_2d_file_dir = [arm_2d_dir + "Helper/Source/", arm_2d_dir + "Helper/Include/",
-                       arm_2d_dir + "Library/Source/", arm_2d_dir + "Library/Include/", 
-                       arm_2d_dir + "examples/[template][babyos]/",
-                       arm_2d_dir + "examples/common/controls/",
-                       arm_2d_dir + "examples/common/asset/"]
-    arm_2d_files,tmp_dir_files = find_files(arm_2d_file_dir, tmp_dir)
-    for i in range(len(arm_2d_files)):
-        shutil.copy2(arm_2d_files[i], tmp_dir_files[i])
-        process_includes(tmp_dir_files[i])
-    
 def check_path_exists(path):
     filepath = os.path.join(path, "b_os.h")
     if not os.path.isfile(filepath):
@@ -130,9 +78,23 @@ def replace_string_in_file(filename, old_string, new_string):
             file.write(content)
             file.close()
 
+def call_function(file_path, function_name, arg):
+    # 加载文件
+    spec = importlib.util.spec_from_file_location("module_name", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    # 获取函数
+    if hasattr(module, function_name):
+        function = getattr(module, function_name)
+        # 调用函数
+        function(arg)
+    else:
+        print(f"在文件 {file_path} 中找不到函数 {function_name}。")
+
+
 if __name__ == "__main__":
     bos_path = check_path_exists(sys.argv[1])
     replace_string_in_file("b_config.bat", sys.argv[1], bos_path)
     replace_string_in_file("b_config.sh", sys.argv[1], bos_path)
     mconfig(bos_path)
-    cp_arm_2d_file(bos_path)
+    call_function(bos_path + "/thirdparty/thirdparty.py", "cp_thirdparty_file", bos_path)

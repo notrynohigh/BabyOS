@@ -433,6 +433,15 @@ uint8_t bDeviceIsAbnormal(uint32_t dev_no)
     return (bDriverInterfaceTable[dev_no].status != 0);
 }
 
+const char *bDeviceDescription(uint32_t dev_no)
+{
+    if (dev_no >= B_REG_DEV_NUMBER)
+    {
+        return NULL;
+    }
+    return bDeviceDescTable[dev_no];
+}
+
 /**
  * \}
  */
