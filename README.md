@@ -134,4 +134,5 @@ FS功能模块是基于FatFS和LittleFS,方便用户使用:
 | 2023.08 | 修复语法问题，增加service层                                  |      |
 | 2023.09 | 增加第三方代码arm-2d，优化spi接口和屏驱动                    |      |
 | 2023.10 | 修复若干bug。增加mcu.py方便新增mcu，优化b_config.py当bos路径无效时提示重新输入 |      |
+| 2023.11 | 修复模拟iic接口；ms延时不依赖tick。添加驱动：icm20948+qmc5883l+qmi8658a<br>增加第三方库qrcode，新建对应的软件模块 |      |
 
