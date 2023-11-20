@@ -100,9 +100,11 @@ typedef struct
 
 typedef struct
 {
-    int16_t acc_arr[3];
+    float temperature;
 
-    int16_t gyro_arr[3];
+    float acc_arr[3];
+
+    float gyro_arr[3];
 } bICM42688P_6Axis_t;
 
 typedef struct

@@ -19,6 +19,181 @@
  * \defgroup ICM42688P_Private_TypesDefinitions
  * \{
  */
+typedef enum
+{
+    // Accesible from all user banks
+    REG_BANK_SEL = 0x76,
+
+    // User Bank 0
+    UB0_REG_DEVICE_CONFIG = 0x11,
+    // break
+    UB0_REG_DRIVE_CONFIG = 0x13,
+    UB0_REG_INT_CONFIG   = 0x14,
+    // break
+    UB0_REG_FIFO_CONFIG = 0x16,
+    // break
+    UB0_REG_TEMP_DATA1    = 0x1D,
+    UB0_REG_TEMP_DATA0    = 0x1E,
+    UB0_REG_ACCEL_DATA_X1 = 0x1F,
+    UB0_REG_ACCEL_DATA_X0 = 0x20,
+    UB0_REG_ACCEL_DATA_Y1 = 0x21,
+    UB0_REG_ACCEL_DATA_Y0 = 0x22,
+    UB0_REG_ACCEL_DATA_Z1 = 0x23,
+    UB0_REG_ACCEL_DATA_Z0 = 0x24,
+    UB0_REG_GYRO_DATA_X1  = 0x25,
+    UB0_REG_GYRO_DATA_X0  = 0x26,
+    UB0_REG_GYRO_DATA_Y1  = 0x27,
+    UB0_REG_GYRO_DATA_Y0  = 0x28,
+    UB0_REG_GYRO_DATA_Z1  = 0x29,
+    UB0_REG_GYRO_DATA_Z0  = 0x2A,
+    UB0_REG_TMST_FSYNCH   = 0x2B,
+    UB0_REG_TMST_FSYNCL   = 0x2C,
+    UB0_REG_INT_STATUS    = 0x2D,
+    UB0_REG_FIFO_COUNTH   = 0x2E,
+    UB0_REG_FIFO_COUNTL   = 0x2F,
+    UB0_REG_FIFO_DATA     = 0x30,
+    UB0_REG_APEX_DATA0    = 0x31,
+    UB0_REG_APEX_DATA1    = 0x32,
+    UB0_REG_APEX_DATA2    = 0x33,
+    UB0_REG_APEX_DATA3    = 0x34,
+    UB0_REG_APEX_DATA4    = 0x35,
+    UB0_REG_APEX_DATA5    = 0x36,
+    UB0_REG_INT_STATUS2   = 0x37,
+    UB0_REG_INT_STATUS3   = 0x38,
+    // break
+    UB0_REG_SIGNAL_PATH_RESET  = 0x4B,
+    UB0_REG_INTF_CONFIG0       = 0x4C,
+    UB0_REG_INTF_CONFIG1       = 0x4D,
+    UB0_REG_PWR_MGMT0          = 0x4E,
+    UB0_REG_GYRO_CONFIG0       = 0x4F,
+    UB0_REG_ACCEL_CONFIG0      = 0x50,
+    UB0_REG_GYRO_CONFIG1       = 0x51,
+    UB0_REG_GYRO_ACCEL_CONFIG0 = 0x52,
+    UB0_REG_ACCEFL_CONFIG1     = 0x53,
+    UB0_REG_TMST_CONFIG        = 0x54,
+    // break
+    UB0_REG_APEX_CONFIG0 = 0x56,
+    UB0_REG_SMD_CONFIG   = 0x57,
+    // break
+    UB0_REG_FIFO_CONFIG1 = 0x5F,
+    UB0_REG_FIFO_CONFIG2 = 0x60,
+    UB0_REG_FIFO_CONFIG3 = 0x61,
+    UB0_REG_FSYNC_CONFIG = 0x62,
+    UB0_REG_INT_CONFIG0  = 0x63,
+    UB0_REG_INT_CONFIG1  = 0x64,
+    UB0_REG_INT_SOURCE0  = 0x65,
+    UB0_REG_INT_SOURCE1  = 0x66,
+    // break
+    UB0_REG_INT_SOURCE3 = 0x68,
+    UB0_REG_INT_SOURCE4 = 0x69,
+    // break
+    UB0_REG_FIFO_LOST_PKT0 = 0x6C,
+    UB0_REG_FIFO_LOST_PKT1 = 0x6D,
+    // break
+    UB0_REG_SELF_TEST_CONFIG = 0x70,
+    // break
+    UB0_REG_WHO_AM_I = 0x75,
+
+    // User Bank 1
+    UB1_REG_SENSOR_CONFIG0 = 0x03,
+    // break
+    UB1_REG_GYRO_CONFIG_STATIC2  = 0x0B,
+    UB1_REG_GYRO_CONFIG_STATIC3  = 0x0C,
+    UB1_REG_GYRO_CONFIG_STATIC4  = 0x0D,
+    UB1_REG_GYRO_CONFIG_STATIC5  = 0x0E,
+    UB1_REG_GYRO_CONFIG_STATIC6  = 0x0F,
+    UB1_REG_GYRO_CONFIG_STATIC7  = 0x10,
+    UB1_REG_GYRO_CONFIG_STATIC8  = 0x11,
+    UB1_REG_GYRO_CONFIG_STATIC9  = 0x12,
+    UB1_REG_GYRO_CONFIG_STATIC10 = 0x13,
+    // break
+    UB1_REG_XG_ST_DATA = 0x5F,
+    UB1_REG_YG_ST_DATA = 0x60,
+    UB1_REG_ZG_ST_DATA = 0x61,
+    UB1_REG_TMSTVAL0   = 0x62,
+    UB1_REG_TMSTVAL1   = 0x63,
+    UB1_REG_TMSTVAL2   = 0x64,
+    // break
+    UB1_REG_INTF_CONFIG4 = 0x7A,
+    UB1_REG_INTF_CONFIG5 = 0x7B,
+    UB1_REG_INTF_CONFIG6 = 0x7C,
+
+    // User Bank 2
+    UB2_REG_ACCEL_CONFIG_STATIC2 = 0x03,
+    UB2_REG_ACCEL_CONFIG_STATIC3 = 0x04,
+    UB2_REG_ACCEL_CONFIG_STATIC4 = 0x05,
+    // break
+    UB2_REG_XA_ST_DATA = 0x3B,
+    UB2_REG_YA_ST_DATA = 0x3C,
+    UB2_REG_ZA_ST_DATA = 0x3D,
+
+    // User Bank 4
+    UB4_REG_APEX_CONFIG1 = 0x40,
+    UB4_REG_APEX_CONFIG2 = 0x41,
+    UB4_REG_APEX_CONFIG3 = 0x42,
+    UB4_REG_APEX_CONFIG4 = 0x43,
+    UB4_REG_APEX_CONFIG5 = 0x44,
+    UB4_REG_APEX_CONFIG6 = 0x45,
+    UB4_REG_APEX_CONFIG7 = 0x46,
+    UB4_REG_APEX_CONFIG8 = 0x47,
+    UB4_REG_APEX_CONFIG9 = 0x48,
+    // break
+    UB4_REG_ACCEL_WOM_X_THR = 0x4A,
+    UB4_REG_ACCEL_WOM_Y_THR = 0x4B,
+    UB4_REG_ACCEL_WOM_Z_THR = 0x4C,
+    UB4_REG_INT_SOURCE6     = 0x4D,
+    UB4_REG_INT_SOURCE7     = 0x4E,
+    UB4_REG_INT_SOURCE8     = 0x4F,
+    UB4_REG_INT_SOURCE9     = 0x50,
+    UB4_REG_INT_SOURCE10    = 0x51,
+    // break
+    UB4_REG_OFFSET_USER0 = 0x77,
+    UB4_REG_OFFSET_USER1 = 0x78,
+    UB4_REG_OFFSET_USER2 = 0x79,
+    UB4_REG_OFFSET_USER3 = 0x7A,
+    UB4_REG_OFFSET_USER4 = 0x7B,
+    UB4_REG_OFFSET_USER5 = 0x7C,
+    UB4_REG_OFFSET_USER6 = 0x7D,
+    UB4_REG_OFFSET_USER7 = 0x7E,
+    UB4_REG_OFFSET_USER8 = 0x7F,
+} Enum_ICM42688reg;
+
+typedef enum
+{
+    odr32k    = 0x01,  // LN mode only
+    odr16k    = 0x02,  // LN mode only
+    odr8k     = 0x03,  // LN mode only
+    odr4k     = 0x04,  // LN mode only
+    odr2k     = 0x05,  // LN mode only
+    odr1k     = 0x06,  // LN mode only
+    odr200    = 0x07,
+    odr100    = 0x08,
+    odr50     = 0x09,
+    odr25     = 0x0A,
+    odr12_5   = 0x0B,
+    odr6a25   = 0x0C,  // LP mode only (accel only)
+    odr3a125  = 0x0D,  // LP mode only (accel only)
+    odr1a5625 = 0x0E,  // LP mode only (accel only)
+    odr500    = 0x0F,
+} Enum_ODR;
+typedef enum
+{
+    dps2000   = 0x00,
+    dps1000   = 0x01,
+    dps500    = 0x02,
+    dps250    = 0x03,
+    dps125    = 0x04,
+    dps62_5   = 0x05,
+    dps31_25  = 0x06,
+    dps15_625 = 0x07
+} Enum_GyroFS;
+typedef enum
+{
+    gpm16 = 0x00,
+    gpm8  = 0x01,
+    gpm4  = 0x02,
+    gpm2  = 0x03
+} Enum_AccelFS;
 
 /**
  * }
@@ -31,42 +206,6 @@
 #define DRIVER_NAME ICM42688P
 
 #define ICM42688Q_ID 0x47
-#define POWER_MGMT 0x4E
-#define DEVICE_CONFIG 0x11
-#define DRIVE_CONFIG 0x13
-#define WHO_AM_I 0x75
-#define TEMP_DATA1 0x1D
-#define TEMP_DATA0 0x1E
-#define GYRO_CONFIG0 0x4F
-#define ACCEL_CONFIG0 0x50
-#define GYRO_CONFIG1 0x51
-#define GYRO_ACCEL_CONFIG0 0x52
-#define ACCEL_CONFIG1 0x53
-#define XA_ST_DATA 0x3B
-#define YA_ST_DATA 0x3C
-#define ZA_ST_DATA 0x3D
-#define BANK_SEL 0x76
-#define ACCEL_DATA_X1 0x1F
-#define ACCEL_DATA_X0 0x20
-#define ACCEL_DATA_Y1 0x21
-#define ACCEL_DATA_Y0 0x22
-#define ACCEL_DATA_Z1 0x23
-#define ACCEL_DATA_Z0 0x24
-#define GYRO_DATA_X1 0x25
-#define GYRO_DATA_X0 0x26
-#define GYRO_DATA_Y1 0x27
-#define GYRO_DATA_Y0 0x28
-#define GYRO_DATA_Z1 0x29
-#define GYRO_DATA_Z0 0x2A
-#define INT_STATUS 0x2D
-#define GYRO_CONFIG0 0x4F
-#define ACCEL_CONFIG0 0x50
-#define GYRO_ACCEL_CONFIG0 0x52
-#define FIFO_CONFIG_INIT 0x16
-#define FIFO_CONFIGURATION 0x5F
-#define FIFO_DATA_REG 0x30
-#define FIFO_DATA_LEN 16
-
 /**
  * }
  */
@@ -75,7 +214,6 @@
  * \defgroup ICM42688P_Private_Macros
  * \{
  */
-#define U82U16(a, b) ((((a)&0xffff) << 8) | (((b)&0xffff) >> 8))
 
 /**
  * }
@@ -86,6 +224,20 @@
  * \{
  */
 bDRIVER_HALIF_TABLE(bICM42688P_HalIf_t, DRIVER_NAME);
+
+uint8_t _bank = 0;  ///< current user bank
+
+///\brief Full scale resolution factors
+static float _accelScale = 0.0f;
+static float _gyroScale  = 0.0f;
+
+///\brief Full scale selections
+// static Enum_AccelFS _accelFS;
+// static Enum_GyroFS  _gyroFS;
+
+///\brief Conversion formula to get temperature in Celsius (Sec 4.13)
+static float TEMP_DATA_REG_SCALE = 132.48f;
+static float TEMP_OFFSET         = 25.0f;
 
 /**
  * }
@@ -108,80 +260,98 @@ static int _bICM42688PReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
 {
     bDRIVER_GET_HALIF(_if, bICM42688P_HalIf_t, pdrv);
 
-    bHalI2CMemRead(_if, reg, 1, data, len);
-    return 0;
+    return bHalI2CMemRead(_if, reg, 1, data, len);
 }
 
 static int _bICM42688PWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bICM42688P_HalIf_t, pdrv);
 
-    bHalI2CMemWrite(_if, reg, 1, data, len);
-    return 0;
+    return bHalI2CMemWrite(_if, reg, 1, data, len);
+}
+
+static void _bICM42688PSetBank(bDriverInterface_t *pdrv, uint8_t bank)
+{
+    if (_bank == bank)
+        return;
+
+    _bank = bank;
+    _bICM42688PWriteRegs(pdrv, REG_BANK_SEL, &_bank, 1);
+}
+
+static void _bICM42688PSoftReset(bDriverInterface_t *pdrv)
+{
+    uint8_t ub0_reg_device_config_val = 0x01;
+    _bICM42688PSetBank(pdrv, 0);
+    _bICM42688PWriteRegs(pdrv, UB0_REG_DEVICE_CONFIG, &ub0_reg_device_config_val, 1);
+    bHalDelayMs(50);
 }
 
 static uint8_t _bICM42688PGetID(bDriverInterface_t *pdrv)
 {
     uint8_t id = 0;
-    _bICM42688PReadRegs(pdrv, WHO_AM_I, &id, 1);
+    _bICM42688PSetBank(pdrv, 0);
+    _bICM42688PReadRegs(pdrv, UB0_REG_WHO_AM_I, &id, 1);
     // b_log("ICM42688P id:0x%x\n", id);
+
     return id;
 }
 
-static void _bICM42688PDefaultCfg(bDriverInterface_t *pdrv)
+static int _bICM42688PSetAccelFS(bDriverInterface_t *pdrv, Enum_AccelFS fssel)
 {
-    uint8_t device_config_val      = 0x01;
-    uint8_t bank_sel_val           = 0x00;
-    uint8_t power_mgmt_val         = 0x0f;
-    uint8_t accel_config0_val      = 0x67;  // 0x03<<5|0x07
-    uint8_t gyro_config0_val       = 0x67;  // 0x03<<5|0x07
-    uint8_t gyro_accel_config0_val = 0x44;
-    uint8_t fifo_config_init_val   = 0x40;
-    uint8_t fifo_configuration_val = 0x03;
-    bHalDelayMs(10);
-    _bICM42688PWriteRegs(pdrv, DEVICE_CONFIG, &device_config_val, 1);
-    bHalDelayMs(50);
-    _bICM42688PWriteRegs(pdrv, BANK_SEL, &bank_sel_val, 1);
-    _bICM42688PWriteRegs(pdrv, POWER_MGMT, &power_mgmt_val, 1);
-    bHalDelayMs(10);
-    _bICM42688PWriteRegs(pdrv, ACCEL_CONFIG0, &accel_config0_val, 1);
-    _bICM42688PWriteRegs(pdrv, GYRO_CONFIG0, &gyro_config0_val, 1);
-    _bICM42688PWriteRegs(pdrv, GYRO_ACCEL_CONFIG0, &gyro_accel_config0_val, 1);
-    bHalDelayMs(10);
-    _bICM42688PWriteRegs(pdrv, FIFO_CONFIG_INIT, &fifo_config_init_val, 1);
-    _bICM42688PWriteRegs(pdrv, FIFO_CONFIGURATION, &fifo_configuration_val, 1);
-    bHalDelayMs(10);
+    uint8_t read_val = 0;
+    _bICM42688PSetBank(pdrv, 0);
+
+    _bICM42688PReadRegs(pdrv, UB0_REG_ACCEL_CONFIG0, &read_val, 1);
+    // only change FS_SEL in reg
+    read_val = (fssel << 5) | (read_val & 0x1F);
+    _bICM42688PWriteRegs(pdrv, UB0_REG_ACCEL_CONFIG0, &read_val, 1);
+
+    _accelScale = (float)(1 << (4 - fssel)) / 32768.0f;
+    // _accelFS    = fssel;
+
+    return 0;
+}
+
+static int _bICM42688PSetGyroFS(bDriverInterface_t *pdrv, Enum_GyroFS fssel)
+{
+    uint8_t read_val = 0;
+    _bICM42688PSetBank(pdrv, 0);
+
+    _bICM42688PReadRegs(pdrv, UB0_REG_GYRO_CONFIG0, &read_val, 1);
+    // only change FS_SEL in reg
+    read_val = (fssel << 5) | (read_val & 0x1F);
+    _bICM42688PWriteRegs(pdrv, UB0_REG_GYRO_CONFIG0, &read_val, 1);
+
+    _gyroScale = (2000.0f / (float)(1 << fssel)) / 32768.0f;
+    // _gyroFS    = fssel;
+
+    return 0;
 }
 
 static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
-    uint8_t             temp_data = 0;
-    uint8_t             fifo_data[16];
+    uint8_t             i = 0;
+    uint8_t             _buffer[16];
+    int16_t             _rawMeas[7];  // temp, accel xyz, gyro xyz
     bICM42688P_6Axis_t *ptmp = (bICM42688P_6Axis_t *)pbuf;
 
-    if (len < sizeof(bICM42688P_6Axis_t))
+    _bICM42688PReadRegs(pdrv, UB0_REG_TEMP_DATA1, _buffer, 14);
+
+    for (i = 0; i < 7; i++)
     {
-        return -1;
+        _rawMeas[i] = ((int16_t)_buffer[i * 2] << 8) | _buffer[i * 2 + 1];
     }
-    _bICM42688PReadRegs(pdrv, INT_STATUS, &temp_data, 1);
-    // b_log("INT_STATUS=%02x\n", temp_data);
-    if (temp_data & 0x0a)
-    {
-        _bICM42688PReadRegs(pdrv, FIFO_DATA_REG, fifo_data, FIFO_DATA_LEN);
-        // b_log("pack_header=%02x\n", fifo_data[0]);//0x68
-        ptmp->acc_arr[0]  = U82U16(fifo_data[1], fifo_data[2]);
-        ptmp->acc_arr[1]  = U82U16(fifo_data[3], fifo_data[4]);
-        ptmp->acc_arr[2]  = U82U16(fifo_data[5], fifo_data[6]);
-        ptmp->gyro_arr[0] = U82U16(fifo_data[7], fifo_data[8]);
-        ptmp->gyro_arr[1] = U82U16(fifo_data[9], fifo_data[10]);
-        ptmp->gyro_arr[2] = U82U16(fifo_data[11], fifo_data[12]);
-        // b_log("acc_dat:%d %d%d \n", ptmp->acc_arr[0], ptmp->acc_arr[1], ptmp->acc_arr[2]);
-        // b_log("gyro_dat:%d %d%d \n", ptmp->gyro_arr[0], ptmp->gyro_arr[1], ptmp->gyro_arr[2]);
-    }
-    else
-    {
-        return -1;
-    }
+
+    ptmp->temperature = ((float)(_rawMeas[0]) / TEMP_DATA_REG_SCALE) + TEMP_OFFSET;
+
+    ptmp->acc_arr[0] = _rawMeas[1] * _accelScale;
+    ptmp->acc_arr[1] = _rawMeas[2] * _accelScale;
+    ptmp->acc_arr[2] = _rawMeas[3] * _accelScale;
+
+    ptmp->gyro_arr[0] = _rawMeas[4] * _gyroScale;
+    ptmp->gyro_arr[1] = _rawMeas[5] * _gyroScale;
+    ptmp->gyro_arr[2] = _rawMeas[6] * _gyroScale;
 
     return 0;
 }
@@ -196,13 +366,26 @@ static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf
  */
 int bICM42688P_Init(bDriverInterface_t *pdrv)
 {
+    uint8_t ub0_reg_pwr_mgmt0_val = 0x0F;
+
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM42688P_Init);
     pdrv->read = _bICM42688PRead;
-    _bICM42688PDefaultCfg(pdrv);
+
+    _bICM42688PSoftReset(pdrv);
+
     if (_bICM42688PGetID(pdrv) != ICM42688Q_ID)
     {
         return -1;
     }
+
+    // turn on accel and gyro in Low Noise (LN) Mode
+    _bICM42688PWriteRegs(pdrv, UB0_REG_PWR_MGMT0, &ub0_reg_pwr_mgmt0_val, 1);
+
+    // 16G is default -- do this to set up accel resolution scaling
+    _bICM42688PSetAccelFS(pdrv, gpm16);
+
+    // 2000DPS is default -- do this to set up gyro resolution scaling
+    _bICM42688PSetGyroFS(pdrv, dps2000);
 
     return 0;
 }
