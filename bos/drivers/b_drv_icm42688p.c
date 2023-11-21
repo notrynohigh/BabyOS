@@ -228,8 +228,8 @@ bDRIVER_HALIF_TABLE(bICM42688P_HalIf_t, DRIVER_NAME);
 uint8_t _bank = 0;  ///< current user bank
 
 ///\brief Full scale resolution factors
-static float _accelScale = 0.0f;
-static float _gyroScale  = 0.0f;
+// static float _accelScale = 0.0f;
+// static float _gyroScale  = 0.0f;
 
 ///\brief Full scale selections
 // static Enum_AccelFS _accelFS;
@@ -307,7 +307,7 @@ static int _bICM42688PSetAccelFS(bDriverInterface_t *pdrv, Enum_AccelFS fssel)
     read_val = (fssel << 5) | (read_val & 0x1F);
     _bICM42688PWriteRegs(pdrv, UB0_REG_ACCEL_CONFIG0, &read_val, 1);
 
-    _accelScale = (float)(1 << (4 - fssel)) / 32768.0f;
+    // _accelScale = (float)(1 << (4 - fssel)) / 32768.0f;
     // _accelFS    = fssel;
 
     return 0;
@@ -323,7 +323,7 @@ static int _bICM42688PSetGyroFS(bDriverInterface_t *pdrv, Enum_GyroFS fssel)
     read_val = (fssel << 5) | (read_val & 0x1F);
     _bICM42688PWriteRegs(pdrv, UB0_REG_GYRO_CONFIG0, &read_val, 1);
 
-    _gyroScale = (2000.0f / (float)(1 << fssel)) / 32768.0f;
+    // _gyroScale = (2000.0f / (float)(1 << fssel)) / 32768.0f;
     // _gyroFS    = fssel;
 
     return 0;
@@ -345,13 +345,13 @@ static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf
 
     ptmp->temperature = ((float)(_rawMeas[0]) / TEMP_DATA_REG_SCALE) + TEMP_OFFSET;
 
-    ptmp->acc_arr[0] = _rawMeas[1] * _accelScale;
-    ptmp->acc_arr[1] = _rawMeas[2] * _accelScale;
-    ptmp->acc_arr[2] = _rawMeas[3] * _accelScale;
+    ptmp->acc_arr[0] = _rawMeas[1];
+    ptmp->acc_arr[1] = _rawMeas[2];
+    ptmp->acc_arr[2] = _rawMeas[3];
 
-    ptmp->gyro_arr[0] = _rawMeas[4] * _gyroScale;
-    ptmp->gyro_arr[1] = _rawMeas[5] * _gyroScale;
-    ptmp->gyro_arr[2] = _rawMeas[6] * _gyroScale;
+    ptmp->gyro_arr[0] = _rawMeas[4];
+    ptmp->gyro_arr[1] = _rawMeas[5];
+    ptmp->gyro_arr[2] = _rawMeas[6];
 
     return 0;
 }
