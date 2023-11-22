@@ -231,6 +231,7 @@ static uint16_t _bMBCRC16(uint8_t *pucFrame, uint16_t usLen)
  */
 static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
 {
+    int              retval = 0;
     int              len   = 0;
     int              i     = 0;
     uint16_t crc = 0;
@@ -239,7 +240,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
 
     if (i_len < 2)
     {
-        return -1;
+        return MODBUS_LEN_ERR;
     }
 
     if (in[1] == MODBUS_RTU_READ_REGS)
@@ -248,12 +249,12 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         len = sizeof(bModbusMasterSendReadRegsAck_t) + r_ack->len;
         if (i_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         crc = _bMBCRC16(in, len - 2);
         if (crc != r_ack->param[r_ack->len / 2])
         {
-            return -2;
+            return MODBUS_FRAME_HEAD_ERR;
         }
         param.slave_id  = r_ack->addr;
         param.func_code = r_ack->func;
@@ -264,7 +265,11 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
             r_ack->param[i] = L2B_B2L_16b(r_ack->param[i]);
         }
         param.reg_value = (uint16_t *)r_ack->param;
-        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_READ_REG, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param);
+        if (retval < 0)
+        {
+            return MODBUS_CALLBACK_ERR;
+        }
     }
     else if (in[1] == MODBUS_RTU_WRITE_REG)
     {
@@ -272,12 +277,12 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         len = sizeof(bModbusMasterSendWriteRegAck_t);
         if (i_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         crc = _bMBCRC16(in, len - 2);
         if (crc != w_1_ack->crc)
         {
-            return -2;
+            return MODBUS_FRAME_HEAD_ERR;
         }
         param.slave_id  = w_1_ack->addr;
         param.func_code = w_1_ack->func;
@@ -285,7 +290,11 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         param.reg_num   = 1;
         w_1_ack->value  = L2B_B2L_16b(w_1_ack->value);
         param.reg_value = (uint16_t *)&w_1_ack->value;
-        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        if (retval < 0)
+        {
+            return MODBUS_CALLBACK_ERR;
+        }
     }
     else if (in[1] == MODBUS_RTU_WRITE_REGS)
     {
@@ -293,23 +302,27 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         len = sizeof(bModbusMasterSendWriteRegsAck_t);
         if (i_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         crc = _bMBCRC16(in, len - 2);
         if (crc != w_ack->crc)
         {
-            return -2;
+            return MODBUS_FRAME_HEAD_ERR;
         }
         param.slave_id  = w_ack->addr;
         param.func_code = w_ack->func;
         param.base_reg  = L2B_B2L_16b(w_ack->reg);
         param.reg_num   = L2B_B2L_16b(w_ack->num);
         param.reg_value = NULL;
-        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        if (retval < 0)
+        {
+            return MODBUS_CALLBACK_ERR;
+        }
     }
     else
     {
-        return -3;
+        return MODBUS_CRC_ERR;
     }
 
     return 0;
@@ -330,7 +343,7 @@ static int _bModbusRTUMasterPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, u
     uint16_t crc = 0;
     if (buf == NULL || buf_len == 0)
     {
-        return -1;
+        return MODBUS_LEN_ERR;
     }
 
     if (cmd == B_MODBUS_CMD_READ_REG)
@@ -339,7 +352,7 @@ static int _bModbusRTUMasterPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, u
         len = sizeof(bModbusMasterRead_t) + 2;
         if (buf_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         param->base_reg = L2B_B2L_16b(param->base_reg);
         param->reg_num = L2B_B2L_16b(param->reg_num);
@@ -350,7 +363,7 @@ static int _bModbusRTUMasterPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, u
         len = sizeof(bModbusMasterSendWriteReg_t);
         if (buf_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         bModbusMasterSendWriteReg_t *frame = (bModbusMasterSendWriteReg_t *)buf;
         frame->func = MODBUS_RTU_WRITE_REG;
@@ -363,7 +376,7 @@ static int _bModbusRTUMasterPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, u
         len = sizeof(bModbusMasterWriteRegs_t) + param->reg_num * 2;
         if (buf_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
 
         bModbusMasterSendWriteRegs_t *frame = (bModbusMasterSendWriteRegs_t *)buf;
@@ -378,7 +391,7 @@ static int _bModbusRTUMasterPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, u
     }
     else
     {
-        return -2;
+        return MODBUS_FRAME_HEAD_ERR;
     }
 
     if (len > 0)
@@ -402,7 +415,8 @@ static int _bModbusRTUMasterPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, u
  */
 static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
 {
-    int i = 0;
+    int              retval = 0;
+    int              i      = 0;
     int len = 0;
     uint16_t crc = 0;
     bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
@@ -410,12 +424,12 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
 
     if (i_len < 2)
     {
-        return -1;
+        return MODBUS_LEN_ERR;
     }
 
     if ((in[0] != SLAVE_ADDR) && (in[0] != ALL_SLAVE_ADDR))
     {
-        return -2;
+        return MODBUS_FRAME_HEAD_ERR;
     }
 
     if (in[1] == MODBUS_RTU_READ_REGS)
@@ -424,12 +438,12 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         len = sizeof(bModbusSlaveRecvReadRegs_t);
         if (i_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         crc = _bMBCRC16(in, len - 2);
         if (crc != r->crc)
         {
-            return -3;
+            return MODBUS_CRC_ERR;
         }
         param.slave_id = r->addr;
         param.func_code = r->func;
@@ -437,14 +451,18 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         param.reg_num = L2B_B2L_16b(r->num);
         if (param.reg_num > MODBUS_READ_REG_MAX)
         {
-            return -4;
+            return MODBUS_MAX_REGNUM_ERR;
         }
         if ((param.base_reg >= MY_DEVICE_MODBUS_REG_NUM) || ((param.base_reg + param.reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
         {
-            return -5;
+            return MODBUS_illegal_reg_ERR;
         }
         param.reg_value = NULL;
-        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_READ_REG, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param);
+        if (retval < 0)
+        {
+            return MODBUS_CALLBACK_ERR;
+        }
     }
     else if (in[1] == MODBUS_RTU_WRITE_REG)
     {
@@ -452,12 +470,12 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         len = sizeof(bModbusSlaveRecvWriteReg_t);
         if (i_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         crc = _bMBCRC16(in, len - 2);
         if (crc != w_1->crc)
         {
-            return -3;
+            return MODBUS_CRC_ERR;
         }
         param.slave_id = w_1->addr;
         param.func_code = w_1->func;
@@ -465,11 +483,15 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         param.reg_num = 1;
         if (param.base_reg >= MY_DEVICE_MODBUS_REG_NUM)
         {
-            return -5;
+            return MODBUS_illegal_reg_ERR;
         }
         w_1->value = L2B_B2L_16b(w_1->value);
         param.reg_value = &w_1->value;
-        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        if (retval < 0)
+        {
+            return MODBUS_CALLBACK_ERR;
+        }
     }
     else if (in[1] == MODBUS_RTU_WRITE_REGS)
     {
@@ -477,12 +499,12 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         len = sizeof(bModbusSlaveRecvWriteRegs_t) + w->len;
         if (i_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         crc = _bMBCRC16(in, len - 2);
         if (crc != w->param[w->len / 2])
         {
-            return -3;
+            return MODBUS_CRC_ERR;
         }
         param.slave_id = w->addr;
         param.func_code = w->func;
@@ -490,26 +512,30 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         param.reg_num = L2B_B2L_16b(w->num);
         if (param.reg_num > MODBUS_WRITE_REG_MAX)
         {
-            return -4;
+            return MODBUS_MAX_REGNUM_ERR;
         }
         if ((param.reg_num * 2) != w->len)
         {
-            return -4;
+            return MODBUS_MAX_REGNUM_ERR;
         }
         if ((param.base_reg >= MY_DEVICE_MODBUS_REG_NUM) || ((param.base_reg + param.reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
         {
-            return -5;
+            return MODBUS_illegal_reg_ERR;
         }
         for (i = 0; i < param.reg_num; i++)
         {
             (w->param)[i] = L2B_B2L_16b((w->param)[i]);
         }
         param.reg_value = w->param;
-        B_SAFE_INVOKE(pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        if (retval < 0)
+        {
+            return MODBUS_CALLBACK_ERR;
+        }
     }
     else
     {
-        return -4;
+        return MODBUS_MAX_REGNUM_ERR;
     }
 
     return 0;
@@ -530,12 +556,12 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
     uint16_t crc = 0;
     if (buf == NULL || buf_len == 0)
     {
-        return -1;
+        return MODBUS_LEN_ERR;
     }
 
     if ((buf[0] != SLAVE_ADDR) && (buf[0] == ALL_SLAVE_ADDR))
     {
-        return -2;
+        return MODBUS_FRAME_HEAD_ERR;
     }
 
     if (cmd == B_MODBUS_CMD_READ_REG)
@@ -544,15 +570,15 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
         len = sizeof(bModbusSlaveRead_t) + param->len;
         if (buf_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         if (param->reserved != MODBUS_RTU_READ_REGS)
         {
-            return -4;
+            return MODBUS_MAX_REGNUM_ERR;
         }
         if ((param->len % 2 != 0) && (param->len != 0))
         {
-            return -4;
+            return MODBUS_MAX_REGNUM_ERR;
         }
         for (i = 0; i < param->len / 2; i++)
         {
@@ -565,15 +591,15 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
         len = sizeof(bModbusSlaveWriteReg_t);
         if (buf_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         if (frame->reserved != MODBUS_RTU_WRITE_REG)
         {
-            return -4;
+            return MODBUS_MAX_REGNUM_ERR;
         }
         if (frame->base_reg >= MY_DEVICE_MODBUS_REG_NUM)
         {
-            return -5;
+            return MODBUS_illegal_reg_ERR;
         }
         frame->base_reg = L2B_B2L_16b(frame->base_reg);
         frame->reg_value = L2B_B2L_16b(frame->reg_value);
@@ -584,22 +610,22 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
         len = sizeof(bModbusSlaveWriteRegs_t);
         if (buf_len < len)
         {
-            return -1;
+            return MODBUS_LEN_ERR;
         }
         if (frame->reserved != MODBUS_RTU_WRITE_REGS)
         {
-            return -4;
+            return MODBUS_MAX_REGNUM_ERR;
         }
         if ((frame->base_reg >= MY_DEVICE_MODBUS_REG_NUM) || ((frame->base_reg + frame->reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
         {
-            return -5;
+            return MODBUS_illegal_reg_ERR;
         }
         frame->base_reg = L2B_B2L_16b(frame->base_reg);
         frame->reg_num = L2B_B2L_16b(frame->reg_num);
     }
     else
     {
-        return -6;
+        return MODBUS_CALLBACK_ERR;
     }
 
     if (len > 0)
