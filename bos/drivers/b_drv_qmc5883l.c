@@ -98,11 +98,11 @@ static int _bQMC5883LWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
     return bHalI2CMemWrite(_if, reg, 1, data, len);
 }
 
-static void _bQMC5883LSOFTRESET(bDriverInterface_t *pdrv)
-{
-    uint8_t control_2_reg_val = 0x80;
-    _bQMC5883LWriteRegs(pdrv, CONTROL_2_REG, &control_2_reg_val, 1);
-}
+// static void _bQMC5883LSOFTRESET(bDriverInterface_t *pdrv)
+// {
+//     uint8_t control_2_reg_val = 0x80;
+//     _bQMC5883LWriteRegs(pdrv, CONTROL_2_REG, &control_2_reg_val, 1);
+// }
 
 // static uint8_t _bQMC5883LGetID(bDriverInterface_t *pdrv)
 // {
@@ -121,23 +121,17 @@ static int _bQMC5883LDefaultCfg(bDriverInterface_t *pdrv)
     uint8_t cfg1_val          = 0x40;
     uint8_t cfg2_val          = 0x01;
 
-    _bQMC5883LSOFTRESET(pdrv);
-    bHalDelayMs(5);
+    // _bQMC5883LSOFTRESET(pdrv);
 
     retval = _bQMC5883LWriteRegs(pdrv, PERIOD_REG, &period_reg_val, 1);
-    bHalDelayMs(5);
 
     retval = _bQMC5883LWriteRegs(pdrv, 0x21, &cfg2_val, 1);
-    bHalDelayMs(5);
 
     retval = _bQMC5883LWriteRegs(pdrv, 0x20, &cfg1_val, 1);
-    bHalDelayMs(5);
 
     retval = _bQMC5883LWriteRegs(pdrv, CONTROL_1_REG, &control_1_reg_val, 1);
-    bHalDelayMs(5);
 
     retval = _bQMC5883LReadRegs(pdrv, CONTROL_1_REG, &read_dat, 1);
-    bHalDelayMs(5);
 
     if (read_dat != control_1_reg_val)
     {
