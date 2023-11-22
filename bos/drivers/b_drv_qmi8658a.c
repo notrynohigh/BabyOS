@@ -103,18 +103,17 @@ static int _bQMI8658AWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
     return 0;
 }
 
-static void _bQMI8658ASOFTRESET(bDriverInterface_t *pdrv)
-{
-    uint8_t reset_reg_val = 0x0B;
-    _bQMI8658AWriteRegs(pdrv, RESET_REG, &reset_reg_val, 1);
-    bHalDelayMs(50);
-}
+// static void _bQMI8658ASOFTRESET(bDriverInterface_t *pdrv)
+// {
+//     uint8_t reset_reg_val = 0x0B;
+//     _bQMI8658AWriteRegs(pdrv, RESET_REG, &reset_reg_val, 1);
+//     bHalDelayMs(50);
+// }
 
 static uint8_t _bQMI8658AGetID(bDriverInterface_t *pdrv)
 {
     uint8_t id = 0;
     _bQMI8658AReadRegs(pdrv, WHO_AM_I, &id, 1);
-    bHalDelayMs(5);
     // b_log("QMI8658A id:0x%x\n", id);
     return id;
 }
@@ -134,7 +133,6 @@ static int _bQMI8658ADefaultCfg(bDriverInterface_t *pdrv)
     _bQMI8658AWriteRegs(pdrv, CTRL2, &ctrl2_val, 1);
     _bQMI8658AWriteRegs(pdrv, CTRL3, &ctrl3_val, 1);
     _bQMI8658AWriteRegs(pdrv, CTRL5, &ctrl5_val, 1);
-    bHalDelayMs(100);
     return 0;
 }
 
@@ -184,7 +182,7 @@ int bQMI8658A_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bQMI8658A_Init);
     pdrv->read = _bQMI8658ARead;
-    _bQMI8658ASOFTRESET(pdrv);
+    // _bQMI8658ASOFTRESET(pdrv);
     if (_bQMI8658AGetID(pdrv) != QMI8658A_ID)
     {
         return -1;
