@@ -65,6 +65,15 @@ extern "C" {
         }                     \
     } while (0)
 
+#define B_SAFE_INVOKE_RET(ret, f, ...) \
+    do                                 \
+    {                                  \
+        if ((f) != NULL)               \
+        {                              \
+            ret = (f)(__VA_ARGS__);    \
+        }                              \
+    } while (0)
+
 #define B_SET_BIT(REG, BIT) ((REG) |= (BIT))
 #define B_CLEAR_BIT(REG, BIT) ((REG) &= ~(BIT))
 #define B_READ_BIT(REG, BIT) ((REG) & (BIT))

@@ -63,6 +63,16 @@ extern "C" {
  * \defgroup MODBUS_Exported_TypesDefinitions
  * \{
  */
+typedef enum
+{
+    MODBUS_LEN_ERR         = -1,
+    MODBUS_FRAME_HEAD_ERR  = -2,
+    MODBUS_CRC_ERR         = -3,
+    MODBUS_MAX_REGNUM_ERR  = -4,  // 超过一帧能放的下寄存器数
+    MODBUS_illegal_reg_ERR = -5,  // 操作非法寄存器
+    MODBUS_CALLBACK_ERR    = -6,  // 回调告知错误
+
+} bModbusErrCode_t;
 
 /**
  * \}
