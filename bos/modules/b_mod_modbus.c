@@ -423,11 +423,11 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
                                  uint16_t o_len)
 {
     int              retval = 0;
-    int              i      = 0;
     int              len    = 0;
     uint16_t         crc    = 0;
     bProtocolAttr_t *pattr  = (bProtocolAttr_t *)attr;
     bModbusCbParm_t  param;
+    bModbusInf_t     modbus_inf;
 
     if (i_len < 2)
     {
@@ -438,6 +438,8 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
     {
         return MODBUS_FRAME_HEAD_ERR;
     }
+
+    memset(&modbus_inf, 0, sizeof(bModbusInf_t));
 
     if (in[1] == MODBUS_RTU_READ_REGS)
     {
@@ -463,9 +465,24 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         if ((param.base_reg >= MY_DEVICE_MODBUS_REG_NUM) ||
             ((param.base_reg + param.reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
         {
-            return MODBUS_illegal_reg_ERR;
+            return MODBUS_ILLEGAL_REG_ERR;
         }
         param.reg_value = NULL;
+
+        B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
+                          (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
+        if (retval >= 0)
+        {
+            // 判定待操作的寄存器指定动作与读写权限匹配?
+            for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
+            {
+                if (modbus_inf.ArrayPtr[i][0] == 0)
+                {
+                    return MODBUS_REG_OPERATION_ERR;
+                }
+            }
+        }
+
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param);
         if (retval < 0)
         {
@@ -491,10 +508,25 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         param.reg_num   = 1;
         if (param.base_reg >= MY_DEVICE_MODBUS_REG_NUM)
         {
-            return MODBUS_illegal_reg_ERR;
+            return MODBUS_ILLEGAL_REG_ERR;
         }
         w_1->value      = L2B_B2L_16b(w_1->value);
         param.reg_value = &w_1->value;
+
+        B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
+                          (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
+        if (retval >= 0)
+        {
+            // 判定待操作的寄存器指定动作与读写权限匹配?
+            for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
+            {
+                if (modbus_inf.ArrayPtr[i][1] == 0)
+                {
+                    return MODBUS_REG_OPERATION_ERR;
+                }
+            }
+        }
+
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
         if (retval < 0)
         {
@@ -529,13 +561,28 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         if ((param.base_reg >= MY_DEVICE_MODBUS_REG_NUM) ||
             ((param.base_reg + param.reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
         {
-            return MODBUS_illegal_reg_ERR;
+            return MODBUS_ILLEGAL_REG_ERR;
         }
-        for (i = 0; i < param.reg_num; i++)
+        for (uint16_t i = 0; i < param.reg_num; i++)
         {
             (w->param)[i] = L2B_B2L_16b((w->param)[i]);
         }
         param.reg_value = w->param;
+
+        B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
+                          (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
+        if (retval >= 0)
+        {
+            // 判定待操作的寄存器指定动作与读写权限匹配?
+            for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
+            {
+                if (modbus_inf.ArrayPtr[i][1] == 0)
+                {
+                    return MODBUS_REG_OPERATION_ERR;
+                }
+            }
+        }
+
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
         if (retval < 0)
         {
@@ -588,7 +635,7 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
         }
         if ((param->len % 2 != 0) && (param->len != 0))
         {
-            return MODBUS_MAX_REGNUM_ERR;
+            return MODBUS_LEN_ERR;
         }
         for (i = 0; i < param->len / 2; i++)
         {
@@ -609,7 +656,7 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
         }
         if (frame->base_reg >= MY_DEVICE_MODBUS_REG_NUM)
         {
-            return MODBUS_illegal_reg_ERR;
+            return MODBUS_ILLEGAL_REG_ERR;
         }
         frame->base_reg  = L2B_B2L_16b(frame->base_reg);
         frame->reg_value = L2B_B2L_16b(frame->reg_value);
@@ -629,7 +676,7 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
         if ((frame->base_reg >= MY_DEVICE_MODBUS_REG_NUM) ||
             ((frame->base_reg + frame->reg_num) >= MY_DEVICE_MODBUS_REG_NUM + 1))
         {
-            return MODBUS_illegal_reg_ERR;
+            return MODBUS_ILLEGAL_REG_ERR;
         }
         frame->base_reg = L2B_B2L_16b(frame->base_reg);
         frame->reg_num  = L2B_B2L_16b(frame->reg_num);

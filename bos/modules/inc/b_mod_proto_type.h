@@ -159,7 +159,8 @@ typedef enum
 
 typedef enum
 {
-    B_PROTO_INFO_DEVICE_ID,  // 获取设备id
+    B_PROTO_INFO_DEVICE_ID,              // 获取设备id
+    B_PROTO_INFO_MODBUS_REG_PERMISSION,  // 获取modbus寄存器的读写权限
     B_PROTO_INFO_NUMBER,
 } bProtoInfoType_t;
 
