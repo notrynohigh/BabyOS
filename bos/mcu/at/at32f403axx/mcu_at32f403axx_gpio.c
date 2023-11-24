@@ -1,5 +1,5 @@
 /**
- * \file        mcu_at32f403a_407_gpio.c
+ * \file        mcu_at32f403axx_gpio.c
  * \version     v0.0.1
  * \date        2023-11-24
  * \author      miniminiminini (405553848@qq.com)
@@ -11,9 +11,35 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_gpio.h"
 
-#if defined(AT32F403A_407)
+#if defined(AT32F403AXX)
 #pragma anon_unions   // 在使用匿名联合的地方添加这个指令
 #define __IO volatile /*!< Defines 'read / write' permissions */
+
+#define CRM_BASE (AHBPERIPH_BASE + 0x1000)
+
+#define PERIPH_REG(periph_base, value) REG32((periph_base + (value >> 16)))
+#define PERIPH_REG_BIT(value) (0x1U << (value & 0x1F))
+#define CRM_REG(value) PERIPH_REG(CRM_BASE, value)
+#define CRM_REG_BIT(value) PERIPH_REG_BIT(value)
+
+#define GPIO_PINS_0 0x0001   /*!< gpio pins number 0 */
+#define GPIO_PINS_1 0x0002   /*!< gpio pins number 1 */
+#define GPIO_PINS_2 0x0004   /*!< gpio pins number 2 */
+#define GPIO_PINS_3 0x0008   /*!< gpio pins number 3 */
+#define GPIO_PINS_4 0x0010   /*!< gpio pins number 4 */
+#define GPIO_PINS_5 0x0020   /*!< gpio pins number 5 */
+#define GPIO_PINS_6 0x0040   /*!< gpio pins number 6 */
+#define GPIO_PINS_7 0x0080   /*!< gpio pins number 7 */
+#define GPIO_PINS_8 0x0100   /*!< gpio pins number 8 */
+#define GPIO_PINS_9 0x0200   /*!< gpio pins number 9 */
+#define GPIO_PINS_10 0x0400  /*!< gpio pins number 10 */
+#define GPIO_PINS_11 0x0800  /*!< gpio pins number 11 */
+#define GPIO_PINS_12 0x1000  /*!< gpio pins number 12 */
+#define GPIO_PINS_13 0x2000  /*!< gpio pins number 13 */
+#define GPIO_PINS_14 0x4000  /*!< gpio pins number 14 */
+#define GPIO_PINS_15 0x8000  /*!< gpio pins number 15 */
+#define GPIO_PINS_ALL 0xFFFF /*!< gpio all pins */
+
 /**
  * @brief type define gpio register all
  */
@@ -262,6 +288,181 @@ typedef struct
         } hdrv_bit;
     };
 } gpio_type;
+
+/**
+ * @brief gpio output type
+ */
+typedef enum
+{
+    GPIO_OUTPUT_PUSH_PULL  = 0x00, /*!< output push-pull */
+    GPIO_OUTPUT_OPEN_DRAIN = 0x04  /*!< output open-drain */
+} gpio_output_type;
+
+/**
+ * @brief gpio pull type
+ */
+typedef enum
+{
+    GPIO_PULL_NONE = 0x0004, /*!< floating for input, no pull for output */
+    GPIO_PULL_UP   = 0x0018, /*!< pull-up */
+    GPIO_PULL_DOWN = 0x0028  /*!< pull-down */
+} gpio_pull_type;
+
+/**
+ * @brief gpio mode select
+ */
+typedef enum
+{
+    GPIO_MODE_INPUT  = 0x00, /*!< gpio input mode */
+    GPIO_MODE_OUTPUT = 0x10, /*!< gpio output mode */
+    GPIO_MODE_MUX    = 0x08, /*!< gpio mux function mode */
+    GPIO_MODE_ANALOG = 0x03  /*!< gpio analog in/out mode */
+} gpio_mode_type;
+
+/**
+ * @brief gpio output drive strength select
+ */
+typedef enum
+{
+    GPIO_DRIVE_STRENGTH_STRONGER = 0x01, /*!< stronger sourcing/sinking strength */
+    GPIO_DRIVE_STRENGTH_MODERATE = 0x02  /*!< moderate sourcing/sinking strength */
+} gpio_drive_type;
+
+/**
+ * @brief gpio init type
+ */
+typedef struct
+{
+    uint32_t         gpio_pins;           /*!< pins number selection */
+    gpio_output_type gpio_out_type;       /*!< output type selection */
+    gpio_pull_type   gpio_pull;           /*!< pull type selection */
+    gpio_mode_type   gpio_mode;           /*!< mode selection */
+    gpio_drive_type  gpio_drive_strength; /*!< drive strength selection */
+} gpio_init_type;
+
+/*************** private start ***************/
+/**
+ * @brief  enable or disable the peripheral clock
+ * @param  value
+ *         this parameter can be one of the following values:
+ *         - CRM_DMA1_PERIPH_CLOCK         - CRM_DMA2_PERIPH_CLOCK         - CRM_CRC_PERIPH_CLOCK -
+ * CRM_XMC_PERIPH_CLOCK
+ *         - CRM_SDIO1_PERIPH_CLOCK        - CRM_SDIO2_PERIPH_CLOCK        - CRM_EMAC_PERIPH_CLOCK
+ * - CRM_EMACTX_PERIPH_CLOCK
+ *         - CRM_EMACRX_PERIPH_CLOCK       - CRM_EMACPTP_PERIPH_CLOCK      - CRM_IOMUX_PERIPH_CLOCK
+ * - CRM_GPIOA_PERIPH_CLOCK
+ *         - CRM_GPIOB_PERIPH_CLOCK        - CRM_GPIOC_PERIPH_CLOCK        - CRM_GPIOD_PERIPH_CLOCK
+ * - CRM_GPIOE_PERIPH_CLOCK
+ *         - CRM_ADC1_PERIPH_CLOCK         - CRM_ADC2_PERIPH_CLOCK         - CRM_TMR1_PERIPH_CLOCK
+ * - CRM_SPI1_PERIPH_CLOCK
+ *         - CRM_TMR8_PERIPH_CLOCK         - CRM_USART1_PERIPH_CLOCK       - CRM_ADC3_PERIPH_CLOCK
+ * - CRM_TMR9_PERIPH_CLOCK
+ *         - CRM_TMR10_PERIPH_CLOCK        - CRM_TMR11_PERIPH_CLOCK        - CRM_ACC_PERIPH_CLOCK -
+ * CRM_I2C3_PERIPH_CLOCK
+ *         - CRM_USART6_PERIPH_CLOCK       - CRM_UART7_PERIPH_CLOCK        - CRM_UART8_PERIPH_CLOCK
+ * - CRM_TMR2_PERIPH_CLOCK
+ *         - CRM_TMR3_PERIPH_CLOCK         - CRM_TMR4_PERIPH_CLOCK         - CRM_TMR5_PERIPH_CLOCK
+ * - CRM_TMR6_PERIPH_CLOCK
+ *         - CRM_TMR7_PERIPH_CLOCK         - CRM_TMR12_PERIPH_CLOCK        - CRM_TMR13_PERIPH_CLOCK
+ * - CRM_TMR14_PERIPH_CLOCK
+ *         - CRM_WWDT_PERIPH_CLOCK         - CRM_SPI2_PERIPH_CLOCK         - CRM_SPI3_PERIPH_CLOCK
+ * - CRM_SPI4_PERIPH_CLOCK
+ *         - CRM_USART2_PERIPH_CLOCK       - CRM_USART3_PERIPH_CLOCK       - CRM_UART4_PERIPH_CLOCK
+ * - CRM_UART5_PERIPH_CLOCK
+ *         - CRM_I2C1_PERIPH_CLOCK         - CRM_I2C2_PERIPH_CLOCK         - CRM_USB_PERIPH_CLOCK -
+ * CRM_CAN1_PERIPH_CLOCK
+ *         - CRM_CAN2_PERIPH_CLOCK         - CRM_BPR_PERIPH_CLOCK          - CRM_PWC_PERIPH_CLOCK -
+ * CRM_DAC_PERIPH_CLOCK
+ * @param  new_state (TRUE or FALSE)
+ * @retval none
+ */
+void crm_periph_clock_enable(crm_periph_clock_type value, confirm_state new_state)
+{
+    /* enable periph clock */
+    if (TRUE == new_state)
+    {
+        CRM_REG(value) |= CRM_REG_BIT(value);
+    }
+    /* disable periph clock */
+    else
+    {
+        CRM_REG(value) &= ~(CRM_REG_BIT(value));
+    }
+}
+
+/**
+ * @brief  initialize the gpio peripheral.
+ * @param  gpio_x: to select the gpio peripheral.
+ *         this parameter can be one of the following values:
+ *         GPIOA, GPIOB, GPIOC, GPIOD, GPIOE.
+ * @param  gpio_init_struct: pointer to gpio init structure.
+ * @retval none
+ */
+static void gpio_init(gpio_type *gpio_x, gpio_init_type *gpio_init_struct)
+{
+    uint32_t temp;
+    uint16_t pinx_value, pin_index;
+
+    pin_index = (uint16_t)gpio_init_struct->gpio_pins;
+
+    /* pinx_value indecate pin grounp bit[3:0] from modey[1:0] confy[1:0] */
+
+    /* pin input analog config */
+    if (gpio_init_struct->gpio_mode == GPIO_MODE_ANALOG)
+    {
+        pinx_value = 0x00;
+    }
+    /* pin input config */
+    else if (gpio_init_struct->gpio_mode == GPIO_MODE_INPUT)
+    {
+        pinx_value = gpio_init_struct->gpio_pull & 0x0F;
+
+        if (gpio_init_struct->gpio_pull == GPIO_PULL_UP)
+        {
+            gpio_x->scr = pin_index;
+        }
+        else if (gpio_init_struct->gpio_pull == GPIO_PULL_DOWN)
+        {
+            gpio_x->clr = pin_index;
+        }
+    }
+    else
+    {
+        pinx_value = (gpio_init_struct->gpio_mode & 0x08) |
+                     (gpio_init_struct->gpio_out_type & 0x04) |
+                     (gpio_init_struct->gpio_drive_strength & 0x03);
+    }
+
+    /* pin 0~7 config */
+    if (((uint32_t)pin_index & ((uint32_t)0x00FF)) != 0x00)
+    {
+        for (temp = 0; temp < 0x08; temp++)
+        {
+            if ((1 << temp) & pin_index)
+            {
+                gpio_x->cfglr &= (uint32_t) ~(0x0F << (temp * 4));
+                gpio_x->cfglr |= (uint32_t)(pinx_value << (temp * 4));
+            }
+        }
+    }
+
+    /* pin 8~15 config */
+    if (pin_index > 0x00ff)
+    {
+        pin_index = pin_index >> 8;
+
+        for (temp = 0; temp < 0x8; temp++)
+        {
+            if ((1 << temp) & pin_index)
+            {
+                gpio_x->cfghr &= (uint32_t) ~(0xf << (temp * 4));
+                gpio_x->cfghr |= (uint32_t)(pinx_value << (temp * 4));
+            }
+        }
+    }
+}
+
+/*************** private end ***************/
 
 void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, bHalGPIOPull_t pull)
 {

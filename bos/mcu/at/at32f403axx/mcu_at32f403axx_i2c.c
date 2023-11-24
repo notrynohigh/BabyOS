@@ -1,5 +1,5 @@
 /**
- * \file        mcu_at32f403a_407_i2c.c
+ * \file        mcu_at32f403axx_i2c.c
  * \version     v0.0.1
  * \date        2023-11-24
  * \author      miniminiminini (405553848@qq.com)
@@ -11,7 +11,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_i2c.h"
 
-#if defined(AT32F403A_407)
+#if defined(AT32F403AXX)
 
 uint8_t bMcuI2CReadByte(const bHalI2CIf_t *i2c_if)
 {

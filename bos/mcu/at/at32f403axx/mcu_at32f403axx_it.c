@@ -1,5 +1,5 @@
 /**
- * \file        mcu_at32f403a_407_it.c
+ * \file        mcu_at32f403axx_it.c
  * \version     v0.0.1
  * \date        2023-11-24
  * \author      miniminiminini (405553848@qq.com)
@@ -11,7 +11,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_it.h"
 
-#if defined(AT32F403A_407)
+#if defined(AT32F403AXX)
 
 void bMcuIntEnable()
 {
