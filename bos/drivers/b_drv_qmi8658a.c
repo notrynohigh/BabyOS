@@ -91,16 +91,14 @@ static int _bQMI8658AReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *da
 {
     bDRIVER_GET_HALIF(_if, bQMI8658A_HalIf_t, pdrv);
 
-    bHalI2CMemRead(_if, reg, 1, data, len);
-    return 0;
+    return bHalI2CMemRead(_if, reg, 1, data, len);
 }
 
 static int _bQMI8658AWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bQMI8658A_HalIf_t, pdrv);
 
-    bHalI2CMemWrite(_if, reg, 1, data, len);
-    return 0;
+    return bHalI2CMemWrite(_if, reg, 1, data, len);
 }
 
 // static void _bQMI8658ASOFTRESET(bDriverInterface_t *pdrv)
@@ -146,8 +144,16 @@ static int _bQMI8658ARead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
 
-    _bQMI8658AReadRegs(pdrv, AccX_L, &axis6_data[0], 6);
-    _bQMI8658AReadRegs(pdrv, GyrX_L, &axis6_data[6], 6);
+    if (_bQMI8658AReadRegs(pdrv, AccX_L, &axis6_data[0], 6) < 0)
+    {
+        return -1;
+    }
+
+    if (_bQMI8658AReadRegs(pdrv, GyrX_L, &axis6_data[6], 6) < 0)
+    {
+        return -1;
+    }
+
     ptmp->acc_arr[0]  = U8ToFloat(axis6_data[1], axis6_data[0]) * 16 * 9.8f / 65536;
     ptmp->acc_arr[1]  = U8ToFloat(axis6_data[3], axis6_data[2]) * 16 * 9.8f / 65536;
     ptmp->acc_arr[2]  = U8ToFloat(axis6_data[5], axis6_data[4]) * 16 * 9.8f / 65536;

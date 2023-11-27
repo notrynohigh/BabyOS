@@ -272,7 +272,7 @@ static int _ICM20948GetID(bDriverInterface_t *pdrv, uint8_t *id)
 int F_ICM20948_GetData(bDriverInterface_t *pdrv, int32_t *pData_acc, int32_t *pData_gyro,
                        int32_t *pData_mag, float *tempreature)
 {
-    int     retval = -1;
+    int     retval = 0;
     uint8_t tempBuf[20];
     int16_t pDataRaw_x[3];
     int16_t pDataRaw_g[3];
@@ -282,7 +282,7 @@ int F_ICM20948_GetData(bDriverInterface_t *pdrv, int32_t *pData_acc, int32_t *pD
     F_IIC_ReadBytes(I2C_ADD_ICM20948, REG_ADD_ACCEL_XOUT_H, &tempBuf[0], 20, retval);
     if (retval < 0)
     {
-        return retval;
+        return -1;
     }
 
     pDataRaw_x[0] = ((((int16_t)tempBuf[0]) << 8) + (int16_t)tempBuf[1]);

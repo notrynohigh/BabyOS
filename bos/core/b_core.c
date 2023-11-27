@@ -396,7 +396,7 @@ int bGetDevNumber(int fd, uint32_t *pdev_no)
     {
         return -1;
     }
-    if(bCoreFdTable[fd].status != BCORE_STA_OPEN)
+    if (bCoreFdTable[fd].status != BCORE_STA_OPEN)
     {
         return -1;
     }
