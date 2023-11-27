@@ -104,13 +104,13 @@ static int _bQMC5883LWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
 //     _bQMC5883LWriteRegs(pdrv, CONTROL_2_REG, &control_2_reg_val, 1);
 // }
 
-// static uint8_t _bQMC5883LGetID(bDriverInterface_t *pdrv)
-// {
-//     uint8_t id = 0;
-//     _bQMC5883LReadRegs(pdrv, CHIP_ID_REG, &id, 1);
-//     // b_log("QMC5883L id:0x%x\n", id);
-//     return id;
-// }
+static uint8_t _bQMC5883LGetID(bDriverInterface_t *pdrv)
+{
+    uint8_t id = 0;
+    _bQMC5883LReadRegs(pdrv, CHIP_ID_REG, &id, 1);
+    // b_log("QMC5883L id:0x%x\n", id);
+    return id;
+}
 
 static int _bQMC5883LDefaultCfg(bDriverInterface_t *pdrv)
 {
@@ -230,6 +230,12 @@ int bQMC5883L_Init(bDriverInterface_t *pdrv)
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bQMC5883L_Init);
     pdrv->read = _bQMC5883LRead;
     pdrv->ctl  = _bQMC5883LCtl;
+
+    if (_bQMC5883LGetID(pdrv) != QMC5883L_ID)
+    {
+        return -1;
+    }
+
     if (_bQMC5883LDefaultCfg(pdrv) < 0)
     {
         return -1;
