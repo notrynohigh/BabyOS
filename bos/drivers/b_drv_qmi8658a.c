@@ -182,11 +182,12 @@ int bQMI8658A_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bQMI8658A_Init);
     pdrv->read = _bQMI8658ARead;
-    // _bQMI8658ASOFTRESET(pdrv);
+
     if (_bQMI8658AGetID(pdrv) != QMI8658A_ID)
     {
         return -1;
     }
+
     if (_bQMI8658ADefaultCfg(pdrv) < 0)
     {
         return -1;

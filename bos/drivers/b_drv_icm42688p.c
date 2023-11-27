@@ -371,12 +371,12 @@ int bICM42688P_Init(bDriverInterface_t *pdrv)
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM42688P_Init);
     pdrv->read = _bICM42688PRead;
 
-    _bICM42688PSoftReset(pdrv);
-
     if (_bICM42688PGetID(pdrv) != ICM42688Q_ID)
     {
         return -1;
     }
+
+    _bICM42688PSoftReset(pdrv);
 
     // turn on accel and gyro in Low Noise (LN) Mode
     _bICM42688PWriteRegs(pdrv, UB0_REG_PWR_MGMT0, &ub0_reg_pwr_mgmt0_val, 1);
