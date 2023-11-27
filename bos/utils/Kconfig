@@ -6,7 +6,9 @@ config _DEBUG_ENABLE
 choice
     prompt "log level"
     depends on _DEBUG_ENABLE
-    default LOG_LEVEL_INFO
+    default LOG_LEVEL_ALL
+    config LOG_LEVEL_ALL
+        bool "all"
     config LOG_LEVEL_INFO
         bool "info level"
     config LOG_LEVEL_WARNING
