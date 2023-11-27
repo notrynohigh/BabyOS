@@ -13,7 +13,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_flash.h"
 
-#if defined(AT32F403AXX)
+#if defined(AT32F403Axx)
 #pragma anon_unions       // 在使用匿名联合的地方添加这个指令
 #define UNUSED(x) (void)x /* to avoid gcc/g++ warnings */
 #define __IO volatile     /*!< Defines 'read / write' permissions */

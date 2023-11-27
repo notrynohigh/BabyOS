@@ -1,7 +1,7 @@
 #ifndef __B_CONFIG_H__
 #define __B_CONFIG_H__
 
-#define AT32F403AXX
+#define AT32F403Axx
 
 #define HW_VERSION 211212
 #define FW_VERSION 80106
