@@ -109,7 +109,7 @@
 #define CJSON_MEM_USE_BMALLOC 1
 #define _QRCODE_ENABLE 1
 #define _DEBUG_ENABLE 1
-#define LOG_LEVEL_INFO 1
+#define LOG_LEVEL_ALL 1
 #define LOG_BUF_SIZE 256
 #define _LOG_VIA_UART 1
 #define LOG_UART 0

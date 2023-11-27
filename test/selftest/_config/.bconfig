@@ -156,7 +156,8 @@ _QRCODE_ENABLE=y
 # Utils Configuration
 #
 _DEBUG_ENABLE=y
-LOG_LEVEL_INFO=y
+LOG_LEVEL_ALL=y
+# LOG_LEVEL_INFO is not set
 # LOG_LEVEL_WARNING is not set
 # LOG_LEVEL_ERROR is not set
 LOG_BUF_SIZE=256

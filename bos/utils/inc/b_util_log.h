@@ -77,12 +77,19 @@ extern "C" {
 
 #if ((defined(_DEBUG_ENABLE)) && (_DEBUG_ENABLE == 1))
 
-#if ((defined(LOG_LEVEL_INFO)) && (LOG_LEVEL_INFO == 1))
+#if ((defined(LOG_LEVEL_ALL)) && (LOG_LEVEL_ALL == 1))
 
 #define b_log_i(...) bLogOut(0, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 #define b_log_w(...) bLogOut(1, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 #define b_log_e(...) bLogOut(2, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 #define b_log(...) bLogOut(3, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+
+#elif ((defined(LOG_LEVEL_INFO)) && (LOG_LEVEL_INFO == 1))
+
+#define b_log_i(...) bLogOut(0, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+#define b_log_w(...) bLogOut(1, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+#define b_log_e(...) bLogOut(2, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+#define b_log(...)
 
 #elif ((defined(LOG_LEVEL_WARNING)) && (LOG_LEVEL_WARNING == 1))
 

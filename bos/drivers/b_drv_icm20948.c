@@ -30,7 +30,7 @@
  */
 
 /*Includes ----------------------------------------------*/
-#include "drivers/inc/b_drv_ICM20948.h"
+#include "drivers/inc/b_drv_icm20948.h"
 
 /**
  * \addtogroup B_DRIVER
