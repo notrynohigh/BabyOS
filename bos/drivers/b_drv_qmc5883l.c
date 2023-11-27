@@ -154,7 +154,12 @@ static int _bQMC5883LRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     {
         return -1;
     }
-    _bQMC5883LReadRegs(pdrv, MAG_X_REG_L, &mag_data[0], MAG_DATA_LEN);
+
+    if (_bQMC5883LReadRegs(pdrv, MAG_X_REG_L, &mag_data[0], MAG_DATA_LEN) < 0)
+    {
+        return -1;
+    }
+
     // _bQMC5883LReadRegs(pdrv, MAG_X_REG_L, &mag_data[0], 1);
     // _bQMC5883LReadRegs(pdrv, MAG_X_REG_H, &mag_data[1], 1);
     // _bQMC5883LReadRegs(pdrv, MAG_Y_REG_L, &mag_data[2], 1);
@@ -179,7 +184,11 @@ static int _bQMC5883LCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
     {
         case bCMD_QMC5883L_WHETHER_NEWDATA_READY:
         {
-            _bQMC5883LReadRegs(pdrv, STATUS_REG, &read_dat, 1);
+            if (_bQMC5883LReadRegs(pdrv, STATUS_REG, &read_dat, 1) < 0)
+            {
+                retval = -1;
+            }
+
             // b_log("0x%02d\n", read_dat);
             // if (read_dat & 0x06)
             // {

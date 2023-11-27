@@ -336,7 +336,10 @@ static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf
     int16_t             _rawMeas[7];  // temp, accel xyz, gyro xyz
     bICM42688P_6Axis_t *ptmp = (bICM42688P_6Axis_t *)pbuf;
 
-    _bICM42688PReadRegs(pdrv, UB0_REG_TEMP_DATA1, _buffer, 14);
+    if (_bICM42688PReadRegs(pdrv, UB0_REG_TEMP_DATA1, _buffer, 14) < 0)
+    {
+        return -1;
+    }
 
     for (i = 0; i < 7; i++)
     {
