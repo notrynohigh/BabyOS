@@ -11,7 +11,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_i2c.h"
 
-#if defined(AT32F403AXX)
+#if defined(AT32F403Axx)
 
 uint8_t bMcuI2CReadByte(const bHalI2CIf_t *i2c_if)
 {

@@ -11,7 +11,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_spi.h"
 
-#if defined(AT32F403AXX)
+#if defined(AT32F403Axx)
 
 int bMcuSpiSetSpeed(const bHalSPIIf_t *spi_if, bHalSPISpeed_t speed)
 {
