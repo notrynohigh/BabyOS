@@ -38,10 +38,11 @@
 
 
 //      Register Address
-#define UART1_BASE_ADDR 	(0x40013800)
-#define UART2_BASE_ADDR 	(0x40004400)
-#define UART3_BASE_ADDR 	(0x40004800)
-#define UART4_BASE_ADDR 	(0x40004C00)
+#define UART1_BASE_ADDR 		(0x40013800)
+#define UART2_BASE_ADDR 		(0x40004400)
+#define UART3_BASE_ADDR 		(0x40004800)
+#define UART4_BASE_ADDR 		(0x40004C00)
+
 #define LPUART1_BASE_ADDR 	(0x40008000)
 
 
@@ -69,18 +70,22 @@ typedef struct
 #define MCU_UART2 	((McuUartReg_t *)UART2_BASE_ADDR)
 #define MCU_UART3 	((McuUartReg_t *)UART3_BASE_ADDR)
 #define MCU_UART4 	((McuUartReg_t *)UART4_BASE_ADDR)
+#define MCU_UART5 	((McuUartReg_t *)UART4_BASE_ADDR)
+#define MCU_UART6 	((McuUartReg_t *)UART4_BASE_ADDR)
+#define MCU_UART7 	((McuUartReg_t *)UART4_BASE_ADDR)
+#define MCU_UART8 	((McuUartReg_t *)UART4_BASE_ADDR)
 #define MCU_LPUART1 ((McuUartReg_t *)LPUART1_BASE_ADDR)
 
 
-static McuUartReg_t *UartTable[5] = {MCU_UART1, MCU_UART2, MCU_UART3,
-                                     MCU_UART4, MCU_LPUART1};
+static McuUartReg_t *UartTable[9] = {MCU_UART1, MCU_UART2, MCU_UART3,
+                                     MCU_UART4, MCU_UART5, MCU_UART6,MCU_UART7,MCU_UART8, MCU_LPUART1};
 
 int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 {
     int           i       = 0;
     int           timeout = 0x000B0000;
     McuUartReg_t *pUart   = NULL;
-    if (uart > B_HAL_UART_6 || pbuf == NULL)
+    if (uart > B_HAL_UART_NUMBER || pbuf == NULL)
     {
         return -1;
     }
