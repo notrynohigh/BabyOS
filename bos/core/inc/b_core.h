@@ -118,6 +118,7 @@ uint8_t bFdIsReadable(int fd);
 uint8_t bFdIsWritable(int fd);
 uint8_t bFdIsAbnormal(int fd);
 
+int bGetDevNumber(int fd, uint32_t *pdev_no);
 /**
  * \}
  */

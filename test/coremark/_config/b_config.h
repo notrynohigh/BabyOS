@@ -19,9 +19,8 @@
 #define COMPILER_FLAGS "-O3"
 #define _DEBUG_ENABLE 1
 #define LOG_UART 0
-#define LOG_LEVEL_INFO 1
+#define LOG_LEVEL_ALL 1
 #define LOG_BUF_SIZE 256
-
 
 #include "b_type.h" 
 

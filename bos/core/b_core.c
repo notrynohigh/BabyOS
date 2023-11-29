@@ -393,6 +393,19 @@ uint8_t bFdIsAbnormal(int fd)
     return bDeviceIsAbnormal(bCoreFdTable[fd].number);
 }
 
+int bGetDevNumber(int fd, uint32_t *pdev_no)
+{
+    if (fd < 0 || fd >= B_REG_DEV_NUMBER || pdev_no == NULL)
+    {
+        return -1;
+    }
+    if (bCoreFdTable[fd].status != BCORE_STA_OPEN)
+    {
+        return -1;
+    }
+    *pdev_no = bCoreFdTable[fd].number;
+    return 0;
+}
 /**
  * \}
  */
