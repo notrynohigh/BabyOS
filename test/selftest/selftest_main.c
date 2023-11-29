@@ -14,6 +14,12 @@
 int main()
 {
     port_init();
+
+    b_log("hello world\r\n");
+    b_log_i("hello world\r\n");
+    b_log_w("hello world\r\n");
+    b_log_e("hello world\r\n");
+
     bInit();
     while (1)
     {

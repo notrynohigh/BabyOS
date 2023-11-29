@@ -15,7 +15,29 @@ choice
         bool "warning level"
     config LOG_LEVEL_ERROR
         bool "error level"
+    config LOG_LEVEL_CUSTOMIZE
+        bool "User-defined levels"
 endchoice
+
+config _B_LOG_ENABLE
+    bool "b_log enable"
+    default y
+    depends on LOG_LEVEL_CUSTOMIZE
+
+config _B_LOG_I_ENABLE
+    bool "b_log_i enable"
+    default y
+    depends on LOG_LEVEL_CUSTOMIZE
+
+config _B_LOG_W_ENABLE
+    bool "b_log_w enable"
+    default y
+    depends on LOG_LEVEL_CUSTOMIZE
+
+config _B_LOG_E_ENABLE
+    bool "b_log_e enable"
+    default y
+    depends on LOG_LEVEL_CUSTOMIZE
 
 config LOG_BUF_SIZE
     int "Log Buffer Size (B)"
