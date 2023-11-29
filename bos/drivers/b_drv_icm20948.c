@@ -382,6 +382,25 @@ static int _bICM20948Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         F_ICM20948_GetData(pdrv, ptmp->acc_arr, ptmp->gyro_arr, ptmp->mag_arr, &ptmp->temperature);
     return retval;
 }
+
+static int _bICM20948Ctl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
+{
+    int retval = 0;
+    switch (cmd)
+    {
+        case bCMD_ICM20948_SET_STATUS_ERR:
+        {
+            pdrv->status = -1;
+        }
+        break;
+
+        default:
+            retval = -1;
+            break;
+    }
+    return retval;
+}
+
 /**
  * \}
  */
@@ -398,6 +417,7 @@ int bICM20948_Init(bDriverInterface_t *pdrv)
 
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM20948_Init);
     pdrv->read = _bICM20948Read;
+    pdrv->ctl  = _bICM20948Ctl;
 
     if (_ICM20948GetID(pdrv, &r_data) < 0)
     {
