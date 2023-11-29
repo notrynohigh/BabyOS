@@ -167,6 +167,24 @@ static int _bQMI8658ARead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     return 0;
 }
 
+static int _bQMI8658ACtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
+{
+    int retval = 0;
+    switch (cmd)
+    {
+        case bCMD_QMI8658A_SET_STATUS_ERR:
+        {
+            pdrv->status = -1;
+        }
+        break;
+
+        default:
+            retval = -1;
+            break;
+    }
+    return retval;
+}
+
 /**
  * }
  */
@@ -188,6 +206,7 @@ int bQMI8658A_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bQMI8658A_Init);
     pdrv->read = _bQMI8658ARead;
+    pdrv->ctl  = _bQMI8658ACtl;
 
     if (_bQMI8658AGetID(pdrv) != QMI8658A_ID)
     {

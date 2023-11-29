@@ -359,6 +359,23 @@ static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf
     return 0;
 }
 
+static int _bICM42688PCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
+{
+    int retval = 0;
+    switch (cmd)
+    {
+        case bCMD_ICM42688P_SET_STATUS_ERR:
+        {
+            pdrv->status = -1;
+        }
+        break;
+
+        default:
+            retval = -1;
+            break;
+    }
+    return retval;
+}
 /**
  * }
  */
@@ -373,6 +390,7 @@ int bICM42688P_Init(bDriverInterface_t *pdrv)
 
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM42688P_Init);
     pdrv->read = _bICM42688PRead;
+    pdrv->ctl  = _bICM42688PCtl;
 
     if (_bICM42688PGetID(pdrv) != ICM42688Q_ID)
     {

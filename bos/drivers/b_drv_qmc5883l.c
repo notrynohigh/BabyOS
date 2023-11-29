@@ -214,7 +214,16 @@ static int _bQMC5883LCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
             }
         }
         break;
+
+        case bCMD_QMC5883L_SET_STATUS_ERR:
+        {
+            pdrv->status = -1;
+            retval       = 0;
+        }
+        break;
+
         default:
+            retval = -1;
             break;
     }
     return retval;
