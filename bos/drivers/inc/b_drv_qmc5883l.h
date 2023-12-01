@@ -22,6 +22,8 @@ typedef bHalI2CIf_t bQMC5883L_HalIf_t;
  * \defgroup QMC5883L_Exported_Defines
  * \{
  */
+#define QMC5883L_NEWDATA_READY 0
+#define QMC5883L_NEWDATA_NOT_READY 1
 
 /**
  * }
