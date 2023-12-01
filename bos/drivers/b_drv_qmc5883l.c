@@ -176,6 +176,16 @@ static int _bQMC5883LRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
     return 0;
 }
 
+/**
+ * \brief
+ * \param pdrv
+ * \param cmd
+ * \param param
+ * \return int
+ * -1代表期间iic错误
+ * 0在bCMD_QMC5883L_WHETHER_NEWDATA_READY下表示有数据
+ * 1在bCMD_QMC5883L_WHETHER_NEWDATA_READY下表示无数据
+ */
 static int _bQMC5883LCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
 {
     int     retval   = -1;
@@ -188,29 +198,16 @@ static int _bQMC5883LCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
             {
                 retval = -1;
             }
-
-            // b_log("0x%02d\n", read_dat);
-            // if (read_dat & 0x06)
-            // {
-            //     b_log("output data OVL or ERROR!\n");
-            //     retval = -1;
-            // }
-            // else if (read_dat & 0x00)
-            // {
-            //     // b_log("output data not ready!\n");
-            //     retval = -2;
-            // }
-            // else if (read_dat == 0x01)
-            // {
-            //     retval = 0;
-            // }
-            if (read_dat & 0x01)
-            {
-                retval = 0;
-            }
             else
             {
-                retval = -1;
+                if (read_dat & 0x01)
+                {
+                    retval = QMC5883L_NEWDATA_READY;
+                }
+                else
+                {
+                    retval = QMC5883L_NEWDATA_NOT_READY;
+                }
             }
         }
         break;
