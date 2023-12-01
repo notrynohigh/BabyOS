@@ -45,6 +45,7 @@ extern "C" {
 #include "b_mod_kv.h"
 #include "b_mod_menu.h"
 #include "b_mod_modbus.h"
+#include "b_mod_netif.h"
 #include "b_mod_param.h"
 #include "b_mod_protocol.h"
 #include "b_mod_pwm.h"
@@ -56,7 +57,6 @@ extern "C" {
 #include "b_mod_wifi.h"
 #include "b_mod_xm128.h"
 #include "b_mod_ymodem.h"
-
 
 #ifdef __cplusplus
 }

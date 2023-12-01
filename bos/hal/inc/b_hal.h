@@ -37,6 +37,7 @@ extern "C" {
 
 /*Includes ----------------------------------------------*/
 #include "b_config.h"
+#include "b_hal_eth.h"
 #include "b_hal_flash.h"
 #include "b_hal_gpio.h"
 #include "b_hal_i2c.h"
@@ -46,6 +47,7 @@ extern "C" {
 #include "b_hal_sdio.h"
 #include "b_hal_spi.h"
 #include "b_hal_uart.h"
+
 
 /**
  * \addtogroup B_HAL

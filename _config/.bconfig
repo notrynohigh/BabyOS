@@ -16,6 +16,7 @@ VENDOR_UBUNTU=y
 # VENDOR_HC is not set
 # VENDOR_WCH is not set
 # VENDOR_HOLTEK is not set
+# VENDOR_ARTERY is not set
 
 #
 # Algorithm Configuration
@@ -37,6 +38,7 @@ MATRIX_KEYS_ROWS=4
 MATRIX_KEYS_COLUMNS=4
 ESP12F_UART_RX_BUF_LEN=1024
 RS485_RX_BUF_LEN=128
+RS485_RX_IDLE_MS=50
 _485_USE_CALLBACK=y
 # _485_USE_SELECT is not set
 # end of Drivers Configuration
@@ -60,6 +62,7 @@ _BOS_MODULES_ENABLE=y
 # _WIFI_ENABLE is not set
 # _SELECT_ENABLE is not set
 # _GUI_ENABLE is not set
+# _LWIP_ENABLE is not set
 # end of Modules Configuration
 
 #
@@ -74,6 +77,7 @@ _BOS_MODULES_ENABLE=y
 # _COREMARK_ENABLE is not set
 # _UNITY_ENABLE is not set
 # _ARM_2D_ENABLE is not set
+# _QRCODE_ENABLE is not set
 # end of Thirdparty Configuration
 
 #

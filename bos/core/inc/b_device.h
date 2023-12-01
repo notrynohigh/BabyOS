@@ -110,6 +110,8 @@ uint8_t bDeviceIsReadable(uint32_t dev_no);
 uint8_t bDeviceIsWritable(uint32_t dev_no);
 uint8_t bDeviceIsAbnormal(uint32_t dev_no);
 
+const char *bDeviceDescription(uint32_t dev_no);
+
 /**
  * \}
  */
