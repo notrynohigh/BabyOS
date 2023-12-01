@@ -40,8 +40,6 @@ extern "C" {
 
 #include "b_config.h"
 
-#define _NETIF_ENABLE 1
-
 #if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
 #include "thirdparty/lwip/bos_lwip/include/lwip/init.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/mem.h"
