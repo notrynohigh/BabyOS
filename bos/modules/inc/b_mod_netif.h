@@ -41,6 +41,7 @@ extern "C" {
 #include "b_config.h"
 
 #if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#include "thirdparty/lwip/bos_lwip/include/lwip/dhcp.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/init.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/mem.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/memp.h"
@@ -49,6 +50,7 @@ extern "C" {
 #include "thirdparty/lwip/bos_lwip/include/lwip/timeouts.h"
 #include "thirdparty/lwip/bos_lwip/include/netif/etharp.h"
 #include "utils/inc/b_util_list.h"
+
 
 /**
  * \addtogroup BABYOS
@@ -74,6 +76,7 @@ typedef struct
 {
     struct netif     lwip_netif;
     uint32_t         mac_dev;
+    uint32_t         dhcp_en;
     int              fd;
     struct list_head list;
 } bNetif_t;
