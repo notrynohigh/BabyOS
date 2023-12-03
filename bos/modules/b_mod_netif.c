@@ -161,14 +161,10 @@ static err_t _bNetifInit(struct netif *netif)
 {
     int       fd      = -1;
     bNetif_t *pbnetif = list_entry(netif, bNetif_t, lwip_netif);
-
-#if LWIP_NETIF_HOSTNAME
     /* Initialize interface hostname */
     netif->hostname = bDeviceDescription(pbnetif->mac_dev);
-#endif /* LWIP_NETIF_HOSTNAME */
-
-    netif->name[0] = pbnetif->mac_dev % 10 + '0';
-    netif->name[1] = (pbnetif->mac_dev % 100) / 10 + '0';
+    netif->name[0]  = pbnetif->mac_dev % 10 + '0';
+    netif->name[1]  = (pbnetif->mac_dev % 100) / 10 + '0';
 
     netif->output     = etharp_output;
     netif->linkoutput = _bNetifLinkoutput;
@@ -217,6 +213,15 @@ static void _bNetifLinkUpdate(struct netif *netif)
     bCtl(pbnetif->fd, bCMD_LINK_STATE_CHANGE, &link_state);
 }
 
+static void _bNetifDhcpStart(struct netif *netif)
+{
+    struct dhcp *dhcp = netif_dhcp_data(netif);
+    if (dhcp == NULL)
+    {
+        dhcp_start(netif);
+    }
+}
+
 static void _bNetifCore()
 {
     struct list_head *pos        = NULL;
@@ -238,6 +243,10 @@ static void _bNetifCore()
                 /* network cable is connected */
                 netif_set_link_up(&pbnetif->lwip_netif);
                 netif_set_up(&pbnetif->lwip_netif);
+                if (pbnetif->dhcp_en)
+                {
+                    _bNetifDhcpStart(&pbnetif->lwip_netif);
+                }
                 b_log("link up..\r\n");
             }
             else if (netif_is_link_up(&pbnetif->lwip_netif) && (!link_state))
@@ -291,11 +300,20 @@ int bNetifAdd(bNetif_t *pInstance, uint32_t ip, uint32_t gw, uint32_t mask)
     ip4_addr_t     gw_addr;
     if (netif_init_f == 0)
     {
+        netif_init_f = 1;
         lwip_init();
     }
     if (pInstance == NULL)
     {
         return -1;
+    }
+    if (ip == 0 && gw == 0 && mask == 0)
+    {
+        pInstance->dhcp_en = 1;
+    }
+    else
+    {
+        pInstance->dhcp_en = 0;
     }
     IP4_ADDR(&ip_addr, (ip >> 24) & 0xff, (ip >> 16) & 0xff, (ip >> 8) & 0xff, (ip >> 0) & 0xff);
     IP4_ADDR(&gw_addr, (gw >> 24) & 0xff, (gw >> 16) & 0xff, (gw >> 8) & 0xff, (gw >> 0) & 0xff);
@@ -309,6 +327,10 @@ int bNetifAdd(bNetif_t *pInstance, uint32_t ip, uint32_t gw, uint32_t mask)
     {
         /* When the netif is fully configured this function must be called */
         netif_set_up(&pInstance->lwip_netif);
+        if (pInstance->dhcp_en)
+        {
+            _bNetifDhcpStart(&pInstance->lwip_netif);
+        }
     }
     else
     {

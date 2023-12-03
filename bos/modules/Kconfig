@@ -352,12 +352,7 @@ config NETIF_CHECKSUM_BY_HARDWARE
     bool "HECKSUM_BY_HARDWARE enabled"
     default n
     depends on _NETIF_ENABLE
-
-config UDP_ENABLE
-    bool "UDP Eanble/Disable"
-    default n    
-    depends on _NETIF_ENABLE
- 
+    
 config MEMP_NUM_TCP_PCB_LISTEN
     int "Value for MEMP_NUM_TCP_PCB_LISTEN"
     default 4    
