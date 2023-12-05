@@ -256,7 +256,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         {
             return MODBUS_FRAME_HEAD_ERR;
         }
-        param.slave_id  = r_ack->addr;
+        param.slave_id = pattr->reserved;  // 用户层保证该地址为从机的实际设备地址
         param.func_code = r_ack->func;
         param.base_reg  = 0;
         param.reg_num   = r_ack->len / 2;
@@ -284,7 +284,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         {
             return MODBUS_FRAME_HEAD_ERR;
         }
-        param.slave_id  = w_1_ack->addr;
+        param.slave_id = pattr->reserved;  // 用户层保证该地址为从机的实际设备地址
         param.func_code = w_1_ack->func;
         param.base_reg  = L2B_B2L_16b(w_1_ack->reg);
         param.reg_num   = 1;
@@ -309,7 +309,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         {
             return MODBUS_FRAME_HEAD_ERR;
         }
-        param.slave_id  = w_ack->addr;
+        param.slave_id = pattr->reserved;  // 用户层保证该地址为从机的实际设备地址
         param.func_code = w_ack->func;
         param.base_reg  = L2B_B2L_16b(w_ack->reg);
         param.reg_num   = L2B_B2L_16b(w_ack->num);
@@ -447,7 +447,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         {
             return MODBUS_CRC_ERR;
         }
-        param.slave_id = r->addr;
+        param.slave_id = pattr->reserved;  // 用户层保证该地址为从机的实际设备地址
         param.func_code = r->func;
         param.base_reg = L2B_B2L_16b(r->reg);
         param.reg_num = L2B_B2L_16b(r->num);
@@ -494,7 +494,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         {
             return MODBUS_CRC_ERR;
         }
-        param.slave_id = w_1->addr;
+        param.slave_id = pattr->reserved;  // 用户层保证该地址为从机的实际设备地址
         param.func_code = w_1->func;
         param.base_reg = L2B_B2L_16b(w_1->reg);
         param.reg_num = 1;
@@ -538,7 +538,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         {
             return MODBUS_CRC_ERR;
         }
-        param.slave_id = w->addr;
+        param.slave_id = pattr->reserved;  // 用户层保证该地址为从机的实际设备地址
         param.func_code = w->func;
         param.base_reg = L2B_B2L_16b(w->reg);
         param.reg_num = L2B_B2L_16b(w->num);
