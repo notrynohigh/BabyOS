@@ -266,7 +266,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         }
         param.reg_value = (uint16_t *)r_ack->param;
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param);
-        if (retval < 0)
+        if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
         }
@@ -291,7 +291,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         w_1_ack->value  = L2B_B2L_16b(w_1_ack->value);
         param.reg_value = (uint16_t *)&w_1_ack->value;
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
-        if (retval < 0)
+        if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
         }
@@ -315,7 +315,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         param.reg_num   = L2B_B2L_16b(w_ack->num);
         param.reg_value = NULL;
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
-        if (retval < 0)
+        if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
         }
@@ -427,7 +427,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         return MODBUS_LEN_ERR;
     }
 
-    if ((in[0] != SLAVE_ADDR) && (in[0] != ALL_SLAVE_ADDR))
+    if ((in[0] != pattr->reserved) && (in[0] != ALL_SLAVE_ADDR))
     {
         return MODBUS_FRAME_HEAD_ERR;
     }
@@ -463,7 +463,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
 
         B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
                           (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
-        if (retval >= 0)
+        if ((retval >= 0) && (pattr->get_info != NULL))
         {
             // 判定待操作的寄存器指定动作与读写权限匹配?
             for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
@@ -476,7 +476,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         }
 
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param);
-        if (retval < 0)
+        if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
         }
@@ -507,7 +507,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
 
         B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
                           (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
-        if (retval >= 0)
+        if ((retval >= 0) && (pattr->get_info != NULL))
         {
             // 判定待操作的寄存器指定动作与读写权限匹配?
             for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
@@ -520,7 +520,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         }
 
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
-        if (retval < 0)
+        if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
         }
@@ -562,7 +562,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
 
         B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
                           (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
-        if (retval >= 0)
+        if ((retval >= 0) && (pattr->get_info != NULL))
         {
             // 判定待操作的寄存器指定动作与读写权限匹配?
             for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
@@ -575,7 +575,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         }
 
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
-        if (retval < 0)
+        if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
         }
@@ -601,12 +601,14 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
     uint16_t i = 0;
     int len = 0;
     uint16_t crc = 0;
+    bProtocolAttr_t *pattr = (bProtocolAttr_t *)attr;
+
     if (buf == NULL || buf_len == 0)
     {
         return MODBUS_LEN_ERR;
     }
 
-    if ((buf[0] != SLAVE_ADDR) && (buf[0] == ALL_SLAVE_ADDR))
+    if ((buf[0] != pattr->reserved) && (buf[0] == ALL_SLAVE_ADDR))
     {
         return MODBUS_FRAME_HEAD_ERR;
     }
