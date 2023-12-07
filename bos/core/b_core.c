@@ -388,7 +388,7 @@ uint8_t bFdIsAbnormal(int fd)
 {
     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
     {
-        return 0;
+        return 1;
     }
     return bDeviceIsAbnormal(bCoreFdTable[fd].number);
 }
