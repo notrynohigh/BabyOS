@@ -256,56 +256,135 @@ static float TEMP_OFFSET         = 25.0f;
  * \defgroup ICM42688P_Private_Functions
  * \{
  */
-static int _bICM42688PReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+/**
+ * \brief        读寄存器并且判定是否iic失败
+ * \param pdrv
+ * \param reg
+ * \param data
+ * \param len
+ * \return int -1:失败,0:正常
+ */
+static int _bICM42688PReadCheckRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data,
+                                    uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bICM42688P_HalIf_t, pdrv);
 
-    return bHalI2CMemRead(_if, reg, 1, data, len);
+    if (bHalI2CMemRead(_if, reg, 1, data, len) < 0)
+    {
+        return -1;
+    }
+
+    return len;
 }
 
-static int _bICM42688PWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+/**
+ * \brief        写寄存器后再读寄存器,看是否配置成功,若iic失败或者写后再读值不一致则返回失败
+ * \param pdrv
+ * \param reg
+ * \param data
+ * \param len
+ * \return int -1:失败,0:正常
+ */
+static int _bICM42688PWriteCheckRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data,
+                                     uint16_t len)
 {
+    uint8_t read_buf[len];
     bDRIVER_GET_HALIF(_if, bICM42688P_HalIf_t, pdrv);
+    memset(read_buf, 0, sizeof(read_buf));
 
-    return bHalI2CMemWrite(_if, reg, 1, data, len);
+    if (bHalI2CMemWrite(_if, reg, 1, data, len) < 0)
+    {
+        return -1;
+    }
+
+    if (bHalI2CMemRead(_if, reg, 1, read_buf, len) < 0)
+    {
+        return -1;
+    }
+
+    for (uint16_t i = 0; i < len; i++)
+    {
+        if (read_buf[i] != data[i])
+        {
+            return -2;
+        }
+    }
+
+    return len;
 }
 
-static void _bICM42688PSetBank(bDriverInterface_t *pdrv, uint8_t bank)
+static int _bICM42688PSetBank(bDriverInterface_t *pdrv, uint8_t bank)
 {
     if (_bank == bank)
-        return;
+        return 0;
+
+    if (_bICM42688PWriteCheckRegs(pdrv, REG_BANK_SEL, &_bank, 1) < 0)
+    {
+        return -1;
+    }
 
     _bank = bank;
-    _bICM42688PWriteRegs(pdrv, REG_BANK_SEL, &_bank, 1);
+
+    return 0;
 }
 
-static void _bICM42688PSoftReset(bDriverInterface_t *pdrv)
+static int _bICM42688PSoftReset(bDriverInterface_t *pdrv)
 {
     uint8_t ub0_reg_device_config_val = 0x01;
-    _bICM42688PSetBank(pdrv, 0);
-    _bICM42688PWriteRegs(pdrv, UB0_REG_DEVICE_CONFIG, &ub0_reg_device_config_val, 1);
+
+    if (_bICM42688PSetBank(pdrv, 0) < 0)
+    {
+        return -1;
+    }
+
+    if (_bICM42688PWriteCheckRegs(pdrv, UB0_REG_DEVICE_CONFIG, &ub0_reg_device_config_val, 1) < 0)
+    {
+        return -1;
+    }
+
     bHalDelayMs(50);
+
+    return 0;
 }
 
-static uint8_t _bICM42688PGetID(bDriverInterface_t *pdrv)
+static int _bICM42688PGetID(bDriverInterface_t *pdrv, uint8_t *id)
 {
-    uint8_t id = 0;
-    _bICM42688PSetBank(pdrv, 0);
-    _bICM42688PReadRegs(pdrv, UB0_REG_WHO_AM_I, &id, 1);
+    if (_bICM42688PSetBank(pdrv, 0) < 0)
+    {
+        return -1;
+    }
+
+    if (_bICM42688PReadCheckRegs(pdrv, UB0_REG_WHO_AM_I, id, 1) < 0)
+    {
+        return -1;
+    }
+
     // b_log("ICM42688P id:0x%x\n", id);
 
-    return id;
+    return 0;
 }
 
 static int _bICM42688PSetAccelFS(bDriverInterface_t *pdrv, Enum_AccelFS fssel)
 {
     uint8_t read_val = 0;
-    _bICM42688PSetBank(pdrv, 0);
 
-    _bICM42688PReadRegs(pdrv, UB0_REG_ACCEL_CONFIG0, &read_val, 1);
+    if (_bICM42688PSetBank(pdrv, 0) < 0)
+    {
+        return -1;
+    }
+
+    if (_bICM42688PReadCheckRegs(pdrv, UB0_REG_ACCEL_CONFIG0, &read_val, 1) < 0)
+    {
+        return -1;
+    }
+
     // only change FS_SEL in reg
     read_val = (fssel << 5) | (read_val & 0x1F);
-    _bICM42688PWriteRegs(pdrv, UB0_REG_ACCEL_CONFIG0, &read_val, 1);
+
+    if (_bICM42688PWriteCheckRegs(pdrv, UB0_REG_ACCEL_CONFIG0, &read_val, 1) < 0)
+    {
+        return -1;
+    }
 
     // _accelScale = (float)(1 << (4 - fssel)) / 32768.0f;
     // _accelFS    = fssel;
@@ -316,12 +395,24 @@ static int _bICM42688PSetAccelFS(bDriverInterface_t *pdrv, Enum_AccelFS fssel)
 static int _bICM42688PSetGyroFS(bDriverInterface_t *pdrv, Enum_GyroFS fssel)
 {
     uint8_t read_val = 0;
-    _bICM42688PSetBank(pdrv, 0);
 
-    _bICM42688PReadRegs(pdrv, UB0_REG_GYRO_CONFIG0, &read_val, 1);
+    if (_bICM42688PSetBank(pdrv, 0) < 0)
+    {
+        return -1;
+    }
+
+    if (_bICM42688PReadCheckRegs(pdrv, UB0_REG_GYRO_CONFIG0, &read_val, 1) < 0)
+    {
+        return -1;
+    }
+
     // only change FS_SEL in reg
     read_val = (fssel << 5) | (read_val & 0x1F);
-    _bICM42688PWriteRegs(pdrv, UB0_REG_GYRO_CONFIG0, &read_val, 1);
+
+    if (_bICM42688PWriteCheckRegs(pdrv, UB0_REG_GYRO_CONFIG0, &read_val, 1) < 0)
+    {
+        return -1;
+    }
 
     // _gyroScale = (2000.0f / (float)(1 << fssel)) / 32768.0f;
     // _gyroFS    = fssel;
@@ -336,7 +427,7 @@ static int _bICM42688PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf
     int16_t             _rawMeas[7];  // temp, accel xyz, gyro xyz
     bICM42688P_6Axis_t *ptmp = (bICM42688P_6Axis_t *)pbuf;
 
-    if (_bICM42688PReadRegs(pdrv, UB0_REG_TEMP_DATA1, _buffer, 14) < 0)
+    if (_bICM42688PReadCheckRegs(pdrv, UB0_REG_TEMP_DATA1, _buffer, 14) < 0)
     {
         return -1;
     }
@@ -386,27 +477,45 @@ static int _bICM42688PCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
  */
 int bICM42688P_Init(bDriverInterface_t *pdrv)
 {
+    uint8_t id                    = 0;
     uint8_t ub0_reg_pwr_mgmt0_val = 0x0F;
 
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM42688P_Init);
     pdrv->read = _bICM42688PRead;
     pdrv->ctl  = _bICM42688PCtl;
 
-    if (_bICM42688PGetID(pdrv) != ICM42688Q_ID)
+    if (_bICM42688PGetID(pdrv, &id) < 0)
     {
         return -1;
     }
 
-    _bICM42688PSoftReset(pdrv);
+    if (id != ICM42688Q_ID)
+    {
+        return -1;
+    }
+
+    if (_bICM42688PSoftReset(pdrv) < 0)
+    {
+        return -1;
+    }
 
     // turn on accel and gyro in Low Noise (LN) Mode
-    _bICM42688PWriteRegs(pdrv, UB0_REG_PWR_MGMT0, &ub0_reg_pwr_mgmt0_val, 1);
+    if (_bICM42688PWriteCheckRegs(pdrv, UB0_REG_PWR_MGMT0, &ub0_reg_pwr_mgmt0_val, 1) < 0)
+    {
+        return -1;
+    }
 
     // 16G is default -- do this to set up accel resolution scaling
-    _bICM42688PSetAccelFS(pdrv, gpm16);
+    if (_bICM42688PSetAccelFS(pdrv, gpm16) < 0)
+    {
+        return -1;
+    }
 
     // 2000DPS is default -- do this to set up gyro resolution scaling
-    _bICM42688PSetGyroFS(pdrv, dps2000);
+    if (_bICM42688PSetGyroFS(pdrv, dps2000) < 0)
+    {
+        return -1;
+    }
 
     return 0;
 }
