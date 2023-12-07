@@ -87,33 +87,71 @@ bDRIVER_HALIF_TABLE(bQMI8658A_HalIf_t, DRIVER_NAME);
  * \defgroup QMI8658A_Private_FunctionPrototypes
  * \{
  */
-static int _bQMI8658AReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+
+/**
+ * \brief        判定iic是否失败
+ * \param pdrv
+ * \param reg
+ * \param data
+ * \param len
+ * \return int
+ */
+static int _bQMI8658AReadCheckRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data,
+                                   uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bQMI8658A_HalIf_t, pdrv);
 
-    return bHalI2CMemRead(_if, reg, 1, data, len);
+    if (bHalI2CMemRead(_if, reg, 1, data, len) < 0)
+    {
+        return -1;
+    }
+
+    return len;
 }
 
-static int _bQMI8658AWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+static int _bQMI8658AWriteCheckRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data,
+                                    uint16_t len)
 {
+    uint8_t read_buf[len];
     bDRIVER_GET_HALIF(_if, bQMI8658A_HalIf_t, pdrv);
+    memset(read_buf, 0, sizeof(read_buf));
 
-    return bHalI2CMemWrite(_if, reg, 1, data, len);
+    if (bHalI2CMemWrite(_if, reg, 1, data, len) < 0)
+    {
+        return -1;
+    }
+
+    if (bHalI2CMemRead(_if, reg, 1, read_buf, len) < 0)
+    {
+        return -1;
+    }
+
+    for (uint16_t i = 0; i < len; i++)
+    {
+        if (read_buf[i] != data[i])
+        {
+            return -2;
+        }
+    }
+
+    return len;
 }
 
 // static void _bQMI8658ASOFTRESET(bDriverInterface_t *pdrv)
 // {
 //     uint8_t reset_reg_val = 0x0B;
-//     _bQMI8658AWriteRegs(pdrv, RESET_REG, &reset_reg_val, 1);
+//     _bQMI8658AWriteCheckRegs(pdrv, RESET_REG, &reset_reg_val, 1);
 //     bHalDelayMs(50);
 // }
 
-static uint8_t _bQMI8658AGetID(bDriverInterface_t *pdrv)
+static int _bQMI8658AGetID(bDriverInterface_t *pdrv, uint8_t *id)
 {
-    uint8_t id = 0;
-    _bQMI8658AReadRegs(pdrv, WHO_AM_I, &id, 1);
+    if (_bQMI8658AReadCheckRegs(pdrv, WHO_AM_I, id, 1) < 0)
+    {
+        return -1;
+    }
     // b_log("QMI8658A id:0x%x\n", id);
-    return id;
+    return 0;
 }
 
 static int _bQMI8658ADefaultCfg(bDriverInterface_t *pdrv)
@@ -126,11 +164,28 @@ static int _bQMI8658ADefaultCfg(bDriverInterface_t *pdrv)
     uint8_t ctrl3_val = 0x64;  // Gyroscope Settings< ±2048dps 500Hz>
     uint8_t ctrl5_val =
         0x11;  // Sensor Data Processing Settings<Enable Gyroscope Accelerometer 低通滤波>
-    _bQMI8658AWriteRegs(pdrv, CTRL1, &ctrl1_val, 1);
-    _bQMI8658AWriteRegs(pdrv, CTRL7, &ctrl7_val, 1);
-    _bQMI8658AWriteRegs(pdrv, CTRL2, &ctrl2_val, 1);
-    _bQMI8658AWriteRegs(pdrv, CTRL3, &ctrl3_val, 1);
-    _bQMI8658AWriteRegs(pdrv, CTRL5, &ctrl5_val, 1);
+
+    if (_bQMI8658AWriteCheckRegs(pdrv, CTRL1, &ctrl1_val, 1) < 0)
+    {
+        return -1;
+    }
+    if (_bQMI8658AWriteCheckRegs(pdrv, CTRL7, &ctrl7_val, 1) < 0)
+    {
+        return -1;
+    }
+    if (_bQMI8658AWriteCheckRegs(pdrv, CTRL2, &ctrl2_val, 1) < 0)
+    {
+        return -1;
+    }
+    if (_bQMI8658AWriteCheckRegs(pdrv, CTRL3, &ctrl3_val, 1) < 0)
+    {
+        return -1;
+    }
+    if (_bQMI8658AWriteCheckRegs(pdrv, CTRL5, &ctrl5_val, 1) < 0)
+    {
+        return -1;
+    }
+
     return 0;
 }
 
@@ -144,12 +199,12 @@ static int _bQMI8658ARead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
 
-    if (_bQMI8658AReadRegs(pdrv, AccX_L, &axis6_data[0], 6) < 0)
+    if (_bQMI8658AReadCheckRegs(pdrv, AccX_L, &axis6_data[0], 6) < 0)
     {
         return -1;
     }
 
-    if (_bQMI8658AReadRegs(pdrv, GyrX_L, &axis6_data[6], 6) < 0)
+    if (_bQMI8658AReadCheckRegs(pdrv, GyrX_L, &axis6_data[6], 6) < 0)
     {
         return -1;
     }
@@ -204,11 +259,17 @@ static int _bQMI8658ACtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
  */
 int bQMI8658A_Init(bDriverInterface_t *pdrv)
 {
+    uint8_t id = 0;
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bQMI8658A_Init);
     pdrv->read = _bQMI8658ARead;
     pdrv->ctl  = _bQMI8658ACtl;
 
-    if (_bQMI8658AGetID(pdrv) != QMI8658A_ID)
+    if (_bQMI8658AGetID(pdrv, &id) < 0)
+    {
+        return -1;
+    }
+
+    if (id != QMI8658A_ID)
     {
         return -1;
     }
