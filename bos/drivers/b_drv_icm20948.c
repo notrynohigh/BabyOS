@@ -253,10 +253,10 @@ static int _bICM20948WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
 static int _ICM20948GetID(bDriverInterface_t *pdrv, uint8_t *id)
 {
     int     retval = 0;
-    uint8_t w_data = 0;
+    // uint8_t w_data = 0;
     uint8_t r_data = 0;
 
-    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);
+    // F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);
     F_IIC_ReadByte(I2C_ADD_ICM20948, REG_ADD_WHO_AM_I, retval);
 
     if (retval <= 0)

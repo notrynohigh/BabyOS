@@ -225,8 +225,6 @@ typedef enum
  */
 bDRIVER_HALIF_TABLE(bICM42688P_HalIf_t, DRIVER_NAME);
 
-uint8_t _bank = 0;  ///< current user bank
-
 ///\brief Full scale resolution factors
 // static float _accelScale = 0.0f;
 // static float _gyroScale  = 0.0f;
@@ -297,65 +295,57 @@ static int _bICM42688PWriteCheckRegs(bDriverInterface_t *pdrv, uint8_t reg, uint
         return -1;
     }
 
+    bHalDelayMs(10);
+
     if (bHalI2CMemRead(_if, reg, 1, read_buf, len) < 0)
     {
-        return -1;
+        return -2;
     }
 
     for (uint16_t i = 0; i < len; i++)
     {
         if (read_buf[i] != data[i])
         {
-            return -2;
+            return -3;
         }
     }
 
     return len;
 }
 
-static int _bICM42688PSetBank(bDriverInterface_t *pdrv, uint8_t bank)
-{
-    if (_bank == bank)
-        return 0;
+// static int _bICM42688PSetBank(bDriverInterface_t *pdrv, uint8_t bank)
+// {
+//     if (_bICM42688PWriteCheckRegs(pdrv, REG_BANK_SEL, &bank, 1) < 0)
+//     {
+//         return -1;
+//     }
 
-    if (_bICM42688PWriteCheckRegs(pdrv, REG_BANK_SEL, &_bank, 1) < 0)
-    {
-        return -1;
-    }
-
-    _bank = bank;
-
-    return 0;
-}
+//     return 0;
+// }
 
 static int _bICM42688PSoftReset(bDriverInterface_t *pdrv)
 {
     uint8_t ub0_reg_device_config_val = 0x01;
 
-    if (_bICM42688PSetBank(pdrv, 0) < 0)
-    {
-        return -1;
-    }
+    // if (_bICM42688PSetBank(pdrv, 0) < 0)
+    // {
+    //     return -1;
+    // }
 
-    if (_bICM42688PWriteCheckRegs(pdrv, UB0_REG_DEVICE_CONFIG, &ub0_reg_device_config_val, 1) < 0)
-    {
-        return -1;
-    }
+    _bICM42688PWriteCheckRegs(pdrv, UB0_REG_DEVICE_CONFIG, &ub0_reg_device_config_val, 1);
 
-    bHalDelayMs(50);
-
-    return 0;
+        return 0;
 }
 
 static int _bICM42688PGetID(bDriverInterface_t *pdrv, uint8_t *id)
 {
-    if (_bICM42688PSetBank(pdrv, 0) < 0)
-    {
-        return -1;
-    }
+   // if (_bICM42688PSetBank(pdrv, 0) < 0)
+   // {
+   //     return -1;
+   // }
 
-    if (_bICM42688PReadCheckRegs(pdrv, UB0_REG_WHO_AM_I, id, 1) < 0)
-    {
+   if (_bICM42688PReadCheckRegs(pdrv, UB0_REG_WHO_AM_I, id, 1) < 0)
+   {
         return -1;
     }
 
@@ -368,10 +358,10 @@ static int _bICM42688PSetAccelFS(bDriverInterface_t *pdrv, Enum_AccelFS fssel)
 {
     uint8_t read_val = 0;
 
-    if (_bICM42688PSetBank(pdrv, 0) < 0)
-    {
-        return -1;
-    }
+    // if (_bICM42688PSetBank(pdrv, 0) < 0)
+    // {
+    //     return -1;
+    // }
 
     if (_bICM42688PReadCheckRegs(pdrv, UB0_REG_ACCEL_CONFIG0, &read_val, 1) < 0)
     {
@@ -396,10 +386,10 @@ static int _bICM42688PSetGyroFS(bDriverInterface_t *pdrv, Enum_GyroFS fssel)
 {
     uint8_t read_val = 0;
 
-    if (_bICM42688PSetBank(pdrv, 0) < 0)
-    {
-        return -1;
-    }
+    // if (_bICM42688PSetBank(pdrv, 0) < 0)
+    // {
+    //     return -1;
+    // }
 
     if (_bICM42688PReadCheckRegs(pdrv, UB0_REG_GYRO_CONFIG0, &read_val, 1) < 0)
     {
