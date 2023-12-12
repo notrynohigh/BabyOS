@@ -1,3 +1,4 @@
+// clang-format off
 /*
  * This file is part of the CmBacktrace Library.
  *
@@ -378,15 +379,18 @@ extern char     *vTaskName(void);
 #if defined(__CC_ARM)
 static __inline __asm uint32_t cmb_get_msp(void)
 {
-    mrs r0, msp bx lr
+    mrs r0, msp 
+    bx lr
 }
 static __inline __asm uint32_t cmb_get_psp(void)
 {
-    mrs r0, psp bx lr
+    mrs r0, psp 
+    bx lr
 }
 static __inline __asm uint32_t cmb_get_sp(void)
 {
-    mov r0, sp bx lr
+    mov r0, sp 
+    bx lr
 }
 #elif defined(__CLANG_ARM)
 __attribute__((always_inline)) static __inline uint32_t cmb_get_msp(void)

@@ -327,15 +327,15 @@ void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, b
     uint32_t      gpio_mode = (dir == B_HAL_GPIO_INPUT) ? GPIO_MODE_INPUT : GPIO_MODE_OUTPUT;
     uint32_t      gpio_pull = (pull <= B_HAL_GPIO_PULLUP) ? pull * 20 + 4 : GPIO_PULL_DOWN;
 
-    if (!B_HAL_GPIO_ISVALID(port, pin))
+    if (port >= B_HAL_GPIO_INVALID || pin >= B_HAL_PIN_INVALID)
     {
         return;
     }
-    if (!B_HAL_GPIODIR_ISVALID(dir))
+    if (dir >= B_HAL_GPIO_DIR_INVALID)
     {
         return;
     }
-    if (!B_HAL_GPIOPULL_ISVALID(pull))
+    if (pull >= B_HAL_GPIO_PULL_INVALID)
     {
         return;
     }
@@ -416,7 +416,7 @@ void bMcuGpioWritePin(bHalGPIOPort_t port, bHalGPIOPin_t pin, uint8_t s)
     McuGpioReg_t *pGpio     = (McuGpioReg_t *)(GPIO_REG_BASE + port * GPIO_REG_OFF);
     uint32_t      GPIO_PINS = 0x00000001 << pin;
 
-    if (!B_HAL_GPIO_ISVALID(port, pin) || pin == B_HAL_PINAll)
+    if (port >= B_HAL_GPIO_INVALID || pin >= B_HAL_PIN_INVALID || pin == B_HAL_PINAll)
     {
         return;
     }
@@ -435,10 +435,11 @@ uint8_t bMcuGpioReadPin(bHalGPIOPort_t port, bHalGPIOPin_t pin)
     McuGpioReg_t *pGpio     = (McuGpioReg_t *)(GPIO_REG_BASE + port * GPIO_REG_OFF);
     uint32_t      GPIO_PINS = 0x00000001 << pin;
 
-    if (!B_HAL_GPIO_ISVALID(port, pin) || pin == B_HAL_PINAll)
+    if (port >= B_HAL_GPIO_INVALID || pin >= B_HAL_PIN_INVALID || pin == B_HAL_PINAll)
     {
         return 0;
     }
+
     if (GPIO_PINS != (GPIO_PINS & pGpio->idt))
     {
         return 0;

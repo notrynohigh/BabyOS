@@ -253,10 +253,10 @@ static int _bICM20948WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
 static int _ICM20948GetID(bDriverInterface_t *pdrv, uint8_t *id)
 {
     int     retval = 0;
-    uint8_t w_data = 0;
+    // uint8_t w_data = 0;
     uint8_t r_data = 0;
 
-    F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);
+    // F_IIC_WriteByte(I2C_ADD_ICM20948, REG_ADD_REG_BANK_SEL, REG_VAL_REG_BANK_0);
     F_IIC_ReadByte(I2C_ADD_ICM20948, REG_ADD_WHO_AM_I, retval);
 
     if (retval <= 0)
@@ -272,7 +272,7 @@ static int _ICM20948GetID(bDriverInterface_t *pdrv, uint8_t *id)
 int F_ICM20948_GetData(bDriverInterface_t *pdrv, int32_t *pData_acc, int32_t *pData_gyro,
                        int32_t *pData_mag, float *tempreature)
 {
-    int     retval = -1;
+    int     retval = 0;
     uint8_t tempBuf[20];
     int16_t pDataRaw_x[3];
     int16_t pDataRaw_g[3];
@@ -282,7 +282,7 @@ int F_ICM20948_GetData(bDriverInterface_t *pdrv, int32_t *pData_acc, int32_t *pD
     F_IIC_ReadBytes(I2C_ADD_ICM20948, REG_ADD_ACCEL_XOUT_H, &tempBuf[0], 20, retval);
     if (retval < 0)
     {
-        return retval;
+        return -1;
     }
 
     pDataRaw_x[0] = ((((int16_t)tempBuf[0]) << 8) + (int16_t)tempBuf[1]);
@@ -382,6 +382,25 @@ static int _bICM20948Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         F_ICM20948_GetData(pdrv, ptmp->acc_arr, ptmp->gyro_arr, ptmp->mag_arr, &ptmp->temperature);
     return retval;
 }
+
+static int _bICM20948Ctl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
+{
+    int retval = 0;
+    switch (cmd)
+    {
+        case bCMD_ICM20948_SET_STATUS_ERR:
+        {
+            pdrv->status = -1;
+        }
+        break;
+
+        default:
+            retval = -1;
+            break;
+    }
+    return retval;
+}
+
 /**
  * \}
  */
@@ -398,6 +417,7 @@ int bICM20948_Init(bDriverInterface_t *pdrv)
 
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bICM20948_Init);
     pdrv->read = _bICM20948Read;
+    pdrv->ctl  = _bICM20948Ctl;
 
     if (_ICM20948GetID(pdrv, &r_data) < 0)
     {

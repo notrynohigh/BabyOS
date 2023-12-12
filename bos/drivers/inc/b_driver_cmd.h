@@ -97,21 +97,24 @@ typedef struct
     float temperature;
 
 } bICM20948_9Axis_t;
+#define bCMD_ICM20948_SET_STATUS_ERR 0
 
 typedef struct
 {
     float temperature;
 
-    float acc_arr[3];
+    int16_t acc_arr[3];
 
-    float gyro_arr[3];
+    int16_t gyro_arr[3];
 } bICM42688P_6Axis_t;
+#define bCMD_ICM42688P_SET_STATUS_ERR 0
 
 typedef struct
 {
     float mag_arr[3];
 } bQMC5883L_3Axis_t;
 #define bCMD_QMC5883L_WHETHER_NEWDATA_READY 0
+#define bCMD_QMC5883L_SET_STATUS_ERR 1
 
 typedef struct
 {
@@ -119,6 +122,7 @@ typedef struct
 
     float gyro_arr[3];  // rad/s
 } bQMI8658A_6Axis_t;
+#define bCMD_QMI8658A_SET_STATUS_ERR 0
 
 ///////////////////////////////////////////////////////////
 // LCD  Command & Data Structure

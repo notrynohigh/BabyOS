@@ -63,6 +63,26 @@ extern "C" {
  * \defgroup MODBUS_Exported_TypesDefinitions
  * \{
  */
+#define COLS 2
+typedef int (*ArrayPtr)[COLS];
+typedef struct
+{
+    uint32_t Reg_Rows;  // Modbus读写权限表中二维数组的行=从机寄存器的个数
+    uint32_t Cols;  // Modbus读写权限表中二维数组的列,第一个元素为读,第二个元素为写
+    uint16_t (*ArrayPtr)[COLS];  // 一维数组指针，指向二维数组第一行元素
+} bModbusInf_t;
+
+typedef enum
+{
+    MODBUS_LEN_ERR           = -1,
+    MODBUS_FRAME_HEAD_ERR    = -2,
+    MODBUS_CRC_ERR           = -3,
+    MODBUS_MAX_REGNUM_ERR    = -4,  // 超过一帧能放的下寄存器数
+    MODBUS_ILLEGAL_REG_ERR   = -5,  // 操作非法寄存器
+    MODBUS_REG_OPERATION_ERR = -6,  // 无操作寄存器权限
+    MODBUS_CALLBACK_ERR      = -7,  // 回调告知错误
+
+} bModbusErrCode_t;
 
 /**
  * \}
