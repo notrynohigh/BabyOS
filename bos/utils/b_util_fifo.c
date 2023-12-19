@@ -150,6 +150,43 @@ int bFIFO_Read(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size)
     return size;
 }
 
+int bFIFO_Copy(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size)
+{
+    uint16_t fifo_len, index, f_index;
+    if (pinstance == NULL || pbuf == NULL)
+    {
+        return -1;
+    }
+    if (pinstance->pbuf == NULL)
+    {
+        return -1;
+    }
+    f_index  = pinstance->r_index;
+    fifo_len = FIFO_LEN(pinstance->w_index, pinstance->r_index, pinstance->size);
+    size     = (size <= fifo_len) ? size : fifo_len;
+    index    = 0;
+    while (index < size)
+    {
+        pbuf[index] = pinstance->pbuf[f_index];
+        f_index     = (f_index + 1) % pinstance->size;
+        index += 1;
+    }
+    return size;
+}
+
+int bFIFO_RemoveData(bFIFO_Instance_t *pinstance, uint16_t size)
+{
+    uint16_t fifo_len;
+    if (pinstance == NULL || pinstance->pbuf == NULL)
+    {
+        return -1;
+    }
+    fifo_len           = FIFO_LEN(pinstance->w_index, pinstance->r_index, pinstance->size);
+    size               = (size <= fifo_len) ? size : fifo_len;
+    pinstance->r_index = (pinstance->r_index + size) % pinstance->size;
+    return size;
+}
+
 int bFIFO_DynCreate(bFIFO_Instance_t *pinstance, uint16_t size)
 {
 #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1

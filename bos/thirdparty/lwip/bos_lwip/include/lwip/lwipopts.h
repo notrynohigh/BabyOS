@@ -52,6 +52,11 @@
 #define LWIP_DHCP 1
 /*----- use DHCP_OPTION_HOSTNAME with netif's hostname */
 #define LWIP_NETIF_HOSTNAME 1
+/**
+ * LWIP_DNS==1: Turn on DNS module. UDP must be available for DNS
+ * transport.
+ */
+#define LWIP_DNS 1
 
 #if defined(NETIF_CHECKSUM_BY_HARDWARE) && (NETIF_CHECKSUM_BY_HARDWARE == 1)
 /*----- Value in opt.h for CHECKSUM_GEN_IP: 1 -----*/

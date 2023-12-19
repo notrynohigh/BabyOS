@@ -10,4 +10,9 @@ config _PROTOCOL_SERVICE_ENABLE
     default n
     depends on _BOS_SERVICES_ENABLE
 
+config _TCPIP_SERVICE_ENABLE
+    bool "TCPIP Service Enable/Disable"
+    default n
+    depends on _BOS_SERVICES_ENABLE 
+
 endmenu
