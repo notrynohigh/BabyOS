@@ -17,9 +17,36 @@
 #define UNUSED(x) (void)x /* to avoid gcc/g++ warnings */
 #define __IO volatile     /*!< Defines 'read / write' permissions */
 
-#define USART1_BASE_ADDR (0x40013800)
-#define USART2_BASE_ADDR (0x40004400)
-#define USART3_BASE_ADDR (0x40004800)
+#define PERIPH_BASE ((uint32_t)0x40000000)
+#define AHBPERIPH_BASE (PERIPH_BASE + 0x20000)
+#define CRM_BASE (AHBPERIPH_BASE + 0x1000)
+#define APB1PERIPH_BASE (PERIPH_BASE + 0x00000)
+#define APB2PERIPH_BASE (PERIPH_BASE + 0x10000)
+#define USART1_BASE (APB2PERIPH_BASE + 0x3800)
+#define USART2_BASE (APB1PERIPH_BASE + 0x4400)
+#define USART3_BASE (APB1PERIPH_BASE + 0x4800)
+#define UART4_BASE (APB1PERIPH_BASE + 0x4C00)
+#define UART5_BASE (APB1PERIPH_BASE + 0x5000)
+#define USART6_BASE (APB2PERIPH_BASE + 0x6000)
+#define UART7_BASE (APB2PERIPH_BASE + 0x6400)
+#define UART8_BASE (APB2PERIPH_BASE + 0x6800)
+
+#define REG8(addr) *(volatile uint8_t *)(addr)
+#define REG16(addr) *(volatile uint16_t *)(addr)
+#define REG32(addr) *(volatile uint32_t *)(addr)
+
+#define PERIPH_REG(periph_base, value) REG32((periph_base + (value >> 16)))
+#define PERIPH_REG_BIT(value) (0x1U << (value & 0x1F))
+
+#define CRM_REG(value) PERIPH_REG(CRM_BASE, value)
+#define CRM_REG_BIT(value) PERIPH_REG_BIT(value)
+#define MAKE_VALUE(reg_offset, bit_num) (uint32_t)(((reg_offset) << 16) | (bit_num & 0x1F))
+
+typedef enum
+{
+    RESET = 0,
+    SET   = !RESET
+} flag_status;
 
 typedef struct
 {
@@ -156,42 +183,66 @@ typedef struct
             __IO uint32_t reserved1 : 16; /* [31:16] */
         } gdiv_bit;
     };
-} McuUartReg_t;
+} usart_type;
 
-#define MCU_UART1 ((McuUartReg_t *)USART1_BASE_ADDR)
-#define MCU_UART2 ((McuUartReg_t *)USART2_BASE_ADDR)
-#define MCU_UART3 ((McuUartReg_t *)USART3_BASE_ADDR)
+#define USART1 ((usart_type *)USART1_BASE)
+#define USART2 ((usart_type *)USART2_BASE)
+#define USART3 ((usart_type *)USART3_BASE)
+#define UART4 ((usart_type *)UART4_BASE)
+#define UART5 ((usart_type *)UART5_BASE)
+#define USART6 ((usart_type *)USART6_BASE)
+#define UART7 ((usart_type *)UART7_BASE)
+#define UART8 ((usart_type *)UART8_BASE)
 
-#define USART_TDBE_FLAG ((uint32_t)0x00000080) /*!< usart transmit data buffer empty flag */
-#define USART_TDC_FLAG ((uint32_t)0x00000040)  /*!< usart transmit data complete flag */
+#define USART_PERR_FLAG ((uint32_t)0x00000001)  /*!< usart parity error flag */
+#define USART_FERR_FLAG ((uint32_t)0x00000002)  /*!< usart framing error flag */
+#define USART_NERR_FLAG ((uint32_t)0x00000004)  /*!< usart noise error flag */
+#define USART_ROERR_FLAG ((uint32_t)0x00000008) /*!< usart receiver overflow error flag */
+#define USART_IDLEF_FLAG ((uint32_t)0x00000010) /*!< usart idle flag */
+#define USART_RDBF_FLAG ((uint32_t)0x00000020)  /*!< usart receive data buffer full flag */
+#define USART_TDC_FLAG ((uint32_t)0x00000040)   /*!< usart transmit data complete flag */
+#define USART_TDBE_FLAG ((uint32_t)0x00000080)  /*!< usart transmit data buffer empty flag */
+#define USART_BFF_FLAG ((uint32_t)0x00000100)   /*!< usart break frame flag */
+#define USART_CTSCF_FLAG ((uint32_t)0x00000200) /*!< usart cts change flag */
 
-static McuUartReg_t *UartTable[] = {MCU_UART1, MCU_UART2,
-                                    MCU_UART3};  // 注意UartTable内串口必须连续
+static usart_type *UartTable[] = {USART1, USART2, USART3, UART4, UART5, USART6, UART7, UART8};
 
-/**
- * @description: 注意UartTable内串口必须连续
- * @param {bHalUartNumber_t} uart
- * @param {uint8_t} *pbuf
- * @param {uint16_t} len
- * @return {*}
- */
+static flag_status usart_flag_get(usart_type *usart_x, uint32_t flag)
+{
+    if (usart_x->sts & flag)
+    {
+        return SET;
+    }
+    else
+    {
+        return RESET;
+    }
+}
+
+static void usart_data_transmit(usart_type *usart_x, uint16_t data)
+{
+    usart_x->dt = (data & 0x01FF);
+}
+
 int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 {
     uint16_t      t_len = len;
-    McuUartReg_t *pUart = NULL;
-    if (uart > (sizeof(UartTable) / sizeof(McuUartReg_t *) - 1) || pbuf == NULL)
+    usart_type   *pUart = NULL;
+
+    if (uart > (sizeof(UartTable) / sizeof(usart_type *) - 1) || pbuf == NULL)
     {
         return -1;
     }
+
     pUart = UartTable[uart];
 
     while (t_len--)
     {
-        while ((pUart->sts & USART_TDBE_FLAG) == 0)
+        while (usart_flag_get(pUart, USART_TDBE_FLAG) == RESET)
             ;
-        pUart->dt = (*pbuf++ & 0x01FF);
+        usart_data_transmit(pUart, *pbuf++);
     }
-    while ((pUart->sts & USART_TDC_FLAG) == 0)
+    while (usart_flag_get(pUart, USART_TDC_FLAG) == RESET)
         ;
 
     return len;
