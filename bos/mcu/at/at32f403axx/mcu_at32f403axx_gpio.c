@@ -71,6 +71,9 @@ typedef enum
     CRM_GPIOC_PERIPH_CLOCK = MAKE_VALUE(0x18, 4), /*!< gpioc periph clock */
     CRM_GPIOD_PERIPH_CLOCK = MAKE_VALUE(0x18, 5), /*!< gpiod periph clock */
     CRM_GPIOE_PERIPH_CLOCK = MAKE_VALUE(0x18, 6), /*!< gpioe periph clock */
+
+    CRM_ERROR_PERIPH_CLOCK = 0XFF,
+
 } crm_periph_clock_type;
 
 typedef enum
@@ -643,6 +646,10 @@ typedef struct
 #define GPIOE ((gpio_type *)GPIOE_BASE)
 #define IOMUX ((iomux_type *)IOMUX_BASE)
 
+#define IS_GPIO_TYPE(var)                                                                        \
+    ((var == GPIOA_BASE) || (var == GPIOB_BASE) || (var == GPIOC_BASE) || (var == GPIOD_BASE) || \
+     (var == GPIOE_BASE))
+
 #define GPIO_PINS_0 0x0001   /*!< gpio pins number 0 */
 #define GPIO_PINS_1 0x0002   /*!< gpio pins number 1 */
 #define GPIO_PINS_2 0x0004   /*!< gpio pins number 2 */
@@ -970,7 +977,7 @@ static gpio_pull_type transform_bos_pull(bHalGPIOPull_t pull)
 // clock转换
 static crm_periph_clock_type transform_bos_clock(bHalGPIOPort_t port)
 {
-    crm_periph_clock_type CRM_GPIOX_PERIPH_CLOCK = 0;
+    crm_periph_clock_type CRM_GPIOX_PERIPH_CLOCK = CRM_ERROR_PERIPH_CLOCK;
 
     switch (port)
     {
@@ -993,6 +1000,12 @@ static crm_periph_clock_type transform_bos_clock(bHalGPIOPort_t port)
         default:
             break;
     }
+
+    assert(CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOA_PERIPH_CLOCK ||
+           CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOB_PERIPH_CLOCK ||
+           CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOC_PERIPH_CLOCK ||
+           CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOD_PERIPH_CLOCK ||
+           CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOE_PERIPH_CLOCK);
 
     return CRM_GPIOX_PERIPH_CLOCK;
 }
@@ -1030,7 +1043,7 @@ void bMcuGpioWritePin(bHalGPIOPort_t port, bHalGPIOPin_t pin, uint8_t s)
     gpio_type *gpio_x      = transform_bos_port(port);
 
     assert(IS_GPIO_PINS_TYPE(gpio_pins_X));
-    assert(IS_CRM_PERIPH_CLOCK_TYPE((uint32_t)gpio_x));
+    assert(IS_GPIO_TYPE((uint32_t)gpio_x));
 
     if (s)
     {

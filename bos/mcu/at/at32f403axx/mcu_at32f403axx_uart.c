@@ -226,22 +226,20 @@ static void usart_data_transmit(usart_type *usart_x, uint16_t data)
 
 int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 {
-    uint16_t      t_len = len;
-    usart_type   *pUart = NULL;
-
-    if (uart > (sizeof(UartTable) / sizeof(usart_type *) - 1) || pbuf == NULL)
+    if (uart > (sizeof(UartTable) / sizeof(usart_type *)) - 1 || pbuf == NULL)
     {
         return -1;
     }
 
-    pUart = UartTable[uart];
+    usart_type *pUart = UartTable[uart];
 
-    while (t_len--)
+    for (uint16_t i = 0; i < len; i++)
     {
         while (usart_flag_get(pUart, USART_TDBE_FLAG) == RESET)
             ;
-        usart_data_transmit(pUart, *pbuf++);
+        usart_data_transmit(pUart, pbuf[i]);
     }
+
     while (usart_flag_get(pUart, USART_TDC_FLAG) == RESET)
         ;
 
