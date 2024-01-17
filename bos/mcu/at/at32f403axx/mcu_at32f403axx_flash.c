@@ -1008,6 +1008,12 @@ int bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
 
 int bMcuFlashRead(uint32_t raddr, uint8_t *pbuf, uint32_t len)
 {
+    if (pbuf == NULL || (raddr + FLASH_BASE + len) > (FLASH_MAX_SIZE + FLASH_BASE))
+    {
+        return -1;
+    }
+    raddr = FLASH_BASE + raddr;
+    memcpy(pbuf, (const uint8_t *)raddr, len);
     return len;
 }
 
