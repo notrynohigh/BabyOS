@@ -195,9 +195,8 @@ int bRS485_Init(bDriverInterface_t *pdrv)
     bRS485RunInfo[pdrv->drv_no].cb = NULL;
 #endif
 
-    bHAL_UART_INIT_ATTR(&bRS485RunInfo[pdrv->drv_no].attr,
-                        (uint8_t *)bRS485RunInfo[pdrv->drv_no].buf, RS485_RX_BUF_LEN,
-                        RS485_RX_IDLE_MS, _bHalUartIdleCallback, pdrv);
+    bHAL_UART_INIT_ATTR(&bRS485RunInfo[pdrv->drv_no].attr, bRS485RunInfo[pdrv->drv_no].buf,
+                        RS485_RX_BUF_LEN, RS485_RX_IDLE_MS, _bHalUartIdleCallback, pdrv);
     bHalUartReceiveIdle(bHalIf_RS485[pdrv->drv_no].uart, &bRS485RunInfo[pdrv->drv_no].attr);
     bHalGpioWritePin(bHalIf_RS485[pdrv->drv_no].port, bHalIf_RS485[pdrv->drv_no].pin, 0);
     return 0;
