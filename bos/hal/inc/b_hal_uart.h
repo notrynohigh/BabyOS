@@ -77,7 +77,7 @@ typedef struct
     bHalUartNumber_t       uart;
     bHalIt_t               it;
     uint8_t               *pbuf;
-    uint16_t               len;
+    uint32_t               len;
     uint16_t               idle_ms;
     bHalUartIdleCallback_t callback;
     void                  *user_data;
