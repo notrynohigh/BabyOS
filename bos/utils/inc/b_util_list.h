@@ -83,11 +83,12 @@ struct list_head
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_add(struct list_head *newItem, struct list_head *prev, struct list_head *next)
+static inline void __list_add(struct list_head *newItem, struct list_head *prev,
+                              struct list_head *next)
 {
-    next->prev = newItem;
-    newItem->next  = next;
-    newItem->prev  = prev;
+    next->prev    = newItem;
+    newItem->next = next;
+    newItem->prev = prev;
     WRITE_ONCE(prev->next, newItem);
 }
 
@@ -225,6 +226,23 @@ static inline uint32_t list_count_nodes(struct list_head *head)
     list_for_each(pos, head) count++;
 
     return count;
+}
+
+/**
+ * check nodes in the list
+ * @head:	the head for your list.
+ */
+static inline uint8_t list_exist_nodes(struct list_head *head, struct list_head *node)
+{
+    struct list_head *pos;
+    list_for_each(pos, head)
+    {
+        if (pos == node)
+        {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 /**

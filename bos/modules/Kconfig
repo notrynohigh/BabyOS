@@ -342,6 +342,8 @@ config _NETIF_ENABLE
     bool "NETIF Enable/Disable"
     default n
     depends on _BOS_MODULES_ENABLE
+    select _BOS_SERVICES_ENABLE
+    select _TCPIP_SERVICE_ENABLE
 
 config NETIF_LINK_CHECK_INTERVAL
     int "Netif Check Link Time Interval (ms)"
@@ -358,12 +360,34 @@ config MEMP_NUM_TCP_PCB_LISTEN
     default 4    
     depends on _NETIF_ENABLE
 
-config TCP_SND_QUEUELEN
-    int "TCP_SND_QUEUELEN"
-    default 8
+config TCP_SND_BUF
+    int "TCP sender buffer space (bytes)"
+    default 2048
     depends on _NETIF_ENABLE
 
+config MEM_SIZE
+    int "the size of the heap memory"
+    default 10240
+    depends on _NETIF_ENABLE
 
+config REMOTE_ADDR_LEN_MAX
+    int "Maximum length of remote address"
+    default 128
+    depends on _NETIF_ENABLE
 
+config CONNECT_RECVBUF_MAX
+    int "Recv Buffer Max Length (B)"
+    default 1024
+    depends on _NETIF_ENABLE
+
+config CONNECT_NUMBER_MAX
+    int "The number of connections that existed at the same time"
+    default 2
+    depends on _NETIF_ENABLE
+
+config SERVER_MAX_CONNECTIONS
+    int "The maximum number of connections that can be saved on the server"
+    default 2
+    depends on _NETIF_ENABLE
 
 endmenu

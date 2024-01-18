@@ -79,12 +79,21 @@ typedef bFIFO_Info_t bFIFO_Instance_t;
  * \defgroup FIFO_Exported_Functions
  * \{
  */
-///< pinstance \ref bFIFO_INSTANCE
+///< 使用 bFIFO_INSTANCE 与 bFIFO_Init 的区别：
+///< bFIFO_INSTANCE 会定义静态的数组，然后执行初始化内容
+///< bFIFO_Init 使用接口传入的buf，然后执行初始化内容
+///< 注意： bFIFO_INSTANCE 和 bFIFO_Init 调用其中1个即可。
 int bFIFO_Init(bFIFO_Instance_t *pinstance, void *pbuf, uint16_t size);
+
 int bFIFO_Write(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size);
 int bFIFO_Read(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size);
 int bFIFO_Length(bFIFO_Instance_t *pinstance, uint16_t *plen);
 int bFIFO_Flush(bFIFO_Instance_t *pinstance);
+
+int bFIFO_Copy(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size);
+int bFIFO_RemoveData(bFIFO_Instance_t *pinstance, uint16_t size);
+
+///< 与 bFIFO_INSTANCE 不同的是，这里不是定义静态数组而是使用动态内存
 int bFIFO_DynCreate(bFIFO_Instance_t *pinstance, uint16_t size);
 int bFIFO_DynDelete(bFIFO_Instance_t *pinstance);
 /**

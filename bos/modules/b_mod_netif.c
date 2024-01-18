@@ -58,6 +58,11 @@
  * \defgroup NETIF_Private_TypesDefinitions
  * \{
  */
+typedef struct
+{
+    uint8_t used;
+    uint8_t buf[CONNECT_RECVBUF_MAX];
+} bNetifConnBuf_t;
 
 /**
  * \}
@@ -86,6 +91,10 @@
  * \{
  */
 static LIST_HEAD(bNetifListHead);
+
+static LIST_HEAD(bNetifClientListHead);
+
+static bNetifConnBuf_t bNetifConnBuf[CONNECT_NUMBER_MAX];
 
 /**
  * \}
@@ -278,6 +287,443 @@ static void _bNetifCore()
 
 BOS_REG_POLLING_FUNC(_bNetifCore);
 
+//------------------------------------------------------------------------
+//    上面是网卡对接LWIP，保证LWIP能跑起来
+//    下面是发起连接，对接lwip的接口
+//------------------------------------------------------------------------
+static err_t _bTcpRecvFn(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err);
+static err_t _bTcpSendFn(void *arg, struct tcp_pcb *tpcb, u16_t len);
+static void  _bTcpErrorFn(void *arg, err_t err);
+static void  _bUdpRecvFn(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr,
+                         u16_t port);
+
+static int _bNetifConnAllocBuf(bNetifConn_t *pconn)
+{
+    int            index    = 0;
+    static uint8_t mem_init = 0;
+    if (mem_init == 0)
+    {
+        memset(bNetifConnBuf, 0, sizeof(bNetifConnBuf));
+        mem_init = 1;
+    }
+    for (index = 0; index < CONNECT_NUMBER_MAX; index++)
+    {
+        if (bNetifConnBuf[index].used == 0)
+        {
+            break;
+        }
+    }
+    if (index >= CONNECT_NUMBER_MAX)
+    {
+        return -1;
+    }
+    bNetifConnBuf[index].used = 1;
+    pconn->mem_index          = index;
+    memset(&bNetifConnBuf[index].buf[0], 0, CONNECT_RECVBUF_MAX);
+    bFIFO_Init(&pconn->recv_buf, &bNetifConnBuf[index].buf[0], CONNECT_RECVBUF_MAX);
+    return 0;
+}
+
+static int _bNetifConnFreeBuf(bNetifConn_t *pconn)
+{
+    int index = pconn->mem_index;
+    if (index >= CONNECT_NUMBER_MAX)
+    {
+        return -1;
+    }
+    if (bNetifConnBuf[index].used == 0)
+    {
+        return -1;
+    }
+    bNetifConnBuf[index].used = 0;
+    return 0;
+}
+
+static int _bNetifConnInit(bNetifConn_t *pconn)
+{
+    if (pconn->state != B_CONN_DEINIT || pconn->subtype != B_NETIF_CLIENT_FLAG)
+    {
+        return -1;
+    }
+    if (0 > _bNetifConnAllocBuf(pconn))
+    {
+        return -1;
+    }
+    pconn->err_code  = 0;
+    pconn->readable  = 0;
+    pconn->writeable = 0;
+    if (pconn->type == B_TRANS_TCP)
+    {
+        pconn->pcb = tcp_new();
+        if (pconn->pcb == NULL)
+        {
+            _bNetifConnFreeBuf(pconn);
+            return -1;
+        }
+        pconn->state = B_CONN_INIT;
+        tcp_arg(pconn->pcb, pconn);
+        tcp_err(pconn->pcb, _bTcpErrorFn);
+    }
+    else if (pconn->type == B_TRANS_UDP)
+    {
+        pconn->pcb = udp_new();
+        if (pconn->pcb == NULL)
+        {
+            _bNetifConnFreeBuf(pconn);
+            return -1;
+        }
+        udp_bind(pconn->pcb, IP_ADDR_ANY, 0);
+        udp_recv(pconn->pcb, _bUdpRecvFn, pconn);
+        pconn->state = B_CONN_INIT;
+    }
+    return 0;
+}
+
+static int _bNetifConnDeinit(bNetifConn_t *pconn)
+{
+    if (pconn->state == B_CONN_DEINIT)
+    {
+        return -1;
+    }
+    pconn->state = B_CONN_DEINIT;
+    if (pconn->type == B_TRANS_TCP)
+    {
+        tcp_abort(pconn->pcb);
+    }
+    else if (pconn->type == B_TRANS_UDP)
+    {
+        udp_remove(pconn->pcb);
+    }
+    pconn->pcb       = NULL;
+    pconn->readable  = 0;
+    pconn->writeable = 0;
+    bFIFO_Flush(&pconn->recv_buf);
+    _bNetifConnFreeBuf(pconn);
+    return 0;
+}
+
+static bNetifConn_t *_bNetifServerNewConn(bNetifServer_t *server, void *pcb)
+{
+    bNetifConn_t *pconn = NULL;
+    int           i     = 0;
+
+    for (i = 0; i < SERVER_MAX_CONNECTIONS; i++)
+    {
+        if (server->conn[i].pcb == NULL)
+        {
+            pconn = &server->conn[i];
+            break;
+        }
+    }
+    if (pconn == NULL)
+    {
+        return NULL;
+    }
+    if (0 > _bNetifConnAllocBuf(pconn))
+    {
+        return NULL;
+    }
+    pconn->callback  = server->callback;
+    pconn->cb_arg    = server->user_data;
+    pconn->err_code  = 0;
+    pconn->pcb       = pcb;
+    pconn->readable  = 0;
+    pconn->writeable = 0;
+    pconn->subtype   = B_NETIF_SERVER_FLAG;
+    pconn->type      = server->type;
+    if (pconn->type == B_TRANS_TCP)
+    {
+        tcp_arg(pconn->pcb, pconn);
+        tcp_err(pconn->pcb, _bTcpErrorFn);
+    }
+    pconn->state = B_CONN_INIT;
+    return pconn;
+}
+
+static bNetifConn_t *_bNetifUdpServerGetConn(bNetifServer_t *server, uint32_t ip, uint16_t port)
+{
+    int           i     = 0;
+    bNetifConn_t *pconn = NULL;
+    for (i = 0; i < SERVER_MAX_CONNECTIONS; i++)
+    {
+        if (server->conn[i].remote_ip == ip && server->conn[i].remote_port == port &&
+            server->conn[i].pcb != NULL)
+        {
+            pconn = &server->conn[i];
+            break;
+        }
+    }
+    if (pconn == NULL)
+    {
+        for (i = 0; i < SERVER_MAX_CONNECTIONS; i++)
+        {
+            if (server->conn[i].pcb == NULL)
+            {
+                pconn = &server->conn[i];
+                break;
+            }
+        }
+        if (pconn == NULL)
+        {
+            return NULL;
+        }
+
+        if (0 > _bNetifConnAllocBuf(pconn))
+        {
+            return NULL;
+        }
+        pconn->pcb         = server->server_pcb;
+        pconn->remote_ip   = ip;
+        pconn->remote_port = port;
+        pconn->callback    = server->callback;
+        pconn->cb_arg      = server->user_data;
+        pconn->err_code    = 0;
+        pconn->readable    = 0;
+        pconn->writeable   = 1;
+        pconn->subtype     = B_NETIF_SERVER_FLAG;
+        pconn->type        = server->type;
+        pconn->state       = B_CONN_CONNECTED;
+    }
+    return pconn;
+}
+
+static void _bNetifTrigEvent(bNetifConn_t *pconn, bNetifConnEvent_t event, void *param)
+{
+    struct pbuf *pbuf_dat = (struct pbuf *)param;
+    if (event == B_EVENT_DNS_FAIL || event == B_EVENT_DISCONNECT || event == B_EVENT_ERROR)
+    {
+        _bNetifConnDeinit(pconn);
+    }
+    else if (event == B_EVENT_DNS_OK)
+    {
+        pconn->remote_ip = *((uint32_t *)param);
+        pconn->state     = B_CONN_CONNECTING;
+    }
+    else if (event == B_EVENT_NEW_DATA)
+    {
+        do
+        {
+            bFIFO_Write(&pconn->recv_buf, pbuf_dat->payload, pbuf_dat->len);
+            pbuf_dat = pbuf_dat->next;
+        } while (pbuf_dat != NULL && pbuf_dat->len > 0);
+        pconn->readable = 1;
+    }
+    else if (event == B_EVENT_CONNECTED)
+    {
+        if (pconn->type == B_TRANS_TCP)
+        {
+            tcp_recv(pconn->pcb, _bTcpRecvFn);
+            tcp_sent(pconn->pcb, _bTcpSendFn);
+        }
+        pconn->state     = B_CONN_CONNECTED;
+        pconn->writeable = 1;
+    }
+    else if (event == B_EVENT_WAIT_DNS)
+    {
+        pconn->state = B_CONN_DNS;
+    }
+    else if (event == B_EVENT_WAIT_CONNECTED)
+    {
+        pconn->state = B_CONN_WAIT_CONNECTED;
+    }
+    pconn->callback(event, pconn, pconn->cb_arg);
+}
+
+static void _bDnsCallback(const char *name, const ip_addr_t *ipaddr, void *callback_arg)
+{
+    bNetifConn_t *pconn = (bNetifConn_t *)callback_arg;
+    if (ipaddr == NULL)
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_DNS_FAIL, NULL);
+    }
+    else
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_DNS_OK, (void *)&ipaddr->addr);
+    }
+}
+
+static void _bUdpRecvFn(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr,
+                        u16_t port)
+{
+    bNetifConn_t *pconn = (bNetifConn_t *)arg;
+    if (p == NULL)
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_DISCONNECT, NULL);
+    }
+    else
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_NEW_DATA, p);
+        pbuf_free(p);
+    }
+}
+
+static err_t _bTcpRecvFn(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
+{
+    bNetifConn_t *pconn = (bNetifConn_t *)arg;
+    if (p == NULL)
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_DISCONNECT, NULL);
+    }
+    else
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_NEW_DATA, p);
+        pbuf_free(p);
+    }
+    return ERR_OK;
+}
+
+static err_t _bTcpSendFn(void *arg, struct tcp_pcb *tpcb, u16_t len)
+{
+    return ERR_OK;
+}
+
+static err_t _bTcpConnectFn(void *arg, struct tcp_pcb *tpcb, err_t err)
+{
+    bNetifConn_t *pconn = (bNetifConn_t *)arg;
+    _bNetifTrigEvent(pconn, B_EVENT_CONNECTED, NULL);
+    return ERR_OK;
+}
+
+static void _bTcpErrorFn(void *arg, err_t err)
+{
+    bNetifConn_t *pconn = (bNetifConn_t *)arg;
+    pconn->err_code     = err;
+    if (err == ERR_ISCONN)
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_CONNECTED, NULL);
+    }
+    else if (err == ERR_ALREADY)
+    {
+        ;
+    }
+    else
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_ERROR, NULL);
+    }
+}
+
+static void _bUdpServerRecvFn(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr,
+                              u16_t port)
+{
+    int             ret    = -1;
+    bNetifConn_t   *pconn  = NULL;
+    bNetifServer_t *server = (bNetifServer_t *)arg;
+    pconn                  = _bNetifUdpServerGetConn(server, addr->addr, port);
+    if (pconn)
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_NEW_DATA, p);
+    }
+    pbuf_free(p);
+}
+
+static err_t _bTcpServerAccept(void *arg, struct tcp_pcb *newpcb, err_t err)
+{
+
+    int             ret    = -1;
+    bNetifConn_t   *pconn  = NULL;
+    bNetifServer_t *server = (bNetifServer_t *)arg;
+    pconn                  = _bNetifServerNewConn(server, newpcb);
+    if (pconn == NULL)
+    {
+        tcp_abort(newpcb);
+    }
+    else
+    {
+        _bNetifTrigEvent(pconn, B_EVENT_CONNECTED, NULL);
+    }
+    return ERR_OK;
+}
+
+/**
+ * client handler
+ */
+
+static void _bNetifClientAdd(bNetifClient_t *client)
+{
+    uint8_t exist_f = list_exist_nodes(&bNetifClientListHead, &(client->list));
+    if (exist_f == 0)
+    {
+        list_add(&(client->list), &bNetifClientListHead);
+    }
+}
+
+static int _bClientInitHandle(bNetifClient_t *client)
+{
+    ip_addr_t addr;
+    err_t     err = dns_gethostbyname(client->remote_addr, &addr, _bDnsCallback, &client->conn);
+    if (err == ERR_OK)
+    {
+        _bNetifTrigEvent(&client->conn, B_EVENT_DNS_OK, &addr.addr);
+    }
+    else if (err == ERR_INPROGRESS)
+    {
+        _bNetifTrigEvent(&client->conn, B_EVENT_WAIT_DNS, NULL);
+    }
+    else
+    {
+        _bNetifTrigEvent(&client->conn, B_EVENT_DNS_FAIL, NULL);
+    }
+    return 0;
+}
+
+static int _bClientConnectingHandle(bNetifClient_t *client)
+{
+    int       ret = -1;
+    ip_addr_t addr;
+    addr.addr = client->conn.remote_ip;
+    if (client->conn.type == B_TRANS_TCP)
+    {
+        if (ERR_OK ==
+            tcp_connect(client->conn.pcb, &addr, client->conn.remote_port, _bTcpConnectFn))
+        {
+            ret = 0;
+            _bNetifTrigEvent(&client->conn, B_EVENT_WAIT_CONNECTED, NULL);
+        }
+    }
+    else if (client->conn.type == B_TRANS_UDP)
+    {
+        if (ERR_OK == udp_connect(client->conn.pcb, &addr, client->conn.remote_port))
+        {
+            ret = 0;
+            _bNetifTrigEvent(&client->conn, B_EVENT_CONNECTED, NULL);
+        }
+    }
+    if (ret != 0)
+    {
+        _bNetifTrigEvent(&client->conn, B_EVENT_DISCONNECT, NULL);
+    }
+    return 0;
+}
+
+static int _bClientConnectedHandle(bNetifClient_t *client)
+{
+    return 0;
+}
+
+static void _bNetifClientCore()
+{
+    struct list_head *pos    = NULL;
+    bNetifClient_t   *client = NULL;
+    list_for_each(pos, &bNetifClientListHead)
+    {
+        client = list_entry(pos, bNetifClient_t, list);
+        if (client->conn.state == B_CONN_INIT)
+        {
+            _bClientInitHandle(client);
+        }
+        else if (client->conn.state == B_CONN_CONNECTING)
+        {
+            _bClientConnectingHandle(client);
+        }
+        else if (client->conn.state == B_CONN_CONNECTED)
+        {
+            _bClientConnectedHandle(client);
+        }
+    }
+}
+
+BOS_REG_POLLING_FUNC(_bNetifClientCore);
+
 /**
  * \}
  */
@@ -339,6 +785,178 @@ int bNetifAdd(bNetif_t *pInstance, uint32_t ip, uint32_t gw, uint32_t mask)
     }
     netif_set_link_callback(&pInstance->lwip_netif, _bNetifLinkUpdate);
     list_add(&pInstance->list, &bNetifListHead);
+    return 0;
+}
+
+/**
+ * CLIENT
+ */
+
+bNetifConn_t *bNetifConnect(bNetifClient_t *client, char *remote, uint16_t port)
+{
+    if (client == NULL || remote == NULL || strlen(remote) > REMOTE_ADDR_LEN_MAX ||
+        client->conn.callback == NULL || (!IS_VALID_TRANS_TYPE(client->conn.type)))
+    {
+        return NULL;
+    }
+    if (0 > _bNetifConnInit(&client->conn))
+    {
+        return NULL;
+    }
+    client->conn.remote_port = port;
+    memset(client->remote_addr, 0, REMOTE_ADDR_LEN_MAX + 1);
+    memcpy(client->remote_addr, remote, strlen(remote));
+    _bNetifClientAdd(client);
+    return &client->conn;
+}
+
+/**
+ * SERVER
+ */
+int bNetifSrvListen(bNetifServer_t *server, uint16_t port)
+{
+    if (server == NULL || server->callback == NULL || (!IS_VALID_TRANS_TYPE(server->type)))
+    {
+        return -1;
+    }
+    if (server->state != B_SRV_DEINIT)
+    {
+        return -2;
+    }
+    memset(server->conn, 0, sizeof(server->conn));
+    if (server->type == B_TRANS_TCP)
+    {
+        server->server_pcb = tcp_new();
+        if (server->server_pcb == NULL)
+        {
+            return -1;
+        }
+        server->server_port = port;
+        tcp_bind(server->server_pcb, IP_ADDR_ANY, port);
+        server->server_pcb = tcp_listen(server->server_pcb);
+        tcp_arg(server->server_pcb, server);
+        tcp_accept(server->server_pcb, _bTcpServerAccept);
+    }
+    else if (server->type == B_TRANS_UDP)
+    {
+        server->server_pcb = udp_new();
+        if (server->server_pcb == NULL)
+        {
+            return -1;
+        }
+        server->server_port = port;
+        ip_addr_t ipaddr;
+        IP4_ADDR(&ipaddr, 0, 0, 0, 0);
+        udp_bind(server->server_pcb, &ipaddr, port);
+        udp_recv(server->server_pcb, _bUdpServerRecvFn, server);
+    }
+    server->state = B_SRV_LISTEN;
+    return 0;
+}
+
+int bNetifConnReadData(bNetifConn_t *pconn, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen)
+{
+    int      read_len = 0;
+    uint16_t fifo_len = 0;
+    if (pconn == NULL || pbuf == NULL || buf_len == 0)
+    {
+        return -1;
+    }
+    if (pconn->pcb == NULL)
+    {
+        return -2;
+    }
+    read_len = bFIFO_Read(&pconn->recv_buf, pbuf, buf_len);
+    if (read_len < 0)
+    {
+        return -3;
+    }
+    if (rlen)
+    {
+        *rlen = (uint16_t)(read_len & 0xffff);
+    }
+    bFIFO_Length(&pconn->recv_buf, &fifo_len);
+    if (fifo_len == 0)
+    {
+        pconn->readable = 0;
+    }
+    return 0;
+}
+
+int bNetifConnWriteData(bNetifConn_t *pconn, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
+{
+    uint16_t writeable_len = 0;
+    if (pconn == NULL || pbuf == NULL || buf_len == 0)
+    {
+        return -1;
+    }
+    if (pconn->pcb == NULL)
+    {
+        return -2;
+    }
+    if (pconn->type == B_TRANS_TCP)
+    {
+        writeable_len = tcp_sndbuf((struct tcp_pcb *)pconn->pcb);
+        if (writeable_len <= buf_len)
+        {
+            pconn->writeable = 0;
+        }
+        writeable_len = (writeable_len > buf_len) ? buf_len : writeable_len;
+        tcp_write(pconn->pcb, pbuf, buf_len, TCP_WRITE_FLAG_COPY);
+        if (wlen)
+        {
+            *wlen = writeable_len;
+        }
+    }
+    else if (pconn->type == B_TRANS_UDP)
+    {
+        struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, buf_len, PBUF_RAM);
+        if (p)
+        {
+            memcpy(p->payload, pbuf, buf_len);
+            udp_send(pconn->pcb, p);
+            pbuf_free(p);
+            if (wlen)
+            {
+                *wlen = buf_len;
+            }
+        }
+        else
+        {
+            if (wlen)
+            {
+                *wlen = 0;
+            }
+        }
+    }
+    return 0;
+}
+
+uint8_t bNetifConnIsReadable(bNetifConn_t *pconn)
+{
+    if (pconn == NULL)
+    {
+        return 0;
+    }
+    return pconn->readable;
+}
+
+uint8_t bNetifConnIsWriteable(bNetifConn_t *pconn)
+{
+    if (pconn == NULL)
+    {
+        return 0;
+    }
+    return pconn->writeable;
+}
+
+int bNetifConnDeinit(bNetifConn_t *pconn)
+{
+    if (pconn == NULL)
+    {
+        return -1;
+    }
+    _bNetifTrigEvent(pconn, B_EVENT_DISCONNECT, NULL);
     return 0;
 }
 

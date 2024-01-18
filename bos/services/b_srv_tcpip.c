@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_services.h
+ * \file        b_srv_tcpip.c
  * \version     v0.0.1
- * \date        2023/08/26
+ * \date        2023/08/27
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
@@ -28,22 +28,103 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_SERVICES_H__
-#define __B_SERVICES_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /*Includes ----------------------------------------------*/
+#include "services/inc/b_srv_tcpip.h"
 
-#include "b_srv_protocol.h"
-#include "b_srv_tcpip.h"
+#if (defined(_TCPIP_SERVICE_ENABLE) && (_TCPIP_SERVICE_ENABLE == 1))
 
-#ifdef __cplusplus
-}
-#endif
+#include <string.h>
 
+/**
+ * \addtogroup BABYOS
+ * \{
+ */
+
+/**
+ * \addtogroup SERVICES
+ * \{
+ */
+
+/**
+ * \addtogroup TCPIP
+ * \{
+ */
+
+/**
+ * \defgroup TCPIP_Private_TypesDefinitions
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TCPIP_Private_Defines
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TCPIP_Private_Macros
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TCPIP_Private_Variables
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TCPIP_Private_FunctionPrototypes
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TCPIP_Private_Functions
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \addtogroup TCPIP_Exported_Functions
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
 #endif
 
 /************************ Copyright (c) 2023 Bean *****END OF FILE****/

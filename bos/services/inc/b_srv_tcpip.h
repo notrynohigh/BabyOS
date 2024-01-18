@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_services.h
+ * \file        b_srv_tcpip.h
  * \version     v0.0.1
- * \date        2023/08/26
+ * \date        2023/08/27
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
@@ -28,17 +28,79 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_SERVICES_H__
-#define __B_SERVICES_H__
+#ifndef __B_SRV_TCPIP_H__
+#define __B_SRV_TCPIP_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
+#include <stdint.h>
 
-#include "b_srv_protocol.h"
-#include "b_srv_tcpip.h"
+#include "b_config.h"
+
+#define _TCPIP_SERVICE_ENABLE 1
+
+#if (defined(_TCPIP_SERVICE_ENABLE) && (_TCPIP_SERVICE_ENABLE == 1))
+
+#include "modules/inc/b_mod_netif.h"
+
+/**
+ * \addtogroup BABYOS
+ * \{
+ */
+
+/**
+ * \addtogroup SERVICES
+ * \{
+ */
+
+/**
+ * \addtogroup TCPIP
+ * \{
+ */
+
+/**
+ * \defgroup TCPIP_Exported_TypesDefinitions
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TCPIP_Exported_Defines
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TCPIP_Exported_Functions
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+#endif
 
 #ifdef __cplusplus
 }
