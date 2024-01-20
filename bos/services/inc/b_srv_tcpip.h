@@ -84,6 +84,8 @@ extern "C" {
  * \{
  */
 
+int bSntpStart(uint32_t interval_s);
+
 /**
  * \}
  */
