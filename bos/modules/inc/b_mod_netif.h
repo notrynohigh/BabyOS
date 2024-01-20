@@ -87,16 +87,17 @@ typedef struct
 
 typedef enum
 {
-    B_EVENT_DNS_FAIL,
-    B_EVENT_DNS_OK,
+    B_EVENT_DNS_OK = 0,
     B_EVENT_WAIT_DNS,
-    B_EVENT_CONNECTING_FAIL,
     B_EVENT_WAIT_CONNECTED,
     B_EVENT_CONNECTED,
-    B_EVENT_DISCONNECT,
     B_EVENT_NEW_DATA,
+    B_EVENT_ERR_BASE = -10,
+    B_EVENT_DNS_FAIL,
+    B_EVENT_CONNECTING_FAIL,
+    B_EVENT_DISCONNECT,
     B_EVENT_ERROR,
-    B_EVENT_INVALID,
+    B_EVENT_INVALID = 0xff,
 } bNetifConnEvent_t;
 
 typedef void (*pbNetifConnCb_t)(bNetifConnEvent_t event, void *param, void *arg);
@@ -130,10 +131,11 @@ typedef struct
     int             reserved;
     uint8_t         readable;
     uint8_t         writeable;
-    uint8_t         mem_index;
+    void           *pbuf;
     uint8_t         subtype;
     uint16_t        remote_port;
     uint32_t        remote_ip;
+    uint32_t        rx_cache_size;
     bFIFO_Info_t    recv_buf;
     bConnState_t    state;
     bTransType_t    type;
@@ -150,14 +152,14 @@ typedef struct
 
 typedef struct
 {
-    bServerState_t   state;
-    pbNetifConnCb_t  callback;
-    bTransType_t     type;
-    void            *user_data;
-    void            *server_pcb;
-    uint16_t         server_port;
-    bNetifConn_t     conn[SERVER_MAX_CONNECTIONS];
-    struct list_head list;
+    bServerState_t  state;
+    pbNetifConnCb_t callback;
+    bTransType_t    type;
+    void           *user_data;
+    void           *server_pcb;
+    uint16_t        server_port;
+    uint32_t        rx_cache_size;
+    bNetifConn_t    conn[SERVER_MAX_CONNECTIONS];
 } bNetifServer_t;
 
 /**
@@ -178,23 +180,50 @@ typedef struct
     }
 
 // trans_type: \ref bTransType_t  B_TRANS_UDP/B_TRANS_TCP
-#define B_NETIF_CLIENT_CREATE_INSTANCE(name, trans_type, cb, arg) \
-    bNetifClient_t name = {                                       \
-        .conn.pcb      = NULL,                                    \
-        .conn.type     = trans_type,                              \
-        .conn.subtype  = B_NETIF_CLIENT_FLAG,                     \
-        .conn.state    = B_CONN_DEINIT,                           \
-        .conn.callback = cb,                                      \
-        .conn.cb_arg   = arg,                                     \
+// if cache_size == 0 , use CONNECT_RECVBUF_MAX
+#define B_NETIF_CLIENT_CREATE_INSTANCE(name, trans_type, cb, arg, cache_size) \
+    bNetifClient_t name = {                                                   \
+        .conn.pcb           = NULL,                                           \
+        .conn.type          = trans_type,                                     \
+        .conn.subtype       = B_NETIF_CLIENT_FLAG,                            \
+        .conn.state         = B_CONN_DEINIT,                                  \
+        .conn.callback      = cb,                                             \
+        .conn.cb_arg        = arg,                                            \
+        .conn.rx_cache_size = cache_size,                                     \
+        .conn.pbuf          = NULL,                                           \
     }
 
-#define B_NETIF_SERVER_CREATE_INSTANCE(name, trans_type, cb, arg) \
-    bNetifServer_t name = {                                       \
-        .callback  = cb,                                          \
-        .user_data = arg,                                         \
-        .type      = trans_type,                                  \
-        .state     = B_SRV_DEINIT,                                \
+#define B_NETIF_SERVER_CREATE_INSTANCE(name, trans_type, cb, arg, cache_size) \
+    bNetifServer_t name = {                                                   \
+        .callback      = cb,                                                  \
+        .user_data     = arg,                                                 \
+        .type          = trans_type,                                          \
+        .state         = B_SRV_DEINIT,                                        \
+        .rx_cache_size = cache_size,                                          \
     }
+
+#define B_NETIF_CLIENT_STRUCT_INIT(pclient, trans_type, cb, arg, cache_size) \
+    do                                                                       \
+    {                                                                        \
+        (pclient)->conn.pcb           = NULL;                                \
+        (pclient)->conn.type          = trans_type;                          \
+        (pclient)->conn.subtype       = B_NETIF_CLIENT_FLAG;                 \
+        (pclient)->conn.state         = B_CONN_DEINIT;                       \
+        (pclient)->conn.callback      = cb;                                  \
+        (pclient)->conn.cb_arg        = arg;                                 \
+        (pclient)->conn.rx_cache_size = cache_size;                          \
+        (pclient)->conn.pbuf          = NULL;                                \
+    } while (0)
+
+#define B_NETIF_SERVER_STRUCT_INIT(pserver, trans_type, cb, arg, cache_size) \
+    do                                                                       \
+    {                                                                        \
+        (pserver)->callback      = cb;                                       \
+        (pserver)->user_data     = arg;                                      \
+        (pserver)->type          = trans_type;                               \
+        (pserver)->state         = B_SRV_DEINIT;                             \
+        (pserver)->rx_cache_size = cache_size;                               \
+    } while (0)
 
 #define bNETIF_IP_U32(a, b, c, d)                                      \
     (((uint32_t)((a) & 0xff) << 24) | ((uint32_t)((b) & 0xff) << 16) | \

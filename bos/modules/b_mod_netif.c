@@ -58,11 +58,6 @@
  * \defgroup NETIF_Private_TypesDefinitions
  * \{
  */
-typedef struct
-{
-    uint8_t used;
-    uint8_t buf[CONNECT_RECVBUF_MAX];
-} bNetifConnBuf_t;
 
 /**
  * \}
@@ -93,8 +88,6 @@ typedef struct
 static LIST_HEAD(bNetifListHead);
 
 static LIST_HEAD(bNetifClientListHead);
-
-static bNetifConnBuf_t bNetifConnBuf[CONNECT_NUMBER_MAX];
 
 /**
  * \}
@@ -296,46 +289,30 @@ static err_t _bTcpSendFn(void *arg, struct tcp_pcb *tpcb, u16_t len);
 static void  _bTcpErrorFn(void *arg, err_t err);
 static void  _bUdpRecvFn(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr,
                          u16_t port);
+static void  _bNetifTrigEvent(bNetifConn_t *pconn, bNetifConnEvent_t event, void *param);
 
 static int _bNetifConnAllocBuf(bNetifConn_t *pconn)
 {
-    int            index    = 0;
-    static uint8_t mem_init = 0;
-    if (mem_init == 0)
+    uint32_t     rx_size = (pconn->rx_cache_size == 0) ? CONNECT_RECVBUF_MAX : pconn->rx_cache_size;
+    struct pbuf *p       = pbuf_alloc(PBUF_RAW, rx_size, PBUF_RAM);
+    if (p == NULL)
     {
-        memset(bNetifConnBuf, 0, sizeof(bNetifConnBuf));
-        mem_init = 1;
-    }
-    for (index = 0; index < CONNECT_NUMBER_MAX; index++)
-    {
-        if (bNetifConnBuf[index].used == 0)
-        {
-            break;
-        }
-    }
-    if (index >= CONNECT_NUMBER_MAX)
-    {
+        b_log_e("malloc error...\r\n");
         return -1;
     }
-    bNetifConnBuf[index].used = 1;
-    pconn->mem_index          = index;
-    memset(&bNetifConnBuf[index].buf[0], 0, CONNECT_RECVBUF_MAX);
-    bFIFO_Init(&pconn->recv_buf, &bNetifConnBuf[index].buf[0], CONNECT_RECVBUF_MAX);
+    pconn->pbuf = p;
+    bFIFO_Init(&pconn->recv_buf, p->payload, p->tot_len);
     return 0;
 }
 
 static int _bNetifConnFreeBuf(bNetifConn_t *pconn)
 {
-    int index = pconn->mem_index;
-    if (index >= CONNECT_NUMBER_MAX)
+    if (pconn->pbuf == NULL)
     {
-        return -1;
+        return 0;
     }
-    if (bNetifConnBuf[index].used == 0)
-    {
-        return -1;
-    }
-    bNetifConnBuf[index].used = 0;
+    pbuf_free(pconn->pbuf);
+    pconn->pbuf = NULL;
     return 0;
 }
 
@@ -394,10 +371,7 @@ static int _bNetifConnDeinit(bNetifConn_t *pconn)
     {
         udp_remove(pconn->pcb);
     }
-    pconn->pcb       = NULL;
-    pconn->readable  = 0;
-    pconn->writeable = 0;
-    bFIFO_Flush(&pconn->recv_buf);
+    pconn->pcb = NULL;
     _bNetifConnFreeBuf(pconn);
     return 0;
 }
@@ -423,14 +397,16 @@ static bNetifConn_t *_bNetifServerNewConn(bNetifServer_t *server, void *pcb)
     {
         return NULL;
     }
-    pconn->callback  = server->callback;
-    pconn->cb_arg    = server->user_data;
-    pconn->err_code  = 0;
-    pconn->pcb       = pcb;
-    pconn->readable  = 0;
-    pconn->writeable = 0;
-    pconn->subtype   = B_NETIF_SERVER_FLAG;
-    pconn->type      = server->type;
+    pconn->callback    = server->callback;
+    pconn->cb_arg      = server->user_data;
+    pconn->err_code    = 0;
+    pconn->pcb         = pcb;
+    pconn->readable    = 0;
+    pconn->writeable   = 0;
+    pconn->subtype     = B_NETIF_SERVER_FLAG;
+    pconn->type        = server->type;
+    pconn->remote_ip   = ((struct tcp_pcb *)pcb)->remote_ip.addr;
+    pconn->remote_port = ((struct tcp_pcb *)pcb)->remote_port;
     if (pconn->type == B_TRANS_TCP)
     {
         tcp_arg(pconn->pcb, pconn);
@@ -479,10 +455,9 @@ static bNetifConn_t *_bNetifUdpServerGetConn(bNetifServer_t *server, uint32_t ip
         pconn->cb_arg      = server->user_data;
         pconn->err_code    = 0;
         pconn->readable    = 0;
-        pconn->writeable   = 1;
         pconn->subtype     = B_NETIF_SERVER_FLAG;
         pconn->type        = server->type;
-        pconn->state       = B_CONN_CONNECTED;
+        _bNetifTrigEvent(pconn, B_EVENT_CONNECTED, NULL);
     }
     return pconn;
 }
@@ -490,6 +465,10 @@ static bNetifConn_t *_bNetifUdpServerGetConn(bNetifServer_t *server, uint32_t ip
 static void _bNetifTrigEvent(bNetifConn_t *pconn, bNetifConnEvent_t event, void *param)
 {
     struct pbuf *pbuf_dat = (struct pbuf *)param;
+    if (pconn->state == B_CONN_DEINIT)
+    {
+        return;
+    }
     if (event == B_EVENT_DNS_FAIL || event == B_EVENT_DISCONNECT || event == B_EVENT_ERROR)
     {
         _bNetifConnDeinit(pconn);

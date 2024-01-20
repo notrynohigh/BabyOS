@@ -15,4 +15,19 @@ config _TCPIP_SERVICE_ENABLE
     default n
     depends on _BOS_SERVICES_ENABLE 
 
+config _NTP_SERVER_1
+    string "ntp server 1"
+    default "ntp1.aliyun.com"
+    depends on _TCPIP_SERVICE_ENABLE
+
+config _NTP_SERVER_2
+    string "ntp server 2"
+    default "ntp2.aliyun.com"
+    depends on _TCPIP_SERVICE_ENABLE    
+
+config _NTP_SERVER_3
+    string "ntp server 3"
+    default "ntp3.aliyun.com"
+    depends on _TCPIP_SERVICE_ENABLE    
+
 endmenu

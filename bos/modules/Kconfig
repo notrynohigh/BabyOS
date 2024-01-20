@@ -380,11 +380,6 @@ config CONNECT_RECVBUF_MAX
     default 1024
     depends on _NETIF_ENABLE
 
-config CONNECT_NUMBER_MAX
-    int "The number of connections that existed at the same time"
-    default 2
-    depends on _NETIF_ENABLE
-
 config SERVER_MAX_CONNECTIONS
     int "The maximum number of connections that can be saved on the server"
     default 2
