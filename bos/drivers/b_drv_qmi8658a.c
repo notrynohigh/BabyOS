@@ -137,12 +137,12 @@ static int _bQMI8658AWriteCheckRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8
     return len;
 }
 
-// static void _bQMI8658ASOFTRESET(bDriverInterface_t *pdrv)
-// {
-//     uint8_t reset_reg_val = 0x0B;
-//     _bQMI8658AWriteCheckRegs(pdrv, RESET_REG, &reset_reg_val, 1);
-//     bHalDelayMs(50);
-// }
+static void _bQMI8658ASOFTRESET(bDriverInterface_t *pdrv)
+{
+    uint8_t reset_reg_val = 0x0B;
+    _bQMI8658AWriteCheckRegs(pdrv, RESET_REG, &reset_reg_val, 1);
+    bHalDelayMs(50);
+}
 
 static int _bQMI8658AGetID(bDriverInterface_t *pdrv, uint8_t *id)
 {
@@ -273,6 +273,8 @@ int bQMI8658A_Init(bDriverInterface_t *pdrv)
     {
         return -1;
     }
+
+    _bQMI8658ASOFTRESET(pdrv);
 
     if (_bQMI8658ADefaultCfg(pdrv) < 0)
     {

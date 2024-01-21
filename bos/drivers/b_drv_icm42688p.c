@@ -205,7 +205,8 @@ typedef enum
  */
 #define DRIVER_NAME ICM42688P
 
-#define ICM42688Q_ID 0x47
+#define ICM42688P_ID 0x47
+
 /**
  * }
  */
@@ -479,7 +480,7 @@ int bICM42688P_Init(bDriverInterface_t *pdrv)
         return -1;
     }
 
-    if (id != ICM42688Q_ID)
+    if (id != ICM42688P_ID)
     {
         return -1;
     }

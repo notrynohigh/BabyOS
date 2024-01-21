@@ -10,8 +10,30 @@
 /*Includes ----------------------------------------------*/
 #include "b_config.h"
 #include "hal/inc/b_hal_gpio.h"
+#include "utils/inc/b_util_log.h"
 
 #if defined(AT32F403Axx)
+static const char *TAG = "BOS_MCU_AT_AT32F403A";
+
+void _assert(const char *str_, const char *tag, uint32_t location)
+{
+    b_log_e("Location: %s %d.\r\n", tag, location);
+    if (str_ != NULL)
+    {
+        b_log_e("Assert info: %s.\r\n", str_);
+    }
+    while (1)
+    {
+    }
+}
+
+#define assert(test_)                       \
+    do                                      \
+    {                                       \
+        if (!(test_))                       \
+            _assert(#test_, TAG, __LINE__); \
+    } while (0)
+
 #pragma anon_unions   // 在使用匿名联合的地方添加这个指令
 #define __IO volatile /*!< Defines 'read / write' permissions */
 /**
@@ -23,67 +45,78 @@ typedef enum
     TRUE  = !FALSE
 } confirm_state;
 
-/**
- * @brief crm periph clock
- */
+/*************** AT32F403A_407_Firmware start ***************/
+#define PERIPH_BASE ((uint32_t)0x40000000)
+#define APB1PERIPH_BASE (PERIPH_BASE + 0x00000)
+#define APB2PERIPH_BASE (PERIPH_BASE + 0x10000)
+#define AHBPERIPH_BASE (PERIPH_BASE + 0x20000)
+#define CRM_BASE (AHBPERIPH_BASE + 0x1000)
+
+#define REG8(addr) *(volatile uint8_t *)(addr)
+#define REG16(addr) *(volatile uint16_t *)(addr)
+#define REG32(addr) *(volatile uint32_t *)(addr)
+#define PERIPH_REG(periph_base, value) REG32((periph_base + (value >> 16)))
+#define PERIPH_REG_BIT(value) (0x1U << (value & 0x1F))
+#define CRM_REG(value) PERIPH_REG(CRM_BASE, value)
+#define CRM_REG_BIT(value) PERIPH_REG_BIT(value)
+
+#define MAKE_VALUE(reg_offset, bit_num) (uint32_t)(((reg_offset) << 16) | (bit_num & 0x1F))
+
 typedef enum
 {
-    /* ahb periph */
-    CRM_DMA1_PERIPH_CLOCK  = MAKE_VALUE(0x14, 0),  /*!< dma1 periph clock */
-    CRM_DMA2_PERIPH_CLOCK  = MAKE_VALUE(0x14, 1),  /*!< dma2 periph clock */
-    CRM_CRC_PERIPH_CLOCK   = MAKE_VALUE(0x14, 6),  /*!< crc periph clock */
-    CRM_XMC_PERIPH_CLOCK   = MAKE_VALUE(0x14, 8),  /*!< xmc periph clock */
-    CRM_SDIO1_PERIPH_CLOCK = MAKE_VALUE(0x14, 10), /*!< sdio1 periph clock */
-    CRM_SDIO2_PERIPH_CLOCK = MAKE_VALUE(0x14, 11), /*!< sdio2 periph clock */
     /* apb2 periph */
-    CRM_IOMUX_PERIPH_CLOCK  = MAKE_VALUE(0x18, 0),  /*!< iomux periph clock */
-    CRM_GPIOA_PERIPH_CLOCK  = MAKE_VALUE(0x18, 2),  /*!< gpioa periph clock */
-    CRM_GPIOB_PERIPH_CLOCK  = MAKE_VALUE(0x18, 3),  /*!< gpiob periph clock */
-    CRM_GPIOC_PERIPH_CLOCK  = MAKE_VALUE(0x18, 4),  /*!< gpioc periph clock */
-    CRM_GPIOD_PERIPH_CLOCK  = MAKE_VALUE(0x18, 5),  /*!< gpiod periph clock */
-    CRM_GPIOE_PERIPH_CLOCK  = MAKE_VALUE(0x18, 6),  /*!< gpioe periph clock */
-    CRM_ADC1_PERIPH_CLOCK   = MAKE_VALUE(0x18, 9),  /*!< adc1 periph clock */
-    CRM_ADC2_PERIPH_CLOCK   = MAKE_VALUE(0x18, 10), /*!< adc2 periph clock */
-    CRM_TMR1_PERIPH_CLOCK   = MAKE_VALUE(0x18, 11), /*!< tmr1 periph clock */
-    CRM_SPI1_PERIPH_CLOCK   = MAKE_VALUE(0x18, 12), /*!< spi1 periph clock */
-    CRM_TMR8_PERIPH_CLOCK   = MAKE_VALUE(0x18, 13), /*!< tmr8 periph clock */
-    CRM_USART1_PERIPH_CLOCK = MAKE_VALUE(0x18, 14), /*!< usart1 periph clock */
-    CRM_ADC3_PERIPH_CLOCK   = MAKE_VALUE(0x18, 15), /*!< adc3 periph clock */
-    CRM_TMR9_PERIPH_CLOCK   = MAKE_VALUE(0x18, 19), /*!< tmr9 periph clock */
-    CRM_TMR10_PERIPH_CLOCK  = MAKE_VALUE(0x18, 20), /*!< tmr10 periph clock */
-    CRM_TMR11_PERIPH_CLOCK  = MAKE_VALUE(0x18, 21), /*!< tmr11 periph clock */
-    CRM_ACC_PERIPH_CLOCK    = MAKE_VALUE(0x18, 22), /*!< acc periph clock */
-    CRM_I2C3_PERIPH_CLOCK   = MAKE_VALUE(0x18, 23), /*!< i2c3 periph clock */
-    CRM_USART6_PERIPH_CLOCK = MAKE_VALUE(0x18, 24), /*!< usart6 periph clock */
-    CRM_UART7_PERIPH_CLOCK  = MAKE_VALUE(0x18, 25), /*!< uart7 periph clock */
-    CRM_UART8_PERIPH_CLOCK  = MAKE_VALUE(0x18, 26), /*!< uart8 periph clock */
-    /* apb1 periph */
-    CRM_TMR2_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 0),  /*!< tmr2 periph clock */
-    CRM_TMR3_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 1),  /*!< tmr3 periph clock */
-    CRM_TMR4_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 2),  /*!< tmr4 periph clock */
-    CRM_TMR5_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 3),  /*!< tmr5 periph clock */
-    CRM_TMR6_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 4),  /*!< tmr6 periph clock */
-    CRM_TMR7_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 5),  /*!< tmr7 periph clock */
-    CRM_TMR12_PERIPH_CLOCK  = MAKE_VALUE(0x1C, 6),  /*!< tmr12 periph clock */
-    CRM_TMR13_PERIPH_CLOCK  = MAKE_VALUE(0x1C, 7),  /*!< tmr13 periph clock */
-    CRM_TMR14_PERIPH_CLOCK  = MAKE_VALUE(0x1C, 8),  /*!< tmr14 periph clock */
-    CRM_WWDT_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 11), /*!< wwdt periph clock */
-    CRM_SPI2_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 14), /*!< spi2 periph clock */
-    CRM_SPI3_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 15), /*!< spi3 periph clock */
-    CRM_SPI4_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 16), /*!< spi4 periph clock */
-    CRM_USART2_PERIPH_CLOCK = MAKE_VALUE(0x1C, 17), /*!< usart2 periph clock */
-    CRM_USART3_PERIPH_CLOCK = MAKE_VALUE(0x1C, 18), /*!< usart3 periph clock */
-    CRM_UART4_PERIPH_CLOCK  = MAKE_VALUE(0x1C, 19), /*!< uart4 periph clock */
-    CRM_UART5_PERIPH_CLOCK  = MAKE_VALUE(0x1C, 20), /*!< uart5 periph clock */
-    CRM_I2C1_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 21), /*!< i2c1 periph clock */
-    CRM_I2C2_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 22), /*!< i2c2 periph clock */
-    CRM_USB_PERIPH_CLOCK    = MAKE_VALUE(0x1C, 23), /*!< usb periph clock */
-    CRM_CAN1_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 25), /*!< can1 periph clock */
-    CRM_CAN2_PERIPH_CLOCK   = MAKE_VALUE(0x1C, 26), /*!< can2 periph clock */
-    CRM_BPR_PERIPH_CLOCK    = MAKE_VALUE(0x1C, 27), /*!< bpr periph clock */
-    CRM_PWC_PERIPH_CLOCK    = MAKE_VALUE(0x1C, 28), /*!< pwc periph clock */
-    CRM_DAC_PERIPH_CLOCK    = MAKE_VALUE(0x1C, 29)  /*!< dac periph clock */
+    CRM_IOMUX_PERIPH_CLOCK = MAKE_VALUE(0x18, 0), /*!< iomux periph clock */
+    CRM_GPIOA_PERIPH_CLOCK = MAKE_VALUE(0x18, 2), /*!< gpioa periph clock */
+    CRM_GPIOB_PERIPH_CLOCK = MAKE_VALUE(0x18, 3), /*!< gpiob periph clock */
+    CRM_GPIOC_PERIPH_CLOCK = MAKE_VALUE(0x18, 4), /*!< gpioc periph clock */
+    CRM_GPIOD_PERIPH_CLOCK = MAKE_VALUE(0x18, 5), /*!< gpiod periph clock */
+    CRM_GPIOE_PERIPH_CLOCK = MAKE_VALUE(0x18, 6), /*!< gpioe periph clock */
+
+    CRM_ERROR_PERIPH_CLOCK = 0XFF,
+
 } crm_periph_clock_type;
+
+typedef enum
+{
+    GPIO_OUTPUT_PUSH_PULL  = 0x00, /*!< output push-pull */
+    GPIO_OUTPUT_OPEN_DRAIN = 0x04, /*!< output open-drain */
+
+    GPIO_OUTPUT_ERROR = 0XFF
+} gpio_output_type;
+
+typedef enum
+{
+    GPIO_PULL_NONE = 0x0004, /*!< floating for input, no pull for output */
+    GPIO_PULL_UP   = 0x0018, /*!< pull-up */
+    GPIO_PULL_DOWN = 0x0028, /*!< pull-down */
+
+    GPIO_PULL_ERROR = 0xFFFF
+} gpio_pull_type;
+
+typedef enum
+{
+    GPIO_MODE_INPUT  = 0x00, /*!< gpio input mode */
+    GPIO_MODE_OUTPUT = 0x10, /*!< gpio output mode */
+    GPIO_MODE_MUX    = 0x08, /*!< gpio mux function mode */
+    GPIO_MODE_ANALOG = 0x03, /*!< gpio analog in/out mode */
+
+    GPIO_MODE_ERROR = 0xFF
+} gpio_mode_type;
+
+typedef enum
+{
+    GPIO_DRIVE_STRENGTH_STRONGER = 0x01, /*!< stronger sourcing/sinking strength */
+    GPIO_DRIVE_STRENGTH_MODERATE = 0x02  /*!< moderate sourcing/sinking strength */
+} gpio_drive_type;
+
+typedef struct
+{
+    uint32_t         gpio_pins;           /*!< pins number selection */
+    gpio_output_type gpio_out_type;       /*!< output type selection */
+    gpio_pull_type   gpio_pull;           /*!< pull type selection */
+    gpio_mode_type   gpio_mode;           /*!< mode selection */
+    gpio_drive_type  gpio_drive_strength; /*!< drive strength selection */
+} gpio_init_type;
 
 /**
  * @brief type define gpio register all
@@ -599,71 +632,7 @@ typedef struct
     };
 } iomux_type;
 
-/**
- * @brief gpio output type
- */
-typedef enum
-{
-    GPIO_OUTPUT_PUSH_PULL  = 0x00, /*!< output push-pull */
-    GPIO_OUTPUT_OPEN_DRAIN = 0x04  /*!< output open-drain */
-} gpio_output_type;
-
-/**
- * @brief gpio pull type
- */
-typedef enum
-{
-    GPIO_PULL_NONE = 0x0004, /*!< floating for input, no pull for output */
-    GPIO_PULL_UP   = 0x0018, /*!< pull-up */
-    GPIO_PULL_DOWN = 0x0028  /*!< pull-down */
-} gpio_pull_type;
-
-/**
- * @brief gpio mode select
- */
-typedef enum
-{
-    GPIO_MODE_INPUT  = 0x00, /*!< gpio input mode */
-    GPIO_MODE_OUTPUT = 0x10, /*!< gpio output mode */
-    GPIO_MODE_MUX    = 0x08, /*!< gpio mux function mode */
-    GPIO_MODE_ANALOG = 0x03  /*!< gpio analog in/out mode */
-} gpio_mode_type;
-
-/**
- * @brief gpio output drive strength select
- */
-typedef enum
-{
-    GPIO_DRIVE_STRENGTH_STRONGER = 0x01, /*!< stronger sourcing/sinking strength */
-    GPIO_DRIVE_STRENGTH_MODERATE = 0x02  /*!< moderate sourcing/sinking strength */
-} gpio_drive_type;
-
-/**
- * @brief gpio init type
- */
-typedef struct
-{
-    uint32_t         gpio_pins;           /*!< pins number selection */
-    gpio_output_type gpio_out_type;       /*!< output type selection */
-    gpio_pull_type   gpio_pull;           /*!< pull type selection */
-    gpio_mode_type   gpio_mode;           /*!< mode selection */
-    gpio_drive_type  gpio_drive_strength; /*!< drive strength selection */
-} gpio_init_type;
-
-#define PERIPH_BASE ((uint32_t)0x40000000)
-#define AHBPERIPH_BASE (PERIPH_BASE + 0x20000)
-#define CRM_BASE (AHBPERIPH_BASE + 0x1000)
-
-#define MAKE_VALUE(reg_offset, bit_num) (uint32_t)(((reg_offset) << 16) | (bit_num & 0x1F))
-#define PERIPH_REG(periph_base, value) REG32((periph_base + (value >> 16)))
-#define PERIPH_REG_BIT(value) (0x1U << (value & 0x1F))
-
-#define CRM_REG(value) PERIPH_REG(CRM_BASE, value)
-#define CRM_REG_BIT(value) PERIPH_REG_BIT(value)
-
-#define APB2PERIPH_BASE (PERIPH_BASE + 0x10000)
 #define IOMUX_BASE (APB2PERIPH_BASE + 0x0000)
-#define EXINT_BASE (APB2PERIPH_BASE + 0x0400)
 #define GPIOA_BASE (APB2PERIPH_BASE + 0x0800)
 #define GPIOB_BASE (APB2PERIPH_BASE + 0x0C00)
 #define GPIOC_BASE (APB2PERIPH_BASE + 0x1000)
@@ -676,6 +645,10 @@ typedef struct
 #define GPIOD ((gpio_type *)GPIOD_BASE)
 #define GPIOE ((gpio_type *)GPIOE_BASE)
 #define IOMUX ((iomux_type *)IOMUX_BASE)
+
+#define IS_GPIO_TYPE(var)                                                                        \
+    ((var == GPIOA_BASE) || (var == GPIOB_BASE) || (var == GPIOC_BASE) || (var == GPIOD_BASE) || \
+     (var == GPIOE_BASE))
 
 #define GPIO_PINS_0 0x0001   /*!< gpio pins number 0 */
 #define GPIO_PINS_1 0x0002   /*!< gpio pins number 1 */
@@ -695,39 +668,56 @@ typedef struct
 #define GPIO_PINS_15 0x8000  /*!< gpio pins number 15 */
 #define GPIO_PINS_ALL 0xFFFF /*!< gpio all pins */
 
-/*************** private start ***************/
+#define IS_GPIO_PINS_TYPE(TYPE)                                                          \
+    (((TYPE) == GPIO_PINS_0) || ((TYPE) == GPIO_PINS_1) || ((TYPE) == GPIO_PINS_2) ||    \
+     ((TYPE) == GPIO_PINS_3) || ((TYPE) == GPIO_PINS_4) || ((TYPE) == GPIO_PINS_5) ||    \
+     ((TYPE) == GPIO_PINS_6) || ((TYPE) == GPIO_PINS_7) || ((TYPE) == GPIO_PINS_8) ||    \
+     ((TYPE) == GPIO_PINS_9) || ((TYPE) == GPIO_PINS_10) || ((TYPE) == GPIO_PINS_11) ||  \
+     ((TYPE) == GPIO_PINS_12) || ((TYPE) == GPIO_PINS_13) || ((TYPE) == GPIO_PINS_14) || \
+     ((TYPE) == GPIO_PINS_15))
+
 /**
  * @brief  enable or disable the peripheral clock
  * @param  value
  *         this parameter can be one of the following values:
- *         - CRM_DMA1_PERIPH_CLOCK         - CRM_DMA2_PERIPH_CLOCK         - CRM_CRC_PERIPH_CLOCK -
- * CRM_XMC_PERIPH_CLOCK
- *         - CRM_SDIO1_PERIPH_CLOCK        - CRM_SDIO2_PERIPH_CLOCK        - CRM_EMAC_PERIPH_CLOCK
+ *         - CRM_DMA1_PERIPH_CLOCK         - CRM_DMA2_PERIPH_CLOCK         -
+ * CRM_CRC_PERIPH_CLOCK - CRM_XMC_PERIPH_CLOCK
+ *         - CRM_SDIO1_PERIPH_CLOCK        - CRM_SDIO2_PERIPH_CLOCK        -
+ * CRM_EMAC_PERIPH_CLOCK
  * - CRM_EMACTX_PERIPH_CLOCK
- *         - CRM_EMACRX_PERIPH_CLOCK       - CRM_EMACPTP_PERIPH_CLOCK      - CRM_IOMUX_PERIPH_CLOCK
+ *         - CRM_EMACRX_PERIPH_CLOCK       - CRM_EMACPTP_PERIPH_CLOCK      -
+ * CRM_IOMUX_PERIPH_CLOCK
  * - CRM_GPIOA_PERIPH_CLOCK
- *         - CRM_GPIOB_PERIPH_CLOCK        - CRM_GPIOC_PERIPH_CLOCK        - CRM_GPIOD_PERIPH_CLOCK
+ *         - CRM_GPIOB_PERIPH_CLOCK        - CRM_GPIOC_PERIPH_CLOCK        -
+ * CRM_GPIOD_PERIPH_CLOCK
  * - CRM_GPIOE_PERIPH_CLOCK
- *         - CRM_ADC1_PERIPH_CLOCK         - CRM_ADC2_PERIPH_CLOCK         - CRM_TMR1_PERIPH_CLOCK
+ *         - CRM_ADC1_PERIPH_CLOCK         - CRM_ADC2_PERIPH_CLOCK         -
+ * CRM_TMR1_PERIPH_CLOCK
  * - CRM_SPI1_PERIPH_CLOCK
- *         - CRM_TMR8_PERIPH_CLOCK         - CRM_USART1_PERIPH_CLOCK       - CRM_ADC3_PERIPH_CLOCK
+ *         - CRM_TMR8_PERIPH_CLOCK         - CRM_USART1_PERIPH_CLOCK       -
+ * CRM_ADC3_PERIPH_CLOCK
  * - CRM_TMR9_PERIPH_CLOCK
- *         - CRM_TMR10_PERIPH_CLOCK        - CRM_TMR11_PERIPH_CLOCK        - CRM_ACC_PERIPH_CLOCK -
- * CRM_I2C3_PERIPH_CLOCK
- *         - CRM_USART6_PERIPH_CLOCK       - CRM_UART7_PERIPH_CLOCK        - CRM_UART8_PERIPH_CLOCK
+ *         - CRM_TMR10_PERIPH_CLOCK        - CRM_TMR11_PERIPH_CLOCK        -
+ * CRM_ACC_PERIPH_CLOCK - CRM_I2C3_PERIPH_CLOCK
+ *         - CRM_USART6_PERIPH_CLOCK       - CRM_UART7_PERIPH_CLOCK        -
+ * CRM_UART8_PERIPH_CLOCK
  * - CRM_TMR2_PERIPH_CLOCK
- *         - CRM_TMR3_PERIPH_CLOCK         - CRM_TMR4_PERIPH_CLOCK         - CRM_TMR5_PERIPH_CLOCK
+ *         - CRM_TMR3_PERIPH_CLOCK         - CRM_TMR4_PERIPH_CLOCK         -
+ * CRM_TMR5_PERIPH_CLOCK
  * - CRM_TMR6_PERIPH_CLOCK
- *         - CRM_TMR7_PERIPH_CLOCK         - CRM_TMR12_PERIPH_CLOCK        - CRM_TMR13_PERIPH_CLOCK
+ *         - CRM_TMR7_PERIPH_CLOCK         - CRM_TMR12_PERIPH_CLOCK        -
+ * CRM_TMR13_PERIPH_CLOCK
  * - CRM_TMR14_PERIPH_CLOCK
- *         - CRM_WWDT_PERIPH_CLOCK         - CRM_SPI2_PERIPH_CLOCK         - CRM_SPI3_PERIPH_CLOCK
+ *         - CRM_WWDT_PERIPH_CLOCK         - CRM_SPI2_PERIPH_CLOCK         -
+ * CRM_SPI3_PERIPH_CLOCK
  * - CRM_SPI4_PERIPH_CLOCK
- *         - CRM_USART2_PERIPH_CLOCK       - CRM_USART3_PERIPH_CLOCK       - CRM_UART4_PERIPH_CLOCK
+ *         - CRM_USART2_PERIPH_CLOCK       - CRM_USART3_PERIPH_CLOCK       -
+ * CRM_UART4_PERIPH_CLOCK
  * - CRM_UART5_PERIPH_CLOCK
- *         - CRM_I2C1_PERIPH_CLOCK         - CRM_I2C2_PERIPH_CLOCK         - CRM_USB_PERIPH_CLOCK -
- * CRM_CAN1_PERIPH_CLOCK
- *         - CRM_CAN2_PERIPH_CLOCK         - CRM_BPR_PERIPH_CLOCK          - CRM_PWC_PERIPH_CLOCK -
- * CRM_DAC_PERIPH_CLOCK
+ *         - CRM_I2C1_PERIPH_CLOCK         - CRM_I2C2_PERIPH_CLOCK         -
+ * CRM_USB_PERIPH_CLOCK - CRM_CAN1_PERIPH_CLOCK
+ *         - CRM_CAN2_PERIPH_CLOCK         - CRM_BPR_PERIPH_CLOCK          -
+ * CRM_PWC_PERIPH_CLOCK - CRM_DAC_PERIPH_CLOCK
  * @param  new_state (TRUE or FALSE)
  * @retval none
  */
@@ -832,60 +822,254 @@ static void gpio_init(gpio_type *gpio_x, gpio_init_type *gpio_init_struct)
     }
 }
 
-/*************** private end ***************/
+/*************** AT32F403A_407_Firmware end ***************/
+#define IS_CRM_PERIPH_CLOCK_TYPE(TYPE)                                           \
+    (((TYPE) == CRM_GPIOA_PERIPH_CLOCK) || ((TYPE) == CRM_GPIOB_PERIPH_CLOCK) || \
+     ((TYPE) == CRM_GPIOC_PERIPH_CLOCK) || ((TYPE) == CRM_GPIOD_PERIPH_CLOCK) || \
+     ((TYPE) == CRM_GPIOE_PERIPH_CLOCK))
 
-/*************** mid start ***************/
-// 实现bos和库函数的转换函数
-// port转换
+#define IS_GPIO_OUTPUT_TYPE(TYPE) \
+    (((TYPE) == GPIO_OUTPUT_PUSH_PULL) || ((TYPE) == GPIO_OUTPUT_OPEN_DRAIN))
+
+#define IS_GPIO_PULL_TYPE(TYPE) \
+    (((TYPE) == GPIO_PULL_NONE) || ((TYPE) == GPIO_PULL_UP) || ((TYPE) == GPIO_PULL_DOWN))
+
+#define IS_GPIO_MODE_TYPE(TYPE) (((TYPE) == GPIO_MODE_INPUT) || ((TYPE) == GPIO_MODE_OUTPUT))
+
+#define IS_GPIO_DRIVE_TYPE(TYPE) \
+    (((TYPE) == GPIO_DRIVE_STRENGTH_STRONGER) || ((TYPE) == GPIO_DRIVE_STRENGTH_MODERATE))
+
 static gpio_type *transform_bos_port(bHalGPIOPort_t port)
 {
+    gpio_type *gpio_x = NULL;
+
+    switch (port)
+    {
+        case B_HAL_GPIOA:
+            gpio_x = GPIOA;
+            break;
+        case B_HAL_GPIOB:
+            gpio_x = GPIOB;
+            break;
+        case B_HAL_GPIOC:
+            gpio_x = GPIOC;
+            break;
+        case B_HAL_GPIOD:
+            gpio_x = GPIOD;
+            break;
+        case B_HAL_GPIOE:
+            gpio_x = GPIOE;
+            break;
+        default:
+            break;
+    }
+
+    return gpio_x;
 }
 
 // pin转换
 static uint32_t transform_bos_pin(bHalGPIOPin_t pin)
 {
+    uint32_t gpio_pins_X = 0;
+
+    switch (pin)
+    {
+        case B_HAL_PIN0:
+            gpio_pins_X = GPIO_PINS_0;
+            break;
+        case B_HAL_PIN1:
+            gpio_pins_X = GPIO_PINS_1;
+            break;
+        case B_HAL_PIN2:
+            gpio_pins_X = GPIO_PINS_2;
+            break;
+        case B_HAL_PIN3:
+            gpio_pins_X = GPIO_PINS_3;
+            break;
+        case B_HAL_PIN4:
+            gpio_pins_X = GPIO_PINS_4;
+            break;
+        case B_HAL_PIN5:
+            gpio_pins_X = GPIO_PINS_5;
+            break;
+        case B_HAL_PIN6:
+            gpio_pins_X = GPIO_PINS_6;
+            break;
+        case B_HAL_PIN7:
+            gpio_pins_X = GPIO_PINS_7;
+            break;
+        case B_HAL_PIN8:
+            gpio_pins_X = GPIO_PINS_8;
+            break;
+        case B_HAL_PIN9:
+            gpio_pins_X = GPIO_PINS_9;
+            break;
+        case B_HAL_PIN10:
+            gpio_pins_X = GPIO_PINS_10;
+            break;
+        case B_HAL_PIN11:
+            gpio_pins_X = GPIO_PINS_11;
+            break;
+        case B_HAL_PIN12:
+            gpio_pins_X = GPIO_PINS_12;
+            break;
+        case B_HAL_PIN13:
+            gpio_pins_X = GPIO_PINS_13;
+            break;
+        case B_HAL_PIN14:
+            gpio_pins_X = GPIO_PINS_14;
+            break;
+        case B_HAL_PIN15:
+            gpio_pins_X = GPIO_PINS_15;
+            break;
+        default:
+            break;
+    }
+
+    return gpio_pins_X;
 }
 
 // dir转换
 static gpio_mode_type transform_bos_dir(bHalGPIODir_t dir)
 {
+    gpio_mode_type gpio_mode = GPIO_MODE_ERROR;
+
+    switch (dir)
+    {
+        case B_HAL_GPIO_INPUT:
+            gpio_mode = GPIO_MODE_INPUT;
+            break;
+        case B_HAL_GPIO_OUTPUT:
+            gpio_mode = GPIO_MODE_OUTPUT;
+            break;
+
+        default:
+            break;
+    }
+
+    return gpio_mode;
 }
 
 // pull转换
 static gpio_pull_type transform_bos_pull(bHalGPIOPull_t pull)
 {
+    gpio_pull_type gpio_pull = GPIO_PULL_ERROR;
+
+    switch (pull)
+    {
+        case B_HAL_GPIO_NOPULL:
+            gpio_pull = GPIO_PULL_NONE;
+            break;
+        case B_HAL_GPIO_PULLUP:
+            gpio_pull = GPIO_PULL_UP;
+            break;
+        case B_HAL_GPIO_PULLDOWN:
+            gpio_pull = GPIO_PULL_DOWN;
+            break;
+
+        default:
+            break;
+    }
+
+    return gpio_pull;
 }
 
 // clock转换
 static crm_periph_clock_type transform_bos_clock(bHalGPIOPort_t port)
 {
+    crm_periph_clock_type CRM_GPIOX_PERIPH_CLOCK = CRM_ERROR_PERIPH_CLOCK;
+
+    switch (port)
+    {
+        case B_HAL_GPIOA:
+            CRM_GPIOX_PERIPH_CLOCK = CRM_GPIOA_PERIPH_CLOCK;
+            break;
+        case B_HAL_GPIOB:
+            CRM_GPIOX_PERIPH_CLOCK = CRM_GPIOB_PERIPH_CLOCK;
+            break;
+        case B_HAL_GPIOC:
+            CRM_GPIOX_PERIPH_CLOCK = CRM_GPIOC_PERIPH_CLOCK;
+            break;
+        case B_HAL_GPIOD:
+            CRM_GPIOX_PERIPH_CLOCK = CRM_GPIOD_PERIPH_CLOCK;
+            break;
+        case B_HAL_GPIOE:
+            CRM_GPIOX_PERIPH_CLOCK = CRM_GPIOE_PERIPH_CLOCK;
+            break;
+
+        default:
+            break;
+    }
+
+    assert(CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOA_PERIPH_CLOCK ||
+           CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOB_PERIPH_CLOCK ||
+           CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOC_PERIPH_CLOCK ||
+           CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOD_PERIPH_CLOCK ||
+           CRM_GPIOX_PERIPH_CLOCK == CRM_GPIOE_PERIPH_CLOCK);
+
+    return CRM_GPIOX_PERIPH_CLOCK;
 }
-/*************** mid end ***************/
 
 void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, bHalGPIOPull_t pull)
 {
-    gpio_init_type gpio_init_struct;
+    uint32_t              gpio_pins_X            = transform_bos_pin(pin);
+    gpio_type            *gpio_x                 = transform_bos_port(port);
+    crm_periph_clock_type CRM_GPIOX_PERIPH_CLOCK = transform_bos_clock(port);
+    gpio_init_type        gpio_init_struct       = {0};
 
-    /* enable the gpioa clock */
-    crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
+    assert(IS_GPIO_PINS_TYPE(gpio_pins_X));
+    assert(IS_CRM_PERIPH_CLOCK_TYPE((uint32_t)gpio_x));
+    assert(IS_CRM_PERIPH_CLOCK_TYPE(CRM_GPIOX_PERIPH_CLOCK));
 
-    /* set default parameter */
+    crm_periph_clock_enable(CRM_GPIOX_PERIPH_CLOCK, TRUE);
+
     gpio_default_para_init(&gpio_init_struct);
 
-    /* configure the gpio */
     gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_STRONGER;
     gpio_init_struct.gpio_out_type       = GPIO_OUTPUT_PUSH_PULL;
-    gpio_init_struct.gpio_mode           = GPIO_MODE_OUTPUT;
-    gpio_init_struct.gpio_pins           = GPIO_PINS_1;
-    gpio_init_struct.gpio_pull           = GPIO_PULL_NONE;
-    gpio_init(GPIOA, &gpio_init_struct);
+    gpio_init_struct.gpio_mode           = transform_bos_dir(dir);
+    gpio_init_struct.gpio_pins           = gpio_pins_X;
+    gpio_init_struct.gpio_pull           = transform_bos_pull(pull);
+
+    assert(IS_GPIO_MODE_TYPE(gpio_init_struct.gpio_mode));
+    assert(IS_GPIO_PULL_TYPE(gpio_init_struct.gpio_pull));
+
+    gpio_init(gpio_x, &gpio_init_struct);
 }
 
 void bMcuGpioWritePin(bHalGPIOPort_t port, bHalGPIOPin_t pin, uint8_t s)
 {
+    uint32_t   gpio_pins_X = transform_bos_pin(pin);
+    gpio_type *gpio_x      = transform_bos_port(port);
+
+    assert(IS_GPIO_PINS_TYPE(gpio_pins_X));
+    assert(IS_GPIO_TYPE((uint32_t)gpio_x));
+
+    if (s)
+    {
+        gpio_x->scr = gpio_pins_X;
+    }
+    else
+    {
+        gpio_x->clr = gpio_pins_X;
+    }
 }
 
 uint8_t bMcuGpioReadPin(bHalGPIOPort_t port, bHalGPIOPin_t pin)
 {
+    uint32_t   gpio_pins_X = transform_bos_pin(pin);
+    gpio_type *gpio_x      = transform_bos_port(port);
+
+    assert(IS_GPIO_PINS_TYPE(gpio_pins_X));
+    assert(IS_CRM_PERIPH_CLOCK_TYPE((uint32_t)gpio_x));
+
+    if (gpio_pins_X != (gpio_pins_X & gpio_x->idt))
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
 #endif
