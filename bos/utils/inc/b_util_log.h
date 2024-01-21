@@ -159,6 +159,18 @@ extern "C" {
         b_log("%02x ", (buf)[ihex]);         \
     }
 
+#define b_assert(expr)                                \
+    do                                                \
+    {                                                 \
+        if (!(expr))                                  \
+        {                                             \
+            b_log_e("Assertion failed: %s\n", #expr); \
+            for (;;)                                  \
+            {                                         \
+            }                                         \
+        }                                             \
+    } while (0)
+
 /**
  * \}
  */

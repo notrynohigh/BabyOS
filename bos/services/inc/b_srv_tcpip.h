@@ -40,8 +40,6 @@ extern "C" {
 
 #include "b_config.h"
 
-#define _TCPIP_SERVICE_ENABLE 1
-
 #if (defined(_TCPIP_SERVICE_ENABLE) && (_TCPIP_SERVICE_ENABLE == 1))
 
 #include "modules/inc/b_mod_netif.h"

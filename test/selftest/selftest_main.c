@@ -13,12 +13,17 @@
 
 int main()
 {
+
+    int a = 1;
+
     port_init();
 
     b_log("hello world\r\n");
     b_log_i("hello world\r\n");
     b_log_w("hello world\r\n");
     b_log_e("hello world\r\n");
+
+    b_assert(a == 1);
 
     bInit();
     while (1)
