@@ -108,6 +108,7 @@ WIFI_RECV_BUF_LEN=1024
 _SELECT_ENABLE=y
 SELECT_FDS_NUMBER=32
 # _GUI_ENABLE is not set
+# _NETIF_ENABLE is not set
 # end of Modules Configuration
 
 #
@@ -179,4 +180,5 @@ MEMP_MAX_SIZE=10240
 #
 _BOS_SERVICES_ENABLE=y
 _PROTOCOL_SERVICE_ENABLE=y
+# _TCPIP_SERVICE_ENABLE is not set
 # end of Services Configuration
