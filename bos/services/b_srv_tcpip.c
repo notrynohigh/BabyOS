@@ -144,9 +144,9 @@ static void _bNtpConnCallback(bNetifConnEvent_t event, void *param, void *arg)
     bNetifConn_t *pconn = (bNetifConn_t *)param;
     if (event == B_EVENT_DNS_OK)
     {
-        b_log("conn ip: %d.%d.%d.%d port:%d\r\n", ((pconn->remote_ip >> 24) & 0xff),
-              ((pconn->remote_ip >> 16) & 0xff), ((pconn->remote_ip >> 8) & 0xff),
-              ((pconn->remote_ip >> 0) & 0xff), pconn->remote_port);
+        b_log("conn ip: %d.%d.%d.%d port:%d\r\n", ((pconn->remote_ip >> 0) & 0xff),
+              ((pconn->remote_ip >> 8) & 0xff), ((pconn->remote_ip >> 16) & 0xff),
+              ((pconn->remote_ip >> 24) & 0xff), pconn->remote_port);
     }
 }
 

@@ -57,6 +57,10 @@
  * transport.
  */
 #define LWIP_DNS 1
+/**
+ * LWIP_RAW==1: Enable application layer to hook into the IP layer itself.
+ */
+#define LWIP_RAW 1
 
 #if defined(NETIF_CHECKSUM_BY_HARDWARE) && (NETIF_CHECKSUM_BY_HARDWARE == 1)
 /*----- Value in opt.h for CHECKSUM_GEN_IP: 1 -----*/

@@ -36,9 +36,11 @@
 #include "b_section.h"
 #include "core/inc/b_core.h"
 #include "core/inc/b_device.h"
+#include "core/inc/b_timer.h"
 #include "drivers/inc/b_driver_cmd.h"
 #include "hal/inc/b_hal.h"
 #include "utils/inc/b_util_log.h"
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -703,6 +705,123 @@ static void _bNetifClientCore()
 
 BOS_REG_POLLING_FUNC(_bNetifClientCore);
 
+// PING
+
+static bNetifPing_t bNetifPingInstance = {
+    .pcb      = NULL,
+    .state    = B_CONN_DEINIT,
+    .timer_id = NULL,
+};
+
+static void _bNetifPingResult(int result, uint32_t ms)
+{
+    if (bNetifPingInstance.timer_id != NULL)
+    {
+        bTimerStop(bNetifPingInstance.timer_id);
+    }
+    if (bNetifPingInstance.pcb != NULL)
+    {
+        raw_remove(bNetifPingInstance.pcb);
+        bNetifPingInstance.pcb = NULL;
+    }
+
+    bNetifPingInstance.state = B_CONN_DEINIT;
+    if (bNetifPingInstance.callback != NULL)
+    {
+        bNetifPingInstance.callback(result, ms, bNetifPingInstance.user_data);
+    }
+}
+
+static void _bNetifSendPing(uint32_t ip)
+{
+    struct ip_hdr        *ip_pack = NULL;
+    struct icmp_echo_hdr *icmp_pack;
+    struct pbuf          *p     = NULL;
+    static uint16_t       seqno = 0;
+    b_log("ping ip: %d.%d.%d.%d\r\n", ((ip >> 0) & 0xff), ((ip >> 8) & 0xff), ((ip >> 16) & 0xff),
+          ((ip >> 24) & 0xff));
+
+    p = pbuf_alloc(PBUF_IP, sizeof(struct icmp_echo_hdr) + 32, PBUF_RAM);
+    if (p == NULL)
+    {
+        _bNetifPingResult(-1, 0);
+        return;
+    }
+    icmp_pack         = (struct icmp_echo_hdr *)p->payload;
+    icmp_pack->code   = 0;
+    icmp_pack->type   = ICMP_ECHO;
+    icmp_pack->id     = PP_HTONS(0x1);
+    icmp_pack->seqno  = PP_HTONS(seqno);
+    icmp_pack->chksum = 0;
+    seqno += 1;
+    for (int i = 0; i < 26; i++)
+    {
+        ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + i] = 'a' + i;
+    }
+    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 26] = 'B';
+    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 27] = 'a';
+    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 28] = 'b';
+    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 29] = 'y';
+    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 30] = 'O';
+    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 31] = 'S';
+#if CHECKSUM_CHECK_ICMP
+    icmp_pack->chksum = inet_chksum(icmp_pack, p->len);
+#endif
+    if (bNetifPingInstance.pcb != NULL)
+    {
+        ip_addr_t ipaddr;
+        ipaddr.addr = ip;
+        raw_sendto(bNetifPingInstance.pcb, p, &ipaddr);
+        bNetifPingInstance.s_tick = bHalGetSysTick();
+    }
+    pbuf_free(p);
+    p = NULL;
+}
+
+static void _bPingDnsCallback(const char *name, const ip_addr_t *ipaddr, void *callback_arg)
+{
+    if (ipaddr == NULL)
+    {
+        b_log_e("dns error...\r\n");
+        _bNetifPingResult(-1, 0);
+    }
+    else
+    {
+        _bNetifSendPing(ipaddr->addr);
+    }
+}
+
+B_TIMER_CREATE_ATTR(bNetifPingTimerAttr);
+
+static void _bNetifPingTimerFunc(void *arg)
+{
+    b_log_e("ping timeout...\r\n");
+    _bNetifPingResult(-1, 0);
+}
+
+static u8_t _bNetifRawRecvFn(void *arg, struct raw_pcb *pcb, struct pbuf *p, const ip_addr_t *addr)
+{
+    struct ip_hdr        *ip_pack   = NULL;
+    struct icmp_echo_hdr *icmp_pack = NULL;
+    uint8_t               ip_hlen   = 0;
+    uint32_t              r_tick    = 0;
+    if (bNetifPingInstance.state != B_CONN_DEINIT && p != NULL)
+    {
+        r_tick  = bHalGetSysTick();
+        ip_pack = (struct ip_hdr *)p->payload;
+        ip_hlen = IPH_HL(ip_pack) * 4;
+        pbuf_header(p, -ip_hlen);
+        icmp_pack = (struct icmp_echo_hdr *)p->payload;
+        if (icmp_pack->code == 0 && icmp_pack->type == 0)
+        {
+            _bNetifPingResult(0, TICKS2MS((r_tick - bNetifPingInstance.s_tick)));
+            pbuf_free(p);
+            return 1;
+        }
+    }
+    return 0;
+}
+
 /**
  * \}
  */
@@ -936,6 +1055,57 @@ int bNetifConnDeinit(bNetifConn_t *pconn)
         return -1;
     }
     _bNetifTrigEvent(pconn, B_EVENT_DISCONNECT, NULL);
+    return 0;
+}
+
+// PING
+int bNetifPing(const char *remote, uint32_t timeout_ms, pbNetifPingCb_t cb, void *arg)
+{
+    if (remote == NULL || cb == NULL || timeout_ms == 0)
+    {
+        return -1;
+    }
+    if (bNetifPingInstance.state != B_CONN_DEINIT)
+    {
+        b_log_e("ping busy...\r\n");
+        return -2;
+    }
+    if (bNetifPingInstance.timer_id == NULL)
+    {
+        bNetifPingInstance.timer_id =
+            bTimerCreate(_bNetifPingTimerFunc, B_TIMER_ONCE, NULL, &bNetifPingTimerAttr);
+    }
+    if (bNetifPingInstance.pcb == NULL)
+    {
+        bNetifPingInstance.pcb = raw_new(IP_PROTO_ICMP);
+        if (bNetifPingInstance.pcb == NULL)
+        {
+            b_log_e("new pcb error...\r\n");
+            return -3;
+        }
+        raw_bind(bNetifPingInstance.pcb, IP4_ADDR_ANY);
+        raw_recv(bNetifPingInstance.pcb, _bNetifRawRecvFn, NULL);
+    }
+    bNetifPingInstance.callback  = cb;
+    bNetifPingInstance.user_data = arg;
+    bNetifPingInstance.state     = B_CONN_INIT;
+    bTimerStart(bNetifPingInstance.timer_id, timeout_ms);
+
+    ip_addr_t addr;
+    err_t     err = dns_gethostbyname(remote, &addr, _bPingDnsCallback, NULL);
+    if (err == ERR_OK)
+    {
+        _bNetifSendPing(addr.addr);
+    }
+    else if (err == ERR_INPROGRESS)
+    {
+        ;
+    }
+    else
+    {
+        b_log_e("dns error...\r\n");
+        _bNetifPingResult(-1, 0);
+    }
     return 0;
 }
 
