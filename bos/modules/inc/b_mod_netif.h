@@ -43,18 +43,21 @@ extern "C" {
 #if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
 #include "thirdparty/lwip/bos_lwip/include/lwip/dhcp.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/dns.h"
+#include "thirdparty/lwip/bos_lwip/include/lwip/inet_chksum.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/init.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/ip_addr.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/mem.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/memp.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/netif.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/opt.h"
+#include "thirdparty/lwip/bos_lwip/include/lwip/raw.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/tcp.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/timeouts.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/udp.h"
 #include "thirdparty/lwip/bos_lwip/include/netif/etharp.h"
 #include "utils/inc/b_util_fifo.h"
 #include "utils/inc/b_util_list.h"
+
 
 /**
  * \addtogroup BABYOS
@@ -162,6 +165,17 @@ typedef struct
     bNetifConn_t    conn[SERVER_MAX_CONNECTIONS];
 } bNetifServer_t;
 
+typedef void (*pbNetifPingCb_t)(int result, uint32_t ms, void *arg);
+typedef struct
+{
+    void           *pcb;
+    void           *user_data;
+    void           *timer_id;
+    uint32_t        s_tick;
+    bConnState_t    state;
+    pbNetifPingCb_t callback;
+} bNetifPing_t;
+
 /**
  * \}
  */
@@ -250,6 +264,9 @@ uint8_t bNetifConnIsWriteable(bNetifConn_t *pconn);
 int     bNetifConnReadData(bNetifConn_t *pconn, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
 int     bNetifConnWriteData(bNetifConn_t *pconn, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
 int     bNetifConnDeinit(bNetifConn_t *pconn);
+
+// ping
+int bNetifPing(const char *remote, uint32_t timeout_ms, pbNetifPingCb_t cb, void *arg);
 
 /**
  * \}
