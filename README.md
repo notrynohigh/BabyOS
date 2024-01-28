@@ -28,6 +28,10 @@ Linux下需要安装python、python-pip以及make 用于配置和编译代码
 
 查看设计文档：[https://babyos.cn/doc/](https://babyos.cn/doc/)
 
+推荐：将babyos作为子模块加入到用户工程进行使用。
+
+<img src="https://foruda.gitee.com/images/1706455699810637537/031b0a0f_1789704.gif" style="zoom: 67%;" />
+
 # 4 BabyOS教程
 
 由于代码在不断更新，所以无法避免视频内容与最新代码匹配，如有疑问，请在issues描述问题！
@@ -61,6 +65,8 @@ BabyOS如果能在项目中发挥大的作用就需要有足够的功能模块�
 **github**（自动同步）：
 
 [https://github.com/notrynohigh/BabyOS](https://github.com/notrynohigh/BabyOS)
+
+
 
 # 友情项目
 
@@ -135,4 +141,6 @@ FS功能模块是基于FatFS和LittleFS,方便用户使用:
 | 2023.09 | 增加第三方代码arm-2d，优化spi接口和屏驱动                    |      |
 | 2023.10 | 修复若干bug。增加mcu.py方便新增mcu，优化b_config.py当bos路径无效时提示重新输入 |      |
 | 2023.11 | 修复模拟iic接口；ms延时不依赖tick。添加驱动：icm20948+qmc5883l+qmi8658a<br>增加第三方库qrcode，新建对应的软件模块 |      |
+| 2023.12 | 第三方库增加lwip，modules增加 b_mod_netif 可免去用户移植lwip的工作 |      |
+| 2024.01 | 增加 b_srv_tcpip 实现获取ntp时间 <br>完善 b_mod_netif接口，实现tcp/udp客户端服务端代码以及ping接口 |      |
 
