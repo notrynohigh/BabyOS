@@ -120,7 +120,7 @@ bUTC_t bUTC_GetTime()
 /**
  * \brief UTC to date struct \ref bUTC_DateTime_t
  */
-void bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, int32_t zone)
+void bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, double zone)
 {
     utc = utc + zone * 60 * 60;
 
@@ -151,7 +151,7 @@ void bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, int32_t zone)
 /**
  * \brief Calculate UTC
  */
-bUTC_t bStruct2UTC(bUTC_DateTime_t tm, int32_t zone)
+bUTC_t bStruct2UTC(bUTC_DateTime_t tm, double zone)
 {
     bUTC_t seconds;
     if (!IS_TIME_VALID(tm))
@@ -177,7 +177,7 @@ bUTC_t bStruct2UTC(bUTC_DateTime_t tm, int32_t zone)
     }
 
     seconds += (days * DAY);
-    seconds -= zone * 60 * 60;
+    seconds -= (bUTC_t)(zone * 60 * 60);
 
     return seconds;
 }

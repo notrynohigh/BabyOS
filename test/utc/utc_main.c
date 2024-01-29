@@ -15,8 +15,12 @@ static void time_print()
 {
     bUTC_DateTime_t tm;
     bUTC_t utc = bUTC_GetTime();
+    b_log("utc:%ld\r\n", utc);
     bUTC2Struct(&tm, utc, 8);
     b_log("%d-%d-%d %d:%d:%d [%d]\r\n", tm.year, tm.month, tm.day, tm.hour, tm.minute, tm.second, tm.week);
+    bUTC2Struct(&tm, utc, 5.5);
+    b_log("%d-%d-%d %d:%d:%d [%d]\r\n", tm.year, tm.month, tm.day, tm.hour, tm.minute, tm.second, tm.week);
+    b_log("utc:%ld\r\n", bStruct2UTC(tm, 5.5));
 }
 
 int main()

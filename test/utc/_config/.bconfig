@@ -16,6 +16,7 @@ VENDOR_UBUNTU=y
 # VENDOR_HC is not set
 # VENDOR_WCH is not set
 # VENDOR_HOLTEK is not set
+# VENDOR_ARTERY is not set
 
 #
 # Algorithm Configuration
@@ -30,6 +31,10 @@ PCF8574_DEFAULT_OUTPUT=0
 MATRIX_KEYS_ROWS=4
 MATRIX_KEYS_COLUMNS=4
 ESP12F_UART_RX_BUF_LEN=1024
+RS485_RX_BUF_LEN=128
+RS485_RX_IDLE_MS=50
+_485_USE_CALLBACK=y
+# _485_USE_SELECT is not set
 # end of Drivers Configuration
 
 #
@@ -44,12 +49,14 @@ _BOS_MODULES_ENABLE=y
 # _XMODEM128_ENABLE is not set
 # _YMODEM_ENABLE is not set
 # _MENU_ENABLE is not set
-# _TIMER_ENABLE is not set
 # _PWM_ENABLE is not set
 # _PARAM_ENABLE is not set
 # _STATE_ENABLE is not set
 # _IAP_ENABLE is not set
 # _WIFI_ENABLE is not set
+# _SELECT_ENABLE is not set
+# _GUI_ENABLE is not set
+# _NETIF_ENABLE is not set
 # end of Modules Configuration
 
 #
@@ -63,16 +70,30 @@ _BOS_MODULES_ENABLE=y
 # _CJSON_ENABLE is not set
 # _COREMARK_ENABLE is not set
 # _UNITY_ENABLE is not set
+# _ARM_2D_ENABLE is not set
+# _QRCODE_ENABLE is not set
 # end of Thirdparty Configuration
 
 #
 # Utils Configuration
 #
 _DEBUG_ENABLE=y
-LOG_UART=0
-LOG_LEVEL_INFO=y
+LOG_LEVEL_ALL=y
+# LOG_LEVEL_INFO is not set
 # LOG_LEVEL_WARNING is not set
 # LOG_LEVEL_ERROR is not set
+# LOG_LEVEL_CUSTOMIZE is not set
 LOG_BUF_SIZE=256
+_LOG_VIA_UART=y
+# _LOG_VIA_USER_SPECIFIED is not set
+LOG_UART=0
 # _MEMP_ENABLE is not set
 # end of Utils Configuration
+
+#
+# Services Configuration
+#
+_BOS_SERVICES_ENABLE=y
+# _PROTOCOL_SERVICE_ENABLE is not set
+# _TCPIP_SERVICE_ENABLE is not set
+# end of Services Configuration

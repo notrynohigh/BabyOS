@@ -100,8 +100,8 @@ typedef int64_t bUTC_t;
 void bUTC_SetTime(bUTC_t utc);
 bUTC_t bUTC_GetTime(void);
 
-void   bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, int32_t zone);
-bUTC_t bStruct2UTC(bUTC_DateTime_t tm, int32_t zone);
+void   bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, double zone);
+bUTC_t bStruct2UTC(bUTC_DateTime_t tm, double zone);
 /**
  * \}
  */
