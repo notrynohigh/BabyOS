@@ -64,6 +64,18 @@ extern "C" {
  * \{
  */
 
+typedef enum
+{
+    B_HTTP_GET,
+    B_HTTP_POST
+} bHttpReqType_t;
+
+typedef struct
+{
+    uint8_t        is_https;
+    bNetifClient_t client;
+} bHttpStruct_t;
+
 /**
  * \}
  */
@@ -83,6 +95,8 @@ extern "C" {
  */
 
 int bSntpStart(uint32_t interval_s);
+
+int bHttpRequest(bHttpStruct_t *http, bHttpReqType_t type, char *url, char *head, char *body);
 
 /**
  * \}
