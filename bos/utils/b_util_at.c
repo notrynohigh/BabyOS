@@ -131,6 +131,11 @@ PT_THREAD(bAtTask)(struct pt *pt, void *arg)
     PT_END(pt);
 }
 
+static void _bAtFree(void *arg)
+{
+    bFree(arg);
+}
+
 /**
  * \}
  */
@@ -207,7 +212,7 @@ int bAtFeedData(bAtStruct_t *pat, uint8_t *pbuf, uint16_t len)
             return -1;
         }
         memcpy(p, pbuf, len);
-        pat->data_cb(p, len, bFree, pat->user_data);
+        pat->data_cb(p, len, _bAtFree, pat->user_data);
     }
     return 0;
 }

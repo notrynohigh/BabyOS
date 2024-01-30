@@ -155,6 +155,11 @@ static bWifiModule_t bWifiModule = {
  * \{
  */
 
+static void _bWifiFree(void *addr)
+{
+    bFree(addr);
+}
+
 static void _bWifiResult(uint8_t cmd, uint8_t isok, void *arg, void (*release)(void *))
 {
     bWifiModule.busy = 0;
@@ -607,7 +612,7 @@ int bWifiSend(const char *remote, uint16_t port, uint8_t *pbuf, uint16_t len)
     }
     memcpy(dat.pbuf, pbuf, len);
     dat.len     = len;
-    dat.release = bFree;
+    dat.release = _bWifiFree;
     retval      = bCtl(bWifiModule.fd, bCMD_WIFI_TCPUDP_SEND, &dat);
     if (retval >= 0)
     {

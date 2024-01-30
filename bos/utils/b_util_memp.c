@@ -222,6 +222,18 @@ static uint32_t _bGetFreeSize()
     return ret;
 }
 
+static uint32_t _bGetUsableSize(void *addr)
+{
+    bMempUnitHead_t *phead = (bMempUnitHead_t *)(addr - sizeof(bMempUnitHead_t));
+    if (phead->status != MEMP_UNIT_USED ||
+        (uint32_t)addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+        (uint32_t)addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+    {
+        return 0;
+    }
+    return phead->size;
+}
+
 /**
  * \}
  */
@@ -250,6 +262,30 @@ static void _bFree(void *paddr)
     }
     _bMempFree((uint32_t)paddr);
 }
+
+static void *_bRealloc(void *paddr, uint32_t size)
+{
+    if (paddr == NULL)
+    {
+        return bMalloc(size);
+    }
+    if (size == 0)
+    {
+        bFree(paddr);
+        return NULL;
+    }
+    void *new_ptr = bMalloc(size);
+    if (new_ptr == NULL)
+    {
+        return NULL;
+    }
+    uint32_t old_size  = _bGetUsableSize(paddr);
+    uint32_t copy_size = (size < old_size) ? size : old_size;
+    memcpy(new_ptr, paddr, copy_size);
+    bFree(paddr);
+    return new_ptr;
+}
+
 #else
 void *bMalloc(uint32_t size)
 {
@@ -269,6 +305,30 @@ void bFree(void *paddr)
     }
     _bMempFree((uint32_t)paddr);
 }
+
+void *bRealloc(void *paddr, uint32_t size)
+{
+    if (paddr == NULL)
+    {
+        return bMalloc(size);
+    }
+    if (size == 0)
+    {
+        bFree(paddr);
+        return NULL;
+    }
+    void *new_ptr = bMalloc(size);
+    if (new_ptr == NULL)
+    {
+        return NULL;
+    }
+    uint32_t old_size  = _bGetUsableSize(paddr);
+    uint32_t copy_size = (size < old_size) ? size : old_size;
+    memcpy(new_ptr, paddr, copy_size);
+    bFree(paddr);
+    return new_ptr;
+}
+
 #endif
 
 uint32_t bGetFreeSize()
@@ -309,6 +369,13 @@ void bFreePlus(void *ptr, const char *func, int line)
 {
     _bFree(ptr);
     b_log("free in %s, %d, address %p\r\n", func, line, ptr);
+}
+
+void *bReallocPlus(void *ptr, uint32_t size, const char *func, int line)
+{
+    void *new_ptr = _bRealloc(ptr, size);
+    b_log("realloc in %s, %d, address %p size %d\r\n", func, line, ptr, size);
+    return new_ptr;
 }
 
 #endif

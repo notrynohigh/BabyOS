@@ -101,8 +101,8 @@ _BOS_MODULES_ENABLE=y
 # Utils Configuration
 #
 _DEBUG_ENABLE=y
-LOG_LEVEL_ALL=y
-# LOG_LEVEL_INFO is not set
+# LOG_LEVEL_ALL is not set
+LOG_LEVEL_INFO=y
 # LOG_LEVEL_WARNING is not set
 # LOG_LEVEL_ERROR is not set
 # LOG_LEVEL_CUSTOMIZE is not set
