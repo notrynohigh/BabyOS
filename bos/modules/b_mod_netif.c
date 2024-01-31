@@ -295,6 +295,10 @@ static void  _bNetifTrigEvent(bNetifConn_t *pconn, bNetifConnEvent_t event, void
 
 static int _bNetifConnAllocBuf(bNetifConn_t *pconn)
 {
+    if (pconn->type == B_TRANS_TCP)
+    {
+        pconn->rx_cache_size = CONNECT_RECVBUF_MAX;
+    }
     uint32_t     rx_size = (pconn->rx_cache_size == 0) ? CONNECT_RECVBUF_MAX : pconn->rx_cache_size;
     struct pbuf *p       = pbuf_alloc(PBUF_RAW, rx_size, PBUF_RAM);
     if (p == NULL)
@@ -968,6 +972,13 @@ int bNetifConnReadData(bNetifConn_t *pconn, uint8_t *pbuf, uint16_t buf_len, uin
     if (read_len < 0)
     {
         return -3;
+    }
+    else
+    {
+        if (pconn->type == B_TRANS_TCP)
+        {
+            tcp_recved(pconn->pcb, read_len);
+        }
     }
     if (rlen)
     {

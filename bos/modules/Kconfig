@@ -354,18 +354,8 @@ config NETIF_CHECKSUM_BY_HARDWARE
     bool "HECKSUM_BY_HARDWARE enabled"
     default n
     depends on _NETIF_ENABLE
-    
-config MEMP_NUM_TCP_PCB_LISTEN
-    int "Value for MEMP_NUM_TCP_PCB_LISTEN"
-    default 4    
-    depends on _NETIF_ENABLE
 
-config TCP_SND_BUF
-    int "TCP sender buffer space (bytes)"
-    default 2048
-    depends on _NETIF_ENABLE
-
-config MEM_SIZE
+config MEM_SIZE_FOR_LWIP
     int "the size of the heap memory"
     default 10240
     depends on _NETIF_ENABLE
@@ -377,7 +367,7 @@ config REMOTE_ADDR_LEN_MAX
 
 config CONNECT_RECVBUF_MAX
     int "Recv Buffer Max Length (B)"
-    default 1024
+    default 4096
     depends on _NETIF_ENABLE
 
 config SERVER_MAX_CONNECTIONS
