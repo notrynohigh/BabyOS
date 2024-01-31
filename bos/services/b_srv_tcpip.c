@@ -121,6 +121,9 @@ typedef struct
 static bNtpPcb_t bNtpPcb;
 B_TASK_CREATE_ATTR(bNtpTask);
 static const char *bNtpServer[B_NTP_SERVER_NUM] = {_NTP_SERVER_1, _NTP_SERVER_2, _NTP_SERVER_3};
+
+static LIST_HEAD(bHttpClientList);
+
 /**
  * \}
  */
@@ -233,6 +236,19 @@ int bSntpStart(uint32_t interval_s)
     }
     bNtpPcb.interval_s = interval_s;
     return 0;
+}
+
+int bHttpRequest(bHttpStruct_t *http, bHttpReqType_t type, char *url, char *head, char *body)
+{
+    if (http == NULL || !HTTPREQ_TYPE_IS_VALID(type) || url == NULL)
+    {
+        return -1;
+    }
+    if (list_exist_nodes(&bHttpClientList, &http->list))
+    {
+        return -2;
+    }
+    
 }
 
 /**

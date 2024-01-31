@@ -69,11 +69,25 @@ typedef enum
     B_HTTP_GET,
     B_HTTP_POST
 } bHttpReqType_t;
+#define HTTPREQ_TYPE_IS_VALID(t) ((t) == B_HTTP_GET || (t) == B_HTTP_POST)
+
+typedef enum
+{
+    B_HTTP_STA_INIT,
+    B_HTTP_STA_CONNECTED,
+    B_HTTP_STA_DISCONNECT,
+    B_HTTP_STA_DEINIT
+} bHttpState_t;
 
 typedef struct
 {
-    uint8_t        is_https;
-    bNetifClient_t client;
+    uint8_t          is_https;
+    bNetifClient_t   client;
+    bHttpState_t     state;
+    char            *url;
+    char            *head;
+    char            *body;
+    struct list_head list;
 } bHttpStruct_t;
 
 /**
