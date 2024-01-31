@@ -62,6 +62,14 @@
  */
 #define LWIP_RAW 1
 
+#ifdef CONNECT_RECVBUF_MAX
+#define TCP_WND CONNECT_RECVBUF_MAX
+#endif
+
+#ifdef MEM_SIZE_FOR_LWIP
+#define MEM_SIZE MEM_SIZE_FOR_LWIP
+#endif
+
 #if defined(NETIF_CHECKSUM_BY_HARDWARE) && (NETIF_CHECKSUM_BY_HARDWARE == 1)
 /*----- Value in opt.h for CHECKSUM_GEN_IP: 1 -----*/
 #define CHECKSUM_GEN_IP 0
