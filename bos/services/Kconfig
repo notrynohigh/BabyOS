@@ -30,4 +30,14 @@ config _NTP_SERVER_3
     default "ntp3.aliyun.com"
     depends on _TCPIP_SERVICE_ENABLE    
 
+config _HTTP_HOST_LEN_MAX
+    int "The maximum length of a URL host"
+    default 64
+    depends on _TCPIP_SERVICE_ENABLE 
+
+config _HTTP_PATH_LEN_MAX
+    int "The maximum length of a URL path"
+    default 256
+    depends on _TCPIP_SERVICE_ENABLE
+
 endmenu

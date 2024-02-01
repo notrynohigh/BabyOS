@@ -122,8 +122,6 @@ static bNtpPcb_t bNtpPcb;
 B_TASK_CREATE_ATTR(bNtpTask);
 static const char *bNtpServer[B_NTP_SERVER_NUM] = {_NTP_SERVER_1, _NTP_SERVER_2, _NTP_SERVER_3};
 
-static LIST_HEAD(bHttpClientList);
-
 /**
  * \}
  */
@@ -209,6 +207,72 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
     PT_END(pt);
 }
 
+//--------------------------------------------------------http--
+static void _bHttpClientCallback(bNetifConnEvent_t event, void *param, void *arg)
+{
+    ;
+}
+
+static int _bHttpParseUrl(const char *url, char *host, char *path, uint16_t *port, uint8_t *ishttps)
+{
+    // 检查是否是HTTPS
+    if (strncmp(url, "https://", 8) == 0)
+    {
+        *ishttps = 1;
+    }
+    else if (strncmp(url, "http://", 7) == 0)
+    {
+        *ishttps = 0;
+    }
+    else
+    {
+        return -1;
+    }
+
+    // 跳过"http://"或"https://"
+    const char *start = url + (*ishttps ? 8 : 7);
+
+    // 查找host的结束位置
+    const char *end = strchr(start, '/');
+    if (end == NULL)
+    {
+        end = url + strlen(url);
+    }
+    if ((end - start) > _HTTP_HOST_LEN_MAX)
+    {
+        return -1;
+    }
+    // 复制host到目标字符串
+    strncpy(host, start, end - start);
+    host[end - start] = '\0';
+
+    // 解析port
+    const char *portStart = strchr(host, ':');
+    if (portStart != NULL)
+    {
+        *port = atoi(portStart + 1);
+    }
+    else
+    {
+        *port = (*ishttps ? 443 : 80);
+    }
+
+    // 解析path
+    if (*end != '\0')
+    {
+        if (strlen(end) > _HTTP_PATH_LEN_MAX)
+        {
+            return -1;
+        }
+        strcpy(path, end);
+    }
+    else
+    {
+        strcpy(path, "/");
+    }
+    return 0;
+}
+
 /**
  * \}
  */
@@ -240,15 +304,24 @@ int bSntpStart(uint32_t interval_s)
 
 int bHttpRequest(bHttpStruct_t *http, bHttpReqType_t type, char *url, char *head, char *body)
 {
+    int ret = -1;
     if (http == NULL || !HTTPREQ_TYPE_IS_VALID(type) || url == NULL)
     {
         return -1;
     }
-    if (list_exist_nodes(&bHttpClientList, &http->list))
+    memset(http->host, 0, sizeof(http->host));
+    memset(http->path, 0, sizeof(http->path));
+    ret = _bHttpParseUrl(url, http->host, http->path, &http->port, &http->is_https);
+    if (ret < 0)
+    {
+        return ret;
+    }
+    if (http->state != B_HTTP_STA_DEINIT)
     {
         return -2;
     }
-    
+
+    B_NETIF_CLIENT_STRUCT_INIT(&http->client, B_TRANS_TCP, _bHttpClientCallback, http, 0);
 }
 
 /**

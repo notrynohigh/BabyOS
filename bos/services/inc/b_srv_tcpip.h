@@ -79,15 +79,27 @@ typedef enum
     B_HTTP_STA_DEINIT
 } bHttpState_t;
 
+typedef enum
+{
+    B_HTTP_EVENT_CONNECTED,
+    B_HTTP_EVENT_DISCONNECT,
+    B_HTTP_RECV_DATA
+} bHttpEvent_t;
+
+typedef void (*pHttpCb_t)(bHttpEvent_t event, uint8_t *dat, uint32_t len, void *arg);
+
 typedef struct
 {
-    uint8_t          is_https;
-    bNetifClient_t   client;
-    bHttpState_t     state;
-    char            *url;
-    char            *head;
-    char            *body;
-    struct list_head list;
+    uint8_t        is_https;
+    bNetifClient_t client;
+    bHttpState_t   state;
+    char           host[_HTTP_HOST_LEN_MAX + 1];
+    char           path[_HTTP_PATH_LEN_MAX + 1];
+    char          *head;
+    char          *body;
+    uint16_t       port;
+    pHttpCb_t      callback;
+    void          *user_data;
 } bHttpStruct_t;
 
 /**
@@ -98,6 +110,14 @@ typedef struct
  * \defgroup TCPIP_Exported_Defines
  * \{
  */
+
+#define B_HTTP_CLIENT_CREATE_INSTANCE(name, cb, arg) \
+    bHttpStruct_t name = {                           \
+        .is_https  = 0,                              \
+        .state     = B_HTTP_STA_DEINIT,              \
+        .callback  = cb,                             \
+        .user_data = arg,                            \
+    }
 
 /**
  * \}
