@@ -208,9 +208,22 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
 }
 
 //--------------------------------------------------------http--
+
+static void _bHttpTrigEvent(bHttpStruct_t *http, bHttpEvent_t event, void *param,
+                            uint32_t param_len)
+{
+}
+
 static void _bHttpClientCallback(bNetifConnEvent_t event, void *param, void *arg)
 {
-    ;
+    if (event == B_EVENT_CONNECTED)
+    {
+        _bHttpTrigEvent(arg, B_HTTP_EVENT_CONNECTED, NULL, 0);
+    }
+    else if (event < 0)
+    {
+        _bHttpTrigEvent(arg, B_HTTP_EVENT_DISCONNECT, NULL, 0);
+    }
 }
 
 static int _bHttpParseUrl(const char *url, char *host, char *path, uint16_t *port, uint8_t *ishttps)
@@ -273,6 +286,42 @@ static int _bHttpParseUrl(const char *url, char *host, char *path, uint16_t *por
     return 0;
 }
 
+static int _bHttpGetRequest(bHttpStruct_t *http, char *head, char *body)
+{
+    int      index = 0, ret = 0;
+    uint32_t len = strlen("GET \r\nHost: \r\n\r\n\r\n\r\n\r\n");
+    len += strlen(http->path);
+    len += strlen(http->host);
+    if (head)
+    {
+        len += strlen(head);
+    }
+    if (body)
+    {
+        len += strlen(body);
+    }
+    len += 4;
+    http->buf = bNetifMalloc(len);
+    if (http->buf == NULL)
+    {
+        return -1;
+    }
+    http->buf_len = len;
+    memset(http->buf, 0, len);
+    index = sprintf("GET %s\r\nHost: %s\r\n", http->path, http->host);
+    if (head)
+    {
+        ret = sprintf(http->buf + index, "%s\r\n\r\n", head);
+        index += ret;
+    }
+    if (body)
+    {
+        ret = sprintf(http->buf + index, "%s\r\n\r\n", body);
+        index += ret;
+    }
+    return 0;
+}
+
 /**
  * \}
  */
@@ -309,19 +358,30 @@ int bHttpRequest(bHttpStruct_t *http, bHttpReqType_t type, char *url, char *head
     {
         return -1;
     }
-    memset(http->host, 0, sizeof(http->host));
-    memset(http->path, 0, sizeof(http->path));
-    ret = _bHttpParseUrl(url, http->host, http->path, &http->port, &http->is_https);
-    if (ret < 0)
-    {
-        return ret;
-    }
+
     if (http->state != B_HTTP_STA_DEINIT)
     {
         return -2;
     }
 
+    memset(http->host, 0, sizeof(http->host));
+    memset(http->path, 0, sizeof(http->path));
+    ret = _bHttpParseUrl(url, http->host, http->path, &http->port, &http->is_https);
+    if (ret < 0)
+    {
+        return -3;
+    }
+    if (type == B_HTTP_GET)
+    {
+        ret = _bHttpGetRequest(http, head, body);
+    }
+    if (ret < 0)
+    {
+        return -4;
+    }
     B_NETIF_CLIENT_STRUCT_INIT(&http->client, B_TRANS_TCP, _bHttpClientCallback, http, 0);
+    http->pconn = bNetifConnect(&http->client, http->host, http->port);
+    return 0;
 }
 
 /**

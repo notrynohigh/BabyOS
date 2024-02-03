@@ -1120,6 +1120,32 @@ int bNetifPing(const char *remote, uint32_t timeout_ms, pbNetifPingCb_t cb, void
     return 0;
 }
 
+// malloc/free
+void *bNetifMalloc(uint32_t len)
+{
+    if (len == 0)
+    {
+        return NULL;
+    }
+    struct pbuf *p = pbuf_alloc(PBUF_RAW, len, PBUF_RAM);
+    if (p == NULL)
+    {
+        return NULL;
+    }
+    return p->payload;
+}
+
+void bNetifFree(void *p)
+{
+    if (p == NULL)
+    {
+        return;
+    }
+    struct pbuf *buf = NULL;
+    buf              = list_entry(p, struct pbuf, payload);
+    pbuf_free(buf);
+}
+
 /**
  * \}
  */

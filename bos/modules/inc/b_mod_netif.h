@@ -58,7 +58,6 @@ extern "C" {
 #include "utils/inc/b_util_fifo.h"
 #include "utils/inc/b_util_list.h"
 
-
 /**
  * \addtogroup BABYOS
  * \{
@@ -267,6 +266,10 @@ int     bNetifConnDeinit(bNetifConn_t *pconn);
 
 // ping
 int bNetifPing(const char *remote, uint32_t timeout_ms, pbNetifPingCb_t cb, void *arg);
+
+// malloc/free
+void *bNetifMalloc(uint32_t len);
+void  bNetifFree(void *p);
 
 /**
  * \}

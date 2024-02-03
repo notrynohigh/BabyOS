@@ -92,12 +92,13 @@ typedef struct
 {
     uint8_t        is_https;
     bNetifClient_t client;
+    bNetifConn_t  *pconn;
     bHttpState_t   state;
     char           host[_HTTP_HOST_LEN_MAX + 1];
     char           path[_HTTP_PATH_LEN_MAX + 1];
-    char          *head;
-    char          *body;
     uint16_t       port;
+    char          *buf;
+    uint32_t       buf_len;
     pHttpCb_t      callback;
     void          *user_data;
 } bHttpStruct_t;
@@ -117,6 +118,7 @@ typedef struct
         .state     = B_HTTP_STA_DEINIT,              \
         .callback  = cb,                             \
         .user_data = arg,                            \
+        .buf       = NULL,                           \
     }
 
 /**
