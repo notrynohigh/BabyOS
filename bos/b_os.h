@@ -102,6 +102,7 @@ extern "C" {
 #include "drivers/inc/b_drv_ili9341.h"
 #include "drivers/inc/b_drv_key.h"
 #include "drivers/inc/b_drv_lis3dh.h"
+#include "drivers/inc/b_drv_ltc2662iuh_12.h"
 #include "drivers/inc/b_drv_matrixkeys.h"
 #include "drivers/inc/b_drv_mcuflash.h"
 #include "drivers/inc/b_drv_oled.h"
