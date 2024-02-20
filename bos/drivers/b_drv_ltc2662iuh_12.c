@@ -5,7 +5,7 @@
  * \author      miniminiminini (405553848@qq.com)
  * \brief       LTC2662IUH_12驱动
  *
- * Copyright (c) 2023 by miniminiminini. All Rights Reserved.
+ * Copyright (c) 2024 by miniminiminini. All Rights Reserved.
  */
 
 /* Includes ----------------------------------------------*/
@@ -74,6 +74,15 @@ static bLTC2662IUH_12Private_t
  * \defgroup LTC2662IUH_12_Private_Functions
  * \{
  */
+
+static int _bLTC2662_Send(bDriverInterface_t *pdrv, uint8_t *pbuf, uint16_t len)
+{
+    bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
+
+    bHalSpiSend(_if, pbuf, len);
+
+    return 0;
+}
 
 /**
  * @brief 通过对应dac通道的expect_current来更新span与span_value
@@ -181,12 +190,6 @@ static int _bLTC2662_DACX_Attribute_Updata(bDriverInterface_t *pdrv, LTC2662_DAC
     return 0;
 }
 
-static int _bLTC2662_FramingHandler(bDriverInterface_t *pdrv, LTC2662_CMD_t cmd, LTC2662_DAC_t dac_x, uint32_t value)
-{
-    bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
-    return 0;
-}
-
 /**
  * \brief     写入范围到n
  * \param pdrv
@@ -194,9 +197,48 @@ static int _bLTC2662_FramingHandler(bDriverInterface_t *pdrv, LTC2662_CMD_t cmd,
  * \param range
  * \return int
  */
-static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x,
-                                  LTC2662_SPAN_t range)
+static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
+    uint8_t send_buf[3] = {0, 0, 0};
+    bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
+    bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
+    if (dac_x >= LTC_DAC_MAX)
+    {
+        return -1;
+    }
+
+    // 0 	1 	1 	0 	Write Span to n
+    if (dac_x == LTC_DAC_0)
+    {
+        send_buf[0] = 0x60 | 0x00;
+    }
+    else if (dac_x == LTC_DAC_1)
+    {
+        send_buf[0] = 0x60 | 0x01;
+    }
+    else if (dac_x == LTC_DAC_2)
+    {
+        send_buf[0] = 0x60 | 0x02;
+    }
+    else if (dac_x == LTC_DAC_3)
+    {
+        send_buf[0] = 0x60 | 0x03;
+    }
+    else if (dac_x == LTC_DAC_4)
+    {
+        send_buf[0] = 0x60 | 0x04;
+    }
+
+    // 将set_value由16bit转换为12bit,后四个无关位,并且进行MSB-TO-LSB
+    uint16_t tempdata = _priv->dac_attribute->set_value << 4;
+    send_buf[1]       = (tempdata >> 8) & 0xff;
+    send_buf[2]       = (tempdata) & 0xff;
+
+    // spi发送
+    bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
+    _bLTC2662_Send(pdrv, send_buf, 3);
+    bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
+
     return 0;
 }
 
@@ -207,15 +249,46 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x,
  * \param range
  * \return int
  */
-static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x,
-                                         LTC2662_SPAN_t range)
+static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
+    bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
+    if (dac_x >= LTC_DAC_MAX)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+static int _bLTC2662_DACX_Exec(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
+{
+    if (_bLTC2662_WriteSpanToN(pdrv, dac_x) < 0)
+    {
+        return -1;
+    }
+    if (_bLTC2662_WriteCodeToNUpdateN(pdrv, dac_x) < 0)
+    {
+        return -2;
+    }
+    return 0;
+}
+
+static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
+{
+    bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
+    if (dac_x >= LTC_DAC_MAX)
+    {
+        return -1;
+    }
+
     return 0;
 }
 
 static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
+    bLTC2662_CONFIG_t *p = (bLTC2662_CONFIG_t *)param;
+
     switch (cmd)
     {
     case bCMD_LTC_SET_CURRENT:
@@ -223,34 +296,42 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
         {
             return -1;
         }
-        bLTC2662_SET_CURRENT_t *p0 = (bLTC2662_SET_CURRENT_t *)param;
-        _priv->dac_attribute[p0->dac_channel].expect_current = p0->current;
+        _priv->dac_attribute[p->dac_channel].expect_current = p->current;
         break;
     case bCMD_LTC_EXEC_DACX:
         if (param == NULL)
         {
             return -1;
         }
-        bLTC2662_EXEC_DACX_t *p1 = (bLTC2662_EXEC_DACX_t *)param;
-        if (p1->dac_channel >= LTC_DAC_MAX)
+        if (p->dac_channel >= LTC_DAC_MAX)
         {
             return -2;
         }
-        if (_bLTC2662_DACX_Attribute_Updata(pdrv, p1->dac_channel) < 0)
+        if (p->current != _priv->dac_attribute[p->dac_channel].expect_current)
+        {
+            _priv->dac_attribute[p->dac_channel].expect_current = p->current;
+        }
+        if (_bLTC2662_DACX_Attribute_Updata(pdrv, p->dac_channel) < 0)
         {
             return -3;
         }
-        //  执行DAC输出
+        if (_bLTC2662_DACX_Exec(pdrv, p->dac_channel) < 0)
+        {
+            return -4;
+        }
         break;
     case bCMD_LTC_STOP_DACX:
         if (param == NULL)
         {
             return -1;
         }
-        bLTC2662_STOP_DACX_t *p2 = (bLTC2662_STOP_DACX_t *)param;
-        if (p2->dac_channel >= LTC_DAC_MAX)
+        if (p->dac_channel >= LTC_DAC_MAX)
         {
             return -2;
+        }
+        if (_bLTC2662_DACX_Stop(pdrv, p->dac_channel) < 0)
+        {
+            return -3;
         }
         break;
     default:

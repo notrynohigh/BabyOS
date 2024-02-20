@@ -128,25 +128,16 @@ typedef enum
 
 typedef struct
 {
-    uint8_t dac_channel; // 0-4
+    LTC2662_DAC_t dac_channel; // 0-4
     float current;       // 电流值,单位mA
-} bLTC2662_SET_CURRENT_t;
-
-typedef struct
-{
-    uint8_t dac_channel; // 0-4
-} bLTC2662_EXEC_DACX_t;
-
-typedef struct
-{
-    uint8_t dac_channel; // 0-4
-} bLTC2662_STOP_DACX_t;
+} bLTC2662_CONFIG_t;
 
 typedef struct
 {
     float expect_current; // 期待的输出电流,即modbus电流强度*0.5mA,bCMD_LTC_SET_CURRENT时候更新
 
     uint8_t status;      // 输出状态, 0:关闭, 1:打开;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+
     LTC2662_SPAN_t span; // bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
     float span_value;    // bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
     float span_div;      // 对应span曲线下set_value每增加1所代表的值,bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
