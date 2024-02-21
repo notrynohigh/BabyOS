@@ -68,6 +68,34 @@ typedef enum
 } LTC2662_CMD_t;
 
 /**
+ * \brief C3-C0为U8的bit7-bit4
+ * COMMAND
+C3(bit7) 	C2(bit6) 	C1(bit5) 	C0(bit4)
+0 	0 	0 	0 	Write Code to n
+1 	0 	0 	0 	Write Code to All
+0 	1 	1 	0 	Write Span to n
+1 	1 	1 	0 	Write Span to All
+0 	0 	0 	1 	Update n (Power Up)
+1 	0 	0 	1 	Update All (Power Up)
+0 	0 	1 	1 	Write Code to n, Update n (Power Up)
+0 	0 	1 	0 	Write Code to n, Update All (Power Up)
+1 	0 	1 	0 	Write Code to All, Update All (Power Up)
+0 	1 	0 	0 	Power Down n
+0 	1 	0 	1 	Power Down Chip
+1 	0 	1 	1 	Monitor Mux
+1 	1 	0 	0 	Toggle Select
+1 	1 	0 	1 	Global Toggle
+0 	1 	1 	1 	Config Command
+1 	1 	1 	1 	No Operation
+*/
+typedef enum
+{
+    WRITE_SPAN_TO_N          = 0x60,
+    WRITE_CODE_TO_N_UPDATE_N = 0x30,
+    POWER_DOWN_N             = 0x40,
+} LTC2662_CMD_DATA_t;
+
+/**
  * \brief LTC2662_DAC_t
 表 2. DAC 地址， n
 地址
@@ -126,6 +154,34 @@ typedef enum
     LTC_SPAN_MAX
 } LTC2662_SPAN_t;
 
+/**
+ * \brief
+ *  Table 3. Span Codes
+S3 	S2 	S1 	S0	OUTPUT RANGE
+External RFSADJ 	FSADJ = VCC
+0 	0 	0 	0 	(Hi-Z)
+0 	0 	0 	1 	50 • VREF /RFSADJ 	3.125mA
+0 	0 	1 	0 	100 • VREF /RFSADJ 	6.25mA
+0 	0 	1 	1 	200 • VREF /RFSADJ 	12.5mA
+0 	1 	0 	0 	400 • VREF /RFSADJ 	25mA
+0 	1 	0 	1 	800 • VREF /RFSADJ 	50mA
+0 	1 	1 	0 	1600 • VREF /RFSADJ 	100mA
+0 	1 	1 	1 	3200 • VREF /RFSADJ 	200mA
+1 	1 	1 	1 	4800 • VREF /RFSADJ 	300mA
+1 	0 	0 	0 	(Switch to V–)
+ */
+typedef enum
+{
+    LTC_SPAN_VALUE_3_125mA = 0X01,
+    LTC_SPAN_VALUE_6_25mA  = 0X02,
+    LTC_SPAN_VALUE_12_5mA  = 0X03,
+    LTC_SPAN_VALUE_25mA    = 0X04,
+    LTC_SPAN_VALUE_50mA    = 0X05,
+    LTC_SPAN_VALUE_100mA   = 0X06,
+    LTC_SPAN_VALUE_200mA   = 0X07,
+    LTC_SPAN_VALUE_300mA   = 0X0F,
+    LTC_SPAN_VALUE_MAX
+} LTC2662_SPAN_VALUE_t;
 typedef struct
 {
     LTC2662_DAC_t dac_channel; // 0-4
