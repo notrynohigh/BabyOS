@@ -35,6 +35,12 @@
  */
 #define DRIVER_NAME LTC2662IUH_12
 
+#define DAC0 0X00
+#define DAC1 0X01
+#define DAC2 0X02
+#define DAC3 0X03
+#define DAC4 0X04
+
 /**
  * }
  */
@@ -210,64 +216,64 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     // 0 	1 	1 	0 	Write Span to n
     if (dac_x == LTC_DAC_0)
     {
-        send_buf[0] = 0x60 | 0x00;
+        send_buf[0] = WRITE_SPAN_TO_N | DAC0;
     }
     else if (dac_x == LTC_DAC_1)
     {
-        send_buf[0] = 0x60 | 0x01;
+        send_buf[0] = WRITE_SPAN_TO_N | DAC1;
     }
     else if (dac_x == LTC_DAC_2)
     {
-        send_buf[0] = 0x60 | 0x02;
+        send_buf[0] = WRITE_SPAN_TO_N | DAC2;
     }
     else if (dac_x == LTC_DAC_3)
     {
-        send_buf[0] = 0x60 | 0x03;
+        send_buf[0] = WRITE_SPAN_TO_N | DAC3;
     }
     else if (dac_x == LTC_DAC_4)
     {
-        send_buf[0] = 0x60 | 0x04;
+        send_buf[0] = WRITE_SPAN_TO_N | DAC4;
     }
 
     if (_priv->dac_attribute[dac_x].span == LTC_SPAN_3_125mA)
     {
         send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & 0x01;
+        send_buf[2] = 0x00 & LTC_SPAN_VALUE_3_125mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_6_25mA)
     {
         send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & 0x02;
+        send_buf[2] = 0x00 & LTC_SPAN_VALUE_6_25mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_12_5mA)
     {
         send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & 0x03;
+        send_buf[2] = 0x00 & LTC_SPAN_VALUE_12_5mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_25mA)
     {
         send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & 0x04;
+        send_buf[2] = 0x00 & LTC_SPAN_VALUE_25mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_50mA)
     {
         send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & 0x05;
+        send_buf[2] = 0x00 & LTC_SPAN_VALUE_50mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_100mA)
     {
         send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & 0x06;
+        send_buf[2] = 0x00 & LTC_SPAN_VALUE_100mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_200mA)
     {
         send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & 0x07;
+        send_buf[2] = 0x00 & LTC_SPAN_VALUE_200mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_300mA)
     {
         send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & 0x0f;
+        send_buf[2] = 0x00 & LTC_SPAN_VALUE_300mA;
     }
 
     // spi发送
@@ -298,23 +304,23 @@ static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t
     // 0 	0 	1 	1
     if (dac_x == LTC_DAC_0)
     {
-        send_buf[0] = 0x30 | 0x00;
+        send_buf[0] = WRITE_CODE_TO_N_UPDATE_N | DAC0;
     }
     else if (dac_x == LTC_DAC_1)
     {
-        send_buf[0] = 0x30 | 0x01;
+        send_buf[0] = WRITE_CODE_TO_N_UPDATE_N | DAC1;
     }
     else if (dac_x == LTC_DAC_2)
     {
-        send_buf[0] = 0x30 | 0x02;
+        send_buf[0] = WRITE_CODE_TO_N_UPDATE_N | DAC2;
     }
     else if (dac_x == LTC_DAC_3)
     {
-        send_buf[0] = 0x30 | 0x03;
+        send_buf[0] = WRITE_CODE_TO_N_UPDATE_N | DAC3;
     }
     else if (dac_x == LTC_DAC_4)
     {
-        send_buf[0] = 0x30 | 0x04;
+        send_buf[0] = WRITE_CODE_TO_N_UPDATE_N | DAC4;
     }
 
     // 将set_value由16bit转换为12bit,后四个无关位,并且进行MSB-TO-LSB
@@ -361,26 +367,26 @@ static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
         return -1;
     }
 
-    // 0 	0 	1 	1
+    // 0 	1 	0 	0 Power Down N
     if (dac_x == LTC_DAC_0)
     {
-        send_buf[0] = 0x30 | 0x00;
+        send_buf[0] = POWER_DOWN_N | DAC0;
     }
     else if (dac_x == LTC_DAC_1)
     {
-        send_buf[0] = 0x30 | 0x01;
+        send_buf[0] = POWER_DOWN_N | DAC1;
     }
     else if (dac_x == LTC_DAC_2)
     {
-        send_buf[0] = 0x30 | 0x02;
+        send_buf[0] = POWER_DOWN_N | DAC2;
     }
     else if (dac_x == LTC_DAC_3)
     {
-        send_buf[0] = 0x30 | 0x03;
+        send_buf[0] = POWER_DOWN_N | DAC3;
     }
     else if (dac_x == LTC_DAC_4)
     {
-        send_buf[0] = 0x30 | 0x04;
+        send_buf[0] = POWER_DOWN_N | DAC4;
     }
 
     send_buf[1] = 0;
