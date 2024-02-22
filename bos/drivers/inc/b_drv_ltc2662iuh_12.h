@@ -23,6 +23,13 @@ extern "C" {
  */
 typedef bHalSPIIf_t bLTC2662IUH_12_HalIf_t;
 
+typedef union LT_union_int16_2bytes
+{
+    int16_t  LT_int16;
+    uint16_t LT_uint16;
+    uint8_t  LT_byte[2];
+} U_LT_Write;
+
 /**
  * \brief LTC2662_CMD_t
 Table 1. Command Codes

@@ -206,6 +206,7 @@ static int _bLTC2662_DACX_Attribute_Updata(bDriverInterface_t *pdrv, LTC2662_DAC
 static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
     uint8_t send_buf[3] = {0, 0, 0};
+    U_LT_Write data;
     bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
     if (dac_x >= LTC_DAC_MAX)
@@ -237,44 +238,39 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 
     if (_priv->dac_attribute[dac_x].span == LTC_SPAN_3_125mA)
     {
-        send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & LTC_SPAN_VALUE_3_125mA;
+        data.LT_uint16 = LTC_SPAN_VALUE_3_125mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_6_25mA)
     {
-        send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & LTC_SPAN_VALUE_6_25mA;
+        data.LT_uint16 = LTC_SPAN_VALUE_6_25mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_12_5mA)
     {
-        send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & LTC_SPAN_VALUE_12_5mA;
+        data.LT_uint16 = LTC_SPAN_VALUE_12_5mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_25mA)
     {
-        send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & LTC_SPAN_VALUE_25mA;
+        data.LT_uint16 = LTC_SPAN_VALUE_25mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_50mA)
     {
-        send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & LTC_SPAN_VALUE_50mA;
+        data.LT_uint16 = LTC_SPAN_VALUE_50mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_100mA)
     {
-        send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & LTC_SPAN_VALUE_100mA;
+        data.LT_uint16 = LTC_SPAN_VALUE_100mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_200mA)
     {
-        send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & LTC_SPAN_VALUE_200mA;
+        data.LT_uint16 = LTC_SPAN_VALUE_200mA;
     }
     else if (_priv->dac_attribute[dac_x].span == LTC_SPAN_300mA)
     {
-        send_buf[1] = 0x00;
-        send_buf[2] = 0x00 & LTC_SPAN_VALUE_300mA;
+        data.LT_uint16 = LTC_SPAN_VALUE_300mA;
     }
+
+    send_buf[1] = data.LT_byte[1];
+    send_buf[2] = data.LT_byte[0];
 
     // spi发送
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
@@ -294,6 +290,7 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
     uint8_t send_buf[3] = {0, 0, 0};
+    U_LT_Write data;
     bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
     if (dac_x >= LTC_DAC_MAX)
@@ -324,9 +321,9 @@ static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t
     }
 
     // 将set_value由16bit转换为12bit,后四个无关位,并且进行MSB-TO-LSB
-    uint16_t tempdata = _priv->dac_attribute->set_value << 4;
-    send_buf[1]       = (tempdata >> 8) & 0xff;
-    send_buf[2]       = (tempdata) & 0xff;
+    data.LT_uint16        = _priv->dac_attribute->set_value;
+    send_buf[1] = data.LT_byte[1];
+    send_buf[2] = data.LT_byte[0];
 
     // spi发送
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
