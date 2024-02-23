@@ -6,6 +6,8 @@ extern "C" {
 #endif
 
 /* Includes ----------------------------------------------*/
+#include "b_config.h"
+#include "utils/inc/b_util_log.h"
 #include "drivers/inc/b_driver.h"
 
 /**
@@ -197,18 +199,19 @@ typedef struct
 
 typedef struct
 {
-    float expect_current; // 期待的输出电流,即modbus电流强度*0.5mA,bCMD_LTC_SET_CURRENT时候更新
+    volatile float
+        expect_current;  // 期待的输出电流,即modbus电流强度*0.5mA,bCMD_LTC_SET_CURRENT时候更新
 
-    uint8_t status;      // 输出状态, 0:关闭, 1:打开;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+    volatile uint8_t status;      // 输出状态, 0:关闭, 1:打开;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
 
-    LTC2662_SPAN_t span; // bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
-    float span_value;    // bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
-    float span_div;      // 对应span曲线下set_value每增加1所代表的值,bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+    volatile LTC2662_SPAN_t span; // bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+    volatile float span_value;    // bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+    volatile float span_div;      // 对应span曲线下set_value每增加1所代表的值,bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
 
-    uint16_t set_value;           // 依据modbus的电流强度设置,12bit,0-4095;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
-    float real_current;           // 实际的输出电流;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
-    float err_current;            // 输出电流的误差.输出状态为0时,误差为0;输出状态为1时,误差为设置电流与实际电流的差值;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
-    float err_percentage_current; // 输出电流的误差百分比.输出状态为0时,误差为0;输出状态为1时,值为误差电流绝对值与设置电流绝对值的百分比;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+    volatile uint16_t set_value;           // 依据modbus的电流强度设置,12bit,0-4095;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+    volatile float real_current;           // 实际的输出电流;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+    volatile float err_current;            // 输出电流的误差.输出状态为0时,误差为0;输出状态为1时,误差为设置电流与实际电流的差值;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
+    volatile float err_percentage_current; // 输出电流的误差百分比.输出状态为0时,误差为0;输出状态为1时,值为误差电流绝对值与设置电流绝对值的百分比;bCMD_LTC_EXEC_DAC_X || bCMD_LTC_STOP_DAC_X时更新
 } bLTC2662_DAC_ATTRIBUTE_t;
 
 typedef struct

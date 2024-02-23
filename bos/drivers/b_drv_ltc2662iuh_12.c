@@ -69,7 +69,7 @@
  */
 bDRIVER_HALIF_TABLE(bLTC2662IUH_12_HalIf_t, DRIVER_NAME);
 
-static bLTC2662IUH_12Private_t
+bLTC2662IUH_12Private_t
     bLTC2662IUH_12RunInfo[bDRIVER_HALIF_NUM(bLTC2662IUH_12_HalIf_t, DRIVER_NAME)];
 
 /**
@@ -269,6 +269,8 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
         data.LT_uint16 = LTC_SPAN_VALUE_300mA;
     }
 
+    // data.LT_uint16 = data.LT_uint16 << 4;
+
     send_buf[1] = data.LT_byte[1];
     send_buf[2] = data.LT_byte[0];
 
@@ -321,7 +323,8 @@ static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t
     }
 
     // 将set_value由16bit转换为12bit,后四个无关位,并且进行MSB-TO-LSB
-    data.LT_uint16        = _priv->dac_attribute->set_value;
+    data.LT_uint16 = _priv->dac_attribute[dac_x].set_value << 4;
+
     send_buf[1] = data.LT_byte[1];
     send_buf[2] = data.LT_byte[0];
 
@@ -428,10 +431,12 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
         }
         if (_bLTC2662_DACX_Attribute_Updata(pdrv, p->dac_channel) < 0)
         {
+            b_log_e("_bLTC2662_DACX_Attribute_Updata chx=%d err!!!\r\n", p->dac_channel);
             return -3;
         }
         if (_bLTC2662_DACX_Exec(pdrv, p->dac_channel) < 0)
         {
+            b_log_e("_bLTC2662_DACX_Exec chx=%d err!!!\r\n", p->dac_channel);
             return -4;
         }
         break;
@@ -446,6 +451,7 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
         }
         if (_bLTC2662_DACX_Stop(pdrv, p->dac_channel) < 0)
         {
+            b_log_e("_bLTC2662_DACX_Stop chx=%d err!!!\r\n", p->dac_channel);
             return -3;
         }
         break;
