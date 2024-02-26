@@ -82,7 +82,9 @@ extern "C" {
 
 typedef struct
 {
-    struct netif     lwip_netif;
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+    struct netif lwip_netif;
+#endif
     uint32_t         mac_dev;
     uint32_t         dhcp_en;
     int              fd;
@@ -147,6 +149,10 @@ typedef struct
     void           *cb_arg;
 } bNetifConn_t;
 
+#ifndef REMOTE_ADDR_LEN_MAX
+#define REMOTE_ADDR_LEN_MAX (128)
+#endif
+
 typedef struct
 {
     bNetifConn_t     conn;
@@ -154,6 +160,9 @@ typedef struct
     struct list_head list;
 } bNetifClient_t;
 
+#ifndef SERVER_MAX_CONNECTIONS
+#define SERVER_MAX_CONNECTIONS (2)
+#endif
 typedef struct
 {
     bServerState_t  state;
@@ -284,7 +293,6 @@ int bNetifPing(const char *remote, uint32_t timeout_ms, pbNetifPingCb_t cb, void
 /**
  * \}
  */
-#endif
 
 #ifdef __cplusplus
 }

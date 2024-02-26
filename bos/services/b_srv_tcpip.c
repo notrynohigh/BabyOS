@@ -63,9 +63,10 @@
 
 typedef struct
 {
+    bNetif_t instance;
     uint8_t (*is_readable)(bNetifConn_t *pconn);
     uint8_t (*is_writeable)(bNetifConn_t *pconn);
-    int (*add)(uint32_t dev, uint32_t ip, uint32_t gw, uint32_t mask);
+    int (*add)(bNetif_t *pinstance, uint32_t ip, uint32_t gw, uint32_t mask);
     bNetifConn_t *(*conn)(bNetifClient_t *client, char *remote, uint16_t port);
     int (*listen)(bNetifServer_t *server, uint16_t port);
     int (*read)(bNetifConn_t *pconn, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
@@ -244,22 +245,25 @@ int bTcpipSrvInit(uint32_t dev, bNetDevType_t type, uint32_t ip, uint32_t gw, ui
     {
         return -1;
     }
+    memset(&bTcpipNetif, 0, sizeof(bTcpipNetif));
     if (type == B_NETDEV_MAC)
     {
 #if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
-        bTcpipNetif.add          = bNetifAdd;
-        bTcpipNetif.conn         = bNetifConnect;
-        bTcpipNetif.listen       = bNetifSrvListen;
-        bTcpipNetif.is_readable  = bNetifConnIsReadable;
-        bTcpipNetif.is_writeable = bNetifConnWriteData;
-        bTcpipNetif.read         = bNetifConnReadData;
-        bTcpipNetif.write        = bNetifConnWriteData;
-        bTcpipNetif.deinit       = bNetifConnDeinit;
+        bTcpipNetif.add              = bNetifAdd;
+        bTcpipNetif.conn             = bNetifConnect;
+        bTcpipNetif.listen           = bNetifSrvListen;
+        bTcpipNetif.is_readable      = bNetifConnIsReadable;
+        bTcpipNetif.is_writeable     = bNetifConnIsWriteable;
+        bTcpipNetif.read             = bNetifConnReadData;
+        bTcpipNetif.write            = bNetifConnWriteData;
+        bTcpipNetif.deinit           = bNetifConnDeinit;
+        bTcpipNetif.instance.mac_dev = dev;
+        bTcpipNetif.add(&bTcpipNetif.instance, ip, gw, mask);
 #else
         return -1;
 #endif
     }
-    bTcpipNetif.add(dev, ip, gw, mask);
+
     return 0;
 }
 
