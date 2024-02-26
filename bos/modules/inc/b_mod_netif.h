@@ -55,9 +55,10 @@ extern "C" {
 #include "thirdparty/lwip/bos_lwip/include/lwip/timeouts.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/udp.h"
 #include "thirdparty/lwip/bos_lwip/include/netif/etharp.h"
+#endif
+
 #include "utils/inc/b_util_fifo.h"
 #include "utils/inc/b_util_list.h"
-
 
 /**
  * \addtogroup BABYOS
@@ -250,7 +251,7 @@ typedef struct
  * \defgroup NETIF_Exported_Functions
  * \{
  */
-
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
 // ip eg. 192.168.1.4  bNETIF_IP_U32(192,168,1,4)
 int bNetifAdd(bNetif_t *pInstance, uint32_t ip, uint32_t gw, uint32_t mask);
 
@@ -267,7 +268,7 @@ int     bNetifConnDeinit(bNetifConn_t *pconn);
 
 // ping
 int bNetifPing(const char *remote, uint32_t timeout_ms, pbNetifPingCb_t cb, void *arg);
-
+#endif
 /**
  * \}
  */

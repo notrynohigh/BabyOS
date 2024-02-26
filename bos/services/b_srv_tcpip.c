@@ -63,6 +63,18 @@
 
 typedef struct
 {
+    uint8_t (*is_readable)(bNetifConn_t *pconn);
+    uint8_t (*is_writeable)(bNetifConn_t *pconn);
+    int (*add)(uint32_t dev, uint32_t ip, uint32_t gw, uint32_t mask);
+    bNetifConn_t *(*conn)(bNetifClient_t *client, char *remote, uint16_t port);
+    int (*listen)(bNetifServer_t *server, uint16_t port);
+    int (*read)(bNetifConn_t *pconn, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
+    int (*write)(bNetifConn_t *pconn, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
+    int (*deinit)(bNetifConn_t *pconn);
+} bTcpipNetif_t;
+
+typedef struct
+{
     uint32_t seconds;
     uint32_t fraction;
 } bNtpTimestamp_t;
@@ -121,6 +133,17 @@ typedef struct
 static bNtpPcb_t bNtpPcb;
 B_TASK_CREATE_ATTR(bNtpTask);
 static const char *bNtpServer[B_NTP_SERVER_NUM] = {_NTP_SERVER_1, _NTP_SERVER_2, _NTP_SERVER_3};
+
+static bTcpipNetif_t bTcpipNetif = {
+    .add          = NULL,
+    .conn         = NULL,
+    .deinit       = NULL,
+    .is_readable  = NULL,
+    .is_writeable = NULL,
+    .listen       = NULL,
+    .read         = NULL,
+    .write        = NULL,
+};
 /**
  * \}
  */
@@ -160,17 +183,17 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
     while (1)
     {
         bNtpPcb.pconn =
-            bNetifConnect(&bNtpPcb.ntp_client, (char *)bNtpServer[ntp_server_index], 123);
+            bTcpipNetif.conn(&bNtpPcb.ntp_client, (char *)bNtpServer[ntp_server_index], 123);
         if (bNtpPcb.pconn == NULL)
         {
             bTaskDelayMs(pt, 10000);
             break;
         }
-        PT_WAIT_UNTIL(pt, bNetifConnIsWriteable(bNtpPcb.pconn) == 1, B_NTP_TIMEOUT_S * 1000);
+        PT_WAIT_UNTIL(pt, bTcpipNetif.is_writeable(bNtpPcb.pconn) == 1, B_NTP_TIMEOUT_S * 1000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             b_log_e("ntp send fail...\r\n");
-            bNetifConnDeinit(bNtpPcb.pconn);
+            bTcpipNetif.deinit(bNtpPcb.pconn);
             bNtpPcb.pconn    = NULL;
             ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
             bTaskDelayMs(pt, 10000);
@@ -178,28 +201,28 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
         }
         memset(&packet, 0, sizeof(bNtpPacket_t));
         packet.li_vn_mode = 0x1b;
-        bNetifConnWriteData(bNtpPcb.pconn, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
-        PT_WAIT_UNTIL(pt, (bNetifConnIsReadable(bNtpPcb.pconn) == 1), B_NTP_TIMEOUT_S * 1000);
+        bTcpipNetif.write(bNtpPcb.pconn, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
+        PT_WAIT_UNTIL(pt, (bTcpipNetif.is_readable(bNtpPcb.pconn) == 1), B_NTP_TIMEOUT_S * 1000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             b_log_e("ntp recv timeout.. \r\n");
-            bNetifConnDeinit(bNtpPcb.pconn);
+            bTcpipNetif.deinit(bNtpPcb.pconn);
             bNtpPcb.pconn    = NULL;
             ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
             bTaskDelayMs(pt, 10000);
             break;
         }
-        bNetifConnReadData(bNtpPcb.pconn, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
+        bTcpipNetif.read(bNtpPcb.pconn, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
         if (rlen == sizeof(bNtpPacket_t))
         {
             if (packet.recv_time.seconds <= packet.trans_time.seconds &&
                 (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
             {
-                ntp_time = ntohl(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
+                ntp_time = B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
                 bUTC_SetTime(ntp_time);
             }
         }
-        bNetifConnDeinit(bNtpPcb.pconn);
+        bTcpipNetif.deinit(bNtpPcb.pconn);
         bNtpPcb.pconn = NULL;
         bTaskDelayMs(pt, bNtpPcb.interval_s * 1000);
     }
@@ -214,6 +237,31 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
  * \addtogroup TCPIP_Exported_Functions
  * \{
  */
+
+int bTcpipSrvInit(uint32_t dev, bNetDevType_t type, uint32_t ip, uint32_t gw, uint32_t mask)
+{
+    if (bTcpipNetif.add != NULL)
+    {
+        return -1;
+    }
+    if (type == B_NETDEV_MAC)
+    {
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+        bTcpipNetif.add          = bNetifAdd;
+        bTcpipNetif.conn         = bNetifConnect;
+        bTcpipNetif.listen       = bNetifSrvListen;
+        bTcpipNetif.is_readable  = bNetifConnIsReadable;
+        bTcpipNetif.is_writeable = bNetifConnWriteData;
+        bTcpipNetif.read         = bNetifConnReadData;
+        bTcpipNetif.write        = bNetifConnWriteData;
+        bTcpipNetif.deinit       = bNetifConnDeinit;
+#else
+        return -1;
+#endif
+    }
+    bTcpipNetif.add(dev, ip, gw, mask);
+    return 0;
+}
 
 int bSntpStart(uint32_t interval_s)
 {

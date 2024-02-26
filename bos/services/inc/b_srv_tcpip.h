@@ -63,7 +63,11 @@ extern "C" {
  * \defgroup TCPIP_Exported_TypesDefinitions
  * \{
  */
-
+typedef enum
+{
+    B_NETDEV_MAC,
+    B_NETDEV_WIFI_MODULE
+} bNetDevType_t;
 /**
  * \}
  */
@@ -81,6 +85,8 @@ extern "C" {
  * \defgroup TCPIP_Exported_Functions
  * \{
  */
+
+int bTcpipSrvInit(uint32_t dev, bNetDevType_t type, uint32_t ip, uint32_t gw, uint32_t mask);
 
 int bSntpStart(uint32_t interval_s);
 

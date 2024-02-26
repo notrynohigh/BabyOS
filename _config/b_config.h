@@ -16,15 +16,6 @@
 #define RS485_RX_IDLE_MS 50
 #define _485_USE_CALLBACK 1
 #define _BOS_MODULES_ENABLE 1
-#define _NETIF_ENABLE 1
-#define NETIF_LINK_CHECK_INTERVAL 200
-#define NETIF_CHECKSUM_BY_HARDWARE 1
-#define MEMP_NUM_TCP_PCB_LISTEN 4
-#define TCP_SND_QUEUELEN 8
-#define REMOTE_ADDR_LEN_MAX 128
-#define CONNECT_SENDBUF_MAX 1024
-#define CONNECT_RECVBUF_MAX 1024
-#define CONNECT_NUMBER_MAX 2
 #define _DEBUG_ENABLE 1
 #define LOG_LEVEL_INFO 1
 #define LOG_BUF_SIZE 256
@@ -32,6 +23,9 @@
 #define LOG_UART 0
 #define _BOS_SERVICES_ENABLE 1
 #define _TCPIP_SERVICE_ENABLE 1
+#define _NTP_SERVER_1 "ntp1.aliyun.com"
+#define _NTP_SERVER_2 "ntp2.aliyun.com"
+#define _NTP_SERVER_3 "ntp3.aliyun.com"
 
 
 #include "b_type.h" 
