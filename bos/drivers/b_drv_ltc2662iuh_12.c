@@ -41,6 +41,8 @@
 #define DAC3 0X03
 #define DAC4 0X04
 
+#define L2B_B2L_16b(n) ((((n) & 0xff) << 8) | (((n) & 0xff00) >> 8))
+
 /**
  * }
  */
@@ -205,7 +207,7 @@ static int _bLTC2662_DACX_Attribute_Updata(bDriverInterface_t *pdrv, LTC2662_DAC
  */
 static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
-    uint8_t send_buf[3] = {0, 0, 0};
+    uint8_t    send_buf[3] = {0, 0, 0};
     U_LT_Write data;
     bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
@@ -269,8 +271,6 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
         data.LT_uint16 = LTC_SPAN_VALUE_300mA;
     }
 
-    // data.LT_uint16 = data.LT_uint16 << 4;
-
     send_buf[1] = data.LT_byte[1];
     send_buf[2] = data.LT_byte[0];
 
@@ -291,7 +291,7 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
  */
 static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
-    uint8_t send_buf[3] = {0, 0, 0};
+    uint8_t    send_buf[3] = {0, 0, 0};
     U_LT_Write data;
     bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
@@ -323,10 +323,15 @@ static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t
     }
 
     // 将set_value由16bit转换为12bit,后四个无关位,并且进行MSB-TO-LSB
-    data.LT_uint16 = _priv->dac_attribute[dac_x].set_value << 4;
+    data.LT_uint16 = _priv->dac_attribute[dac_x].set_value;
 
-    send_buf[1] = data.LT_byte[1];
-    send_buf[2] = data.LT_byte[0];
+    // 将LT_byte按照大小端进行转换
+    data.LT_uint16 = L2B_B2L_16b(data.LT_uint16);
+    // 将其左移四位
+    data.LT_uint16 = data.LT_uint16 << 4;
+
+    send_buf[1] = data.LT_byte[0];
+    send_buf[2] = data.LT_byte[1];
 
     // spi发送
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
