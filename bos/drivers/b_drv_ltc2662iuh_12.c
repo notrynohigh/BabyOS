@@ -411,57 +411,73 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
 {
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
     bLTC2662_CONFIG_t *p = (bLTC2662_CONFIG_t *)param;
+    bLTC2662_STATUS_t *q = (bLTC2662_STATUS_t *)param;
 
     switch (cmd)
     {
-    case bCMD_LTC_SET_CURRENT:
-        if (param == NULL)
-        {
-            return -1;
-        }
-        _priv->dac_attribute[p->dac_channel].expect_current = p->current;
-        break;
-    case bCMD_LTC_EXEC_DACX:
-        if (param == NULL)
-        {
-            return -1;
-        }
-        if (p->dac_channel >= LTC_DAC_MAX)
-        {
-            return -2;
-        }
-        if (p->current != _priv->dac_attribute[p->dac_channel].expect_current)
-        {
+        case bCMD_LTC_GET_DACX_STATUS:
+            if (param == NULL)
+            {
+                return -1;
+            }
+            q->status = _priv->dac_attribute[q->dac_channel].status;
+            break;
+        case bCMD_LTC_SET_CURRENT:
+            if (param == NULL)
+            {
+                return -1;
+            }
             _priv->dac_attribute[p->dac_channel].expect_current = p->current;
-        }
-        if (_bLTC2662_DACX_Attribute_Updata(pdrv, p->dac_channel) < 0)
-        {
-            b_log_e("_bLTC2662_DACX_Attribute_Updata chx=%d err!!!\r\n", p->dac_channel);
-            return -3;
-        }
-        if (_bLTC2662_DACX_Exec(pdrv, p->dac_channel) < 0)
-        {
-            b_log_e("_bLTC2662_DACX_Exec chx=%d err!!!\r\n", p->dac_channel);
-            return -4;
-        }
-        break;
-    case bCMD_LTC_STOP_DACX:
-        if (param == NULL)
-        {
-            return -1;
-        }
-        if (p->dac_channel >= LTC_DAC_MAX)
-        {
-            return -2;
-        }
-        if (_bLTC2662_DACX_Stop(pdrv, p->dac_channel) < 0)
-        {
-            b_log_e("_bLTC2662_DACX_Stop chx=%d err!!!\r\n", p->dac_channel);
-            return -3;
-        }
-        break;
-    default:
-        break;
+            break;
+        case bCMD_LTC_EXEC_DACX:
+            if (param == NULL)
+            {
+                return -1;
+            }
+            if (p->dac_channel >= LTC_DAC_MAX)
+            {
+                return -2;
+            }
+            if (p->current < 0)
+            {
+                return -3;
+            }
+            if (p->current == _priv->dac_attribute[p->dac_channel].expect_current)
+            {
+                return 0;
+            }
+            else
+            {
+                _priv->dac_attribute[p->dac_channel].expect_current = p->current;
+            }
+            if (_bLTC2662_DACX_Attribute_Updata(pdrv, p->dac_channel) < 0)
+            {
+                b_log_e("_bLTC2662_DACX_Attribute_Updata chx=%d err!!!\r\n", p->dac_channel);
+                return -4;
+            }
+            if (_bLTC2662_DACX_Exec(pdrv, p->dac_channel) < 0)
+            {
+                b_log_e("_bLTC2662_DACX_Exec chx=%d err!!!\r\n", p->dac_channel);
+                return -5;
+            }
+            break;
+        case bCMD_LTC_STOP_DACX:
+            if (param == NULL)
+            {
+                return -1;
+            }
+            if (p->dac_channel >= LTC_DAC_MAX)
+            {
+                return -2;
+            }
+            if (_bLTC2662_DACX_Stop(pdrv, p->dac_channel) < 0)
+            {
+                b_log_e("_bLTC2662_DACX_Stop chx=%d err!!!\r\n", p->dac_channel);
+                return -3;
+            }
+            break;
+        default:
+            break;
     }
     return 0;
 }

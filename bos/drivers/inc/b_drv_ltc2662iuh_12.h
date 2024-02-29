@@ -191,6 +191,13 @@ typedef enum
     LTC_SPAN_VALUE_300mA   = 0X0F,
     LTC_SPAN_VALUE_MAX
 } LTC2662_SPAN_VALUE_t;
+
+typedef struct
+{
+    LTC2662_DAC_t dac_channel;  // 0-4
+    uint8_t       status;       // 0:关闭, 1:打开
+} bLTC2662_STATUS_t;
+
 typedef struct
 {
     LTC2662_DAC_t dac_channel; // 0-4

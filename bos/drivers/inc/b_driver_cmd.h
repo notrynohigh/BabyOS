@@ -41,9 +41,10 @@ extern "C" {
 ///////////////////////////////////////////////////////////
 // eeprom Command & Data Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_LTC_SET_CURRENT 0 // uint32_t
-#define bCMD_LTC_EXEC_DACX 1   // uint32_t 某个DAC按照私有参数执行
-#define bCMD_LTC_STOP_DACX 2   // uint32_t 某个DAC取消输出
+#define bCMD_LTC_GET_DACX_STATUS 0  // uint32_t 获取某个DAC输出状态
+#define bCMD_LTC_SET_CURRENT 1 // uint32_t
+#define bCMD_LTC_EXEC_DACX 2   // uint32_t 某个DAC按照私有参数执行
+#define bCMD_LTC_STOP_DACX 3   // uint32_t 某个DAC取消输出
 
 ///////////////////////////////////////////////////////////
 // 485 Command & Data Structure
