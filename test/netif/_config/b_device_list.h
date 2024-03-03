@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_srv_tcpip.h
+ * \file        b_device_list.h
  * \version     v0.0.1
- * \date        2023/08/27
+ * \date        2019/06/05
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2023 Bean
+ * Copyright (c) 2019 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,87 +28,39 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_SRV_TCPIP_H__
-#define __B_SRV_TCPIP_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/*Includes ----------------------------------------------*/
-#include <stdint.h>
-
-#include "b_config.h"
-
-#if (defined(_TCPIP_SERVICE_ENABLE) && (_TCPIP_SERVICE_ENABLE == 1))
-
-#include "modules/inc/b_mod_netif/b_mod_link.h"
-#include "modules/inc/b_mod_netif/b_mod_trans.h"
-
 /**
- * \addtogroup BABYOS
- * \{
+typedef enum
+{
+    B_DRIVER_NULL = 0,
+    B_DRIVER_24CXX,
+    B_DRIVER_DS18B20,
+    B_DRIVER_ESP12F,
+    B_DRIVER_FM25CL,
+    B_DRIVER_ILI9320,
+    B_DRIVER_ILI9341,
+    B_DRIVER_KEY,
+    B_DRIVER_LIS3DH,
+    B_DRIVER_MATRIXKEYS,
+    B_DRIVER_MCUFLASH,
+    B_DRIVER_OLED,
+    B_DRIVER_PCF8574,
+    B_DRIVER_SD,
+    B_DRIVER_SPIFLASH,
+    B_DRIVER_SSD1289,
+    B_DRIVER_ST7789,
+    B_DRIVER_TESTFLASH,
+    B_DRIVER_XPT2046,
+    B_DRIVER_NUMBER
+} bDriverNumber_t;
+*/
+/**
+    B_DEVICE_REG(dev_1, bDriverNumber_t, "description")
+    .....
+    B_DEVICE_REG(dev_n, bDriverNumber_t, "description")
  */
 
-/**
- * \addtogroup SERVICES
- * \{
- */
+B_DEVICE_REG(bTESTFLASH, B_DRIVER_TESTFLASH, "testflash")
 
-/**
- * \addtogroup TCPIP
- * \{
- */
+#undef B_DEVICE_REG
 
-/**
- * \defgroup TCPIP_Exported_TypesDefinitions
- * \{
- */
-
-/**
- * \}
- */
-
-/**
- * \defgroup TCPIP_Exported_Defines
- * \{
- */
-
-/**
- * \}
- */
-
-/**
- * \defgroup TCPIP_Exported_Functions
- * \{
- */
-
-int bTcpipSrvInit(void);
-
-int bSntpStart(uint32_t interval_s);
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
-
-/************************ Copyright (c) 2023 Bean *****END OF FILE****/
+/************************ Copyright (c) 2019 Bean *****END OF FILE****/
