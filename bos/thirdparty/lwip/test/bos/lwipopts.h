@@ -49,7 +49,9 @@
 /*----- Value in opt.h for LWIP_NETIF_LINK_CALLBACK: 0 -----*/
 #define LWIP_NETIF_LINK_CALLBACK 1
 /*----- Value in opt.h for LWIP_DHCP: 0 -----*/
-#define LWIP_DHCP 1
+#ifdef NETIF_USE_DHCP
+#define LWIP_DHCP NETIF_USE_DHCP
+#endif
 /*----- use DHCP_OPTION_HOSTNAME with netif's hostname */
 #define LWIP_NETIF_HOSTNAME 1
 /**

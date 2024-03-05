@@ -222,10 +222,12 @@ typedef struct
     void *user_data;
 } bWifiModuleCallback_t;
 
+#define WIFI_SSID_LEN_MAX (32)
+#define WIFI_PASSWD_LEN_MAX (64)
 typedef struct
 {
-    char    ssid[64];
-    char    passwd[64];
+    char    ssid[WIFI_SSID_LEN_MAX + 1];
+    char    passwd[WIFI_PASSWD_LEN_MAX + 1];
     uint8_t encryption;
     // 0(open) 1(WPA_PSK) 2(WPA2_PSK) 3(WPA_WPA2_PSK)
 } bApInfo_t;

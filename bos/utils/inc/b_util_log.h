@@ -159,7 +159,7 @@ extern "C" {
         b_log("%02x ", (buf)[ihex]);         \
     }
 
-#define b_assert(expr)                                \
+#define b_assert_log(expr)                            \
     do                                                \
     {                                                 \
         if (!(expr))                                  \

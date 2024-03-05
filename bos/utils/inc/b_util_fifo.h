@@ -84,7 +84,7 @@ typedef bFIFO_Info_t bFIFO_Instance_t;
 ///< bFIFO_Init 使用接口传入的buf，然后执行初始化内容
 ///< 注意： bFIFO_INSTANCE 和 bFIFO_Init 调用其中1个即可。
 int bFIFO_Init(bFIFO_Instance_t *pinstance, void *pbuf, uint16_t size);
-
+int bFIFO_Deinit(bFIFO_Instance_t *pinstance);
 int bFIFO_Write(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size);
 int bFIFO_Read(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size);
 int bFIFO_Length(bFIFO_Instance_t *pinstance, uint16_t *plen);
