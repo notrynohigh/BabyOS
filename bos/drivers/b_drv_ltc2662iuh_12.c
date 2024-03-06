@@ -9,6 +9,7 @@
  */
 
 /* Includes ----------------------------------------------*/
+#include <math.h>
 #include "drivers/inc/b_drv_ltc2662iuh_12.h"
 
 /**
@@ -186,7 +187,7 @@ static int _bLTC2662_DACX_Attribute_Updata(bDriverInterface_t *pdrv, LTC2662_DAC
         return -2;
     }
 
-    _priv->dac_attribute[dac_x].set_value = _priv->dac_attribute[dac_x].expect_current / _priv->dac_attribute[dac_x].span_div;
+    _priv->dac_attribute[dac_x].set_value = round(_priv->dac_attribute[dac_x].expect_current / _priv->dac_attribute[dac_x].span_div);
     _priv->dac_attribute[dac_x].set_value = _priv->dac_attribute[dac_x].set_value > 4095 ? 4095 : _priv->dac_attribute[dac_x].set_value;
 
     _priv->dac_attribute[dac_x].real_current = _priv->dac_attribute[dac_x].set_value * _priv->dac_attribute[dac_x].span_div;
@@ -428,6 +429,13 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
                 return -1;
             }
             _priv->dac_attribute[p->dac_channel].expect_current = p->current;
+            break;
+        case bCMD_LTC_GET_CURRENT:
+            if (param == NULL)
+            {
+                return -1;
+            }
+            p->current = _priv->dac_attribute[p->dac_channel].real_current;
             break;
         case bCMD_LTC_EXEC_DACX:
             if (param == NULL)
