@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_utils.h
+ * \file        b_util_at.h
  * \version     v0.0.1
- * \date        2019/12/23
+ * \date        2019/06/05
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
@@ -28,18 +28,99 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_UTILS_H__
-#define __B_UTILS_H__
-/*Includes ----------------------------------------------*/
+#ifndef __B_UTIL_AT_H__
+#define __B_UTIL_AT_H__
 
-#include "b_util_at.h"
-#include "b_util_fifo.h"
-#include "b_util_list.h"
-#include "b_util_log.h"
-#include "b_util_lunar.h"
-#include "b_util_memp.h"
-#include "b_util_uart.h"
-#include "b_util_utc.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*Includes ----------------------------------------------*/
+#include "b_config.h"
+
+#if (defined(_AT_ENABLE) && (_AT_ENABLE == 1))
+
+#include "core/inc/b_task.h"
+
+/**
+ * \addtogroup BABYOS
+ * \{
+ */
+
+/**
+ * \addtogroup B_UTILS
+ * \{
+ */
+
+/**
+ * \addtogroup AT
+ * \{
+ */
+
+/**
+ * \defgroup AT_Exported_Defines
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup AT_Exported_TypesDefinitions
+ * \{
+ */
+
+typedef void (*pAtCmdCb_t)(uint8_t isok, void *user_data);
+typedef void (*pAtNewDataCb_t)(uint8_t *pbuf, uint16_t len, void (*pfree)(void *), void *user_data);
+typedef void (*pAtSendData_t)(const uint8_t *pbuf, uint16_t len, void *user_data);
+
+typedef struct
+{
+    const char    *pcmd;
+    const char    *resp;
+    void          *user_data;
+    uint16_t       timeout;
+    pAtCmdCb_t     cmd_cb;
+    pAtNewDataCb_t data_cb;
+    pAtSendData_t  send;
+    bTaskAttr_t    attr;
+} bAtStruct_t;
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup AT_Exported_Functions
+ * \{
+ */
+
+int bAtInit(bAtStruct_t *pat, pAtCmdCb_t cmd_cb, pAtNewDataCb_t data_cb, pAtSendData_t send,
+            void *user_data);
+int bAtSendCmd(bAtStruct_t *pat, const char *pcmd, const char *resp, uint16_t timeout);
+int bAtFeedData(bAtStruct_t *pat, uint8_t *pbuf, uint16_t len);
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
+
 /************************ Copyright (c) 2019 Bean *****END OF FILE****/

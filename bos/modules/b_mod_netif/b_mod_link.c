@@ -32,6 +32,8 @@
 /*Includes ----------------------------------------------*/
 #include "modules/inc/b_mod_netif/b_mod_link.h"
 
+#include "hal/inc/b_hal.h"
+
 #if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
 
 #if (defined(_NETIF_USE_LWIP) && (_NETIF_USE_LWIP == 1))
@@ -40,7 +42,6 @@
 #include "core/inc/b_core.h"
 #include "core/inc/b_device.h"
 #include "drivers/inc/b_driver_cmd.h"
-#include "hal/inc/b_hal.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/dhcp.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/dns.h"
 #include "thirdparty/lwip/bos_lwip/include/lwip/inet_chksum.h"

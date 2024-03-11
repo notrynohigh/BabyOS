@@ -1,5 +1,7 @@
 #include "modules/inc/b_mod_netif/b_mod_trans.h"
 
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+
 __WEAKDEF int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
 {
     return -1;
@@ -44,3 +46,5 @@ __WEAKDEF int bPing(char *remote, uint32_t timeout_ms, pbTransPingCb_t cb, void 
 {
     return -1;
 }
+
+#endif
