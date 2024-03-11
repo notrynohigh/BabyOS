@@ -13,7 +13,7 @@
 
 #if defined(AT32F403Axx)
 #include "at32f403a_407.h"
-
+#if defined(SPI_MODULE_ENABLED)
 static spi_type *spi_buf[] = {SPI1, SPI2, SPI3, SPI4};
 
 static int get_spi_x(const bHalSPIIf_t *spi_if, spi_type **spi_x)
@@ -125,5 +125,5 @@ int bMcuSpiReceive(const bHalSPIIf_t *spi_if, uint8_t *pbuf, uint16_t len)
 
     return 0;
 }
-
+#endif
 #endif
