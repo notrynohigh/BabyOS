@@ -42,10 +42,10 @@ extern "C" {
 // eeprom Command & Data Structure
 ///////////////////////////////////////////////////////////
 #define bCMD_LTC_GET_DACX_STATUS 0  // uint32_t 获取某个DAC输出状态
-#define bCMD_LTC_SET_CURRENT 1 // uint32_t
-#define bCMD_LTC_GET_CURRENT 2 // uint32_t
-#define bCMD_LTC_EXEC_DACX 3   // uint32_t 某个DAC按照私有参数执行
-#define bCMD_LTC_STOP_DACX 4   // uint32_t 某个DAC取消输出
+#define bCMD_LTC_SET_CURRENT 1      // uint32_t
+#define bCMD_LTC_GET_CURRENT 2      // uint32_t
+#define bCMD_LTC_EXEC_DACX 3        // uint32_t 某个DAC按照私有参数执行
+#define bCMD_LTC_STOP_DACX 4        // uint32_t 某个DAC取消输出
 
 ///////////////////////////////////////////////////////////
 // 485 Command & Data Structure
@@ -200,39 +200,60 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // Wifi Module Command & Data Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_WIFI_MODE_STA 0           // none
-#define bCMD_WIFI_MODE_AP 1            // bApInfo_t
-#define bCMD_WIFI_MODE_STA_AP 2        // bApInfo_t
-#define bCMD_WIFI_JOIN_AP 3            // bApInfo_t
-#define bCMD_WIFI_MQTT_CONN 4          // bMqttConnInfo_t
-#define bCMD_WIFI_MQTT_SUB 5           // bMqttTopic_t
-#define bCMD_WIFI_MQTT_PUB 6           // bMqttData_t
-#define bCMD_WIFI_LOCAL_TCP_SERVER 7   // bTcpUdpInfo_t
-#define bCMD_WIFI_LOCAL_UDP_SERVER 8   // bTcpUdpInfo_t
-#define bCMD_WIFI_REMOT_TCP_SERVER 9   // bTcpUdpInfo_t
-#define bCMD_WIFI_REMOT_UDP_SERVER 10  // bTcpUdpInfo_t
-#define bCMD_WIFI_PING 11              // default www.baidu.com
-#define bCMD_WIFI_GET_CONN_STATUS 12   // bWfifiConnStat_t
-#define bCMD_WIFI_REG_CALLBACK 13      // bWifiModuleCallback_t
-#define bCMD_WIFI_TCPUDP_CLOSE 14      // bTcpUdpInfo_t
-#define bCMD_WIFI_TCPUDP_SEND 15       // bTcpUdpData_t
-
+#define bCMD_WIFI_REG_CALLBACK 0       // bWifiDrvCallback_t
+#define bCMD_WIFI_MODE_STA 1           // none
+#define bCMD_WIFI_MODE_AP 2            // bApInfo_t
+#define bCMD_WIFI_MODE_STA_AP 3        // bApInfo_t
+#define bCMD_WIFI_JOIN_AP 4            // bApInfo_t
+#define bCMD_WIFI_PING 5               // char *
+#define bCMD_WIFI_LOCAL_TCP_SERVER 6   // bTcpUdpInfo_t
+#define bCMD_WIFI_LOCAL_UDP_SERVER 7   // bTcpUdpInfo_t
+#define bCMD_WIFI_REMOT_TCP_SERVER 8   // bTcpUdpInfo_t
+#define bCMD_WIFI_REMOT_UDP_SERVER 9   // bTcpUdpInfo_t
+#define bCMD_WIFI_TCPUDP_CLOSE 10      // bTcpUdpInfo_t
+#define bCMD_WIFI_TCPUDP_SEND 11       // bTcpUdpData_t
+#define bCMD_WIFI_MQTT_CONN 12         // bMqttConnInfo_t
+#define bCMD_WIFI_MQTT_SUB 13          // bMqttTopic_t
+#define bCMD_WIFI_MQTT_PUB 14          // bMqttData_t
+#define bCMD_WIFI_SET_CALLBACK_ARG 15  // void *
 typedef enum
 {
-    WIFI_DRV_EVT_CMD_OK,     // arg 为对应Wifi Module Command
-    WIFI_DRV_EVT_CMD_ERR,    // arg 为对应Wifi Module Command
-    WIFI_DRV_EVT_DATA,       // 提示收到数据 bTcpUdpData_t
-    WIFI_DRV_EVT_MQTT_DATA,  // 提示收到数据 bMqttData_t
-} bWifiModuleEvent_t;
+    B_EVT_MODE_STA_OK = 0,
+    B_EVT_MODE_AP_OK,
+    B_EVT_MODE_STA_AP_OK,
+    B_EVT_JOIN_AP_OK,
+    B_EVT_PING_OK,
+    B_EVT_LOCAL_TCP_SERVER_OK,
+    B_EVT_LOCAL_UDP_SERVER_OK,
+    B_EVT_CONN_TCP_SERVER_OK,
+    B_EVT_CONN_UDP_SERVER_OK,
+    B_EVT_CLOSE_CONN_OK,
+    B_EVT_CONN_SEND_OK,
+    B_EVT_CONN_NEW_DATA,
+
+    B_EVT_FAIL_BASE = -100,
+    B_EVT_MODE_STA_FAIL,
+    B_EVT_MODE_AP_FAIL,
+    B_EVT_MODE_STA_AP_FAIL,
+    B_EVT_JOIN_AP_FAIL,
+    B_EVT_PING_FAIL,
+    B_EVT_LOCAL_TCP_SERVER_FAIL,
+    B_EVT_LOCAL_UDP_SERVER_FAIL,
+    B_EVT_CONN_TCP_SERVER_FAIL,
+    B_EVT_CONN_UDP_SERVER_FAIL,
+    B_EVT_CLOSE_CONN_FAIL,
+    B_EVT_CONN_SEND_FAIL,
+} bWifiDrvEvent_t;
 
 typedef struct
 {
-    void (*cb)(bWifiModuleEvent_t event, void *arg, void (*release)(void *), void *user_data);
+    void (*cb)(bWifiDrvEvent_t event, void *arg, void (*release)(void *), void *user_data);
     void *user_data;
-} bWifiModuleCallback_t;
+} bWifiDrvCallback_t;
 
 #define WIFI_SSID_LEN_MAX (32)
 #define WIFI_PASSWD_LEN_MAX (64)
+#define WIFI_REMOTE_ADDR_LEN_MAX (64)
 typedef struct
 {
     char    ssid[WIFI_SSID_LEN_MAX + 1];
@@ -243,7 +264,7 @@ typedef struct
 
 typedef struct
 {
-    char     ip[64];
+    char     ip[WIFI_REMOTE_ADDR_LEN_MAX + 1];
     uint16_t port;
 } bTcpUdpInfo_t;
 

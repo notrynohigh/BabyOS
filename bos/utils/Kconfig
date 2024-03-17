@@ -74,4 +74,9 @@ config _MEMP_MONITOR_ENABLE
     default n
     depends on _MEMP_ENABLE
 
+config _AT_ENABLE
+    bool "AT Enable/Disable"
+    default n
+    select _MEMP_ENABLE
+
 endmenu

@@ -179,7 +179,7 @@ config _CJSON_ENABLE
 
 config CJSON_MEM_USE_BMALLOC
     bool "use bMalloc and bFree ?"
-    default n
+    default y
     depends on _CJSON_ENABLE
     select _MEMP_ENABLE
 
