@@ -167,7 +167,7 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             b_log_e("ntp send fail...\r\n");
-            bShutdown(bNtpPcb.sockfd);
+            PT_WAIT_UNTIL(pt, bShutdown(bNtpPcb.sockfd) >= 0, B_NTP_TIMEOUT_S * 1000);
             ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
             break;
         }
@@ -178,7 +178,7 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             b_log_e("ntp recv timeout.. \r\n");
-            bShutdown(bNtpPcb.sockfd);
+            PT_WAIT_UNTIL(pt, bShutdown(bNtpPcb.sockfd) >= 0, B_NTP_TIMEOUT_S * 1000);
             ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
             bTaskDelayMs(pt, 10000);
             break;
@@ -193,7 +193,7 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
                 bUTC_SetTime(ntp_time);
             }
         }
-        bShutdown(bNtpPcb.sockfd);
+        PT_WAIT_UNTIL(pt, bShutdown(bNtpPcb.sockfd) >= 0, B_NTP_TIMEOUT_S * 1000);
         bTaskDelayMs(pt, bNtpPcb.interval_s * 1000);
     }
     PT_END(pt);
