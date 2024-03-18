@@ -107,29 +107,26 @@ PT_THREAD(bAtTask)(struct pt *pt, void *arg)
     PT_BEGIN(pt);
     while (1)
     {
-        if (pat->pcmd)
+        PT_WAIT_UNTIL_FOREVER(pt, pat->pcmd != NULL);
+        pat->send((const uint8_t *)pat->pcmd, strlen(pat->pcmd), pat->user_data);
+        pat->pcmd = NULL;
+        if (pat->resp == NULL)
         {
-            pat->send((const uint8_t *)pat->pcmd, strlen(pat->pcmd), pat->user_data);
-            pat->pcmd = NULL;
+            pat->cmd_cb(1, pat->user_data);
+        }
+        else
+        {
+            b_log("wait resp %dms..\r\n", pat->timeout);
+            PT_WAIT_UNTIL(pt, pat->resp == NULL, pat->timeout);
             if (pat->resp == NULL)
             {
-                pat->cmd_cb(1, pat->user_data);
+                result = 1;
             }
-            else
-            {
-                b_log("wait resp..\r\n");
-                PT_WAIT_UNTIL(pt, pat->resp == NULL, pat->timeout);
-                if (pat->resp == NULL)
-                {
-                    result = 1;
-                }
-                pat->resp    = NULL;
-                pat->pcmd    = NULL;
-                pat->timeout = 0;
-                pat->cmd_cb(result, pat->user_data);
-            }
+            pat->resp    = NULL;
+            pat->pcmd    = NULL;
+            pat->timeout = 0;
+            pat->cmd_cb(result, pat->user_data);
         }
-        bTaskDelayMs(pt, 100);
     }
     PT_END(pt);
 }
@@ -163,6 +160,7 @@ int bAtInit(bAtStruct_t *pat, pAtCmdCb_t cmd_cb, pAtNewDataCb_t data_cb, pAtSend
 
 int bAtSendCmd(bAtStruct_t *pat, const char *pcmd, const char *resp, uint16_t timeout)
 {
+    b_log("atcmd: %s\r\n", pcmd);
     if (pat == NULL || pcmd == NULL || pat->cmd_cb == NULL || pat->data_cb == NULL ||
         pat->send == NULL)
     {
