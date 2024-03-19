@@ -199,7 +199,7 @@ const static bEsp12fCmd_t bEspCmdJoinAp[1]         = {{NULL, "OK", 15000, _bJoin
 const static bEsp12fCmd_t bEspCmdPing[1]           = {{NULL, "OK", 3000, _bPing}};
 const static bEsp12fCmd_t bEspCmdLocalTcpServer[1] = {{NULL, "OK", 300, _bLocalTcpServer}};
 const static bEsp12fCmd_t bEspCmdRemotTcpServer[1] = {{NULL, "OK", 1000, _bRemoteTcpServer}};
-const static bEsp12fCmd_t bEspCmdRemotUdpServer[1] = {{NULL, "OK", 300, _bRemoteUdpServer}};
+const static bEsp12fCmd_t bEspCmdRemotUdpServer[1] = {{NULL, "OK", 1000, _bRemoteUdpServer}};
 const static bEsp12fCmd_t bEspCmdCloseTcpUdp[1]    = {{NULL, "OK", 300, _bCloseTcpUdp}};
 const static bEsp12fCmd_t bEspCmdSendData[1]       = {{NULL, ">", 300, _bTcpUdpSend}};
 /**
@@ -642,34 +642,45 @@ static int _bESP12FCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             memcpy(&_priv->param.tcpudp, param, sizeof(bTcpUdpInfo_t));
             conn_id = 0xff;
             retval  = _bEsp12fGetConn(_priv, &_priv->param.tcpudp, &conn_id);
-            if (retval < 0 && conn_id == 0xff)
-            {
-                return -1;
-            }
-
+            b_log_w("retval %d cnn_id %02x \r\n", retval, conn_id);
             if (cmd == bCMD_WIFI_LOCAL_TCP_SERVER)
             {
                 _bEsp12fProcessCmd(_priv, cmd, &bEspCmdLocalTcpServer[0],
                                    sizeof(bEspCmdLocalTcpServer) / sizeof(bEsp12fCmd_t), 0, 0);
             }
-            else if (cmd == bCMD_WIFI_REMOT_TCP_SERVER && _priv->conn[conn_id].connected == 0)
+            else if (cmd == bCMD_WIFI_REMOT_TCP_SERVER)
             {
+                if (conn_id == 0xff)
+                {
+                    b_log_e("conn full, use conn_id 0\r\n");
+                    return -2;
+                }
                 _priv->conn_id = conn_id;
                 memcpy(&_priv->conn[conn_id], &_priv->param.tcpudp, sizeof(bTcpUdpInfo_t));
                 _priv->conn[conn_id].connected = 1;
                 _bEsp12fProcessCmd(_priv, cmd, &bEspCmdRemotTcpServer[0],
                                    sizeof(bEspCmdRemotTcpServer) / sizeof(bEsp12fCmd_t), 0, 0);
             }
-            else if (cmd == bCMD_WIFI_REMOT_UDP_SERVER && _priv->conn[conn_id].connected == 0)
+            else if (cmd == bCMD_WIFI_REMOT_UDP_SERVER)
             {
+                if (conn_id == 0xff)
+                {
+                    b_log_e("conn full\r\n");
+                    return -2;
+                }
                 _priv->conn_id = conn_id;
                 memcpy(&_priv->conn[conn_id], &_priv->param.tcpudp, sizeof(bTcpUdpInfo_t));
                 _priv->conn[conn_id].connected = 1;
                 _bEsp12fProcessCmd(_priv, cmd, &bEspCmdRemotUdpServer[0],
                                    sizeof(bEspCmdRemotUdpServer) / sizeof(bEsp12fCmd_t), 0, 0);
             }
-            else if (cmd == bCMD_WIFI_TCPUDP_CLOSE && _priv->conn[retval].connected == 1)
+            else if (cmd == bCMD_WIFI_TCPUDP_CLOSE)
             {
+                if (retval < 0)
+                {
+                    b_log_e("cannt find..\r\n");
+                    return -2;
+                }
                 _priv->conn_id                = retval;
                 _priv->conn[retval].connected = 0;
                 _bEsp12fProcessCmd(_priv, cmd, &bEspCmdCloseTcpUdp[0],
@@ -691,7 +702,8 @@ static int _bESP12FCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             retval = _bEsp12fGetConn(_priv, &_priv->param.tcpudp, NULL);
             if (retval < 0)
             {
-                return -1;
+                b_log_e("cannt find..\r\n");
+                return -2;
             }
             memcpy(&_priv->param.dat, param, sizeof(bTcpUdpData_t));
             _priv->conn_id = retval;

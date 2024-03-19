@@ -370,8 +370,9 @@ static void _bWifiDrvCb(bWifiDrvEvent_t event, void *arg, void (*release)(void *
 static int _bWifiSetDrvCbArg(void *arg)
 {
     int retval = -1;
-    if (bWifiModule.busy || arg == NULL)
+    if (bWifiModule.busy)
     {
+        b_log_e("busy cmd:%d\r\n", bWifiModule.cmd);
         return -1;
     }
     retval = bCtl(bWifiModule.fd, bCMD_WIFI_SET_CALLBACK_ARG, arg);
@@ -553,6 +554,8 @@ int bWifiDisconn(const char *remote, uint16_t port)
     if (bWifiModule.busy != 0 || bWifiModule.fd < 0 || remote == NULL ||
         strlen(remote) > WIFI_REMOTE_ADDR_LEN_MAX || strlen(remote) == 0)
     {
+        b_log_e("err: %d %d %p %d %s\r\n", bWifiModule.busy, bWifiModule.fd, remote, strlen(remote),
+                remote);
         return -1;
     }
     memset(&info, 0, sizeof(bTcpUdpInfo_t));
@@ -660,14 +663,14 @@ int bConnect(int sockfd, char *remote, uint16_t port)
         b_log_e("%d %p %d\r\n", sockfd, remote, port);
         return -1;
     }
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans    = (bTrans_t *)sockfd;
+    ptrans->remote_port = port;
+    memset(ptrans->remote_ip, 0, REMOTE_ADDR_LEN_MAX + 1);
+    memcpy(ptrans->remote_ip, remote, strlen(remote));
     if (_bWifiSetDrvCbArg(ptrans) < 0)
     {
         return -2;
     }
-    ptrans->remote_port = port;
-    memset(ptrans->remote_ip, 0, REMOTE_ADDR_LEN_MAX + 1);
-    memcpy(ptrans->remote_ip, remote, strlen(remote));
     if (ptrans->type == B_TRANS_CONN_TCP)
     {
         retval = bWifiConnTcp(ptrans->remote_ip, ptrans->remote_port);
@@ -766,18 +769,17 @@ int bShutdown(int sockfd)
     int retval = -1;
     if (sockfd < 0)
     {
+        b_log_e("sockfd == -1\r\n");
         return -1;
     }
     bTrans_t *ptrans = (bTrans_t *)sockfd;
-    if (_bWifiSetDrvCbArg(ptrans) < 0)
+    __list_del(ptrans->list.prev, ptrans->list.next);
+    if ((retval = _bWifiSetDrvCbArg(NULL)) < 0)
     {
+        b_log_e("set arg error..%d\r\n", retval);
         return -2;
     }
-    retval = bWifiDisconn(ptrans->remote_ip, ptrans->remote_port);
-    if (retval < 0)
-    {
-        return -2;
-    }
+    bWifiDisconn(ptrans->remote_ip, ptrans->remote_port);
     bFree(ptrans->rx_fifo.pbuf);
     bFIFO_Deinit(&ptrans->rx_fifo);
     bFree(ptrans);

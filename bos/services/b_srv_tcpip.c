@@ -161,13 +161,14 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
             b_log_e("socket fail...\r\n");
             break;
         }
-        b_log("sockfd: %x\r\n", bNtpPcb.sockfd);
+        b_log("sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
         bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123);
         PT_WAIT_UNTIL(pt, bSockIsWriteable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             b_log_e("ntp send fail...\r\n");
-            PT_WAIT_UNTIL(pt, bShutdown(bNtpPcb.sockfd) >= 0, B_NTP_TIMEOUT_S * 1000);
+            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+            b_log_e("shutdown..\r\n");
             ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
             break;
         }
@@ -178,7 +179,8 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             b_log_e("ntp recv timeout.. \r\n");
-            PT_WAIT_UNTIL(pt, bShutdown(bNtpPcb.sockfd) >= 0, B_NTP_TIMEOUT_S * 1000);
+            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+            b_log_e("shutdown..\r\n");
             ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
             bTaskDelayMs(pt, 10000);
             break;
@@ -193,7 +195,8 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
                 bUTC_SetTime(ntp_time);
             }
         }
-        PT_WAIT_UNTIL(pt, bShutdown(bNtpPcb.sockfd) >= 0, B_NTP_TIMEOUT_S * 1000);
+        PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+        b_log_e("shutdown..\r\n");
         bTaskDelayMs(pt, bNtpPcb.interval_s * 1000);
     }
     PT_END(pt);
