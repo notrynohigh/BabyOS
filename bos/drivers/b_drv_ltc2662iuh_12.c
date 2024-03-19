@@ -518,6 +518,9 @@ int bLTC2662IUH_12_Init(bDriverInterface_t *pdrv)
     pdrv->ctl = _bLTC2662IUH_12Ctl;
     pdrv->close = _bLTC2662IUH_12Close;
     pdrv->_private._p = &bLTC2662IUH_12RunInfo[pdrv->drv_no];
+
+    _bLTC2662IUH_12Close(pdrv);
+
     return 0;
 }
 
