@@ -469,7 +469,8 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
             }
             if (p->current == _priv->dac_attribute[p->dac_channel].expect_current)
             {
-                b_log_i("bCMD_LTC_EXEC_DACX current is equal to expect_current, no need to exec!!!\r\n");
+                // b_log_i("bCMD_LTC_EXEC_DACX current is equal to expect_current, no need to
+                // exec!!!\r\n");
                 return 0;
             }
             else
