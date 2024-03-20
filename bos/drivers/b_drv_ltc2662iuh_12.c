@@ -414,6 +414,7 @@ static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
 
     _priv->dac_attribute[dac_x].status = 0;
+    _priv->dac_attribute[dac_x].expect_current = 0;
 
     return 0;
 }
