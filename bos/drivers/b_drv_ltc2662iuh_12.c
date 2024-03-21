@@ -369,6 +369,8 @@ static int _bLTC2662_DACX_Exec(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 
     _priv->dac_attribute[dac_x].status = 1;
 
+    b_log_i("\r\n%d\t%10.2f\t%10.2f\t%10.2f\t%10.2f\t\r\n", dac_x, _priv->dac_attribute[dac_x].expect_current, _priv->dac_attribute[dac_x].real_current, _priv->dac_attribute[dac_x].err_current, _priv->dac_attribute[dac_x].err_percentage_current);
+
     return 0;
 }
 
@@ -415,6 +417,8 @@ static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 
     _priv->dac_attribute[dac_x].status = 0;
     _priv->dac_attribute[dac_x].expect_current = 0;
+
+    b_log_i("\r\n%d\t%d\t\r\n", dac_x, _priv->dac_attribute[dac_x].status);
 
     return 0;
 }
