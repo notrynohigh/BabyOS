@@ -402,8 +402,13 @@ int bSPIFLASH_Init(bDriverInterface_t *pdrv)
     return retval;
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_SPIFLASH, bSPIFLASH_Init);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

@@ -155,8 +155,13 @@ static void _bButtonCore()
     }
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section bos_polling
+#endif
 BOS_REG_POLLING_FUNC(_bButtonCore);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 static void _bButtonCallback(void *p)
 {
     flex_button_t     *btn       = (flex_button_t *)p;

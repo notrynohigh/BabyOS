@@ -298,7 +298,13 @@ int bAPDS9930_Init(bDriverInterface_t *pdrv)
     return 0;
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_APDS9930, bAPDS9930_Init);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

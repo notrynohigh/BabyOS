@@ -112,6 +112,8 @@ static const char    bLogPrefix[3]     = {'I', 'W', 'E'};
 #define B_FPUTC int fputc(int c, FILE *f)
 #elif defined(__GNUC__)
 #define B_FPUTC int __io_putchar(int c)
+#elif defined(__RENESAS__)
+#define B_FPUTC int putchar(int c)
 #else
 #define B_FPUTC int fputc(int c, FILE *f)
 #endif

@@ -123,9 +123,21 @@ static int _bDriverNullInit(bDriverInterface_t *pdrv)
     }
     return 0;
 }
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init_0
+#endif
 bDRIVER_REG_INIT_0(B_DRIVER_NULL, _bDriverNullInit);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
+
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_NULL, _bDriverNullInit);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 
 /**
  * \}

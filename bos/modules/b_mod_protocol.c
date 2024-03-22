@@ -316,9 +316,13 @@ static int _bProtocolPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t
  * \addtogroup PROTOCOL_Exported_Functions
  * \{
  */
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section b_srv_protocol
+#endif
 bPROTOCOL_REG_INSTANCE("bos", _bProtocolParse, _bProtocolPackage);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

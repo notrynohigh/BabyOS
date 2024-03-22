@@ -239,7 +239,13 @@ int bDS18B20_Init(bDriverInterface_t *pdrv)
     return 0;
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_DS18B20, bDS18B20_Init);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

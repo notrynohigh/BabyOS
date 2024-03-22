@@ -466,8 +466,13 @@ int bLIS3DH_Init(bDriverInterface_t *pdrv)
     return 0;
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_LIS3DH, bLIS3DH_Init);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

@@ -221,8 +221,13 @@ static void _bNetlinkCore()
     sys_check_timeouts();
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section bos_polling
+#endif
 BOS_REG_POLLING_FUNC(_bNetlinkCore);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 int bNetlinkInit()
 {
 #if (defined(_NETIF_USE_LWIP) && (_NETIF_USE_LWIP == 1))

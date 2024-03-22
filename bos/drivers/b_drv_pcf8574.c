@@ -153,8 +153,13 @@ int bPCF8574_Init(bDriverInterface_t *pdrv)
     return 0;
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init_0
+#endif
 bDRIVER_REG_INIT_0(B_DRIVER_PCF8574, bPCF8574_Init);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

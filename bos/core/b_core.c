@@ -96,7 +96,15 @@ bSECTION_DEF_FLASH(bos_polling, pbPoling_t);
  * \{
  */
 static void _bCoreMonitor(void);
+
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section bos_polling
+#endif
 BOS_REG_POLLING_FUNC(_bCoreMonitor);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
+
 /**
  * \}
  */

@@ -85,8 +85,13 @@ static void _bStatePolling()
     }
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section bos_polling
+#endif
 BOS_REG_POLLING_FUNC(_bStatePolling);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 static bStateAttr_t *_bStateFindAttr(const char *name)
 {
     bStateAttr_t     *attr = NULL;

@@ -262,8 +262,13 @@ static int _bYmodemPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t b
  * \addtogroup YMODEM_Exported_Functions
  * \{
  */
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section b_srv_protocol
+#endif
 bPROTOCOL_REG_INSTANCE("ymodem", _bYmodemParse, _bYmodemPackage);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

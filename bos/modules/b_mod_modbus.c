@@ -705,10 +705,21 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
  * \addtogroup MODBUS_Exported_Functions
  * \{
  */
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section b_srv_protocol
+#endif
 bPROTOCOL_REG_INSTANCE("modbus_master", _bModbusRTUMasterParse, _bModbusRTUMasterPackage);
-bPROTOCOL_REG_INSTANCE("modbus_slave", _bModbusRTUSlaveParse, _bModbusRTUSlavePackage);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section b_srv_protocol
+#endif
+bPROTOCOL_REG_INSTANCE("modbus_slave", _bModbusRTUSlaveParse, _bModbusRTUSlavePackage);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

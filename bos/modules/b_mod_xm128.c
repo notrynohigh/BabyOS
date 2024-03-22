@@ -195,9 +195,13 @@ static int _bXmodem128Package(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
  * \addtogroup XMODEM128_Exported_Functions
  * \{
  */
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section b_srv_protocol
+#endif
 bPROTOCOL_REG_INSTANCE("xmodem128", _bXmodem128Parse, _bXmodem128Package);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

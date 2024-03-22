@@ -61,8 +61,13 @@
  * \{
  */
 static void _ShellParamHandle(char argc, char *argv);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section b_mod_shell
+#endif
 bSHELL_REG_INSTANCE("param", _ShellParamHandle);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

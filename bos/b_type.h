@@ -90,6 +90,8 @@ extern "C" {
 #define __WEAKDEF __attribute__((weak))
 #elif defined(__ICCARM__)
 #define __WEAKDEF __weak
+#elif defined(__RENESAS__)
+#define __WEAKDEF 
 #else
 #define __WEAKDEF __attribute__((weak))
 #endif
