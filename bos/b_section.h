@@ -77,6 +77,8 @@ typedef void (*pbPoling_t)(void);
 #define BOS_SECTION_START_ADDR(section_name) &CONCAT_2(section_name, $$Base)
 
 #elif defined(__GNUC__)
+#define __stringify(x...) #x
+#define STRINGIFY(s1) __stringify(s1)
 #define BOS_SECTION_START_ADDR(section_name) &CONCAT_2(__start_, section_name)
 
 #elif defined(__ICCARM__)
@@ -84,9 +86,10 @@ typedef void (*pbPoling_t)(void);
 #define STRINGIFY(s1) __stringify(s1)
 #define BOS_SECTION_START_ADDR(section_name) __section_begin(STRINGIFY(section_name))
 
-#elif defined(__RENESAS__)
-#define BOS_SECTION_START_ADDR(section_name) __sectop(#section_name)
-
+#elif defined(__RENESAS__)  // map section __s.constbos_polling_n __e.constbos_polling_n
+#define STRINGIFY(x) #x
+#define QUOTE(x) STRINGIFY(x)
+#define BOS_SECTION_START_ADDR(section_name) __sectop(QUOTE(.##const##section_name##_n))
 #endif
 
 /**
@@ -101,8 +104,8 @@ typedef void (*pbPoling_t)(void);
 #elif defined(__ICCARM__)
 #define BOS_SECTION_END_ADDR(section_name) __section_end(STRINGIFY(section_name))
 
-#elif defined(__RENESAS__)
-#define BOS_SECTION_END_ADDR(section_name) __secend(#section_name)
+#elif defined(__RENESAS__)  // miki
+#define BOS_SECTION_END_ADDR(section_name) __secend(QUOTE(.##const##section_name##_n))
 
 #endif
 
@@ -173,7 +176,7 @@ typedef void (*pbPoling_t)(void);
 
 #define bSECTION_FOR_EACH(section_name, data_type, variable)                     \
     for (data_type *variable = BOS_SECTION_ITEM_GET(section_name, data_type, 0); \
-         (intptr_t)variable != (intptr_t)BOS_SECTION_END_ADDR(section_name); variable++)
+         (int)variable != (int)BOS_SECTION_END_ADDR(section_name); variable++)
 
 /**
  * \}

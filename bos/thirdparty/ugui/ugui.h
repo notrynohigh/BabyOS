@@ -544,10 +544,11 @@ typedef struct
 #define DRIVER_ENABLED (1 << 1)
 
 /* Supported drivers */
-#define NUMBER_OF_DRIVERS 3
+#define NUMBER_OF_DRIVERS 4
 #define DRIVER_DRAW_LINE 0
 #define DRIVER_FILL_FRAME 1
 #define DRIVER_FILL_AREA 2
+#define DRIVER_READXBF 3
 
 /* -------------------------------------------------------------------------------- */
 /* -- µGUI CORE STRUCTURE                                                        -- */
@@ -875,8 +876,6 @@ typedef struct
 /* -------------------------------------------------------------------------------- */
 /* -- PROTOTYPES                                                                 -- */
 /* -------------------------------------------------------------------------------- */
-#if defined(GUI_FONT_XBF)
-
 typedef struct
 {
     uint32_t addr;
@@ -889,8 +888,6 @@ typedef struct
     uint16_t x_byte;
 } XBF_Data_t;
 
-int UG_ReadXBF(UG_U32 off, UG_U8* pbuf, UG_U16 len);
-#endif
 /* Classic functions */
 UG_S16 UG_Init(UG_GUI* g, void (*p)(UG_S16, UG_S16, UG_COLOR), UG_S16 x, UG_S16 y);
 UG_S16 UG_SelectGUI(UG_GUI* g);

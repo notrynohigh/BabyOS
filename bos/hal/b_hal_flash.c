@@ -45,7 +45,7 @@
  * \addtogroup FLASH_Exported_Functions
  * \{
  */
-
+#if defined(__WEAKDEF)
 __WEAKDEF int bMcuFlashInit()
 {
     return -1;
@@ -85,7 +85,7 @@ __WEAKDEF uint32_t bMcuFlashChipSize()
 {
     return 0;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 

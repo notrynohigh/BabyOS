@@ -34,7 +34,6 @@
 
 #include "utils/inc/b_util_log.h"
 
-
 #if (defined(_MEMP_ENABLE) && (_MEMP_ENABLE == 1))
 
 /**
@@ -174,6 +173,11 @@ static void *_bMempAlloc(uint32_t size)
             break;
         }
     }
+    if (pret == NULL)
+    {
+        b_log_e("memp alloc fail, size:%d", size);
+        bMallocFailedHook();
+    }
     return pret;
 }
 
@@ -247,7 +251,7 @@ static void _bFree(void *paddr)
     _bMempFree((uint32_t)paddr);
 }
 #else
-void          *bMalloc(uint32_t size)
+void *bMalloc(uint32_t size)
 {
     _bMempInit();
     if (size == 0)
@@ -272,11 +276,25 @@ uint32_t bGetFreeSize()
     _bMempInit();
     return _bGetFreeSize();
 }
-
+#if defined(__WEAKDEF)
 __WEAKDEF void bMallocFailedHook()
 {
     ;
 }
+#else
+static void (*pMallocFailHook)(void) = NULL;
+void bMallocRegisterHook(void (*hook)(void))
+{
+    pMallocFailHook = hook;
+}
+void bMallocFailedHook()
+{
+    if (pMallocFailHook)
+    {
+        pMallocFailHook();
+    }
+}
+#endif
 
 #if (defined(_MEMP_MONITOR_ENABLE) && (_MEMP_MONITOR_ENABLE == 1))
 

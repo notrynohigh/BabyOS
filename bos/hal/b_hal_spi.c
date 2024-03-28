@@ -83,9 +83,8 @@ static uint8_t _bHalSPIIOWriteRead(bHalSPIIO_t spi, uint8_t dat)
         {
             dat++;
         }
-        if(i == 7 && spi.CPHA == 1)
+        if (i == 7 && spi.CPHA == 1)
         {
-
         }
         else
         {
@@ -109,7 +108,7 @@ static uint8_t _bHalSPIIOWriteRead(bHalSPIIO_t spi, uint8_t dat)
  * \addtogroup SPI_Exported_Functions
  * \{
  */
-
+#if defined(__WEAKDEF)
 __WEAKDEF int bMcuSpiSetSpeed(const bHalSPIIf_t *spi_if, bHalSPISpeed_t speed)
 {
     return -1;
@@ -129,7 +128,7 @@ __WEAKDEF int bMcuSpiReceive(const bHalSPIIf_t *spi_if, uint8_t *pbuf, uint16_t 
 {
     return -1;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 
