@@ -91,9 +91,14 @@ extern "C" {
 #elif defined(__ICCARM__)
 #define __WEAKDEF __weak
 #elif defined(__RENESAS__)
-#define __WEAKDEF 
 #else
 #define __WEAKDEF __attribute__((weak))
+#endif
+
+#if defined(__RENESAS__)
+#define __INLINE_DEF __inline
+#else
+#define __INLINE_DEF inline
 #endif
 
 #define B_SIZE_ALIGNMENT(size, align) (((size) + (align)-1) & ~((align)-1))

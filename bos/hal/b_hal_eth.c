@@ -45,7 +45,7 @@
  * \addtogroup ETH_Exported_Functions
  * \{
  */
-
+#if defined(__WEAKDEF)
 __WEAKDEF int bMcuEthInit(bHalBufList_t *pbuf_list)
 {
     return -1;
@@ -74,7 +74,7 @@ __WEAKDEF int bMcuEthTransmit(void *pbuf, uint32_t len)
 {
     return -1;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 

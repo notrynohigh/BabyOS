@@ -141,11 +141,15 @@ typedef enum
  * \defgroup IAP_Exported_Functions
  * \{
  */
-/**
- * 跳转是弱函数，用户可自己实现
- */
+
+#if defined(__WEAKDEF)
+// 弱函数，用户可以自行实现
 void bIapJump2Boot(void);
 void bIapJump2App(void);
+#else
+// 不支持弱函数的编译器，传入自定义跳转函数
+int bIapRegisterJumpFunc(pJumpFunc_t jump2boot, pJumpFunc_t jump2app);
+#endif
 
 /**
  * \brief 初始化函数

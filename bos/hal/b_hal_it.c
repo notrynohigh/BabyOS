@@ -56,7 +56,7 @@ static LIST_HEAD(bHalItListHead);
  * \addtogroup IT_Exported_Functions
  * \{
  */
-
+#if defined(__WEAKDEF)
 __WEAKDEF void bMcuIntEnable()
 {
     ;
@@ -66,7 +66,7 @@ __WEAKDEF void bMcuIntDisable()
 {
     ;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 
