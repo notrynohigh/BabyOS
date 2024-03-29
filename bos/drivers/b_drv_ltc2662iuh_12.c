@@ -107,6 +107,7 @@ static int _bLTC2662_DACX_Updata_Span(bDriverInterface_t *pdrv, LTC2662_DAC_t da
 
     if (dac_x >= LTC_DAC_MAX)
     {
+        b_log_e("Invalid DAC channel");
         return -1;
     }
 
@@ -160,6 +161,7 @@ static int _bLTC2662_DACX_Updata_Span(bDriverInterface_t *pdrv, LTC2662_DAC_t da
     }
     else
     {
+        b_log_e("Invalid current value");
         return -2;
     }
 
@@ -179,11 +181,13 @@ static int _bLTC2662_DACX_Attribute_Updata(bDriverInterface_t *pdrv, LTC2662_DAC
 
     if (dac_x >= LTC_DAC_MAX)
     {
+        b_log_e("Invalid DAC channel");
         return -1;
     }
 
     if (_bLTC2662_DACX_Updata_Span(pdrv, dac_x) < 0)
     {
+        b_log_e("Invalid current value");
         return -2;
     }
 
@@ -214,6 +218,7 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
     if (dac_x >= LTC_DAC_MAX)
     {
+        b_log_e("Invalid DAC channel");
         return -1;
     }
 
@@ -298,6 +303,7 @@ static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
     if (dac_x >= LTC_DAC_MAX)
     {
+        b_log_e("Invalid DAC channel");
         return -1;
     }
 
@@ -347,18 +353,26 @@ static int _bLTC2662_DACX_Exec(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
     if (dac_x >= LTC_DAC_MAX)
     {
+        b_log_e("Invalid DAC channel");
         return -1;
     }
     if (_bLTC2662_WriteSpanToN(pdrv, dac_x) < 0)
     {
+        b_log_e("_bLTC2662_WriteSpanToN chx=%d err!!!\r\n", dac_x);
         return -2;
     }
     if (_bLTC2662_WriteCodeToNUpdateN(pdrv, dac_x) < 0)
     {
+        b_log_e("_bLTC2662_WriteCodeToNUpdateN chx=%d err!!!\r\n", dac_x);
         return -3;
     }
 
     _priv->dac_attribute[dac_x].status = 1;
+
+    // b_log_i("\r\n%d\t%10.3f\t%10.3f\t%10.3f\t%10.3f\t\r\n", dac_x,
+    //         _priv->dac_attribute[dac_x].expect_current, _priv->dac_attribute[dac_x].real_current,
+    //         _priv->dac_attribute[dac_x].err_current,
+    //         _priv->dac_attribute[dac_x].err_percentage_current);
 
     return 0;
 }
@@ -370,6 +384,7 @@ static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
     if (dac_x >= LTC_DAC_MAX)
     {
+        b_log_e("Invalid DAC channel");
         return -1;
     }
 
@@ -404,6 +419,9 @@ static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
 
     _priv->dac_attribute[dac_x].status = 0;
+    _priv->dac_attribute[dac_x].expect_current = 0;
+
+    // b_log_i("\r\n%d\t%d\t\r\n", dac_x, _priv->dac_attribute[dac_x].status);
 
     return 0;
 }
@@ -419,6 +437,7 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
         case bCMD_LTC_GET_DACX_STATUS:
             if (param == NULL)
             {
+                b_log_e("bCMD_LTC_GET_DACX_STATUS param err!!!\r\n");
                 return -1;
             }
             q->status = _priv->dac_attribute[q->dac_channel].status;
@@ -426,6 +445,7 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
         case bCMD_LTC_SET_CURRENT:
             if (param == NULL)
             {
+                b_log_e("bCMD_LTC_SET_CURRENT param err!!!\r\n");
                 return -1;
             }
             _priv->dac_attribute[p->dac_channel].expect_current = p->current;
@@ -433,6 +453,7 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
         case bCMD_LTC_GET_CURRENT:
             if (param == NULL)
             {
+                b_log_e("bCMD_LTC_GET_CURRENT param err!!!\r\n");
                 return -1;
             }
             p->current = _priv->dac_attribute[p->dac_channel].real_current;
@@ -440,18 +461,23 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
         case bCMD_LTC_EXEC_DACX:
             if (param == NULL)
             {
+                b_log_e("bCMD_LTC_EXEC_DACX param err!!!\r\n");
                 return -1;
             }
             if (p->dac_channel >= LTC_DAC_MAX)
             {
+                b_log_e("bCMD_LTC_EXEC_DACX dac_channel err!!!\r\n");
                 return -2;
             }
             if (p->current < 0)
             {
+                b_log_e("bCMD_LTC_EXEC_DACX current err!!!\r\n");
                 return -3;
             }
             if (p->current == _priv->dac_attribute[p->dac_channel].expect_current)
             {
+                // b_log_i("bCMD_LTC_EXEC_DACX current is equal to expect_current, no need to
+                // exec!!!\r\n");
                 return 0;
             }
             else
@@ -472,10 +498,12 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
         case bCMD_LTC_STOP_DACX:
             if (param == NULL)
             {
+                b_log_e("bCMD_LTC_STOP_DACX param err!!!\r\n");
                 return -1;
             }
             if (p->dac_channel >= LTC_DAC_MAX)
             {
+                b_log_e("bCMD_LTC_STOP_DACX dac_channel err!!!\r\n");
                 return -2;
             }
             if (_bLTC2662_DACX_Stop(pdrv, p->dac_channel) < 0)
@@ -518,6 +546,9 @@ int bLTC2662IUH_12_Init(bDriverInterface_t *pdrv)
     pdrv->ctl = _bLTC2662IUH_12Ctl;
     pdrv->close = _bLTC2662IUH_12Close;
     pdrv->_private._p = &bLTC2662IUH_12RunInfo[pdrv->drv_no];
+
+    _bLTC2662IUH_12Close(pdrv);
+
     return 0;
 }
 
