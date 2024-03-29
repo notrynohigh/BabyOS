@@ -74,6 +74,8 @@ typedef void (*pbPoling_t)(void);
  * \brief the beginning of a section
  */
 #if defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6000000))
+#define __stringify(x...) #x
+#define STRINGIFY(s1) __stringify(s1)
 #define BOS_SECTION_START_ADDR(section_name) &CONCAT_2(section_name, $$Base)
 
 #elif defined(__GNUC__)
