@@ -33,9 +33,9 @@
 /* send dummy data for read data */
 #define DUMMY_DATA 0xFF
 
-//#ifndef SFUD_FLASH_DEVICE_TABLE
-//#error "Please configure the flash device information table in (in sfud_cfg.h)."
-//#endif
+// #ifndef SFUD_FLASH_DEVICE_TABLE
+// #error "Please configure the flash device information table in (in sfud_cfg.h)."
+// #endif
 
 /* supported manufacturer information table */
 static const sfud_mf mf_table[] = SFUD_MF_TABLE;
@@ -77,12 +77,6 @@ static void     make_adress_byte_array(const sfud_flash *flash, uint32_t addr, u
 /* ../port/sfup_port.c */
 extern void sfud_log_debug(const char *file, const long line, const char *format, ...);
 extern void sfud_log_info(const char *format, ...);
-
-__WEAKDEF sfud_err sfud_spi_port_init(sfud_flash *flash)
-{
-    return SFUD_ERR_NOT_FOUND;
-}
-
 /**
  * SFUD initialize by flash device
  *
@@ -215,19 +209,10 @@ sfud_err sfud_qspi_fast_read_enable(sfud_flash *flash, uint8_t data_line_width)
  */
 static sfud_err hardware_init(sfud_flash *flash)
 {
-    extern sfud_err sfud_spi_port_init(sfud_flash * flash);
-
     sfud_err result = SFUD_SUCCESS;
     size_t   i;
 
     SFUD_ASSERT(flash);
-
-    result = sfud_spi_port_init(flash);
-    if (result != SFUD_SUCCESS)
-    {
-        return result;
-    }
-
 #ifdef SFUD_USING_QSPI
     /* set default read instruction */
     flash->read_cmd_format.instruction = SFUD_CMD_READ_DATA;

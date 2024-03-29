@@ -78,10 +78,26 @@ static void _bHalUpdateDelayParam()
  * \addtogroup HAL_Exported_Functions
  * \{
  */
+#if defined(__WEAKDEF)
 __WEAKDEF void bHalUserInit()
 {
     ;
 }
+#else
+static void (*pbHalUserInitFunc)(void) = NULL;
+void bHalUserInit()
+{
+    if (pbHalUserInitFunc)
+    {
+        pbHalUserInitFunc();
+    }
+}
+
+void bHalRegUserInit(void (*cb)(void))
+{
+    pbHalUserInitFunc = cb;
+}
+#endif
 
 void bHalInit()
 {

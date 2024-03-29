@@ -46,7 +46,7 @@ if mcu_exist == 1:
                 filtered_lines = []
                 check_flag = 0
                 for cpline in lines:
-                    if "__WEAKDEF" in cpline and check_flag == 0:
+                    if cpline.startswith("__WEAKDEF") and check_flag == 0:
                         cpline = cpline.replace('__WEAKDEF', '')
                         cpline = re.sub(r'^\s+', '', cpline)
                         filtered_lines.append(cpline)

@@ -14088,15 +14088,26 @@ void UG_PutCharUnicode(uint32_t v, UG_S16 x, UG_S16 y, UG_COLOR fc, UG_COLOR bc)
     XBF_Data_t _data;
     uint32_t   info_addr = 0;
     info_addr            = XBF_FILE_ADDR + ((v - ' ') * 6) + 18;
-    UG_ReadXBF(info_addr, (uint8_t*)&info, sizeof(XBF_Info_t));
-    UG_ReadXBF(info.addr, (uint8_t*)&_data, sizeof(XBF_Data_t));
+
+    if (gui->driver[DRIVER_READXBF].state & DRIVER_ENABLED)
+    {
+        ((int (*)(uint32_t off, uint8_t* pbuf, uint16_t len))gui->driver[DRIVER_READXBF].driver)(
+            info_addr, (uint8_t*)&info, sizeof(XBF_Info_t));
+        ((int (*)(uint32_t off, uint8_t* pbuf, uint16_t len))gui->driver[DRIVER_READXBF].driver)(
+            info.addr, (uint8_t*)&_data, sizeof(XBF_Data_t));
+    }
+    else
+    {
+        return;
+    }
     if ((gui->font.char_height * _data.x_byte + sizeof(XBF_Data_t)) == info.len)
     {
         for (k = 0; k < (info.len - sizeof(XBF_Data_t));)
         {
             for (i = 0; i < _data.x_byte; i++)
             {
-                UG_ReadXBF(info.addr + sizeof(XBF_Data_t) + k + i, &tmp_data, 1);
+                ((int (*)(uint32_t off, uint8_t* pbuf, uint16_t len))gui->driver[DRIVER_READXBF]
+                     .driver)(info.addr + sizeof(XBF_Data_t) + k + i, &tmp_data, 1);
                 for (j = 0; j < 8; j++)
                 {
                     if ((i * 8 + j) >= _data.x_len)
@@ -14933,7 +14944,7 @@ void UG_Update(void)
 {
     UG_WINDOW* wnd;
 
-    if(gui == NULL)
+    if (gui == NULL)
     {
         return;
     }
@@ -15039,7 +15050,7 @@ void UG_DrawBMP(UG_S16 xp, UG_S16 yp, UG_BMP* bmp)
             r <<= 3;
             g = (tmp >> 5) & 0x3F;
             g <<= 2;
-            b = (tmp)&0x1F;
+            b = (tmp) & 0x1F;
             b <<= 3;
             c = ((UG_COLOR)r << 16) | ((UG_COLOR)g << 8) | (UG_COLOR)b;
             UG_DrawPixel(xp++, yp, c);

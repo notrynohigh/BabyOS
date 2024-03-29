@@ -302,8 +302,13 @@ int bQMC5883L_Init(bDriverInterface_t *pdrv)
 }
 
 // bDRIVER_REG_INIT_0(B_DRIVER_QMC5883L, bQMC5883L_Init_0);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_QMC5883L, bQMC5883L_Init);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * }
  */

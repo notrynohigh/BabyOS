@@ -61,8 +61,8 @@ extern "C" {
 void* bMallocPlus(uint32_t size, const char* func, int line);
 void  bFreePlus(void* ptr, const char* func, int line);
 
-#define bMalloc(size)  bMallocPlus((size), __func__, __LINE__)
-#define bFree(addr)    bFreePlus((addr), __func__, __LINE__)
+#define bMalloc(size) bMallocPlus((size), __func__, __LINE__)
+#define bFree(addr) bFreePlus((addr), __func__, __LINE__)
 
 #else
 
@@ -72,8 +72,11 @@ void  bFree(void *paddr);
 #endif
 
 uint32_t bGetFreeSize(void);
-void     bMallocFailedHook(void);
-
+#if defined(__WEAKDEF)
+void bMallocFailedHook(void);
+#else
+void bMallocRegisterHook(void (*hook)(void));
+#endif
 /**
  * \}
  */

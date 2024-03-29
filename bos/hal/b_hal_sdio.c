@@ -44,7 +44,7 @@
  * \addtogroup SDIO_Exported_Functions
  * \{
  */
-
+#if defined(__WEAKDEF)
 __WEAKDEF int bMcuSDIOReadBlocks(const bHalSDIONumber_t sd, uint8_t *pdata, uint32_t addr,
                                  uint32_t xblocks)
 {
@@ -56,7 +56,7 @@ __WEAKDEF int bMcuSDIOWriteBlocks(const bHalSDIONumber_t sd, uint8_t *pdata, uin
 {
     return 0;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 

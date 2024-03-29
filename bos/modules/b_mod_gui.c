@@ -186,6 +186,23 @@ static void _LCD_FillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, bG
     }
 }
 
+static int _bGUI_ReadXBF(uint32_t off, uint8_t *pbuf, uint16_t len)
+{
+#if defined(GUI_FONT_XBF)
+    int fd = -1;
+    fd     = bOpen(bGUI_XBF_FontDevice, BCORE_FLAG_RW);
+    if (fd < 0)
+    {
+        b_log_e("open err\r\n");
+        return -1;
+    }
+    bLseek(fd, off);
+    bRead(fd, pbuf, len);
+    bClose(fd);
+#endif
+    return 0;
+}
+
 static void _bGUI_TouchExec()
 {
     int           fd = -1;
@@ -253,8 +270,13 @@ static void _bGUI_Core()
 #endif
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section bos_polling
+#endif
 BOS_REG_POLLING_FUNC(_bGUI_Core);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section
+#endif
 /**
  * \}
  */
@@ -318,7 +340,8 @@ int bGUIRegist(bGUIInstance_t *pInstance)
     UG_FontSelect(&FONT_12X16);
 #elif defined(GUI_FONT_XBF)
     uint8_t xbf_info[18];
-    if (0 > UG_ReadXBF(XBF_FILE_ADDR, xbf_info, 18))
+    UG_DriverRegister(DRIVER_READXBF, _bGUI_ReadXBF);
+    if (0 > _bGUI_ReadXBF(XBF_FILE_ADDR, xbf_info, 18))
     {
         b_log_e("read err\r\n");
         return -1;
@@ -339,23 +362,6 @@ int bGUIRegist(bGUIInstance_t *pInstance)
     pGUICurrent = pInstance;
     return 0;
 }
-
-#if defined(GUI_FONT_XBF)
-__WEAKDEF int UG_ReadXBF(uint32_t off, uint8_t *pbuf, uint16_t len)
-{
-    int fd = -1;
-    fd     = bOpen(bGUI_XBF_FontDevice, BCORE_FLAG_RW);
-    if (fd < 0)
-    {
-        b_log_e("open err\r\n");
-        return -1;
-    }
-    bLseek(fd, off);
-    bRead(fd, pbuf, len);
-    bClose(fd);
-    return 0;
-}
-#endif
 
 int bGUISelect(uint32_t lcd_dev_no)
 {

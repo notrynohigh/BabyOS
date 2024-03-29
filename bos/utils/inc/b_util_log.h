@@ -183,8 +183,13 @@ extern "C" {
 void bLogOut(uint8_t type, const char *ptr_file, const char *ptr_func, uint32_t line,
              const char *fmt, ...);
 
+#if defined(__WEAKDEF)
 // 非串口打印日志时，用户重新实现此函数。
 void bLogOutputBytes(uint8_t *pbuf, uint16_t len);
+#else
+// 不支持弱函数，则通过函数注册进去
+void bLogRegOutputBytes(void (*pfn)(uint8_t *pbuf, uint16_t len));
+#endif
 
 #endif
 /**

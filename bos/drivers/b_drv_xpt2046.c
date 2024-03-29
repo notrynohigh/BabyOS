@@ -164,8 +164,13 @@ int bXPT2046_Init(bDriverInterface_t *pdrv)
     return 0;
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_XPT2046, bXPT2046_Init);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * \}
  */

@@ -112,10 +112,13 @@ static const char    bLogPrefix[3]     = {'I', 'W', 'E'};
 #define B_FPUTC int fputc(int c, FILE *f)
 #elif defined(__GNUC__)
 #define B_FPUTC int __io_putchar(int c)
+#elif defined(__RENESAS__)
+#define B_FPUTC int __far putchar(int c)
 #else
 #define B_FPUTC int fputc(int c, FILE *f)
 #endif
 
+#if defined(__WEAKDEF)
 __WEAKDEF void bLogOutputBytes(uint8_t *pbuf, uint16_t len)
 {
 #if defined(LOG_UART)
@@ -125,6 +128,23 @@ __WEAKDEF void bLogOutputBytes(uint8_t *pbuf, uint16_t len)
     (void)len;
 #endif
 }
+#else
+static void (*pbLogOutputBytes)(uint8_t *pbuf, uint16_t len) = NULL;
+
+void bLogOutputBytes(uint8_t *pbuf, uint16_t len)
+{
+    if (pbLogOutputBytes)
+    {
+        pbLogOutputBytes(pbuf, len);
+    }
+}
+
+void bLogRegOutputBytes(void (*pfn)(uint8_t *pbuf, uint16_t len))
+{
+    pbLogOutputBytes = pfn;
+}
+
+#endif
 
 B_FPUTC
 {
@@ -144,7 +164,7 @@ static void _bLogOutput(void *p)
 #if defined(_LOG_VIA_USER_SPECIFIED) && (_LOG_VIA_USER_SPECIFIED == 1)
     bLogOutputBytes(p, strlen(p));
 #elif defined(LOG_UART)
-    bHalUartSend((bHalUartNumber_t) LOG_UART, p, strlen(p));
+    bHalUartSend((bHalUartNumber_t)LOG_UART, p, strlen(p));
 #else
     (void)p;
 #endif
