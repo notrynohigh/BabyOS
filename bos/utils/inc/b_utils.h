@@ -32,6 +32,7 @@
 #define __B_UTILS_H__
 /*Includes ----------------------------------------------*/
 
+#include "b_util_at.h"
 #include "b_util_fifo.h"
 #include "b_util_list.h"
 #include "b_util_log.h"

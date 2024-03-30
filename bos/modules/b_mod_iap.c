@@ -457,8 +457,13 @@ static void _IapBackupFirmware()
     }
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section bos_polling
+#endif
 BOS_REG_POLLING_FUNC(_IapBackupFirmware);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section
+#endif
 #endif
 
 /**
@@ -677,20 +682,46 @@ static int _bIapUpdateFwData(uint32_t index, uint8_t *pbuf, uint32_t len)
 /**
  * \brief 默认使用重启，用户可以根据需求重写此函数
  */
+#if defined(__WEAKDEF)
 __WEAKDEF void bIapJump2Boot()
 {
     bHalIntDisable();
     ((pJumpFunc_t)(*((volatile uint32_t *)(BOOT_START_ADDR + 4))))();
 }
+#else
+static pJumpFunc_t pbJump2Boot = NULL;
 
+void bIapJump2Boot()
+{
+    pbJump2Boot();
+}
+#endif
 /**
  * \brief 跳转到应用程序，用户可以根据需求重写此函数
  */
+#if defined(__WEAKDEF)
 __WEAKDEF void bIapJump2App()
 {
     bHalIntDisable();
     ((pJumpFunc_t)(*((volatile uint32_t *)(APP_START_ADDR + 4))))();
 }
+#else
+static pJumpFunc_t pbJump2App = NULL;
+
+void bIapJump2App()
+{
+    pbJump2App();
+}
+#endif
+
+#ifndef __WEAKDEF
+int bIapRegisterJumpFunc(pJumpFunc_t jump2boot, pJumpFunc_t jump2app)
+{
+    pbJump2Boot = jump2boot;
+    pbJump2App  = jump2app;
+    return 0;
+}
+#endif
 
 int bIapInit(uint32_t cache_dev_no, uint32_t backup_dev_no, uint32_t backup_time_s)
 {

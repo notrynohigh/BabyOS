@@ -44,7 +44,7 @@
  * \addtogroup QSPI_Exported_Functions
  * \{
  */
-
+#if defined(__WEAKDEF)
 __WEAKDEF int bMcuQSPISendCmd(const bHalQSPINumber_t qspi, const bHalQSPICmdInfo_t *pcmd)
 {
     return 0;
@@ -59,7 +59,7 @@ __WEAKDEF int bMcuQSPITransmitData(const bHalQSPINumber_t qspi, const uint8_t *p
 {
     return 0;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 

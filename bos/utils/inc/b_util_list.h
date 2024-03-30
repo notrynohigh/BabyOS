@@ -83,8 +83,8 @@ struct list_head
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_add(struct list_head *newItem, struct list_head *prev,
-                              struct list_head *next)
+static __INLINE_DEF void __list_add(struct list_head *newItem, struct list_head *prev,
+                                    struct list_head *next)
 {
     next->prev    = newItem;
     newItem->next = next;
@@ -100,7 +100,7 @@ static inline void __list_add(struct list_head *newItem, struct list_head *prev,
  * Insert a new entry after the specified head.
  * This is good for implementing stacks.
  */
-static inline void list_add(struct list_head *newItem, struct list_head *head)
+static __INLINE_DEF void list_add(struct list_head *newItem, struct list_head *head)
 {
     __list_add(newItem, head, head->next);
 }
@@ -113,7 +113,7 @@ static inline void list_add(struct list_head *newItem, struct list_head *head)
  * Insert a new entry before the specified head.
  * This is useful for implementing queues.
  */
-static inline void list_add_tail(struct list_head *newItem, struct list_head *head)
+static __INLINE_DEF void list_add_tail(struct list_head *newItem, struct list_head *head)
 {
     __list_add(newItem, head->prev, head);
 }
@@ -125,7 +125,7 @@ static inline void list_add_tail(struct list_head *newItem, struct list_head *he
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline void __list_del(struct list_head *prev, struct list_head *next)
+static __INLINE_DEF void __list_del(struct list_head *prev, struct list_head *next)
 {
     next->prev = prev;
     WRITE_ONCE(prev->next, next);
@@ -136,7 +136,7 @@ static inline void __list_del(struct list_head *prev, struct list_head *next)
  * @list: the entry to test
  * @head: the head of the list
  */
-static inline int list_is_first(const struct list_head *list, const struct list_head *head)
+static __INLINE_DEF int list_is_first(const struct list_head *list, const struct list_head *head)
 {
     return list->prev == head;
 }
@@ -146,7 +146,7 @@ static inline int list_is_first(const struct list_head *list, const struct list_
  * @list: the entry to test
  * @head: the head of the list
  */
-static inline int list_is_last(const struct list_head *list, const struct list_head *head)
+static __INLINE_DEF int list_is_last(const struct list_head *list, const struct list_head *head)
 {
     return list->next == head;
 }
@@ -156,7 +156,7 @@ static inline int list_is_last(const struct list_head *list, const struct list_h
  * @list: the entry to test
  * @head: the head of the list
  */
-static inline int list_is_head(const struct list_head *list, const struct list_head *head)
+static __INLINE_DEF int list_is_head(const struct list_head *list, const struct list_head *head)
 {
     return list == head;
 }
@@ -165,7 +165,7 @@ static inline int list_is_head(const struct list_head *list, const struct list_h
  * list_empty - tests whether a list is empty
  * @head: the list to test.
  */
-static inline int list_empty(const struct list_head *head)
+static __INLINE_DEF int list_empty(const struct list_head *head)
 {
     return head->next == head;
 }
@@ -218,7 +218,7 @@ static inline int list_empty(const struct list_head *head)
  * list_count_nodes - count nodes in the list
  * @head:	the head for your list.
  */
-static inline uint32_t list_count_nodes(struct list_head *head)
+static __INLINE_DEF uint32_t list_count_nodes(struct list_head *head)
 {
     struct list_head *pos;
     uint32_t          count = 0;
@@ -232,7 +232,7 @@ static inline uint32_t list_count_nodes(struct list_head *head)
  * check nodes in the list
  * @head:	the head for your list.
  */
-static inline uint8_t list_exist_nodes(struct list_head *head, struct list_head *node)
+static __INLINE_DEF uint8_t list_exist_nodes(struct list_head *head, struct list_head *node)
 {
     struct list_head *pos;
     list_for_each(pos, head)

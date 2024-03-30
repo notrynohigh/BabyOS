@@ -42,7 +42,8 @@ extern "C" {
 
 #if (defined(_TCPIP_SERVICE_ENABLE) && (_TCPIP_SERVICE_ENABLE == 1))
 
-#include "modules/inc/b_mod_netif.h"
+#include "modules/inc/b_mod_netif/b_mod_link.h"
+#include "modules/inc/b_mod_netif/b_mod_trans.h"
 
 /**
  * \addtogroup BABYOS
@@ -81,6 +82,8 @@ extern "C" {
  * \defgroup TCPIP_Exported_Functions
  * \{
  */
+
+int bTcpipSrvInit(void);
 
 int bSntpStart(uint32_t interval_s);
 

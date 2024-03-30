@@ -351,6 +351,7 @@ static int _HalI2CIOWriteBuff(bHalI2CIO_t i2c, uint8_t dev, uint16_t addr, uint8
  * \addtogroup I2C_Exported_Functions
  * \{
  */
+#if defined(__WEAKDEF)
 __WEAKDEF int bMcuI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
     return -1;
@@ -372,7 +373,7 @@ __WEAKDEF int bMcuI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8
 {
     return -1;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 

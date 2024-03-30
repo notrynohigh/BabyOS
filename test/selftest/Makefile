@@ -120,7 +120,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 #######################################
 # link script
 LDSCRIPT = $(SOURCE_ROOT)/test/babyos.ld
-LDFLAGS = -T$(LDSCRIPT) -lpthread
+LDFLAGS = -T$(LDSCRIPT) -lpthread -lm
 # libraries  
 
 

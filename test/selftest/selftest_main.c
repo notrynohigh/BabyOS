@@ -23,7 +23,7 @@ int main()
     b_log_w("hello world\r\n");
     b_log_e("hello world\r\n");
 
-    b_assert(a == 1);
+    b_assert_log(a == 1);
 
     bInit();
     while (1)

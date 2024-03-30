@@ -32,16 +32,35 @@
 /*Includes ----------------------------------------------*/
 #include "modules/inc/b_mod_wifi.h"
 
-#include "b_section.h"
+#if (defined(_WIFI_ENABLE) && (_WIFI_ENABLE == 1))
 #include "core/inc/b_core.h"
-#include "core/inc/b_queue.h"
-#include "core/inc/b_sem.h"
-#include "core/inc/b_task.h"
-#include "drivers/inc/b_driver.h"
+#include "drivers/inc/b_driver_cmd.h"
+#include "thirdparty/cjson/cjson.h"
 #include "utils/inc/b_util_log.h"
 #include "utils/inc/b_util_memp.h"
 
-#if (defined(_WIFI_ENABLE) && (_WIFI_ENABLE == 1))
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#include "modules/inc/b_mod_netif/b_mod_trans.h"
+#include "utils/inc/b_util_fifo.h"
+
+static LIST_HEAD(bWifiTransList);
+
+typedef struct
+{
+    void            *cb_arg;
+    pbTransCb_t      callback;
+    uint8_t          readable;
+    uint8_t          writeable;
+    bFIFO_Info_t     rx_fifo;
+    uint16_t         local_port;
+    uint16_t         remote_port;
+    char             remote_ip[REMOTE_ADDR_LEN_MAX + 1];
+    bTransType_t     type;
+    struct list_head list;
+} bTrans_t;
+
+#endif
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -61,45 +80,30 @@
  * \defgroup WIFI_Private_TypesDefinitions
  * \{
  */
-typedef struct
+
+typedef enum
 {
-    char     ip[64];
-    uint16_t port;
-} bWifiServerInfo_t;
+    WIFI_CMD_APCONFIGNET = 0,
+    WIFI_CMD_CONN_AP,
+    WIFI_CMD_CONN_TCP,
+    WIFI_CMD_CONN_UDP,
+    WIFI_CMD_DISCONN,
+    WIFI_CMD_PING,
+    WIFI_CMD_SEND,
+} bWifiCmd_t;
 
 typedef struct
 {
-    uint8_t          type;
-    char             ip[64];
-    uint16_t         port;
-    uint16_t         server_port;
-    bFIFO_Instance_t sfifo;
-    bFIFO_Instance_t rfifo;
-} bWifiNetCtx_t;
-
-typedef struct
-{
-    void            *pdev;
-    bWifiNetCtx_t   *pctx;
-    struct list_head list;
-} bWifiNetCtxList_t;
-
-typedef struct
-{
-    int                result;
-    uint32_t           dev;
-    int                fd;
-    bWifiEventHandle_t cb;
-    bWifiNetCtxList_t  ctx;
-} bWifiDevice_t;
-
-typedef struct
-{
-    bWifiDevice_t *handle;
-    uint8_t        type;
-    void          *param;
-    void (*release)(void *);
-} bWifiQItem_t;
+    int        fd;
+    uint8_t    busy;
+    bWifiCmd_t cmd;
+    union
+    {
+        bApInfo_t ap;
+    } param;
+    pWifiEvtCb_t cb;
+    void        *user_data;
+} bWifiModule_t;
 
 /**
  * \}
@@ -109,26 +113,6 @@ typedef struct
  * \defgroup WIFI_Private_Defines
  * \{
  */
-#define WIFI_CONFIG_STA (0)
-#define WIFI_CONFIG_AP (1)
-#define WIFI_CONFIG_AP_STA (2)
-#define WIFI_JOINAP_START (3)
-#define WIFI_START_PING (4)
-#define WIFI_CREATE_TCP_SERVER (5)
-#define WIFI_CREATE_UDP_SERVER (6)
-#define WIFI_CONNECT_TCP_SERVER (7)
-#define WIFI_CONNECT_UDP_SERVER (8)
-#define WIFI_CONNECT_CLOSE (9)
-#define WIFI_CONNECT_SEND (10)
-#define WIFI_CONNECT_MQTT (11)
-#define WIFI_CONNECT_MQTT_SUB (12)
-#define WIFI_CONNECT_MQTT_PUB (13)
-
-#define WIFI_CONN_TYPE_NULL (0)
-#define WIFI_CONN_TYPE_TCP_SERVER (1)
-#define WIFI_CONN_TYPE_UDP_SERVER (2)
-#define WIFI_CONN_TYPE_TCP_CLIENT (3)
-#define WIFI_CONN_TYPE_UDP_CLIENT (4)
 
 /**
  * \}
@@ -148,16 +132,10 @@ typedef struct
  * \{
  */
 
-static bWifiDevice_t bWifiDeviceTable[WIFI_DEVICE_NUMBER];
-
-B_TASK_CREATE_ATTR(bWifiTaskAttr);
-
-static uint8_t bWifiQBuf[sizeof(bWifiQItem_t) * WIFI_Q_LEN];
-B_QUEUE_CREATE_ATTR(bWifiQueueAttr, bWifiQBuf, sizeof(bWifiQBuf));
-static bQueueId_t bWifiQueue = NULL;
-
-B_SEM_CREATE_ATTR(bWifiSemAttr);
-static bSemId_t bWifiSem = NULL;
+static bWifiModule_t bWifiModule = {
+    .fd   = -1,
+    .busy = 0,
+};
 
 /**
  * \}
@@ -177,511 +155,228 @@ static bSemId_t bWifiSem = NULL;
  * \{
  */
 
-static void _bWifiMemRelease(void *p)
+static void _bWifiResult(uint8_t cmd, uint8_t isok, void *arg, void (*release)(void *))
 {
-    bFree(p);
-}
-
-static void _bWifiDeleteNetCtx(bWifiNetCtxList_t *p)
-{
-    bWifiNetCtx_t *pctx = p->pctx;
-
-    __list_del(p->list.prev, p->list.next);
-
-    bFIFO_DynDelete(&pctx->rfifo);
-    bFIFO_DynDelete(&pctx->sfifo);
-
-    _bWifiMemRelease(pctx);
-    _bWifiMemRelease(p);
-}
-
-static void _bWifiClearNetCtx(bWifiNetCtxList_t *ctx_head)
-{
-    bWifiNetCtxList_t *ctx_list = NULL;
-    struct list_head  *pnode    = NULL;
-    list_for_each(pnode, &ctx_head->list)
+    bWifiModule.busy = 0;
+    if (cmd == WIFI_CMD_APCONFIGNET)
     {
-        ctx_list = list_entry(pnode, bWifiNetCtxList_t, list);
-        if (ctx_list)
+        if (isok == 0)
         {
-            _bWifiDeleteNetCtx(ctx_list);
-        }
-    }
-}
-
-static uint8_t _bWifiIpIsZero(char ip[64])
-{
-    int i = 0;
-    for (i = 0; i < 64; i++)
-    {
-        if (ip[i] != 0)
-        {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-static bWifiNetCtxList_t *_bWifiFindNetCtx(bWifiNetCtxList_t *ctx_head, const char *ip,
-                                           uint16_t port)
-{
-    bWifiNetCtxList_t *ctx_list    = NULL;
-    bWifiNetCtxList_t *pctx_list_z = NULL;
-    bWifiNetCtx_t     *pctx        = NULL;
-    struct list_head  *pnode       = NULL;
-    list_for_each(pnode, &ctx_head->list)
-    {
-        ctx_list = list_entry(pnode, bWifiNetCtxList_t, list);
-        if (ctx_list == NULL)
-        {
-            return NULL;
-        }
-        pctx = ctx_list->pctx;
-
-        if (ip == NULL || _bWifiIpIsZero((char *)ip))
-        {
-            if (port == pctx->server_port)
-            {
-                return ctx_list;
-            }
-            continue;
-        }
-
-        if (_bWifiIpIsZero(pctx->ip))
-        {
-            pctx_list_z = ctx_list;
-        }
-
-        if (pctx->port == port && memcmp(pctx->ip, ip, sizeof(pctx->ip)) == 0)
-        {
-            return ctx_list;
-        }
-    }
-    if (pctx_list_z != NULL)
-    {
-        memcpy(pctx_list_z->pctx->ip, ip, sizeof(pctx_list_z->pctx->ip));
-        pctx_list_z->pctx->port = port;
-        return pctx_list_z;
-    }
-    return NULL;
-}
-
-// id | ip | port 不必全部都有
-static bWifiNetCtxList_t *_bWifiAddNetCtx(bWifiNetCtxList_t *ctx_head, uint8_t type, const char *ip,
-                                          uint16_t port)
-{
-    bWifiNetCtx_t     *pctx     = NULL;
-    bWifiNetCtxList_t *pctxlist = NULL;
-
-    if ((pctxlist = _bWifiFindNetCtx(ctx_head, ip, port)) != NULL)
-    {
-        return pctxlist;
-    }
-
-    pctx = bMalloc(sizeof(bWifiNetCtx_t));
-    if (pctx == NULL)
-    {
-        return NULL;
-    }
-    b_log("pctx %p \r\n", pctx);
-    memset(pctx, 0, sizeof(bWifiNetCtx_t));
-
-    pctxlist = bMalloc(sizeof(bWifiNetCtxList_t));
-    if (pctxlist == NULL)
-    {
-        _bWifiMemRelease(pctx);
-        return NULL;
-    }
-    pctxlist->pctx = pctx;
-
-    if (bFIFO_DynCreate(&pctx->rfifo, WIFI_RECV_BUF_LEN) < 0)
-    {
-        _bWifiMemRelease(pctx);
-        _bWifiMemRelease(pctxlist);
-        return NULL;
-    }
-
-    if (bFIFO_DynCreate(&pctx->sfifo, WIFI_SEND_BUF_LEN) < 0)
-    {
-        _bWifiMemRelease(pctx);
-        _bWifiMemRelease(pctxlist);
-        bFIFO_DynDelete(&pctx->rfifo);
-        return NULL;
-    }
-
-    pctx->type = type;
-    if (ip != NULL)
-    {
-        pctx->port = port;
-        memcpy(pctx->ip, ip, sizeof(pctx->ip));
-    }
-    else
-    {
-        pctx->server_port = port;
-    }
-
-    list_add(&pctxlist->list, &ctx_head->list);
-    return pctxlist;
-}
-
-static void _bWifiEventHandler(bWifiModuleEvent_t event, void *arg, void (*release)(void *),
-                               void *user_data)
-{
-    bWifiDevice_t *pdev = (bWifiDevice_t *)user_data;
-    uint8_t        cmd  = 0;
-    if (event == WIFI_DRV_EVT_CMD_OK || event == WIFI_DRV_EVT_CMD_ERR)
-    {
-        pdev->result = event;
-        cmd          = *((uint8_t *)arg);
-        bSemRelease(bWifiSem);
-    }
-
-    if (event == WIFI_DRV_EVT_CMD_OK)
-    {
-        if (cmd == bCMD_WIFI_MODE_STA)
-        {
-            pdev->cb(user_data, WIFI_EVT_STA_MODE, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MODE_AP)
-        {
-            pdev->cb(user_data, WIFI_EVT_AP_MODE, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MODE_STA_AP)
-        {
-            pdev->cb(user_data, WIFI_EVT_AP_STA_MODE, NULL);
-        }
-        else if (cmd == bCMD_WIFI_JOIN_AP)
-        {
-            pdev->cb(user_data, WIFI_EVT_JOINAP_OK, NULL);
-        }
-        else if (cmd == bCMD_WIFI_PING)
-        {
-            pdev->cb(user_data, WIFI_EVT_PING_OK, NULL);
-        }
-        else if (cmd == bCMD_WIFI_LOCAL_TCP_SERVER)
-        {
-            pdev->cb(user_data, WIFI_EVT_SETUP_TCPSERVER_OK, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MQTT_CONN)
-        {
-            pdev->cb(user_data, WIFI_EVT_MQTT_CONN_OK, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MQTT_SUB)
-        {
-            pdev->cb(user_data, WIFI_EVT_MQTT_SUB_OK, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MQTT_PUB)
-        {
-            pdev->cb(user_data, WIFI_EVT_MQTT_PUB_OK, NULL);
-        }
-    }
-    else if (event == WIFI_DRV_EVT_CMD_ERR)
-    {
-        if (cmd == bCMD_WIFI_MODE_STA)
-        {
-            pdev->cb(user_data, WIFI_EVT_STA_ERR, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MODE_AP)
-        {
-            pdev->cb(user_data, WIFI_EVT_AP_ERR, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MODE_STA_AP)
-        {
-            pdev->cb(user_data, WIFI_EVT_AP_STA_ERR, NULL);
-        }
-        else if (cmd == bCMD_WIFI_JOIN_AP)
-        {
-            pdev->cb(user_data, WIFI_EVT_JOINAP_ERR, NULL);
-        }
-        else if (cmd == bCMD_WIFI_PING)
-        {
-            pdev->cb(user_data, WIFI_EVT_PING_ERR, NULL);
-        }
-        else if (cmd == bCMD_WIFI_LOCAL_TCP_SERVER)
-        {
-            pdev->cb(user_data, WIFI_EVT_SETUP_TCPSERVER_ERR, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MQTT_CONN)
-        {
-            pdev->cb(user_data, WIFI_EVT_MQTT_CONN_ERR, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MQTT_SUB)
-        {
-            pdev->cb(user_data, WIFI_EVT_MQTT_SUB_ERR, NULL);
-        }
-        else if (cmd == bCMD_WIFI_MQTT_PUB)
-        {
-            pdev->cb(user_data, WIFI_EVT_MQTT_PUB_ERR, NULL);
-        }
-    }
-    else if (event == WIFI_DRV_EVT_DATA)
-    {
-        bWifiNetCtxList_t *pctx_list = NULL;
-        bTcpUdpData_t     *pdata     = (bTcpUdpData_t *)arg;
-        pctx_list = _bWifiFindNetCtx(&pdev->ctx, pdata->conn.ip, pdata->conn.port);
-        if (pctx_list != NULL)
-        {
-            bFIFO_Write(&pctx_list->pctx->rfifo, pdata->pbuf, pdata->len);
-            if (pdata->release)
-            {
-                pdata->release(pdata->pbuf);
-            }
-            pdev->cb(user_data, WIFI_EVT_DATA_READY, NULL);
-        }
-    }
-    else if (event == WIFI_DRV_EVT_MQTT_DATA)
-    {
-        bWifiMqttData_t mqttdata;
-        bMqttData_t    *pmqttdata = (bMqttData_t *)arg;
-        memset(&mqttdata, 0, sizeof(bWifiMqttData_t));
-        mqttdata.len     = pmqttdata->len;
-        mqttdata.release = pmqttdata->release;
-        mqttdata.pbuf    = pmqttdata->pbuf;
-        memcpy(mqttdata.topic, pmqttdata->topic.topic, sizeof(mqttdata.topic));
-        pdev->cb(user_data, WIFI_EVT_MQTT_DATA, &mqttdata);
-    }
-    if (release && arg)
-    {
-        release(arg);
-    }
-}
-
-PT_THREAD(_bWifiModTask)(struct pt *pt, void *arg)
-{
-    static bWifiQItem_t item;
-    void               *param = NULL;
-    int                 wait  = 0;
-    PT_BEGIN(pt);
-    while (1)
-    {
-        bQueueGetBlock(pt, bWifiQueue, &item, 0xffffffff);
-        if (PT_WAIT_IS_TIMEOUT(pt))
-        {
-            return 0;
-        }
-        b_log("q get : %d\r\n", item.type);
-        bSemAcquireNonblock(bWifiSem);
-        wait                = 1;
-        item.handle->result = -1;
-        if (item.type == WIFI_CONFIG_STA)
-        {
-            bCtl(item.handle->fd, bCMD_WIFI_MODE_STA, NULL);
-        }
-        else if (item.type == WIFI_CONFIG_AP || item.type == WIFI_CONFIG_AP_STA)
-        {
-            param = bMalloc(sizeof(bApInfo_t));
-            if (param == NULL)
-            {
-                wait = 0;
-            }
-            else
-            {
-                memset(param, 0, sizeof(bApInfo_t));
-                memcpy(((bApInfo_t *)param)->ssid, ((bWifiApInfo_t *)item.param)->ssid,
-                       sizeof(((bApInfo_t *)param)->ssid));
-                memcpy(((bApInfo_t *)param)->passwd, ((bWifiApInfo_t *)item.param)->passwd,
-                       sizeof(((bApInfo_t *)param)->passwd));
-                ((bApInfo_t *)param)->encryption = ((bWifiApInfo_t *)item.param)->encryption;
-                if (WIFI_CONFIG_AP_STA == item.type)
-                {
-                    bCtl(item.handle->fd, bCMD_WIFI_MODE_STA_AP, param);
-                }
-                else
-                {
-                    bCtl(item.handle->fd, bCMD_WIFI_MODE_AP, param);
-                }
-                _bWifiMemRelease(param);
-                param = NULL;
-            }
-        }
-        else if (item.type == WIFI_JOINAP_START)
-        {
-            param = bMalloc(sizeof(bApInfo_t));
-            if (param == NULL)
-            {
-                wait = 0;
-            }
-            else
-            {
-                memset(param, 0, sizeof(bApInfo_t));
-                memcpy(((bApInfo_t *)param)->ssid, ((bWifiApInfo_t *)item.param)->ssid,
-                       sizeof(((bApInfo_t *)param)->ssid));
-                memcpy(((bApInfo_t *)param)->passwd, ((bWifiApInfo_t *)item.param)->passwd,
-                       sizeof(((bApInfo_t *)param)->passwd));
-                ((bApInfo_t *)param)->encryption = ((bWifiApInfo_t *)item.param)->encryption;
-                bCtl(item.handle->fd, bCMD_WIFI_JOIN_AP, param);
-                _bWifiMemRelease(param);
-                param = NULL;
-            }
-        }
-        else if (item.type == WIFI_START_PING)
-        {
-            bCtl(item.handle->fd, bCMD_WIFI_PING, NULL);
-        }
-        else if (item.type == WIFI_CREATE_TCP_SERVER || item.type == WIFI_CREATE_UDP_SERVER ||
-                 item.type == WIFI_CONNECT_TCP_SERVER || item.type == WIFI_CONNECT_UDP_SERVER ||
-                 item.type == WIFI_CONNECT_CLOSE)
-        {
-            param = bMalloc(sizeof(bTcpUdpInfo_t));
-            if (param == NULL)
-            {
-                wait = 0;
-            }
-            else
-            {
-                memset(param, 0, sizeof(bTcpUdpInfo_t));
-                ((bTcpUdpInfo_t *)param)->port = *((uint16_t *)item.param);
-                if (WIFI_CREATE_TCP_SERVER == item.type)
-                {
-                    bCtl(item.handle->fd, bCMD_WIFI_LOCAL_TCP_SERVER, param);
-                }
-                else if (WIFI_CREATE_UDP_SERVER == item.type)
-                {
-                    bCtl(item.handle->fd, bCMD_WIFI_LOCAL_UDP_SERVER, param);
-                }
-                else if (WIFI_CONNECT_TCP_SERVER == item.type)
-                {
-                    memcpy(((bTcpUdpInfo_t *)param)->ip, ((bWifiServerInfo_t *)item.param)->ip,
-                           sizeof(((bTcpUdpInfo_t *)param)->ip));
-                    bCtl(item.handle->fd, bCMD_WIFI_REMOT_TCP_SERVER, param);
-                }
-                else if (WIFI_CONNECT_UDP_SERVER == item.type)
-                {
-                    memcpy(((bTcpUdpInfo_t *)param)->ip, ((bWifiServerInfo_t *)item.param)->ip,
-                           sizeof(((bTcpUdpInfo_t *)param)->ip));
-                    bCtl(item.handle->fd, bCMD_WIFI_REMOT_UDP_SERVER, param);
-                }
-                else if (WIFI_CONNECT_CLOSE == item.type)
-                {
-                    memcpy(((bTcpUdpInfo_t *)param)->ip, ((bWifiServerInfo_t *)item.param)->ip,
-                           sizeof(((bTcpUdpInfo_t *)param)->ip));
-                    bCtl(item.handle->fd, bCMD_WIFI_TCPUDP_CLOSE, param);
-                }
-                _bWifiMemRelease(param);
-                param = NULL;
-            }
-        }
-        else if (item.type == WIFI_CONNECT_SEND)
-        {
-            bWifiNetCtx_t *pctx = (bWifiNetCtx_t *)item.param;
-            param               = bMalloc(sizeof(bTcpUdpData_t));
-            if (param == NULL)
-            {
-                wait = 0;
-            }
-            else
-            {
-
-                memset(param, 0, sizeof(bTcpUdpData_t));
-                bFIFO_Length(&pctx->sfifo, &(((bTcpUdpData_t *)param)->len));
-                if (((bTcpUdpData_t *)param)->len > 0)
-                {
-                    ((bTcpUdpData_t *)param)->pbuf = bMalloc(((bTcpUdpData_t *)param)->len);
-                }
-                if (((bTcpUdpData_t *)param)->pbuf != NULL)
-                {
-                    ((bTcpUdpData_t *)param)->release = _bWifiMemRelease;
-                    bFIFO_Read(&pctx->sfifo, ((bTcpUdpData_t *)param)->pbuf,
-                               ((bTcpUdpData_t *)param)->len);
-                    memcpy(((bTcpUdpData_t *)param)->conn.ip, pctx->ip,
-                           sizeof(((bTcpUdpData_t *)param)->conn.ip));
-                    ((bTcpUdpData_t *)param)->conn.port = pctx->port;
-                    bCtl(item.handle->fd, bCMD_WIFI_TCPUDP_SEND, param);
-                }
-                _bWifiMemRelease(param);
-                param = NULL;
-            }
-        }
-        else if (item.type == WIFI_CONNECT_MQTT)
-        {
-            bWifiMqtt_t *pmqtt = (bWifiMqtt_t *)item.param;
-            param              = bMalloc(sizeof(bMqttConnInfo_t));
-            if (param == NULL)
-            {
-                wait = 0;
-            }
-            else
-            {
-                memset(param, 0, sizeof(bMqttConnInfo_t));
-
-                memcpy(((bMqttConnInfo_t *)param)->broker, pmqtt->broker,
-                       sizeof(((bMqttConnInfo_t *)param)->broker));
-                ((bMqttConnInfo_t *)param)->port = pmqtt->port;
-                memcpy(((bMqttConnInfo_t *)param)->device_id, pmqtt->device_id,
-                       sizeof(((bMqttConnInfo_t *)param)->device_id));
-                memcpy(((bMqttConnInfo_t *)param)->user, pmqtt->user,
-                       sizeof(((bMqttConnInfo_t *)param)->user));
-                memcpy(((bMqttConnInfo_t *)param)->passwd, pmqtt->passwd,
-                       sizeof(((bMqttConnInfo_t *)param)->passwd));
-                bCtl(item.handle->fd, bCMD_WIFI_MQTT_CONN, param);
-                _bWifiMemRelease(param);
-                param = NULL;
-            }
-        }
-        else if (item.type == WIFI_CONNECT_MQTT_SUB)
-        {
-            uint8_t *p = (uint8_t *)item.param;
-            param      = bMalloc(sizeof(bMqttTopic_t));
-            if (param == NULL)
-            {
-                wait = 0;
-            }
-            else
-            {
-                memset(param, 0, sizeof(bMqttTopic_t));
-                ((bMqttTopic_t *)param)->qos = p[0];
-                p += 1;
-                memcpy(((bMqttTopic_t *)param)->topic, p, strlen((const char *)p));
-                bCtl(item.handle->fd, bCMD_WIFI_MQTT_SUB, param);
-                _bWifiMemRelease(param);
-                param = NULL;
-            }
-        }
-        else if (item.type == WIFI_CONNECT_MQTT_PUB)
-        {
-            uint8_t *p = (uint8_t *)item.param;
-            param      = bMalloc(sizeof(bMqttData_t));
-            if (param == NULL)
-            {
-                wait = 0;
-            }
-            else
-            {
-                memset(param, 0, sizeof(bMqttData_t));
-                ((bMqttData_t *)param)->topic.qos = p[0];
-                p += 1;
-                memcpy(((bMqttData_t *)param)->topic.topic, p, strlen((const char *)p));
-                p += strlen((const char *)p) + 1;
-                ((bMqttData_t *)param)->len = p[1];
-                ((bMqttData_t *)param)->len = ((bMqttData_t *)param)->len << 8;
-                ((bMqttData_t *)param)->len |= p[0];
-                p += 2;
-                ((bMqttData_t *)param)->pbuf = bMalloc(((bMqttData_t *)param)->len);
-                if (((bMqttData_t *)param)->pbuf != NULL)
-                {
-                    ((bMqttData_t *)param)->release = _bWifiMemRelease;
-                    memcpy(((bMqttData_t *)param)->pbuf, p, ((bMqttData_t *)param)->len);
-                    bCtl(item.handle->fd, bCMD_WIFI_MQTT_PUB, param);
-                }
-                _bWifiMemRelease(param);
-                param = NULL;
-            }
+            bWifiModule.cb(B_WIFI_EVT_APCFGNET, NULL, NULL, bWifiModule.user_data);
         }
         else
         {
-            wait = 0;
+            bWifiModule.cb(B_WIFI_EVT_APCFGNET, arg, release, bWifiModule.user_data);
         }
-        if (wait == 1)
-        {
-            bSemAcquireBlock(pt, bWifiSem, 30000);
-        }
-        if (item.release)
-        {
-            item.release(item.param);
-        }
-        memset(&item, 0, sizeof(bWifiQItem_t));
     }
-    PT_END(pt);
+    else if (cmd == WIFI_CMD_CONN_AP)
+    {
+        bWifiModule.cb(B_WIFI_EVT_CONN_AP, &isok, NULL, bWifiModule.user_data);
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_CONN_TCP)
+    {
+        bWifiModule.cb(B_WIFI_EVT_CONN_TCP, &isok, NULL, bWifiModule.user_data);
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_CONN_UDP)
+    {
+        bWifiModule.cb(B_WIFI_EVT_CONN_UDP, &isok, NULL, bWifiModule.user_data);
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_DISCONN)
+    {
+        bWifiModule.cb(B_WIFI_EVT_DISCONN, &isok, NULL, bWifiModule.user_data);
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_PING)
+    {
+        bWifiModule.cb(B_WIFI_EVT_PING, &isok, NULL, bWifiModule.user_data);
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_SEND)
+    {
+        bWifiModule.cb(B_WIFI_EVT_SEND, &isok, NULL, bWifiModule.user_data);
+    }
+}
+
+static void _bWifiApCfgNetHandle(bWifiDrvEvent_t event, void *arg, void (*release)(void *),
+                                 void *user_data)
+{
+    int            retval = -1;
+    bTcpUdpInfo_t  info;
+    bTcpUdpData_t *pdat = NULL;
+    if (event == B_EVT_MODE_STA_AP_OK)
+    {
+        memset(&info, 0, sizeof(bTcpUdpInfo_t));
+        info.port = 666;
+        retval    = bCtl(bWifiModule.fd, bCMD_WIFI_LOCAL_TCP_SERVER, &info);
+        if (retval < 0)
+        {
+            _bWifiResult(bWifiModule.cmd, 0, NULL, NULL);
+        }
+    }
+    else if (event == B_EVT_LOCAL_TCP_SERVER_OK)
+    {
+        ;
+    }
+}
+
+static void _bWifiConnApHandle(bWifiDrvEvent_t event, void *arg, void (*release)(void *),
+                               void *user_data)
+{
+    int retval = -1;
+    if (event == B_EVT_MODE_STA_OK)
+    {
+        retval = bCtl(bWifiModule.fd, bCMD_WIFI_JOIN_AP, &bWifiModule.param.ap);
+        if (retval < 0)
+        {
+            _bWifiResult(bWifiModule.cmd, 0, NULL, NULL);
+        }
+    }
+    else if (event == B_EVT_JOIN_AP_OK)
+    {
+        _bWifiResult(bWifiModule.cmd, 1, NULL, NULL);
+    }
+}
+
+static void _bWifiDrvCb(bWifiDrvEvent_t event, void *arg, void (*release)(void *), void *user_data)
+{
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+    bTrans_t *ptrans = (bTrans_t *)user_data;
+#endif
+    bWifiApInfo_t apinfo;
+    b_log_w("[%d]evt:%d %p\r\n", bWifiModule.cmd, event, arg);
+    if (event < 0)
+    {
+        _bWifiResult(bWifiModule.cmd, 0, NULL, NULL);
+        return;
+    }
+    if (event == B_EVT_CONN_NEW_DATA && arg != NULL)
+    {
+        bTcpUdpData_t *pdat = (bTcpUdpData_t *)arg;
+        if (pdat->len > 0 && pdat->pbuf != NULL)
+        {
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+            struct list_head *pos    = NULL;
+            bTrans_t         *ptrans = NULL;
+            list_for_each(pos, &bWifiTransList)
+            {
+                ptrans = list_entry(pos, bTrans_t, list);
+                if (strcmp(ptrans->remote_ip, pdat->conn.ip) == 0 &&
+                    pdat->conn.port == ptrans->remote_port)
+                {
+                    bFIFO_Write(&ptrans->rx_fifo, pdat->pbuf, pdat->len);
+                    ptrans->readable = 1;
+                    ptrans->callback(B_TRANS_NEW_DATA, NULL, ptrans->cb_arg);
+                    break;
+                }
+            }
+#endif
+            bWifiNewData_t new_data;
+            new_data.pbuf = pdat->pbuf;
+            new_data.len  = pdat->len;
+            bWifiModule.cb(B_WIFI_EVT_RECV, &new_data, NULL, bWifiModule.user_data);
+
+            if (bWifiModule.cmd == WIFI_CMD_APCONFIGNET)
+            {
+                memset(&apinfo, 0, sizeof(bWifiApInfo_t));
+                cJSON *root = cJSON_Parse((const char *)pdat->pbuf);
+                if (root != NULL)
+                {
+                    cJSON *ssid   = cJSON_GetObjectItem(root, "ssid");
+                    cJSON *passwd = cJSON_GetObjectItem(root, "passwd");
+                    if (ssid != NULL && cJSON_IsString(ssid) &&
+                        strlen(ssid->valuestring) <= WIFI_SSID_LEN_MAX)
+                    {
+                        memcpy(&apinfo.ssid[0], ssid->valuestring, strlen(ssid->valuestring));
+                    }
+                    if (passwd != NULL && cJSON_IsString(passwd) &&
+                        strlen(passwd->valuestring) <= WIFI_PASSWD_LEN_MAX)
+                    {
+                        memcpy(&apinfo.passwd[0], passwd->valuestring, strlen(passwd->valuestring));
+                    }
+                    cJSON_Delete(root);
+                    if (strlen(apinfo.ssid) > 0)
+                    {
+                        _bWifiResult(bWifiModule.cmd, 1, &apinfo, NULL);
+                    }
+                }
+            }
+        }
+        if (release)
+        {
+            if (arg)
+            {
+                release(arg);
+            }
+        }
+    }
+
+    if (bWifiModule.cmd == WIFI_CMD_APCONFIGNET)
+    {
+        _bWifiApCfgNetHandle(event, arg, release, user_data);
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_CONN_AP)
+    {
+        _bWifiConnApHandle(event, arg, release, user_data);
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_CONN_TCP)
+    {
+        if (event == B_EVT_CONN_TCP_SERVER_OK)
+        {
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+            if (ptrans != NULL)
+            {
+                ptrans->writeable = 1;
+                ptrans->callback(B_TRANS_CONNECTED, NULL, ptrans->cb_arg);
+            }
+#endif
+            _bWifiResult(bWifiModule.cmd, 1, NULL, NULL);
+        }
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_CONN_UDP)
+    {
+        if (event == B_EVT_CONN_UDP_SERVER_OK)
+        {
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+            if (ptrans != NULL)
+            {
+                ptrans->writeable = 1;
+                ptrans->callback(B_TRANS_CONNECTED, NULL, ptrans->cb_arg);
+            }
+#endif
+            _bWifiResult(bWifiModule.cmd, 1, NULL, NULL);
+        }
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_DISCONN)
+    {
+        if (event == B_EVT_CLOSE_CONN_OK)
+        {
+            _bWifiResult(bWifiModule.cmd, 1, NULL, NULL);
+        }
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_PING)
+    {
+        if (event == B_EVT_PING_OK)
+        {
+            _bWifiResult(bWifiModule.cmd, 1, NULL, NULL);
+        }
+    }
+    else if (bWifiModule.cmd == WIFI_CMD_SEND)
+    {
+        if (event == B_EVT_CONN_SEND_OK)
+        {
+            _bWifiResult(bWifiModule.cmd, 1, NULL, NULL);
+        }
+    }
+}
+
+static int _bWifiSetDrvCbArg(void *arg)
+{
+    int retval = -1;
+    if (bWifiModule.busy)
+    {
+        b_log_e("busy cmd:%d\r\n", bWifiModule.cmd);
+        return -1;
+    }
+    retval = bCtl(bWifiModule.fd, bCMD_WIFI_SET_CALLBACK_ARG, arg);
+    return retval;
 }
 
 /**
@@ -693,402 +388,406 @@ PT_THREAD(_bWifiModTask)(struct pt *pt, void *arg)
  * \{
  */
 
-int bWifiInit()
+int bWifiInit(uint32_t dev_no, pWifiEvtCb_t cb, void *user_data)
 {
-    memset(bWifiDeviceTable, 0, sizeof(bWifiDeviceTable));
-    bTaskCreate("wifi task", _bWifiModTask, NULL, &bWifiTaskAttr);
-    bWifiQueue = bQueueCreate(WIFI_Q_LEN, sizeof(bWifiQItem_t), &bWifiQueueAttr);
-    bWifiSem   = bSemCreate(1, 0, &bWifiSemAttr);
+    bWifiDrvCallback_t drv_cb;
+    if (bWifiModule.fd >= 0 || cb == NULL)
+    {
+        return -1;
+    }
+    int fd = bOpen(dev_no, BCORE_FLAG_RW);
+    if (fd < 0)
+    {
+        return -1;
+    }
+    bWifiModule.fd        = fd;
+    bWifiModule.cb        = cb;
+    bWifiModule.user_data = user_data;
+    drv_cb.cb             = _bWifiDrvCb;
+    drv_cb.user_data      = NULL;
+    bCtl(fd, bCMD_WIFI_REG_CALLBACK, &drv_cb);
     return 0;
 }
 
-bWifiHandle_t bWifiUp(uint32_t dev_no, bWifiEventHandle_t cb)
+int bWifiDeinit()
 {
-    bWifiModuleCallback_t drv_cb;
-    bWifiDevice_t        *pdev = NULL;
-
-    if (cb == NULL)
-    {
-        return NULL;
-    }
-
-    for (int i = 0; i < WIFI_DEVICE_NUMBER; i++)
-    {
-        if (bWifiDeviceTable[i].dev == 0)
-        {
-            pdev = &bWifiDeviceTable[i];
-        }
-    }
-    if (pdev == NULL)
-    {
-        return NULL;
-    }
-    pdev->dev = dev_no;
-    pdev->cb  = cb;
-    pdev->fd  = bOpen(dev_no, BCORE_FLAG_RW);
-    if (pdev->fd < 0)
-    {
-        return NULL;
-    }
-    drv_cb.cb        = _bWifiEventHandler;
-    drv_cb.user_data = pdev;
-    bCtl(pdev->fd, bCMD_WIFI_REG_CALLBACK, &drv_cb);
-    INIT_LIST_HEAD(&pdev->ctx.list);
-    return pdev;
-}
-
-int bWifiDown(bWifiHandle_t handle)
-{
-    bWifiDevice_t *pdev = (bWifiDevice_t *)handle;
-    if (handle == NULL)
+    if (bWifiModule.fd < 0)
     {
         return -1;
     }
-    bClose(pdev->fd);
-    _bWifiClearNetCtx(&pdev->ctx);
-    memset(pdev, 0, sizeof(bWifiDevice_t));
+    bClose(bWifiModule.fd);
+    bWifiModule.fd = -1;
     return 0;
 }
 
-int bWifiSetMode(bWifiHandle_t handle, uint8_t mode, const bWifiApInfo_t *pinfo)
+int bWifiApConfigNet(const char *ssid, const char *passwd)
 {
-    bWifiQItem_t   item;
-    bWifiDevice_t *pdev = (bWifiDevice_t *)handle;
-    if (handle == NULL || !IS_WIFI_MODE(mode))
+    int retval = -1;
+    if (bWifiModule.busy != 0 || bWifiModule.fd < 0 || ssid == NULL)
     {
         return -1;
     }
-    if (mode != WIFI_MODE_STA && pinfo == NULL)
+    if (strlen(ssid) > WIFI_SSID_LEN_MAX)
     {
         return -1;
     }
-    _bWifiClearNetCtx(&pdev->ctx);
-    memset(&item, 0, sizeof(item));
-    if (mode == WIFI_MODE_STA)
+    if (passwd != NULL)
     {
-        item.type = WIFI_CONFIG_STA;
-    }
-    else if (mode == WIFI_MODE_AP)
-    {
-        item.type = WIFI_CONFIG_AP;
-    }
-    else if (mode == WIFI_MODE_AP_STA)
-    {
-        item.type = WIFI_CONFIG_AP_STA;
-    }
-    item.handle = handle;
-    if (mode != WIFI_MODE_STA)
-    {
-        item.param = bMalloc(sizeof(bWifiApInfo_t));
-        if (item.param == NULL)
+        if (strlen(passwd) > WIFI_PASSWD_LEN_MAX)
         {
             return -1;
         }
-        item.release = _bWifiMemRelease;
-        memcpy(item.param, pinfo, sizeof(bWifiApInfo_t));
-    }
-    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
-    {
-        if (item.param != NULL)
+        if (strlen(passwd) == 0)
         {
-            _bWifiMemRelease(item.param);
+            passwd = NULL;
         }
-        return -1;
     }
-    return 0;
-}
-
-int bWifiJoinAp(bWifiHandle_t handle, const bWifiApInfo_t *pinfo)
-{
-    bWifiQItem_t item;
-    if (handle == NULL)
+    bApInfo_t ap_info;
+    memset(&ap_info, 0, sizeof(ap_info));
+    memcpy(&ap_info.ssid[0], ssid, strlen(ssid));
+    if (passwd == NULL)
     {
-        return -1;
+        ap_info.encryption = 0;
     }
-
-    item.param = bMalloc(sizeof(bWifiApInfo_t));
-    if (item.param == NULL)
+    else
     {
-        return -1;
+        ap_info.encryption = 3;
+        memcpy(&ap_info.passwd[0], passwd, strlen(passwd));
     }
-    item.release = _bWifiMemRelease;
-    memcpy(item.param, pinfo, sizeof(bWifiApInfo_t));
-
-    item.type   = WIFI_JOINAP_START;
-    item.handle = handle;
-    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
+    retval = bCtl(bWifiModule.fd, bCMD_WIFI_MODE_STA_AP, &ap_info);
+    if (retval >= 0)
     {
-        if (item.param != NULL)
-        {
-            _bWifiMemRelease(item.param);
-        }
-        return -1;
-    }
-    return 0;
-}
-
-int bWifiPing(bWifiHandle_t handle)
-{
-    bWifiQItem_t item;
-    if (handle == NULL)
-    {
-        return -1;
-    }
-    item.type    = WIFI_START_PING;
-    item.handle  = handle;
-    item.param   = NULL;
-    item.release = NULL;
-    return bQueuePutNonblock(bWifiQueue, &item);
-}
-
-bWifiConnHandle_t bWifiSetupServer(bWifiHandle_t handle, uint8_t type, uint16_t port)
-{
-    bWifiQItem_t   item;
-    bWifiDevice_t *pdev = (bWifiDevice_t *)handle;
-    if (handle == NULL || !IS_WIFI_SERVER_TYPE(type))
-    {
-        return NULL;
-    }
-
-    bWifiNetCtxList_t *plist = NULL;
-    if (type == WIFI_SERVER_TYPE_TCP)
-    {
-        plist = _bWifiAddNetCtx(&pdev->ctx, WIFI_CONN_TYPE_TCP_SERVER, NULL, port);
-    }
-    else if (type == WIFI_SERVER_TYPE_UDP)
-    {
-        plist = _bWifiAddNetCtx(&pdev->ctx, WIFI_CONN_TYPE_UDP_SERVER, NULL, port);
-    }
-
-    if (plist == NULL)
-    {
-        return NULL;
-    }
-    plist->pdev = pdev;
-    if (type == WIFI_SERVER_TYPE_TCP)
-    {
-        item.type = WIFI_CREATE_TCP_SERVER;
-    }
-    else if (type == WIFI_SERVER_TYPE_UDP)
-    {
-        item.type = WIFI_CREATE_UDP_SERVER;
-    }
-    item.handle = handle;
-    item.param  = bMalloc(sizeof(uint16_t));
-    if (item.param == NULL)
-    {
-        return NULL;
-    }
-    item.release              = _bWifiMemRelease;
-    *((uint16_t *)item.param) = port;
-    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
-    {
-        _bWifiMemRelease(item.param);
-        _bWifiDeleteNetCtx(plist);
-        return NULL;
-    }
-    return plist;
-}
-
-bWifiConnHandle_t bWifiConnectServer(bWifiHandle_t handle, uint8_t type, const char *ip,
-                                     uint16_t port)
-{
-    bWifiQItem_t   item;
-    bWifiDevice_t *pdev = (bWifiDevice_t *)handle;
-    if (handle == NULL || !IS_WIFI_SERVER_TYPE(type) || ip == NULL)
-    {
-        return NULL;
-    }
-
-    bWifiNetCtxList_t *plist = NULL;
-    if (type == WIFI_SERVER_TYPE_TCP)
-    {
-        plist = _bWifiAddNetCtx(&pdev->ctx, WIFI_CONN_TYPE_TCP_CLIENT, ip, port);
-    }
-    else if (type == WIFI_SERVER_TYPE_UDP)
-    {
-        plist = _bWifiAddNetCtx(&pdev->ctx, WIFI_CONN_TYPE_UDP_CLIENT, ip, port);
-    }
-    if (plist == NULL)
-    {
-        return NULL;
-    }
-    plist->pdev = pdev;
-    if (type == WIFI_SERVER_TYPE_TCP)
-    {
-        item.type = WIFI_CONNECT_TCP_SERVER;
-    }
-    else if (type == WIFI_SERVER_TYPE_UDP)
-    {
-        item.type = WIFI_CONNECT_UDP_SERVER;
-    }
-    item.handle = handle;
-    item.param  = bMalloc(sizeof(bWifiServerInfo_t));
-    if (item.param == NULL)
-    {
-        return NULL;
-    }
-    memset(item.param, 0, sizeof(bWifiServerInfo_t));
-    item.release                            = _bWifiMemRelease;
-    ((bWifiServerInfo_t *)item.param)->port = port;
-    memcpy(((bWifiServerInfo_t *)item.param)->ip, ip,
-           sizeof(((bWifiServerInfo_t *)item.param)->ip));
-    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
-    {
-        _bWifiMemRelease(item.param);
-        _bWifiDeleteNetCtx(plist);
-        return NULL;
-    }
-    return plist;
-}
-
-int bWifiConnectClose(bWifiConnHandle_t conn)
-{
-    if (conn == NULL)
-    {
-        return -1;
-    }
-    bWifiQItem_t       item;
-    bWifiNetCtxList_t *pconn = (bWifiNetCtxList_t *)conn;
-    bWifiDevice_t     *pdev  = pconn->pdev;
-
-    item.handle = pdev;
-    item.param  = bMalloc(sizeof(bWifiServerInfo_t));
-    if (item.param == NULL)
-    {
-        return -1;
-    }
-    memset(item.param, 0, sizeof(bWifiServerInfo_t));
-    item.release = _bWifiMemRelease;
-    item.type    = WIFI_CONNECT_CLOSE;
-
-    ((bWifiServerInfo_t *)item.param)->port = pconn->pctx->port;
-    memcpy(((bWifiServerInfo_t *)item.param)->ip, pconn->pctx->ip,
-           sizeof(((bWifiServerInfo_t *)item.param)->ip));
-    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
-    {
-        _bWifiMemRelease(item.param);
-        return -1;
-    }
-    _bWifiDeleteNetCtx(conn);
-    return 0;
-}
-
-int bWifiConnSend(bWifiConnHandle_t conn, uint8_t *pbuf, uint16_t len)
-{
-    bWifiQItem_t       item;
-    bWifiNetCtxList_t *pconn  = (bWifiNetCtxList_t *)conn;
-    int                retval = -1;
-    if (conn == NULL || pbuf == NULL)
-    {
-        return -1;
-    }
-
-    item.type    = WIFI_CONNECT_SEND;
-    item.handle  = pconn->pdev;
-    item.param   = pconn->pctx;
-    item.release = NULL;
-
-    retval = bFIFO_Write(&pconn->pctx->sfifo, pbuf, len);
-    if (retval > 0)
-    {
-        bQueuePutNonblock(bWifiQueue, &item);
+        bWifiModule.cmd  = WIFI_CMD_APCONFIGNET;
+        bWifiModule.busy = 1;
     }
     return retval;
 }
 
-int bWifiConnRead(bWifiConnHandle_t conn, uint8_t *pbuf, uint16_t len)
+int bWifiJoinAp(const char *ssid, const char *passwd)
 {
-    bWifiNetCtxList_t *pconn = (bWifiNetCtxList_t *)conn;
-    if (conn == NULL || pbuf == NULL)
+    int retval = -1;
+    if (bWifiModule.busy != 0 || bWifiModule.fd < 0 || ssid == NULL)
     {
         return -1;
     }
-    return bFIFO_Read(&pconn->pctx->rfifo, pbuf, len);
+    if (strlen(ssid) > WIFI_SSID_LEN_MAX)
+    {
+        return -1;
+    }
+    if (passwd != NULL)
+    {
+        if (strlen(passwd) > WIFI_PASSWD_LEN_MAX)
+        {
+            return -1;
+        }
+        if (strlen(passwd) == 0)
+        {
+            passwd = NULL;
+        }
+    }
+    memset(&bWifiModule.param.ap, 0, sizeof(bApInfo_t));
+    memcpy(&bWifiModule.param.ap.ssid[0], ssid, strlen(ssid));
+    if (passwd == NULL)
+    {
+        bWifiModule.param.ap.encryption = 0;
+    }
+    else
+    {
+        bWifiModule.param.ap.encryption = 3;
+        memcpy(&bWifiModule.param.ap.passwd[0], passwd, strlen(passwd));
+    }
+    retval = bCtl(bWifiModule.fd, bCMD_WIFI_MODE_STA, NULL);
+    if (retval >= 0)
+    {
+        bWifiModule.cmd  = WIFI_CMD_CONN_AP;
+        bWifiModule.busy = 1;
+    }
+    return retval;
 }
 
-int bWifiMqttConnect(bWifiHandle_t handle, bWifiMqtt_t *mqtt)
+int bWifiConnTcp(const char *remote, uint16_t port)
 {
-    if (handle == NULL || mqtt == NULL)
+    int           retval = -1;
+    bTcpUdpInfo_t info;
+    if (bWifiModule.busy != 0 || bWifiModule.fd < 0 || remote == NULL ||
+        strlen(remote) > WIFI_REMOTE_ADDR_LEN_MAX || strlen(remote) == 0)
     {
         return -1;
     }
-    bWifiQItem_t item;
-    item.type   = WIFI_CONNECT_MQTT;
-    item.handle = handle;
-    item.param  = bMalloc(sizeof(bWifiMqtt_t));
-    if (item.param == NULL)
+    memset(&info, 0, sizeof(bTcpUdpInfo_t));
+    memcpy(&info.ip[0], remote, strlen(remote));
+    info.port = port;
+    retval    = bCtl(bWifiModule.fd, bCMD_WIFI_REMOT_TCP_SERVER, &info);
+    if (retval >= 0)
+    {
+        bWifiModule.cmd  = WIFI_CMD_CONN_TCP;
+        bWifiModule.busy = 1;
+    }
+    return retval;
+}
+
+int bWifiConnUdp(const char *remote, uint16_t port)
+{
+    int           retval = -1;
+    bTcpUdpInfo_t info;
+    if (bWifiModule.busy != 0 || bWifiModule.fd < 0 || remote == NULL ||
+        strlen(remote) > WIFI_REMOTE_ADDR_LEN_MAX || strlen(remote) == 0)
     {
         return -1;
     }
-    memset(item.param, 0, sizeof(bWifiMqtt_t));
-    memcpy(item.param, mqtt, sizeof(bWifiMqtt_t));
-    item.release = _bWifiMemRelease;
-    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
+    memset(&info, 0, sizeof(bTcpUdpInfo_t));
+    memcpy(&info.ip[0], remote, strlen(remote));
+    info.port = port;
+    retval    = bCtl(bWifiModule.fd, bCMD_WIFI_REMOT_UDP_SERVER, &info);
+    if (retval >= 0)
     {
-        _bWifiMemRelease(item.param);
+        bWifiModule.cmd  = WIFI_CMD_CONN_UDP;
+        bWifiModule.busy = 1;
+    }
+    return retval;
+}
+
+int bWifiDisconn(const char *remote, uint16_t port)
+{
+    int           retval = -1;
+    bTcpUdpInfo_t info;
+    if (bWifiModule.busy != 0 || bWifiModule.fd < 0 || remote == NULL ||
+        strlen(remote) > WIFI_REMOTE_ADDR_LEN_MAX || strlen(remote) == 0)
+    {
+        b_log_e("err: %d %d %p %d %s\r\n", bWifiModule.busy, bWifiModule.fd, remote, strlen(remote),
+                remote);
         return -1;
+    }
+    memset(&info, 0, sizeof(bTcpUdpInfo_t));
+    memcpy(&info.ip[0], remote, strlen(remote));
+    info.port = port;
+    retval    = bCtl(bWifiModule.fd, bCMD_WIFI_TCPUDP_CLOSE, &info);
+    if (retval >= 0)
+    {
+        bWifiModule.cmd  = WIFI_CMD_DISCONN;
+        bWifiModule.busy = 1;
+    }
+    return retval;
+}
+
+int bWifiPing(const char *remote)
+{
+    int retval = -1;
+    if (bWifiModule.busy != 0 || bWifiModule.fd < 0 || remote == NULL ||
+        strlen(remote) > WIFI_REMOTE_ADDR_LEN_MAX || strlen(remote) == 0)
+    {
+        return -1;
+    }
+    retval = bCtl(bWifiModule.fd, bCMD_WIFI_PING, (void *)remote);
+    if (retval >= 0)
+    {
+        bWifiModule.cmd  = WIFI_CMD_PING;
+        bWifiModule.busy = 1;
+    }
+    return retval;
+}
+
+int bWifiSend(const char *remote, uint16_t port, uint8_t *pbuf, uint16_t len)
+{
+    int           retval = -1;
+    bTcpUdpData_t dat;
+    if (bWifiModule.busy != 0 || bWifiModule.fd < 0 || remote == NULL ||
+        strlen(remote) > WIFI_REMOTE_ADDR_LEN_MAX || strlen(remote) == 0 || pbuf == NULL ||
+        len == 0)
+    {
+        return -1;
+    }
+    memset(&dat, 0, sizeof(bTcpUdpData_t));
+    memcpy(&dat.conn.ip[0], remote, strlen(remote));
+    dat.conn.port = port;
+    dat.pbuf      = bMalloc(len);
+    if (dat.pbuf == NULL)
+    {
+        return -2;
+    }
+    memcpy(dat.pbuf, pbuf, len);
+    dat.len     = len;
+    dat.release = bFree;
+    retval      = bCtl(bWifiModule.fd, bCMD_WIFI_TCPUDP_SEND, &dat);
+    if (retval >= 0)
+    {
+        bWifiModule.cmd  = WIFI_CMD_SEND;
+        bWifiModule.busy = 1;
+    }
+    else
+    {
+        bFree(dat.pbuf);
+        dat.pbuf = NULL;
+    }
+    return retval;
+}
+
+#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+
+int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
+{
+    int result;
+    if (cb == NULL || (type != B_TRANS_CONN_TCP && type != B_TRANS_CONN_UDP))
+    {
+        return -1;
+    }
+    bTrans_t *ptrans = (bTrans_t *)bMalloc(sizeof(bTrans_t));
+    if (ptrans == NULL)
+    {
+        return -2;
+    }
+    memset(ptrans, 0, sizeof(bTrans_t));
+    uint8_t *pbuf = (uint8_t *)bMalloc(CONNECT_RECVBUF_MAX);
+    if (pbuf == NULL)
+    {
+        bFree(ptrans);
+        ptrans = NULL;
+        return -2;
+    }
+    bFIFO_Init(&ptrans->rx_fifo, pbuf, CONNECT_RECVBUF_MAX);
+    ptrans->type      = type;
+    ptrans->callback  = cb;
+    ptrans->cb_arg    = user_data;
+    ptrans->readable  = 0;
+    ptrans->writeable = 0;
+    list_add(&ptrans->list, &bWifiTransList);
+    return (int)ptrans;
+}
+
+int bConnect(int sockfd, char *remote, uint16_t port)
+{
+    int retval = -1;
+    if (sockfd <= 0 || remote == NULL || strlen(remote) > REMOTE_ADDR_LEN_MAX ||
+        strlen(remote) == 0)
+    {
+        b_log_e("%d %p %d\r\n", sockfd, remote, port);
+        return -1;
+    }
+    bTrans_t *ptrans    = (bTrans_t *)sockfd;
+    ptrans->remote_port = port;
+    memset(ptrans->remote_ip, 0, REMOTE_ADDR_LEN_MAX + 1);
+    memcpy(ptrans->remote_ip, remote, strlen(remote));
+    if (_bWifiSetDrvCbArg(ptrans) < 0)
+    {
+        return -2;
+    }
+    if (ptrans->type == B_TRANS_CONN_TCP)
+    {
+        retval = bWifiConnTcp(ptrans->remote_ip, ptrans->remote_port);
+    }
+    else
+    {
+        retval = bWifiConnUdp(ptrans->remote_ip, ptrans->remote_port);
+    }
+    return retval;
+}
+
+int bBind(int sockfd, uint16_t port)
+{
+    return -1;
+}
+
+int bListen(int sockfd, int backlog)
+{
+    return -1;
+}
+
+int bRecv(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen)
+{
+    int      read_len = 0;
+    uint16_t fifo_len = 0;
+    if (sockfd < 0 || pbuf == NULL || buf_len == 0)
+    {
+        return -1;
+    }
+    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    read_len         = bFIFO_Read(&ptrans->rx_fifo, pbuf, buf_len);
+    if (read_len < 0)
+    {
+        return -2;
+    }
+    if (rlen)
+    {
+        *rlen = (uint16_t)(read_len & 0xffff);
+    }
+    bFIFO_Length(&ptrans->rx_fifo, &fifo_len);
+    if (fifo_len == 0)
+    {
+        ptrans->readable = 0;
     }
     return 0;
 }
 
-int bWifiMqttSub(bWifiHandle_t handle, const char *topic, uint8_t qos)
+int bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
 {
-    if (handle == NULL || topic == NULL || qos > 2)
+    uint16_t writeable_len = 0;
+    int      retval        = -1;
+    if (sockfd < 0 || pbuf == NULL || buf_len == 0)
     {
         return -1;
     }
-    uint8_t     *pch = NULL;
-    bWifiQItem_t item;
-    item.type   = WIFI_CONNECT_MQTT_SUB;
-    item.handle = handle;
-    item.param  = bMalloc(strlen(topic) + 1 + 1);
-    if (item.param == NULL)
+    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    if (_bWifiSetDrvCbArg(ptrans) < 0)
     {
-        return -1;
+        return -2;
     }
-    memset(item.param, 0, strlen(topic) + 1 + 1);
-    pch    = item.param;
-    pch[0] = qos;
-    memcpy(pch + 1, topic, strlen(topic));
-    item.release = _bWifiMemRelease;
-    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
+    retval = bWifiSend(ptrans->remote_ip, ptrans->remote_port, pbuf, buf_len);
+    if (retval < 0)
     {
-        _bWifiMemRelease(item.param);
-        return -1;
+        return -2;
+    }
+    b_log("send %d \r\n", retval);
+    if (retval >= 0 && wlen != NULL)
+    {
+        *wlen = buf_len;
     }
     return 0;
 }
 
-int bWifiMqttPub(bWifiHandle_t handle, const char *topic, uint8_t qos, uint8_t *pbuf, uint16_t len)
+uint8_t bSockIsReadable(int sockfd)
 {
-    if (handle == NULL || topic == NULL || qos > 2 || pbuf == NULL || len == 0)
+    if (sockfd < 0)
     {
+        return 0;
+    }
+    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    return ptrans->readable;
+}
+
+uint8_t bSockIsWriteable(int sockfd)
+{
+    if (sockfd < 0)
+    {
+        return 0;
+    }
+    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    return ptrans->writeable;
+}
+
+int bShutdown(int sockfd)
+{
+    int retval = -1;
+    if (sockfd < 0)
+    {
+        b_log_e("sockfd == -1\r\n");
         return -1;
     }
-    uint8_t     *pch = NULL;
-    bWifiQItem_t item;
-    item.type   = WIFI_CONNECT_MQTT_PUB;
-    item.handle = handle;
-    item.param  = bMalloc(strlen(topic) + 1 + 1 + sizeof(len) + len);
-    if (item.param == NULL)
+    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    __list_del(ptrans->list.prev, ptrans->list.next);
+    if ((retval = _bWifiSetDrvCbArg(NULL)) < 0)
     {
-        return -1;
+        b_log_e("set arg error..%d\r\n", retval);
+        return -2;
     }
-    memset(item.param, 0, (strlen(topic) + 1 + 1 + sizeof(len) + len));
-    pch    = item.param;
-    pch[0] = qos;
-    memcpy(pch + 1, topic, strlen(topic));
-    memcpy(pch + 1 + strlen(topic) + 1, &len, sizeof(len));
-    memcpy(pch + 1 + strlen(topic) + 1 + sizeof(len), pbuf, len);
-    item.release = _bWifiMemRelease;
-    if (bQueuePutNonblock(bWifiQueue, &item) < 0)
-    {
-        _bWifiMemRelease(item.param);
-        return -1;
-    }
+    bWifiDisconn(ptrans->remote_ip, ptrans->remote_port);
+    bFree(ptrans->rx_fifo.pbuf);
+    bFIFO_Deinit(&ptrans->rx_fifo);
+    bFree(ptrans);
+    ptrans = NULL;
     return 0;
 }
+
+#endif
 
 /**
  * \}

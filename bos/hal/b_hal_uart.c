@@ -29,8 +29,9 @@
  *******************************************************************************
  */
 /*Includes ----------------------------------------------*/
-#include "hal/inc/b_hal.h"
 #include "b_section.h"
+#include "hal/inc/b_hal.h"
+
 /**
  * \addtogroup B_HAL
  * \{
@@ -130,8 +131,13 @@ static void _bHalUartDetectIdle()
     }
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section bos_polling
+#endif
 BOS_REG_POLLING_FUNC(_bHalUartDetectIdle);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section
+#endif
 /**
  * \}
  */
@@ -140,7 +146,7 @@ BOS_REG_POLLING_FUNC(_bHalUartDetectIdle);
  * \addtogroup UART_Exported_Functions
  * \{
  */
-
+#if defined(__WEAKDEF)
 __WEAKDEF int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 {
     return -1;
@@ -150,7 +156,7 @@ __WEAKDEF int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
 {
     return -1;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 

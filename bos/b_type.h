@@ -90,8 +90,15 @@ extern "C" {
 #define __WEAKDEF __attribute__((weak))
 #elif defined(__ICCARM__)
 #define __WEAKDEF __weak
+#elif defined(__RENESAS__)
 #else
 #define __WEAKDEF __attribute__((weak))
+#endif
+
+#if defined(__RENESAS__)
+#define __INLINE_DEF __inline
+#else
+#define __INLINE_DEF inline
 #endif
 
 #define B_SIZE_ALIGNMENT(size, align) (((size) + (align)-1) & ~((align)-1))
@@ -104,6 +111,16 @@ extern "C" {
         while (1)      \
             ;          \
     }
+
+#define B_SWAP_16(x) (((x) >> 8) | ((x) << 8))
+#define B_SWAP_32(x)                                                                      \
+    ((((x) & 0xFF000000) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | \
+     (((x) & 0x000000FF) << 24))
+#define B_SWAP_64(x)                                                                 \
+    ((((x) & 0xFF00000000000000ULL) >> 56) | (((x) & 0x00FF000000000000ULL) >> 40) | \
+     (((x) & 0x0000FF0000000000ULL) >> 24) | (((x) & 0x000000FF00000000ULL) >> 8) |  \
+     (((x) & 0x00000000FF000000ULL) << 8) | (((x) & 0x0000000000FF0000ULL) << 24) |  \
+     (((x) & 0x000000000000FF00ULL) << 40) | (((x) & 0x00000000000000FFULL) << 56))
 
 /**
  * \}

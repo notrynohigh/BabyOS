@@ -48,7 +48,6 @@ extern "C" {
 #include "b_hal_spi.h"
 #include "b_hal_uart.h"
 
-
 /**
  * \addtogroup B_HAL
  * \{
@@ -120,8 +119,13 @@ typedef struct
 
 // 移植时调用，TICK中断服务函数调用bHalIncSysTick
 void bHalIncSysTick(void);
+#if defined(__WEAKDEF)
 // 弱函数，用户可重新实现此函数。bInit->bHalInit->bHalUserInit
 void bHalUserInit(void);
+#else
+// 若编译器不支持弱函数，调用此接口注册
+void bHalRegUserInit(void (*cb)(void));
+#endif
 
 void     bHalInit(void);
 void     bHalDelayMs(uint16_t xms);

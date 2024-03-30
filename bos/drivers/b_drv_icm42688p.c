@@ -511,7 +511,13 @@ int bICM42688P_Init(bDriverInterface_t *pdrv)
     return 0;
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_ICM42688P, bICM42688P_Init);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 /**
  * }
  */

@@ -84,9 +84,9 @@ typedef struct
 
 typedef struct
 {
-    bNetifClient_t ntp_client;
-    bNetifConn_t  *pconn;
-    uint32_t       interval_s;
+    bTaskId_t task_id;
+    int       sockfd;
+    uint32_t  interval_s;
 } bNtpPcb_t;
 
 /**
@@ -118,7 +118,9 @@ typedef struct
  * \defgroup TCPIP_Private_Variables
  * \{
  */
-static bNtpPcb_t bNtpPcb;
+static bNtpPcb_t bNtpPcb = {
+    .task_id = 0,
+};
 B_TASK_CREATE_ATTR(bNtpTask);
 static const char *bNtpServer[B_NTP_SERVER_NUM] = {_NTP_SERVER_1, _NTP_SERVER_2, _NTP_SERVER_3};
 /**
@@ -139,15 +141,9 @@ static const char *bNtpServer[B_NTP_SERVER_NUM] = {_NTP_SERVER_1, _NTP_SERVER_2,
  * \{
  */
 
-static void _bNtpConnCallback(bNetifConnEvent_t event, void *param, void *arg)
+static void _bNtpConnCallback(bTransEvent_t event, void *param, void *arg)
 {
-    bNetifConn_t *pconn = (bNetifConn_t *)param;
-    if (event == B_EVENT_DNS_OK)
-    {
-        b_log("conn ip: %d.%d.%d.%d port:%d\r\n", ((pconn->remote_ip >> 0) & 0xff),
-              ((pconn->remote_ip >> 8) & 0xff), ((pconn->remote_ip >> 16) & 0xff),
-              ((pconn->remote_ip >> 24) & 0xff), pconn->remote_port);
-    }
+    ;
 }
 
 PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
@@ -159,48 +155,48 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
     PT_BEGIN(pt);
     while (1)
     {
-        bNtpPcb.pconn =
-            bNetifConnect(&bNtpPcb.ntp_client, (char *)bNtpServer[ntp_server_index], 123);
-        if (bNtpPcb.pconn == NULL)
+        bNtpPcb.sockfd = bSocket(B_TRANS_CONN_UDP, _bNtpConnCallback, NULL);
+        if (bNtpPcb.sockfd < 0)
         {
-            bTaskDelayMs(pt, 10000);
+            b_log_e("socket fail...\r\n");
             break;
         }
-        PT_WAIT_UNTIL(pt, bNetifConnIsWriteable(bNtpPcb.pconn) == 1, B_NTP_TIMEOUT_S * 1000);
+        b_log("sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
+        bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123);
+        PT_WAIT_UNTIL(pt, bSockIsWriteable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             b_log_e("ntp send fail...\r\n");
-            bNetifConnDeinit(bNtpPcb.pconn);
-            bNtpPcb.pconn    = NULL;
+            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+            b_log_e("shutdown..\r\n");
             ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
             break;
         }
         memset(&packet, 0, sizeof(bNtpPacket_t));
         packet.li_vn_mode = 0x1b;
-        bNetifConnWriteData(bNtpPcb.pconn, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
-        PT_WAIT_UNTIL(pt, (bNetifConnIsReadable(bNtpPcb.pconn) == 1), B_NTP_TIMEOUT_S * 1000);
+        bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
+        PT_WAIT_UNTIL(pt, bSockIsReadable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             b_log_e("ntp recv timeout.. \r\n");
-            bNetifConnDeinit(bNtpPcb.pconn);
-            bNtpPcb.pconn    = NULL;
+            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+            b_log_e("shutdown..\r\n");
             ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
             bTaskDelayMs(pt, 10000);
             break;
         }
-        bNetifConnReadData(bNtpPcb.pconn, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
+        bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
         if (rlen == sizeof(bNtpPacket_t))
         {
             if (packet.recv_time.seconds <= packet.trans_time.seconds &&
                 (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
             {
-                ntp_time = ntohl(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
+                ntp_time = B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
                 bUTC_SetTime(ntp_time);
             }
         }
-        bNetifConnDeinit(bNtpPcb.pconn);
-        bNtpPcb.pconn = NULL;
+        PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+        b_log_e("shutdown..\r\n");
         bTaskDelayMs(pt, bNtpPcb.interval_s * 1000);
     }
     PT_END(pt);
@@ -215,17 +211,19 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
  * \{
  */
 
+int bTcpipSrvInit()
+{
+    return bNetlinkInit();
+}
+
 int bSntpStart(uint32_t interval_s)
 {
-    static uint8_t b_ntp_init_f = 0;
-    if (b_ntp_init_f == 0)
+    if (bNtpPcb.task_id == NULL)
     {
-        b_ntp_init_f = 1;
         memset(&bNtpPcb, 0, sizeof(bNtpPcb));
-        B_NETIF_CLIENT_STRUCT_INIT(&bNtpPcb.ntp_client, B_TRANS_UDP, _bNtpConnCallback, 0, 128);
-        bNtpPcb.pconn      = NULL;
+        bNtpPcb.sockfd     = -1;
         bNtpPcb.interval_s = 60 * 60;
-        bTaskCreate("ntp", _bNtpTaskFunc, NULL, &bNtpTask);
+        bNtpPcb.task_id    = bTaskCreate("ntp", _bNtpTaskFunc, NULL, &bNtpTask);
     }
     if (interval_s == 0)
     {

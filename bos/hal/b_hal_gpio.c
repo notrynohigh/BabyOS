@@ -45,7 +45,7 @@
  * \addtogroup GPIO_Exported_Functions
  * \{
  */
-
+#if defined(__WEAKDEF)
 __WEAKDEF void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir,
                               bHalGPIOPull_t pull)
 {
@@ -71,7 +71,7 @@ __WEAKDEF uint16_t bMcuGpioReadPort(bHalGPIOPort_t port)
 {
     return 0;
 }
-
+#endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 

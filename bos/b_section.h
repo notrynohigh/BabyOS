@@ -66,20 +66,32 @@ typedef void (*pbPoling_t)(void);
 #endif
 
 #define CONCAT_2(s1, s2) s1##s2
-#define __stringify(x...) #x
-#define STRINGIFY(s1) __stringify(s1)
+#if defined(__RENESAS__)
+#define BSECTION_NEED_PRAGMA 1
+#endif
 
 /**
  * \brief the beginning of a section
  */
 #if defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6000000))
+#define __stringify(x...) #x
+#define STRINGIFY(s1) __stringify(s1)
 #define BOS_SECTION_START_ADDR(section_name) &CONCAT_2(section_name, $$Base)
 
 #elif defined(__GNUC__)
+#define __stringify(x...) #x
+#define STRINGIFY(s1) __stringify(s1)
 #define BOS_SECTION_START_ADDR(section_name) &CONCAT_2(__start_, section_name)
 
 #elif defined(__ICCARM__)
+#define __stringify(x...) #x
+#define STRINGIFY(s1) __stringify(s1)
 #define BOS_SECTION_START_ADDR(section_name) __section_begin(STRINGIFY(section_name))
+
+#elif defined(__RENESAS__)  // map section __s.constbos_polling_n __e.constbos_polling_n
+#define STRINGIFY(x) #x
+#define QUOTE(x) STRINGIFY(x)
+#define BOS_SECTION_START_ADDR(section_name) __sectop(QUOTE(.##const##section_name##_n))
 #endif
 
 /**
@@ -93,6 +105,10 @@ typedef void (*pbPoling_t)(void);
 
 #elif defined(__ICCARM__)
 #define BOS_SECTION_END_ADDR(section_name) __section_end(STRINGIFY(section_name))
+
+#elif defined(__RENESAS__)  // miki
+#define BOS_SECTION_END_ADDR(section_name) __secend(QUOTE(.##const##section_name##_n))
+
 #endif
 
 /**
@@ -107,16 +123,19 @@ typedef void (*pbPoling_t)(void);
 #if defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6000000))
 #define BOS_SECTION_DEF(section_name, data_type)      \
     extern data_type *CONCAT_2(section_name, $$Base); \
-    extern void *     CONCAT_2(section_name, $$Limit)
+    extern void      *CONCAT_2(section_name, $$Limit)
 
 #elif defined(__GNUC__)
 #define BOS_SECTION_DEF(section_name, data_type)        \
     extern data_type *CONCAT_2(__start_, section_name); \
-    extern void *     CONCAT_2(__stop_, section_name)
+    extern void      *CONCAT_2(__stop_, section_name)
 
 #elif defined(__ICCARM__)
 #define BOS_SECTION_DEF(section_name, data_type) \
     _Pragma(STRINGIFY(section = STRINGIFY(section_name)));
+
+#elif defined(__RENESAS__)
+#define BOS_SECTION_DEF(section_name, data_type)
 
 #endif
 
@@ -134,6 +153,10 @@ typedef void (*pbPoling_t)(void);
 #elif defined(__ICCARM__)
 #define BOS_SECTION_ITEM_REGISTER(section_name, section_var) \
     __root section_var @STRINGIFY(section_name)
+
+#elif defined(__RENESAS__)
+#define BOS_SECTION_ITEM_REGISTER(section_name, data_type) data_type
+
 #endif
 
 /**
@@ -149,17 +172,13 @@ typedef void (*pbPoling_t)(void);
     BOS_SECTION_LENGTH(section_name) / sizeof(data_type)
 
 #define bSECTION_DEF_FLASH(section_name, data_type) BOS_SECTION_DEF(section_name, const data_type)
-#define bSECTION_DEF_RAM(section_name, data_type) BOS_SECTION_DEF(section_name, data_type)
 
 #define bSECTION_ITEM_REGISTER_FLASH(section_name, data_type, var_name) \
     BOS_SECTION_ITEM_REGISTER(section_name, const data_type var_name)
 
-#define bSECTION_ITEM_REGISTER_RAM(section_name, data_type, var_name) \
-    BOS_SECTION_ITEM_REGISTER(section_name, data_type var_name)
-
 #define bSECTION_FOR_EACH(section_name, data_type, variable)                     \
     for (data_type *variable = BOS_SECTION_ITEM_GET(section_name, data_type, 0); \
-         (intptr_t)variable != (intptr_t)BOS_SECTION_END_ADDR(section_name); variable++)
+         (int)variable != (int)BOS_SECTION_END_ADDR(section_name); variable++)
 
 /**
  * \}

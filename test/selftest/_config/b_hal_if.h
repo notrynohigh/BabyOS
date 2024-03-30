@@ -163,6 +163,11 @@
         ._if.simulating_i2c.sda = {B_HAL_GPIOA, B_HAL_PIN6}, ._if.simulating_i2c.frq = 100000,     \
     }
 
+#define HAL_LTC2662IUH_12_IF                                                         \
+    {                                                                                \
+        ._if.spi = B_HAL_SPI_3, .cs = {B_HAL_GPIOC, B_HAL_PIN9}, .is_simulation = 0, \
+    }
+
 #define HAL_MCUMAC_IF \
     {                 \
         0             \

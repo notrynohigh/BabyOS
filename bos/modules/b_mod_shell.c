@@ -112,8 +112,13 @@ static void _CmdBosHandler(char argc, char *argv)
         }
     }
 }
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section b_mod_shell
+#endif
 bSHELL_REG_INSTANCE("bos", _CmdBosHandler);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
 
 /**
  * \}

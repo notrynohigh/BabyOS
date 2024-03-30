@@ -394,16 +394,23 @@ int bSPIFLASH_Init(bDriverInterface_t *pdrv)
 
     _bSPIFLASH_Open(pdrv);
 
+    sfud_spi_port_init(&p_data->sflash);
     if (sfud_device_init(&p_data->sflash) != SFUD_SUCCESS)
     {
         retval = -1;
     }
+
     _bSPIFLASH_Close(pdrv);
     return retval;
 }
 
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
 bDRIVER_REG_INIT(B_DRIVER_SPIFLASH, bSPIFLASH_Init);
-
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section
+#endif
 /**
  * \}
  */

@@ -223,28 +223,8 @@ config IAP_BACKUP_SIZE
 config _WIFI_ENABLE
     bool "WiFi Enable/Disable"
     default n
-    depends on _BOS_MODULES_ENABLE
-    select _MEMP_ENABLE
-
-config WIFI_Q_LEN
-    int "WiFi Queue Length"
-    default 10
-    depends on _WIFI_ENABLE
-
-config WIFI_DEVICE_NUMBER
-    int "WiFi Device Number"
-    default 1
-    depends on _WIFI_ENABLE
-
-config WIFI_SEND_BUF_LEN
-    int "WiFi Send Buffer Length"
-    default 1024
-    depends on _WIFI_ENABLE
-
-config WIFI_RECV_BUF_LEN
-    int "WiFi Receive Buffer Length"
-    default 1024
-    depends on _WIFI_ENABLE    
+    depends on _BOS_MODULES_ENABLE  
+    select _CJSON_ENABLE
 
 config _SELECT_ENABLE
     bool "Select Enable/Disable"
@@ -345,20 +325,55 @@ config _NETIF_ENABLE
     select _BOS_SERVICES_ENABLE
     select _TCPIP_SERVICE_ENABLE
 
-config NETIF_LINK_CHECK_INTERVAL
-    int "Netif Check Link Time Interval (ms)"
-    default 200
+config _NETIF_USE_LWIP
+    bool "NETIF USE LWIP"
+    default y
     depends on _NETIF_ENABLE
+
+config NETIF_DEV_NO
+    int "Network device number"
+    default 1
+    depends on _NETIF_USE_LWIP
+
+choice
+    prompt "Ways to obtain an IP address"
+    depends on _NETIF_USE_LWIP
+    default _GUI_RGB_565
+config NETIF_USE_DHCP
+    bool "Dynamic IP"
+config NETIF_USE_STATIC_IP
+    bool "Static IP"   
+endchoice
+
+config NETIF_IP_ADDRESS
+    string "IP Address"
+    default "192.168.169.55"
+    depends on NETIF_USE_STATIC_IP
+
+config NETIF_GW_ADDRESS
+    string "GW Address"
+    default "192.168.169.1"
+    depends on NETIF_USE_STATIC_IP
+
+config NETIF_MASK_ADDRESS
+    string "MASK Address"
+    default "255.255.255.0"
+    depends on NETIF_USE_STATIC_IP
+
+config NETIF_LINK_CHECK_INTERVAL
+    int "Check Link Time Interval (ms)"
+    default 200
+    depends on _NETIF_USE_LWIP
 
 config NETIF_CHECKSUM_BY_HARDWARE
     bool "HECKSUM_BY_HARDWARE enabled"
     default n
-    depends on _NETIF_ENABLE
+    depends on _NETIF_USE_LWIP
 
 config MEM_SIZE_FOR_LWIP
-    int "the size of the heap memory"
+    int "Size of The Heap Memory"
     default 10240
-    depends on _NETIF_ENABLE
+    depends on _NETIF_USE_LWIP
 
 config REMOTE_ADDR_LEN_MAX
     int "Maximum length of remote address"
