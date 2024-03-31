@@ -16,73 +16,50 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "utils/inc/b_util_list.h"
 #include "utils/inc/b_util_log.h"
-
-static LIST_HEAD(socket_list_head);
+#include "utils/inc/b_util_memp.h"
 
 typedef struct
 {
-    int              sockfd;
-    void            *cb_arg;
-    pbTransCb_t      callback;
-    uint8_t          readable;
-    uint8_t          writeable;
-    bFIFO_Info_t     rx_fifo;
-    uint16_t         local_port;
-    uint16_t         remote_port;
-    uint32_t         remote_ip;
-    bTransType_t     type;
-    pthread_t        thread;
-    struct list_head list;
+    int          sockfd;
+    void        *cb_arg;
+    pbTransCb_t  callback;
+    uint8_t      readable;
+    uint8_t      writeable;
+    bFIFO_Info_t rx_fifo;
+    uint16_t     local_port;
+    uint16_t     remote_port;
+    uint32_t     remote_ip;
+    bTransType_t type;
+    pthread_t    thread;
 } bTrans_t;
 
 void *thread_function(void *arg)
 {
-    uint8_t           buf[CONNECT_RECVBUF_MAX];
-    struct list_head *pos    = NULL;
-    bTrans_t         *ptrans = NULL;
-    int               retval = -1;
+    uint8_t   buf[CONNECT_RECVBUF_MAX];
+    bTrans_t *ptrans = (bTrans_t *)arg;
+    int       retval = -1;
     while (1)
     {
-        list_for_each(pos, &socket_list_head)
+        retval = recv(ptrans->sockfd, buf, sizeof(buf), 0);
+        if (retval == -1 || retval == 0)
         {
-            ptrans = (bTrans_t *)list_entry(pos, bTrans_t, list);
-            if ((retval = recv(ptrans->sockfd, buf, sizeof(buf), 0)) == -1)
-            {
-                printf("Error: failed to receive data from server\r\n");
-            }
-            else if (retval > 0)
-            {
-                printf("recv:%d ...\r\n", retval);
-                bFIFO_Write(&ptrans->rx_fifo, buf, retval);
-                ptrans->readable = 1;
-                ptrans->callback(B_TRANS_NEW_DATA, ptrans, ptrans->cb_arg);
-            }
+            ;
         }
-        sleep(1);
+        else if (retval > 0)
+        {
+            b_log("recv:%d ...\r\n", retval);
+            bFIFO_Write(&ptrans->rx_fifo, buf, retval);
+            ptrans->readable = 1;
+            ptrans->callback(B_TRANS_NEW_DATA, ptrans, ptrans->cb_arg);
+        }
     }
-    return NULL;
+    pthread_exit(NULL);
 }
 
 int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
 {
-    static uint8_t init_f = 0;
-    pthread_t      thread;
-    int            result;
-
-    if (init_f == 0)
-    {
-        // 创建线程
-        result = pthread_create(&thread, NULL, thread_function, NULL);
-        if (result != 0)
-        {
-            printf("Thread creation failed\r\n");
-            return -1;
-        }
-        init_f = 1;
-    }
-
+    int result;
     if (cb == NULL || (type != B_TRANS_CONN_TCP && type != B_TRANS_CONN_UDP))
     {
         return -1;
@@ -94,18 +71,17 @@ int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
         b_log_e("Error: socket creation failed\r\n");
         return -1;
     }
-
-    bTrans_t *ptrans = (bTrans_t *)malloc(sizeof(bTrans_t));
+    bTrans_t *ptrans = (bTrans_t *)bMalloc(sizeof(bTrans_t));
     if (ptrans == NULL)
     {
         close(sockfd);
         return -2;
     }
     memset(ptrans, 0, sizeof(bTrans_t));
-    uint8_t *pbuf = (uint8_t *)malloc(CONNECT_RECVBUF_MAX);
+    uint8_t *pbuf = (uint8_t *)bMalloc(CONNECT_RECVBUF_MAX);
     if (pbuf == NULL)
     {
-        free(ptrans);
+        bFree(ptrans);
         ptrans = NULL;
         return -2;
     }
@@ -116,7 +92,7 @@ int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
     ptrans->cb_arg    = user_data;
     ptrans->readable  = 0;
     ptrans->writeable = 0;
-    list_add(&ptrans->list, &socket_list_head);
+    pthread_create(&ptrans->thread, NULL, thread_function, ptrans);
     return (int)ptrans;
 }
 
@@ -133,7 +109,7 @@ int bConnect(int sockfd, char *remote, uint16_t port)
 
     if ((he = gethostbyname(remote)) == NULL)
     {
-        printf("gethostbyname fail\r\n");
+        b_log("gethostbyname fail\r\n");
         return -1;
     }
     addr_list = (struct in_addr **)he->h_addr_list;
@@ -145,13 +121,13 @@ int bConnect(int sockfd, char *remote, uint16_t port)
     // 连接到服务器
     if (connect(ptrans->sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
     {
-        printf("Error: connection failed\r\n");
+        b_log("Error: connection failed\r\n");
         ptrans->callback(B_TRANS_ERROR, ptrans, ptrans->cb_arg);
         return -1;
     }
     ptrans->writeable = 1;
     ptrans->callback(B_TRANS_CONNECTED, ptrans, ptrans->cb_arg);
-    printf("Connected to the server.\r\n");
+    b_log("Connected to the server.\r\n");
     return 0;
 }
 
@@ -205,7 +181,7 @@ int bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
     {
         return -1;
     }
-    printf("send %d \r\n", retval);
+    b_log("send %d \r\n", retval);
     if (retval >= 0 && wlen != NULL)
     {
         *wlen = retval;
@@ -235,16 +211,18 @@ uint8_t bSockIsWriteable(int sockfd)
 
 int bShutdown(int sockfd)
 {
+    int retval = -1;
     if (sockfd < 0)
     {
         return -1;
     }
     bTrans_t *ptrans = (bTrans_t *)sockfd;
-    __list_del(ptrans->list.prev, ptrans->list.next);
+    retval           = pthread_cancel(ptrans->thread);
+    b_log("retval:%d\r\n", retval);
     close(ptrans->sockfd);
-    free(ptrans->rx_fifo.pbuf);
+    bFree(ptrans->rx_fifo.pbuf);
     bFIFO_Deinit(&ptrans->rx_fifo);
-    free(ptrans);
+    bFree(ptrans);
     ptrans = NULL;
     return 0;
 }
@@ -260,7 +238,7 @@ int bDnsParse(char *remote, pbTransDnsCb_t cb, void *user_data)
 
     if ((he = gethostbyname(remote)) == NULL)
     {
-        printf("gethostbyname fail\r\n");
+        b_log("gethostbyname fail\r\n");
         return -1;
     }
     addr_list = (struct in_addr **)he->h_addr_list;

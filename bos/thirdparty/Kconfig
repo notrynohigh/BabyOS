@@ -214,4 +214,8 @@ config _QRCODE_ENABLE
     bool "QRcode Enable/Disable"
     default n
 
+config _HTTP_PARSER_ENABLE
+    bool "Http-Parser Enable/Disable"
+    default n
+
 endmenu

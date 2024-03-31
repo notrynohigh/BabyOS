@@ -65,6 +65,31 @@ extern "C" {
  * \{
  */
 
+typedef enum
+{
+    B_HTTP_GET,
+    B_HTTP_POST
+} bHttpReqType_t;
+#define HTTPREQ_TYPE_IS_VALID(t) ((t) == B_HTTP_GET || (t) == B_HTTP_POST)
+
+typedef struct
+{
+    uint8_t *pdat;
+    uint16_t len;
+    void (*release)(void *);
+} bHttpRecvData_t;
+
+typedef enum
+{
+    B_HTTP_EVENT_CONNECTED = 0,
+    B_HTTP_EVENT_RECV_DATA,  // callback param : bHttpRecvData_t
+    B_HTTP_EVENT_DESTROY,
+    B_HTTP_EVENT_ERR_BASE = -100,
+    B_HTTP_EVENT_ERROR,
+} bHttpEvent_t;
+
+typedef void (*pHttpCb_t)(bHttpEvent_t event, void *param, void *arg);
+
 /**
  * \}
  */
@@ -87,6 +112,11 @@ int bTcpipSrvInit(void);
 
 int bSntpStart(uint32_t interval_s);
 
+int bHttpInit(pHttpCb_t cb, void *user_data);
+int bHttpDeInit(int httpfd);
+// 默认头部有Content-Length; head为自定义头部，以\r\n结尾
+int bHttpRequest(int httpfd, bHttpReqType_t type, const char *url, const char *head,
+                 const char *body);
 /**
  * \}
  */

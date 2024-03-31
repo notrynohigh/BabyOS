@@ -60,15 +60,16 @@ extern "C" {
 
 void* bMallocPlus(uint32_t size, const char* func, int line);
 void  bFreePlus(void* ptr, const char* func, int line);
+void* bReallocPlus(void* ptr, uint32_t size, const char* func, int line);
 
 #define bMalloc(size) bMallocPlus((size), __func__, __LINE__)
 #define bFree(addr) bFreePlus((addr), __func__, __LINE__)
-
+#define bRealloc(addr, size) bReallocPlus((addr), (size), __func__, __LINE__)
 #else
 
 void *bMalloc(uint32_t size);
 void  bFree(void *paddr);
-
+void *bRealloc(void *paddr, uint32_t size);
 #endif
 
 uint32_t bGetFreeSize(void);

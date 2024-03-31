@@ -221,7 +221,11 @@ static void _bAtCmdCb(uint8_t isok, void *user_data)
     b_log_w("at result:%d\r\n", isok);
 }
 
-static void *bAtNewDataMalloc(uint8_t *pbuf, uint16_t len)
+static void _bEsp12fFree(void *addr)
+{
+    bFree(addr);
+}
+static void *_bAtNewDataMalloc(uint8_t *pbuf, uint16_t len)
 {
     if (len == 0 || pbuf == NULL)
     {
@@ -242,11 +246,11 @@ static void *bAtNewDataMalloc(uint8_t *pbuf, uint16_t len)
     memcpy(ptmp, pbuf, len);
     pdat->len     = len;
     pdat->pbuf    = ptmp;
-    pdat->release = bFree;
+    pdat->release = _bEsp12fFree;
     return pdat;
 }
 
-static void bAtNewDataFree(void *p)
+static void _bAtNewDataFree(void *p)
 {
     bTcpUdpData_t *dat = (bTcpUdpData_t *)p;
     if (dat == NULL)
@@ -286,11 +290,11 @@ static void _bAtNewDataCb(uint8_t *pbuf, uint16_t len, void (*pfree)(void *), vo
                 p = strstr(p, ":");
                 p = p + 1;
                 b_log("read:%p, %d\r\n", p, rlen);
-                pdat = (bTcpUdpData_t *)bAtNewDataMalloc((uint8_t *)p, rlen);
+                pdat = (bTcpUdpData_t *)_bAtNewDataMalloc((uint8_t *)p, rlen);
                 if (pdat != NULL)
                 {
                     memcpy(&pdat->conn, &_priv->conn[conn_id].info, sizeof(bTcpUdpInfo_t));
-                    _priv->cb.cb(B_EVT_CONN_NEW_DATA, pdat, bAtNewDataFree, _priv->cb.user_data);
+                    _priv->cb.cb(B_EVT_CONN_NEW_DATA, pdat, _bAtNewDataFree, _priv->cb.user_data);
                 }
             }
         }
@@ -747,7 +751,7 @@ int bESP12F_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_ESP12F, bESP12F_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 
 /**
