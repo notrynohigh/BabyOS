@@ -168,9 +168,19 @@ typedef struct internal_hooks
 #if (defined(CJSON_MEM_USE_BMALLOC) && (CJSON_MEM_USE_BMALLOC == 1))
 
 #include "utils/inc/b_util_memp.h"
-#define internal_malloc bMalloc
-#define internal_free bFree
-#define internal_realloc NULL
+
+static void *CJSON_CDECL internal_malloc(size_t size)
+{
+    return bMalloc(size);
+}
+static void CJSON_CDECL internal_free(void *pointer)
+{
+    bFree(pointer);
+}
+static void *CJSON_CDECL internal_realloc(void *pointer, size_t size)
+{
+    return bRealloc(pointer, size);
+}
 
 #else
 
