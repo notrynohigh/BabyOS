@@ -22,10 +22,13 @@ void ntp_test()
     b_log("%d-%02d-%02d %02d:%02d:%02d %02d\r\n", tm.year, tm.month, tm.day, tm.hour, tm.minute,
           tm.second, tm.week);
     b_log_w(":::::%d\r\n", bGetFreeSize());
-    bHttpRequest(httpfd, B_HTTP_GET,
-                 "http://restapi.amap.com/v3/weather/"
-                 "weatherInfo?city=440300&key=",
-                 NULL, NULL);
+    if (now_utc > 1711855508)
+    {
+        bHttpRequest(httpfd, B_HTTP_GET,
+                     "http://restapi.amap.com/v3/weather/"
+                     "weatherInfo?city=440300&key=",
+                     NULL, NULL);
+    }
 }
 
 void HttpCb(bHttpEvent_t event, void *param, void *arg)
@@ -35,6 +38,7 @@ void HttpCb(bHttpEvent_t event, void *param, void *arg)
         bHttpRecvData_t *dat = (bHttpRecvData_t *)param;
         if (dat->pdat != NULL && dat->len > 0)
         {
+            b_log("%s", dat->pdat);
             char *pstr = strstr(dat->pdat, "\r\n\r\n");
             if (pstr != NULL)
             {
@@ -44,26 +48,13 @@ void HttpCb(bHttpEvent_t event, void *param, void *arg)
                     cJSON *lives = cJSON_GetObjectItem(root, "lives");
                     if (lives != NULL && lives->type == cJSON_Array)
                     {
-                        lives         = cJSON_GetArrayItem(lives, 0);
-                        cJSON *wether = cJSON_GetObjectItem(lives, "weather");
-                        cJSON *temp   = cJSON_GetObjectItem(lives, "temperature");
-                        cJSON *hum    = cJSON_GetObjectItem(lives, "humidity");
-                        char  *we     = "Cloudy";
-                        if (strstr(wether->valuestring, "晴") != NULL)
-                        {
-                            we = "Sunny";
-                        }
-                        if (strstr(wether->valuestring, "雨") != NULL)
-                        {
-                            we = "Rainy";
-                        }
-                        if (strstr(wether->valuestring, "雪") != NULL)
-                        {
-                            we = "Snowy";
-                        }
-                        b_log("w:%s\r\n", we);
-                        b_log("t:%s\r\n", temp->valuestring);
-                        b_log("h:%s\r\n", hum->valuestring);
+                        lives              = cJSON_GetArrayItem(lives, 0);
+                        cJSON *weather     = cJSON_GetObjectItem(lives, "weather");
+                        cJSON *temperature = cJSON_GetObjectItem(lives, "temperature");
+                        cJSON *humidity    = cJSON_GetObjectItem(lives, "humidity");
+                        b_log("\r\n\r\nweather: %s\r\n", weather->valuestring);
+                        b_log("\r\ntemperature:%s℃\r\n", temperature->valuestring);
+                        b_log("\r\nhumidity:%s%%\r\n", humidity->valuestring);
                     }
                     cJSON_Delete(root);
                 }
