@@ -88,9 +88,14 @@ static int _bLTC2662_Send(bDriverInterface_t *pdrv, uint8_t *pbuf, uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
 
-    bHalSpiSend(_if, pbuf, len);
+    return bHalSpiSend(_if, pbuf, len);
+}
 
-    return 0;
+static int _bLTC2662_Recv(bDriverInterface_t *pdrv, uint8_t *pbuf, uint16_t len)
+{
+    bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
+
+    return bHalSpiReceive(_if, pbuf, len);
 }
 
 /**
@@ -426,6 +431,48 @@ static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     return 0;
 }
 
+static int _bLTC2662_GET_DACX_FR(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
+{
+    int ret = -1;
+    uint8_t recv_buf[3] = {0, 0, 0};
+    bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
+
+    if (dac_x >= LTC_DAC_MAX)
+    {
+        b_log_e("Invalid DAC channel");
+        return -1;
+    }
+
+    // spi接收
+    bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
+    _bLTC2662_Recv(pdrv, recv_buf, 3);
+    bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
+
+    switch (dac_x)
+    {
+    case LTC_DAC_0:
+        ret = recv_buf[0] & 0x01;
+        break;
+    case LTC_DAC_1:
+        ret = recv_buf[0] & 0x02;
+        break;
+    case LTC_DAC_2:
+        ret = recv_buf[0] & 0x04;
+        break;
+    case LTC_DAC_3:
+        ret = recv_buf[0] & 0x08;
+        break;
+    case LTC_DAC_4:
+        ret = recv_buf[0] & 0x10;
+        break;
+ 
+    default:
+        break;
+    }
+
+    return ret;
+}
+
 static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
@@ -440,6 +487,11 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
                 b_log_e("bCMD_LTC_GET_DACX_STATUS param err!!!\r\n");
                 return -1;
             }
+            if (q->dac_channel >= LTC_DAC_MAX)
+            {
+                b_log_e("bCMD_LTC_GET_DACX_STATUS dac_channel err!!!\r\n");
+                return -2;
+            }
             q->status = _priv->dac_attribute[q->dac_channel].status;
             break;
         case bCMD_LTC_SET_CURRENT:
@@ -448,6 +500,11 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
                 b_log_e("bCMD_LTC_SET_CURRENT param err!!!\r\n");
                 return -1;
             }
+            if (p->dac_channel >= LTC_DAC_MAX)
+            {
+                b_log_e("bCMD_LTC_SET_CURRENT dac_channel err!!!\r\n");
+                return -2;
+            }
             _priv->dac_attribute[p->dac_channel].expect_current = p->current;
             break;
         case bCMD_LTC_GET_CURRENT:
@@ -455,6 +512,11 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
             {
                 b_log_e("bCMD_LTC_GET_CURRENT param err!!!\r\n");
                 return -1;
+            }
+            if (p->dac_channel >= LTC_DAC_MAX)
+            {
+                b_log_e("bCMD_LTC_GET_CURRENT dac_channel err!!!\r\n");
+                return -2;
             }
             p->current = _priv->dac_attribute[p->dac_channel].real_current;
             break;
@@ -512,6 +574,21 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
                 return -3;
             }
             break;
+        case bCMD_LTC_GET_DACX_FR:
+            if (param == NULL)
+            {
+                b_log_e("bCMD_LTC_GET_DACX_FR param err!!!\r\n");
+                return -1;
+            }
+            if (q->dac_channel >= LTC_DAC_MAX)
+            {
+                b_log_e("bCMD_LTC_GET_DACX_FR dac_channel err!!!\r\n");
+                return -2;
+            }
+            q->status             = _priv->dac_attribute[q->dac_channel].status;
+            q->open_circuit_fault = _bLTC2662_GET_DACX_FR(pdrv, q->dac_channel);
+            break;
+
         default:
             break;
     }

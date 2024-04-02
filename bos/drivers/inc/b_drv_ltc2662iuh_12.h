@@ -196,6 +196,7 @@ typedef struct
 {
     LTC2662_DAC_t dac_channel;  // 0-4
     uint8_t       status;       // 0:关闭, 1:打开
+    uint8_t       open_circuit_fault;  // 是否开路错误 0:无错误, 1:有错误
 } bLTC2662_STATUS_t;
 
 typedef struct
