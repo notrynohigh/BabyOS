@@ -5,6 +5,7 @@ import os, sys
 import shutil
 import re
 import importlib
+import importlib.util
 from kconfiglib import Kconfig
 from menuconfig import menuconfig
 

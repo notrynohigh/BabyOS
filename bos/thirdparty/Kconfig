@@ -227,5 +227,14 @@ config CFG_TUSB_CONFIG_FILE
     default "b_usb_config.h"
     depends on _TINYUSB_ENABLE
 
+config _MBEDTLS_ENABLE
+    bool "MbedTls Enable/Disable"
+    default n
+    select _MEMP_ENABLE
+
+config MBEDTLS_CONFIG_FILE
+    string "MbedTls config file"
+    default "b_mbedtls_config.h"
+    depends on _MBEDTLS_ENABLE
 
 endmenu
