@@ -145,7 +145,7 @@ extern "C" {
 
 #endif
 
-#elif ((_DEBUG_ENABLE == 1) && (_RTT_EVR_ENABLE == 1) && (_EventRecorder_ENABLE))
+#elif ((_DEBUG_ENABLE == 1) && (_RTT_EVR_ENABLE == 1) && (_EventRecorder_ENABLE == 1))
 
 #if ((defined(LOG_LEVEL_CUSTOMIZE)) && (LOG_LEVEL_CUSTOMIZE == 1))
 
@@ -210,7 +210,7 @@ extern "C" {
 
 #endif
 
-#elif ((_DEBUG_ENABLE == 1) && (_RTT_EVR_ENABLE == 1) && (_RTTViewer_ENABLE))
+#elif ((_DEBUG_ENABLE == 1) && (_RTT_EVR_ENABLE == 1) && (_RTTViewer_ENABLE == 1))
 
 #if ((defined(LOG_LEVEL_CUSTOMIZE)) && (LOG_LEVEL_CUSTOMIZE == 1))
 

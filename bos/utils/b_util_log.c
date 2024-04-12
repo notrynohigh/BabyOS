@@ -146,7 +146,7 @@ void bLogRegOutputBytes(void (*pfn)(uint8_t *pbuf, uint16_t len))
 
 #endif
 
-#ifndef _RTT_EVR_ENABLE  // 使能RTT输出和MDK中的EVENTRECORDER输出,需要自己在MDK工程中进行重定向
+#if !_RTT_EVR_ENABLE  // 使能RTT输出和MDK中的EVENTRECORDER输出,需要自己在MDK工程中进行重定向
 B_FPUTC
 {
     uint8_t ch = c & 0xff;
