@@ -218,8 +218,8 @@ extern "C" {
 #define b_log(...)                         \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(3);         \
-        SEGGER_RTT_printf(3, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(4);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #else
 #define b_log(...)
@@ -229,7 +229,7 @@ extern "C" {
 #define b_log_i(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(0);         \
+        SEGGER_RTT_SetTerminal(1);         \
         SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #else
@@ -240,8 +240,8 @@ extern "C" {
 #define b_log_w(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(1);         \
-        SEGGER_RTT_printf(1, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(2);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #else
 #define b_log_w(...)
@@ -251,8 +251,8 @@ extern "C" {
 #define b_log_e(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(2);         \
-        SEGGER_RTT_printf(2, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #else
 #define b_log_e(...)
@@ -263,26 +263,26 @@ extern "C" {
 #define b_log_i(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(0);         \
+        SEGGER_RTT_SetTerminal(1);         \
         SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log_w(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(1);         \
-        SEGGER_RTT_printf(1, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(2);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log_e(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(2);         \
-        SEGGER_RTT_printf(2, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log(...)                         \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(3);         \
-        SEGGER_RTT_printf(3, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(4);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 
 #elif ((defined(LOG_LEVEL_INFO)) && (LOG_LEVEL_INFO == 1))
@@ -290,20 +290,20 @@ extern "C" {
 #define b_log_i(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(0);         \
+        SEGGER_RTT_SetTerminal(1);         \
         SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log_w(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(1);         \
-        SEGGER_RTT_printf(1, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(2);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log_e(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(2);         \
-        SEGGER_RTT_printf(2, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log(...)
 
@@ -313,14 +313,14 @@ extern "C" {
 #define b_log_w(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(1);         \
-        SEGGER_RTT_printf(1, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(2);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log_e(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(2);         \
-        SEGGER_RTT_printf(2, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log(...)
 
@@ -331,8 +331,8 @@ extern "C" {
 #define b_log_e(...)                       \
     do                                     \
     {                                      \
-        SEGGER_RTT_SetTerminal(2);         \
-        SEGGER_RTT_printf(2, __VA_ARGS__); \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
     } while (0);
 #define b_log(...)
 
