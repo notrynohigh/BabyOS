@@ -106,6 +106,7 @@ extern "C" {
 #include "drivers/inc/b_drv_matrixkeys.h"
 #include "drivers/inc/b_drv_mcuflash.h"
 #include "drivers/inc/b_drv_oled.h"
+#include "drivers/inc/b_drv_paj7620u2.h"
 #include "drivers/inc/b_drv_pcf8574.h"
 #include "drivers/inc/b_drv_qmc5883l.h"
 #include "drivers/inc/b_drv_qmi8658a.h"
@@ -115,6 +116,7 @@ extern "C" {
 #include "drivers/inc/b_drv_ssd1289.h"
 #include "drivers/inc/b_drv_st7789.h"
 #include "drivers/inc/b_drv_xpt2046.h"
+
 
 // thirdparty
 #include "thirdparty/cjson/cjson.h"

@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_device_list.h
+ * \file        b_drv_paj7620u2.h
  * \version     v0.0.1
- * \date        2019/06/05
- * \author      Bean(notrynohigh@outlook.com)
+ * \date        2023/03/25
+ * \author      babyos
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2019 Bean
+ * Copyright (c) 2023 babyos
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,48 +28,63 @@
  * SOFTWARE.
  *******************************************************************************
  */
+#ifndef __B_DRV_PAJ7620U2_H__
+#define __B_DRV_PAJ7620U2_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*Includes ----------------------------------------------*/
+#include "drivers/inc/b_driver.h"
 /**
-typedef enum
-{
-    B_DRIVER_NULL = 0,
-    B_DRIVER_LTC2662IUH_12,
-    B_DRIVER_ICM20948,
-    B_DRIVER_ICM42688P,
-    B_DRIVER_QMC5883L,
-    B_DRIVER_QMI8658A,
-    B_DRIVER_24CXX,
-    B_DRIVER_DS18B20,
-    B_DRIVER_ESP12F,
-    B_DRIVER_FM25CL,
-    B_DRIVER_ILI9320,
-    B_DRIVER_ILI9341,
-    B_DRIVER_KEY,
-    B_DRIVER_LIS3DH,
-    B_DRIVER_MATRIXKEYS,
-    B_DRIVER_MCUFLASH,
-    B_DRIVER_MCUMAC,
-    B_DRIVER_OLED,
-    B_DRIVER_PAJ7620U2,
-    B_DRIVER_PCF8574,
-    B_DRIVER_RS485,
-    B_DRIVER_SD,
-    B_DRIVER_SPIFLASH,
-    B_DRIVER_SSD1289,
-    B_DRIVER_ST7789,
-    B_DRIVER_TESTFLASH,
-    B_DRIVER_XPT2046,
-    B_DRIVER_APDS9930,
-    B_DRIVER_NUMBER
-} bDriverNumber_t;
-*/
-/**
-    B_DEVICE_REG(dev_1, bDriverNumber_t, "description")
-    .....
-    B_DEVICE_REG(dev_n, bDriverNumber_t, "description")
+ * \addtogroup B_DRIVER
+ * \{
  */
 
-B_DEVICE_REG(bTESTFLASH, B_DRIVER_TESTFLASH, "testflash")
+/**
+ * \addtogroup PAJ7620U2
+ * \{
+ */
 
-#undef B_DEVICE_REG
+/**
+ * \defgroup PAJ7620U2_Exported_TypesDefinitions
+ * \{
+ */
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+typedef bHalI2CIf_t bPAJ7620U2_HalIf_t;
+
+typedef struct
+{
+    uint8_t reserved;
+} bPAJ7620U2Private_t;
+
+#define PAJ7620U2_READ_GESTURE_UP (0x0001)
+#define PAJ7620U2_READ_GESTURE_DOWN (0x0002)
+#define PAJ7620U2_READ_GESTURE_LEFT (0x0004)
+#define PAJ7620U2_READ_GESTURE_RIGHT (0x0008)
+#define PAJ7620U2_READ_GESTURE_FORWARD (0x0010)
+#define PAJ7620U2_READ_GESTURE_BACKWARD (0x0020)
+#define PAJ7620U2_READ_GESTURE_CLOCKWISE (0x0040)
+#define PAJ7620U2_READ_GESTURE_COUNT_CLOCKWISE (0x0080)
+#define PAJ7620U2_READ_GESTURE_WAVE (0x0100)
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+
+/************************ Copyright (c) 2023 babyos *****END OF FILE****/
