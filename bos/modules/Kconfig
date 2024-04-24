@@ -390,4 +390,25 @@ config SERVER_MAX_CONNECTIONS
     default 2
     depends on _NETIF_ENABLE
 
+config _USB_ENABLE
+    bool "USB Enable/Disable"
+    default n
+    depends on _BOS_MODULES_ENABLE
+    select _TINYUSB_ENABLE
+
+config USB_MANUFACTURER
+    string "Manufacturer"
+    default "BabyOS"
+    depends on _USB_ENABLE
+
+config USB_PRODUCT
+    string "Product"
+    default "BabyOS-USB"
+    depends on _USB_ENABLE
+
+config USB_SERIAL_NUMBER
+    string "Serials"
+    default "BabyOS-USB0"
+    depends on _USB_ENABLE
+
 endmenu

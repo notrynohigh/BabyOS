@@ -32,12 +32,15 @@ def clear_directory(directory):
 
 #将文件里面的相对路径，去掉相对路径部分字符串
 def process_includes(file_path):
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding="utf-8") as f:
         content = f.read()
     # 使用正则表达式匹配所有#include语句，并去掉路径部分
     pattern = r'#include\s+"(\.\./)*(\S*/)*(.+?)"'
     content = re.sub(pattern, r'#include "\3"', content)
-    with open(file_path, 'w') as f:
+    # 使用正则表达式匹配所有#include语句，并去掉路径部分
+    pattern = r'#include\s+<(\.\./)*(\S*/)*(.+?)>'
+    content = re.sub(pattern, r'#include "\3"', content)
+    with open(file_path, 'w', encoding="utf-8") as f:
         f.write(content)
 
 def copy_files_R(src_dir, des_dir):
@@ -110,7 +113,53 @@ def cp_lwip_file(bos_dir):
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
+def copy_specific_files(source_dir, destination_dir, extensions, del_include_path):
+    for root, dirs, files in os.walk(source_dir):
+        for file in files:
+            if file.endswith(tuple(extensions)):
+                source_file = os.path.join(root, file)
+                destination_file = os.path.join(destination_dir, file)
+                shutil.copy2(source_file, destination_file)
+                if del_include_path:
+                    process_includes(destination_file)
+
+def replace_line_with_pattern(file_path, pattern_to_replace, replacement_line):
+    with open(file_path, 'r', encoding="utf-8") as file:
+        lines = file.readlines()
+    with open(file_path, 'w', encoding="utf-8") as file:
+        for line in lines:
+            if pattern_to_replace in line:
+                file.write(replacement_line + '\n')
+            else:
+                file.write(line)
+
+def replace_line_with_pattern_plus(file_path, pattern_to_replace, replacement_line):
+    # 读取文件内容
+    with open(file_path, 'r', encoding="utf-8") as file:
+        file_content = file.read()
+    # 使用正则表达式进行替换
+    file_content = re.sub(pattern_to_replace, replacement_line, file_content)
+    # 写入替换后的内容
+    with open(file_path, 'w', encoding="utf-8") as file:
+        file.write(file_content)
+                
+# tinyusb
+def cp_tinyusb_file(bos_dir):
+    tinyusb_dir = bos_dir + "/thirdparty/tinyusb/"
+    tmp_dir = tinyusb_dir + "bos_tinyusb/"
+    if not os.path.exists(tmp_dir):
+        os.makedirs(tmp_dir)
+    else:
+        print("bos_tinyusb exist !")
+        return
+    extensions = (".c", ".h")
+    copy_specific_files(tinyusb_dir + "tinyusb/src/", tmp_dir, extensions, True)
+    replace_line_with_pattern(tmp_dir + 'tusb_option.h','#define _TUSB_OPTION_H_', '#define _TUSB_OPTION_H_\r\n#include "b_config.h"')
+    pattern = r'#\s*define\s+tu_printf\s+printf'
+    replace_line_with_pattern_plus(tmp_dir + 'tusb_debug.h', pattern, '#include "utils/inc/b_util_log.h"\r\n  #define tu_printf  b_log')
+
 #---------------------------------------------------------------------
 def cp_thirdparty_file(bos_dir):
     cp_arm_2d_file(bos_dir)
     cp_lwip_file(bos_dir)
+    cp_tinyusb_file(bos_dir)

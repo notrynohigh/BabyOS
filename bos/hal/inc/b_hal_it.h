@@ -81,6 +81,7 @@ typedef enum
     B_HAL_IT_EXTI = 0x4954,
     B_HAL_IT_UART_RX,  // 串口中断接收 或 DMA接收
     B_HAL_IT_UART_TX,  // 串口发送中断 或 DMA 发送完成中断
+    B_HAL_IT_USB,
 } bHalItNumber_t;
 
 typedef struct b_hal_it

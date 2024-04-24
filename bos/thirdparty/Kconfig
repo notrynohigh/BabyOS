@@ -218,4 +218,14 @@ config _HTTP_PARSER_ENABLE
     bool "Http-Parser Enable/Disable"
     default n
 
+config _TINYUSB_ENABLE
+    bool "Tiny-USB Enable/Disable"
+    default n
+
+config CFG_TUSB_CONFIG_FILE
+    string "Custom configuration file"
+    default "b_usb_config.h"
+    depends on _TINYUSB_ENABLE
+
+
 endmenu
