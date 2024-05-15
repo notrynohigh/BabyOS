@@ -63,11 +63,10 @@ extern "C" {
 
 typedef void *bTaskId_t;
 
-#define B_TASK_INIT_BEGIN()             \
-    static uint8_t _task_init_flag = 0; \
-    if (_task_init_flag == 0)           \
-    {                                   \
-        _task_init_flag = 1;
+#define B_TASK_INIT_BEGIN() \
+    if (pt->init == 0)      \
+    {                       \
+        pt->init = 1;
 
 #define B_TASK_INIT_END() }
 
