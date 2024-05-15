@@ -63,9 +63,20 @@ extern "C" {
 
 typedef void *bTaskId_t;
 
+#define B_TASK_INIT_BEGIN() \
+    if (pt->init == 0)      \
+    {                       \
+        pt->init = 1;
+
+#define B_TASK_INIT_END() }
+
 /**
 PT_THREAD(test_task)(struct pt *pt, void *arg)
 {
+    B_TASK_INIT_BEGIN();
+    // ...
+    B_TASK_INIT_END();
+
     PT_BEGIN(pt);
     while (1)
     {

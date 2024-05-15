@@ -91,7 +91,7 @@ typedef enum
 } bProtocolCmd_t;
 
 #define PROTOCOL_NEED_DEFAULT_ACK(c) \
-    (c == PROTO_CMD_TEST || c == PROTO_CMD_UTC || PROTO_CMD_TRANS_FILE)
+    (c == PROTO_CMD_TEST || c == PROTO_CMD_UTC || PROTO_CMD_TRANS_FILE || PROTO_CMD_FW_INFO)
 
 /**
 |      |                    |                     |       |          |       |

@@ -243,7 +243,28 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         b_log_e("crc error!%d %d", crc, in[length - 1]);
         return -1;
     }
-    if (phead->cmd == PROTO_CMD_TRANS_FILE)
+    if (phead->cmd == PROTO_CMD_TEST)
+    {
+        ;
+    }
+    else if (phead->cmd == PROTO_CMD_UTC)
+    {
+        bProtoUtc_t utc;
+        uint32_t   *dat = (uint32_t *)(&in[sizeof(bProtocolHead_t)]);
+        utc.utc         = *dat;
+        utc.timezone    = 8.0;
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_UTC, &utc);
+    }
+    else if (phead->cmd == PROTO_CMD_FW_INFO)
+    {
+        bProtoFileInfo_t info;
+        bProtoFWParam_t *fw = (bProtoFWParam_t *)(&in[sizeof(bProtocolHead_t)]);
+        info.size           = fw->size;
+        info.fcrc32         = fw->f_crc32;
+        memcpy(&info.name[0], fw->filename, sizeof(fw->filename));
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_OTA_FILE_INFO, &info);
+    }
+    else if (phead->cmd == PROTO_CMD_TRANS_FILE)
     {
         bProtoFileInfo_t        info;
         bProtoTransFileParam_t *param = (bProtoTransFileParam_t *)(&in[sizeof(bProtocolHead_t)]);
@@ -278,10 +299,10 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
 
 static int _bProtocolPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
-    int              ret   = -1;
-    uint8_t          tmp_buf[32];
-    uint16_t         tmp_size  = 0;
-    uint8_t          proto_cmd = 0;
+    int      ret = -1;
+    uint8_t  tmp_buf[32];
+    uint16_t tmp_size  = 0;
+    uint8_t  proto_cmd = 0;
 
     if (cmd == B_PROTO_REQ_FILE_DATA)
     {
@@ -321,7 +342,7 @@ static int _bProtocolPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t
 #endif
 bPROTOCOL_REG_INSTANCE("bos", _bProtocolParse, _bProtocolPackage);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

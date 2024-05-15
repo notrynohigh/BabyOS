@@ -186,9 +186,9 @@ static void _LCD_FillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, bG
     }
 }
 
+#if defined(GUI_FONT_XBF)
 static int _bGUI_ReadXBF(uint32_t off, uint8_t *pbuf, uint16_t len)
 {
-#if defined(GUI_FONT_XBF)
     int fd = -1;
     fd     = bOpen(bGUI_XBF_FontDevice, BCORE_FLAG_RW);
     if (fd < 0)
@@ -199,9 +199,9 @@ static int _bGUI_ReadXBF(uint32_t off, uint8_t *pbuf, uint16_t len)
     bLseek(fd, off);
     bRead(fd, pbuf, len);
     bClose(fd);
-#endif
     return 0;
 }
+#endif
 
 static void _bGUI_TouchExec()
 {

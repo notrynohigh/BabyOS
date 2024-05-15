@@ -168,4 +168,9 @@
         0             \
     }
 
+#define HAL_PAJ7620U2_IF                                                     \
+    {                                                                        \
+        .dev_addr = (0x73 << 1), .is_simulation = 0, ._if.i2c = B_HAL_I2C_1, \
+    }
+
 #endif
