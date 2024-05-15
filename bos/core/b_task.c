@@ -137,7 +137,7 @@ static void _bTaskCore()
 #endif
 BOS_REG_POLLING_FUNC(_bTaskCore);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}
@@ -179,6 +179,9 @@ void bTaskRemove(bTaskId_t id)
     if (pattr != NULL)
     {
         __list_del(pattr->list.prev, pattr->list.next);
+        pattr->arg    = NULL;
+        pattr->enable = 0;
+        pattr->func   = NULL;
     }
 }
 

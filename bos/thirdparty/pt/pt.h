@@ -57,8 +57,9 @@ struct pt
     lc_t     lc;
     uint32_t tick;
     uint32_t time_ms;
-    uint32_t wait;
-    int32_t  retval;
+    uint8_t  wait;
+    uint8_t  init;
+    int16_t  retval;
 };
 
 #define PT_WAITING 0
@@ -97,6 +98,7 @@ struct pt
         LC_INIT((pt)->tick);    \
         LC_INIT((pt)->time_ms); \
         LC_INIT((pt)->wait);    \
+        LC_INIT((pt)->init);    \
         LC_INIT((pt)->retval);  \
     } while (0)
 

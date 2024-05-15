@@ -309,6 +309,8 @@ static int _IapCopyFwData()
 static int _IapCopyBackupData()
 {
     int retval = 0;
+#if (defined(_BACKUP_ENABLE) && (_BACKUP_ENABLE == 1))
+
 #if (IAP_BACKUP_LOCATION == 1)
     int      fd      = -1;
     uint32_t tmp_len = 0, r_len = 0;
@@ -316,10 +318,6 @@ static int _IapCopyBackupData()
 #endif
     uint32_t tmp_crc = 0;
     uint8_t  retry   = 0;
-
-#if (_BACKUP_ENABLE == 0)
-    return -1;
-#endif
 
     if (bIapFlag.backup.flag != B_IAP_BACKUP_VALID)
     {
@@ -368,6 +366,9 @@ static int _IapCopyBackupData()
             break;
         }
     }
+#else
+    retval = -1;
+#endif
     return retval;
 }
 
