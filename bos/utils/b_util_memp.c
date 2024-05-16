@@ -254,6 +254,22 @@ static void *_bMalloc(uint32_t size)
     return _bMempAlloc(size);
 }
 
+static void *_bCalloc(uint32_t num, uint32_t size)
+{
+    void *p = NULL;
+    _bMempInit();
+    if (size == 0 || num == 0)
+    {
+        return NULL;
+    }
+    p = _bMempAlloc(size * num);
+    if (p)
+    {
+        memset(p, 0, (size * num));
+    }
+    return p;
+}
+
 static void _bFree(void *paddr)
 {
     if (paddr == NULL || bMempInitFlag == 0)
@@ -295,6 +311,22 @@ void *bMalloc(uint32_t size)
         return NULL;
     }
     return _bMempAlloc(size);
+}
+
+void *bCalloc(uint32_t num, uint32_t size)
+{
+    void *p = NULL;
+    _bMempInit();
+    if (size == 0 || num == 0)
+    {
+        return NULL;
+    }
+    p = _bMempAlloc(size * num);
+    if (p)
+    {
+        memset(p, 0, (size * num));
+    }
+    return p;
 }
 
 void bFree(void *paddr)
@@ -362,6 +394,13 @@ void *bMallocPlus(uint32_t size, const char *func, int line)
 {
     void *ptr = _bMalloc(size);
     b_log("malloc in %s, %d, size %d, address %p\r\n", func, line, size, ptr);
+    return ptr;
+}
+
+void *bCallocPlus(uint32_t num, uint32_t size, const char *func, int line)
+{
+    void *ptr = _bCalloc(num, size);
+    b_log("calloc in %s, %d, num %d size %d, address %p\r\n", func, line, num, size, ptr);
     return ptr;
 }
 
