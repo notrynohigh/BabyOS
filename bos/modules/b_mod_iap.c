@@ -833,6 +833,11 @@ uint8_t bIapPercentage()
     return bIapFlag.percentage;
 }
 
+uint8_t bIapIsInBoot(void)
+{
+    return (((uint32_t)_bIapSetStat) < APP_START_ADDR);
+}
+
 /**
  * \}
  */
