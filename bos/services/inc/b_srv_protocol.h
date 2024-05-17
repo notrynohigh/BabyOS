@@ -43,6 +43,7 @@ extern "C" {
 #if (defined(_PROTOCOL_SERVICE_ENABLE) && (_PROTOCOL_SERVICE_ENABLE == 1))
 
 #include "modules/inc/b_mod_proto_type.h"
+#include "utils/inc/b_util_list.h"
 
 /**
  * \addtogroup BABYOS
@@ -75,6 +76,14 @@ typedef struct
 typedef int (*bProtSrvCallback_t)(bProtoCmd_t cmd, void *param);
 typedef int (*bProtSrvGetInfo_t)(bProtoInfoType_t type, uint8_t *buf, uint16_t buf_len);
 
+typedef struct
+{
+    uint8_t            number;
+    const bProtoCmd_t *pcmd_table;
+    bProtSrvCallback_t callback;
+    struct list_head   list;
+} bProtSrvSubscribe_t;
+
 /**
  * \}
  */
@@ -89,10 +98,10 @@ typedef int (*bProtSrvGetInfo_t)(bProtoInfoType_t type, uint8_t *buf, uint16_t b
 // callback \ref bProtSrvCallback_t
 #define B_PROT_SRV_CREATE_ATTR(attr_name, proto_name, _callback) \
     static bProtSrvAttr_t attr_name = {                          \
-        .name          = proto_name,                             \
-        .attr.callback = _callback,                              \
-        .attr.parse    = NULL,                                   \
-        .attr.package  = NULL,                                   \
+        .name            = proto_name,                           \
+        .attr.u_callback = _callback,                            \
+        .attr.parse      = NULL,                                 \
+        .attr.package    = NULL,                                 \
     }
 
 /**
@@ -117,6 +126,10 @@ int bProtSrvParse(bProtSrvId_t id, uint8_t *in, uint16_t i_len, uint8_t *out, ui
 // buf_len buf的长度
 // retval buf中有效数据长度，-1表示打包失败
 int bProtSrvPackage(bProtSrvId_t id, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len);
+
+// 订阅协议的指令
+// psub 订阅信息 \ref bProtSrvSubscribe_t
+int bProtSrvSubscribe(bProtSrvId_t id, bProtSrvSubscribe_t *psub);
 
 /**
  * \}

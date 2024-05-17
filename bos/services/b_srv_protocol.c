@@ -102,7 +102,33 @@ bSECTION_DEF_FLASH(b_srv_protocol, bProtocolInstance_t);
  * \defgroup PROTOCOL_Private_Functions
  * \{
  */
-
+static int _bProtoCallback(bProtoCmd_t cmd, void *param, void *arg)
+{
+    int             i     = 0;
+    bProtSrvAttr_t *pattr = (bProtSrvAttr_t *)arg;
+    if (arg == NULL)
+    {
+        return -1;
+    }
+    struct list_head    *pos  = NULL;
+    bProtSrvSubscribe_t *psub = NULL;
+    list_for_each(pos, &pattr->attr.list)
+    {
+        psub = list_entry(pos, bProtSrvSubscribe_t, list);
+        for (i = 0; i < psub->number; i++)
+        {
+            if (psub->pcmd_table[i] == cmd)
+            {
+                psub->callback(cmd, param);
+            }
+        }
+    }
+    if (pattr->attr.u_callback != NULL)
+    {
+        return pattr->attr.u_callback(cmd, param);
+    }
+    return 0;
+}
 /**
  * \}
  */
@@ -125,6 +151,9 @@ bProtSrvId_t bProtSrvInit(bProtSrvAttr_t *attr, bProtSrvGetInfo_t func)
             attr->attr.get_info = func;
             attr->attr.package  = instance->package;
             attr->attr.parse    = instance->parse;
+            attr->attr.callback = _bProtoCallback;
+            attr->attr.arg      = attr;
+            INIT_LIST_HEAD(&attr->attr.list);
             break;
         }
     }
@@ -160,6 +189,23 @@ int bProtSrvPackage(bProtSrvId_t id, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf
         return -1;
     }
     return pattr->attr.package(&pattr->attr, cmd, buf, buf_len);
+}
+
+// 订阅协议的指令
+// psub 订阅信息 \ref bProtSrvSubscribe_t
+int bProtSrvSubscribe(bProtSrvId_t id, bProtSrvSubscribe_t *psub)
+{
+    bProtSrvAttr_t *pattr = (bProtSrvAttr_t *)id;
+    if (pattr == NULL || psub == NULL)
+    {
+        return -1;
+    }
+    if (psub->callback == NULL || psub->number == 0 || psub->pcmd_table == NULL)
+    {
+        return -2;
+    }
+    list_add(&psub->list, &pattr->attr.list);
+    return 0;
 }
 
 /**

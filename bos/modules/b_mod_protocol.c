@@ -253,7 +253,7 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         uint32_t   *dat = (uint32_t *)(&in[sizeof(bProtocolHead_t)]);
         utc.utc         = *dat;
         utc.timezone    = 8.0;
-        B_SAFE_INVOKE(pattr->callback, B_PROTO_UTC, &utc);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_UTC, &utc, pattr->arg);
     }
     else if (phead->cmd == PROTO_CMD_FW_INFO)
     {
@@ -262,7 +262,7 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         info.size           = fw->size;
         info.fcrc32         = fw->f_crc32;
         memcpy(&info.name[0], fw->filename, sizeof(fw->filename));
-        B_SAFE_INVOKE(pattr->callback, B_PROTO_OTA_FILE_INFO, &info);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_OTA_FILE_INFO, &info, pattr->arg);
     }
     else if (phead->cmd == PROTO_CMD_TRANS_FILE)
     {
@@ -271,12 +271,12 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
 
         info.size   = param->size;
         info.fcrc32 = param->f_crc32;
-        B_SAFE_INVOKE(pattr->callback, B_PROTO_TRANS_FILE_INFO, &info);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_TRANS_FILE_INFO, &info, pattr->arg);
 
         bProtoFileLocation_t location;
         location.dev    = param->dev_no;
         location.offset = param->offset;
-        B_SAFE_INVOKE(pattr->callback, B_PROTO_SET_FILE_LOCATION, &location);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_SET_FILE_LOCATION, &location, pattr->arg);
     }
     else if (phead->cmd == PROTO_CMD_FDATA)
     {
@@ -285,7 +285,7 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         dat.offset                = param->seq * 512;
         dat.size                  = 512;
         dat.dat                   = param->data;
-        B_SAFE_INVOKE(pattr->callback, B_PROTO_FILE_DATA, &dat);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_FILE_DATA, &dat, pattr->arg);
     }
 
     length = 0;

@@ -182,7 +182,7 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
 
     if (ret != -1)
     {
-        B_SAFE_INVOKE(pattr->callback, B_XYMODEM_DATA, &param);
+        B_SAFE_INVOKE(pattr->callback, B_XYMODEM_DATA, &param, pattr->arg);
     }
 
     if (out && o_len > 0)
@@ -235,7 +235,7 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
 
 static int _bYmodemPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
-    int              ret   = -1;
+    int ret = -1;
     if (buf == NULL || buf_len == 0)
     {
         return -1;
@@ -267,7 +267,7 @@ static int _bYmodemPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t b
 #endif
 bPROTOCOL_REG_INSTANCE("ymodem", _bYmodemParse, _bYmodemPackage);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

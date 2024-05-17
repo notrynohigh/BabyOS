@@ -269,7 +269,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
             r_ack->param[i] = L2B_B2L_16b(r_ack->param[i]);
         }
         param.reg_value = (uint16_t *)r_ack->param;
-        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
@@ -294,7 +294,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         param.reg_num   = 1;
         w_1_ack->value  = L2B_B2L_16b(w_1_ack->value);
         param.reg_value = (uint16_t *)&w_1_ack->value;
-        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
@@ -318,7 +318,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         param.base_reg  = L2B_B2L_16b(w_ack->reg);
         param.reg_num   = L2B_B2L_16b(w_ack->num);
         param.reg_value = NULL;
-        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
@@ -483,7 +483,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
             }
         }
 
-        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
@@ -527,7 +527,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
             }
         }
 
-        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
@@ -583,7 +583,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
             }
         }
 
-        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param);
+        B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
             return MODBUS_CALLBACK_ERR;
@@ -710,7 +710,7 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
 #endif
 bPROTOCOL_REG_INSTANCE("modbus_master", _bModbusRTUMasterParse, _bModbusRTUMasterPackage);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 
 #ifdef BSECTION_NEED_PRAGMA
@@ -718,7 +718,7 @@ bPROTOCOL_REG_INSTANCE("modbus_master", _bModbusRTUMasterParse, _bModbusRTUMaste
 #endif
 bPROTOCOL_REG_INSTANCE("modbus_slave", _bModbusRTUSlaveParse, _bModbusRTUSlavePackage);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

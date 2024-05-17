@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_services.h
+ * \file        b_srv_ota.h
  * \version     v0.0.1
- * \date        2023/08/26
+ * \date        2023/08/27
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
@@ -28,18 +28,83 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_SERVICES_H__
-#define __B_SERVICES_H__
+#ifndef __B_SRV_OTA_H__
+#define __B_SRV_OTA_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
+#include <stdint.h>
 
-#include "b_srv_ota.h"
-#include "b_srv_protocol.h"
-#include "b_srv_tcpip.h"
+#include "b_config.h"
+
+#if (defined(_OTA_SERVICE_ENABLE) && (_OTA_SERVICE_ENABLE == 1))
+
+#include "modules/inc/b_mod_iap.h"
+#include "services/inc/b_srv_protocol.h"
+
+/**
+ * \addtogroup BABYOS
+ * \{
+ */
+
+/**
+ * \addtogroup SERVICES
+ * \{
+ */
+
+/**
+ * \addtogroup OTA
+ * \{
+ */
+
+/**
+ * \defgroup OTA_Exported_TypesDefinitions
+ * \{
+ */
+
+typedef void (*bOtaSrvSendData_t)(uint8_t *pbuf, uint16_t len);
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup OTA_Exported_Defines
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup OTA_Exported_Functions
+ * \{
+ */
+
+int bOtaSrvInit(bProtSrvId_t protocol_id, bOtaSrvSendData_t send, uint32_t cache_dev_no,
+                uint32_t backup_dev_no, uint32_t backup_time_s);
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+#endif
 
 #ifdef __cplusplus
 }
