@@ -368,6 +368,12 @@ uint32_t bGetFreeSize()
     _bMempInit();
     return _bGetFreeSize();
 }
+
+uint32_t bGetTotalSize()
+{
+    return MEMP_SIZE;
+}
+
 #if defined(__WEAKDEF)
 __WEAKDEF void bMallocFailedHook()
 {

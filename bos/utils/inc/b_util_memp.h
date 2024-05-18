@@ -76,6 +76,8 @@ void *bRealloc(void *paddr, uint32_t size);
 #endif
 
 uint32_t bGetFreeSize(void);
+uint32_t bGetTotalSize(void);
+
 #if defined(__WEAKDEF)
 void bMallocFailedHook(void);
 #else
