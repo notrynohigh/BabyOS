@@ -237,4 +237,14 @@ config MBEDTLS_CONFIG_FILE
     default "b_mbedtls_config.h"
     depends on _MBEDTLS_ENABLE
 
+config _LVGL_ENABLE
+    bool "LVGL Enable/Disable"
+    default n
+    select _MEMP_ENABLE
+
+config LV_CONF_INCLUDE_SIMPLE
+    bool "simply include lv_conf.h is enabled"
+    default y
+    depends on _LVGL_ENABLE
+
 endmenu
