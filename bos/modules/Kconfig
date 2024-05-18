@@ -241,10 +241,9 @@ config _GUI_ENABLE
     default n
     depends on _BOS_MODULES_ENABLE
 
-config _USE_UGUI
-    bool "Use Thirdparty/uGUI"
-    default y
-    depends on _GUI_ENABLE
+config GUI_REFR_PERIOD
+    int "GUI Refresh Period x ms"
+    default 33
     select _UGUI_ENABLE
 
 choice
@@ -259,8 +258,26 @@ config _GUI_RGB_8BIT
     bool "rgb_8bit"    
 endchoice
 
+config _USE_UGUI
+    bool "Use Thirdparty/uGUI"
+    default y
+    depends on _GUI_ENABLE
+    select _UGUI_ENABLE
+
+config _USE_LVGL
+    bool "Use thirdparty/lvgl"
+    default n
+    depends on _GUI_ENABLE
+    select _LVGL_ENABLE
+
+config LVGL_DISP_BUF_NUM
+    int "The number of buffers used for partial rendering"
+    default 1
+    range 1 2
+    depends on _USE_LVGL
+
 config _USE_ARM_2D
-    bool "Use Thirdparty/arm-2d"
+    bool "Use thirdparty/arm-2d"
     default n
     depends on _GUI_ENABLE
     select _ARM_2D_ENABLE
