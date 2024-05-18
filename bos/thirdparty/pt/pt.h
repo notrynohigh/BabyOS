@@ -98,7 +98,6 @@ struct pt
         LC_INIT((pt)->tick);    \
         LC_INIT((pt)->time_ms); \
         LC_INIT((pt)->wait);    \
-        LC_INIT((pt)->init);    \
         LC_INIT((pt)->retval);  \
     } while (0)
 

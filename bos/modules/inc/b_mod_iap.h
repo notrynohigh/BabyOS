@@ -156,6 +156,7 @@ int bIapRegisterJumpFunc(pJumpFunc_t jump2boot, pJumpFunc_t jump2app);
  * \param cache_dev_no   缓存固件的设备号，若不需要缓存则传入0
  * \param backup_dev_no  备份固件的设备号，若不需要备份固件则传入0
  * \param backup_time_s  运行多少s后备份固件，若不需要备份固件则忽略
+ * \return int 0：正常跳转  1：升级完成跳转  -1：升级异常跳转
  */
 int bIapInit(uint32_t cache_dev_no, uint32_t backup_dev_no, uint32_t backup_time_s);
 
@@ -181,6 +182,11 @@ uint8_t bIapBackupIsValid(void);
  * 查询升级进度
  */
 uint8_t bIapPercentage(void);
+
+/**
+ * 查询当前是否在boot区域
+ */
+uint8_t bIapIsInBoot(void);
 
 /**
  * \}

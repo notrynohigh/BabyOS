@@ -52,6 +52,10 @@ extern "C" {
 #include "thirdparty/arm-2d/bos_arm-2d/arm_extra_controls.h"
 #endif
 
+#if (defined(_USE_LVGL) && (_USE_LVGL == 1))
+#include "thirdparty/lvgl/lvgl.h"
+#endif
+
 /**
  * \addtogroup BABYOS
  * \{

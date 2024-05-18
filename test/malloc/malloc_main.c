@@ -30,6 +30,11 @@ void test()
     b_log("realloc 2048 %p %s\r\n", pbuf, pbuf);
     pbuf = bRealloc(pbuf, 0);
     b_log("free size:::%d\r\n", bGetFreeSize());
+
+    pbuf = bCalloc(1, 1024);
+    memcpy(pbuf, "BABYOS", strlen("BABYOS"));
+    b_log("malloc 1024 %p %s\r\n", pbuf, pbuf);
+    bFree(pbuf);
 }
 
 int main()

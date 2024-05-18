@@ -158,10 +158,11 @@ bTaskId_t bTaskCreate(const char *name, bTaskFunc_t func, void *argument, bTaskA
     {
         return attr;
     }
-    attr->name   = (name == NULL) ? B_TASK_DEFAULT_NAME : name;
-    attr->func   = func;
-    attr->arg    = argument;
-    attr->enable = 1;
+    attr->name         = (name == NULL) ? B_TASK_DEFAULT_NAME : name;
+    attr->func         = func;
+    attr->arg          = argument;
+    attr->enable       = 1;
+    attr->task_pt.init = 0;
     PT_INIT(&attr->task_pt);
     list_add(&attr->list, &bTaskListHead);
     return attr;

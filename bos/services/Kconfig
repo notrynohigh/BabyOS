@@ -43,4 +43,11 @@ config _HTTP_PATH_LEN_MAX
     depends on _TCPIP_SERVICE_ENABLE
 
 
+config _OTA_SERVICE_ENABLE
+    bool "OTA Service Enable/Disable"
+    default n
+    depends on _BOS_SERVICES_ENABLE 
+    select _PROTOCOL_SERVICE_ENABLE
+    select _IAP_ENABLE
+
 endmenu

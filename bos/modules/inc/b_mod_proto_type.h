@@ -39,6 +39,7 @@ extern "C" {
 #include <stdint.h>
 
 #include "b_section.h"
+#include "utils/inc/b_util_list.h"
 
 #pragma pack(1)
 
@@ -172,18 +173,22 @@ typedef enum
     B_PROTO_INFO_NUMBER,
 } bProtoInfoType_t;
 
-typedef int (*bProtoCallback_t)(bProtoCmd_t cmd, void *param);
+typedef int (*bProtoUserCallback_t)(bProtoCmd_t cmd, void *param);
+typedef int (*bProtoCallback_t)(bProtoCmd_t cmd, void *param, void *arg);
 typedef int (*bProtoParse_t)(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len);
 typedef int (*bProtoPackage_t)(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len);
 typedef int (*bProtoGetInfo_t)(bProtoInfoType_t type, uint8_t *buf, uint16_t buf_len);
 
 typedef struct
 {
-    uint32_t         reserved;
-    bProtoParse_t    parse;
-    bProtoPackage_t  package;
-    bProtoGetInfo_t  get_info;
-    bProtoCallback_t callback;
+    uint32_t             reserved;
+    bProtoParse_t        parse;
+    bProtoPackage_t      package;
+    bProtoGetInfo_t      get_info;
+    bProtoUserCallback_t u_callback;
+    bProtoCallback_t     callback;
+    void                *arg;
+    struct list_head     list;
 } bProtocolAttr_t;
 
 typedef struct

@@ -138,7 +138,7 @@ static int _bXmodem128Parse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         param.seq     = (ret == 0) ? phead->number : 0;
         param.dat     = (ret == 0) ? phead->dat : NULL;
         param.dat_len = (ret == 0) ? 128 : 0;
-        B_SAFE_INVOKE(pattr->callback, B_XYMODEM_DATA, &param);
+        B_SAFE_INVOKE(pattr->callback, B_XYMODEM_DATA, &param, pattr->arg);
     }
 
     if (out && o_len > 0)
@@ -200,7 +200,7 @@ static int _bXmodem128Package(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_
 #endif
 bPROTOCOL_REG_INSTANCE("xmodem128", _bXmodem128Parse, _bXmodem128Package);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

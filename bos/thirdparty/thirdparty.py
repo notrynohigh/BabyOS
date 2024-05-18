@@ -37,11 +37,21 @@ def process_includes(file_path):
     # 使用正则表达式匹配所有#include语句，并去掉路径部分
     pattern = r'#include\s+"(\.\./)*(\S*/)*(.+?)"'
     content = re.sub(pattern, r'#include "\3"', content)
-    # 使用正则表达式匹配所有#include语句，并去掉路径部分
     pattern = r'#include\s+<(\.\./)*(\S*/)*(.+?)>'
     content = re.sub(pattern, r'#include "\3"', content)
     with open(file_path, 'w', encoding="utf-8") as f:
         f.write(content)
+
+def remove_relative_paths_in_includes(directory):
+    """
+    遍历指定目录下的所有.c和.h文件，移除#include语句中的相对路径部分。
+    """
+    # 遍历目录下的所有文件
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.c') or file.endswith('.h'):
+                file_path = os.path.join(root, file)
+                process_includes(file_path)
 
 def copy_files_R(src_dir, des_dir):
     try:
@@ -52,8 +62,31 @@ def copy_files_R(src_dir, des_dir):
     except:
         print("目录复制失败！")
 
+def insert_include_line(file_path, search_line, new_line):
+    """
+    在指定文件中搜索特定行，并在其下一行插入新的文本行。
+    
+    :param file_path: 文件的路径。
+    :param search_line: 要搜索的行。
+    :param new_line: 要插入的新行。
+    """
+    # 读取文件内容
+    with open(file_path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+    
+    # 查找指定行并在其后插入新行
+    for i, line in enumerate(lines):
+        if search_line in line:
+            # 在找到的行后面插入新行，注意i+1表示下一行的位置
+            lines.insert(i + 1, new_line + '\n')
+            break  # 如果只需要替换第一个匹配项，找到后即可退出循环
+    
+    # 将修改后的内容写回文件
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.writelines(lines)
+
 #在文件里相对路径前增加一个路径
-def replace_includes(directory, replacement):
+def lwip_replace_includes(directory, replacement):
     for root, dirs, files in os.walk(directory):
         for file in files:
             if file.endswith(".c") or file.endswith(".h"):
@@ -65,9 +98,52 @@ def replace_includes(directory, replacement):
                 with open(file_path, 'w') as f:
                     f.write(content)
 
+#在文件里相对路径前增加一个路径
+def mbedtls_replace_includes(directory, replacement):
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".c") or file.endswith(".h"):
+                file_path = os.path.join(root, file)
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                content = content.replace('#include "mbedtls/', '#include "{}mbedtls/'.format(replacement))
+                content = content.replace('#include "psa/', '#include "{}psa/'.format(replacement))
+
+                content = content.replace('#include <mbedtls/', '#include <{}mbedtls/'.format(replacement))
+                content = content.replace('#include <psa/', '#include <{}psa/'.format(replacement))
+                with open(file_path, 'w') as f:
+                    f.write(content)
+
 # 拷贝文件到目录
 def copy_file_to_directory(file, des_dir):
     shutil.copy(file, des_dir)
+
+# 拷贝目录下文件到dst_dir
+def copy_files(src_dir, dst_dir):
+    """
+    复制src_dir目录下的所有文件到dst_dir目录。
+    :param src_dir: 源目录
+    :param dst_dir: 目标目录
+    """
+    # 检查源目录是否存在
+    if not os.path.exists(src_dir):
+        print(f"源目录 {src_dir} 不存在。")
+        return
+    
+    # 如果目标目录不存在，则创建它
+    if not os.path.exists(dst_dir):
+        os.makedirs(dst_dir)
+    
+    # 遍历源目录中的所有文件和目录
+    for item in os.listdir(src_dir):
+        src_path = os.path.join(src_dir, item)
+        dst_path = os.path.join(dst_dir, item)
+        
+        # 检查当前项是否为文件
+        if os.path.isfile(src_path):
+            # 复制文件
+            shutil.copy2(src_path, dst_path)
+            print(f"文件 {src_path} 已复制到 {dst_path}")
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
@@ -109,7 +185,24 @@ def cp_lwip_file(bos_dir):
     copy_files_R(lwip_dir + "test/bos/arch/", tmp_dir + "include/lwip/arch/")
     copy_file_to_directory(lwip_dir + "test/bos/lwipopts.h", tmp_dir + "include/lwip/")
     copy_file_to_directory(lwip_dir + "test/bos/netif/ethernet.c", tmp_dir)
-    replace_includes(tmp_dir, "thirdparty/lwip/bos_lwip/include/")
+    lwip_replace_includes(tmp_dir, "thirdparty/lwip/bos_lwip/include/")
+
+# mbedtls
+def cp_mbedtls_file(bos_dir):
+    mbedtls_dir = bos_dir + "/thirdparty/mbedtls/"
+    tmp_dir = mbedtls_dir + "bos_mbedtls/"
+    if not os.path.exists(tmp_dir):
+        os.makedirs(tmp_dir)
+    else:
+        print("bos_mbedtls exist !")
+        return
+    copy_files(mbedtls_dir + "mbedtls-3.6.0/library/", tmp_dir)
+    copy_files_R(mbedtls_dir + "mbedtls-3.6.0/include/psa/", tmp_dir + "psa/")
+    copy_files_R(mbedtls_dir + "mbedtls-3.6.0/include/mbedtls/", tmp_dir + "mbedtls/")
+    mbedtls_replace_includes(tmp_dir + "psa/", "thirdparty/mbedtls/bos_mbedtls/")
+    mbedtls_replace_includes(tmp_dir + "mbedtls/", "thirdparty/mbedtls/bos_mbedtls/")
+    mbedtls_replace_includes(tmp_dir, "thirdparty/mbedtls/bos_mbedtls/")
+    insert_include_line(tmp_dir + "mbedtls/build_info.h", '#define MBEDTLS_BUILD_INFO_H', '#include "b_config.h"')
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
@@ -163,3 +256,4 @@ def cp_thirdparty_file(bos_dir):
     cp_arm_2d_file(bos_dir)
     cp_lwip_file(bos_dir)
     cp_tinyusb_file(bos_dir)
+    cp_mbedtls_file(bos_dir)

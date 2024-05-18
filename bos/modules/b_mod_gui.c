@@ -35,6 +35,7 @@
 #include "core/inc/b_core.h"
 #include "drivers/inc/b_driver.h"
 #include "utils/inc/b_util_log.h"
+#include "utils/inc/b_util_memp.h"
 /**
  * \addtogroup BABYOS
  * \{
@@ -54,7 +55,12 @@
  * \defgroup GUI_Private_TypesDefinitions
  * \{
  */
-
+typedef struct
+{
+    uint16_t x;
+    uint16_t y;
+    uint8_t  is_pressed;
+} bGuiTouchData_t;
 /**
  * \}
  */
@@ -203,23 +209,19 @@ static int _bGUI_ReadXBF(uint32_t off, uint8_t *pbuf, uint16_t len)
 }
 #endif
 
-static void _bGUI_TouchExec()
+static int _bGUI_TouchRead(bGuiTouchData_t *pdata)
 {
     int           fd = -1;
     uint16_t      tmp;
     bTouchAdVal_t ad_val;
-    if (pGUICurrent == NULL)
+    if (pGUICurrent == NULL || pGUICurrent->touch_dev_no == 0 || pdata == NULL)
     {
-        return;
-    }
-    if (pGUICurrent->touch_dev_no == 0)
-    {
-        return;
+        return -1;
     }
     fd = bOpen(pGUICurrent->touch_dev_no, BCORE_FLAG_R);
     if (fd < 0)
     {
-        return;
+        return -1;
     }
     if (pGUICurrent->touch_type == TOUCH_TYPE_RES)
     {
@@ -227,14 +229,15 @@ static void _bGUI_TouchExec()
     }
     bClose(fd);
 
+    pdata->x          = 0;
+    pdata->y          = 0;
+    pdata->is_pressed = 0;
+
     if (pGUICurrent->touch_type == TOUCH_TYPE_RES)
     {
         if (ad_val.x_ad < pGUICurrent->touch_ad_x[0] || ad_val.x_ad >= pGUICurrent->touch_ad_x[1] ||
             ad_val.y_ad < pGUICurrent->touch_ad_y[0] || ad_val.y_ad >= pGUICurrent->touch_ad_y[1])
         {
-#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
-            UG_TouchUpdate(pGUICurrent->lcd_x_size, pGUICurrent->lcd_y_size, TOUCH_STATE_RELEASED);
-#endif
         }
         else
         {
@@ -248,25 +251,34 @@ static void _bGUI_TouchExec()
                 ad_val.x_ad = ad_val.y_ad;
                 ad_val.y_ad = pGUICurrent->lcd_x_size - 1 - tmp;
             }
-#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
-            UG_TouchUpdate(ad_val.x_ad, ad_val.y_ad, TOUCH_STATE_PRESSED);
-#endif
+            pdata->x          = ad_val.x_ad;
+            pdata->y          = ad_val.y_ad;
+            pdata->is_pressed = 1;
         }
     }
+    return 0;
 }
 
 static void _bGUI_Core()
 {
     static uint32_t tick = 0;
+    bGuiTouchData_t tdata;
     if (bHalGetSysTick() - tick > MS2TICKS(10))
     {
         tick = bHalGetSysTick();
 #if (defined(_USE_UGUI) && (_USE_UGUI == 1))
-        _bGUI_TouchExec();
+        if (0 == _bGUI_TouchRead(&tdata))
+        {
+            UG_TouchUpdate(tdata.x, tdata.y,
+                           (tdata.is_pressed) ? TOUCH_STATE_PRESSED : TOUCH_STATE_RELEASED);
+        }
 #endif
     }
 #if (defined(_USE_UGUI) && (_USE_UGUI == 1))
     UG_Update();
+#endif
+#if (defined(_USE_LVGL) && (_USE_LVGL == 1))
+    lv_task_handler();
 #endif
 }
 
@@ -277,6 +289,64 @@ BOS_REG_POLLING_FUNC(_bGUI_Core);
 #ifdef BSECTION_NEED_PRAGMA
 #pragma section
 #endif
+
+#if (defined(_USE_LVGL) && (_USE_LVGL == 1))
+#if LV_USE_LOG
+void _lv_log_print_g_cb(lv_log_level_t level, const char *buf)
+{
+    b_log("%s\r\n", buf);
+}
+#endif
+
+static void _lv_disp_flush(lv_display_t *disp_drv, const lv_area_t *area, uint8_t *px_map)
+{
+    bGUIDrawBmp(area->x1, area->y1, (area->x2 - area->x1) + 1, (area->y2 - area->y1) + 1, px_map);
+    lv_display_flush_ready(disp_drv);
+}
+
+static void _lv_port_disp_init()
+{
+    lv_display_t *disp = lv_display_create(pGUICurrent->lcd_x_size, pGUICurrent->lcd_y_size);
+    lv_display_set_flush_cb(disp, _lv_disp_flush);
+
+#if LVGL_DISP_BUF_NUM == 1
+    lv_color_t *pbuf = NULL;
+    pbuf             = bCalloc(pGUICurrent->lcd_x_size * 10, sizeof(lv_color_t));
+    B_ASSERT(pbuf != NULL);
+    lv_display_set_buffers(disp, pbuf, NULL, (pGUICurrent->lcd_x_size * 10 * sizeof(lv_color_t)),
+                           LV_DISPLAY_RENDER_MODE_PARTIAL);
+#endif
+#if LVGL_DISP_BUF_NUM == 2
+    lv_color_t *pbuf_1 = NULL;
+    lv_color_t *pbuf_2 = NULL;
+    pbuf_1             = bCalloc(pGUICurrent->lcd_x_size * 10, sizeof(lv_color_t));
+    pbuf_2             = bCalloc(pGUICurrent->lcd_x_size * 10, sizeof(lv_color_t));
+    B_ASSERT((pbuf_1 != NULL && pbuf_2 != NULL));
+    lv_display_set_buffers(disp, pbuf_1, pbuf_2, pGUICurrent->lcd_x_size * 10 * sizeof(lv_color_t),
+                           LV_DISPLAY_RENDER_MODE_PARTIAL);
+#endif
+}
+
+static void _lv_indev_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
+{
+    bGuiTouchData_t tdata;
+    if (_bGUI_TouchRead(&tdata) == 0)
+    {
+        data->point.x = tdata.x;
+        data->point.y = tdata.y;
+        data->state   = (tdata.is_pressed) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+    }
+}
+
+static void _lv_port_indev_init()
+{
+    lv_indev_t *indev_touch = lv_indev_create();
+    lv_indev_set_type(indev_touch, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_read_cb(indev_touch, _lv_indev_read_cb);
+}
+
+#endif
+
 /**
  * \}
  */
@@ -320,7 +390,7 @@ int bGUIRegist(bGUIInstance_t *pInstance)
         pInstance->pnext = pGUIHead->pnext;
         pGUIHead->pnext  = pInstance;
     }
-
+    pGUICurrent             = pInstance;
     pInstance->lcd_disp_dir = LCD_DISP_V;
 #if (defined(_USE_UGUI) && (_USE_UGUI == 1))
     pInstance->gui_handle.char_h_space = 0;
@@ -356,10 +426,20 @@ int bGUIRegist(bGUIInstance_t *pInstance)
     UG_FontSelect(&bGUI_XBF_Font);
 #endif
 #endif
+
 #if (defined(_USE_ARM_2D) && (_USE_ARM_2D == 1))
     arm_2d_init();
 #endif
-    pGUICurrent = pInstance;
+
+#if (defined(_USE_LVGL) && (_USE_LVGL == 1))
+#if LV_USE_LOG
+    lv_log_register_print_cb(_lv_log_print_g_cb);
+#endif /* LV_USE_LOG */
+    lv_init();
+    _lv_port_disp_init();
+    _lv_port_indev_init();
+    lv_tick_set_cb(bHalGetSysTick);
+#endif
     return 0;
 }
 

@@ -157,7 +157,8 @@ extern "C" {
             b_log("\n");                     \
         }                                    \
         b_log("%02x ", (buf)[ihex]);         \
-    }
+    }                                        \
+    b_log("\r\n");
 
 #define b_assert_log(expr)                            \
     do                                                \
