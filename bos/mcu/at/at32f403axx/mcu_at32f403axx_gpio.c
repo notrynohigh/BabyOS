@@ -1018,7 +1018,7 @@ void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, b
     gpio_init_type        gpio_init_struct       = {0};
 
     assert(IS_GPIO_PINS_TYPE(gpio_pins_X));
-    assert(IS_CRM_PERIPH_CLOCK_TYPE((uint32_t)gpio_x));
+    assert(IS_GPIO_TYPE((uint32_t)gpio_x));
     assert(IS_CRM_PERIPH_CLOCK_TYPE(CRM_GPIOX_PERIPH_CLOCK));
 
     crm_periph_clock_enable(CRM_GPIOX_PERIPH_CLOCK, TRUE);
