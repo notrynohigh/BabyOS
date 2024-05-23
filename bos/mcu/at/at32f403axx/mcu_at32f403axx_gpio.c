@@ -1061,7 +1061,7 @@ uint8_t bMcuGpioReadPin(bHalGPIOPort_t port, bHalGPIOPin_t pin)
     gpio_type *gpio_x      = transform_bos_port(port);
 
     assert(IS_GPIO_PINS_TYPE(gpio_pins_X));
-    assert(IS_CRM_PERIPH_CLOCK_TYPE((uint32_t)gpio_x));
+    assert(IS_GPIO_TYPE((uint32_t)gpio_x));
 
     if (gpio_pins_X != (gpio_pins_X & gpio_x->idt))
     {
