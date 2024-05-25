@@ -515,7 +515,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
 
 int bTcpipSrvInit()
 {
-    return bNetlinkInit();
+    return 0;
 }
 
 int bSntpStart(uint32_t interval_s)

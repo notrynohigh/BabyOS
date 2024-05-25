@@ -42,8 +42,6 @@ extern "C" {
 
 #if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
 
-int bNetlinkInit(void);
-
 #endif
 
 #ifdef __cplusplus

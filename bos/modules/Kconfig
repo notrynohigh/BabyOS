@@ -245,6 +245,7 @@ config GUI_REFR_PERIOD
     int "GUI Refresh Period x ms"
     default 33
     select _UGUI_ENABLE
+    depends on _GUI_ENABLE
 
 choice
     prompt "Color RGBXXX"
@@ -339,8 +340,6 @@ config _NETIF_ENABLE
     bool "NETIF Enable/Disable"
     default n
     depends on _BOS_MODULES_ENABLE
-    select _BOS_SERVICES_ENABLE
-    select _TCPIP_SERVICE_ENABLE
 
 config _NETIF_USE_LWIP
     bool "NETIF USE LWIP"

@@ -176,59 +176,7 @@ static void _bNetifDhcpStart(struct netif *netif)
 #endif
 }
 
-static void _bNetlinkCore()
-{
-    uint8_t         link_state = 0;
-    static uint32_t tick       = 0;
-    struct pbuf    *p          = NULL;
-    uint32_t        len        = 0;
-    err_t           err;
-
-    if (bHalGetSysTick() - tick > MS2TICKS(NETIF_LINK_CHECK_INTERVAL))
-    {
-        tick = bHalGetSysTick();
-        bCtl(bLinkFd, bCMD_GET_LINK_STATE, &link_state);
-        if (!netif_is_link_up(&bLinkNetif) && (link_state))
-        {
-            /* network cable is connected */
-            netif_set_link_up(&bLinkNetif);
-            netif_set_up(&bLinkNetif);
-#if (defined(NETIF_USE_DHCP) && (NETIF_USE_DHCP == 1))
-            _bNetifDhcpStart(&bLinkNetif);
-#endif
-        }
-        else if (netif_is_link_up(&bLinkNetif) && (!link_state))
-        {
-            /* network cable is disconnected */
-            netif_set_link_down(&bLinkNetif);
-            netif_set_down(&bLinkNetif);
-        }
-    }
-    if (netif_is_link_up(&bLinkNetif))
-    {
-        p = NULL;
-        bRead(bLinkFd, (uint8_t *)&p, 0);
-        if (p != NULL)
-        {
-            err = bLinkNetif.input(p, &bLinkNetif);
-            if (err != ERR_OK)
-            {
-                pbuf_free(p);
-                p = NULL;
-            }
-        }
-    }
-    sys_check_timeouts();
-}
-
-#ifdef BSECTION_NEED_PRAGMA
-#pragma section bos_polling
-#endif
-BOS_REG_POLLING_FUNC(_bNetlinkCore);
-#ifdef BSECTION_NEED_PRAGMA
-#pragma section 
-#endif
-int bNetlinkInit()
+static int _bNetlinkInit()
 {
 #if (defined(_NETIF_USE_LWIP) && (_NETIF_USE_LWIP == 1))
     ip4_addr_t ip_addr;
@@ -272,12 +220,68 @@ int bNetlinkInit()
     return 0;
 }
 
-#else
-
-int bNetlinkInit()
+static void _bNetlinkCore()
 {
-    return 0;
+    uint8_t         link_state = 0;
+    static uint32_t tick       = 0;
+    static uint8_t  link_init  = 0;
+    struct pbuf    *p          = NULL;
+    uint32_t        len        = 0;
+    err_t           err;
+
+    if (link_init == 0)
+    {
+        if (_bNetlinkInit() == 0)
+        {
+            link_init = 1;
+        }
+        return;
+    }
+
+    if (bHalGetSysTick() - tick > MS2TICKS(NETIF_LINK_CHECK_INTERVAL))
+    {
+        tick = bHalGetSysTick();
+        bCtl(bLinkFd, bCMD_GET_LINK_STATE, &link_state);
+        if (!netif_is_link_up(&bLinkNetif) && (link_state))
+        {
+            /* network cable is connected */
+            netif_set_link_up(&bLinkNetif);
+            netif_set_up(&bLinkNetif);
+#if (defined(NETIF_USE_DHCP) && (NETIF_USE_DHCP == 1))
+            _bNetifDhcpStart(&bLinkNetif);
+#endif
+        }
+        else if (netif_is_link_up(&bLinkNetif) && (!link_state))
+        {
+            /* network cable is disconnected */
+            netif_set_link_down(&bLinkNetif);
+            netif_set_down(&bLinkNetif);
+        }
+    }
+    if (netif_is_link_up(&bLinkNetif))
+    {
+        p = NULL;
+        bRead(bLinkFd, (uint8_t *)&p, 0);
+        if (p != NULL)
+        {
+            err = bLinkNetif.input(p, &bLinkNetif);
+            if (err != ERR_OK)
+            {
+                pbuf_free(p);
+                p = NULL;
+            }
+        }
+    }
+    sys_check_timeouts();
 }
+
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section bos_polling
+#endif
+BOS_REG_POLLING_FUNC(_bNetlinkCore);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section
+#endif
 
 #endif
 
