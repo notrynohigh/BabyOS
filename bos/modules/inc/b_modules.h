@@ -53,13 +53,13 @@ extern "C" {
 #include "b_mod_qrcode.h"
 #include "b_mod_select.h"
 #include "b_mod_shell.h"
+#include "b_mod_ssl.h"
 #include "b_mod_state.h"
 #include "b_mod_trace.h"
 #include "b_mod_usb.h"
 #include "b_mod_wifi.h"
 #include "b_mod_xm128.h"
 #include "b_mod_ymodem.h"
-
 
 #ifdef __cplusplus
 }

@@ -13,22 +13,9 @@
 #include "b_os.h"
 
 int  httpfd = -1;
-void ntp_test()
+void bMallocFailedHook()
 {
-    bUTC_DateTime_t tm;
-    bUTC_t          now_utc = bUTC_GetTime();
-
-    bUTC2Struct(&tm, now_utc, 8);
-    b_log("%d-%02d-%02d %02d:%02d:%02d %02d\r\n", tm.year, tm.month, tm.day, tm.hour, tm.minute,
-          tm.second, tm.week);
-    b_log_w(":::::%d\r\n", bGetFreeSize());
-    if (now_utc > 1711855508)
-    {
-        bHttpRequest(httpfd, B_HTTP_GET,
-                     "http://restapi.amap.com/v3/weather/"
-                     "weatherInfo?city=440300&key=2ecb62606e0682a50cae3ade6b30c3b1",
-                     NULL, NULL);
-    }
+    b_log_e("=========================\r\n");
 }
 
 void HttpCb(bHttpEvent_t event, void *param, void *arg)
@@ -70,23 +57,19 @@ void HttpCb(bHttpEvent_t event, void *param, void *arg)
     }
 }
 
-void bMallocFailedHook()
-{
-    b_log_e("=========================\r\n");
-}
-
 int main()
 {
     port_init();
     bInit();
 
-    bTcpipSrvInit();
-    bSntpStart(60 * 60);
     httpfd = bHttpInit(HttpCb, NULL);
+    bHttpRequest(httpfd, B_HTTP_GET,
+                 "https://restapi.amap.com/v3/weather/"
+                 "weatherInfo?city=440300&key=2ecb62606e0682a50cae3ade6b30c3b1",
+                 NULL, NULL);
     while (1)
     {
         bExec();
-        BOS_PERIODIC_TASK(ntp_test, 1000 * 10);
     }
     return 0;
 }

@@ -13,10 +13,6 @@ config MATRIX_KEYS_COLUMNS
     int "Maximum number of columns of matrix keys"
     default 4
 
-config ESP12F_UART_RX_BUF_LEN
-    int "ESP12F Uart Rx Buffer Length"
-    default 1024
-
 config ESP12F_CMD_BUF_LEN  
     int "ESP12F Cmd Buffer Length"
     default 128 

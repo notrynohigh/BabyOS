@@ -39,6 +39,7 @@
 
 #include "core/inc/b_sem.h"
 #include "core/inc/b_task.h"
+#include "modules/inc/b_mod_ssl.h"
 #include "thirdparty/http-parser/http_parser.h"
 #include "utils/inc/b_util_log.h"
 #include "utils/inc/b_util_memp.h"
@@ -121,6 +122,9 @@ typedef struct
     uint8_t             *precv;
     uint16_t             recvbuf_len;
     uint16_t             recvbuf_index;
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+    bSSLHandle_t ssl;
+#endif
 } bHttpStruct_t;
 
 /**
@@ -371,7 +375,14 @@ static void _bHttpResult(bHttpStruct_t *http, bHttpEvent_t evt, void *param)
             http->request = NULL;
         }
         http->sockfd = -1;
-        http->state  = B_HTTP_STA_DEINIT;
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+        if (http->ssl != NULL)
+        {
+            bSSLDeinit(http->ssl);
+            http->ssl = NULL;
+        }
+#endif
+        http->state = B_HTTP_STA_DEINIT;
     }
     http->callback(evt, param, http->user_data);
     if (http->precv)
@@ -387,7 +398,7 @@ static void _bHttpTransCb(bTransEvent_t event, void *param, void *arg)
 {
 }
 
-int on_message_complete(http_parser *parser)
+static int _bHttpParseComplete(http_parser *parser)
 {
     bHttpStruct_t *http = (bHttpStruct_t *)parser->data;
     http->state         = B_HTTP_STA_RECV_DATA;
@@ -396,52 +407,93 @@ int on_message_complete(http_parser *parser)
 
 PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
 {
-    bHttpStruct_t *http = (bHttpStruct_t *)arg;
+    int             ret   = 0;
+    void           *param = NULL;
+    bHttpEvent_t    event = B_HTTP_EVENT_ERROR;
+    bHttpStruct_t  *http  = (bHttpStruct_t *)arg;
+    bHttpRecvData_t dat;
     PT_BEGIN(pt);
     while (1)
     {
         if (http->state == B_HTTP_STA_DEINIT)
         {
-            break;
+            return 0;
         }
         if (http->state == B_HTTP_STA_DESTROY)
         {
             if (http->sockfd > 0)
             {
-                b_log_e("http destroy...\r\n");
-                PT_WAIT_UNTIL_FOREVER(pt, bShutdown(http->sockfd) >= 0);
-                b_log_e("shutdown..\r\n");
+                SOCKET_SHUTDOWN(pt, http->sockfd);
                 _bHttpResult(http, B_HTTP_EVENT_DESTROY, NULL);
             }
             bTaskRemove(http->task_id);
             bFree(http);
-            return 0;
+            break;  // task end
         }
         http->sockfd = bSocket(B_TRANS_CONN_TCP, _bHttpTransCb, http);
         if (http->sockfd < 0)
         {
-            b_log_e("socket fail...\r\n");
-            _bHttpResult(http, B_HTTP_EVENT_ERROR, NULL);
-            break;
+            event = B_HTTP_EVENT_ERROR;
+            param = NULL;
+            goto http_restart;
         }
         b_log("sockfd: %x %s %d %s\r\n", http->sockfd, http->host, http->port, http->path);
         bConnect(http->sockfd, http->host, http->port);
         PT_WAIT_UNTIL(pt, bSockIsWriteable(http->sockfd) == 1, 5000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
-            b_log_e("http conn fail...\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(http->sockfd) >= 0);
-            b_log_e("shutdown..\r\n");
-            _bHttpResult(http, B_HTTP_EVENT_ERROR, NULL);
-            break;
+            event = B_HTTP_EVENT_CONN_FAIL;
+            param = NULL;
+            goto http_restart;
         }
+        ///////////////////////////////////////////////////////////////
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+        static uint16_t ssl_timeout = 0;
+        ssl_timeout                 = 0;
+        while (http->is_https)
+        {
+            ret = bSSLHandshake(http->ssl, http->sockfd);
+            if (ret < 0)
+            {
+                event = B_HTTP_EVENT_SSL_FAIL;
+                param = &ret;
+                goto http_restart;
+            }
+            else if (ret == 0)
+            {
+                break;  // ssl handshake ok ...
+            }
+            else
+            {
+                bTaskDelayMs(pt, 10);
+                ssl_timeout++;
+                if (ssl_timeout >= 200)
+                {
+                    ssl_timeout = 0;
+                    event       = B_HTTP_EVENT_SSL_FAIL;
+                    param       = &ret;
+                    goto http_restart;
+                }
+            }
+        }
+#endif
+        //////////////////////////////////////////////////////////////
         _bHttpResult(http, B_HTTP_EVENT_CONNECTED, NULL);
-        b_log("send:%s\r\n", http->request);
-        bSend(http->sockfd, (uint8_t *)http->request, strlen(http->request), NULL);
+        b_log("http req:%s\r\n", http->request);
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+        if (http->is_https)
+        {
+            bSSLSend(http->ssl, (uint8_t *)http->request, strlen(http->request), NULL);
+        }
+        else
+#endif
+        {
+            bSend(http->sockfd, (uint8_t *)http->request, strlen(http->request), NULL);
+        }
         http->parse.data = http;
         http_parser_init(&http->parse, HTTP_RESPONSE);
         http_parser_settings_init(&http->parse_cb);
-        http->parse_cb.on_message_complete = on_message_complete;
+        http->parse_cb.on_message_complete = _bHttpParseComplete;
         int      parse_len                 = 0;
         uint16_t readlen                   = 0;
         for (;;)
@@ -449,28 +501,33 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
             PT_WAIT_UNTIL(pt, bSockIsReadable(http->sockfd) == 1, 5000);
             if (pt->retval == PT_RETVAL_TIMEOUT)
             {
-                b_log_e("http recv timeout.. \r\n");
-                PT_WAIT_UNTIL_FOREVER(pt, bShutdown(http->sockfd) >= 0);
-                b_log_e("shutdown..\r\n");
-                _bHttpResult(http, B_HTTP_EVENT_ERROR, NULL);
-                break;
+                event = B_HTTP_EVENT_RECV_TIMEOUT;
+                param = NULL;
+                goto http_restart;
             }
             if ((http->recvbuf_len - http->recvbuf_index) <= 128)
             {
-                b_log("realloc-----\r\n");
                 http->recvbuf_len += 1024;
                 http->precv = bRealloc(http->precv, http->recvbuf_len);
                 if (http->precv == NULL)
                 {
-                    b_log_e("malloc error.. \r\n");
-                    PT_WAIT_UNTIL_FOREVER(pt, bShutdown(http->sockfd) >= 0);
-                    b_log_e("shutdown..\r\n");
-                    _bHttpResult(http, B_HTTP_EVENT_ERROR, NULL);
-                    break;
+                    event = B_HTTP_EVENT_ERROR;
+                    param = NULL;
+                    goto http_restart;
                 }
             }
-            bRecv(http->sockfd, http->precv + http->recvbuf_index,
-                  http->recvbuf_len - http->recvbuf_index, &readlen);
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+            if (http->is_https)
+            {
+                bSSLRecv(http->ssl, http->precv + http->recvbuf_index,
+                         http->recvbuf_len - http->recvbuf_index, &readlen);
+            }
+            else
+#endif
+            {
+                bRecv(http->sockfd, http->precv + http->recvbuf_index,
+                      http->recvbuf_len - http->recvbuf_index, &readlen);
+            }
             if (readlen > 0)
             {
                 parse_len =
@@ -481,25 +538,26 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
                 http->recvbuf_index += readlen;
                 if (http->state == B_HTTP_STA_RECV_DATA)
                 {
-                    bHttpRecvData_t dat;
                     dat.pdat    = http->precv;
                     dat.len     = http->recvbuf_index;
-                    dat.release = _bTcpipSrvFree;
-                    PT_WAIT_UNTIL_FOREVER(pt, bShutdown(http->sockfd) >= 0);
-                    _bHttpResult(http, B_HTTP_EVENT_RECV_DATA, &dat);
-                    http->precv = NULL;
-                    break;
+                    dat.release = NULL;
+
+                    event = B_HTTP_EVENT_RECV_DATA;
+                    param = &dat;
+                    goto http_restart;
                 }
                 else if (parse_len < 0)
                 {
-                    b_log_e("parse error.. \r\n");
-                    PT_WAIT_UNTIL_FOREVER(pt, bShutdown(http->sockfd) >= 0);
-                    b_log_e("shutdown..\r\n");
-                    _bHttpResult(http, B_HTTP_EVENT_ERROR, NULL);
-                    break;
+                    event = B_HTTP_EVENT_ERROR;
+                    param = NULL;
+                    goto http_restart;
                 }
             }
         }
+    http_restart:
+        SOCKET_SHUTDOWN(pt, http->sockfd);
+        _bHttpResult(http, event, param);
+        bTaskRestart(pt);
     }
     PT_END(pt);
 }
@@ -609,7 +667,19 @@ int bHttpRequest(int httpfd, bHttpReqType_t type, const char *url, const char *h
         return -4;
     }
     http->request = request;
-    http->state   = B_HTTP_STA_INIT;
+    if (http->is_https)
+    {
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+        http->ssl = bSSLInit(http->host, NULL);
+        if (SSLHANDLE_IS_INVALID(http->ssl))
+        {
+            bFree(http->request);
+            http->request = NULL;
+            return -5;
+        }
+#endif
+    }
+    http->state = B_HTTP_STA_INIT;
     return 0;
 }
 
