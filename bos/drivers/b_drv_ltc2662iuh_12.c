@@ -42,7 +42,7 @@
 #define DAC3 0X03
 #define DAC4 0X04
 
-#define L2B_B2L_16b(n) ((((n) & 0xff) << 8) | (((n) & 0xff00) >> 8))
+// #define L2B_B2L_16b(n) ((((n) & 0xff) << 8) | (((n) & 0xff00) >> 8))
 
 /**
  * }
@@ -170,6 +170,13 @@ static int _bLTC2662_DACX_Updata_Span(bDriverInterface_t *pdrv, LTC2662_DAC_t da
         return -2;
     }
 
+    if ((dac_x == LTC_DAC_0))
+    {
+        // b_log("$$$ DAC4 current: %.2f, span: %d, span_value: %.2f, span_div: %.2f\r\n", current,
+        //       _priv->dac_attribute[dac_x].span, _priv->dac_attribute[dac_x].span_value,
+        //       _priv->dac_attribute[dac_x].span_div);
+    }
+
     return 0;
 }
 
@@ -197,13 +204,23 @@ static int _bLTC2662_DACX_Attribute_Updata(bDriverInterface_t *pdrv, LTC2662_DAC
     }
 
     _priv->dac_attribute[dac_x].set_value = round(_priv->dac_attribute[dac_x].expect_current / _priv->dac_attribute[dac_x].span_div);
+    if ((dac_x == LTC_DAC_0))
+    {
+        // b_log("^^^ set_value:%d", _priv->dac_attribute[dac_x].set_value);
+    }
     _priv->dac_attribute[dac_x].set_value = _priv->dac_attribute[dac_x].set_value > 4095 ? 4095 : _priv->dac_attribute[dac_x].set_value;
-
-    _priv->dac_attribute[dac_x].real_current = _priv->dac_attribute[dac_x].set_value * _priv->dac_attribute[dac_x].span_div;
+    _priv->dac_attribute[dac_x].real_current =
+        _priv->dac_attribute[dac_x].set_value * _priv->dac_attribute[dac_x].span_div;
 
     _priv->dac_attribute[dac_x].err_current = _priv->dac_attribute[dac_x].expect_current - _priv->dac_attribute[dac_x].real_current;
 
     _priv->dac_attribute[dac_x].err_percentage_current = _priv->dac_attribute[dac_x].err_current / _priv->dac_attribute[dac_x].expect_current;
+
+    if ((dac_x == LTC_DAC_0))
+    {
+        // b_log("^^^ set_value:%d real_current=%.2f\r\n", _priv->dac_attribute[dac_x].set_value,
+        // _priv->dac_attribute[dac_x].real_current);
+    }
 
     return 0;
 }
@@ -282,8 +299,23 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
         data.LT_uint16 = LTC_SPAN_VALUE_300mA;
     }
 
-    send_buf[1] = data.LT_byte[1];
-    send_buf[2] = data.LT_byte[0];
+    // data.LT_uint16 = L2B_B2L_16b(data.LT_uint16);
+
+    uint8_t temp_data = data.LT_byte[0];
+    data.LT_byte[0]   = data.LT_byte[1];
+    data.LT_byte[1]   = temp_data;
+
+    send_buf[1] = data.LT_byte[0];
+    send_buf[2] = data.LT_byte[1];
+
+    // send_buf[1] = send_buf[1] << 4;
+    // send_buf[2] = send_buf[2] << 4;
+
+    if ((dac_x == LTC_DAC_0))
+    {
+        b_log("%d###%02X %02X %02X\r\n", _priv->dac_attribute[dac_x].span, send_buf[0], send_buf[1],
+              send_buf[2]);
+    }
 
     // spi发送
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
@@ -292,6 +324,106 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 
     return 0;
 }
+
+#if 0
+/**
+ * \brief   Write Code to n->Update n (Power Up)
+ * \param pdrv
+ * \param dac_x
+ * \param range
+ * \return int
+ */
+// static int _bLTC2662_WriteCodeToNUpdateN_SubStep(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
+// {
+//     uint8_t    send_buf[3] = {0, 0, 0};
+//     U_LT_Write data;
+//     bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
+//     bDRIVER_GET_PRIVATE(_priv, bLTC2662IUH_12Private_t, pdrv);
+//     if (dac_x >= LTC_DAC_MAX)
+//     {
+//         b_log_e("Invalid DAC channel");
+//         return -1;
+//     }
+
+//     // 0 	0 	0 	0
+//     if (dac_x == LTC_DAC_0)
+//     {
+//         send_buf[0] = WRITE_CODE_TO_N | DAC0;
+//     }
+//     else if (dac_x == LTC_DAC_1)
+//     {
+//         send_buf[0] = WRITE_CODE_TO_N | DAC1;
+//     }
+//     else if (dac_x == LTC_DAC_2)
+//     {
+//         send_buf[0] = WRITE_CODE_TO_N | DAC2;
+//     }
+//     else if (dac_x == LTC_DAC_3)
+//     {
+//         send_buf[0] = WRITE_CODE_TO_N | DAC3;
+//     }
+//     else if (dac_x == LTC_DAC_4)
+//     {
+//         send_buf[0] = WRITE_CODE_TO_N | DAC4;
+//     }
+
+//     // 将set_value由16bit转换为12bit,后四个无关位,并且进行MSB-TO-LSB
+//     data.LT_uint16 = _priv->dac_attribute[dac_x].set_value;
+
+//     // 将LT_byte按照大小端进行转换
+//     data.LT_uint16 = L2B_B2L_16b(data.LT_uint16);
+//     // 将其左移四位
+//     data.LT_uint16 = data.LT_uint16 << 4;
+
+//     send_buf[1] = data.LT_byte[0];
+//     send_buf[2] = data.LT_byte[1];
+
+//     // spi发送
+//     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
+//     _bLTC2662_Send(pdrv, send_buf, 3);
+//     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
+
+//     // 0 	0 	0 	1
+//     if (dac_x == LTC_DAC_0)
+//     {
+//         send_buf[0] = UPDATE_N | DAC0;
+//     }
+//     else if (dac_x == LTC_DAC_1)
+//     {
+//         send_buf[0] = UPDATE_N | DAC1;
+//     }
+//     else if (dac_x == LTC_DAC_2)
+//     {
+//         send_buf[0] = UPDATE_N | DAC2;
+//     }
+//     else if (dac_x == LTC_DAC_3)
+//     {
+//         send_buf[0] = UPDATE_N | DAC3;
+//     }
+//     else if (dac_x == LTC_DAC_4)
+//     {
+//         send_buf[0] = UPDATE_N | DAC4;
+//     }
+
+//     // 将set_value由16bit转换为12bit,后四个无关位,并且进行MSB-TO-LSB
+//     data.LT_uint16 = _priv->dac_attribute[dac_x].set_value;
+
+//     // 将LT_byte按照大小端进行转换
+//     data.LT_uint16 = L2B_B2L_16b(data.LT_uint16);
+//     // 将其左移四位
+//     data.LT_uint16 = data.LT_uint16 << 4;
+
+//     send_buf[1] = data.LT_byte[0];
+//     send_buf[2] = data.LT_byte[1];
+
+//     // spi发送
+//     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
+//     _bLTC2662_Send(pdrv, send_buf, 3);
+//     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
+
+//     return 0;
+// }
+#endif
 
 /**
  * \brief   写入代码至 n，更新 n（上电）
@@ -337,13 +469,18 @@ static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t
     // 将set_value由16bit转换为12bit,后四个无关位,并且进行MSB-TO-LSB
     data.LT_uint16 = _priv->dac_attribute[dac_x].set_value;
 
-    // 将LT_byte按照大小端进行转换
-    data.LT_uint16 = L2B_B2L_16b(data.LT_uint16);
-    // 将其左移四位
-    data.LT_uint16 = data.LT_uint16 << 4;
+    uint8_t temp_data = data.LT_byte[0];
+    data.LT_byte[0]   = data.LT_byte[1];
+    data.LT_byte[1]   = temp_data;
 
-    send_buf[1] = data.LT_byte[0];
-    send_buf[2] = data.LT_byte[1];
+    send_buf[1] = (data.LT_byte[0] << 4) | (data.LT_byte[1] >> 4);
+    send_buf[2] = data.LT_byte[1] << 4;
+
+    if ((dac_x == LTC_DAC_0))
+    {
+        b_log("%d %.2f||| %02X  %02X %02X\r\n", _priv->dac_attribute[dac_x].set_value,
+              _priv->dac_attribute[dac_x].real_current, send_buf[0], send_buf[1], send_buf[2]);
+    }
 
     // spi发送
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
@@ -382,6 +519,7 @@ static int _bLTC2662_DACX_Exec(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     return 0;
 }
 
+// Power Down n
 static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
     uint8_t send_buf[3] = {0, 0, 0};
