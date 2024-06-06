@@ -116,49 +116,49 @@ static int _bLTC2662_DACX_Updata_Span(bDriverInterface_t *pdrv, LTC2662_DAC_t da
         return -1;
     }
 
-    if (current < LTC_SPAN_3_125)
+    if (current <= LTC_SPAN_3_125)
     {
         _priv->dac_attribute[dac_x].span       = LTC_SPAN_3_125mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_3_125;
         _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_3_125 / 4095;
     }
-    else if (current < LTC_SPAN_6_25)
+    else if (current <= LTC_SPAN_6_25)
     {
         _priv->dac_attribute[dac_x].span       = LTC_SPAN_6_25mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_6_25;
         _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_6_25 / 4095;
     }
-    else if (current < LTC_SPAN_12_5)
+    else if (current <= LTC_SPAN_12_5)
     {
         _priv->dac_attribute[dac_x].span       = LTC_SPAN_12_5mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_12_5;
         _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_12_5 / 4095;
     }
-    else if (current < LTC_SPAN_25)
+    else if (current <= LTC_SPAN_25)
     {
         _priv->dac_attribute[dac_x].span       = LTC_SPAN_25mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_25;
         _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_25 / 4095;
     }
-    else if (current < LTC_SPAN_50)
+    else if (current <= LTC_SPAN_50)
     {
         _priv->dac_attribute[dac_x].span       = LTC_SPAN_50mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_50;
         _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_50 / 4095;
     }
-    else if (current < LTC_SPAN_100)
+    else if (current <= LTC_SPAN_100)
     {
         _priv->dac_attribute[dac_x].span       = LTC_SPAN_100mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_100;
         _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_100 / 4095;
     }
-    else if (current < LTC_SPAN_200)
+    else if (current <= LTC_SPAN_200)
     {
         _priv->dac_attribute[dac_x].span       = LTC_SPAN_200mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_200;
         _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_200 / 4095;
     }
-    else if (current < LTC_SPAN_300)
+    else if (current <= LTC_SPAN_300)
     {
         _priv->dac_attribute[dac_x].span       = LTC_SPAN_300mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_300;
