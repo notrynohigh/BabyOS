@@ -74,6 +74,8 @@ uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
     while (spi_i2s_flag_get(spi_x, SPI_I2S_TDBE_FLAG) == RESET)
         ;
     spi_i2s_data_transmit(spi_x, dat);
+    while (spi_i2s_flag_get(spi_x, SPI_I2S_TDBE_FLAG) == RESET)
+        ;
 
     return 0;
 }
