@@ -376,8 +376,8 @@ static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t
     data.LT_byte[0]   = data.LT_byte[1];
     data.LT_byte[1]   = temp_data;
 
-    send_buf[1] = data.LT_byte[0];
-    send_buf[2] = data.LT_byte[1];
+    send_buf[1] = data.LT_byte[0] << 4 | data.LT_byte[1] >> 4;
+    send_buf[2] = data.LT_byte[1] << 4;
 
     uint8_t tmp_send_buf[4] = {0, 0, 0, 0};
     memcpy(&tmp_send_buf[1], &send_buf[0], 3);
