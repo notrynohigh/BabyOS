@@ -49,6 +49,7 @@ void *thread_function(void *arg)
         else if (retval > 0)
         {
             b_log("recv:%d ...\r\n", retval);
+            b_log_hex(buf, retval);
             bFIFO_Write(&ptrans->rx_fifo, buf, retval);
             ptrans->readable = 1;
             ptrans->callback(B_TRANS_NEW_DATA, ptrans, ptrans->cb_arg);
@@ -92,13 +93,12 @@ int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
     ptrans->cb_arg    = user_data;
     ptrans->readable  = 0;
     ptrans->writeable = 0;
-    pthread_create(&ptrans->thread, NULL, thread_function, ptrans);
     return (int)ptrans;
 }
 
 int bConnect(int sockfd, char *remote, uint16_t port)
 {
-    if (sockfd < 0 || remote == NULL)
+    if (SOCKFD_IS_INVALID(sockfd) || remote == NULL)
     {
         return -1;
     }
@@ -127,6 +127,7 @@ int bConnect(int sockfd, char *remote, uint16_t port)
     }
     ptrans->writeable = 1;
     ptrans->callback(B_TRANS_CONNECTED, ptrans, ptrans->cb_arg);
+    pthread_create(&ptrans->thread, NULL, thread_function, ptrans);
     b_log("Connected to the server.\r\n");
     return 0;
 }
@@ -145,7 +146,7 @@ int bRecv(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen)
 {
     int      read_len = 0;
     uint16_t fifo_len = 0;
-    if (sockfd < 0 || pbuf == NULL || buf_len == 0)
+    if (SOCKFD_IS_INVALID(sockfd) || pbuf == NULL || buf_len == 0)
     {
         return -1;
     }
@@ -171,7 +172,7 @@ int bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
 {
     uint16_t writeable_len = 0;
     int      retval        = -1;
-    if (sockfd < 0 || pbuf == NULL || buf_len == 0)
+    if (SOCKFD_IS_INVALID(sockfd) || pbuf == NULL || buf_len == 0)
     {
         return -1;
     }
@@ -191,7 +192,7 @@ int bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
 
 uint8_t bSockIsReadable(int sockfd)
 {
-    if (sockfd < 0)
+    if (SOCKFD_IS_INVALID(sockfd))
     {
         return 0;
     }
@@ -201,7 +202,7 @@ uint8_t bSockIsReadable(int sockfd)
 
 uint8_t bSockIsWriteable(int sockfd)
 {
-    if (sockfd < 0)
+    if (SOCKFD_IS_INVALID(sockfd))
     {
         return 0;
     }
@@ -212,7 +213,7 @@ uint8_t bSockIsWriteable(int sockfd)
 int bShutdown(int sockfd)
 {
     int retval = -1;
-    if (sockfd < 0)
+    if (SOCKFD_IS_INVALID(sockfd))
     {
         return -1;
     }

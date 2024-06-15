@@ -225,6 +225,7 @@ config _WIFI_ENABLE
     default n
     depends on _BOS_MODULES_ENABLE  
     select _CJSON_ENABLE
+    select _MEMP_ENABLE
 
 config _SELECT_ENABLE
     bool "Select Enable/Disable"
@@ -245,6 +246,7 @@ config GUI_REFR_PERIOD
     int "GUI Refresh Period x ms"
     default 33
     select _UGUI_ENABLE
+    depends on _GUI_ENABLE
 
 choice
     prompt "Color RGBXXX"
@@ -339,8 +341,6 @@ config _NETIF_ENABLE
     bool "NETIF Enable/Disable"
     default n
     depends on _BOS_MODULES_ENABLE
-    select _BOS_SERVICES_ENABLE
-    select _TCPIP_SERVICE_ENABLE
 
 config _NETIF_USE_LWIP
     bool "NETIF USE LWIP"
@@ -427,5 +427,16 @@ config USB_SERIAL_NUMBER
     string "Serials"
     default "BabyOS-USB0"
     depends on _USB_ENABLE
+
+config _SSL_ENABLE
+    bool "SSL Enable/Disable"
+    default n
+    depends on _BOS_MODULES_ENABLE
+    select _MBEDTLS_ENABLE
+
+config _HARDWARE_RBG_ENABLE
+    bool "Hardware Random Byte Generator"
+    default n
+    depends on _SSL_ENABLE
 
 endmenu

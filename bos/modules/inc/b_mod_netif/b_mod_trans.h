@@ -68,7 +68,15 @@ typedef void (*pbTransCb_t)(bTransEvent_t event, void *param, void *arg);
 typedef void (*pbTransDnsCb_t)(const char *name, uint32_t ipaddr, void *arg);
 typedef void (*pbTransPingCb_t)(int result, uint32_t ms, void *arg);
 
-
+#define SOCKFD_IS_INVALID(sockfd) ((sockfd) <= 0)
+#define SOCKET_SHUTDOWN(pt, sockfd)                                \
+    do                                                             \
+    {                                                              \
+        if (!SOCKFD_IS_INVALID((sockfd)))                          \
+        {                                                          \
+            PT_WAIT_UNTIL_FOREVER((pt), bShutdown((sockfd)) >= 0); \
+        }                                                          \
+    } while (0)
 
 int     bSocket(bTransType_t type, pbTransCb_t cb, void *user_data);
 int     bConnect(int sockfd, char *remote, uint16_t port);
@@ -76,7 +84,7 @@ int     bBind(int sockfd, uint16_t port);
 int     bListen(int sockfd, int backlog);
 int     bRecv(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
 int     bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
-int     bShutdown(int sockfd);
+int     bShutdown(int sockfd);  // 建议使用 SOCKET_SHUTDOWN 一直等到关闭完成
 uint8_t bSockIsReadable(int sockfd);
 uint8_t bSockIsWriteable(int sockfd);
 int     bDnsParse(char *remote, pbTransDnsCb_t cb, void *user_data);

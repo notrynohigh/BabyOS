@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_mod_link.h
+ * \file        mcu_stm32l4xx_rng.c
  * \version     v0.0.1
- * \date        2020/01/02
+ * \date        2020/03/25
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
@@ -21,31 +21,44 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO PARAM SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_MOD_LINK_H__
-#define __B_MOD_LINK_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
-
 #include "b_config.h"
+#include "hal/inc/b_hal_rng.h"
 
-#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#if (defined(STM32L41X_L46X))
 
-#endif
+typedef struct
+{
+    volatile uint32_t CR; /*!< RNG control register, Address offset: 0x00 */
+    volatile uint32_t SR; /*!< RNG status register,  Address offset: 0x04 */
+    volatile uint32_t DR; /*!< RNG data register,    Address offset: 0x08 */
+} McuRNGReg_t;
 
-#ifdef __cplusplus
+#define RNG_BASE_ADDR (0x50060800UL)
+#define MCU_RNG ((McuRNGReg_t *)RNG_BASE_ADDR)
+
+uint32_t bMcuRNGRead()
+{
+    McuRNGReg_t *rng = MCU_RNG;
+    if ((rng->CR & (0x1 << 2)) == 0)
+    {
+        rng->CR |= (0x1 << 2);
+    }
+    while ((rng->SR & 0x1) == 0)
+    {
+        (void)0;
+    }
+    return rng->DR;
 }
-#endif
 
 #endif
+
+/************************ Copyright (c) 2020 Bean *****END OF FILE****/

@@ -115,7 +115,7 @@ typedef struct
     uint8_t             cmd_index;
     uint8_t             result;
     uint8_t             step;
-    uint8_t             uart_buf[ESP12F_UART_RX_BUF_LEN];
+    uint8_t             uart_buf[CONNECT_RECVBUF_MAX];
     char                cmd_tmp[ESP12F_CMD_BUF_LEN + 1];
     union
     {
@@ -279,30 +279,56 @@ static void _bAtNewDataCb(uint8_t *pbuf, uint16_t len, void (*pfree)(void *), vo
     int            rlen    = 0;
     int            retval  = -1;
     //+IPD,0,16:12312312312313
-    p = strstr((const char *)pbuf, "+IPD,");
-    if (p != NULL)
+    tmp_p = (char *)pbuf;
+    while (1)
     {
-        retval = sscanf(p, "+IPD,%d,%d:%*s", &conn_id, &rlen);
-        if (retval == 2 && rlen > 0)
+        p = strstr((const char *)tmp_p, "+IPD,");
+        if (p != NULL)
         {
-            if (conn_id >= 0 && conn_id < ESP12F_CONN_NUM_MAX)
+            retval = sscanf(p, "+IPD,%d,%d:%*s", &conn_id, &rlen);
+            if (retval == 2 && rlen > 0)
             {
-                p = strstr(p, ":");
-                p = p + 1;
-                b_log("read:%p, %d\r\n", p, rlen);
-                pdat = (bTcpUdpData_t *)_bAtNewDataMalloc((uint8_t *)p, rlen);
-                if (pdat != NULL)
+                if (conn_id >= 0 && conn_id < ESP12F_CONN_NUM_MAX)
                 {
-                    memcpy(&pdat->conn, &_priv->conn[conn_id].info, sizeof(bTcpUdpInfo_t));
-                    _priv->cb.cb(B_EVT_CONN_NEW_DATA, pdat, _bAtNewDataFree, _priv->cb.user_data);
+                    p = strstr(p, ":");
+                    p = p + 1;
+                    b_log("read:%p, %d\r\n", p, rlen);
+
+#if 1
+                    bTcpUdpData_t new_data;
+                    new_data.pbuf    = (uint8_t *)p;
+                    new_data.len     = rlen;
+                    new_data.release = NULL;
+                    memcpy(&new_data.conn, &_priv->conn[conn_id].info, sizeof(bTcpUdpInfo_t));
+                    _priv->cb.cb(B_EVT_CONN_NEW_DATA, &new_data, NULL, _priv->cb.user_data);
+#else
+                    pdat = (bTcpUdpData_t *)_bAtNewDataMalloc((uint8_t *)p, rlen);
+                    if (pdat != NULL)
+                    {
+                        memcpy(&pdat->conn, &_priv->conn[conn_id].info, sizeof(bTcpUdpInfo_t));
+                        _priv->cb.cb(B_EVT_CONN_NEW_DATA, pdat, _bAtNewDataFree,
+                                     _priv->cb.user_data);
+                    }
+#endif
                 }
+                tmp_p = p + rlen;
+                if (((uint32_t)tmp_p) >= ((uint32_t)(pbuf + len)))
+                {
+                    break;
+                }
+            }
+            else
+            {
+                b_log_e("sscanf error %d %d \r\n", retval, rlen);
+                break;
             }
         }
         else
         {
-            b_log_e("sscanf error %d %d \r\n", retval, rlen);
+            break;
         }
     }
+
     if (pfree)
     {
         if (pbuf)
@@ -511,7 +537,7 @@ PT_THREAD(bEsp12fTask)(struct pt *pt, void *arg)
                 _bEsp12fCtlResult(_priv->cmd, 0, pdrv);
             }
         }
-        bTaskDelayMs(pt, 100);
+        bTaskYield(pt);
     }
     PT_END(pt);
 }
@@ -740,7 +766,7 @@ int bESP12F_Init(bDriverInterface_t *pdrv)
     bAtInit(&bEspRunInfo[pdrv->drv_no].at, _bAtCmdCb, _bAtNewDataCb, _bAtSendData, pdrv);
     // 串口接收初始化，注册接收空闲回调
     bHAL_UART_INIT_ATTR(&bEspRunInfo[pdrv->drv_no].uart_attr,
-                        &(bEspRunInfo[pdrv->drv_no].uart_buf[0]), ESP12F_UART_RX_BUF_LEN, 50,
+                        &(bEspRunInfo[pdrv->drv_no].uart_buf[0]), CONNECT_RECVBUF_MAX, 50,
                         _bHalUartIdleCb, pdrv);
     bHalUartReceiveIdle(*((bESP12F_HalIf_t *)pdrv->hal_if), &bEspRunInfo[pdrv->drv_no].uart_attr);
     return 0;
