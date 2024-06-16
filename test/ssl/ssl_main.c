@@ -25,27 +25,9 @@ void HttpCb(bHttpEvent_t event, void *param, void *arg)
         bHttpRecvData_t *dat = (bHttpRecvData_t *)param;
         if (dat->pdat != NULL && dat->len > 0)
         {
-            b_log("%s", dat->pdat);
+            b_log("%s\r\n", dat->pdat);
             char *pstr = strstr(dat->pdat, "\r\n\r\n");
-            if (pstr != NULL)
-            {
-                cJSON *root = cJSON_Parse(pstr);
-                if (root)
-                {
-                    cJSON *lives = cJSON_GetObjectItem(root, "lives");
-                    if (lives != NULL && lives->type == cJSON_Array)
-                    {
-                        lives              = cJSON_GetArrayItem(lives, 0);
-                        cJSON *weather     = cJSON_GetObjectItem(lives, "weather");
-                        cJSON *temperature = cJSON_GetObjectItem(lives, "temperature");
-                        cJSON *humidity    = cJSON_GetObjectItem(lives, "humidity");
-                        b_log("\r\n\r\nweather: %s\r\n", weather->valuestring);
-                        b_log("\r\ntemperature:%s℃\r\n", temperature->valuestring);
-                        b_log("\r\nhumidity:%s%%\r\n", humidity->valuestring);
-                    }
-                    cJSON_Delete(root);
-                }
-            }
+            b_log("result: %s\r\n", pstr);
         }
         if (dat)
         {
@@ -57,16 +39,48 @@ void HttpCb(bHttpEvent_t event, void *param, void *arg)
     }
 }
 
+#define BOUNDARY_STR "----WebKitFormBoundary7MA4YWxkTrZu0gW"
+static char *__pack_post_body(const char *api_key, const char *api_secret, const char *image_url)
+{
+#define BODY_PARAM_NUMBER (3)
+#define BODY_ITEM_FORMAT "--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n"
+#define BODY_END_FORMAT "--%s--\r\n"
+    int body_len = (strlen(BOUNDARY_STR) + strlen("Content-Disposition: form-data; name=") + 16) *
+                       BODY_PARAM_NUMBER +
+                   4 + strlen(BOUNDARY_STR) + 4 + strlen("api_key") + strlen("api_secret") +
+                   strlen("image_url") + strlen(api_key) + strlen(api_secret) + strlen(image_url);
+    b_log("malloc: %d\r\n", body_len);
+    char *pbody = bMalloc(body_len);
+    b_assert_log(pbody != NULL);
+    char *ptmp = pbody;
+    int   ret  = 0;
+    ret        = sprintf(ptmp, BODY_ITEM_FORMAT, BOUNDARY_STR, "api_key", api_key);
+    ptmp += ret;
+    ret = sprintf(ptmp, BODY_ITEM_FORMAT, BOUNDARY_STR, "api_secret", api_secret);
+    ptmp += ret;
+    ret = sprintf(ptmp, BODY_ITEM_FORMAT, BOUNDARY_STR, "image_url", image_url);
+    ptmp += ret;
+    ret = sprintf(ptmp, BODY_END_FORMAT, BOUNDARY_STR);
+    b_log("body[%d]:\r\n%s", strlen(pbody), pbody);
+    return pbody;
+}
+
 int main()
 {
     port_init();
     bInit();
 
+    char  post_header[128];
+    char *pbody = NULL;
+
+    sprintf(post_header, "Content-Type: multipart/form-data; boundary=%s\r\n", BOUNDARY_STR);
+    pbody = __pack_post_body(
+        "babyos", "babyos",
+        "https://tse1-mm.cn.bing.net/th/id/OIP-C.Y2M7yqEjWKR0mrPD9xp9tAAAAA?rs=1&pid=ImgDetMain");
+
     httpfd = bHttpInit(HttpCb, NULL);
-    bHttpRequest(httpfd, B_HTTP_GET,
-                 "https://restapi.amap.com/v3/weather/"
-                 "weatherInfo?city=440300&key=2ecb62606e0682a50cae3ade6b30c3b1",
-                 NULL, NULL);
+    bHttpRequest(httpfd, B_HTTP_POST, "https://www.aiyan-tech.com/car_number/", post_header, pbody);
+    bFree(pbody);
     while (1)
     {
         bExec();
