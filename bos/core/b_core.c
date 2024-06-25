@@ -116,7 +116,7 @@ BOS_REG_POLLING_FUNC(_bCoreMonitor);
 
 static void _bCoreMonitor()
 {
-    ;
+    bHalWdtFeed();
 }
 
 static int _bCoreCreateFd(uint32_t dev_no, uint8_t flag)
