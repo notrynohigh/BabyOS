@@ -50,7 +50,6 @@ extern "C" {
 #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ssl.h"
 #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/x509.h"
 
-
 /**
  * \addtogroup BABYOS
  * \{
@@ -72,8 +71,8 @@ extern "C" {
  */
 typedef struct
 {
-    const uint8_t *cert_der;
-    uint32_t       cert_der_len;
+    const uint8_t *pbuf;
+    uint32_t       len;
 } bSSLCert_t;
 
 typedef void *bSSLHandle_t;
