@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_hal.h
+ * \file        b_hal_wdt.c
  * \version     v0.0.1
- * \date        2019/06/05
+ * \date        2020/03/25
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2019 Bean
+ * Copyright (c) 2020 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,35 +21,15 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SWDTL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_HAL_H__
-#define __B_HAL_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*Includes ----------------------------------------------*/
-#include "b_config.h"
-#include "b_hal_display.h"
-#include "b_hal_eth.h"
-#include "b_hal_flash.h"
-#include "b_hal_gpio.h"
-#include "b_hal_i2c.h"
-#include "b_hal_if.h"
-#include "b_hal_it.h"
-#include "b_hal_qspi.h"
-#include "b_hal_rng.h"
-#include "b_hal_sdio.h"
-#include "b_hal_spi.h"
-#include "b_hal_uart.h"
-#include "b_hal_wdt.h"
+#include "hal/inc/b_hal.h"
 
 /**
  * \addtogroup B_HAL
@@ -57,12 +37,12 @@ extern "C" {
  */
 
 /**
- * \addtogroup HAL
+ * \addtogroup WDT
  * \{
  */
 
 /**
- * \defgroup HAL_Exported_TypesDefinitions
+ * \defgroup WDT_Private_Variables
  * \{
  */
 
@@ -71,59 +51,52 @@ extern "C" {
  */
 
 /**
- * \defgroup HAL_Exported_Defines
+ * \addtogroup WDT_Private_Functions
  * \{
  */
-#define MS2TICKS(m) (m / (1000 / TICK_FRQ_HZ))
-#define TICKS2MS(t) (t * (1000 / TICK_FRQ_HZ))
-
-#if (defined(_HALIF_VARIABLE_ENABLE) && (_HALIF_VARIABLE_ENABLE == 1))
-#define HALIF_KEYWORD static
-#else
-#define HALIF_KEYWORD const static
-#endif
 
 /**
  * \}
  */
 
 /**
- * \defgroup HAL_Exported_Functions
+ * \addtogroup WDT_Exported_Functions
  * \{
  */
-
-// 移植时调用，TICK中断服务函数调用bHalIncSysTick
-void bHalIncSysTick(void);
 #if defined(__WEAKDEF)
-// 弱函数，用户可重新实现此函数。bInit->bHalInit->bHalUserInit
-void bHalUserInit(void);
-#else
-// 若编译器不支持弱函数，调用此接口注册
-void bHalRegUserInit(void (*cb)(void));
-#endif
+__WEAKDEF int bMcuWdtStart(uint8_t timeout_s)
+{
+    return -1;
+}
 
-void     bHalInit(void);
-void     bHalDelayMs(uint16_t xms);
-void     bHalDelayUs(uint32_t xus);
-uint32_t bHalGetSysTick(void);
-uint64_t bHalGetSysTickPlus(void);
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-#ifdef __cplusplus
+__WEAKDEF int bMcuWdtFeed()
+{
+    return -1;
 }
 #endif
+//---------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------
 
-#endif
+int bHalWdtStart(uint8_t timeout_s)
+{
+    return bMcuWdtStart(timeout_s);
+}
+
+int bHalWdtFeed()
+{
+    return bMcuWdtFeed();
+}
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
 
 /************************ Copyright (c) 2019 Bean *****END OF FILE****/

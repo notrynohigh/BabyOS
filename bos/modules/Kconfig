@@ -434,8 +434,8 @@ config _SSL_ENABLE
     depends on _BOS_MODULES_ENABLE
     select _MBEDTLS_ENABLE
 
-config _HARDWARE_RBG_ENABLE
-    bool "Hardware Random Byte Generator"
+config _SSL_DEFAULT_CERT_ENABLE
+    bool "The default certificate in the configuration file (MBEDTLS_SSL_DEFAULT_CERT) Enable/Disable"
     default n
     depends on _SSL_ENABLE
 

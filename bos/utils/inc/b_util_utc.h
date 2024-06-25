@@ -70,34 +70,10 @@ typedef int64_t bUTC_t;
  */
 
 /**
- * \defgroup UTC_Exported_Defines
- * \{
- */
-#define YEAR_CHECK(yr) (((yr % 400) == 0x0) || (((yr % 4) == 0) && ((yr % 100) != 0)))
-
-#define YEAR_DAYS(yr) (YEAR_CHECK(yr) ? 366 : 365)
-#define BEGYEAR 1970  // UTC started at 00:00:00 January 1, 2000
-#define DAY 86400UL   // 24 hours * 60 minutes * 60 seconds
-/**
- * \}
- */
-
-/**
- * \defgroup UTC_Exported_Macros
- * \{
- */
-#define IS_TIME_VALID(n)                                             \
-    ((n.month > 0 && n.month <= 12) && (n.day > 0 && n.day <= 31) && \
-     n.hour <= 23 && n.minute <= 59 && n.second <= 59)
-/**
- * \}
- */
-
-/**
  * \defgroup UTC_Exported_Functions
  * \{
  */
-void bUTC_SetTime(bUTC_t utc);
+void   bUTC_SetTime(bUTC_t utc);
 bUTC_t bUTC_GetTime(void);
 
 void   bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, double zone);

@@ -6,4 +6,9 @@ config TICK_FRQ_HZ
 config _HALIF_VARIABLE_ENABLE
     bool "Hardware Interface Variable Enable/Disable"
     default n
+
+config WDT_TIMEOUT_S
+    int "Watchdog timeout (s)"
+    default 60
+
 endmenu

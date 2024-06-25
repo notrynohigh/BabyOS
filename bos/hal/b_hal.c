@@ -101,8 +101,12 @@ void bHalRegUserInit(void (*cb)(void))
 
 void bHalInit()
 {
-    _bHalUpdateDelayParam();
+#ifndef WDT_TIMEOUT_S
+#define WDT_TIMEOUT_S (60)
+#endif
     bHalUserInit();
+    bHalWdtStart(WDT_TIMEOUT_S);
+    _bHalUpdateDelayParam();
 }
 
 void bHalIncSysTick()

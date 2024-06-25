@@ -205,7 +205,11 @@ static int _bSSLRecv(void *ctx, unsigned char *buf, size_t len)
 
 bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
 {
-    int ret = 0;
+    int        ret       = 0;
+    bSSLCert_t root_cert = {
+        .pbuf = NULL,
+        .len  = 0,
+    };
     if (hostname == NULL)
     {
         return NULL;
@@ -239,9 +243,22 @@ bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
     p_ssl->sockfd = -1;
     mbedtls_ssl_set_bio(&p_ssl->ssl_ctx, p_ssl, _bSSLSend, _bSSLRecv, NULL);
 
-    if (cert != NULL && cert->cert_der != NULL && cert->cert_der_len != 0)
+    if (cert)
     {
-        ret = mbedtls_x509_crt_parse_der(&p_ssl->ca, cert->cert_der, cert->cert_der_len);
+        root_cert.pbuf = cert->pbuf;
+        root_cert.len  = cert->len;
+    }
+    else
+    {
+#if defined(MBEDTLS_SSL_DEFAULT_CERT)
+        root_cert.pbuf = MBEDTLS_SSL_DEFAULT_CERT;
+        root_cert.len  = sizeof(MBEDTLS_SSL_DEFAULT_CERT);
+#endif
+    }
+
+    if (root_cert.pbuf != NULL && root_cert.len != 0)
+    {
+        ret = mbedtls_x509_crt_parse(&p_ssl->ca, root_cert.pbuf, root_cert.len);
         if (ret == 0)
         {
             mbedtls_ssl_conf_ca_chain(&p_ssl->ssl_conf, &p_ssl->ca, NULL);
@@ -249,11 +266,13 @@ bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
         }
         else
         {
+            b_log_e("cert parse error..-0x%x\r\n", 0 - ret);
             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
         }
     }
     else
     {
+        b_log_w("no valid cert ....\r\n");
         mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
     }
     mbedtls_ssl_setup(&p_ssl->ssl_ctx, &p_ssl->ssl_conf);

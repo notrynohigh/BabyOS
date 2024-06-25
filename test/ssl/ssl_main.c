@@ -79,7 +79,7 @@ int main()
         "https://tse1-mm.cn.bing.net/th/id/OIP-C.Y2M7yqEjWKR0mrPD9xp9tAAAAA?rs=1&pid=ImgDetMain");
 
     httpfd = bHttpInit(HttpCb, NULL);
-    bHttpRequest(httpfd, B_HTTP_POST, "https://www.aiyan-tech.com/car_number/", post_header, pbody);
+    bHttpRequest(httpfd, B_HTTP_POST, "https://aiyan-tech.com/car_number/", post_header, pbody);
     bFree(pbody);
     while (1)
     {
