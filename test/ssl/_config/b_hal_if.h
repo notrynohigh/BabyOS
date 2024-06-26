@@ -43,7 +43,7 @@
 
 #define HAL_ILI9320_IF                                       \
     {                                                        \
-        .if_type = 2, .reset = {B_HAL_GPIOC, B_HAL_PIN7},    \
+        .if_type = 2,                                        \
         ._if._spi._spi =                                     \
             {                                                \
                 .is_simulation = 0,                          \
@@ -125,63 +125,6 @@
 #define HAL_XPT2046_IF                                                               \
     {                                                                                \
         ._if.spi = B_HAL_SPI_3, .cs = {B_HAL_GPIOC, B_HAL_PIN9}, .is_simulation = 0, \
-    }
-
-#define HAL_RS485_IF                                                  \
-    {                                                                 \
-        .port = B_HAL_GPIOA, .pin = B_HAL_PIN0, .uart = B_HAL_UART_1, \
-    }
-
-#define HAL_APDS9930_IF                                      \
-    {                                                        \
-        .dev_addr = (0x39 << 1), .is_simulation = 1,         \
-        ._if.simulating_i2c.clk = {B_HAL_GPIOA, B_HAL_PIN6}, \
-        ._if.simulating_i2c.sda = {B_HAL_GPIOA, B_HAL_PIN5}, \
-    }
-
-#define HAL_ICM20948_IF                                                                            \
-    {                                                                                              \
-        .dev_addr = 0Xd0, .is_simulation = 1, ._if.simulating_i2c.clk = {B_HAL_GPIOB, B_HAL_PIN1}, \
-        ._if.simulating_i2c.sda = {B_HAL_GPIOB, B_HAL_PIN0}, ._if.simulating_i2c.frq = 1000000,    \
-    }
-
-#define HAL_ICM42688P_IF                                                                           \
-    {                                                                                              \
-        .dev_addr = 0Xd0, .is_simulation = 1, ._if.simulating_i2c.clk = {B_HAL_GPIOA, B_HAL_PIN7}, \
-        ._if.simulating_i2c.sda = {B_HAL_GPIOA, B_HAL_PIN6}, ._if.simulating_i2c.frq = 1000000,    \
-    }
-
-#define HAL_QMI8658A_IF                                                                            \
-    {                                                                                              \
-        .dev_addr = 0xD6, .is_simulation = 1, ._if.simulating_i2c.clk = {B_HAL_GPIOA, B_HAL_PIN7}, \
-        ._if.simulating_i2c.sda = {B_HAL_GPIOA, B_HAL_PIN6}, ._if.simulating_i2c.frq = 100000,     \
-    }
-
-#define HAL_QMC5883L_IF                                                                            \
-    {                                                                                              \
-        .dev_addr = 0x1A, .is_simulation = 1, ._if.simulating_i2c.clk = {B_HAL_GPIOA, B_HAL_PIN7}, \
-        ._if.simulating_i2c.sda = {B_HAL_GPIOA, B_HAL_PIN6}, ._if.simulating_i2c.frq = 100000,     \
-    }
-
-#define HAL_LTC2662IUH_12_IF                                                         \
-    {                                                                                \
-        ._if.spi = B_HAL_SPI_3, .cs = {B_HAL_GPIOC, B_HAL_PIN9}, .is_simulation = 0, \
-    }
-
-#define HAL_MCP4018_IF                                                                             \
-    {                                                                                              \
-        .dev_addr = 0Xd0, .is_simulation = 1, ._if.simulating_i2c.clk = {B_HAL_GPIOA, B_HAL_PIN7}, \
-        ._if.simulating_i2c.sda = {B_HAL_GPIOA, B_HAL_PIN6}, ._if.simulating_i2c.frq = 1000000,    \
-    }
-
-#define HAL_MCUMAC_IF \
-    {                 \
-        0             \
-    }
-
-#define HAL_PAJ7620U2_IF                                                     \
-    {                                                                        \
-        .dev_addr = (0x73 << 1), .is_simulation = 0, ._if.i2c = B_HAL_I2C_1, \
     }
 
 #endif

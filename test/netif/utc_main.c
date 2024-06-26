@@ -26,7 +26,7 @@ void ntp_test()
     {
         bHttpRequest(httpfd, B_HTTP_GET,
                      "http://restapi.amap.com/v3/weather/"
-                     "weatherInfo?city=440300&key=",
+                     "weatherInfo?city=440300&key=2ecb62606e0682a50cae3ade6b30c3b1",
                      NULL, NULL);
     }
 }
@@ -86,7 +86,7 @@ int main()
     while (1)
     {
         bExec();
-        BOS_PERIODIC_TASK(ntp_test, 1000 * 60);
+        BOS_PERIODIC_TASK(ntp_test, 1000 * 10);
     }
     return 0;
 }

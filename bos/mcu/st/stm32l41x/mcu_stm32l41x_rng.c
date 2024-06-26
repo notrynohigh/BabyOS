@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_util_utc.h
+ * \file        mcu_stm32l4xx_rng.c
  * \version     v0.0.1
- * \date        2019/06/05
+ * \date        2020/03/25
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2019 Bean
+ * Copyright (c) 2020 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,79 +21,44 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_UTIL_UTC_H__
-#define __B_UTIL_UTC_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
+#include "b_config.h"
+#include "hal/inc/b_hal_rng.h"
 
-/**
- * \addtogroup B_UTILS
- * \{
- */
+#if (defined(STM32L41X_L46X))
 
-/**
- * \addtogroup UTC
- * \{
- */
-
-/**
- * \defgroup UTC_Exported_TypesDefinitions
- * \{
- */
 typedef struct
 {
-    uint16_t year;
-    uint8_t  month;
-    uint8_t  day;
-    uint8_t  week;
-    uint8_t  hour;
-    uint8_t  minute;
-    uint8_t  second;
-} bUTC_DateTime_t;
+    volatile uint32_t CR; /*!< RNG control register, Address offset: 0x00 */
+    volatile uint32_t SR; /*!< RNG status register,  Address offset: 0x04 */
+    volatile uint32_t DR; /*!< RNG data register,    Address offset: 0x08 */
+} McuRNGReg_t;
 
-typedef int64_t bUTC_t;
+#define RNG_BASE_ADDR (0x50060800UL)
+#define MCU_RNG ((McuRNGReg_t *)RNG_BASE_ADDR)
 
-/**
- * \}
- */
-
-/**
- * \defgroup UTC_Exported_Functions
- * \{
- */
-void   bUTC_SetTime(bUTC_t utc);
-bUTC_t bUTC_GetTime(void);
-
-void   bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, double zone);
-bUTC_t bStruct2UTC(bUTC_DateTime_t tm, double zone);
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-#ifdef __cplusplus
+uint32_t bMcuRNGRead()
+{
+    McuRNGReg_t *rng = MCU_RNG;
+    if ((rng->CR & (0x1 << 2)) == 0)
+    {
+        rng->CR |= (0x1 << 2);
+    }
+    while ((rng->SR & 0x1) == 0)
+    {
+        (void)0;
+    }
+    return rng->DR;
 }
-#endif
 
 #endif
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+/************************ Copyright (c) 2020 Bean *****END OF FILE****/

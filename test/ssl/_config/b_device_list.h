@@ -1,6 +1,6 @@
 /**
  *!
- * \file        b_util_utc.h
+ * \file        b_device_list.h
  * \version     v0.0.1
  * \date        2019/06/05
  * \author      Bean(notrynohigh@outlook.com)
@@ -28,72 +28,39 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_UTIL_UTC_H__
-#define __B_UTIL_UTC_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/*Includes ----------------------------------------------*/
-#include <stdint.h>
-
 /**
- * \addtogroup B_UTILS
- * \{
- */
-
-/**
- * \addtogroup UTC
- * \{
- */
-
-/**
- * \defgroup UTC_Exported_TypesDefinitions
- * \{
- */
-typedef struct
+typedef enum
 {
-    uint16_t year;
-    uint8_t  month;
-    uint8_t  day;
-    uint8_t  week;
-    uint8_t  hour;
-    uint8_t  minute;
-    uint8_t  second;
-} bUTC_DateTime_t;
-
-typedef int64_t bUTC_t;
-
+    B_DRIVER_NULL = 0,
+    B_DRIVER_24CXX,
+    B_DRIVER_DS18B20,
+    B_DRIVER_ESP12F,
+    B_DRIVER_FM25CL,
+    B_DRIVER_ILI9320,
+    B_DRIVER_ILI9341,
+    B_DRIVER_KEY,
+    B_DRIVER_LIS3DH,
+    B_DRIVER_MATRIXKEYS,
+    B_DRIVER_MCUFLASH,
+    B_DRIVER_OLED,
+    B_DRIVER_PCF8574,
+    B_DRIVER_SD,
+    B_DRIVER_SPIFLASH,
+    B_DRIVER_SSD1289,
+    B_DRIVER_ST7789,
+    B_DRIVER_TESTFLASH,
+    B_DRIVER_XPT2046,
+    B_DRIVER_NUMBER
+} bDriverNumber_t;
+*/
 /**
- * \}
+    B_DEVICE_REG(dev_1, bDriverNumber_t, "description")
+    .....
+    B_DEVICE_REG(dev_n, bDriverNumber_t, "description")
  */
 
-/**
- * \defgroup UTC_Exported_Functions
- * \{
- */
-void   bUTC_SetTime(bUTC_t utc);
-bUTC_t bUTC_GetTime(void);
+B_DEVICE_REG(bTESTFLASH, B_DRIVER_TESTFLASH, "testflash")
 
-void   bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, double zone);
-bUTC_t bStruct2UTC(bUTC_DateTime_t tm, double zone);
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-/**
- * \}
- */
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+#undef B_DEVICE_REG
 
 /************************ Copyright (c) 2019 Bean *****END OF FILE****/

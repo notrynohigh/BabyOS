@@ -146,6 +146,12 @@ bTaskId_t bTaskGetId(void);
 /// task中延时函数, 这里只是为了保证接口的名字与其他接口一致。
 #define bTaskDelayMs(pt, ms) B_TASK_DELAY_XMS(pt, ms)
 
+/// task 重置任务
+#define bTaskRestart(pt) PT_RESTART(pt)
+
+/// task 让出cpu的使用
+#define bTaskYield(pt) PT_YIELD(pt)
+
 /**
  * \}
  */

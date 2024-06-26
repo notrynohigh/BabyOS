@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_srv_tcpip.h
+ * \file        b_mod_ssl.h
  * \version     v0.0.1
- * \date        2023/08/27
+ * \date        2020/05/16
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2023 Bean
+ * Copyright (c) 2020 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_SRV_TCPIP_H__
-#define __B_SRV_TCPIP_H__
+#ifndef __B_MOD_SSL_H__
+#define __B_MOD_SSL_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,10 +40,15 @@ extern "C" {
 
 #include "b_config.h"
 
-#if (defined(_TCPIP_SERVICE_ENABLE) && (_TCPIP_SERVICE_ENABLE == 1))
-
-#include "modules/inc/b_mod_netif/b_mod_link.h"
-#include "modules/inc/b_mod_netif/b_mod_trans.h"
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/bignum.h"
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ctr_drbg.h"
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/debug.h"
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/entropy.h"
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/rsa.h"
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ssl.h"
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/x509.h"
 
 /**
  * \addtogroup BABYOS
@@ -51,75 +56,58 @@ extern "C" {
  */
 
 /**
- * \addtogroup SERVICES
+ * \addtogroup MODULES
  * \{
  */
 
 /**
- * \addtogroup TCPIP
+ * \addtogroup SSL
  * \{
  */
 
 /**
- * \defgroup TCPIP_Exported_TypesDefinitions
+ * \defgroup SSL_Exported_TypesDefinitions
  * \{
  */
-
-typedef enum
-{
-    B_HTTP_GET,
-    B_HTTP_POST
-} bHttpReqType_t;
-#define HTTPREQ_TYPE_IS_VALID(t) ((t) == B_HTTP_GET || (t) == B_HTTP_POST)
-
 typedef struct
 {
-    uint8_t *pdat;
-    uint16_t len;
-    void (*release)(void *);
-} bHttpRecvData_t;
+    const uint8_t *pbuf;
+    uint32_t       len;
+} bSSLCert_t;
 
-typedef enum
-{
-    B_HTTP_EVENT_CONNECTED = 0,
-    B_HTTP_EVENT_RECV_DATA,  // callback param : bHttpRecvData_t
-    B_HTTP_EVENT_DESTROY,
-    B_HTTP_EVENT_ERR_BASE = -100,
-    B_HTTP_EVENT_ERROR,
-    B_HTTP_EVENT_CONN_FAIL,
-    B_HTTP_EVENT_SSL_FAIL,
-    B_HTTP_EVENT_RECV_TIMEOUT,
-} bHttpEvent_t;
-
-typedef void (*pHttpCb_t)(bHttpEvent_t event, void *param, void *arg);
+typedef void *bSSLHandle_t;
 
 /**
  * \}
  */
 
 /**
- * \defgroup TCPIP_Exported_Defines
+ * \defgroup SSL_Exported_Defines
  * \{
  */
-
+#define SSLHANDLE_IS_INVALID(h) ((h) == NULL)
 /**
  * \}
  */
 
 /**
- * \defgroup TCPIP_Exported_Functions
+ * \defgroup SSL_Exported_Functions
  * \{
  */
+bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert);
+int          bSSLDeinit(bSSLHandle_t ssl);
 
-int bTcpipSrvInit(void);
+/**
+ * \brief
+ * \param ssl
+ * \param sockfd
+ * \return int (< 0: error) (0: success) (1: in progress)
+ */
+int bSSLHandshake(bSSLHandle_t ssl, int sockfd);
 
-int bSntpStart(uint32_t interval_s);
+int bSSLRecv(bSSLHandle_t ssl, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
+int bSSLSend(bSSLHandle_t ssl, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
 
-int bHttpInit(pHttpCb_t cb, void *user_data);
-int bHttpDeInit(int httpfd);
-// 默认头部有Content-Length; head为自定义头部，以\r\n结尾
-int bHttpRequest(int httpfd, bHttpReqType_t type, const char *url, const char *head,
-                 const char *body);
 /**
  * \}
  */
@@ -144,4 +132,4 @@ int bHttpRequest(int httpfd, bHttpReqType_t type, const char *url, const char *h
 
 #endif
 
-/************************ Copyright (c) 2023 Bean *****END OF FILE****/
+/************************ Copyright (c) 2020 Bean *****END OF FILE****/

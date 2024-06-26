@@ -237,6 +237,12 @@ config MBEDTLS_CONFIG_FILE
     default "b_mbedtls_config.h"
     depends on _MBEDTLS_ENABLE
 
+config MBEDTLS_DEBUG_LEVEL
+    int "Debug Info Level (0~4: No debug ~ Verbose)"
+    default 1
+    depends on _MBEDTLS_ENABLE
+    range 0 4
+
 config _LVGL_ENABLE
     bool "LVGL Enable/Disable"
     default n
