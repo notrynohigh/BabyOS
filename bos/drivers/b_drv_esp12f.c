@@ -75,6 +75,10 @@
 #define ESP12F_CMD_RESULT_OK (0x01)
 #define ESP12F_CMD_RESULT_FAIL (0x02)
 
+#ifndef CONNECT_RECVBUF_MAX
+#define CONNECT_RECVBUF_MAX (1024)
+#endif
+
 /**
  * \}
  */

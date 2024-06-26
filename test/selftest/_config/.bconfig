@@ -7,6 +7,7 @@ FW_NAME="BabyOS"
 #
 TICK_FRQ_HZ=1000
 # _HALIF_VARIABLE_ENABLE is not set
+WDT_TIMEOUT_S=60
 # end of Hal Configuration
 
 VENDOR_UBUNTU=y
@@ -51,7 +52,6 @@ _ALGO_CRC32_MPEG2_ENABLE=y
 PCF8574_DEFAULT_OUTPUT=0
 MATRIX_KEYS_ROWS=4
 MATRIX_KEYS_COLUMNS=4
-ESP12F_UART_RX_BUF_LEN=1024
 ESP12F_CMD_BUF_LEN=128
 ESP12F_CMD_TIMEOUT=5000
 RS485_RX_BUF_LEN=128
@@ -107,6 +107,8 @@ _SELECT_ENABLE=y
 SELECT_FDS_NUMBER=32
 # _GUI_ENABLE is not set
 # _NETIF_ENABLE is not set
+# _USB_ENABLE is not set
+# _SSL_ENABLE is not set
 # end of Modules Configuration
 
 #
@@ -149,6 +151,10 @@ CJSON_MEM_USE_BMALLOC=y
 # _UNITY_ENABLE is not set
 # _ARM_2D_ENABLE is not set
 _QRCODE_ENABLE=y
+# _HTTP_PARSER_ENABLE is not set
+# _TINYUSB_ENABLE is not set
+# _MBEDTLS_ENABLE is not set
+# _LVGL_ENABLE is not set
 # end of Thirdparty Configuration
 
 #
@@ -180,4 +186,5 @@ _AT_ENABLE=y
 _BOS_SERVICES_ENABLE=y
 _PROTOCOL_SERVICE_ENABLE=y
 # _TCPIP_SERVICE_ENABLE is not set
+# _OTA_SERVICE_ENABLE is not set
 # end of Services Configuration
