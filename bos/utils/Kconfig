@@ -55,10 +55,10 @@ choice
 endchoice
 
 config LOG_UART
-    int "0-7:(B_HAL_UART_1-8) 8:(B_HAL_LPUART_1)"
+    int "0-7:(B_HAL_UART_1-8) 8-11:(B_HAL_LPUART_1-4)"
     default 0
     depends on _LOG_VIA_UART
-    range 0 8
+    range 0 11
 
 config _MEMP_ENABLE
     bool "MemoryPool Enable/Disable"

@@ -67,6 +67,9 @@ typedef enum
     B_HAL_UART_7,
     B_HAL_UART_8,
     B_HAL_LPUART_1,
+    B_HAL_LPUART_2,
+    B_HAL_LPUART_3,
+    B_HAL_LPUART_4,
     B_HAL_UART_NUMBER
 } bHalUartNumber_t;
 

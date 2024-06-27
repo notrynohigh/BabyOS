@@ -516,7 +516,7 @@ static int _bIapBootCheckFlag()
     }
     else if (bIapFlag.stat == B_IAP_STA_FINISHED)
     {
-        if (bIapFlag.fail_count >= B_IAP_APP_FAIL_COUNT)
+        if (bIapFlag.fail_count >= B_IAP_FAIL_COUNT)
         {
             bIapFlag.fail_count = 0;
             retval              = 1;
@@ -526,6 +526,7 @@ static int _bIapBootCheckFlag()
         {
             retval = -1;
             bIapFlag.fail_count += 1;
+            _bIapSetStat(B_IAP_STA_FINISHED);
         }
     }
 #else
