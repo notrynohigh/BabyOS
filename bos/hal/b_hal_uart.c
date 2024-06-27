@@ -162,11 +162,19 @@ __WEAKDEF int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
 
 int bHalUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 {
+    if (IS_NULL(pbuf) || len == 0)
+    {
+        return -1;
+    }
     return bMcuUartSend(uart, pbuf, len);
 }
 
 int bHalReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
 {
+    if (IS_NULL(pbuf) || len == 0)
+    {
+        return -1;
+    }
     return bMcuReceive(uart, pbuf, len);
 }
 

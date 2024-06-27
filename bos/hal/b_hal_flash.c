@@ -111,11 +111,19 @@ int bHalFlashErase(uint32_t raddr, uint32_t pages)
 
 int bHalFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
 {
+    if (IS_NULL(pbuf) || len == 0)
+    {
+        return -1;
+    }
     return bMcuFlashWrite(raddr, pbuf, len);
 }
 
 int bHalFlashRead(uint32_t raddr, uint8_t *pbuf, uint32_t len)
 {
+    if (IS_NULL(pbuf) || len == 0)
+    {
+        return -1;
+    }
     return bMcuFlashRead(raddr, pbuf, len);
 }
 
