@@ -37,6 +37,7 @@
 #include "algorithm/inc/algo_crc.h"
 #include "core/inc/b_sem.h"
 #include "core/inc/b_task.h"
+#include "hal/inc/b_hal.h"
 
 /**
  * \addtogroup BABYOS
@@ -66,7 +67,9 @@
  * \defgroup OTA_Private_Defines
  * \{
  */
-
+#ifndef OTA_TIMEOUT_S
+#define OTA_TIMEOUT_S (30)
+#endif
 /**
  * \}
  */
@@ -118,11 +121,28 @@ const static bProtoCmd_t bCmdTable[] = {B_PROTO_OTA_FILE_INFO, B_PROTO_FILE_DATA
  * \{
  */
 
+static int _bOtaSendResult(uint8_t result)
+{
+    uint8_t  buf[128];
+    uint16_t olen = 0;
+    buf[0]        = result;
+    olen          = bProtSrvPackage(bProtocolId, B_PROTO_TRANS_FILE_RESULT, buf, sizeof(buf));
+    if (olen > 0 && bProtocolSend != NULL)
+    {
+        bProtocolSend(buf, olen);
+    }
+    return 0;
+}
+
 PT_THREAD(bOtaTaskFunc)(struct pt *pt, void *arg)
 {
     uint8_t              buf[128];
-    uint16_t             len   = 0;
-    bProtoReqFileData_t *p_req = (bProtoReqFileData_t *)buf;
+    uint16_t             len     = 0;
+    bProtoReqFileData_t *p_req   = (bProtoReqFileData_t *)buf;
+    static uint32_t      timeout = 0;
+    B_TASK_INIT_BEGIN();
+    timeout = bHalGetSysTick();
+    B_TASK_INIT_END();
     PT_BEGIN(pt);
     while (1)
     {
@@ -135,6 +155,35 @@ PT_THREAD(bOtaTaskFunc)(struct pt *pt, void *arg)
         if (bOtaTaskId != NULL && (bIapGetStatus() != B_IAP_STA_START))
         {
             bTaskRemove(bOtaTaskId);
+            bOtaTaskId = NULL;
+        }
+        if (PT_WAIT_IS_TIMEOUT(pt))
+        {
+            if (bHalGetSysTick() - timeout >= (MS2TICKS(OTA_TIMEOUT_S * 1000)))
+            {
+                _bOtaSendResult(4);
+                bTaskDelayMs(pt, 1000);
+                if (bIapIsInBoot())
+                {
+                    bIapJump2App();
+                    // 没有成功跳入应用程序,继续等待数据
+                    timeout = bHalGetSysTick();
+                    bHalIntEnable();
+                }
+                else
+                {
+                    // 应用程序中，则停止请求数据
+                    if (bOtaTaskId != NULL)
+                    {
+                        bTaskRemove(bOtaTaskId);
+                        bOtaTaskId = NULL;
+                    }
+                }
+            }
+        }
+        else
+        {
+            timeout = bHalGetSysTick();
         }
     }
     PT_END(pt);
@@ -145,6 +194,7 @@ static void _OtaProtStart()
     if (bOtaTaskId != NULL)
     {
         bTaskRemove(bOtaTaskId);
+        bOtaTaskId = NULL;
     }
     bOtaTaskId = bTaskCreate("ota", bOtaTaskFunc, NULL, &bOtaTaskAttr);
     if (bOtaSemId == NULL)
@@ -191,6 +241,10 @@ static int _OtaProtCallback(bProtoCmd_t cmd, void *param)
         {
             bIapJump2Boot();
         }
+        else if ((bIapGetStatus() == B_IAP_STA_FINISHED) && (bIapIsInBoot()))
+        {
+            bIapJump2App();
+        }
         else if (bIapGetStatus() == B_IAP_STA_START)
         {
             bSemRelease(bOtaSemId);
@@ -230,15 +284,7 @@ int bOtaSrvInit(bProtSrvId_t protocol_id, bOtaSrvSendData_t send, uint32_t cache
     }
     if ((bIapIsInBoot() == 0) && (ret == 1))
     {
-        uint8_t  buf[128];
-        uint16_t olen   = 0;
-        uint8_t  result = 0;
-        buf[0]          = result;
-        olen            = bProtSrvPackage(bProtocolId, B_PROTO_TRANS_FILE_RESULT, buf, sizeof(buf));
-        if (olen > 0)
-        {
-            send(buf, olen);
-        }
+        _bOtaSendResult(0);
     }
     return 0;
 }

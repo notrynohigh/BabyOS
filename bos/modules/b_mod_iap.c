@@ -127,11 +127,11 @@ static int _bIapEraseSpace()
 #if (IAP_FILE_CACHE == 0 || IAP_FILE_CACHE == 1)
     if (IAP_FILE_CACHE == 0)
     {
-        addr = APP_START_ADDR - MCUFLASH_BASE_ADDR;
+        addr = (uint32_t)APP_START_ADDR - (uint32_t)MCUFLASH_BASE_ADDR;
     }
     else
     {
-        addr = IAP_FW_SAVE_ADDR - MCUFLASH_BASE_ADDR;
+        addr = (uint32_t)IAP_FW_SAVE_ADDR - (uint32_t)MCUFLASH_BASE_ADDR;
     }
     bHalFlashUnlock();
     bHalFlashErase(addr, (bIapFlag.info.len + bHalFlashSectorSize() - 1) / bHalFlashSectorSize());
@@ -208,8 +208,8 @@ static int _IapCheckFwData()
     uint32_t tmp_len = 0, r_len = 0;
     uint8_t  tmp[64];
 #endif
-    CRC_REG_SBS_HANDLE(tmp_crc, bIapFlag.info.crc_type);
 #if (IAP_FILE_CACHE == 2)
+    CRC_REG_SBS_HANDLE(tmp_crc, bIapFlag.info.crc_type);
     fd = bOpen(bIapFlag.cache_dev, BCORE_FLAG_RW);
     if (fd == -1)
     {
@@ -255,12 +255,12 @@ static int _IapCopyFwData()
     uint32_t tmp_len = 0, r_len = 0;
     uint8_t  tmp[64];
 #endif
-    uint32_t tmp_crc = 0;
-    uint8_t  retry   = 0;
 
 #if (IAP_FILE_CACHE == 0)
-    return 0;
-#endif
+    retval = 0;
+#else
+    uint32_t tmp_crc = 0;
+    uint8_t  retry   = 0;
     for (retry = 0; retry < B_IAP_FAIL_COUNT; retry++)
     {
         retval = 0;
@@ -303,14 +303,14 @@ static int _IapCopyFwData()
             break;
         }
     }
+#endif
     return retval;
 }
 
+#if (defined(_BACKUP_ENABLE) && (_BACKUP_ENABLE == 1))
 static int _IapCopyBackupData()
 {
     int retval = 0;
-#if (defined(_BACKUP_ENABLE) && (_BACKUP_ENABLE == 1))
-
 #if (IAP_BACKUP_LOCATION == 1)
     int      fd      = -1;
     uint32_t tmp_len = 0, r_len = 0;
@@ -366,13 +366,8 @@ static int _IapCopyBackupData()
             break;
         }
     }
-#else
-    retval = -1;
-#endif
     return retval;
 }
-
-#if (defined(_BACKUP_ENABLE) && (_BACKUP_ENABLE == 1))
 
 static void _IapBackupFirmware()
 {
@@ -539,11 +534,13 @@ static int _bIapBootCheckFlag()
         }
         else
         {
+#if (defined(_BACKUP_ENABLE) && (_BACKUP_ENABLE == 1))
             retval = _IapCopyBackupData();
             if (retval == 0)
             {
                 _bIapSetStat(B_IAP_STA_FINISHED);
             }
+#endif
         }
     }
     else if (bIapFlag.stat == B_IAP_STA_FINISHED)
@@ -551,7 +548,9 @@ static int _bIapBootCheckFlag()
         if (bIapFlag.fail_count >= B_IAP_FAIL_COUNT)
         {
             bIapFlag.fail_count = 0;
+#if (defined(_BACKUP_ENABLE) && (_BACKUP_ENABLE == 1))
             _IapCopyBackupData();
+#endif
         }
         else
         {
@@ -585,7 +584,10 @@ static int _bIapStart(bIapFwInfo_t *pinfo)
     _bIapSetStat(B_IAP_STA_START);
 #if (RECEIVE_FIRMWARE_MODE == 0)
     // 跳转到执行BOOT代码
-    bIapJump2Boot();
+    if (!bIapIsInBoot())
+    {
+        bIapJump2Boot();
+    }
 #endif
     return 0;
 }
@@ -619,11 +621,11 @@ static int _bIapUpdateFwData(uint32_t index, uint8_t *pbuf, uint32_t len)
 #elif ((IAP_FILE_CACHE == 0) || (IAP_FILE_CACHE == 1))
     if (IAP_FILE_CACHE == 0)
     {
-        addr += APP_START_ADDR - BOOT_START_ADDR;
+        addr += (uint32_t)APP_START_ADDR - (uint32_t)BOOT_START_ADDR;
     }
     else
     {
-        addr += IAP_FW_SAVE_ADDR - BOOT_START_ADDR;
+        addr += (uint32_t)IAP_FW_SAVE_ADDR - (uint32_t)BOOT_START_ADDR;
     }
     bHalFlashUnlock();
     bHalFlashWrite(addr, pbuf, len);
@@ -687,8 +689,12 @@ static int _bIapUpdateFwData(uint32_t index, uint8_t *pbuf, uint32_t len)
 #if defined(__WEAKDEF)
 __WEAKDEF void bIapJump2Boot()
 {
+    pJumpFunc_t boot_reset = (pJumpFunc_t)(*((volatile uint32_t *)(BOOT_START_ADDR + 4)));
     bHalIntDisable();
-    ((pJumpFunc_t)(*((volatile uint32_t *)(BOOT_START_ADDR + 4))))();
+    if ((((uint32_t)boot_reset) < APP_START_ADDR))
+    {
+        boot_reset();
+    }
 }
 #else
 static pJumpFunc_t pbJump2Boot = NULL;
@@ -704,8 +710,13 @@ void bIapJump2Boot()
 #if defined(__WEAKDEF)
 __WEAKDEF void bIapJump2App()
 {
+    pJumpFunc_t app_reset = (pJumpFunc_t)(*((volatile uint32_t *)(APP_START_ADDR + 4)));
     bHalIntDisable();
-    ((pJumpFunc_t)(*((volatile uint32_t *)(APP_START_ADDR + 4))))();
+    if ((((uint32_t)app_reset) > APP_START_ADDR) &&
+        (((uint32_t)app_reset) < (MCUFLASH_BASE_ADDR + bHalFlashChipSize())))
+    {
+        app_reset();
+    }
 }
 #else
 static pJumpFunc_t pbJump2App = NULL;
