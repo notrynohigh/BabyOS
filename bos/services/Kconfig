@@ -51,4 +51,9 @@ config _OTA_SERVICE_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
     select _IAP_ENABLE
 
+config OTA_TIMEOUT_S
+    int "OTA Timeout (s)"
+    default 30
+    depends on _OTA_SERVICE_ENABLE
+
 endmenu
