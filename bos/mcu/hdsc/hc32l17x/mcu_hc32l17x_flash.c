@@ -9,14 +9,19 @@
 
 int bMcuFlashInit()
 {
-    en_result_t ret = Flash_Init(1, TRUE);
-    B_ASSERT(ret == Ok);
+    static uint8_t init_f = 0;
+    if (init_f == 0)
+    {
+        en_result_t ret = Flash_Init(1, TRUE);
+        B_ASSERT(ret == Ok);
+        init_f = 1;
+    }
     return 0;
 }
 
 int bMcuFlashUnlock()
 {
-    en_result_t ret = Flash_LockSet(FlashLock1, 0x80000000);
+    en_result_t ret = Flash_UnlockAll();
     return (ret == Ok) ? 0 : -1;
 }
 
