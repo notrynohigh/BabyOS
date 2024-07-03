@@ -33,7 +33,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_i2c.h"
 
-#if (defined(STM32G0X0))
+#if (defined(STM32G4XX))
 
 int bMcuI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {

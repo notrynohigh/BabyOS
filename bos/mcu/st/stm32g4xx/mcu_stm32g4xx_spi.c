@@ -33,7 +33,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_spi.h"
 
-#if (defined(STM32G0X0))
+#if (defined(STM32G4XX))
 
 //         Register Address
 

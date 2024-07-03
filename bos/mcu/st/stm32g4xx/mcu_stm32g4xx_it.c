@@ -33,7 +33,7 @@
 #include "b_config.h"
 #include "hal/inc/b_hal_it.h"
 
-#if (defined(STM32G0X0))
+#if (defined(STM32G4XX))
 
 void bMcuIntEnable()
 {
