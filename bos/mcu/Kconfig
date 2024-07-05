@@ -71,6 +71,8 @@ config HC32L13X
     bool "HC32L13X"
 config HC32L07X
     bool "HC32L07X"
+config HC32L17X
+    bool "HC32L17X"    
 endchoice
 
 #选择沁恒微电子的芯片

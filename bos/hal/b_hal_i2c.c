@@ -381,9 +381,9 @@ int bHalI2CReadByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
     int         retval = 0;
     bHalI2CIO_t simulating_iic;
-    if (IS_NULL(i2c_if))
+    if (IS_NULL(i2c_if) || (IS_NULL(pbuf) && (len > 0)))
     {
-        return 0;
+        return -1;
     }
     if (i2c_if->is_simulation == 1)
     {
@@ -403,7 +403,7 @@ int bHalI2CWriteByte(const bHalI2CIf_t *i2c_if, uint8_t *pbuf, uint16_t len)
 {
     int         retval = 0;
     bHalI2CIO_t simulating_iic;
-    if (IS_NULL(i2c_if))
+    if (IS_NULL(i2c_if) || (IS_NULL(pbuf) && (len > 0)))
     {
         return -1;
     }
@@ -426,7 +426,7 @@ int bHalI2CMemWrite(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_ad
 {
     int         retval = 0;
     bHalI2CIO_t simulating_iic;
-    if (IS_NULL(i2c_if))
+    if (IS_NULL(i2c_if) || (IS_NULL(pbuf) && (len > 0)))
     {
         return -1;
     }
@@ -450,7 +450,7 @@ int bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_add
 {
     int         retval = 0;
     bHalI2CIO_t simulating_iic;
-    if (IS_NULL(i2c_if))
+    if (IS_NULL(i2c_if) || (IS_NULL(pbuf) && (len > 0)))
     {
         return -1;
     }

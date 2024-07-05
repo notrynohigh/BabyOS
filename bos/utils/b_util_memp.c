@@ -222,7 +222,7 @@ static uint32_t _bGetFreeSize()
     return ret;
 }
 
-static uint32_t _bGetUsableSize(void *addr)
+static uint32_t _bGetUsableSize(uint32_t addr)
 {
     bMempUnitHead_t *phead = (bMempUnitHead_t *)(addr - sizeof(bMempUnitHead_t));
     if (phead->status != MEMP_UNIT_USED ||
@@ -295,7 +295,7 @@ static void *_bRealloc(void *paddr, uint32_t size)
     {
         return NULL;
     }
-    uint32_t old_size  = _bGetUsableSize(paddr);
+    uint32_t old_size  = _bGetUsableSize((uint32_t)paddr);
     uint32_t copy_size = (size < old_size) ? size : old_size;
     memcpy(new_ptr, paddr, copy_size);
     bFree(paddr);
@@ -354,7 +354,7 @@ void *bRealloc(void *paddr, uint32_t size)
     {
         return NULL;
     }
-    uint32_t old_size  = _bGetUsableSize(paddr);
+    uint32_t old_size  = _bGetUsableSize((uint32_t)paddr);
     uint32_t copy_size = (size < old_size) ? size : old_size;
     memcpy(new_ptr, paddr, copy_size);
     bFree(paddr);

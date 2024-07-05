@@ -101,11 +101,13 @@ void bHalRegUserInit(void (*cb)(void))
 
 void bHalInit()
 {
+    bHalUserInit();
+#if (defined(_WDT_ENABLE) && (_WDT_ENABLE == 1))
 #ifndef WDT_TIMEOUT_S
 #define WDT_TIMEOUT_S (60)
 #endif
-    bHalUserInit();
     bHalWdtStart(WDT_TIMEOUT_S);
+#endif
     _bHalUpdateDelayParam();
 }
 

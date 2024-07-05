@@ -102,7 +102,7 @@ static void _bCoreMonitor(void);
 #endif
 BOS_REG_POLLING_FUNC(_bCoreMonitor);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 
 /**
@@ -116,7 +116,9 @@ BOS_REG_POLLING_FUNC(_bCoreMonitor);
 
 static void _bCoreMonitor()
 {
+#if (defined(_WDT_ENABLE) && (_WDT_ENABLE == 1))
     bHalWdtFeed();
+#endif
 }
 
 static int _bCoreCreateFd(uint32_t dev_no, uint8_t flag)
@@ -411,7 +413,6 @@ int bGetDevNumber(int fd, uint32_t *pdev_no)
     *pdev_no = bCoreFdTable[fd].number;
     return 0;
 }
-
 
 /**
  * \}
