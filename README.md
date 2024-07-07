@@ -19,8 +19,6 @@ BabyOS适用于MCU项目，她是一套管理功能模块和外设驱动的框�
 1. 编译器需要勾选C99
 2. 默认情况，编译器需要支持自定义段（必须）以及弱函数（非必须）
 
-若当前BabyOS代码未适配您正在使用的编译器，请提交Issue
-
 Windows下需要安装python（2或3均可）用于配置代码
 
 Linux下需要安装python、python-pip以及make 用于配置和编译代码
@@ -34,6 +32,26 @@ Linux下需要安装python、python-pip以及make 用于配置和编译代码
 推荐：将babyos作为子模块加入到用户工程进行使用。
 
 <img src="https://foruda.gitee.com/images/1706455699810637537/031b0a0f_1789704.gif" style="zoom: 67%;" />
+
+**添加BabyOS代码**
+
+| 路径           | 部分/全部                   |
+| -------------- | --------------------------- |
+| bos/algorithm  | 全部添加                    |
+| bos/core       | 全部添加                    |
+| bos/drivers    | **根据需要添加**            |
+| bos/hal        | 全部添加                    |
+| bos/mcu        | **根据需要添加**            |
+| bos/modules    | 全部添加                    |
+| bos/thirdparty | **根据需要添加**            |
+| bos/utils      | 全部添加                    |
+| bos/_config    | *_config目录拷贝至用户目录* |
+
+**添加Include路径**
+
+`bos/`
+
+ `_config/`   如果配置文件拷贝到其他路径了，则添加相应路径即可。
 
 # 4 BabyOS教程
 
@@ -68,28 +86,6 @@ BabyOS如果能在项目中发挥大的作用就需要有足够的功能模块�
 **github**（自动同步）：
 
 [https://github.com/notrynohigh/BabyOS](https://github.com/notrynohigh/BabyOS)
-
-
-
-# 友情项目
-
-BabyOS包含了第三方开源代码，这部分代码都是MCU项目中比较实用的。
-
-Shell功能模块基于开源项目nr_micro_shell，[https://gitee.com/nrush/nr_micro_shell](https://gitee.com/nrush/nr_micro_shell)，感谢作者Nrush
-
-Button 功能模块基于开源项目FlexibleButton，[https://github.com/murphyzhao/FlexibleButton](https://github.com/murphyzhao/FlexibleButton)，感谢作者Murphy
-
-GUI功能模块基于开源项目uGUI, [https://github.com/achimdoebler/UGUI](https://github.com/achimdoebler/UGUI), 感谢作者Achimdoebler
-
-Trace功能模块基于开源项目 CmBacktrace,https://gitee.com/Armink/CmBacktrace/tree/master 感谢作者Armink
-
-SPIFlash驱动基于开源项目SFUD,https://gitee.com/Armink/SFUD 感谢作者Armink
-
-FS功能模块是基于FatFS和LittleFS,方便用户使用:
-
-    http://elm-chan.org/fsw/ff/archives.html FatFS
-    
-    https://github.com/ARMmbed/littlefs LittleFS
 
 ---
 
@@ -151,3 +147,4 @@ FS功能模块是基于FatFS和LittleFS,方便用户使用:
 | 2024.04 | 增加手势传感器和tinyusb第三方库 | |
 | 2024.05 | 完善babyos协议，使用最新的代码更新OTA例子;增加LVGL第三方代码 | |
 | 2024.06 | 增加b_mod_ssl 可以请求https接口，HAL层增加看门狗 | |
+| 2024.07 | 重写b_mod_fs， 统一文件系统的操作接口 | |
