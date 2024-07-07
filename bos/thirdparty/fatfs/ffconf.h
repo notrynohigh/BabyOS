@@ -1,6 +1,7 @@
 /*---------------------------------------------------------------------------/
 /  FatFs Functional Configurations
 /---------------------------------------------------------------------------*/
+#include "b_config.h"
 
 #define FFCONF_DEF 86606 /* Revision ID */
 
@@ -34,7 +35,11 @@
 /* This option switches filtered directory read functions, f_findfirst() and
 /  f_findnext(). (0:Disable, 1:Enable 2:Enable with matching altname[] too) */
 
+#ifndef _FS_MKFS_ENABLE
 #define FF_USE_MKFS 1
+#else
+#define FF_USE_MKFS _FS_MKFS_ENABLE
+#endif
 /* This option switches f_mkfs() function. (0:Disable or 1:Enable) */
 
 #define FF_USE_FASTSEEK 0
@@ -146,8 +151,11 @@
 /*---------------------------------------------------------------------------/
 / Drive/Volume Configurations
 /---------------------------------------------------------------------------*/
-
+#ifndef FS_MOUNT_NUMBER
 #define FF_VOLUMES 2
+#else
+#define FF_VOLUMES FS_MOUNT_NUMBER
+#endif
 /* Number of volumes (logical drives) to be used. (1-10) */
 
 #define FF_STR_VOLUME_ID 0

@@ -20,6 +20,42 @@ config _ERROR_MANAGE_ENABLE
     default n
     depends on _BOS_MODULES_ENABLE
 
+config _FS_ENABLE
+    bool "FS Enable/Disable"
+    default n
+    depends on _BOS_MODULES_ENABLE
+
+choice
+    prompt "FS Select"
+    depends on _FS_ENABLE
+    default FS_FATFS
+config FS_FATFS
+    bool "FatFS"
+config FS_LITTLEFS
+    bool "LittleFS" 
+endchoice
+
+config FS_MOUNT_NUMBER
+    int "Maximum number of mounts"
+    default 1
+    depends on _FS_ENABLE
+    range 1 10
+
+config FS_BLOCK_SIZE
+    int "Block Size (Number of minimum erasure units, default 1)"
+    default 1
+    depends on _FS_ENABLE
+
+config _FS_MKFS_ENABLE
+    bool "Create a file system Enable/Disable"
+    default n
+    depends on _FS_ENABLE
+
+config LFS_CONFIG
+    string "LFS_CONFIG as a header file to include"
+    default b_lfs_config.h
+    depends on FS_LITTLEFS
+
 config ERROR_Q_LENGTH
     int "Error Queue Length"
     default 10

@@ -9,7 +9,7 @@ config _HALIF_VARIABLE_ENABLE
 
 config _WDT_ENABLE
     bool "Watchdog Enable/Disable"
-    default false
+    default n
 
 config WDT_TIMEOUT_S
     int "Watchdog timeout (s)"

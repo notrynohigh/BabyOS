@@ -231,9 +231,13 @@ int bRead(int fd, uint8_t *pdata, uint32_t len)
     }
 
     retval = bDeviceRead(bCoreFdTable[fd].number, bCoreFdTable[fd].lseek, pdata, len);
+    if (retval == B_DEVICE_FUNC_NULL)
+    {
+        retval = 0;
+    }
     if (retval >= 0)
     {
-        bCoreFdTable[fd].lseek += len;
+        bCoreFdTable[fd].lseek += retval;
     }
     return retval;
 }
@@ -252,9 +256,13 @@ int bWrite(int fd, uint8_t *pdata, uint32_t len)
     }
 
     retval = bDeviceWrite(bCoreFdTable[fd].number, bCoreFdTable[fd].lseek, pdata, len);
+    if (retval == B_DEVICE_FUNC_NULL)
+    {
+        retval = 0;
+    }
     if (retval >= 0)
     {
-        bCoreFdTable[fd].lseek += len;
+        bCoreFdTable[fd].lseek += retval;
     }
     return retval;
 }
@@ -276,11 +284,17 @@ int bLseek(int fd, uint32_t off)
 
 int bCtl(int fd, uint8_t cmd, void *param)
 {
+    int retval = 0;
     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
     {
         return -1;
     }
-    return bDeviceCtl(bCoreFdTable[fd].number, cmd, param);
+    retval = bDeviceCtl(bCoreFdTable[fd].number, cmd, param);
+    if (retval == B_DEVICE_FUNC_NULL)
+    {
+        retval = 0;
+    }
+    return retval;
 }
 
 int bClose(int fd)

@@ -133,46 +133,6 @@ config XBF_FILE_ADDR
     default 0x0
     depends on _UGUI_ENABLE
 
-
-config _FS_ENABLE
-    bool "FS Enable/Disable"
-    default n
-
-config _FS_TEST_ENABLE
-    bool "bFS_Test() Enable/Disable"
-    default y
-    depends on _FS_ENABLE
-
-choice
-    prompt "FS Select"
-    depends on _FS_ENABLE
-config FS_FATFS
-    bool "FatFS"
-config FS_LITTLEFS
-    bool "LittleFS"
-endchoice
-
-config _SPIFLASH_ENABLE
-    bool "SPIFLASH Enable/Disable (Device No: bSPIFLASH)"
-    default y
-    depends on _FS_ENABLE
-
-config SPIFLASH_SIZE
-    int "SPI Flash x(MB)"
-    default 8
-    depends on _SPIFLASH_ENABLE
-
-config _SD_ENABLE
-    bool "SD Card Enable/Disable (Device No: bSD)"
-    default n
-    depends on _FS_ENABLE
-
-config SD_SIZE_XG
-    int "SD Card x(G)"
-    default 1
-    depends on _SD_ENABLE
-
-
 config _CJSON_ENABLE
     bool "CJSON Enable/Disable"
     default n

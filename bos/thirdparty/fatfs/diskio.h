@@ -9,10 +9,6 @@
 extern "C" {
 #endif
 
-#define DEV_SPIFLASH 0 /* Map SPIFLASH to physical drive 0*/
-#define DEV_SDCARD 1   /* Map SDCARD to physical drive 1*/
-
-
 /* Status of Disk Functions */
 typedef BYTE DSTATUS;
 
