@@ -423,9 +423,9 @@ int bFSMount(uint8_t index, uint8_t mkfs)
     result = f_mount(&(fs->bfs), (const char *)(&(fs->prefix[0])), 1);
     if ((result == FR_NO_FILESYSTEM) && (mkfs == 1))
     {
-        if (bFSMkfs(fs) == 0)
+        if (bFSMkfs(index) == 0)
         {
-            result = f_mount(&(fs->bfs), (const char *)disk_str, 1);
+            result = f_mount(&(fs->bfs), (const char *)(&(fs->prefix[0])), 1);
         }
     }
     if (result == FR_OK)
@@ -456,7 +456,7 @@ int bFSMount(uint8_t index, uint8_t mkfs)
     int result = lfs_mount(&(fs->bfs), &(fs->cfg));
     if (result && (mkfs == 1))
     {
-        result = bFSMkfs(fs);
+        result = bFSMkfs(index);
         if (result == 0)
         {
             result = lfs_mount(&(fs->bfs), &(fs->cfg));
@@ -823,7 +823,7 @@ int bFSMkfs(uint8_t index)
 #endif
 }
 
-int bFSGetInfo(int index, uint32_t *ptotal_size, uint32_t *pfree_size)
+int bFSGetInfo(uint8_t index, uint32_t *ptotal_size, uint32_t *pfree_size)
 {
     if (IS_NULL(ptotal_size) || IS_NULL(pfree_size))
     {
@@ -835,7 +835,6 @@ int bFSGetInfo(int index, uint32_t *ptotal_size, uint32_t *pfree_size)
         return -1;
     }
 #if defined(FS_FATFS)
-    uint16_t index = pfs->index;
     uint32_t fre_sect, tot_sect;
     DWORD    fclst  = 0;
     FATFS   *pfatfs = NULL;
@@ -846,8 +845,8 @@ int bFSGetInfo(int index, uint32_t *ptotal_size, uint32_t *pfree_size)
     }
     tot_sect     = (pfatfs->n_fatent - 2) * pfatfs->csize;
     fre_sect     = fclst * pfatfs->csize;
-    *ptotal_size = tot_sect * tmp->sector_size;
-    *pfree_size  = fre_sect * tmp->sector_size;
+    *ptotal_size = tot_sect * pfs->partition->sector_size;
+    *pfree_size  = fre_sect * pfs->partition->sector_size;
     return 0;
 #elif (defined(FS_LITTLEFS))
     uint32_t total_space = pfs->cfg.block_size * pfs->cfg.block_count;

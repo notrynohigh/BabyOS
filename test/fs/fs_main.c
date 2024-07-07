@@ -27,7 +27,7 @@ void bTestFs()
         if (BFS_FD_IS_VALID(fd))
         {
             bFSFileGetInfo(fd, &fsize);
-            b_log("file-size:%d(B)\r\n", fsize);
+            b_log("file-0-size:%d(B)\r\n", fsize);
             bFSWrite(fd, "baby", strlen("baby"));
             bFSClose(fd);
             fd = -1;
@@ -36,6 +36,8 @@ void bTestFs()
         fd = bFSOpen(&file, "1:hello", BFS_O_RDWR | BFS_O_CREAT | BFS_O_APPEND);
         if (BFS_FD_IS_VALID(fd))
         {
+            bFSFileGetInfo(fd, &fsize);
+            b_log("file-1-size:%d(B)\r\n", fsize);
             bFSWrite(fd, "os", strlen("os"));
             bFSClose(fd);
             fd = -1;
