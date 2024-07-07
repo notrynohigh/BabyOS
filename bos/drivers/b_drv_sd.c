@@ -445,12 +445,12 @@ static int _bSD_WriteSingleBlock(bDriverInterface_t *pdrv, uint32_t sector, uint
     return 0;
 }
 
-// sector:  Sector number to write from
-// count: Number of sectors to write
-static int _bSD_Write(bDriverInterface_t *pdrv, uint32_t sector, uint8_t *pbuf, uint32_t count)
+static int _bSD_Write(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
-    int i      = 0;
-    int retval = -1;
+    int      i      = 0;
+    int      retval = -1;
+    uint32_t sector = addr / 512;
+    uint32_t count  = len / 512;
     bDRIVER_GET_HALIF(_if, bSD_HalIf_t, pdrv);
     if (_if->is_spi)
     {
@@ -471,15 +471,15 @@ static int _bSD_Write(bDriverInterface_t *pdrv, uint32_t sector, uint8_t *pbuf, 
     {
         return -1;
     }
-    return count;
+    return (count * 512);
 }
 
-// sector:  Sector number to write from
-// count: Number of sectors to write
-static int _bSD_Read(bDriverInterface_t *pdrv, uint32_t sector, uint8_t *pbuf, uint32_t count)
+static int _bSD_Read(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
-    int i      = 0;
-    int retval = -1;
+    int      i      = 0;
+    int      retval = -1;
+    uint32_t sector = addr / 512;
+    uint32_t count  = len / 512;
     bDRIVER_GET_HALIF(_if, bSD_HalIf_t, pdrv);
     if (_if->is_spi)
     {
@@ -500,7 +500,7 @@ static int _bSD_Read(bDriverInterface_t *pdrv, uint32_t sector, uint8_t *pbuf, u
     {
         return -1;
     }
-    return count;
+    return (count * 512);
 }
 
 /**
@@ -528,7 +528,7 @@ int bSD_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_SD, bSD_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

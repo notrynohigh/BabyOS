@@ -1,24 +1,5 @@
-/*
- * lfs utility functions
- *
- * Copyright (c) 2022, The littlefs authors.
- * Copyright (c) 2017, Arm Limited. All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- */
-#ifndef LFS_UTIL_H
-#define LFS_UTIL_H
-
-#include "b_config.h"
-
-// Users can override lfs_util.h with their own configuration by defining
-// LFS_CONFIG as a header file to include (-DLFS_CONFIG=lfs_config.h).
-//
-// If LFS_CONFIG is used, none of the default utils will be emitted and must be
-// provided by the config file. To start, I would suggest copying lfs_util.h
-// and modifying as needed.
-#ifdef LFS_CONFIG
-#include LFS_CONFIG
-#else
+#ifndef __B_LFS_CONFIG_H__
+#define __B_LFS_CONFIG_H__
 
 // System includes
 #include <inttypes.h>
@@ -26,70 +7,39 @@
 #include <stdint.h>
 #include <string.h>
 
-#ifndef LFS_NO_MALLOC
-#include <stdlib.h>
-#endif
-#ifndef LFS_NO_ASSERT
-#include <assert.h>
-#endif
-#if !defined(LFS_NO_DEBUG) || !defined(LFS_NO_WARN) || !defined(LFS_NO_ERROR) || \
-    defined(LFS_YES_TRACE)
-#include <stdio.h>
-#endif
+#include "utils/inc/b_util_log.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define LFS_NO_MALLOC
+#define _LFS_DEBUG_ENABLE (0)
+
+#define LFS_CACHE_SIZE (16)
+#define LFS_LOOKAHEAD_SIZE (16)
 
 // Macros, may be replaced by system specific wrappers. Arguments to these
 // macros must not have side-effects as the macros can be removed for a smaller
 // code footprint
 
 // Logging functions
-#ifndef LFS_TRACE
-#ifdef LFS_YES_TRACE
-#define LFS_TRACE_(fmt, ...) printf("%s:%d:trace: " fmt "%s\n", __FILE__, __LINE__, __VA_ARGS__)
+#if _LFS_DEBUG_ENABLE
+#define LFS_TRACE_(fmt, ...) b_log("%s:%d:trace: " fmt "%s\n", __FILE__, __LINE__, __VA_ARGS__)
 #define LFS_TRACE(...) LFS_TRACE_(__VA_ARGS__, "")
-#else
-#define LFS_TRACE(...)
-#endif
-#endif
 
-#ifndef LFS_DEBUG
-#ifndef LFS_NO_DEBUG
-#define LFS_DEBUG_(fmt, ...) printf("%s:%d:debug: " fmt "%s\n", __FILE__, __LINE__, __VA_ARGS__)
+#define LFS_DEBUG_(fmt, ...) b_log("%s:%d:debug: " fmt "%s\n", __FILE__, __LINE__, __VA_ARGS__)
 #define LFS_DEBUG(...) LFS_DEBUG_(__VA_ARGS__, "")
-#else
-#define LFS_DEBUG(...)
-#endif
-#endif
 
-#ifndef LFS_WARN
-#ifndef LFS_NO_WARN
-#define LFS_WARN_(fmt, ...) printf("%s:%d:warn: " fmt "%s\n", __FILE__, __LINE__, __VA_ARGS__)
+#define LFS_WARN_(fmt, ...) b_log("%s:%d:warn: " fmt "%s\n", __FILE__, __LINE__, __VA_ARGS__)
 #define LFS_WARN(...) LFS_WARN_(__VA_ARGS__, "")
-#else
-#define LFS_WARN(...)
-#endif
-#endif
 
-#ifndef LFS_ERROR
-#ifndef LFS_NO_ERROR
-#define LFS_ERROR_(fmt, ...) printf("%s:%d:error: " fmt "%s\n", __FILE__, __LINE__, __VA_ARGS__)
+#define LFS_ERROR_(fmt, ...) b_log("%s:%d:error: " fmt "%s\n", __FILE__, __LINE__, __VA_ARGS__)
 #define LFS_ERROR(...) LFS_ERROR_(__VA_ARGS__, "")
 #else
+#define LFS_TRACE(...)
+#define LFS_DEBUG(...)
+#define LFS_WARN(...)
 #define LFS_ERROR(...)
 #endif
-#endif
-
 // Runtime assertions
-#ifndef LFS_ASSERT
-#ifndef LFS_NO_ASSERT
-#define LFS_ASSERT(test) assert(test)
-#else
-#define LFS_ASSERT(test)
-#endif
-#endif
+#define LFS_ASSERT(test) b_assert_log(test)
 
 // Builtin functions, these may be replaced by more efficient
 // toolchain-specific implementations. LFS_NO_INTRINSICS falls back to a more
@@ -261,9 +211,4 @@ static inline void lfs_free(void *p)
 #endif
 }
 
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
-
-#endif
-#endif
+#endif /* __B_LFS_CONFIG_H__ */
