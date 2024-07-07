@@ -58,7 +58,22 @@
  * \defgroup FS_Private_TypesDefinitions
  * \{
  */
-
+typedef struct
+{
+    uint8_t               used;
+    char                  prefix[5];
+    const bFSPartition_t *partition;
+#if defined(FS_FATFS)
+    FATFS bfs;
+#endif
+#if defined(FS_LITTLEFS)
+    struct lfs_config cfg;
+    lfs_t             bfs;
+    uint8_t           r_buf[LFS_CACHE_SIZE];
+    uint8_t           w_buf[LFS_CACHE_SIZE];
+    uint8_t           pre_buf[LFS_LOOKAHEAD_SIZE];
+#endif
+} bFS_t;
 /**
  * \}
  */
@@ -67,9 +82,11 @@
  * \defgroup FS_Private_Defines
  * \{
  */
+
 #ifndef FS_MOUNT_NUMBER
 #define FS_MOUNT_NUMBER (1)
 #endif
+
 /**
  * \}
  */
@@ -89,7 +106,7 @@
  */
 
 const static bFSPartition_t *gpbPartition      = NULL;
-static uint16_t              gbPartitionNumber = 0;
+static uint8_t               gbPartitionNumber = 0;
 
 static bFS_t gbFSTable[FS_MOUNT_NUMBER];
 
@@ -111,7 +128,7 @@ static bFS_t gbFSTable[FS_MOUNT_NUMBER];
  * \{
  */
 
-static const bFSPartition_t *_bFSFindPartition(uint16_t index)
+static const bFSPartition_t *_bFSFindPartition(uint8_t index)
 {
     int i = 0;
     for (i = 0; i < gbPartitionNumber; i++)
@@ -122,6 +139,25 @@ static const bFSPartition_t *_bFSFindPartition(uint16_t index)
         }
     }
     return NULL;
+}
+
+static bFS_t *_bFSFindMounted(uint8_t index)
+{
+    int    i   = 0;
+    bFS_t *pfs = NULL;
+    for (i = 0; i < FS_MOUNT_NUMBER; i++)
+    {
+        if (gbFSTable[i].used != 1)
+        {
+            continue;
+        }
+        if (gbFSTable[i].partition->index == index)
+        {
+            pfs = &gbFSTable[i];
+            break;
+        }
+    }
+    return pfs;
 }
 
 #if defined(FS_LITTLEFS)
@@ -150,12 +186,8 @@ static int _bFSDeviceRead(const struct lfs_config *c, lfs_block_t block, lfs_off
     {
         return LFS_ERR_CORRUPT;
     }
-    const bFSPartition_t *tmp = _bFSFindPartition(fs->index);
-    if (tmp == NULL)
-    {
-        return LFS_ERR_CORRUPT;
-    }
-    int ret = bFSPartitionRead(fs->index, fs->cfg.block_size * block + off, buffer, size);
+    int ret =
+        bFSPartitionRead(fs->partition->index, fs->cfg.block_size * block + off, buffer, size);
     if (ret >= 0)
     {
         return LFS_ERR_OK;
@@ -171,12 +203,8 @@ static int _bFSDeviceWrite(const struct lfs_config *c, lfs_block_t block, lfs_of
     {
         return LFS_ERR_CORRUPT;
     }
-    const bFSPartition_t *tmp = _bFSFindPartition(fs->index);
-    if (tmp == NULL)
-    {
-        return LFS_ERR_CORRUPT;
-    }
-    int ret = bFSPartitionWrite(fs->index, fs->cfg.block_size * block + off, (uint8_t *)buffer, size);
+    int ret = bFSPartitionWrite(fs->partition->index, fs->cfg.block_size * block + off,
+                                (uint8_t *)buffer, size);
     if (ret >= 0)
     {
         return LFS_ERR_OK;
@@ -191,12 +219,8 @@ static int _bFSDeviceErase(const struct lfs_config *c, lfs_block_t block)
     {
         return LFS_ERR_CORRUPT;
     }
-    const bFSPartition_t *tmp = _bFSFindPartition(fs->index);
-    if (tmp == NULL)
-    {
-        return LFS_ERR_CORRUPT;
-    }
-    int ret = bFSPartitionErase(fs->index, fs->cfg.block_size * block, fs->cfg.block_size);
+    int ret =
+        bFSPartitionErase(fs->partition->index, fs->cfg.block_size * block, fs->cfg.block_size);
     if (ret >= 0)
     {
         return LFS_ERR_OK;
@@ -211,6 +235,23 @@ static int _bFSDeviceSync(const struct lfs_config *c)
 
 #endif
 
+static int _bFSGetIndex(const char *path_str)
+{
+    int   number;
+    char *endptr;
+
+    number = strtol(path_str, &endptr, 10);
+
+    if (*endptr == ':' && number >= 0 && number <= 255)
+    {
+        return number;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 /**
  * \}
  */
@@ -220,7 +261,7 @@ static int _bFSDeviceSync(const struct lfs_config *c)
  * \{
  */
 
-int bFSInit(const bFSPartition_t *partition, uint16_t partition_number)
+int bFSInit(const bFSPartition_t *partition, uint8_t partition_number)
 {
     if (IS_NULL(partition) || partition_number == 0 || !IS_NULL(gpbPartition))
     {
@@ -232,134 +273,134 @@ int bFSInit(const bFSPartition_t *partition, uint16_t partition_number)
     return 0;
 }
 
-int bFSGetPartitionState(uint16_t index)
+int bFSGetPartitionState(uint8_t index)
 {
-    const bFSPartition_t *tmp = NULL;
+    const bFSPartition_t *partition = NULL;
     if (IS_NULL(gpbPartition) || gbPartitionNumber == 0)
     {
         return -1;
     }
-    tmp = _bFSFindPartition(index);
-    if (IS_NULL(tmp))
+    partition = _bFSFindPartition(index);
+    if (IS_NULL(partition))
     {
         return -1;
     }
-    if (bDeviceIsAbnormal(tmp->dev_no))
+    if (bDeviceIsAbnormal(partition->dev_no))
     {
         return -1;
     }
     return 0;
 }
 
-int bFSGetPartitionInfo(uint16_t index, const bFSPartition_t **partition)
+int bFSGetPartitionInfo(uint8_t index, const bFSPartition_t **p_partition)
 {
-    const bFSPartition_t *tmp = NULL;
-    if (IS_NULL(gpbPartition) || gbPartitionNumber == 0 || IS_NULL(partition))
+    const bFSPartition_t *partition = NULL;
+    if (IS_NULL(gpbPartition) || gbPartitionNumber == 0 || IS_NULL(p_partition))
     {
         return -1;
     }
-    tmp = _bFSFindPartition(index);
-    if (IS_NULL(tmp))
+    partition = _bFSFindPartition(index);
+    if (IS_NULL(partition))
     {
         return -1;
     }
-    *partition = tmp;
+    *p_partition = partition;
     return 0;
 }
 
-int bFSPartitionRead(uint16_t index, uint32_t offset, uint8_t *pbuf, uint32_t len)
+int bFSPartitionRead(uint8_t index, uint32_t offset, uint8_t *pbuf, uint32_t len)
 {
-    const bFSPartition_t *tmp = NULL;
+    const bFSPartition_t *partition = NULL;
     if (IS_NULL(pbuf) || (len == 0))
     {
         return -1;
     }
-    tmp = _bFSFindPartition(index);
-    if (IS_NULL(tmp) || offset >= tmp->total_size)
+    partition = _bFSFindPartition(index);
+    if (IS_NULL(partition) || offset >= partition->total_size)
     {
         return -1;
     }
     int      fd   = -1;
-    uint32_t rlen = (tmp->total_size - offset);
+    uint32_t rlen = (partition->total_size - offset);
     rlen          = (rlen > len) ? len : rlen;
-    fd            = bOpen(tmp->dev_no, BCORE_FLAG_RW);
+    fd            = bOpen(partition->dev_no, BCORE_FLAG_RW);
     if (fd < 0)
     {
         return -2;
     }
-    bLseek(fd, tmp->base_addr + offset);
+    bLseek(fd, partition->base_addr + offset);
     int ret = bRead(fd, pbuf, rlen);
     bClose(fd);
     return ret;
 }
 
-int bFSPartitionWrite(uint16_t index, uint32_t offset, uint8_t *pbuf, uint32_t len)
+int bFSPartitionWrite(uint8_t index, uint32_t offset, uint8_t *pbuf, uint32_t len)
 {
-    const bFSPartition_t *tmp = NULL;
+    const bFSPartition_t *partition = NULL;
     if (IS_NULL(pbuf) || (len == 0))
     {
         return -1;
     }
-    tmp = _bFSFindPartition(index);
-    if (IS_NULL(tmp) || offset >= tmp->total_size)
+    partition = _bFSFindPartition(index);
+    if (IS_NULL(partition) || offset >= partition->total_size)
     {
         return -1;
     }
     int      fd   = -1;
-    uint32_t wlen = (tmp->total_size - offset);
+    uint32_t wlen = (partition->total_size - offset);
     wlen          = (wlen > len) ? len : wlen;
-    fd            = bOpen(tmp->dev_no, BCORE_FLAG_RW);
+    fd            = bOpen(partition->dev_no, BCORE_FLAG_RW);
     if (fd < 0)
     {
         return -2;
     }
-    bLseek(fd, tmp->base_addr + offset);
+    bLseek(fd, partition->base_addr + offset);
     int ret = bWrite(fd, pbuf, wlen);
     bClose(fd);
     return ret;
 }
 
-int bFSPartitionErase(uint16_t index, uint32_t offset, uint32_t len)
+int bFSPartitionErase(uint8_t index, uint32_t offset, uint32_t len)
 {
-    const bFSPartition_t *tmp = NULL;
+    const bFSPartition_t *partition = NULL;
     bFlashErase_t         cmd_erase;
     if (len == 0)
     {
         return -1;
     }
-    tmp = _bFSFindPartition(index);
-    if (IS_NULL(tmp) || offset >= tmp->total_size)
+    partition = _bFSFindPartition(index);
+    if (IS_NULL(partition) || offset >= partition->total_size)
     {
         return -1;
     }
     int fd = -1;
-    fd     = bOpen(tmp->dev_no, BCORE_FLAG_RW);
+    fd     = bOpen(partition->dev_no, BCORE_FLAG_RW);
     if (fd < 0)
     {
         return -2;
     }
-    cmd_erase.addr = tmp->base_addr + offset;
-    cmd_erase.num  = len / tmp->sector_size;
+    cmd_erase.addr = partition->base_addr + offset;
+    cmd_erase.num  = len / partition->sector_size;
     int ret        = bCtl(fd, bCMD_ERASE_SECTOR, &cmd_erase);
     bClose(fd);
     return ret;
 }
 
-int bFSMount(bFS_t **pfs, uint16_t index, uint8_t mkfs)
+int bFSMount(uint8_t index, uint8_t mkfs)
 {
-    const bFSPartition_t *tmp = NULL;
-    if (IS_NULL(pfs))
+    bFS_t *fs = _bFSFindMounted(index);
+    if (fs != NULL)
     {
+        b_log_e("already mounted...\r\n");
         return -1;
     }
-    tmp = _bFSFindPartition(index);
-    if (tmp == NULL)
+    const bFSPartition_t *partition = _bFSFindPartition(index);
+    if (partition == NULL)
     {
+        b_log_e("invalid index...\r\n");
         return -1;
     }
-    bFS_t *fs = NULL;
-    int    i  = 0;
-    for (i = 0; i < FS_MOUNT_NUMBER; i++)
+    for (int i = 0; i < FS_MOUNT_NUMBER; i++)
     {
         if (gbFSTable[i].used == 0)
         {
@@ -369,28 +410,29 @@ int bFSMount(bFS_t **pfs, uint16_t index, uint8_t mkfs)
     }
     if (fs == NULL)
     {
+        b_log_e("The maximum number of mounts is reached\r\n");
         return -2;
     }
-    fs->index = index;
+    fs->partition = partition;
+    fs->used      = 1;
+    memset(&(fs->prefix[0]), 0, sizeof(fs->prefix));
+    sprintf(&(fs->prefix[0]), "%d:", partition->index);
 #if defined(FS_FATFS)
     FRESULT result = FR_OK;
-    uint8_t disk_str[8];
-    sprintf((char *)disk_str, "%d:", index);
-    result = f_mount(&(fs->bfs), (const char *)disk_str, 1);
 
+    result = f_mount(&(fs->bfs), (const char *)(&(fs->prefix[0])), 1);
     if ((result == FR_NO_FILESYSTEM) && (mkfs == 1))
     {
-        if (bFSMkfs(fs) == 0)
+        if (bFSMkfs(index) == 0)
         {
-            result = f_mount(&(fs->bfs), (const char *)disk_str, 1);
+            result = f_mount(&(fs->bfs), (const char *)(&(fs->prefix[0])), 1);
         }
     }
     if (result == FR_OK)
     {
-        fs->used = 1;
-        *pfs     = fs;
         return 0;
     }
+    fs->used = 0;
     b_log_e("result:%d\r\n", result);
     return -1;
 #elif (defined(FS_LITTLEFS))
@@ -402,8 +444,8 @@ int bFSMount(bFS_t **pfs, uint16_t index, uint8_t mkfs)
     fs->cfg.sync             = _bFSDeviceSync;
     fs->cfg.read_size        = 1;
     fs->cfg.prog_size        = 8;
-    fs->cfg.block_size       = tmp->sector_size;
-    fs->cfg.block_count      = tmp->total_size / tmp->sector_size;
+    fs->cfg.block_size       = partition->sector_size;
+    fs->cfg.block_count      = partition->total_size / partition->sector_size;
     fs->cfg.block_cycles     = 500;
     fs->cfg.cache_size       = LFS_CACHE_SIZE;
     fs->cfg.lookahead_size   = LFS_LOOKAHEAD_SIZE;
@@ -411,38 +453,38 @@ int bFSMount(bFS_t **pfs, uint16_t index, uint8_t mkfs)
     fs->cfg.prog_buffer      = fs->w_buf;
     fs->cfg.read_buffer      = fs->r_buf;
 
-    int err = lfs_mount(&(fs->bfs), &(fs->cfg));
-    if (err && (mkfs == 1))
+    int result = lfs_mount(&(fs->bfs), &(fs->cfg));
+    if (result && (mkfs == 1))
     {
-        err = bFSMkfs(fs);
-        if (err == 0)
+        result = bFSMkfs(index);
+        if (result == 0)
         {
-            err = lfs_mount(&(fs->bfs), &(fs->cfg));
+            result = lfs_mount(&(fs->bfs), &(fs->cfg));
         }
     }
-    if (err == 0)
+    if (result != 0)
     {
-        fs->used = 1;
-        *pfs     = fs;
+        fs->used = 0;
     }
-    b_log_e("err:%d\r\n", err);
-    return err;
+    b_log_e("result:%d\r\n", result);
+    return result;
 #else
     return -1;
 #endif
 }
 
-int bFSUnmount(bFS_t *pfs)
+int bFSUnmount(uint8_t index)
 {
-    if (IS_NULL(pfs) || pfs->used == 0)
+    bFS_t *pfs = _bFSFindMounted(index);
+    if (pfs == NULL)
     {
+        b_log_e("Not mounted...\r\n");
         return -1;
     }
 #if defined(FS_FATFS)
     FRESULT result = FR_OK;
-    uint8_t disk_str[8];
-    sprintf((char *)disk_str, "%d:", pfs->index);
-    result = f_mount(NULL, (const char *)disk_str, 1);
+
+    result = f_mount(NULL, (const char *)(&(pfs->prefix[0])), 1);
     if (result == FR_OK)
     {
         pfs->used = 0;
@@ -452,23 +494,36 @@ int bFSUnmount(bFS_t *pfs)
     return -1;
 #elif (defined(FS_LITTLEFS))
 
-    int err = lfs_unmount(&(pfs->bfs));
-    if (err == 0)
+    int result = lfs_unmount(&(pfs->bfs));
+    if (result == 0)
     {
         pfs->used        = 0;
         pfs->cfg.context = NULL;
     }
-    b_log_e("err:%d\r\n", err);
-    return err;
+    b_log_e("err:%d\r\n", result);
+    return result;
 #else
     return -1;
 #endif
 }
 
-int bFSOpen(bFS_t *pfs, bFSFile_t *pfile, const char *path, int flag)
+int bFSOpen(bFSFile_t *fil, const char *path, int flag)
 {
-    if (IS_NULL(pfs) || IS_NULL(path) || IS_NULL(pfile))
+    if (IS_NULL(path) || IS_NULL(fil))
     {
+        return -1;
+    }
+    int index = _bFSGetIndex(path);
+    if (index < 0)
+    {
+        b_log_e("path invalid...\r\n");
+        b_log_e("The right example: \"0:babyos.txt\" \"1:babyos.txt\" ...\r\n");
+        return -1;
+    }
+    bFS_t *pfs = _bFSFindMounted(index);
+    if (pfs == NULL)
+    {
+        b_log_e("Not mounted...\r\n");
         return -1;
     }
 #if defined(FS_FATFS)
@@ -501,10 +556,11 @@ int bFSOpen(bFS_t *pfs, bFSFile_t *pfile, const char *path, int flag)
     {
         mode |= FA_OPEN_APPEND;
     }
-    FRESULT ret = f_open(&(pfile->bfile), path, mode);
+    FRESULT ret = f_open(&(fil->bfile), path, mode);
     if (FR_OK == ret)
     {
-        return 0;
+        fil->reserved = pfs;
+        return ((int)fil);
     }
     b_log_e("ret:%d\r\n", ret);
     return -1;
@@ -538,13 +594,14 @@ int bFSOpen(bFS_t *pfs, bFSFile_t *pfile, const char *path, int flag)
     {
         lfflag |= LFS_O_APPEND;
     }
-    pfile->cfg.buffer     = pfile->buf;
-    pfile->cfg.attrs      = NULL;
-    pfile->cfg.attr_count = 0;
-    int ret = lfs_file_opencfg(&(pfs->bfs), &(pfile->bfile), path, lfflag, &(pfile->cfg));
+    fil->cfg.buffer     = fil->buf;
+    fil->cfg.attrs      = NULL;
+    fil->cfg.attr_count = 0;
+    int ret             = lfs_file_opencfg(&(pfs->bfs), &(fil->bfile), path, lfflag, &(fil->cfg));
     if (0 == ret)
     {
-        return 0;
+        fil->reserved = pfs;
+        return ((int)fil);
     }
     b_log_e("ret:%d\r\n", ret);
     return -1;
@@ -553,10 +610,16 @@ int bFSOpen(bFS_t *pfs, bFSFile_t *pfile, const char *path, int flag)
 #endif
 }
 
-int bFSWrite(bFS_t *pfs, bFSFile_t *pfile, uint8_t *pbuf, uint32_t len, uint32_t *wlen)
+int bFSWrite(int fd, uint8_t *pbuf, uint32_t len)
 {
     uint32_t real_len = 0;
-    if (IS_NULL(pfs) || IS_NULL(pfile) || IS_NULL(pbuf) || len == 0)
+    if (!BFS_FD_IS_VALID(fd) || IS_NULL(pbuf) || len == 0)
+    {
+        return -1;
+    }
+    bFSFile_t *pfile = (bFSFile_t *)fd;
+    bFS_t     *pfs   = pfile->reserved;
+    if (pfs == NULL)
     {
         return -1;
     }
@@ -564,37 +627,31 @@ int bFSWrite(bFS_t *pfs, bFSFile_t *pfile, uint8_t *pbuf, uint32_t len, uint32_t
     FRESULT ret = f_write(&(pfile->bfile), pbuf, len, &real_len);
     if (ret == FR_OK)
     {
-        if (wlen)
-        {
-            *wlen = real_len;
-        }
-        return 0;
+        return real_len;
     }
     b_log_e("ret:%d\r\n", ret);
     return -1;
 #elif (defined(FS_LITTLEFS))
     B_UNUSED(real_len);
     int ret = lfs_file_write(&(pfs->bfs), &(pfile->bfile), pbuf, len);
-    if (ret >= 0)
-    {
-        if (wlen)
-        {
-            *wlen = ret;
-        }
-        return 0;
-    }
     b_log_e("ret:%d\r\n", ret);
-    return -1;
+    return ret;
 #else
     B_UNUSED(real_len);
     return -1;
 #endif
 }
 
-int bFSRead(bFS_t *pfs, bFSFile_t *pfile, uint8_t *pbuf, uint32_t len, uint32_t *rlen)
+int bFSRead(int fd, uint8_t *pbuf, uint32_t len)
 {
     uint32_t real_len = 0;
-    if (IS_NULL(pfs) || IS_NULL(pfile) || IS_NULL(pbuf) || len == 0)
+    if (!BFS_FD_IS_VALID(fd) || IS_NULL(pbuf) || len == 0)
+    {
+        return -1;
+    }
+    bFSFile_t *pfile = (bFSFile_t *)fd;
+    bFS_t     *pfs   = pfile->reserved;
+    if (pfs == NULL)
     {
         return -1;
     }
@@ -602,36 +659,30 @@ int bFSRead(bFS_t *pfs, bFSFile_t *pfile, uint8_t *pbuf, uint32_t len, uint32_t 
     FRESULT ret = f_read(&(pfile->bfile), pbuf, len, &real_len);
     if (ret == FR_OK)
     {
-        if (rlen)
-        {
-            *rlen = real_len;
-        }
-        return 0;
+        return real_len;
     }
     b_log_e("ret:%d\r\n", ret);
     return -1;
 #elif (defined(FS_LITTLEFS))
     B_UNUSED(real_len);
     int ret = lfs_file_read(&(pfs->bfs), &(pfile->bfile), pbuf, len);
-    if (ret >= 0)
-    {
-        if (rlen)
-        {
-            *rlen = ret;
-        }
-        return 0;
-    }
     b_log_e("ret:%d\r\n", ret);
-    return -1;
+    return ret;
 #else
     B_UNUSED(real_len);
     return -1;
 #endif
 }
 
-int bFSClose(bFS_t *pfs, bFSFile_t *pfile)
+int bFSClose(int fd)
 {
-    if (IS_NULL(pfs) || IS_NULL(pfile))
+    if (!BFS_FD_IS_VALID(fd))
+    {
+        return -1;
+    }
+    bFSFile_t *pfile = (bFSFile_t *)fd;
+    bFS_t     *pfs   = pfile->reserved;
+    if (pfs == NULL)
     {
         return -1;
     }
@@ -655,9 +706,15 @@ int bFSClose(bFS_t *pfs, bFSFile_t *pfile)
 #endif
 }
 
-int bFSLseek(bFS_t *pfs, bFSFile_t *pfile, int32_t offset, int whence)
+int bFSLseek(int fd, int32_t offset, int whence)
 {
-    if (IS_NULL(pfs) || IS_NULL(pfile))
+    if (!BFS_FD_IS_VALID(fd))
+    {
+        return -1;
+    }
+    bFSFile_t *pfile = (bFSFile_t *)fd;
+    bFS_t     *pfs   = pfile->reserved;
+    if (pfs == NULL)
     {
         return -1;
     }
@@ -735,17 +792,16 @@ int bFSLseek(bFS_t *pfs, bFSFile_t *pfile, int32_t offset, int whence)
 static uint8_t bMkfsBuf[FF_MAX_SS];
 #endif
 #endif
-int bFSMkfs(bFS_t *pfs)
+int bFSMkfs(uint8_t index)
 {
 #if (defined(_FS_MKFS_ENABLE) && (_FS_MKFS_ENABLE == 1))
+    bFS_t *pfs = _bFSFindMounted(index);
     if (IS_NULL(pfs))
     {
         return -1;
     }
 #if defined(FS_FATFS)
-    uint8_t disk_str[8];
-    sprintf((char *)disk_str, "%d:", pfs->index);
-    FRESULT ret = f_mkfs((const char *)disk_str, NULL, bMkfsBuf, FF_MAX_SS);
+    FRESULT ret = f_mkfs((const char *)pfs->prefix, NULL, bMkfsBuf, FF_MAX_SS);
     if (ret == FR_OK)
     {
         return 0;
@@ -767,34 +823,30 @@ int bFSMkfs(bFS_t *pfs)
 #endif
 }
 
-int bFSGetInfo(bFS_t *pfs, uint32_t *ptotal_size, uint32_t *pfree_size)
+int bFSGetInfo(uint8_t index, uint32_t *ptotal_size, uint32_t *pfree_size)
 {
-    if (IS_NULL(pfs) || IS_NULL(ptotal_size) || IS_NULL(pfree_size))
+    if (IS_NULL(ptotal_size) || IS_NULL(pfree_size))
+    {
+        return -1;
+    }
+    bFS_t *pfs = _bFSFindMounted(index);
+    if (IS_NULL(pfs))
     {
         return -1;
     }
 #if defined(FS_FATFS)
-    uint16_t              index = pfs->index;
-    const bFSPartition_t *tmp   = NULL;
-    tmp                         = _bFSFindPartition(index);
-    if (tmp == NULL)
-    {
-        return -1;
-    }
     uint32_t fre_sect, tot_sect;
     DWORD    fclst  = 0;
     FATFS   *pfatfs = NULL;
-    uint8_t  disk_str[8];
-    sprintf((char *)disk_str, "%d:", pfs->index);
-    FRESULT ret = f_getfree((const char *)disk_str, &fclst, &pfatfs);
+    FRESULT  ret    = f_getfree((const char *)pfs->prefix, &fclst, &pfatfs);
     if (ret)
     {
         return -1;
     }
     tot_sect     = (pfatfs->n_fatent - 2) * pfatfs->csize;
     fre_sect     = fclst * pfatfs->csize;
-    *ptotal_size = tot_sect * tmp->sector_size;
-    *pfree_size  = fre_sect * tmp->sector_size;
+    *ptotal_size = tot_sect * pfs->partition->sector_size;
+    *pfree_size  = fre_sect * pfs->partition->sector_size;
     return 0;
 #elif (defined(FS_LITTLEFS))
     uint32_t total_space = pfs->cfg.block_size * pfs->cfg.block_count;
@@ -812,12 +864,13 @@ int bFSGetInfo(bFS_t *pfs, uint32_t *ptotal_size, uint32_t *pfree_size)
 #endif
 }
 
-int bFSFileGetInfo(bFS_t *pfs, bFSFile_t *pfile, uint32_t *pfile_size)
+int bFSFileGetInfo(int fd, uint32_t *pfile_size)
 {
-    if (IS_NULL(pfs) || IS_NULL(pfile) || IS_NULL(pfile_size))
+    if (!BFS_FD_IS_VALID(fd))
     {
         return -1;
     }
+    bFSFile_t *pfile = (bFSFile_t *)fd;
 #if defined(FS_FATFS)
     *pfile_size = f_size(&(pfile->bfile));
     return 0;
