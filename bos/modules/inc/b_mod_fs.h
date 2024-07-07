@@ -71,28 +71,12 @@ extern "C" {
  */
 typedef struct
 {
-    uint16_t index;
+    uint8_t  index;
     uint32_t dev_no;
     uint32_t base_addr;
     uint32_t total_size;
     uint16_t sector_size;
 } bFSPartition_t;
-
-typedef struct
-{
-    uint8_t  used;
-    uint16_t index;
-#if defined(FS_FATFS)
-    FATFS bfs;
-#endif
-#if defined(FS_LITTLEFS)
-    struct lfs_config cfg;
-    lfs_t             bfs;
-    uint8_t           r_buf[LFS_CACHE_SIZE];
-    uint8_t           w_buf[LFS_CACHE_SIZE];
-    uint8_t           pre_buf[LFS_LOOKAHEAD_SIZE];
-#endif
-} bFS_t;
 
 typedef struct
 {
@@ -104,6 +88,7 @@ typedef struct
     lfs_file_t             bfile;
     uint8_t                buf[LFS_CACHE_SIZE];
 #endif
+    void *reserved;
 } bFSFile_t;
 
 /**
@@ -126,10 +111,7 @@ typedef struct
 #define BFS_SEEK_CUR (0x2)
 #define BFS_SEEK_END (0x3)
 
-#ifndef FS_BLOCK_SIZE
-// Number of minimum erasure units
-#define FS_BLOCK_SIZE (1)
-#endif
+#define BFS_FD_IS_VALID(f) ((f) > 0)
 
 /**
  * \}
@@ -140,31 +122,25 @@ typedef struct
  * \{
  */
 
-int bFSInit(const bFSPartition_t *partition, uint16_t partition_number);
-/**
- * \brief
- * \param pfs
- * \param index
- * \param mkfs (1)Format if Mount Fails
- * \return int
- */
-int bFSMount(bFS_t **pfs, uint16_t index, uint8_t mkfs);
-int bFSUnmount(bFS_t *pfs);
-int bFSOpen(bFS_t *pfs, bFSFile_t *pfile, const char *path, int flag);
-int bFSWrite(bFS_t *pfs, bFSFile_t *pfile, uint8_t *pbuf, uint32_t len, uint32_t *wlen);
-int bFSRead(bFS_t *pfs, bFSFile_t *pfile, uint8_t *pbuf, uint32_t len, uint32_t *rlen);
-int bFSClose(bFS_t *pfs, bFSFile_t *pfile);
-int bFSLseek(bFS_t *pfs, bFSFile_t *pfile, int32_t offset, int whence);
-int bFSMkfs(bFS_t *pfs);
+int bFSInit(const bFSPartition_t *partition, uint8_t partition_number);
 
-int bFSGetInfo(bFS_t *pfs, uint32_t *ptotal_size, uint32_t *pfree_size);
-int bFSFileGetInfo(bFS_t *pfs, bFSFile_t *pfile, uint32_t *pfile_size);
+int bFSMount(uint8_t index, uint8_t mkfs);
+int bFSUnmount(uint8_t index);
+int bFSMkfs(uint8_t index);
+int bFSGetInfo(uint8_t index, uint32_t *ptotal_size, uint32_t *pfree_size);
 
-int bFSGetPartitionState(uint16_t index);
-int bFSGetPartitionInfo(uint16_t index, const bFSPartition_t **partition);
-int bFSPartitionRead(uint16_t index, uint32_t offset, uint8_t *pbuf, uint32_t len);
-int bFSPartitionWrite(uint16_t index, uint32_t offset, uint8_t *pbuf, uint32_t len);
-int bFSPartitionErase(uint16_t index, uint32_t offset, uint32_t len);
+int bFSOpen(bFSFile_t *fil, const char *path, int flag);
+int bFSWrite(int fd, uint8_t *pbuf, uint32_t len);
+int bFSRead(int fd, uint8_t *pbuf, uint32_t len);
+int bFSClose(int fd);
+int bFSLseek(int fd, int32_t offset, int whence);
+int bFSFileGetInfo(int fd, uint32_t *pfile_size);
+
+int bFSGetPartitionState(uint8_t index);
+int bFSGetPartitionInfo(uint8_t index, const bFSPartition_t **p_partition);
+int bFSPartitionRead(uint8_t index, uint32_t offset, uint8_t *pbuf, uint32_t len);
+int bFSPartitionWrite(uint8_t index, uint32_t offset, uint8_t *pbuf, uint32_t len);
+int bFSPartitionErase(uint8_t index, uint32_t offset, uint32_t len);
 
 /**
  * \}
