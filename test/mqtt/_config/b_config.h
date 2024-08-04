@@ -1,0 +1,47 @@
+#ifndef __B_CONFIG_H__ 
+#define __B_CONFIG_H__ 
+
+
+#define HW_VERSION 211212
+#define FW_VERSION 80106
+#define FW_NAME "BabyOS"
+#define TICK_FRQ_HZ 1000
+#define VENDOR_UBUNTU 1
+#define PCF8574_DEFAULT_OUTPUT 0
+#define MATRIX_KEYS_ROWS 4
+#define MATRIX_KEYS_COLUMNS 4
+#define ESP12F_CMD_BUF_LEN 128
+#define ESP12F_CMD_TIMEOUT 5000
+#define RS485_RX_BUF_LEN 128
+#define RS485_RX_IDLE_MS 50
+#define _485_USE_CALLBACK 1
+#define _BOS_MODULES_ENABLE 1
+#define _NETIF_ENABLE 1
+#define REMOTE_ADDR_LEN_MAX 128
+#define CONNECT_RECVBUF_MAX 10240
+#define SERVER_MAX_CONNECTIONS 2
+#define _CJSON_ENABLE 1
+#define CJSON_MEM_USE_BMALLOC 1
+#define _DEBUG_ENABLE 1
+#define LOG_LEVEL_ALL 1
+#define LOG_BUF_SIZE 100000
+#define _LOG_VIA_UART 1
+#define LOG_UART 0
+#define _MEMP_ENABLE 1
+#define MEMP_MAX_SIZE 102400
+#define _BOS_SERVICES_ENABLE 1
+#define _MQTT_SERVICE_ENABLE 1
+#define BABYOS_MQTT_BROKER 1
+#define MQTT_CLIENT_ID "babyos"
+#define MQTT_BROKER_URL "mqtt://babyos.cn:1883"
+#define MQTT_USER_NAME "babyos"
+#define MQTT_USER_PASSWD "babyos"
+#define MQTT_SUB_TOPIC_DEFAULT "ogugO0zq_Qi7O3HxQn9G4X2rhHZU"
+#define MQTT_QOS_DEFAULT 0
+#define MQTT_KEEP_ALIVE 60
+
+
+#include "b_type.h" 
+
+#endif 
+

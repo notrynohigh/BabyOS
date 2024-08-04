@@ -56,4 +56,53 @@ config OTA_TIMEOUT_S
     default 30
     depends on _OTA_SERVICE_ENABLE
 
+config _MQTT_SERVICE_ENABLE
+    bool "MQTT Enable/Disable"
+    default n
+    depends on _BOS_SERVICES_ENABLE
+    select _MEMP_ENABLE
+    select _NETIF_ENABLE
+
+choice
+    prompt "Select Mqtt Broker"
+    default BABYOS_MQTT_BROKER
+    depends on _MQTT_SERVICE_ENABLE
+config BABYOS_MQTT_BROKER
+    bool "BabyOS Mqtt Broker"
+config RESERVED_BROKER
+    bool "Reserved"
+endchoice
+
+if BABYOS_MQTT_BROKER
+
+config MQTT_CLIENT_ID
+    string "Mqtt Client Id"
+    default "babyos"
+
+config MQTT_BROKER_URL
+    string "Mqtt Broker Url"
+    default "mqtt://babyos.cn:1883"
+
+config MQTT_USER_NAME
+    string "Mqtt User Name"
+    default "babyos"
+
+config MQTT_USER_PASSWD
+    string "Mqtt User Passwd"
+    default "babyos"
+
+config MQTT_SUB_TOPIC_DEFAULT
+    string "Default MQTT Subscription Topic"
+    default "ogugO0zq_Qi7O3HxQn9G4X2rhH"
+
+config MQTT_QOS_DEFAULT
+    int "Default MQTT QOS"
+    default 0
+
+config MQTT_KEEP_ALIVE
+    int "MQTT Keep Alive"
+    default 60 
+
+endif
+
 endmenu
