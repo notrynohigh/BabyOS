@@ -5,12 +5,14 @@
 #if (defined(VENDOR_UBUNTU) && (VENDOR_UBUNTU == 1))
 
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/epoll.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -39,20 +41,45 @@ void *thread_function(void *arg)
     uint8_t   buf[CONNECT_RECVBUF_MAX];
     bTrans_t *ptrans = (bTrans_t *)arg;
     int       retval = -1;
+
+    int flags = fcntl(ptrans->sockfd, F_GETFL, 0);
+    if (fcntl(ptrans->sockfd, F_SETFL, flags | O_NONBLOCK) == -1)
+    {
+        b_log("fcntl fail\r\n");
+        return -1;
+    }
+
+    int                epoll_fd = epoll_create1(EPOLL_CLOEXEC);
+    struct epoll_event ev;
+    ev.events  = EPOLLIN;
+    ev.data.fd = ptrans->sockfd;
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, ptrans->sockfd, &ev) == -1)
+    {
+        b_log("epoll_ctl fail\r\n");
+        return NULL;
+    }
     while (1)
     {
-        retval = recv(ptrans->sockfd, buf, sizeof(buf), 0);
-        if (retval == -1 || retval == 0)
+        if (epoll_wait(epoll_fd, &ev, 1, -1) == -1)
         {
-            ;
+            b_log("epoll_wait fail\r\n");
+            return NULL;
         }
-        else if (retval > 0)
+        if (ev.data.fd == ptrans->sockfd && ev.events & EPOLLIN)
         {
-            b_log("recv:%d ...\r\n", retval);
-            b_log_hex(buf, retval);
-            bFIFO_Write(&ptrans->rx_fifo, buf, retval);
-            ptrans->readable = 1;
-            ptrans->callback(B_TRANS_NEW_DATA, ptrans, ptrans->cb_arg);
+            retval = recv(ptrans->sockfd, buf, sizeof(buf), 0);
+            if (retval == -1 || retval == 0)
+            {
+                ;
+            }
+            else if (retval > 0)
+            {
+                b_log("recv:%d ...\r\n", retval);
+                b_log_hex(buf, retval);
+                bFIFO_Write(&ptrans->rx_fifo, buf, retval);
+                ptrans->readable = 1;
+                ptrans->callback(B_TRANS_NEW_DATA, ptrans, ptrans->cb_arg);
+            }
         }
     }
     pthread_exit(NULL);

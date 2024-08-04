@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_util_memp.h
+ * \file        b_srv_mqtt.h
  * \version     v0.0.1
- * \date        2019/12/23
+ * \date        2023/08/27
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2019 Bean
+ * Copyright (c) 2023 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,67 +28,98 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_UTIL_MEMP_H__
-#define __B_UTIL_MEMP_H__
+#ifndef __B_SRV_MQTT_H__
+#define __B_SRV_MQTT_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdlib.h>
-#include <string.h>
+#include <stdint.h>
 
 #include "b_config.h"
 
+#if (defined(_MQTT_SERVICE_ENABLE) && (_MQTT_SERVICE_ENABLE == 1))
+
+#include "modules/inc/b_mod_netif/b_mod_link.h"
+#include "modules/inc/b_mod_netif/b_mod_trans.h"
+
 /**
- * \addtogroup B_UTILS
+ * \addtogroup BABYOS
  * \{
  */
 
 /**
- * \addtogroup MEMP
+ * \addtogroup SERVICES
  * \{
  */
 
-#if (defined(_MEMP_ENABLE) && (_MEMP_ENABLE == 1))
 /**
- * \defgroup MEMP_Exported_Functions
+ * \addtogroup MQTT
  * \{
  */
-#if (defined(_MEMP_MONITOR_ENABLE) && (_MEMP_MONITOR_ENABLE == 1))
 
-void* bMallocPlus(uint32_t size, const char* func, int line);
-void* bCallocPlus(uint32_t num, uint32_t size, const char* func, int line);
-void  bFreePlus(void* ptr, const char* func, int line);
-void* bReallocPlus(void* ptr, uint32_t size, const char* func, int line);
+/**
+ * \defgroup MQTT_Exported_TypesDefinitions
+ * \{
+ */
 
-#define bMalloc(size) bMallocPlus((size), __func__, __LINE__)
-#define bCalloc(num, size) bCallocPlus((num), (size), __func__, __LINE__)
-#define bFree(addr) bFreePlus((addr), __func__, __LINE__)
-#define bRealloc(addr, size) bReallocPlus((addr), (size), __func__, __LINE__)
-#else
+typedef struct
+{
+    uint8_t  dup;
+    uint8_t  retained;
+    uint16_t pack_id;
+    int      qos;
+    char    *topic;
+    uint16_t topic_len;
+    char    *payload;
+    uint32_t payload_len;
+} bMqttPubParam_t;
 
-void *bMalloc(uint32_t size);
-void *bCalloc(uint32_t num, uint32_t size);
-void  bFree(void *paddr);
-void *bRealloc(void *paddr, uint32_t size);
-#endif
+typedef union
+{
+    bMqttPubParam_t pub;
+} bMqttEvtParam_t;
 
-uint32_t bGetFreeSize(void);
-uint32_t bGetTotalSize(void);
+typedef enum
+{
+    B_MQTT_EVT_CONN,
+    B_MQTT_EVT_DISCONN,
+    B_MQTT_EVT_PUB,
+    B_MQTT_EVT_INVALID,
+} bMqttEvent_t;
 
-char* bStrDup(char* str);
+typedef struct
+{
+    char    *host;
+    char    *username;
+    char    *passwd;
+    uint16_t keep_alive;
+} bMqttConnParam_t;
 
-#if defined(__WEAKDEF)
-void bMallocFailedHook(void);
-#else
-void bMallocRegisterHook(void (*hook)(void));
-#endif
+typedef void (*pbMqttCallback_t)(bMqttEvent_t evt, bMqttEvtParam_t *param, void *user_data);
+
 /**
  * \}
  */
-#endif
+
+/**
+ * \defgroup MQTT_Exported_Defines
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup MQTT_Exported_Functions
+ * \{
+ */
+
+int bMqttSrvStartWithCfg(pbMqttCallback_t cb, void *arg);
+
 /**
  * \}
  */
@@ -96,10 +127,21 @@ void bMallocRegisterHook(void (*hook)(void));
 /**
  * \}
  */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+
+/************************ Copyright (c) 2023 Bean *****END OF FILE****/
