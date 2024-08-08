@@ -241,7 +241,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
     uint16_t         crc    = 0;
     bProtocolAttr_t *pattr  = (bProtocolAttr_t *)attr;
     bModbusCbParm_t  param;
-
+		uint16_t 				 buf[] = {0};
     if (i_len < 2)
     {
         return MODBUS_LEN_ERR;
@@ -268,7 +268,9 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         {
             r_ack->param[i] = L2B_B2L_16b(r_ack->param[i]);
         }
-        param.reg_value = (uint16_t *)r_ack->param;
+//        param.reg_value = (uint16_t *)r_ack->param;
+				buf[0] = r_ack->param[0];
+				param.reg_value = (uint16_t *)buf;
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
