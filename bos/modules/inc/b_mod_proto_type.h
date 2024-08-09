@@ -40,7 +40,7 @@ extern "C" {
 
 #include "b_section.h"
 #include "utils/inc/b_util_list.h"
-
+#include "b_config.h"
 #pragma pack(1)
 
 typedef struct
@@ -99,7 +99,7 @@ typedef struct
     uint8_t  slave_addr;
     uint8_t  reserved;
     uint8_t  len;
-    uint16_t reg_value[1];  // Little endian
+    uint16_t reg_value[MY_DEVICE_MODBUS_REG_NUM];  // Little endian
 } bModbusSlaveRead_t;
 
 typedef struct

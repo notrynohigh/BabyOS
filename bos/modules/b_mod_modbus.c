@@ -635,7 +635,8 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
     if (cmd == B_MODBUS_CMD_READ_REG)
     {
         bModbusSlaveRead_t *param = (bModbusSlaveRead_t *)buf;
-        len                       = sizeof(bModbusSlaveRead_t) + param->len;
+//        len                       = sizeof(bModbusSlaveRead_t) + param->len;
+				len                       = 5 + param->len;//5 = ID(1) + FUNTION(1)+LEN(1) +CRC(2)
         if (buf_len < len)
         {
             return MODBUS_LEN_ERR;
@@ -648,7 +649,8 @@ static int _bModbusRTUSlavePackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, ui
         {
             return MODBUS_LEN_ERR;
         }
-        for (i = 0; i < param->len / 2; i++)
+//        for (i = 0; i < param->len / 2; i++)
+				for (i = 0; i < param->len ; i++)
         {
             param->reg_value[i] = L2B_B2L_16b(param->reg_value[i]);
         }
