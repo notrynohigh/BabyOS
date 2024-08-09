@@ -37,7 +37,7 @@
 #include <string.h>
 
 #include "algorithm/inc/algo_crc.h"
-
+#include "utils/inc/b_util_log.h"
 /**
  * \addtogroup BABYOS
  * \{
@@ -73,7 +73,7 @@ typedef struct
     uint8_t  addr;
     uint8_t  func;
     uint8_t  len;
-    uint16_t param[1];
+    uint16_t param[MY_DEVICE_MODBUS_REG_NUM];
 } bModbusMasterSendReadRegsAck_t;
 
 typedef struct
@@ -241,7 +241,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
     uint16_t         crc    = 0;
     bProtocolAttr_t *pattr  = (bProtocolAttr_t *)attr;
     bModbusCbParm_t  param;
-		uint16_t 				 buf[] = {0};
+		uint16_t 				 buf[MY_DEVICE_MODBUS_REG_NUM] = {0};
     if (i_len < 2)
     {
         return MODBUS_LEN_ERR;
@@ -250,8 +250,9 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
     if (in[1] == MODBUS_RTU_READ_REGS)
     {
         bModbusMasterSendReadRegsAck_t *r_ack = (bModbusMasterSendReadRegsAck_t *)in;
-        len                                   = sizeof(bModbusMasterSendReadRegsAck_t) + r_ack->len;
-        if (i_len < len)
+//        len                                   = sizeof(bModbusMasterSendReadRegsAck_t) + r_ack->len;
+				len                                   = 5 + r_ack->len;
+        if (i_len != len)
         {
             return MODBUS_LEN_ERR;
         }
@@ -260,17 +261,23 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         {
             return MODBUS_FRAME_HEAD_ERR;
         }
-        param.slave_id = pattr->reserved;  // 用户层保证该地址为从机的实际设备地址
+//        param.slave_id = pattr->reserved;  // 用户层保证该地址为从机的实际设备地址
+				param.slave_id = r_ack->addr;
         param.func_code = r_ack->func;
         param.base_reg  = 0;
         param.reg_num   = r_ack->len / 2;
+				if ((param.reg_num ) >= MY_DEVICE_MODBUS_REG_NUM)
+        {
+            return MODBUS_MAX_REGNUM_ERR;
+        }
         for (i = 0; i < param.reg_num; i++)
         {
             r_ack->param[i] = L2B_B2L_16b(r_ack->param[i]);
+						buf[i] = r_ack->param[i];
         }
-//        param.reg_value = (uint16_t *)r_ack->param;
-				buf[0] = r_ack->param[0];
-				param.reg_value = (uint16_t *)buf;
+//        param.reg_value = (int16_t *)r_ack->param;
+				b_log("r_ack->param address is : %x ", &r_ack->param);				
+				param.reg_value = (int16_t *)buf;
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
@@ -295,7 +302,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
         param.base_reg  = L2B_B2L_16b(w_1_ack->reg);
         param.reg_num   = 1;
         w_1_ack->value  = L2B_B2L_16b(w_1_ack->value);
-        param.reg_value = (uint16_t *)&w_1_ack->value;
+        param.reg_value = (int16_t *)&w_1_ack->value;
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_WRITE_REGS, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
         {
@@ -513,7 +520,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
             return MODBUS_ILLEGAL_REG_ERR;
         }
         w_1->value      = L2B_B2L_16b(w_1->value);
-        param.reg_value = &w_1->value;
+        param.reg_value = (int16_t *)&w_1->value;
 
         B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
                           (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
@@ -569,7 +576,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         {
             (w->param)[i] = L2B_B2L_16b((w->param)[i]);
         }
-        param.reg_value = w->param;
+        param.reg_value = (int16_t *)w->param;
 
         B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
                           (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));

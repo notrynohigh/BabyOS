@@ -108,7 +108,7 @@ typedef struct
     uint8_t   func_code;
     uint16_t  base_reg;   // Little endian
     uint16_t  reg_num;    // Little endian
-    uint16_t *reg_value;  // Little endian
+    int16_t 	*reg_value;   // Little endian
 } bModbusCbParm_t;
 
 typedef struct
