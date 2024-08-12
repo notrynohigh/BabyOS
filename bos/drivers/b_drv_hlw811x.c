@@ -1,0 +1,2266 @@
+/**
+ *!
+ * \file        b_drv_lis3dh.c
+ * \version     v0.0.1
+ * \date        2020/06/08
+ * \author      Bean(notrynohigh@outlook.com)
+ *******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2020 Bean
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *******************************************************************************
+ */
+
+/*Includes ----------------------------------------------*/
+#include "drivers/inc/b_drv_hlw811x.h"
+#include "drivers/inc/HLW811x_regs.h"
+#include <string.h>
+
+#include "utils/inc/b_util_log.h"
+
+/**
+ * \addtogroup B_DRIVER
+ * \{
+ */
+
+/**
+ * \addtogroup LIS3DH
+ * \{
+ */
+
+/**
+ * \defgroup LIS3DH_Private_TypesDefinitions
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup LIS3DH_Private_Defines
+ * \{
+ */
+
+#define DRIVER_NAME HLW811X
+
+/** Device Identification (Who am I) **/
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup LIS3DH_Private_Macros
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup LIS3DH_Private_Variables
+ * \{
+ */
+bDRIVER_HALIF_TABLE(bHLW811X_HalIf_t, DRIVER_NAME);
+
+static bList3dhPrivate_t bHlw811xRunInfo[bDRIVER_HALIF_NUM(bHLW811X_HalIf_t, DRIVER_NAME)];
+static const int         Digit2mgTable[4][3] = {{1, 4, 16}, {2, 8, 32}, {4, 16, 64}, {12, 48, 192}};
+static const int         DataShiftTable[3]   = {4, 6, 8};
+/**
+ * \}
+ */
+
+/**
+ * \defgroup LIS3DH_Private_FunctionPrototypes
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup LIS3DH_Private_Functions
+ * \{
+ */
+static int _bHlw811xhReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+{
+    bDRIVER_GET_HALIF(_if, bLIS3DH_HalIf_t, pdrv);
+    if (_if->is_spi)
+    {
+        reg |= 0xC0;
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
+        bHalSpiSend(&_if->_if._spi, &reg, 1);
+        bHalSpiReceive(&_if->_if._spi, data, len);
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+    }
+    else
+    {
+        reg = reg | 0x80;
+        bHalI2CMemRead(&_if->_if._i2c, reg, 1, data, len);
+    }
+    return 0;
+}
+
+static int _bHlw811xWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
+{
+    bDRIVER_GET_HALIF(_if, bLIS3DH_HalIf_t, pdrv);
+    if (_if->is_spi)
+    {
+        reg |= 0x40;
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
+        bHalSpiSend(&_if->_if._spi, &reg, 1);
+        bHalSpiSend(&_if->_if._spi, data, len);
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+    }
+    else
+    {
+        bHalI2CMemWrite(&_if->_if._i2c, reg, 1, data, len);
+    }
+    return 0;
+}
+
+static uint8_t _bHlw811xGetID(bDriverInterface_t *pdrv)
+{
+    uint8_t id = 0;
+    _bLis3dhReadRegs(pdrv, LIS3DH_WHO_AM_I, &id, 1);
+    b_log("lis3dh id:%x\n", id);
+    return id;
+}
+
+static void bLis3dhBlockDataUpdateSet(bDriverInterface_t *pdrv, uint8_t val)
+{
+    uint8_t reg = 0;
+    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG4, &reg, 1);
+    reg &= ~(0x1 << 7);
+    reg |= (((val == 1) ? 0x1 : 0x0) << 7);
+    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG4, &reg, 1);
+}
+
+static void bLis3dhDataRateSet(bDriverInterface_t *pdrv, bLis3dhODR_t val)
+{
+    uint8_t reg = 0;
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG1, &reg, 1);
+    reg &= 0x0f;
+    reg |= (val) << 4;
+    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG1, &reg, 1);
+    _private->odr = val;
+}
+
+static void bLis3dhFullScaleSet(bDriverInterface_t *pdrv, bLis3dhFS_t val)
+{
+    uint8_t reg = 0;
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG4, &reg, 1);
+    reg &= ~((0x3) << 4);
+    reg |= (val) << 4;
+    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG4, &reg, 1);
+    _private->fs = val;
+}
+
+static void bLis3dhFifoSet(bDriverInterface_t *pdrv, uint8_t en)
+{
+    uint8_t reg = 0;
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG5, &reg, 1);
+    if (en)
+    {
+        reg |= (0x1 << 6);
+    }
+    else
+    {
+        reg &= ~(0x1 << 6);
+    }
+    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG5, &reg, 1);
+    _private->fifo_en = en;
+}
+
+static void bLis3dhFifoWatermarkSet(bDriverInterface_t *pdrv, uint8_t watermark)
+{
+    uint8_t reg = 0;
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    _bLis3dhReadRegs(pdrv, LIS3DH_FIFO_CTRL_REG, &reg, 1);
+    reg = (reg & ~(0x1f)) | (watermark & 0x1f);
+    _bLis3dhWriteRegs(pdrv, LIS3DH_FIFO_CTRL_REG, &reg, 1);
+    _private->watermark = watermark & 0x1f;
+}
+
+static void bLis3dhFifoWatermarkInt(bDriverInterface_t *pdrv, uint8_t en)
+{
+    uint8_t reg = 0;
+    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG3, &reg, 1);
+    if (en)
+    {
+        reg |= (0x1) << 2;
+    }
+    else
+    {
+        reg &= ~((0x1) << 2);
+    }
+    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG3, &reg, 1);
+}
+
+static void bLis3dhFifoModeSet(bDriverInterface_t *pdrv, bLis3dhFifoMode_t mode)
+{
+    uint8_t reg = 0;
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    _bLis3dhReadRegs(pdrv, LIS3DH_FIFO_CTRL_REG, &reg, 1);
+    reg &= ~(0x3 << 6);
+    reg |= (mode) << 6;
+    b_log("reg:%x\r\n", reg);
+    _bLis3dhWriteRegs(pdrv, LIS3DH_FIFO_CTRL_REG, &reg, 1);
+    _private->fm = mode;
+}
+
+static void bLis3dhIntPolaritySet(bDriverInterface_t *pdrv, uint8_t horl)
+{
+    uint8_t reg = 0;
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG6, &reg, 1);
+    if (horl)
+    {
+        reg &= ~((0x1) << 1);
+    }
+    else
+    {
+        reg |= (0x1) << 1;
+    }
+    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG6, &reg, 1);
+    _private->int_polarity = (horl != 0);
+}
+
+static void bLis3dhOptModeSet(bDriverInterface_t *pdrv, bLis3dhOptMode_t val)
+{
+    uint8_t reg1 = 0, reg4 = 0;
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG1, &reg1, 1);
+    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG4, &reg4, 1);
+
+    reg1 &= ~(0x1 << 3);
+    reg4 &= ~(0x1 << 3);
+
+    if (val == LIS3DH_HR_12BIT)
+    {
+        reg4 |= (0x1 << 3);
+    }
+
+    if (val == LIS3DH_NM_10BIT)
+    {
+        ;
+    }
+
+    if (val == LIS3DH_LP_8BIT)
+    {
+        reg1 |= (0x1 << 3);
+    }
+
+    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG1, &reg1, 1);
+    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG4, &reg4, 1);
+    _private->opmode = val;
+}
+
+static uint8_t _bLis3dhFifoFthFlagGet(bDriverInterface_t *pdrv)
+{
+    uint8_t reg = 0;
+    _bLis3dhReadRegs(pdrv, LIS3DH_FIFO_SRC_REG, &reg, 1);
+    return ((reg & 0x80) >> 7);
+}
+
+static uint8_t _bLis3dhFifoDataLevelGet(bDriverInterface_t *pdrv)
+{
+    uint8_t reg = 0;
+    _bLis3dhReadRegs(pdrv, LIS3DH_FIFO_SRC_REG, &reg, 1);
+    return (reg & 0x1f);
+}
+
+static void _bLis3dhGetRawData(bDriverInterface_t *pdrv, bGsensor3Axis_t *pval)
+{
+    uint8_t buff[6];
+    _bLis3dhReadRegs(pdrv, LIS3DH_OUT_X_L, buff, 6);
+    pval->x_mg = (int16_t)buff[1];
+    pval->x_mg = (pval->x_mg * 256) + (int16_t)buff[0];
+    pval->y_mg = (int16_t)buff[3];
+    pval->y_mg = (pval->y_mg * 256) + (int16_t)buff[2];
+    pval->z_mg = (int16_t)buff[5];
+    pval->z_mg = (pval->z_mg * 256) + (int16_t)buff[4];
+}
+
+static void _bLis3dhClearFifo(bDriverInterface_t *pdrv)
+{
+    uint8_t         flags;
+    uint8_t         num = 0, i = 0;
+    bGsensor3Axis_t tmp;
+    /* Check if FIFO level over threshold */
+    flags = _bLis3dhFifoFthFlagGet(pdrv);
+    if (flags)
+    {
+        /* Read number of sample in FIFO */
+        num = _bLis3dhFifoDataLevelGet(pdrv);
+        for (i = 0; i < num; i++)
+        {
+            _bLis3dhGetRawData(pdrv, &tmp);
+        }
+    }
+}
+
+static void _bLis3dhItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *param,
+                              void *user_data)
+{
+    uint8_t             flags;
+    uint8_t             num = 0, i = 0;
+    bGsensor3Axis_t     tmp;
+    bDriverInterface_t *pdrv = user_data;
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    /* Check if FIFO level over threshold */
+    flags = _bLis3dhFifoFthFlagGet(pdrv);
+    if (flags)
+    {
+        /* Read number of sample in FIFO */
+        num = _bLis3dhFifoDataLevelGet(pdrv);
+        for (i = 0; i < num; i++)
+        {
+            _bLis3dhGetRawData(pdrv, &tmp);
+            tmp.x_mg = (tmp.x_mg >> DataShiftTable[_private->opmode]) *
+                       Digit2mgTable[_private->fs][_private->opmode];
+            tmp.y_mg = (tmp.y_mg >> DataShiftTable[_private->opmode]) *
+                       Digit2mgTable[_private->fs][_private->opmode];
+            tmp.z_mg = (tmp.z_mg >> DataShiftTable[_private->opmode]) *
+                       Digit2mgTable[_private->fs][_private->opmode];
+            bFIFO_Write(&pdrv->r_cache, (uint8_t *)&tmp, sizeof(bGsensor3Axis_t));
+        }
+    }
+}
+
+static void _bLis3dhDefaultCfg(bDriverInterface_t *pdrv)
+{
+    bDRIVER_GET_HALIF(_if, bLIS3DH_HalIf_t, pdrv);
+    bLis3dhBlockDataUpdateSet(pdrv, 0);
+    bLis3dhDataRateSet(pdrv, LIS3DH_ODR_25Hz);
+    bLis3dhFullScaleSet(pdrv, LIS3DH_FS_4G);
+    bLis3dhOptModeSet(pdrv, LIS3DH_HR_12BIT);
+    if (_if->it[0].it == B_HAL_IT_EXTI)
+    {
+        bLis3dhFifoWatermarkSet(pdrv, 31);
+        bLis3dhFifoWatermarkInt(pdrv, 1);
+        bLis3dhFifoModeSet(pdrv, LIS3DH_DYNAMIC_STREAM_MODE);
+        bLis3dhFifoSet(pdrv, 1);
+        bLis3dhIntPolaritySet(pdrv, 0);
+        bHAL_IT_REGISTER(lis3dh_it, B_HAL_IT_EXTI, _if->it[0].index, _bLis3dhItHandler, pdrv);
+    }
+}
+
+static int _bLis3dhRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
+{
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
+    bGsensor3Axis_t *ptmp = (bGsensor3Axis_t *)pbuf;
+    int              i    = 0;
+    uint8_t          c    = len / sizeof(bGsensor3Axis_t);
+
+    for (i = 0; i < c; i++)
+    {
+        if (bFIFO_Read(&pdrv->r_cache, (uint8_t *)&ptmp[i], sizeof(bGsensor3Axis_t)) > 0)
+        {
+            ;
+        }
+        else
+        {
+            _bLis3dhGetRawData(pdrv, &ptmp[i]);
+            ptmp[i].x_mg = (ptmp[i].x_mg >> DataShiftTable[_private->opmode]) *
+                           Digit2mgTable[_private->fs][_private->opmode];
+            ptmp[i].y_mg = (ptmp[i].y_mg >> DataShiftTable[_private->opmode]) *
+                           Digit2mgTable[_private->fs][_private->opmode];
+            ptmp[i].z_mg = (ptmp[i].z_mg >> DataShiftTable[_private->opmode]) *
+                           Digit2mgTable[_private->fs][_private->opmode];
+        }
+    }
+    return (c * sizeof(bGsensor3Axis_t));
+}
+
+
+/* Private Constants ------------------------------------------------------------*/
+/**
+ * @brief  Commands
+ */
+#define HLW811X_COMMAND_ADDRESS       HLW811X_REG_ADDR_Command
+#define HLW811X_COMMAND_WRITE_ENABLE  0xE5
+#define HLW811X_COMMAND_WRITE_CLOSE   0xDC
+#define HLW811X_COMMAND_CHANNELA      0x5A
+#define HLW811X_COMMAND_CHANNELB      0xA5
+#define HLW811X_COMMAND_RESET         0x96
+
+/**
+ * @brief  CoefReg coefficients
+ */
+#define HLW811X_VREF                  1.25f
+
+/**
+ * @brief  PGA coefficients
+ */
+static const uint8_t HLW811X_PGA_TABLE[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
+
+
+/**
+ ==================================================================================
+                       ##### Private Functions #####
+ ==================================================================================
+ */
+ static inline int8_t
+HLW811x_WriteReg(bDriverInterface_t *pdrv,
+                    uint8_t Address, uint8_t Size, uint8_t *Data)
+{
+	
+	
+}
+static inline int8_t
+HLW811x_ReadReg(bDriverInterface_t *pdrv,
+                   uint8_t Address, uint8_t Size, uint8_t *Data)
+{
+
+
+}
+
+static int8_t
+HLW811x_WriteReg16(bDriverInterface_t *pdrv,,
+                   uint8_t Address, uint16_t Data)
+{
+  uint8_t Buffer[2] = {0};
+  
+  Buffer[0] = (Data >> 8) & 0xFF;
+  Buffer[1] = Data & 0xFF;
+
+  return HLW811x_WriteReg(pdrv, Address, 2, Buffer);
+}
+
+static int8_t
+HLW811x_ReadReg16(bDriverInterface_t *pdrv,
+                  uint8_t Address, uint16_t *Data)
+{
+  uint8_t Buffer[2] = {0};
+  int8_t Result = 0;
+  
+  Result = HLW811x_ReadReg(Handler, Address, 2, Buffer);
+  if (Result < 0)
+    return Result;
+
+  *Data = ((uint16_t)Buffer[0] << 8) | ((uint16_t)Buffer[1]);
+  return Result;
+}
+
+static int8_t
+HLW811x_ReadReg24(bDriverInterface_t *pdrv,
+                  uint8_t Address, uint32_t *Data)
+{
+  uint8_t Buffer[3] = {0};
+  int8_t Result = 0;
+  
+  Result = HLW811x_ReadReg(Handler, Address, 3, Buffer);
+  if (Result < 0)
+    return Result;
+
+  *Data = ((uint32_t)Buffer[0] << 16) | ((uint32_t)Buffer[1] << 8) |
+          ((uint32_t)Buffer[2]);
+  return Result;
+}
+
+static int8_t
+HLW811x_ReadReg32(bDriverInterface_t *pdrv,
+                  uint8_t Address, uint32_t *Data)
+{
+  uint8_t Buffer[4] = {0};
+  int8_t Result = 0;
+  
+  Result = HLW811x_ReadReg(Handler, Address, 4, Buffer);
+  if (Result < 0)
+    return Result;
+
+  *Data = ((uint32_t)Buffer[0] << 24) | ((uint32_t)Buffer[1] << 16) |
+          ((uint32_t)Buffer[2] << 8)  | ((uint32_t)Buffer[3]);
+  return Result;
+}
+
+static int8_t
+HLW811x_Command(bDriverInterface_t *pdrv, uint8_t Command)
+{
+  uint8_t Buffer = Command;
+  return HLW811x_WriteReg(Handler, HLW811X_COMMAND_ADDRESS, 1, &Buffer);
+}
+
+static inline int8_t
+HLW811x_CommandEnableWriteOperation(bDriverInterface_t *pdrv)
+{
+  return HLW811x_Command(Handler, HLW811X_COMMAND_WRITE_ENABLE);
+}
+
+static inline int8_t
+HLW811x_CommandCloseWriteOperation(bDriverInterface_t *pdrv)
+{
+  return HLW811x_Command(Handler, HLW811X_COMMAND_WRITE_CLOSE);
+}
+
+static inline int8_t
+HLW811x_CommandReset(bDriverInterface_t *pdrv)
+{
+  return HLW811x_Command(Handler, HLW811X_COMMAND_RESET);
+}
+
+static int32_t
+HLW811x_24BitTo32Bit(uint32_t Data)
+{
+  int32_t Res = 0;
+
+  Data &= 0x00FFFFFF;
+
+  // convert three bytes of 2s complement into 24 bit signed integer
+  if (Data & 0x00800000)
+    Res = 0xFF000000;
+  Res |= Data;
+
+  // Res is now a 32-bit signed integer
+  return Res;
+}
+
+/**
+ ==================================================================================
+                            ##### Public Functions #####
+ ==================================================================================
+ */
+
+/**
+ * @brief  Initializer function
+ * @param  Handler: Pointer to handler
+ * @param  Device: Device type
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t 
+HLW811x_Init(bDriverInterface_t *pdrv, HLW811x_Device_t Device)
+{
+	
+	
+}
+
+/**
+ * @brief  Deinitialize function
+ * @param  Handler: Pointer to handler
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t 
+HLW811x_DeInit(bDriverInterface_t *pdrv)
+{
+	
+}
+
+/**
+ * @brief  Low level read register function
+ * @param  Handler: Pointer to handler
+ * @param  RegAddr: Register address
+ * @param  Data: Pointer to buffer to store data
+ * @param  Len: Register data length in bytes
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_ReadRegLL(bDriverInterface_t *pdrv,
+                  uint8_t RegAddr,
+                  uint8_t *Data,
+                  uint8_t Len)
+{
+  if (!pdrv || !Data)
+    return HLW811X_INVALID_PARAM;
+
+  if (Len == 0)
+    return HLW811X_INVALID_PARAM;
+
+  return ((HLW811x_ReadReg(pdrv, RegAddr, Len, Data) >= 0) ? HLW811X_OK : HLW811X_FAIL);
+}
+
+/**
+ * @brief  Low level read register function
+ * @param  Handler: Pointer to handler
+ * @param  RegAddr: Register address
+ * @param  Data: Pointer to buffer to store data
+ * @param  Len: Register data length in bytes
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_ReadRegLL(bDriverInterface_t *pdrv,
+                  uint8_t RegAddr,
+                  uint8_t *Data,
+                  uint8_t Len)
+{
+  if (!Handler || !Data)
+    return HLW811X_INVALID_PARAM;
+
+  if (Len == 0)
+    return HLW811X_INVALID_PARAM;
+
+  return ((HLW811x_ReadReg(Handler, RegAddr, Len, Data) >= 0) ? HLW811X_OK : HLW811X_FAIL);
+}
+
+
+/**
+ * @brief  Low level write register function
+ * @param  Handler: Pointer to handler
+ * @param  RegAddr: Register address
+ * @param  Data: Pointer to data to write
+ * @param  Len: Register data length in bytes
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_WriteRegLL(bDriverInterface_t *pdrv,
+                   uint8_t RegAddr,
+                   uint8_t *Data,
+                   uint8_t Len)
+{
+  int8_t Result = 0;
+
+  if (!Handler || !Data)
+    return HLW811X_INVALID_PARAM;
+
+  if (Len == 0)
+    return HLW811X_INVALID_PARAM;
+
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg(Handler, RegAddr, Len, Data);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Begin function to initialize the device and set the default values
+ * @note   This function must be called after initializing platform dependent and
+ *         HLW811x_Init functions.
+ * 
+ * @note   This function will read the coefficients from the device. It is
+ *         mandatory to call this function before using other functions such as
+ *         HLW811x_GetRmsU, HLW811x_GetRmsIx and etc.
+ * 
+ * @param  Handler: Pointer to handler
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_Begin(bDriverInterface_t *pdrv)
+{
+  int8_t Result = 0;
+  uint16_t Reg16 = 0;
+  uint16_t Checksum = 0;
+
+  Handler->ResCoef.KU = 1.0f;
+  Handler->ResCoef.KIA = 1.0f;
+  Handler->ResCoef.KIB = 1.0f;
+
+  Handler->PGA.U = HLW811X_PGA_1;
+  Handler->PGA.IA = HLW811X_PGA_16;
+  Handler->PGA.IB = HLW811X_PGA_1;
+
+  Handler->CLKI = 3579545;
+
+  if (HLW811x_SetSpecialMeasurementChannel(Handler,
+                                           HLW811X_CURRENT_CHANNEL_A) != HLW811X_OK)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_HFConst, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->HFconst = Reg16;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_RmsIAC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->CoefReg.RmsIAC = Reg16;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_RmsIBC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->CoefReg.RmsIBC = Reg16;
+  
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_RmsUC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->CoefReg.RmsUC = Reg16;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_PowerPAC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->CoefReg.PowerPAC = Reg16;
+  
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_PowerPBC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->CoefReg.PowerPBC = Reg16;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_PowerSC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->CoefReg.PowerSC = Reg16;
+  
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EnergyAC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->CoefReg.EnergyAC = Reg16;
+  
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EnergyBC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Handler->CoefReg.EnergyBC = Reg16;
+
+  Checksum = 0xFFFF +
+             Handler->CoefReg.RmsIAC +
+             Handler->CoefReg.RmsIBC +
+             Handler->CoefReg.RmsUC +
+             Handler->CoefReg.PowerPAC +
+             Handler->CoefReg.PowerPBC +
+             Handler->CoefReg.PowerSC +
+             Handler->CoefReg.EnergyAC +
+             Handler->CoefReg.EnergyBC;
+  Checksum = ~Checksum;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_Coeff_chksum, &Reg16);
+  if (Result < 0 || Checksum != Reg16)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+/**
+ * @brief  Set the ratio of the resistors for current channel A
+ * @note   This ration mentioned in the datasheet as K1
+ * @param  Handler: Pointer to handler
+ * @param  KIA: Ratio of the resistors for current channel A
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ */
+HLW811x_Result_t
+HLW811x_SetResRatioIA(bDriverInterface_t *pdrv, float KIA)
+{
+  Handler->ResCoef.KIA = KIA;
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the ratio of the resistors for current channel B
+ * @note   This ration mentioned in the datasheet as K1
+ * @param  Handler: Pointer to handler
+ * @param  KIA: Ratio of the resistors for current channel B
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ */
+HLW811x_Result_t
+HLW811x_SetResRatioIB(bDriverInterface_t *pdrv, float KIB)
+{
+  Handler->ResCoef.KIB = KIB;
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the ratio of the resistors for voltage channel
+ * @note   This ration mentioned in the datasheet as K2
+ * @param  Handler: Pointer to handler
+ * @param  KU: Ratio of the resistors for voltage channel
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ */
+HLW811x_Result_t
+HLW811x_SetResRatioU(bDriverInterface_t *pdrv, float KU)
+{
+  Handler->ResCoef.KU = KU;
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the oscillator frequency
+ * @param  Handler: Pointer to handler
+ * @param  Freq: Frequency in Hz
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ */
+HLW811x_Result_t
+HLW811x_SetCLKFreq(bDriverInterface_t *pdrv, uint32_t Freq)
+{
+  Handler->CLKI = Freq;
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set current channel for special measurements
+ * @note   The selected channel will be used for special measurements such as
+ *         apparent power, power factor, phase angle, instantaneous
+ *         apparent power and active power overload
+ * 
+ * @param  Handler: Pointer to handler
+ * @param  Channel: Current channel
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetSpecialMeasurementChannel(bDriverInterface_t *pdrv,
+                                     HLW811x_CurrentChannel_t Channel)
+{
+  switch (Channel)
+  {
+  case HLW811X_CURRENT_CHANNEL_A:
+    Handler->CurrentChannel = HLW811X_CURRENT_CHANNEL_A;
+    return HLW811x_Command(Handler, HLW811X_COMMAND_CHANNELA);
+    break;
+
+  case HLW811X_CURRENT_CHANNEL_B:
+    Handler->CurrentChannel = HLW811X_CURRENT_CHANNEL_B;
+    return HLW811x_Command(Handler, HLW811X_COMMAND_CHANNELB);
+    break;
+  }
+
+  return HLW811X_INVALID_PARAM;
+}
+
+
+/**
+ * @brief  Enable/Disable the channels
+ * @param  Handler: Pointer to handler
+ * @param  U: Voltage channel
+ * @param  IA: Current channel A
+ * @param  IB: Current channel B
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetChannelOnOff(bDriverInterface_t *pdrv,
+                        HLW811x_EnDis_t U, HLW811x_EnDis_t IA, HLW811x_EnDis_t IB)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_SYSCON, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  if (U == HLW811X_ENDIS_ENABLE)
+  {
+    Reg |= (1 << HLW811X_REG_SYSCON_ADC3ON);
+  }
+  else if (U == HLW811X_ENDIS_DISABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_SYSCON_ADC3ON);
+  }
+
+  if (IA == HLW811X_ENDIS_ENABLE)
+  {
+    Reg |= (1 << HLW811X_REG_SYSCON_ADC1ON);
+  }
+  else if (IA == HLW811X_ENDIS_DISABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_SYSCON_ADC1ON);
+  }
+
+  if (IB == HLW811X_ENDIS_ENABLE)
+  {
+    Reg |= (1 << HLW811X_REG_SYSCON_ADC2ON);
+  }
+  else if (IB == HLW811X_ENDIS_DISABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_SYSCON_ADC2ON);
+  }
+
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_SYSCON, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the PGA gain
+ * @param  Handler: Pointer to handler
+ * @param  U: PGA gain for voltage channel
+ * @param  IA: PGA gain for current channel A
+ * @param  IB: PGA gain for current channel B
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetPGA(bDriverInterface_t *pdrv,
+               HLW811x_PGA_t U, HLW811x_PGA_t IA, HLW811x_PGA_t IB)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_SYSCON, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  if (U < HLW811X_PGA_NONE)
+  {
+    Reg &= ~(0x07 << HLW811X_REG_SYSCON_PGAU);
+    Reg |= (HLW811X_PGA_TABLE[U] << HLW811X_REG_SYSCON_PGAU);
+  }
+
+  if (IA < HLW811X_PGA_NONE)
+  {
+    Reg &= ~(0x07 << HLW811X_REG_SYSCON_PGAIA);
+    Reg |= (HLW811X_PGA_TABLE[IA] << HLW811X_REG_SYSCON_PGAIA);
+  }
+
+  if (IB < HLW811X_PGA_NONE)
+  {
+    Reg &= ~(0x07 << HLW811X_REG_SYSCON_PGAIB);
+    Reg |= (HLW811X_PGA_TABLE[IB] << HLW811X_REG_SYSCON_PGAIB);
+  }
+
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_SYSCON, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  
+  Handler->PGA.U = U;
+  Handler->PGA.IA = IA;
+  Handler->PGA.IB = IB;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the active power calculation method
+ * @param  Handler: Pointer to handler
+ * @param  Method: Active power calculation method
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetActivePowCalcMethod(bDriverInterface_t *pdrv,
+                               HLW811x_ActivePowCalcMethod_t Method)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  if (Method > 3)
+    return HLW811X_INVALID_PARAM;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Reg &= ~(0x03 << HLW811X_REG_EMUCON_Pmode);
+  Reg |= (Method << HLW811X_REG_EMUCON_Pmode);
+
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the RMS calculation mode
+ * @param  Handler: Pointer to handler
+ * @param  Mode: RMS calculation mode
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetRMSCalcMode(bDriverInterface_t *pdrv, HLW811x_RMSCalcMode_t Mode)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  if (Mode == HLW811X_RMS_CALC_MODE_NORMAL)
+    Reg &= ~(1 << HLW811X_REG_EMUCON_DC_MODE);
+  else
+    Reg |= (1 << HLW811X_REG_EMUCON_DC_MODE);
+  
+
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the zero crossing detection mode
+ * @param  Handler: Pointer to handler
+ * @param  Mode: Zero crossing detection mode
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetZeroCrossing(bDriverInterface_t *pdrv,
+                        HLW811x_ZeroCrossingMode_t Mode)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Mode)
+  {
+  case HLW811X_ZERO_CROSSING_MODE_POSITIVE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD0);
+    Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD1);
+    break;
+
+  case HLW811X_ZERO_CROSSING_MODE_NEGATIVE:
+    Reg |= (1 << HLW811X_REG_EMUCON_ZXD0);
+    Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD1);
+    break;
+
+  case HLW811X_ZERO_CROSSING_MODE_BOTH:
+    Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD0);
+    Reg |= (1 << HLW811X_REG_EMUCON_ZXD1);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the high pass filter for digital signal
+ * @param  Handler: Pointer to handler
+ * @param  U: Voltage channel
+ * @param  IA: Current channel A
+ * @param  IB: Current channel B
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetDigitalHighPassFilter(bDriverInterface_t *pdrv,
+                                 HLW811x_EnDis_t U, HLW811x_EnDis_t IA, HLW811x_EnDis_t IB)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  if (U == HLW811X_ENDIS_ENABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_EMUCON_HPFUOFF);
+  }
+  else if (U == HLW811X_ENDIS_DISABLE)
+  {
+    Reg |= (1 << HLW811X_REG_EMUCON_HPFUOFF);
+  }
+
+  if (IA == HLW811X_ENDIS_ENABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_EMUCON_HPFIAOFF);
+  }
+  else if (IA == HLW811X_ENDIS_DISABLE)
+  {
+    Reg |= (1 << HLW811X_REG_EMUCON_HPFIAOFF);
+  }
+
+  if (IB == HLW811X_ENDIS_ENABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_EMUCON_HPFIBOFF);
+  }
+  else if (IB == HLW811X_ENDIS_DISABLE)
+  {
+    Reg |= (1 << HLW811X_REG_EMUCON_HPFIBOFF);
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the PFB and PFA pulses
+ * @param  Handler: Pointer to handler
+ * @param  PFA: PFA pulse
+ * @param  PFB: PFB pulse
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetPFPulse(bDriverInterface_t *pdrv,
+                   HLW811x_EnDis_t PFA, HLW811x_EnDis_t PFB)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  if (PFA == HLW811X_ENDIS_ENABLE)
+  {
+    Reg |= (1 << HLW811X_REG_EMUCON_PARUN);
+  }
+  else if (PFA == HLW811X_ENDIS_DISABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_EMUCON_PARUN);
+  }
+
+  if (PFB == HLW811X_ENDIS_ENABLE)
+  {
+    Reg |= (1 << HLW811X_REG_EMUCON_PBRUN);
+  }
+  else if (PFB == HLW811X_ENDIS_DISABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_EMUCON_PBRUN);
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set open drain for SDO pin
+ * @param  Handler: Pointer to handler
+ * @param  Enable: Enable/Disable open drain for SDO pin
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetSDOPinOpenDrain(bDriverInterface_t *pdrv, HLW811x_EnDis_t Enable)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Enable)
+  {
+  case HLW811X_ENDIS_ENABLE:
+    Reg |= (1 << HLW811X_REG_EMUCON2_SDOCmos);
+    break;
+
+  case HLW811X_ENDIS_DISABLE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_SDOCmos);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the energy clearance
+ * @param  Handler: Pointer to handler
+ * @param  PA: Energy clearance for channel A
+ * @param  PB: Energy clearance for channel B
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetEnergyClearance(bDriverInterface_t *pdrv,
+                           HLW811x_EnDis_t PA, HLW811x_EnDis_t PB)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  if (PA == HLW811X_ENDIS_ENABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_EPB_CA);
+  }
+  else if (PA == HLW811X_ENDIS_DISABLE)
+  {
+    Reg |= (1 << HLW811X_REG_EMUCON2_EPB_CA);
+  }
+
+  if (PB == HLW811X_ENDIS_ENABLE)
+  {
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_EPB_CB);
+  }
+  else if (PB == HLW811X_ENDIS_DISABLE)
+  {
+    Reg |= (1 << HLW811X_REG_EMUCON2_EPB_CB);
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the data update frequency
+ * @param  Handler: Pointer to handler
+ * @param  Freq: Data update frequency
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetDataUpdateFreq(bDriverInterface_t *pdrv,
+                          HLW811x_DataUpdateFreq_t Freq)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+  uint16_t Mask = 0;
+
+  switch (Freq)
+  {
+  case HLW811X_DATA_UPDATE_FREQ_3_4HZ:
+    Mask = 0;
+    break;
+
+  case HLW811X_DATA_UPDATE_FREQ_6_8HZ:
+    Mask = (1 << HLW811X_REG_EMUCON2_DUPSEL);
+    break;
+
+  case HLW811X_DATA_UPDATE_FREQ_13_65HZ:
+    Mask = (2 << HLW811X_REG_EMUCON2_DUPSEL);
+    break;
+
+  case HLW811X_DATA_UPDATE_FREQ_27_3HZ:
+    Mask = (3 << HLW811X_REG_EMUCON2_DUPSEL);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Reg &= ~(3 << HLW811X_REG_EMUCON2_DUPSEL);
+  Reg |= Mask;
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the power factor functionality
+ * @param  Handler: Pointer to handler
+ * @param  Enable: Enable/Disable power factor functionality
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetPowerFactorFunctionality(bDriverInterface_t *pdrv,
+                                    HLW811x_EnDis_t Enable)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Enable)
+  {
+  case HLW811X_ENDIS_ENABLE:
+    Reg |= (1 << HLW811X_REG_EMUCON2_PfactorEN);
+    break;
+
+  case HLW811X_ENDIS_DISABLE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_PfactorEN);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the waveform data
+ * @param  Handler: Pointer to handler
+ * @param  Enable: Enable/Disable waveform data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetWaveformData(bDriverInterface_t *pdrv,
+                        HLW811x_EnDis_t Enable)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Enable)
+  {
+  case HLW811X_ENDIS_ENABLE:
+    Reg |= (1 << HLW811X_REG_EMUCON2_WaveEN);
+    break;
+
+  case HLW811X_ENDIS_DISABLE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_WaveEN);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the voltage sag detection
+ * @param  Handler: Pointer to handler
+ * @param  Enable: Enable/Disable voltage sag detection
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetVoltageSagDetection(bDriverInterface_t *pdrv,
+                               HLW811x_EnDis_t Enable)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Enable)
+  {
+  case HLW811X_ENDIS_ENABLE:
+    Reg |= (1 << HLW811X_REG_EMUCON2_SAGEN);
+    break;
+
+  case HLW811X_ENDIS_DISABLE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_SAGEN);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the over voltage, current and load detection
+ * @param  Handler: Pointer to handler
+ * @param  Enable: Enable/Disable over voltage and current detection
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetOverVolCarDetection(bDriverInterface_t *pdrv,
+                               HLW811x_EnDis_t Enable)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Enable)
+  {
+  case HLW811X_ENDIS_ENABLE:
+    Reg |= (1 << HLW811X_REG_EMUCON2_OverEN);
+    break;
+
+  case HLW811X_ENDIS_DISABLE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_OverEN);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set zero crossing detection
+ * @param  Handler: Pointer to handler
+ * @param  Enable: Enable/Disable zero crossing detection
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetZeroCrossingDetection(bDriverInterface_t *pdrv,
+                                 HLW811x_EnDis_t Enable)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Enable)
+  {
+  case HLW811X_ENDIS_ENABLE:
+    Reg |= (1 << HLW811X_REG_EMUCON2_ZxEN);
+    break;
+
+  case HLW811X_ENDIS_DISABLE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_ZxEN);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set the peak detection
+ * @param  Handler: Pointer to handler
+ * @param  Enable: Enable/Disable peak detection
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetPeakDetection(bDriverInterface_t *pdrv,
+                         HLW811x_EnDis_t Enable)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Enable)
+  {
+  case HLW811X_ENDIS_ENABLE:
+    Reg |= (1 << HLW811X_REG_EMUCON2_PeakEN);
+    break;
+
+  case HLW811X_ENDIS_DISABLE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_PeakEN);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set INT1 and INT2 pins functionality
+ * @param  Handler: Pointer to handler
+ * @param  INT1: INT1 pin functionality
+ * @param  INT2: INT2 pin functionality
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_SetIntOutFunc(bDriverInterface_t *pdrv,
+                      HLW811x_IntOutFunc_t INT1, HLW811x_IntOutFunc_t INT2)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_INT, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  if (INT1 < HLW811X_INTOUT_FUNC_NO_CHANGE)
+  {
+    Reg &= ~(0x0F << HLW811X_REG_INT_P1sel);
+    Reg |= ((INT1 & 0x0F) << HLW811X_REG_INT_P1sel);
+  }
+
+  if (INT2 < HLW811X_INTOUT_FUNC_NO_CHANGE)
+  {
+    Reg &= ~(0x0F << HLW811X_REG_INT_P2sel);
+    Reg |= ((INT2 & 0x0F) << HLW811X_REG_INT_P2sel);
+  }
+
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_INT, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Set interrupt mask
+ * @param  Handler: Pointer to handler
+ * @param  Mask: Interrupt mask value
+ * @note   Use the define HLW811X_REG_IE_XXX to set the mask value
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetIntMask(bDriverInterface_t *pdrv, uint16_t Mask)
+{
+  int8_t Result = 0;
+
+  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_IE, Mask);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get interrupt status flag
+ * @note   Use the define HLW811X_REG_IF_XXX to check the flag
+ * @param  Handler: Pointer to handler
+ * @param  Mask: Pointer to interrupt mask value
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetIntFlag(bDriverInterface_t *pdrv, uint16_t *Mask)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_IF, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  
+  if (Mask)
+    *Mask = Reg;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get reset interrupt status flag
+ * @note   Use the define HLW811X_REG_RIF_XXX to check the flag
+ * @param  Handler: Pointer to handler
+ * @param  Mask: Pointer to interrupt mask value
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetResIntFlag(bDriverInterface_t *pdrv, uint16_t *Mask)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_RIF, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  
+  if (Mask)
+    *Mask = Reg;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get the RMS value of the voltage in V
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetRmsU(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t Reg = 0;
+  int32_t RawValue = 0;
+  uint16_t CoefReg = 0;
+  float ResCoef = 0;
+  uint8_t PGA = 0;
+
+  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_RmsU, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  RawValue = HLW811x_24BitTo32Bit(Reg);
+  CoefReg = Handler->CoefReg.RmsUC;
+  ResCoef = Handler->ResCoef.KU;
+  PGA = (1 << Handler->PGA.U);
+  *Data = (float)RawValue * (CoefReg / 4194304.0f / ResCoef / 100 / PGA);
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get the RMS value of the current channel A in A
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetRmsIA(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t Reg = 0;
+  int32_t RawValue = 0;
+  uint16_t CoefReg = 0;
+  float ResCoef = 0;
+  uint8_t PGA = 0;
+  double DoubleBuffer = 0;
+
+  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_RmsIA, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  RawValue = HLW811x_24BitTo32Bit(Reg);
+  CoefReg = Handler->CoefReg.RmsIAC;
+  ResCoef = Handler->ResCoef.KIA;
+  PGA = 16 >> Handler->PGA.IA;
+  DoubleBuffer = (double)RawValue * (CoefReg / 8388608.0 / ResCoef / 1000 * PGA);
+  *Data = (float)DoubleBuffer;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get the RMS value of the current channel B in A
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetRmsIB(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t Reg = 0;
+  int32_t RawValue = 0;
+  uint16_t CoefReg = 0;
+  float ResCoef = 0;
+  uint8_t PGA = 0;
+  double DoubleBuffer = 0;
+
+  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_RmsIB, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  RawValue = HLW811x_24BitTo32Bit(Reg);
+  CoefReg = Handler->CoefReg.RmsIBC;
+  ResCoef = Handler->ResCoef.KIB;
+  PGA = 16 >> Handler->PGA.IB;
+  DoubleBuffer = (double)RawValue * (CoefReg / 8388608.0 / ResCoef / 10000 * PGA);
+  *Data = (float)DoubleBuffer;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get active power of channel A in W
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetPowerPA(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t Reg = 0;
+  int32_t RawValue = 0;
+  uint16_t CoefReg = 0;
+  double ResCoef = 0;
+  double PGA = 0;
+  double DoubleBuffer = 0;
+
+  Result = HLW811x_ReadReg32(Handler, HLW811X_REG_ADDR_PowerPA, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  RawValue = *((int32_t*)&Reg);
+  CoefReg = Handler->CoefReg.PowerPAC;
+  PGA = 16 >> (Handler->PGA.U + Handler->PGA.IA);
+  ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIA;
+  DoubleBuffer = (double)RawValue * (CoefReg / 2147483648.0 / ResCoef * PGA);
+  *Data = (float)DoubleBuffer;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get active power of channel B in W
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetPowerPB(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t Reg = 0;
+  int32_t RawValue = 0;
+  uint16_t CoefReg = 0;
+  double ResCoef = 0;
+  double PGA = 0;
+  double DoubleBuffer = 0;
+
+  Result = HLW811x_ReadReg32(Handler, HLW811X_REG_ADDR_PowerPB, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  RawValue = *((int32_t*)&Reg);
+  CoefReg = Handler->CoefReg.PowerPBC;
+  PGA = 16 >> (Handler->PGA.U + Handler->PGA.IB);
+  ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIB;
+  DoubleBuffer = (double)RawValue * (CoefReg / 2147483648.0 / ResCoef * PGA);
+  *Data = (float)DoubleBuffer;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get the apparent power of selected channel in W
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetPowerS(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t Reg = 0;
+  int32_t RawValue = 0;
+  uint16_t CoefReg = 0;
+  double ResCoef = 0;
+  double PGA = 0;
+  double DoubleBuffer = 0;
+
+  Result = HLW811x_ReadReg32(Handler, HLW811X_REG_ADDR_PowerS, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  RawValue = *((int32_t*)&Reg);
+  CoefReg = Handler->CoefReg.PowerSC;
+
+  switch (Handler->CurrentChannel)
+  {
+  
+  case HLW811X_CURRENT_CHANNEL_A:
+    PGA = 16 >> (Handler->PGA.U + Handler->PGA.IA);
+    ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIA;
+    break;
+
+  case HLW811X_CURRENT_CHANNEL_B: 
+    PGA = 16 >> (Handler->PGA.U + Handler->PGA.IB);
+    ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIB;
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+
+  DoubleBuffer = (double)RawValue * (CoefReg / 2147483648.0 / ResCoef * PGA);
+  *Data = (float)DoubleBuffer;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get Energy of channel A in KWH
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetEnergyA(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t RawValue = 0;
+  uint16_t CoefReg = 0;
+  float ResCoef = 0;
+  uint16_t PGA = 0;
+  double DoubleBuffer = 0;
+
+  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_Energy_PA, &RawValue);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  CoefReg = Handler->CoefReg.EnergyAC;
+  PGA = (1 << Handler->PGA.U) * (1 << Handler->PGA.IA);
+  ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIA;
+  DoubleBuffer = (double)RawValue * (CoefReg / 536870912.0 / PGA / 4096 / ResCoef) * Handler->HFconst;
+  *Data = (float)DoubleBuffer;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get Energy of channel B in KWH
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetEnergyB(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t RawValue = 0;
+  uint16_t CoefReg = 0;
+  float ResCoef = 0;
+  uint16_t PGA = 0;
+  double DoubleBuffer = 0;
+
+  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_Energy_PB, &RawValue);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  CoefReg = Handler->CoefReg.EnergyBC;
+  PGA = (1 << Handler->PGA.U) * (1 << Handler->PGA.IB);
+  ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIB;
+  DoubleBuffer = (double)RawValue * (CoefReg / 536870912.0 / PGA / 4096 / ResCoef) * Handler->HFconst;
+  *Data = (float)DoubleBuffer;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get the frequency of the voltage channel in Hz
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetFreqU(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint16_t RawValue = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_Ufreq, &RawValue);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  *Data = Handler->CLKI / 8.0 / RawValue;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get the power factor of the selected channel
+ * @note   The power factor is a value between -1 and 1
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_GetPowerFactor(bDriverInterface_t *pdrv, float *Data)
+{
+  int8_t Result = 0;
+  uint32_t RawValue = 0;
+  int32_t RawValueInt = 0;
+
+  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_PowerFactor, &RawValue);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  RawValueInt = HLW811x_24BitTo32Bit(RawValue);
+  *Data = (float)((double)RawValueInt / 8388607.0);
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * @brief  Get phase angle in degrees
+ * @param  Handler: Pointer to handler
+ * @param  Data: Pointer to store the data
+ * @param  Freq: Frequency of the voltage channel in Hz
+ * @note   The phase angle should be 50 or 60 Hz. The other values are invalid
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ *         - HLW811X_INVALID_PARAM: One of parameters is invalid.
+ */
+HLW811x_Result_t
+HLW811x_GetPhaseAngle(bDriverInterface_t *pdrv, float *Data, uint32_t Freq)
+{
+  int8_t Result = 0;
+  uint16_t RawValue = 0;
+
+  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_Angle, &RawValue);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  if (Freq == 50)
+    *Data = (float)RawValue * 0.0805f;
+  else if (Freq == 60)
+    *Data = (float)RawValue * 0.0965f;
+  else
+    return HLW811X_INVALID_PARAM;
+
+  // while (*Data > 360.0f)
+  //   *Data -= 360.0f;
+
+  return HLW811X_OK;
+}
+
+
+/**
+ * \}
+ */
+
+/**
+ * \addtogroup LIS3DH_Exported_Functions
+ * \{
+ */
+
+int bHLW811X_Init(bDriverInterface_t *pdrv)
+{
+    bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bHLW811X_Init);
+    pdrv->read        = _bLis3dhRead;
+    pdrv->_private._p = &bHlw811xRunInfo[pdrv->drv_no];
+    memset(pdrv->_private._p, 0, sizeof(bList3dhPrivate_t));
+    if ((_bLis3dhGetID(pdrv)) != LIS3DH_ID)
+    {
+        return -1;
+    }
+    _bLis3dhDefaultCfg(pdrv);
+    _bLis3dhClearFifo(pdrv);
+
+    bDRIVER_SET_READCACHE(pdrv, &bLis3dhRunInfo[pdrv->drv_no].data[0],
+                          sizeof(bLis3dhRunInfo[pdrv->drv_no].data));
+						  
+						  
+	HLW811x_Begin(pdrv);
+
+    return 0;
+}
+
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section driver_init
+#endif
+bDRIVER_REG_INIT(B_DRIVER_LIS3DH, bLIS3DH_Init);
+#ifdef BSECTION_NEED_PRAGMA
+#pragma section 
+#endif
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/************************ Copyright (c) 2020 Bean *****END OF FILE****/

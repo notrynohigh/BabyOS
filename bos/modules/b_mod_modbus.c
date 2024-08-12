@@ -276,7 +276,7 @@ static int _bModbusRTUMasterParse(void *attr, uint8_t *in, uint16_t i_len, uint8
 						buf[i] = r_ack->param[i];
         }
 //        param.reg_value = (int16_t *)r_ack->param;
-				b_log("r_ack->param address is : %x ", &r_ack->param);				
+//				b_log("r_ack->param address is : %x ", &r_ack->param);				
 				param.reg_value = (int16_t *)buf;
         B_SAFE_INVOKE_RET(retval, pattr->callback, B_MODBUS_CMD_READ_REG, &param, pattr->arg);
         if ((retval < 0) && (pattr->callback != NULL))
