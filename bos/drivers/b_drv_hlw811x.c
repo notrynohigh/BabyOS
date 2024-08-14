@@ -1,9 +1,9 @@
 /**
  *!
- * \file        b_drv_lis3dh.c
+ * \file        b_drv_hlw811x.c
  * \version     v0.0.1
- * \date        2020/06/08
- * \author      Bean(notrynohigh@outlook.com)
+ * \date        2024/08/14
+ * \author      hmchen(chenhaimeng@189.cn)
  *******************************************************************************
  * @attention
  *
@@ -42,7 +42,7 @@
  */
 
 /**
- * \addtogroup LIS3DH
+ * \addtogroup HLW8112
  * \{
  */
 
@@ -83,319 +83,7 @@
  */
 bDRIVER_HALIF_TABLE(bHLW811X_HalIf_t, DRIVER_NAME);
 
-static bList3dhPrivate_t bHlw811xRunInfo[bDRIVER_HALIF_NUM(bHLW811X_HalIf_t, DRIVER_NAME)];
-static const int         Digit2mgTable[4][3] = {{1, 4, 16}, {2, 8, 32}, {4, 16, 64}, {12, 48, 192}};
-static const int         DataShiftTable[3]   = {4, 6, 8};
-/**
- * \}
- */
-
-/**
- * \defgroup LIS3DH_Private_FunctionPrototypes
- * \{
- */
-
-/**
- * \}
- */
-
-/**
- * \defgroup LIS3DH_Private_Functions
- * \{
- */
-static int _bHlw811xhReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
-{
-    bDRIVER_GET_HALIF(_if, bLIS3DH_HalIf_t, pdrv);
-    if (_if->is_spi)
-    {
-        reg |= 0xC0;
-        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi, &reg, 1);
-        bHalSpiReceive(&_if->_if._spi, data, len);
-        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
-    }
-    else
-    {
-        reg = reg | 0x80;
-        bHalI2CMemRead(&_if->_if._i2c, reg, 1, data, len);
-    }
-    return 0;
-}
-
-static int _bHlw811xWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data, uint16_t len)
-{
-    bDRIVER_GET_HALIF(_if, bLIS3DH_HalIf_t, pdrv);
-    if (_if->is_spi)
-    {
-        reg |= 0x40;
-        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi, &reg, 1);
-        bHalSpiSend(&_if->_if._spi, data, len);
-        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
-    }
-    else
-    {
-        bHalI2CMemWrite(&_if->_if._i2c, reg, 1, data, len);
-    }
-    return 0;
-}
-
-static uint8_t _bHlw811xGetID(bDriverInterface_t *pdrv)
-{
-    uint8_t id = 0;
-    _bLis3dhReadRegs(pdrv, LIS3DH_WHO_AM_I, &id, 1);
-    b_log("lis3dh id:%x\n", id);
-    return id;
-}
-
-static void bLis3dhBlockDataUpdateSet(bDriverInterface_t *pdrv, uint8_t val)
-{
-    uint8_t reg = 0;
-    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG4, &reg, 1);
-    reg &= ~(0x1 << 7);
-    reg |= (((val == 1) ? 0x1 : 0x0) << 7);
-    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG4, &reg, 1);
-}
-
-static void bLis3dhDataRateSet(bDriverInterface_t *pdrv, bLis3dhODR_t val)
-{
-    uint8_t reg = 0;
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG1, &reg, 1);
-    reg &= 0x0f;
-    reg |= (val) << 4;
-    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG1, &reg, 1);
-    _private->odr = val;
-}
-
-static void bLis3dhFullScaleSet(bDriverInterface_t *pdrv, bLis3dhFS_t val)
-{
-    uint8_t reg = 0;
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG4, &reg, 1);
-    reg &= ~((0x3) << 4);
-    reg |= (val) << 4;
-    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG4, &reg, 1);
-    _private->fs = val;
-}
-
-static void bLis3dhFifoSet(bDriverInterface_t *pdrv, uint8_t en)
-{
-    uint8_t reg = 0;
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG5, &reg, 1);
-    if (en)
-    {
-        reg |= (0x1 << 6);
-    }
-    else
-    {
-        reg &= ~(0x1 << 6);
-    }
-    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG5, &reg, 1);
-    _private->fifo_en = en;
-}
-
-static void bLis3dhFifoWatermarkSet(bDriverInterface_t *pdrv, uint8_t watermark)
-{
-    uint8_t reg = 0;
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    _bLis3dhReadRegs(pdrv, LIS3DH_FIFO_CTRL_REG, &reg, 1);
-    reg = (reg & ~(0x1f)) | (watermark & 0x1f);
-    _bLis3dhWriteRegs(pdrv, LIS3DH_FIFO_CTRL_REG, &reg, 1);
-    _private->watermark = watermark & 0x1f;
-}
-
-static void bLis3dhFifoWatermarkInt(bDriverInterface_t *pdrv, uint8_t en)
-{
-    uint8_t reg = 0;
-    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG3, &reg, 1);
-    if (en)
-    {
-        reg |= (0x1) << 2;
-    }
-    else
-    {
-        reg &= ~((0x1) << 2);
-    }
-    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG3, &reg, 1);
-}
-
-static void bLis3dhFifoModeSet(bDriverInterface_t *pdrv, bLis3dhFifoMode_t mode)
-{
-    uint8_t reg = 0;
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    _bLis3dhReadRegs(pdrv, LIS3DH_FIFO_CTRL_REG, &reg, 1);
-    reg &= ~(0x3 << 6);
-    reg |= (mode) << 6;
-    b_log("reg:%x\r\n", reg);
-    _bLis3dhWriteRegs(pdrv, LIS3DH_FIFO_CTRL_REG, &reg, 1);
-    _private->fm = mode;
-}
-
-static void bLis3dhIntPolaritySet(bDriverInterface_t *pdrv, uint8_t horl)
-{
-    uint8_t reg = 0;
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG6, &reg, 1);
-    if (horl)
-    {
-        reg &= ~((0x1) << 1);
-    }
-    else
-    {
-        reg |= (0x1) << 1;
-    }
-    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG6, &reg, 1);
-    _private->int_polarity = (horl != 0);
-}
-
-static void bLis3dhOptModeSet(bDriverInterface_t *pdrv, bLis3dhOptMode_t val)
-{
-    uint8_t reg1 = 0, reg4 = 0;
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG1, &reg1, 1);
-    _bLis3dhReadRegs(pdrv, LIS3DH_CTRL_REG4, &reg4, 1);
-
-    reg1 &= ~(0x1 << 3);
-    reg4 &= ~(0x1 << 3);
-
-    if (val == LIS3DH_HR_12BIT)
-    {
-        reg4 |= (0x1 << 3);
-    }
-
-    if (val == LIS3DH_NM_10BIT)
-    {
-        ;
-    }
-
-    if (val == LIS3DH_LP_8BIT)
-    {
-        reg1 |= (0x1 << 3);
-    }
-
-    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG1, &reg1, 1);
-    _bLis3dhWriteRegs(pdrv, LIS3DH_CTRL_REG4, &reg4, 1);
-    _private->opmode = val;
-}
-
-static uint8_t _bLis3dhFifoFthFlagGet(bDriverInterface_t *pdrv)
-{
-    uint8_t reg = 0;
-    _bLis3dhReadRegs(pdrv, LIS3DH_FIFO_SRC_REG, &reg, 1);
-    return ((reg & 0x80) >> 7);
-}
-
-static uint8_t _bLis3dhFifoDataLevelGet(bDriverInterface_t *pdrv)
-{
-    uint8_t reg = 0;
-    _bLis3dhReadRegs(pdrv, LIS3DH_FIFO_SRC_REG, &reg, 1);
-    return (reg & 0x1f);
-}
-
-static void _bLis3dhGetRawData(bDriverInterface_t *pdrv, bGsensor3Axis_t *pval)
-{
-    uint8_t buff[6];
-    _bLis3dhReadRegs(pdrv, LIS3DH_OUT_X_L, buff, 6);
-    pval->x_mg = (int16_t)buff[1];
-    pval->x_mg = (pval->x_mg * 256) + (int16_t)buff[0];
-    pval->y_mg = (int16_t)buff[3];
-    pval->y_mg = (pval->y_mg * 256) + (int16_t)buff[2];
-    pval->z_mg = (int16_t)buff[5];
-    pval->z_mg = (pval->z_mg * 256) + (int16_t)buff[4];
-}
-
-static void _bLis3dhClearFifo(bDriverInterface_t *pdrv)
-{
-    uint8_t         flags;
-    uint8_t         num = 0, i = 0;
-    bGsensor3Axis_t tmp;
-    /* Check if FIFO level over threshold */
-    flags = _bLis3dhFifoFthFlagGet(pdrv);
-    if (flags)
-    {
-        /* Read number of sample in FIFO */
-        num = _bLis3dhFifoDataLevelGet(pdrv);
-        for (i = 0; i < num; i++)
-        {
-            _bLis3dhGetRawData(pdrv, &tmp);
-        }
-    }
-}
-
-static void _bLis3dhItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *param,
-                              void *user_data)
-{
-    uint8_t             flags;
-    uint8_t             num = 0, i = 0;
-    bGsensor3Axis_t     tmp;
-    bDriverInterface_t *pdrv = user_data;
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    /* Check if FIFO level over threshold */
-    flags = _bLis3dhFifoFthFlagGet(pdrv);
-    if (flags)
-    {
-        /* Read number of sample in FIFO */
-        num = _bLis3dhFifoDataLevelGet(pdrv);
-        for (i = 0; i < num; i++)
-        {
-            _bLis3dhGetRawData(pdrv, &tmp);
-            tmp.x_mg = (tmp.x_mg >> DataShiftTable[_private->opmode]) *
-                       Digit2mgTable[_private->fs][_private->opmode];
-            tmp.y_mg = (tmp.y_mg >> DataShiftTable[_private->opmode]) *
-                       Digit2mgTable[_private->fs][_private->opmode];
-            tmp.z_mg = (tmp.z_mg >> DataShiftTable[_private->opmode]) *
-                       Digit2mgTable[_private->fs][_private->opmode];
-            bFIFO_Write(&pdrv->r_cache, (uint8_t *)&tmp, sizeof(bGsensor3Axis_t));
-        }
-    }
-}
-
-static void _bLis3dhDefaultCfg(bDriverInterface_t *pdrv)
-{
-    bDRIVER_GET_HALIF(_if, bLIS3DH_HalIf_t, pdrv);
-    bLis3dhBlockDataUpdateSet(pdrv, 0);
-    bLis3dhDataRateSet(pdrv, LIS3DH_ODR_25Hz);
-    bLis3dhFullScaleSet(pdrv, LIS3DH_FS_4G);
-    bLis3dhOptModeSet(pdrv, LIS3DH_HR_12BIT);
-    if (_if->it[0].it == B_HAL_IT_EXTI)
-    {
-        bLis3dhFifoWatermarkSet(pdrv, 31);
-        bLis3dhFifoWatermarkInt(pdrv, 1);
-        bLis3dhFifoModeSet(pdrv, LIS3DH_DYNAMIC_STREAM_MODE);
-        bLis3dhFifoSet(pdrv, 1);
-        bLis3dhIntPolaritySet(pdrv, 0);
-        bHAL_IT_REGISTER(lis3dh_it, B_HAL_IT_EXTI, _if->it[0].index, _bLis3dhItHandler, pdrv);
-    }
-}
-
-static int _bLis3dhRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
-{
-    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
-    bGsensor3Axis_t *ptmp = (bGsensor3Axis_t *)pbuf;
-    int              i    = 0;
-    uint8_t          c    = len / sizeof(bGsensor3Axis_t);
-
-    for (i = 0; i < c; i++)
-    {
-        if (bFIFO_Read(&pdrv->r_cache, (uint8_t *)&ptmp[i], sizeof(bGsensor3Axis_t)) > 0)
-        {
-            ;
-        }
-        else
-        {
-            _bLis3dhGetRawData(pdrv, &ptmp[i]);
-            ptmp[i].x_mg = (ptmp[i].x_mg >> DataShiftTable[_private->opmode]) *
-                           Digit2mgTable[_private->fs][_private->opmode];
-            ptmp[i].y_mg = (ptmp[i].y_mg >> DataShiftTable[_private->opmode]) *
-                           Digit2mgTable[_private->fs][_private->opmode];
-            ptmp[i].z_mg = (ptmp[i].z_mg >> DataShiftTable[_private->opmode]) *
-                           Digit2mgTable[_private->fs][_private->opmode];
-        }
-    }
-    return (c * sizeof(bGsensor3Axis_t));
-}
+static bHlw811xPrivate_t bHlw811xRunInfo[bDRIVER_HALIF_NUM(bHLW811X_HalIf_t, DRIVER_NAME)];
 
 
 /* Private Constants ------------------------------------------------------------*/
@@ -429,19 +117,179 @@ static const uint8_t HLW811X_PGA_TABLE[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
 HLW811x_WriteReg(bDriverInterface_t *pdrv,
                     uint8_t Address, uint8_t Size, uint8_t *Data)
 {
-	
+  bDRIVER_GET_HALIF(_if, bHLW811X_HalIf_t, pdrv);
+  uint8_t Buffer[3] = {0};
+  int8_t Result = 0;
+
+#if (HLW811X_CONFIG_SPI_WRITE_RETRY > 0)
+  uint8_t Retry = 0;
+  uint8_t BufferCheckTX[3] = {HLW811X_REG_ADDR_Wdata, 0, 0};
+  uint8_t BufferCheckRX[3] = {0};
+#endif
+
+  if (Address == HLW811X_COMMAND_ADDRESS) // Special address for commands
+    Buffer[0] = Address;
+  else
+    Buffer[0] = Address | 0x80;
+
+  if (Size > 2)
+    return -1;
+  for (uint8_t i = 0; i < Size; i++)
+    Buffer[i + 1] = Data[i];
+
+
+#if (HLW811X_CONFIG_SPI_WRITE_RETRY > 0)
+  do
+  {
+    // Write data
+	if (_if->is_spi)
+    {
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
+        bHalSpiSend(&_if->_if._spi, Buffer, Size + 1);
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+    }
+    else
+    {
+		//uart
+    }
+
+    // Command address is not supposed to be checked
+    if (Address == HLW811X_COMMAND_ADDRESS)
+      break;
+
+    // Read WDATA register to check the written data
+	if (_if->is_spi)
+    {
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
+        bHalSpiSend(&_if->_if._spi, BufferCheckTX, 3);
+        bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 3);
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+    }
+    else
+    {
+		//uart
+    }
+
+    // Compare the written data with the WDATA register
+    Result = 0;
+    for (uint8_t i = 0; i < Size; i++)
+    {
+      if (Data[i] != BufferCheckRX[i + 1])
+      {
+        Result = -1;
+        break;
+      }
+    }
+  } while (Result < 0 && Retry++ < HLW811X_CONFIG_SPI_WRITE_RETRY);
+#else
+  	if (_if->is_spi)
+    {
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
+        bHalSpiSend(&_if->_if._spi, Buffer, Size + 1);
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+    }
+    else
+    {
+		//uart
+    }
+#endif
+
+  return Result;
 	
 }
 static inline int8_t
 HLW811x_ReadReg(bDriverInterface_t *pdrv,
                    uint8_t Address, uint8_t Size, uint8_t *Data)
 {
+  bDRIVER_GET_HALIF(_if, bHLW811X_HalIf_t, pdrv);
+  uint8_t BufferTx[5] = {0xFF};
+  uint8_t BufferRx[5] = {0};
+  int8_t Result = 0;
 
+#if (HLW811X_CONFIG_SPI_READ_RETRY > 0)
+  uint8_t Retry = 0;
+  uint8_t BufferCheckTX[5] = {HLW811X_REG_ADDR_Rdata, 0, 0};
+  uint8_t BufferCheckRX[5] = {0};
+#endif
 
+  if (Address == HLW811X_COMMAND_ADDRESS) // Special address for commands
+    return -1;
+  else
+    BufferTx[0] = Address & 0x7F;
+
+  if (Size > 4)
+    return -1;
+
+#if (HLW811X_CONFIG_SPI_READ_RETRY > 0)
+  do
+  {
+    // Read data
+    //Handler->Platform.SPI.SetLevelSCSN(0);
+    //Result = Handler->Platform.SPI.SendReceive(BufferTx, BufferRx, Size + 1);
+    //Handler->Platform.SPI.SetLevelSCSN(1);
+	if (_if->is_spi)
+    {
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
+        bHalSpiSend(&_if->_if._spi, BufferTx, Size + 1);
+				bHalSpiReceive(&_if->_if._spi, BufferRx, Size + 1);
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+    }
+    else
+    {
+		//uart
+    }
+
+    // Read RDATA register to check the read data
+    //Handler->Platform.SPI.SetLevelSCSN(0);
+    //Result = Handler->Platform.SPI.SendReceive(BufferCheckTX, BufferCheckRX, 5);
+    //Handler->Platform.SPI.SetLevelSCSN(1);
+	if (_if->is_spi)
+    {
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
+        bHalSpiSend(&_if->_if._spi, BufferCheckTX, 5);
+				bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 5);
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+    }
+    else
+    {
+		//uart
+    }
+    // Compare the read data with the RDATA register
+    Result = 0;
+    for (uint8_t i = 1; i < Size + 1; i++)
+    {
+      if (BufferRx[i] != BufferCheckRX[i])
+      {
+        Result = -1;
+        break;
+      }
+    }
+  } while (Result < 0 && Retry++ < HLW811X_CONFIG_SPI_READ_RETRY);
+#else
+  //Handler->Platform.SPI.SetLevelSCSN(0);
+  //Result = Handler->Platform.SPI.SendReceive(BufferTx, BufferRx, Size + 1);
+  //Handler->Platform.SPI.SetLevelSCSN(1);
+  	if (_if->is_spi)
+    {
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
+        bHalSpiSend(&_if->_if._spi, BufferTx, Size + 1);
+		bHalSpiReceive(&_if->_if._spi, BufferRx, Size + 1);
+        bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+    }
+    else
+    {
+		//uart
+    }
+#endif
+
+  for (uint8_t i = 0; i < Size; i++)
+    Data[i] = BufferRx[i + 1];
+
+  return Result;
 }
 
 static int8_t
-HLW811x_WriteReg16(bDriverInterface_t *pdrv,,
+HLW811x_WriteReg16(bDriverInterface_t *pdrv,
                    uint8_t Address, uint16_t Data)
 {
   uint8_t Buffer[2] = {0};
@@ -459,7 +307,7 @@ HLW811x_ReadReg16(bDriverInterface_t *pdrv,
   uint8_t Buffer[2] = {0};
   int8_t Result = 0;
   
-  Result = HLW811x_ReadReg(Handler, Address, 2, Buffer);
+  Result = HLW811x_ReadReg(pdrv, Address, 2, Buffer);
   if (Result < 0)
     return Result;
 
@@ -474,7 +322,7 @@ HLW811x_ReadReg24(bDriverInterface_t *pdrv,
   uint8_t Buffer[3] = {0};
   int8_t Result = 0;
   
-  Result = HLW811x_ReadReg(Handler, Address, 3, Buffer);
+  Result = HLW811x_ReadReg(pdrv, Address, 3, Buffer);
   if (Result < 0)
     return Result;
 
@@ -490,7 +338,7 @@ HLW811x_ReadReg32(bDriverInterface_t *pdrv,
   uint8_t Buffer[4] = {0};
   int8_t Result = 0;
   
-  Result = HLW811x_ReadReg(Handler, Address, 4, Buffer);
+  Result = HLW811x_ReadReg(pdrv, Address, 4, Buffer);
   if (Result < 0)
     return Result;
 
@@ -503,25 +351,25 @@ static int8_t
 HLW811x_Command(bDriverInterface_t *pdrv, uint8_t Command)
 {
   uint8_t Buffer = Command;
-  return HLW811x_WriteReg(Handler, HLW811X_COMMAND_ADDRESS, 1, &Buffer);
+  return HLW811x_WriteReg(pdrv, HLW811X_COMMAND_ADDRESS, 1, &Buffer);
 }
 
 static inline int8_t
 HLW811x_CommandEnableWriteOperation(bDriverInterface_t *pdrv)
 {
-  return HLW811x_Command(Handler, HLW811X_COMMAND_WRITE_ENABLE);
+  return HLW811x_Command(pdrv, HLW811X_COMMAND_WRITE_ENABLE);
 }
 
 static inline int8_t
 HLW811x_CommandCloseWriteOperation(bDriverInterface_t *pdrv)
 {
-  return HLW811x_Command(Handler, HLW811X_COMMAND_WRITE_CLOSE);
+  return HLW811x_Command(pdrv, HLW811X_COMMAND_WRITE_CLOSE);
 }
 
 static inline int8_t
 HLW811x_CommandReset(bDriverInterface_t *pdrv)
 {
-  return HLW811x_Command(Handler, HLW811X_COMMAND_RESET);
+  return HLW811x_Command(pdrv, HLW811X_COMMAND_RESET);
 }
 
 static int32_t
@@ -558,8 +406,10 @@ HLW811x_24BitTo32Bit(uint32_t Data)
 HLW811x_Result_t 
 HLW811x_Init(bDriverInterface_t *pdrv, HLW811x_Device_t Device)
 {
+  if (!pdrv)
+    return HLW811X_INVALID_PARAM;	
 	
-	
+	return HLW811X_OK;
 }
 
 /**
@@ -572,7 +422,10 @@ HLW811x_Init(bDriverInterface_t *pdrv, HLW811x_Device_t Device)
 HLW811x_Result_t 
 HLW811x_DeInit(bDriverInterface_t *pdrv)
 {
+  if (!pdrv)
+    return HLW811X_INVALID_PARAM;	
 	
+	return HLW811X_OK;	
 }
 
 /**
@@ -601,32 +454,6 @@ HLW811x_ReadRegLL(bDriverInterface_t *pdrv,
 }
 
 /**
- * @brief  Low level read register function
- * @param  Handler: Pointer to handler
- * @param  RegAddr: Register address
- * @param  Data: Pointer to buffer to store data
- * @param  Len: Register data length in bytes
- * @retval HLW811x_Result_t
- *         - HLW811X_OK: Operation was successful.
- *         - HLW811X_FAIL: Failed to send or receive data.
- */
-HLW811x_Result_t
-HLW811x_ReadRegLL(bDriverInterface_t *pdrv,
-                  uint8_t RegAddr,
-                  uint8_t *Data,
-                  uint8_t Len)
-{
-  if (!Handler || !Data)
-    return HLW811X_INVALID_PARAM;
-
-  if (Len == 0)
-    return HLW811X_INVALID_PARAM;
-
-  return ((HLW811x_ReadReg(Handler, RegAddr, Len, Data) >= 0) ? HLW811X_OK : HLW811X_FAIL);
-}
-
-
-/**
  * @brief  Low level write register function
  * @param  Handler: Pointer to handler
  * @param  RegAddr: Register address
@@ -644,125 +471,27 @@ HLW811x_WriteRegLL(bDriverInterface_t *pdrv,
 {
   int8_t Result = 0;
 
-  if (!Handler || !Data)
+  if (!pdrv || !Data)
     return HLW811X_INVALID_PARAM;
 
   if (Len == 0)
     return HLW811X_INVALID_PARAM;
 
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg(Handler, RegAddr, Len, Data);
+  Result = HLW811x_WriteReg(pdrv, RegAddr, Len, Data);
   if (Result < 0)
     return HLW811X_FAIL;
   
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
   return HLW811X_OK;
 }
 
-
-/**
- * @brief  Begin function to initialize the device and set the default values
- * @note   This function must be called after initializing platform dependent and
- *         HLW811x_Init functions.
- * 
- * @note   This function will read the coefficients from the device. It is
- *         mandatory to call this function before using other functions such as
- *         HLW811x_GetRmsU, HLW811x_GetRmsIx and etc.
- * 
- * @param  Handler: Pointer to handler
- * @retval HLW811x_Result_t
- *         - HLW811X_OK: Operation was successful.
- *         - HLW811X_FAIL: Failed to send or receive data.
- */
-HLW811x_Result_t
-HLW811x_Begin(bDriverInterface_t *pdrv)
-{
-  int8_t Result = 0;
-  uint16_t Reg16 = 0;
-  uint16_t Checksum = 0;
-
-  Handler->ResCoef.KU = 1.0f;
-  Handler->ResCoef.KIA = 1.0f;
-  Handler->ResCoef.KIB = 1.0f;
-
-  Handler->PGA.U = HLW811X_PGA_1;
-  Handler->PGA.IA = HLW811X_PGA_16;
-  Handler->PGA.IB = HLW811X_PGA_1;
-
-  Handler->CLKI = 3579545;
-
-  if (HLW811x_SetSpecialMeasurementChannel(Handler,
-                                           HLW811X_CURRENT_CHANNEL_A) != HLW811X_OK)
-    return HLW811X_FAIL;
-
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_HFConst, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->HFconst = Reg16;
-
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_RmsIAC, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->CoefReg.RmsIAC = Reg16;
-
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_RmsIBC, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->CoefReg.RmsIBC = Reg16;
-  
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_RmsUC, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->CoefReg.RmsUC = Reg16;
-
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_PowerPAC, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->CoefReg.PowerPAC = Reg16;
-  
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_PowerPBC, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->CoefReg.PowerPBC = Reg16;
-
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_PowerSC, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->CoefReg.PowerSC = Reg16;
-  
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EnergyAC, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->CoefReg.EnergyAC = Reg16;
-  
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EnergyBC, &Reg16);
-  if (Result < 0)
-    return HLW811X_FAIL;
-  Handler->CoefReg.EnergyBC = Reg16;
-
-  Checksum = 0xFFFF +
-             Handler->CoefReg.RmsIAC +
-             Handler->CoefReg.RmsIBC +
-             Handler->CoefReg.RmsUC +
-             Handler->CoefReg.PowerPAC +
-             Handler->CoefReg.PowerPBC +
-             Handler->CoefReg.PowerSC +
-             Handler->CoefReg.EnergyAC +
-             Handler->CoefReg.EnergyBC;
-  Checksum = ~Checksum;
-
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_Coeff_chksum, &Reg16);
-  if (Result < 0 || Checksum != Reg16)
-    return HLW811X_FAIL;
-
-  return HLW811X_OK;
-}
 
 /**
  * @brief  Set the ratio of the resistors for current channel A
@@ -775,7 +504,8 @@ HLW811x_Begin(bDriverInterface_t *pdrv)
 HLW811x_Result_t
 HLW811x_SetResRatioIA(bDriverInterface_t *pdrv, float KIA)
 {
-  Handler->ResCoef.KIA = KIA;
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+  _priv->ResCoef.KIA = KIA;
   return HLW811X_OK;
 }
 
@@ -791,7 +521,8 @@ HLW811x_SetResRatioIA(bDriverInterface_t *pdrv, float KIA)
 HLW811x_Result_t
 HLW811x_SetResRatioIB(bDriverInterface_t *pdrv, float KIB)
 {
-  Handler->ResCoef.KIB = KIB;
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);	
+  _priv->ResCoef.KIB = KIB;
   return HLW811X_OK;
 }
 
@@ -807,7 +538,8 @@ HLW811x_SetResRatioIB(bDriverInterface_t *pdrv, float KIB)
 HLW811x_Result_t
 HLW811x_SetResRatioU(bDriverInterface_t *pdrv, float KU)
 {
-  Handler->ResCoef.KU = KU;
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);	
+  _priv->ResCoef.KU = KU;
   return HLW811X_OK;
 }
 
@@ -822,7 +554,8 @@ HLW811x_SetResRatioU(bDriverInterface_t *pdrv, float KU)
 HLW811x_Result_t
 HLW811x_SetCLKFreq(bDriverInterface_t *pdrv, uint32_t Freq)
 {
-  Handler->CLKI = Freq;
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);	
+  _priv->CLKI = Freq;
   return HLW811X_OK;
 }
 
@@ -844,16 +577,17 @@ HLW811x_Result_t
 HLW811x_SetSpecialMeasurementChannel(bDriverInterface_t *pdrv,
                                      HLW811x_CurrentChannel_t Channel)
 {
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);	
   switch (Channel)
   {
   case HLW811X_CURRENT_CHANNEL_A:
-    Handler->CurrentChannel = HLW811X_CURRENT_CHANNEL_A;
-    return HLW811x_Command(Handler, HLW811X_COMMAND_CHANNELA);
+    _priv->CurrentChannel = HLW811X_CURRENT_CHANNEL_A;
+    return HLW811x_Command(pdrv, HLW811X_COMMAND_CHANNELA);
     break;
 
   case HLW811X_CURRENT_CHANNEL_B:
-    Handler->CurrentChannel = HLW811X_CURRENT_CHANNEL_B;
-    return HLW811x_Command(Handler, HLW811X_COMMAND_CHANNELB);
+    _priv->CurrentChannel = HLW811X_CURRENT_CHANNEL_B;
+    return HLW811x_Command(pdrv, HLW811X_COMMAND_CHANNELB);
     break;
   }
 
@@ -878,7 +612,7 @@ HLW811x_SetChannelOnOff(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_SYSCON, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_SYSCON, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -909,15 +643,15 @@ HLW811x_SetChannelOnOff(bDriverInterface_t *pdrv,
     Reg &= ~(1 << HLW811X_REG_SYSCON_ADC2ON);
   }
 
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_SYSCON, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_SYSCON, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -941,8 +675,9 @@ HLW811x_SetPGA(bDriverInterface_t *pdrv,
 {
   int8_t Result = 0;
   uint16_t Reg = 0;
-
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_SYSCON, &Reg);
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_SYSCON, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -964,19 +699,19 @@ HLW811x_SetPGA(bDriverInterface_t *pdrv,
     Reg |= (HLW811X_PGA_TABLE[IB] << HLW811X_REG_SYSCON_PGAIB);
   }
 
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_SYSCON, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_SYSCON, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
   
-  Handler->PGA.U = U;
-  Handler->PGA.IA = IA;
-  Handler->PGA.IB = IB;
+  _priv->PGA.U = U;
+  _priv->PGA.IA = IA;
+  _priv->PGA.IB = IB;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1002,22 +737,22 @@ HLW811x_SetActivePowCalcMethod(bDriverInterface_t *pdrv,
   if (Method > 3)
     return HLW811X_INVALID_PARAM;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
   Reg &= ~(0x03 << HLW811X_REG_EMUCON_Pmode);
   Reg |= (Method << HLW811X_REG_EMUCON_Pmode);
 
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1039,7 +774,7 @@ HLW811x_SetRMSCalcMode(bDriverInterface_t *pdrv, HLW811x_RMSCalcMode_t Mode)
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1049,15 +784,15 @@ HLW811x_SetRMSCalcMode(bDriverInterface_t *pdrv, HLW811x_RMSCalcMode_t Mode)
     Reg |= (1 << HLW811X_REG_EMUCON_DC_MODE);
   
 
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1081,7 +816,7 @@ HLW811x_SetZeroCrossing(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1107,15 +842,15 @@ HLW811x_SetZeroCrossing(bDriverInterface_t *pdrv,
     break;
   }
 
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1140,7 +875,7 @@ HLW811x_SetDigitalHighPassFilter(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1171,15 +906,15 @@ HLW811x_SetDigitalHighPassFilter(bDriverInterface_t *pdrv,
     Reg |= (1 << HLW811X_REG_EMUCON_HPFIBOFF);
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1203,7 +938,7 @@ HLW811x_SetPFPulse(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1225,15 +960,15 @@ HLW811x_SetPFPulse(bDriverInterface_t *pdrv,
     Reg &= ~(1 << HLW811X_REG_EMUCON_PBRUN);
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1255,7 +990,7 @@ HLW811x_SetSDOPinOpenDrain(bDriverInterface_t *pdrv, HLW811x_EnDis_t Enable)
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1274,15 +1009,15 @@ HLW811x_SetSDOPinOpenDrain(bDriverInterface_t *pdrv, HLW811x_EnDis_t Enable)
     break;
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1306,7 +1041,7 @@ HLW811x_SetEnergyClearance(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1328,15 +1063,15 @@ HLW811x_SetEnergyClearance(bDriverInterface_t *pdrv,
     Reg |= (1 << HLW811X_REG_EMUCON2_EPB_CB);
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1384,22 +1119,22 @@ HLW811x_SetDataUpdateFreq(bDriverInterface_t *pdrv,
     break;
   }
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
   Reg &= ~(3 << HLW811X_REG_EMUCON2_DUPSEL);
   Reg |= Mask;
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1423,7 +1158,7 @@ HLW811x_SetPowerFactorFunctionality(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1442,15 +1177,15 @@ HLW811x_SetPowerFactorFunctionality(bDriverInterface_t *pdrv,
     break;
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1474,7 +1209,7 @@ HLW811x_SetWaveformData(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1493,15 +1228,15 @@ HLW811x_SetWaveformData(bDriverInterface_t *pdrv,
     break;
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1525,7 +1260,7 @@ HLW811x_SetVoltageSagDetection(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1544,15 +1279,15 @@ HLW811x_SetVoltageSagDetection(bDriverInterface_t *pdrv,
     break;
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1576,7 +1311,7 @@ HLW811x_SetOverVolCarDetection(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1595,15 +1330,15 @@ HLW811x_SetOverVolCarDetection(bDriverInterface_t *pdrv,
     break;
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1627,7 +1362,7 @@ HLW811x_SetZeroCrossingDetection(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1646,15 +1381,15 @@ HLW811x_SetZeroCrossingDetection(bDriverInterface_t *pdrv,
     break;
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1678,7 +1413,7 @@ HLW811x_SetPeakDetection(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1697,15 +1432,15 @@ HLW811x_SetPeakDetection(bDriverInterface_t *pdrv,
     break;
   }
   
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_EMUCON2, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1730,7 +1465,7 @@ HLW811x_SetIntOutFunc(bDriverInterface_t *pdrv,
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_INT, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_INT, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1746,15 +1481,15 @@ HLW811x_SetIntOutFunc(bDriverInterface_t *pdrv,
     Reg |= ((INT2 & 0x0F) << HLW811X_REG_INT_P2sel);
   }
 
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_INT, Reg);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_INT, Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1776,15 +1511,15 @@ HLW811x_SetIntMask(bDriverInterface_t *pdrv, uint16_t Mask)
 {
   int8_t Result = 0;
 
-  Result = HLW811x_CommandEnableWriteOperation(Handler);
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_WriteReg16(Handler, HLW811X_REG_ADDR_IE, Mask);
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_IE, Mask);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  Result = HLW811x_CommandCloseWriteOperation(Handler);
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -1807,7 +1542,7 @@ HLW811x_GetIntFlag(bDriverInterface_t *pdrv, uint16_t *Mask)
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_IF, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_IF, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
   
@@ -1833,7 +1568,7 @@ HLW811x_GetResIntFlag(bDriverInterface_t *pdrv, uint16_t *Mask)
   int8_t Result = 0;
   uint16_t Reg = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_RIF, &Reg);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_RIF, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
   
@@ -1861,15 +1596,16 @@ HLW811x_GetRmsU(bDriverInterface_t *pdrv, float *Data)
   uint16_t CoefReg = 0;
   float ResCoef = 0;
   uint8_t PGA = 0;
-
-  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_RmsU, &Reg);
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	
+  Result = HLW811x_ReadReg24(pdrv, HLW811X_REG_ADDR_RmsU, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
   RawValue = HLW811x_24BitTo32Bit(Reg);
-  CoefReg = Handler->CoefReg.RmsUC;
-  ResCoef = Handler->ResCoef.KU;
-  PGA = (1 << Handler->PGA.U);
+  CoefReg = _priv->CoefReg.RmsUC;
+  ResCoef = _priv->ResCoef.KU;
+  PGA = (1 << _priv->PGA.U);
   *Data = (float)RawValue * (CoefReg / 4194304.0f / ResCoef / 100 / PGA);
 
   return HLW811X_OK;
@@ -1894,15 +1630,16 @@ HLW811x_GetRmsIA(bDriverInterface_t *pdrv, float *Data)
   float ResCoef = 0;
   uint8_t PGA = 0;
   double DoubleBuffer = 0;
-
-  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_RmsIA, &Reg);
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	
+  Result = HLW811x_ReadReg24(pdrv, HLW811X_REG_ADDR_RmsIA, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
   RawValue = HLW811x_24BitTo32Bit(Reg);
-  CoefReg = Handler->CoefReg.RmsIAC;
-  ResCoef = Handler->ResCoef.KIA;
-  PGA = 16 >> Handler->PGA.IA;
+  CoefReg = _priv->CoefReg.RmsIAC;
+  ResCoef = _priv->ResCoef.KIA;
+  PGA = 16 >> _priv->PGA.IA;
   DoubleBuffer = (double)RawValue * (CoefReg / 8388608.0 / ResCoef / 1000 * PGA);
   *Data = (float)DoubleBuffer;
 
@@ -1928,15 +1665,16 @@ HLW811x_GetRmsIB(bDriverInterface_t *pdrv, float *Data)
   float ResCoef = 0;
   uint8_t PGA = 0;
   double DoubleBuffer = 0;
-
-  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_RmsIB, &Reg);
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	
+  Result = HLW811x_ReadReg24(pdrv, HLW811X_REG_ADDR_RmsIB, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
   RawValue = HLW811x_24BitTo32Bit(Reg);
-  CoefReg = Handler->CoefReg.RmsIBC;
-  ResCoef = Handler->ResCoef.KIB;
-  PGA = 16 >> Handler->PGA.IB;
+  CoefReg = _priv->CoefReg.RmsIBC;
+  ResCoef = _priv->ResCoef.KIB;
+  PGA = 16 >> _priv->PGA.IB;
   DoubleBuffer = (double)RawValue * (CoefReg / 8388608.0 / ResCoef / 10000 * PGA);
   *Data = (float)DoubleBuffer;
 
@@ -1962,15 +1700,16 @@ HLW811x_GetPowerPA(bDriverInterface_t *pdrv, float *Data)
   double ResCoef = 0;
   double PGA = 0;
   double DoubleBuffer = 0;
-
-  Result = HLW811x_ReadReg32(Handler, HLW811X_REG_ADDR_PowerPA, &Reg);
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	
+  Result = HLW811x_ReadReg32(pdrv, HLW811X_REG_ADDR_PowerPA, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
   RawValue = *((int32_t*)&Reg);
-  CoefReg = Handler->CoefReg.PowerPAC;
-  PGA = 16 >> (Handler->PGA.U + Handler->PGA.IA);
-  ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIA;
+  CoefReg = _priv->CoefReg.PowerPAC;
+  PGA = 16 >> (_priv->PGA.U + _priv->PGA.IA);
+  ResCoef = _priv->ResCoef.KU * _priv->ResCoef.KIA;
   DoubleBuffer = (double)RawValue * (CoefReg / 2147483648.0 / ResCoef * PGA);
   *Data = (float)DoubleBuffer;
 
@@ -1996,15 +1735,16 @@ HLW811x_GetPowerPB(bDriverInterface_t *pdrv, float *Data)
   double ResCoef = 0;
   double PGA = 0;
   double DoubleBuffer = 0;
-
-  Result = HLW811x_ReadReg32(Handler, HLW811X_REG_ADDR_PowerPB, &Reg);
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	
+  Result = HLW811x_ReadReg32(pdrv, HLW811X_REG_ADDR_PowerPB, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
   RawValue = *((int32_t*)&Reg);
-  CoefReg = Handler->CoefReg.PowerPBC;
-  PGA = 16 >> (Handler->PGA.U + Handler->PGA.IB);
-  ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIB;
+  CoefReg = _priv->CoefReg.PowerPBC;
+  PGA = 16 >> (_priv->PGA.U + _priv->PGA.IB);
+  ResCoef = _priv->ResCoef.KU * _priv->ResCoef.KIB;
   DoubleBuffer = (double)RawValue * (CoefReg / 2147483648.0 / ResCoef * PGA);
   *Data = (float)DoubleBuffer;
 
@@ -2030,25 +1770,26 @@ HLW811x_GetPowerS(bDriverInterface_t *pdrv, float *Data)
   double ResCoef = 0;
   double PGA = 0;
   double DoubleBuffer = 0;
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
 
-  Result = HLW811x_ReadReg32(Handler, HLW811X_REG_ADDR_PowerS, &Reg);
+  Result = HLW811x_ReadReg32(pdrv, HLW811X_REG_ADDR_PowerS, &Reg);
   if (Result < 0)
     return HLW811X_FAIL;
 
   RawValue = *((int32_t*)&Reg);
-  CoefReg = Handler->CoefReg.PowerSC;
+  CoefReg = _priv->CoefReg.PowerSC;
 
-  switch (Handler->CurrentChannel)
+  switch (_priv->CurrentChannel)
   {
   
   case HLW811X_CURRENT_CHANNEL_A:
-    PGA = 16 >> (Handler->PGA.U + Handler->PGA.IA);
-    ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIA;
+    PGA = 16 >> (_priv->PGA.U + _priv->PGA.IA);
+    ResCoef = _priv->ResCoef.KU * _priv->ResCoef.KIA;
     break;
 
   case HLW811X_CURRENT_CHANNEL_B: 
-    PGA = 16 >> (Handler->PGA.U + Handler->PGA.IB);
-    ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIB;
+    PGA = 16 >> (_priv->PGA.U + _priv->PGA.IB);
+    ResCoef = _priv->ResCoef.KU * _priv->ResCoef.KIB;
     break;
 
   default:
@@ -2080,15 +1821,16 @@ HLW811x_GetEnergyA(bDriverInterface_t *pdrv, float *Data)
   float ResCoef = 0;
   uint16_t PGA = 0;
   double DoubleBuffer = 0;
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
 
-  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_Energy_PA, &RawValue);
+  Result = HLW811x_ReadReg24(pdrv, HLW811X_REG_ADDR_Energy_PA, &RawValue);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  CoefReg = Handler->CoefReg.EnergyAC;
-  PGA = (1 << Handler->PGA.U) * (1 << Handler->PGA.IA);
-  ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIA;
-  DoubleBuffer = (double)RawValue * (CoefReg / 536870912.0 / PGA / 4096 / ResCoef) * Handler->HFconst;
+  CoefReg = _priv->CoefReg.EnergyAC;
+  PGA = (1 << _priv->PGA.U) * (1 << _priv->PGA.IA);
+  ResCoef = _priv->ResCoef.KU * _priv->ResCoef.KIA;
+  DoubleBuffer = (double)RawValue * (CoefReg / 536870912.0 / PGA / 4096 / ResCoef) * _priv->HFconst;
   *Data = (float)DoubleBuffer;
 
   return HLW811X_OK;
@@ -2112,15 +1854,16 @@ HLW811x_GetEnergyB(bDriverInterface_t *pdrv, float *Data)
   float ResCoef = 0;
   uint16_t PGA = 0;
   double DoubleBuffer = 0;
-
-  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_Energy_PB, &RawValue);
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);	
+	
+  Result = HLW811x_ReadReg24(pdrv, HLW811X_REG_ADDR_Energy_PB, &RawValue);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  CoefReg = Handler->CoefReg.EnergyBC;
-  PGA = (1 << Handler->PGA.U) * (1 << Handler->PGA.IB);
-  ResCoef = Handler->ResCoef.KU * Handler->ResCoef.KIB;
-  DoubleBuffer = (double)RawValue * (CoefReg / 536870912.0 / PGA / 4096 / ResCoef) * Handler->HFconst;
+  CoefReg = _priv->CoefReg.EnergyBC;
+  PGA = (1 << _priv->PGA.U) * (1 << _priv->PGA.IB);
+  ResCoef = _priv->ResCoef.KU * _priv->ResCoef.KIB;
+  DoubleBuffer = (double)RawValue * (CoefReg / 536870912.0 / PGA / 4096 / ResCoef) * _priv->HFconst;
   *Data = (float)DoubleBuffer;
 
   return HLW811X_OK;
@@ -2140,12 +1883,13 @@ HLW811x_GetFreqU(bDriverInterface_t *pdrv, float *Data)
 {
   int8_t Result = 0;
   uint16_t RawValue = 0;
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_Ufreq, &RawValue);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_Ufreq, &RawValue);
   if (Result < 0)
     return HLW811X_FAIL;
 
-  *Data = Handler->CLKI / 8.0 / RawValue;
+  *Data = _priv->CLKI / 8.0 / RawValue;
 
   return HLW811X_OK;
 }
@@ -2167,7 +1911,7 @@ HLW811x_GetPowerFactor(bDriverInterface_t *pdrv, float *Data)
   uint32_t RawValue = 0;
   int32_t RawValueInt = 0;
 
-  Result = HLW811x_ReadReg24(Handler, HLW811X_REG_ADDR_PowerFactor, &RawValue);
+  Result = HLW811x_ReadReg24(pdrv, HLW811X_REG_ADDR_PowerFactor, &RawValue);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -2195,7 +1939,7 @@ HLW811x_GetPhaseAngle(bDriverInterface_t *pdrv, float *Data, uint32_t Freq)
   int8_t Result = 0;
   uint16_t RawValue = 0;
 
-  Result = HLW811x_ReadReg16(Handler, HLW811X_REG_ADDR_Angle, &RawValue);
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_Angle, &RawValue);
   if (Result < 0)
     return HLW811X_FAIL;
 
@@ -2208,6 +1952,106 @@ HLW811x_GetPhaseAngle(bDriverInterface_t *pdrv, float *Data, uint32_t Freq)
 
   // while (*Data > 360.0f)
   //   *Data -= 360.0f;
+
+  return HLW811X_OK;
+}
+
+/**
+ * @brief  Begin function to initialize the device and set the default values
+ * @note   This function must be called after initializing platform dependent and
+ *         HLW811x_Init functions.
+ * 
+ * @note   This function will read the coefficients from the device. It is
+ *         mandatory to call this function before using other functions such as
+ *         HLW811x_GetRmsU, HLW811x_GetRmsIx and etc.
+ * 
+ * @param  Handler: Pointer to handler
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_Begin(bDriverInterface_t *pdrv)
+{
+  int8_t Result = 0;
+  uint16_t Reg16 = 0;
+  uint16_t Checksum = 0;
+	
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	
+  _priv->ResCoef.KU = 1.0f;
+  _priv->ResCoef.KIA = 1.0f;
+  _priv->ResCoef.KIB = 1.0f;
+
+  _priv->PGA.U = HLW811X_PGA_1;
+  _priv->PGA.IA = HLW811X_PGA_16;
+  _priv->PGA.IB = HLW811X_PGA_1;
+
+  _priv->CLKI = 3579545;
+
+  if (HLW811x_SetSpecialMeasurementChannel(pdrv,
+                                           HLW811X_CURRENT_CHANNEL_A) != HLW811X_OK)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_HFConst, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->HFconst = Reg16;
+
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_RmsIAC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->CoefReg.RmsIAC = Reg16;
+
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_RmsIBC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->CoefReg.RmsIBC = Reg16;
+  
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_RmsUC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->CoefReg.RmsUC = Reg16;
+
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_PowerPAC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->CoefReg.PowerPAC = Reg16;
+  
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_PowerPBC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->CoefReg.PowerPBC = Reg16;
+
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_PowerSC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->CoefReg.PowerSC = Reg16;
+  
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EnergyAC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->CoefReg.EnergyAC = Reg16;
+  
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EnergyBC, &Reg16);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  _priv->CoefReg.EnergyBC = Reg16;
+
+  Checksum = 0xFFFF +
+             _priv->CoefReg.RmsIAC +
+             _priv->CoefReg.RmsIBC +
+             _priv->CoefReg.RmsUC +
+             _priv->CoefReg.PowerPAC +
+             _priv->CoefReg.PowerPBC +
+             _priv->CoefReg.PowerSC +
+             _priv->CoefReg.EnergyAC +
+             _priv->CoefReg.EnergyBC;
+  Checksum = ~Checksum;
+
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_Coeff_chksum, &Reg16);
+  if (Result < 0 || Checksum != Reg16)
+    return HLW811X_FAIL;
 
   return HLW811X_OK;
 }
@@ -2225,18 +2069,18 @@ HLW811x_GetPhaseAngle(bDriverInterface_t *pdrv, float *Data, uint32_t Freq)
 int bHLW811X_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bHLW811X_Init);
-    pdrv->read        = _bLis3dhRead;
+//    pdrv->read        = _bLis3dhRead;
     pdrv->_private._p = &bHlw811xRunInfo[pdrv->drv_no];
-    memset(pdrv->_private._p, 0, sizeof(bList3dhPrivate_t));
-    if ((_bLis3dhGetID(pdrv)) != LIS3DH_ID)
-    {
-        return -1;
-    }
-    _bLis3dhDefaultCfg(pdrv);
-    _bLis3dhClearFifo(pdrv);
+    memset(pdrv->_private._p, 0, sizeof(bHlw811xPrivate_t));
+//    if ((_bLis3dhGetID(pdrv)) != LIS3DH_ID)
+//    {
+//        return -1;
+//    }
+//    _bLis3dhDefaultCfg(pdrv);
+//    _bLis3dhClearFifo(pdrv);
 
-    bDRIVER_SET_READCACHE(pdrv, &bLis3dhRunInfo[pdrv->drv_no].data[0],
-                          sizeof(bLis3dhRunInfo[pdrv->drv_no].data));
+//    bDRIVER_SET_READCACHE(pdrv, &bLis3dhRunInfo[pdrv->drv_no].data[0],
+//                          sizeof(bLis3dhRunInfo[pdrv->drv_no].data));
 						  
 						  
 	HLW811x_Begin(pdrv);
@@ -2247,7 +2091,7 @@ int bHLW811X_Init(bDriverInterface_t *pdrv)
 #ifdef BSECTION_NEED_PRAGMA
 #pragma section driver_init
 #endif
-bDRIVER_REG_INIT(B_DRIVER_LIS3DH, bLIS3DH_Init);
+bDRIVER_REG_INIT(B_DRIVER_HLW8112, bHLW811X_Init);
 #ifdef BSECTION_NEED_PRAGMA
 #pragma section 
 #endif

@@ -2,8 +2,8 @@
  *!
  * \file        b_drv_hlw811x.h
  * \version     v0.0.1
- * \date        2020/06/08
- * \author      Bean(notrynohigh@outlook.com)
+ * \date        2024/08/14
+ * \author      hmchen(chenhaimeng@189.cn)
  *******************************************************************************
  * @attention
  *
@@ -52,67 +52,6 @@ extern "C" {
  * \{
  */
 //<HALIF 2 SPI_I2C
-typedef struct
-{
-    union
-    {
-        bHalI2CIf_t _i2c;
-        bHalSPIIf_t _spi;
-    } _if;
-    uint8_t    is_spi;
-    bHalItIf_t it[2];
-} bLIS3DH_HalIf_t;
-
-typedef enum
-{
-    LIS3DH_POWER_DOWN                   = 0x00,
-    LIS3DH_ODR_1Hz                      = 0x01,
-    LIS3DH_ODR_10Hz                     = 0x02,
-    LIS3DH_ODR_25Hz                     = 0x03,
-    LIS3DH_ODR_50Hz                     = 0x04,
-    LIS3DH_ODR_100Hz                    = 0x05,
-    LIS3DH_ODR_200Hz                    = 0x06,
-    LIS3DH_ODR_400Hz                    = 0x07,
-    LIS3DH_ODR_1kHz620_LP               = 0x08,
-    LIS3DH_ODR_5kHz376_LP_1kHz344_NM_HP = 0x09,
-} bLis3dhODR_t;
-
-typedef enum
-{
-    LIS3DH_FS_2G  = 0,
-    LIS3DH_FS_4G  = 1,
-    LIS3DH_FS_8G  = 2,
-    LIS3DH_FS_16G = 3,
-} bLis3dhFS_t;
-
-typedef enum
-{
-    LIS3DH_HR_12BIT = 0,
-    LIS3DH_NM_10BIT = 1,
-    LIS3DH_LP_8BIT  = 2,
-} bLis3dhOptMode_t;
-
-typedef enum
-{
-    LIS3DH_BYPASS_MODE         = 0,
-    LIS3DH_FIFO_MODE           = 1,
-    LIS3DH_DYNAMIC_STREAM_MODE = 2,
-    LIS3DH_STREAM_TO_FIFO_MODE = 3,
-} bLis3dhFifoMode_t;
-
-typedef struct
-{
-    bLis3dhODR_t      odr;
-    bLis3dhFS_t       fs;
-    bLis3dhOptMode_t  opmode;
-    uint8_t           fifo_en;
-    uint8_t           watermark;
-    uint8_t           fifo_intx;
-    bLis3dhFifoMode_t fm;
-    uint8_t           int_polarity;
-    bGsensor3Axis_t   data[32];
-} bList3dhPrivate_t;
-
 
 typedef struct
 {
@@ -278,6 +217,12 @@ typedef struct
 		uint16_t EnergyAC;
 		uint16_t EnergyBC;
 	} CoefReg;
+	 struct
+  {
+    float KU;
+    float KIA;
+    float KIB;
+  } ResCoef;
 	struct
 	{
 		HLW811x_PGA_t U;
