@@ -47,7 +47,7 @@
  */
 
 /**
- * \defgroup LIS3DH_Private_TypesDefinitions
+ * \defgroup HLW8112_Private_TypesDefinitions
  * \{
  */
 
@@ -56,7 +56,7 @@
  */
 
 /**
- * \defgroup LIS3DH_Private_Defines
+ * \defgroup HLW8112_Private_Defines
  * \{
  */
 
@@ -69,7 +69,7 @@
  */
 
 /**
- * \defgroup LIS3DH_Private_Macros
+ * \defgroup HLW8112_Private_Macros
  * \{
  */
 
@@ -78,7 +78,7 @@
  */
 
 /**
- * \defgroup LIS3DH_Private_Variables
+ * \defgroup HLW8112_Private_Variables
  * \{
  */
 bDRIVER_HALIF_TABLE(bHLW811X_HalIf_t, DRIVER_NAME);
@@ -161,8 +161,8 @@ HLW811x_WriteReg(bDriverInterface_t *pdrv,
 	if (_if->is_spi)
     {
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi, BufferCheckTX, 3);
-        bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 3);
+        bHalSpiSend(&_if->_if._spi, BufferCheckTX, 1);
+        bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 2);
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
     }
     else
@@ -174,7 +174,7 @@ HLW811x_WriteReg(bDriverInterface_t *pdrv,
     Result = 0;
     for (uint8_t i = 0; i < Size; i++)
     {
-      if (Data[i] != BufferCheckRX[i + 1])
+      if (Data[i] != BufferCheckRX[i])
       {
         Result = -1;
         break;
@@ -230,8 +230,8 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
 	if (_if->is_spi)
     {
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi, BufferTx, Size + 1);
-				bHalSpiReceive(&_if->_if._spi, BufferRx, Size + 1);
+        bHalSpiSend(&_if->_if._spi, BufferTx, 1);
+				bHalSpiReceive(&_if->_if._spi, BufferRx, Size);
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
     }
     else
@@ -246,8 +246,8 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
 	if (_if->is_spi)
     {
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi, BufferCheckTX, 5);
-				bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 5);
+        bHalSpiSend(&_if->_if._spi, BufferCheckTX, 1);
+				bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 4);
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
     }
     else
@@ -256,7 +256,7 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
     }
     // Compare the read data with the RDATA register
     Result = 0;
-    for (uint8_t i = 1; i < Size + 1; i++)
+    for (uint8_t i = 0; i < Size ; i++)
     {
       if (BufferRx[i] != BufferCheckRX[i])
       {
@@ -272,8 +272,8 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
   	if (_if->is_spi)
     {
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi, BufferTx, Size + 1);
-		bHalSpiReceive(&_if->_if._spi, BufferRx, Size + 1);
+        bHalSpiSend(&_if->_if._spi, BufferTx, 1);
+				bHalSpiReceive(&_if->_if._spi, BufferRx, Size);
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
     }
     else
@@ -283,7 +283,7 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
 #endif
 
   for (uint8_t i = 0; i < Size; i++)
-    Data[i] = BufferRx[i + 1];
+    Data[i] = BufferRx[i];
 
   return Result;
 }
@@ -369,7 +369,18 @@ HLW811x_CommandCloseWriteOperation(bDriverInterface_t *pdrv)
 static inline int8_t
 HLW811x_CommandReset(bDriverInterface_t *pdrv)
 {
-  return HLW811x_Command(pdrv, HLW811X_COMMAND_RESET);
+	int8_t Result = 0;
+	Result = HLW811x_CommandEnableWriteOperation(pdrv);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Result = HLW811x_Command(pdrv, HLW811X_COMMAND_RESET);
+  if (Result < 0)
+    return HLW811X_FAIL;
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
+  if (Result < 0)
+    return HLW811X_FAIL;
+	
+  return HLW811X_OK;	
 }
 
 static int32_t
@@ -577,21 +588,35 @@ HLW811x_Result_t
 HLW811x_SetSpecialMeasurementChannel(bDriverInterface_t *pdrv,
                                      HLW811x_CurrentChannel_t Channel)
 {
+	int8_t Result = 0;
+	uint8_t Command = 0;
 	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);	
   switch (Channel)
   {
   case HLW811X_CURRENT_CHANNEL_A:
     _priv->CurrentChannel = HLW811X_CURRENT_CHANNEL_A;
-    return HLW811x_Command(pdrv, HLW811X_COMMAND_CHANNELA);
+		Command = HLW811X_COMMAND_CHANNELA;
     break;
 
   case HLW811X_CURRENT_CHANNEL_B:
     _priv->CurrentChannel = HLW811X_CURRENT_CHANNEL_B;
-    return HLW811x_Command(pdrv, HLW811X_COMMAND_CHANNELB);
+		Command = HLW811X_COMMAND_CHANNELB;
     break;
+  default:
+    return HLW811X_INVALID_PARAM;
+		break;
   }
-
-  return HLW811X_INVALID_PARAM;
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
+  if (Result < 0)
+    return HLW811X_FAIL;	
+	Result = HLW811x_Command(pdrv, Command);
+	if (Result < 0)
+    return HLW811X_FAIL;
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
+  if (Result < 0)
+    return HLW811X_FAIL;
+	
+  return HLW811X_OK;
 }
 
 
@@ -717,7 +742,45 @@ HLW811x_SetPGA(bDriverInterface_t *pdrv,
 
   return HLW811X_OK;
 }
+/**
+ * @brief  Set the comparator on off
+ * @param  Handler: Pointer to handler
+ * @param  Method: Active power calculation method
+ * @retval HLW811x_Result_t
+ *         - HLW811X_OK: Operation was successful.
+ *         - HLW811X_FAIL: Failed to send or receive data.
+ */
+HLW811x_Result_t
+HLW811x_SetComparatorOff(bDriverInterface_t *pdrv,
+                               HLW811x_ComparatorOff_t OnOff)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+	
+//	if (OnOff > 2)
+//    return HLW811X_INVALID_PARAM;
 
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+	
+  Reg &= ~(0x01 << HLW811X_REG_EMUCON_comp_off);
+  Reg |= (OnOff << HLW811X_REG_EMUCON_comp_off);
+
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
 
 /**
  * @brief  Set the active power calculation method
@@ -1447,6 +1510,46 @@ HLW811x_SetPeakDetection(bDriverInterface_t *pdrv,
   return HLW811X_OK;
 }
 
+HLW811x_Result_t
+HLW811x_SetInternalVref(bDriverInterface_t *pdrv,
+                         HLW811x_EnDis_t Enable)
+{
+  int8_t Result = 0;
+  uint16_t Reg = 0;
+
+  Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  switch (Enable)
+  {
+  case HLW811X_ENDIS_ENABLE:
+    Reg |= (1 << HLW811X_REG_EMUCON2_VrefSel);
+    break;
+
+  case HLW811X_ENDIS_DISABLE:
+    Reg &= ~(1 << HLW811X_REG_EMUCON2_VrefSel);
+    break;
+
+  default:
+    return HLW811X_INVALID_PARAM;
+    break;
+  }
+  
+  Result = HLW811x_CommandEnableWriteOperation(pdrv);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_WriteReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, Reg);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  Result = HLW811x_CommandCloseWriteOperation(pdrv);
+  if (Result < 0)
+    return HLW811X_FAIL;
+
+  return HLW811X_OK;
+}
 
 /**
  * @brief  Set INT1 and INT2 pins functionality
@@ -1988,11 +2091,63 @@ HLW811x_Begin(bDriverInterface_t *pdrv)
   _priv->PGA.IB = HLW811X_PGA_1;
 
   _priv->CLKI = 3579545;
-
+	//HLW811X_REG_ADDR_SYSCON
   if (HLW811x_SetSpecialMeasurementChannel(pdrv,
                                            HLW811X_CURRENT_CHANNEL_A) != HLW811X_OK)
     return HLW811X_FAIL;
-
+  if (HLW811x_SetChannelOnOff(pdrv,
+                              HLW811X_ENDIS_ENABLE,HLW811X_ENDIS_ENABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	
+	//HLW811X_REG_ADDR_EMUCON
+	if (HLW811x_SetComparatorOff(pdrv,
+                              HLW811X_COMPARATOC_POS_OFF) != HLW811X_OK)
+    return HLW811X_FAIL;	
+	
+	if (HLW811x_SetActivePowCalcMethod(pdrv,
+                              HLW811X_ACTIVE_POW_CALC_METHOD_POS_NEG_ALGEBRAIC) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetRMSCalcMode(pdrv,
+                              HLW811X_RMS_CALC_MODE_NORMAL) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetZeroCrossing(pdrv,
+                              HLW811X_ZERO_CROSSING_MODE_POSITIVE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetDigitalHighPassFilter(pdrv,
+                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetPFPulse(pdrv,
+                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+//HLW811X_REG_ADDR_EMUCON2
+	if (HLW811x_SetEnergyClearance(pdrv,
+                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetDataUpdateFreq(pdrv,
+                              HLW811X_DATA_UPDATE_FREQ_27_3HZ) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetPowerFactorFunctionality(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetWaveformData(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+if (HLW811x_SetVoltageSagDetection(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;	
+if (HLW811x_SetOverVolCarDetection(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;	
+if (HLW811x_SetZeroCrossingDetection(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;	
+	if (HLW811x_SetPeakDetection(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;	
+	if (HLW811x_SetInternalVref(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	
   Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_HFConst, &Reg16);
   if (Result < 0)
     return HLW811X_FAIL;

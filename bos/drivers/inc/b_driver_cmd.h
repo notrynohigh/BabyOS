@@ -324,9 +324,22 @@ typedef struct
 } bMacAddress_t;
 
 ///////////////////////////////////////////////////////////
-// power monitoring and analysis, Command  &  Structure
+// power meter and analysis, Command  &  Structure
 ///////////////////////////////////////////////////////////
-
+typedef struct
+{
+    float RmsU;
+    float RmsIA;
+    float RmsIB;
+    float PowerPA;
+    float PowerPB;
+    float PowerS;
+    float EnergyA;
+    float EnergyB;
+    float FreqU;
+    float PowerFactor;	
+		float PhaseAngle;	
+} bPowerMeter_hlw811x_t;
 
 ///////////////////////////////////////////////////////////
 //

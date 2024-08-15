@@ -64,7 +64,13 @@ typedef struct
     bHalItIf_t it[2];
 } bHLW811X_HalIf_t;
 
+#ifndef HLW811X_CONFIG_SPI_READ_RETRY
+  #define HLW811X_CONFIG_SPI_READ_RETRY  1
+#endif
 
+#ifndef HLW811X_CONFIG_SPI_WRITE_RETRY
+  #define HLW811X_CONFIG_SPI_WRITE_RETRY 1
+#endif
 /* Exported Data Types ----------------------------------------------------------*/
 /**
  * @brief  Library functions result data type
@@ -109,6 +115,13 @@ typedef enum HLW811x_PGA_e
   HLW811X_PGA_NONE = 5
 } HLW811x_PGA_t;
 
+
+
+typedef enum HLW811x_ComparatorOff_e
+{
+  HLW811X_COMPARATOC_POS_ON = 0,
+  HLW811X_COMPARATOC_POS_OFF = 1
+} HLW811x_ComparatorOff_t;
 
 /**
  * @brief  Active power calculation method
