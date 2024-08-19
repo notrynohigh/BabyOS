@@ -230,7 +230,7 @@ typedef struct
 		uint16_t EnergyAC;
 		uint16_t EnergyBC;
 	} CoefReg;
-	 struct
+	struct
   {
     float KU;
     float KIA;
@@ -246,6 +246,7 @@ typedef struct
   uint16_t HFconst;
   uint32_t CLKI;
   HLW811x_CurrentChannel_t CurrentChannel;
+	bHlw811xDrvCallback_t cb;	
 	
 } bHlw811xPrivate_t;
 

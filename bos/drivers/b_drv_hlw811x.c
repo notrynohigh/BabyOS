@@ -224,9 +224,6 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
   do
   {
     // Read data
-    //Handler->Platform.SPI.SetLevelSCSN(0);
-    //Result = Handler->Platform.SPI.SendReceive(BufferTx, BufferRx, Size + 1);
-    //Handler->Platform.SPI.SetLevelSCSN(1);
 	if (_if->is_spi)
     {
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
@@ -240,9 +237,6 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
     }
 
     // Read RDATA register to check the read data
-    //Handler->Platform.SPI.SetLevelSCSN(0);
-    //Result = Handler->Platform.SPI.SendReceive(BufferCheckTX, BufferCheckRX, 5);
-    //Handler->Platform.SPI.SetLevelSCSN(1);
 	if (_if->is_spi)
     {
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
@@ -266,9 +260,6 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
     }
   } while (Result < 0 && Retry++ < HLW811X_CONFIG_SPI_READ_RETRY);
 #else
-  //Handler->Platform.SPI.SetLevelSCSN(0);
-  //Result = Handler->Platform.SPI.SendReceive(BufferTx, BufferRx, Size + 1);
-  //Handler->Platform.SPI.SetLevelSCSN(1);
   	if (_if->is_spi)
     {
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
@@ -593,18 +584,18 @@ HLW811x_SetSpecialMeasurementChannel(bDriverInterface_t *pdrv,
 	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);	
   switch (Channel)
   {
-  case HLW811X_CURRENT_CHANNEL_A:
-    _priv->CurrentChannel = HLW811X_CURRENT_CHANNEL_A;
-		Command = HLW811X_COMMAND_CHANNELA;
-    break;
+		case HLW811X_CURRENT_CHANNEL_A:
+			_priv->CurrentChannel = HLW811X_CURRENT_CHANNEL_A;
+			Command = HLW811X_COMMAND_CHANNELA;
+			break;
 
-  case HLW811X_CURRENT_CHANNEL_B:
-    _priv->CurrentChannel = HLW811X_CURRENT_CHANNEL_B;
-		Command = HLW811X_COMMAND_CHANNELB;
-    break;
-  default:
-    return HLW811X_INVALID_PARAM;
-		break;
+		case HLW811X_CURRENT_CHANNEL_B:
+			_priv->CurrentChannel = HLW811X_CURRENT_CHANNEL_B;
+			Command = HLW811X_COMMAND_CHANNELB;
+			break;
+		default:
+			return HLW811X_INVALID_PARAM;
+
   }
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
   if (Result < 0)
@@ -885,24 +876,24 @@ HLW811x_SetZeroCrossing(bDriverInterface_t *pdrv,
 
   switch (Mode)
   {
-  case HLW811X_ZERO_CROSSING_MODE_POSITIVE:
-    Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD0);
-    Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD1);
-    break;
+		case HLW811X_ZERO_CROSSING_MODE_POSITIVE:
+			Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD0);
+			Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD1);
+			break;
 
-  case HLW811X_ZERO_CROSSING_MODE_NEGATIVE:
-    Reg |= (1 << HLW811X_REG_EMUCON_ZXD0);
-    Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD1);
-    break;
+		case HLW811X_ZERO_CROSSING_MODE_NEGATIVE:
+			Reg |= (1 << HLW811X_REG_EMUCON_ZXD0);
+			Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD1);
+			break;
 
-  case HLW811X_ZERO_CROSSING_MODE_BOTH:
-    Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD0);
-    Reg |= (1 << HLW811X_REG_EMUCON_ZXD1);
-    break;
+		case HLW811X_ZERO_CROSSING_MODE_BOTH:
+			Reg &= ~(1 << HLW811X_REG_EMUCON_ZXD0);
+			Reg |= (1 << HLW811X_REG_EMUCON_ZXD1);
+			break;
 
-  default:
-    return HLW811X_INVALID_PARAM;
-    break;
+		default:
+			return HLW811X_INVALID_PARAM;
+
   }
 
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1059,17 +1050,17 @@ HLW811x_SetSDOPinOpenDrain(bDriverInterface_t *pdrv, HLW811x_EnDis_t Enable)
 
   switch (Enable)
   {
-  case HLW811X_ENDIS_ENABLE:
-    Reg |= (1 << HLW811X_REG_EMUCON2_SDOCmos);
-    break;
+		case HLW811X_ENDIS_ENABLE:
+			Reg |= (1 << HLW811X_REG_EMUCON2_SDOCmos);
+			break;
 
-  case HLW811X_ENDIS_DISABLE:
-    Reg &= ~(1 << HLW811X_REG_EMUCON2_SDOCmos);
-    break;
+		case HLW811X_ENDIS_DISABLE:
+			Reg &= ~(1 << HLW811X_REG_EMUCON2_SDOCmos);
+			break;
 
-  default:
-    return HLW811X_INVALID_PARAM;
-    break;
+		default:
+			return HLW811X_INVALID_PARAM;
+
   }
   
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1161,25 +1152,25 @@ HLW811x_SetDataUpdateFreq(bDriverInterface_t *pdrv,
 
   switch (Freq)
   {
-  case HLW811X_DATA_UPDATE_FREQ_3_4HZ:
-    Mask = 0;
-    break;
+		case HLW811X_DATA_UPDATE_FREQ_3_4HZ:
+			Mask = 0;
+			break;
 
-  case HLW811X_DATA_UPDATE_FREQ_6_8HZ:
-    Mask = (1 << HLW811X_REG_EMUCON2_DUPSEL);
-    break;
+		case HLW811X_DATA_UPDATE_FREQ_6_8HZ:
+			Mask = (1 << HLW811X_REG_EMUCON2_DUPSEL);
+			break;
 
-  case HLW811X_DATA_UPDATE_FREQ_13_65HZ:
-    Mask = (2 << HLW811X_REG_EMUCON2_DUPSEL);
-    break;
+		case HLW811X_DATA_UPDATE_FREQ_13_65HZ:
+			Mask = (2 << HLW811X_REG_EMUCON2_DUPSEL);
+			break;
 
-  case HLW811X_DATA_UPDATE_FREQ_27_3HZ:
-    Mask = (3 << HLW811X_REG_EMUCON2_DUPSEL);
-    break;
+		case HLW811X_DATA_UPDATE_FREQ_27_3HZ:
+			Mask = (3 << HLW811X_REG_EMUCON2_DUPSEL);
+			break;
 
-  default:
-    return HLW811X_INVALID_PARAM;
-    break;
+		default:
+			return HLW811X_INVALID_PARAM;
+
   }
 
   Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_EMUCON2, &Reg);
@@ -1227,17 +1218,16 @@ HLW811x_SetPowerFactorFunctionality(bDriverInterface_t *pdrv,
 
   switch (Enable)
   {
-  case HLW811X_ENDIS_ENABLE:
-    Reg |= (1 << HLW811X_REG_EMUCON2_PfactorEN);
-    break;
+		case HLW811X_ENDIS_ENABLE:
+			Reg |= (1 << HLW811X_REG_EMUCON2_PfactorEN);
+			break;
 
-  case HLW811X_ENDIS_DISABLE:
-    Reg &= ~(1 << HLW811X_REG_EMUCON2_PfactorEN);
-    break;
+		case HLW811X_ENDIS_DISABLE:
+			Reg &= ~(1 << HLW811X_REG_EMUCON2_PfactorEN);
+			break;
+		default:
+			return HLW811X_INVALID_PARAM;
 
-  default:
-    return HLW811X_INVALID_PARAM;
-    break;
   }
   
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1278,17 +1268,17 @@ HLW811x_SetWaveformData(bDriverInterface_t *pdrv,
 
   switch (Enable)
   {
-  case HLW811X_ENDIS_ENABLE:
-    Reg |= (1 << HLW811X_REG_EMUCON2_WaveEN);
-    break;
+		case HLW811X_ENDIS_ENABLE:
+			Reg |= (1 << HLW811X_REG_EMUCON2_WaveEN);
+			break;
 
-  case HLW811X_ENDIS_DISABLE:
-    Reg &= ~(1 << HLW811X_REG_EMUCON2_WaveEN);
-    break;
+		case HLW811X_ENDIS_DISABLE:
+			Reg &= ~(1 << HLW811X_REG_EMUCON2_WaveEN);
+			break;
 
-  default:
-    return HLW811X_INVALID_PARAM;
-    break;
+		default:
+			return HLW811X_INVALID_PARAM;
+
   }
   
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1329,17 +1319,17 @@ HLW811x_SetVoltageSagDetection(bDriverInterface_t *pdrv,
 
   switch (Enable)
   {
-  case HLW811X_ENDIS_ENABLE:
-    Reg |= (1 << HLW811X_REG_EMUCON2_SAGEN);
-    break;
+		case HLW811X_ENDIS_ENABLE:
+			Reg |= (1 << HLW811X_REG_EMUCON2_SAGEN);
+			break;
 
-  case HLW811X_ENDIS_DISABLE:
-    Reg &= ~(1 << HLW811X_REG_EMUCON2_SAGEN);
-    break;
+		case HLW811X_ENDIS_DISABLE:
+			Reg &= ~(1 << HLW811X_REG_EMUCON2_SAGEN);
+			break;
 
-  default:
-    return HLW811X_INVALID_PARAM;
-    break;
+		default:
+			return HLW811X_INVALID_PARAM;
+
   }
   
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1380,17 +1370,17 @@ HLW811x_SetOverVolCarDetection(bDriverInterface_t *pdrv,
 
   switch (Enable)
   {
-  case HLW811X_ENDIS_ENABLE:
-    Reg |= (1 << HLW811X_REG_EMUCON2_OverEN);
-    break;
+		case HLW811X_ENDIS_ENABLE:
+			Reg |= (1 << HLW811X_REG_EMUCON2_OverEN);
+			break;
 
-  case HLW811X_ENDIS_DISABLE:
-    Reg &= ~(1 << HLW811X_REG_EMUCON2_OverEN);
-    break;
+		case HLW811X_ENDIS_DISABLE:
+			Reg &= ~(1 << HLW811X_REG_EMUCON2_OverEN);
+			break;
 
-  default:
-    return HLW811X_INVALID_PARAM;
-    break;
+		default:
+			return HLW811X_INVALID_PARAM;
+
   }
   
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1431,17 +1421,17 @@ HLW811x_SetZeroCrossingDetection(bDriverInterface_t *pdrv,
 
   switch (Enable)
   {
-  case HLW811X_ENDIS_ENABLE:
-    Reg |= (1 << HLW811X_REG_EMUCON2_ZxEN);
-    break;
+		case HLW811X_ENDIS_ENABLE:
+			Reg |= (1 << HLW811X_REG_EMUCON2_ZxEN);
+			break;
 
-  case HLW811X_ENDIS_DISABLE:
-    Reg &= ~(1 << HLW811X_REG_EMUCON2_ZxEN);
-    break;
+		case HLW811X_ENDIS_DISABLE:
+			Reg &= ~(1 << HLW811X_REG_EMUCON2_ZxEN);
+			break;
 
-  default:
-    return HLW811X_INVALID_PARAM;
-    break;
+		default:
+			return HLW811X_INVALID_PARAM;
+
   }
   
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1492,7 +1482,7 @@ HLW811x_SetPeakDetection(bDriverInterface_t *pdrv,
 
   default:
     return HLW811X_INVALID_PARAM;
-    break;
+
   }
   
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1533,7 +1523,7 @@ HLW811x_SetInternalVref(bDriverInterface_t *pdrv,
 
   default:
     return HLW811X_INVALID_PARAM;
-    break;
+
   }
   
   Result = HLW811x_CommandEnableWriteOperation(pdrv);
@@ -1897,7 +1887,7 @@ HLW811x_GetPowerS(bDriverInterface_t *pdrv, float *Data)
 
   default:
     return HLW811X_INVALID_PARAM;
-    break;
+
   }
 
   DoubleBuffer = (double)RawValue * (CoefReg / 2147483648.0 / ResCoef * PGA);
@@ -2074,79 +2064,13 @@ HLW811x_GetPhaseAngle(bDriverInterface_t *pdrv, float *Data, uint32_t Freq)
  *         - HLW811X_FAIL: Failed to send or receive data.
  */
 HLW811x_Result_t
-HLW811x_Begin(bDriverInterface_t *pdrv)
+HLW811x_Coefficient_checksum(bDriverInterface_t *pdrv)
 {
   int8_t Result = 0;
   uint16_t Reg16 = 0;
   uint16_t Checksum = 0;
-	
+ 	
 	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
-	
-  _priv->ResCoef.KU = 1.0f;
-  _priv->ResCoef.KIA = 1.0f;
-  _priv->ResCoef.KIB = 1.0f;
-
-  _priv->PGA.U = HLW811X_PGA_1;
-  _priv->PGA.IA = HLW811X_PGA_16;
-  _priv->PGA.IB = HLW811X_PGA_1;
-
-  _priv->CLKI = 3579545;
-	//HLW811X_REG_ADDR_SYSCON
-  if (HLW811x_SetSpecialMeasurementChannel(pdrv,
-                                           HLW811X_CURRENT_CHANNEL_A) != HLW811X_OK)
-    return HLW811X_FAIL;
-  if (HLW811x_SetChannelOnOff(pdrv,
-                              HLW811X_ENDIS_ENABLE,HLW811X_ENDIS_ENABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
-    return HLW811X_FAIL;
-	
-	//HLW811X_REG_ADDR_EMUCON
-	if (HLW811x_SetComparatorOff(pdrv,
-                              HLW811X_COMPARATOC_POS_OFF) != HLW811X_OK)
-    return HLW811X_FAIL;	
-	
-	if (HLW811x_SetActivePowCalcMethod(pdrv,
-                              HLW811X_ACTIVE_POW_CALC_METHOD_POS_NEG_ALGEBRAIC) != HLW811X_OK)
-    return HLW811X_FAIL;
-	if (HLW811x_SetRMSCalcMode(pdrv,
-                              HLW811X_RMS_CALC_MODE_NORMAL) != HLW811X_OK)
-    return HLW811X_FAIL;
-	if (HLW811x_SetZeroCrossing(pdrv,
-                              HLW811X_ZERO_CROSSING_MODE_POSITIVE) != HLW811X_OK)
-    return HLW811X_FAIL;
-	if (HLW811x_SetDigitalHighPassFilter(pdrv,
-                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
-    return HLW811X_FAIL;
-	if (HLW811x_SetPFPulse(pdrv,
-                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
-    return HLW811X_FAIL;
-//HLW811X_REG_ADDR_EMUCON2
-	if (HLW811x_SetEnergyClearance(pdrv,
-                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
-    return HLW811X_FAIL;
-	if (HLW811x_SetDataUpdateFreq(pdrv,
-                              HLW811X_DATA_UPDATE_FREQ_27_3HZ) != HLW811X_OK)
-    return HLW811X_FAIL;
-	if (HLW811x_SetPowerFactorFunctionality(pdrv,
-                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
-    return HLW811X_FAIL;
-	if (HLW811x_SetWaveformData(pdrv,
-                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
-    return HLW811X_FAIL;
-if (HLW811x_SetVoltageSagDetection(pdrv,
-                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
-    return HLW811X_FAIL;	
-if (HLW811x_SetOverVolCarDetection(pdrv,
-                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
-    return HLW811X_FAIL;	
-if (HLW811x_SetZeroCrossingDetection(pdrv,
-                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
-    return HLW811X_FAIL;	
-	if (HLW811x_SetPeakDetection(pdrv,
-                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
-    return HLW811X_FAIL;	
-	if (HLW811x_SetInternalVref(pdrv,
-                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
-    return HLW811X_FAIL;
 	
   Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_HFConst, &Reg16);
   if (Result < 0)
@@ -2212,6 +2136,184 @@ if (HLW811x_SetZeroCrossingDetection(pdrv,
 }
 
 
+
+HLW811x_Result_t _bHlw811xDefaultCfg(bDriverInterface_t *pdrv)
+{
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	
+  _priv->ResCoef.KU = 1.0f;
+  _priv->ResCoef.KIA = 1.0f;
+  _priv->ResCoef.KIB = 1.0f;
+
+  _priv->PGA.U = HLW811X_PGA_1;
+  _priv->PGA.IA = HLW811X_PGA_16;
+  _priv->PGA.IB = HLW811X_PGA_1;
+
+  _priv->CLKI = 3579545;
+	//HLW811X_REG_ADDR_SYSCON
+  if (HLW811x_SetSpecialMeasurementChannel(pdrv,
+                                           HLW811X_CURRENT_CHANNEL_A) != HLW811X_OK)
+    return HLW811X_FAIL;
+  if (HLW811x_SetChannelOnOff(pdrv,
+                              HLW811X_ENDIS_ENABLE,HLW811X_ENDIS_ENABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	
+	//HLW811X_REG_ADDR_EMUCON
+	if (HLW811x_SetComparatorOff(pdrv,
+                              HLW811X_COMPARATOC_POS_OFF) != HLW811X_OK)
+    return HLW811X_FAIL;	
+	
+	if (HLW811x_SetActivePowCalcMethod(pdrv,
+                              HLW811X_ACTIVE_POW_CALC_METHOD_POS_NEG_ALGEBRAIC) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetRMSCalcMode(pdrv,
+                              HLW811X_RMS_CALC_MODE_NORMAL) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetZeroCrossing(pdrv,
+                              HLW811X_ZERO_CROSSING_MODE_POSITIVE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetDigitalHighPassFilter(pdrv,
+                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetPFPulse(pdrv,
+                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	//HLW811X_REG_ADDR_EMUCON2
+	if (HLW811x_SetEnergyClearance(pdrv,
+                              HLW811X_ENDIS_DISABLE,HLW811X_ENDIS_DISABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetDataUpdateFreq(pdrv,
+                              HLW811X_DATA_UPDATE_FREQ_27_3HZ) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetPowerFactorFunctionality(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetWaveformData(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	if (HLW811x_SetVoltageSagDetection(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;	
+	if (HLW811x_SetOverVolCarDetection(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;	
+	if (HLW811x_SetZeroCrossingDetection(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;	
+	if (HLW811x_SetPeakDetection(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;	
+	if (HLW811x_SetInternalVref(pdrv,
+                              HLW811X_ENDIS_ENABLE) != HLW811X_OK)
+    return HLW811X_FAIL;
+	
+  return HLW811X_OK;	
+}
+//read data unit
+// mV / mA
+static int _bHlw811xRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
+{
+	bPowerMeter_hlw811x_t hlw811x;
+	
+	if (len < sizeof(bPowerMeter_hlw811x_t))
+	{
+		return -1;
+	}
+	if(HLW811x_GetRmsU(pdrv, &hlw811x.RmsU)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetRmsIA(pdrv, &hlw811x.RmsIA)!= HLW811X_OK)
+	{
+		return -1;
+	}
+	if(HLW811x_GetRmsIB(pdrv, &hlw811x.RmsIB)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetPowerPA(pdrv, &hlw811x.PowerPA)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetPowerPB(pdrv, &hlw811x.PowerPB)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetPowerS(pdrv, &hlw811x.PowerSA)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetEnergyA(pdrv, &hlw811x.EnergyA)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetEnergyB(pdrv, &hlw811x.EnergyB)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetFreqU(pdrv, &hlw811x.FreqU)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetPowerFactor(pdrv, &hlw811x.PowerFactorA)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	if(HLW811x_GetPhaseAngle(pdrv, &hlw811x.PhaseAngleA,50)!= HLW811X_OK)
+	{
+		return -1;
+	}	
+	
+	memcpy(pbuf, &hlw811x, sizeof(bPowerMeter_hlw811x_t));
+	return sizeof(bPowerMeter_hlw811x_t);	
+}
+
+//--------------------------------------------------------------------------------------------------
+static int _bHlw811xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
+{
+	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
+	b_log("ctl:%d\r\n", cmd);
+	
+    switch (cmd)
+    {
+				case bCMD_HLW811X_REG_CALLBACK:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            bHlw811xDrvCallback_t *pcb 	= (bHlw811xDrvCallback_t *)param;
+            _priv->cb.cb            		= pcb->cb;
+            _priv->cb.user_data     		= pcb->user_data;
+        }
+				break;
+				case bCMD_HLW811X_SOFT_RST:
+        {
+					HLW811x_CommandReset(pdrv);
+        }
+				break;
+				case bCMD_HLW811X_MODE_AC:
+        {
+						if (HLW811x_SetRMSCalcMode(pdrv,
+                              HLW811X_RMS_CALC_MODE_NORMAL) != HLW811X_OK)
+						return HLW811X_FAIL;
+        }
+				break;
+				case bCMD_HLW811X_MODE_DC:
+        {
+						if (HLW811x_SetRMSCalcMode(pdrv,
+                              HLW811X_RMS_CALC_MODE_DC) != HLW811X_OK)
+						return HLW811X_FAIL;
+        }
+				break;
+				default:
+					
+					break;
+		}
+	return 0;		
+}
+
+
 /**
  * \}
  */
@@ -2223,24 +2325,21 @@ if (HLW811x_SetZeroCrossingDetection(pdrv,
 
 int bHLW811X_Init(bDriverInterface_t *pdrv)
 {
-    bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bHLW811X_Init);
-//    pdrv->read        = _bLis3dhRead;
-    pdrv->_private._p = &bHlw811xRunInfo[pdrv->drv_no];
-    memset(pdrv->_private._p, 0, sizeof(bHlw811xPrivate_t));
-//    if ((_bLis3dhGetID(pdrv)) != LIS3DH_ID)
-//    {
-//        return -1;
-//    }
-//    _bLis3dhDefaultCfg(pdrv);
-//    _bLis3dhClearFifo(pdrv);
-
-//    bDRIVER_SET_READCACHE(pdrv, &bLis3dhRunInfo[pdrv->drv_no].data[0],
-//                          sizeof(bLis3dhRunInfo[pdrv->drv_no].data));
-						  
-						  
-	HLW811x_Begin(pdrv);
-
-    return 0;
+	bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bHLW811X_Init);
+	pdrv->read        = _bHlw811xRead;
+	pdrv->ctl         = _bHlw811xCtl;
+	pdrv->_private._p = &bHlw811xRunInfo[pdrv->drv_no];
+	memset(pdrv->_private._p, 0, sizeof(bHlw811xPrivate_t));
+					  
+	if(HLW811x_Coefficient_checksum(pdrv))
+	{
+		return -1;
+	}
+	if(_bHlw811xDefaultCfg(pdrv))
+	{
+		return -1;
+	}
+	return 0;
 }
 
 #ifdef BSECTION_NEED_PRAGMA
