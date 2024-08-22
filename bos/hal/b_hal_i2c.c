@@ -468,6 +468,30 @@ int bHalI2CMemRead(const bHalI2CIf_t *i2c_if, uint16_t mem_addr, uint8_t mem_add
     }
     return retval;
 }
+
+
+int bHalI2CAddressCheck(const bHalI2CIf_t *i2c_if)
+{
+    int         retval = 0;
+	uint8_t 	dummy = i2c_if->dev_addr;
+    bHalI2CIO_t simulating_iic;
+    if (IS_NULL(i2c_if))
+    {
+        return -1;
+    }
+    if (i2c_if->is_simulation == 1)
+    {
+        simulating_iic.clk = i2c_if->_if.simulating_i2c.clk;
+        simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
+        simulating_iic.frq = i2c_if->_if.simulating_i2c.frq;
+        retval             = _HalI2CIOWriteData(simulating_iic, i2c_if->dev_addr, &dummy, 0);
+    }
+    else
+    {
+        retval = bMcuI2CWriteByte(i2c_if, &dummy, 0);
+    }
+    return retval;
+}
 /**
  * \}
  */
