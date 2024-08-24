@@ -286,10 +286,16 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
 	}
 
 #endif
-
+	uint32_t check_sum = 0;
 	for (uint8_t i = 0; i < Size; i++)
+	{
+		check_sum += BufferRx[i];
 		Data[i] = BufferRx[i];
-
+	}
+	if(check_sum == (0xff * Size))
+	{
+		Result = -1;	
+	}
 	return Result;
 }
 
@@ -2274,7 +2280,6 @@ HLW811x_Coefficient_checksum(bDriverInterface_t *pdrv)
 	Checksum = ~Checksum;
 
 	Result = HLW811x_ReadReg16(pdrv, HLW811X_REG_ADDR_Coeff_chksum, &Reg16);
-
 	if (Result < 0 || Checksum != Reg16)
 		return HLW811X_FAIL;
 
