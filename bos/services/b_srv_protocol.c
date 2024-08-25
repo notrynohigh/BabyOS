@@ -157,7 +157,8 @@ bProtSrvId_t bProtSrvInit(bProtSrvAttr_t *attr, bProtSrvGetInfo_t func)
             break;
         }
     }
-    if (attr->attr.parse && attr->attr.package)
+    // 运行只支持解析或者打包
+    if (attr->attr.parse || attr->attr.package)
     {
         return attr;
     }
@@ -169,12 +170,17 @@ bProtSrvId_t bProtSrvInit(bProtSrvAttr_t *attr, bProtSrvGetInfo_t func)
 // retval 返回值是，out中的有效数据长度。-1表示打包失败
 int bProtSrvParse(bProtSrvId_t id, uint8_t *in, uint16_t i_len, uint8_t *out, uint16_t o_len)
 {
+    int             ret   = -1;
     bProtSrvAttr_t *pattr = (bProtSrvAttr_t *)id;
     if (pattr == NULL || in == NULL)
     {
         return -1;
     }
-    return pattr->attr.parse(&pattr->attr, in, i_len, out, o_len);
+    if (pattr->attr.parse)
+    {
+        ret = pattr->attr.parse(&pattr->attr, in, i_len, out, o_len);
+    }
+    return ret;
 }
 
 // cmd 是需要打包什么数据 \ref bProtoCmd_t
@@ -183,12 +189,17 @@ int bProtSrvParse(bProtSrvId_t id, uint8_t *in, uint16_t i_len, uint8_t *out, ui
 // retval buf中有效数据长度，-1表示打包失败
 int bProtSrvPackage(bProtSrvId_t id, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
+    int             ret   = -1;
     bProtSrvAttr_t *pattr = (bProtSrvAttr_t *)id;
     if (pattr == NULL || buf == NULL || cmd >= B_PROTO_CMD_NUMBER)
     {
         return -1;
     }
-    return pattr->attr.package(&pattr->attr, cmd, buf, buf_len);
+    if (pattr->attr.package)
+    {
+        ret = pattr->attr.package(&pattr->attr, cmd, buf, buf_len);
+    }
+    return ret;
 }
 
 // 订阅协议的指令

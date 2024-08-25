@@ -124,6 +124,8 @@ extern "C" {
 
 #define B_UNUSED(x) (void)(x)
 
+#define B_ALIGN_TO_2_BYTES(addr) (((uint32_t)(addr) + 1) & ~((uint32_t)1))
+
 /**
  * \}
  */

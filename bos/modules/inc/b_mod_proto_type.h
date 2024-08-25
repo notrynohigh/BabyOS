@@ -40,8 +40,6 @@ extern "C" {
 
 #include "b_section.h"
 #include "utils/inc/b_util_list.h"
-#include "b_config.h"
-#pragma pack(1)
 
 typedef struct
 {
@@ -53,7 +51,6 @@ typedef struct
 typedef struct
 {
     uint8_t  slave_addr;
-    uint8_t  reserved1;
     uint16_t base_reg;      // Little endian
     uint16_t reg_value[1];  // Little endian
 } bModbusMasterWriteReg_t;
@@ -61,10 +58,9 @@ typedef struct
 typedef struct
 {
     uint8_t  slave_addr;
-    uint8_t  reserved1;
     uint16_t base_reg;  // Little endian
     uint16_t reg_num;   // Little endian
-    uint8_t  reserved2;
+    uint8_t  reserved[8];
     uint16_t reg_value[1];  // Little endian
 } bModbusMasterWriteRegs_t;
 
@@ -78,37 +74,11 @@ typedef struct
 
 typedef struct
 {
-    uint8_t  slave_addr;
-    uint8_t  reserved;
-    uint16_t base_reg;   // Little endian
-    uint16_t reg_value;  // Little endian
-    uint16_t crc;
-} bModbusSlaveWriteReg_t;
-
-typedef struct
-{
-    uint8_t  slave_addr;
-    uint8_t  reserved;
-    uint16_t base_reg;  // Little endian
-    uint16_t reg_num;   // Little endian
-    uint16_t crc;
-} bModbusSlaveWriteRegs_t;
-
-typedef struct
-{
-    uint8_t  slave_addr;
-    uint8_t  reserved;
-    uint8_t  len;
-    uint16_t reg_value[MY_DEVICE_MODBUS_REG_NUM];  // Little endian
-} bModbusSlaveRead_t;
-
-typedef struct
-{
     uint8_t   slave_id;
     uint8_t   func_code;
     uint16_t  base_reg;   // Little endian
     uint16_t  reg_num;    // Little endian
-    int16_t 	*reg_value;   // Little endian
+    uint16_t *reg_value;  // Little endian
 } bModbusCbParm_t;
 
 typedef struct
@@ -146,8 +116,6 @@ typedef struct
 #define B_PROTO_TRANS_RESULT_OK 0
 #define B_PROTO_TRANS_RESULT_FAIL 1
 
-#pragma pack()
-
 typedef enum
 {
     B_XYMODEM_CMD_START,        // package [null],
@@ -170,6 +138,8 @@ typedef enum
 {
     B_PROTO_INFO_DEVICE_ID,              // 获取设备id
     B_PROTO_INFO_MODBUS_REG_PERMISSION,  // 获取modbus寄存器的读写权限
+    B_PROTO_INFO_MODBUS_SLAVE_ADDR,      // 获取当前设备的从机地址
+    B_PROTO_INFO_MODBUS_REG_VALUE,       // 获取modbus寄存器的值（做从机时使用）
     B_PROTO_INFO_NUMBER,
 } bProtoInfoType_t;
 
@@ -181,7 +151,6 @@ typedef int (*bProtoGetInfo_t)(bProtoInfoType_t type, uint8_t *buf, uint16_t buf
 
 typedef struct
 {
-    uint32_t             reserved;
     bProtoParse_t        parse;
     bProtoPackage_t      package;
     bProtoGetInfo_t      get_info;
