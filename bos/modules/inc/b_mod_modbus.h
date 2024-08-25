@@ -81,7 +81,7 @@ typedef enum
     MODBUS_ILLEGAL_REG_ERR   = -5,  // 操作非法寄存器
     MODBUS_REG_OPERATION_ERR = -6,  // 无操作寄存器权限
     MODBUS_CALLBACK_ERR      = -7,  // 回调告知错误
-
+    MODBUS_GET_REGVALUE_ERR  = -8,  // 无法获取从机寄存器值
 } bModbusErrCode_t;
 
 /**
@@ -103,7 +103,7 @@ typedef enum
  * \defgroup MODBUS_Exported_Macros
  * \{
  */
-#define L2B_B2L_16b(n) ((((n)&0xff) << 8) | (((n)&0xff00) >> 8))
+#define L2B_B2L_16b(n) ((((n) & 0xff) << 8) | (((n) & 0xff00) >> 8))
 /**
  * \}
  */
