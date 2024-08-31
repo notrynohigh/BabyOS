@@ -330,8 +330,11 @@ typedef struct
 #define bCMD_HLW811X_SOFT_RST 					1       //none
 #define bCMD_HLW811X_MODE_AC 						2       //none
 #define bCMD_HLW811X_MODE_DC 						3       //none
+#define bCMD_HLW811X_SET_RESRATIO_IA 		4       //none
+#define bCMD_HLW811X_SET_RESRATIO_IB	 	5       //none
+#define bCMD_HLW811X_SET_RESRATIO_U 		6       //none
 #define bCMD_HLW811X_SET_CALLBACK_ARG 	15  		// void *
-  
+
 typedef enum
 {
     B_EVT_INT_PFA = 0,

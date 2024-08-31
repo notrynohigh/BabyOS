@@ -104,38 +104,39 @@ static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
     l_c = _priv->page_size - off % (_priv->page_size);
     if (len <= l_c)
     {
-		if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, len) != 0)
-		{
-			return -1;
-		}
+			if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, len) != 0)
+			{
+				return -1;
+			}
+			bHalDelayMs(5);
     }
     else
     {
-		if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, l_c) != 0)
-		{
-			return -1;
-		}
+				if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, l_c) != 0)
+				{
+					return -1;
+				}
         bHalDelayMs(5);
         off += l_c;
         pbuf += l_c;
         len -= l_c;
         for (i = 0; i < len / (_priv->page_size); i++)
         {
-			if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, _priv->page_size) != 0)
-			{
-				return -1;
-			}
-            bHalDelayMs(5);
-            off += _priv->page_size;
-            pbuf += _priv->page_size;
+					if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, _priv->page_size) != 0)
+					{
+						return -1;
+					}
+					bHalDelayMs(5);
+					off += _priv->page_size;
+					pbuf += _priv->page_size;
         }
         if ((len % _priv->page_size) > 0)
         {
-			if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, (len % _priv->page_size)) != 0)
-			{
-				return -1;
-			}
-            bHalDelayMs(5);
+					if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, (len % _priv->page_size)) != 0)
+					{
+						return -1;
+					}
+					bHalDelayMs(5);
         }
     }
     return len;
@@ -145,10 +146,10 @@ static int _b24CXXRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, ui
 {
     bDRIVER_GET_HALIF(_if, b24CXX_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, b24CXXPrivate_t, pdrv);
-	if(bHalI2CMemRead(_if, off, 1 + (_priv->capacity > 256), pbuf, len) != 0)
-	{
-		return -1;
-	}
+		if(bHalI2CMemRead(_if, off, 1 + (_priv->capacity > 256), pbuf, len) != 0)
+		{
+			return -1;
+		}
     return len;
 }
 

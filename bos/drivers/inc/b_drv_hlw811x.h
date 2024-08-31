@@ -250,6 +250,8 @@ typedef struct
 	
 } bHlw811xPrivate_t;
 
+void set_nsi8241_en1(uint8_t dev_no);
+
 /**
  * \}
  */

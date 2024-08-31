@@ -1817,7 +1817,7 @@ HLW811x_GetRmsU(bDriverInterface_t *pdrv, float *Data)
 
 	if (Result < 0)
 		return HLW811X_FAIL;
-
+//	b_log("HLW811x_GetRmsU reg: %d \r\n",Reg);
 	RawValue = HLW811x_24BitTo32Bit(Reg);
 	CoefReg = _priv->CoefReg.RmsUC;
 	ResCoef = _priv->ResCoef.KU;
@@ -2453,7 +2453,7 @@ static int _bHlw811xRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
 static int _bHlw811xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
 	bDRIVER_GET_PRIVATE(_priv, bHlw811xPrivate_t, pdrv);
-	b_log("ctl:%d\r\n", cmd);
+//	b_log("ctl:%d\r\n", cmd);
 
 	switch (cmd)
 	{
@@ -2491,7 +2491,46 @@ static int _bHlw811xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 				return HLW811X_FAIL;
 		}
 		break;
-
+		
+		case bCMD_HLW811X_SET_RESRATIO_IA:
+		{
+			if (param == NULL)
+			{
+				return -1;
+			}
+			float *pcb  = (float *)param;
+			if (HLW811x_SetResRatioIA(pdrv,
+									   *pcb) != HLW811X_OK)
+				return HLW811X_FAIL;
+		}
+		break;
+		
+		case bCMD_HLW811X_SET_RESRATIO_IB:
+		{
+			if (param == NULL)
+			{
+				return -1;
+			}
+			float *pcb  = (float *)param;
+			if (HLW811x_SetResRatioIB(pdrv,
+									   *pcb) != HLW811X_OK)
+				return HLW811X_FAIL;
+		}
+		break;
+		
+		case bCMD_HLW811X_SET_RESRATIO_U:
+		{
+			if (param == NULL)
+			{
+				return -1;
+			}
+			float *pcb  = (float *)param;
+			if (HLW811x_SetResRatioU(pdrv,
+									   *pcb) != HLW811X_OK)
+				return HLW811X_FAIL;
+		}
+		break;
+		
 		default:
 
 			break;
@@ -2500,6 +2539,35 @@ static int _bHlw811xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 	return 0;
 }
 
+void set_nsi8241_en1(uint8_t dev_no)
+{
+	switch(dev_no)
+	{
+		case 0 :
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN12, 	0);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN15, 	1);			
+			break;
+		case 1 :
+		case 2 :
+		case 4 :
+		case 5 :
+		case 6 :
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN12, 	1);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN15, 	0);				
+			break;
+		case 3 :	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN12, 	0);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	1);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN15, 	0);			
+			break;
+		default:
+			break;
+	}
+	bHalDelayMs(10);
+
+}
 
 /**
  * \}
@@ -2517,7 +2585,9 @@ int bHLW811X_Init(bDriverInterface_t *pdrv)
 	pdrv->ctl         = _bHlw811xCtl;
 	pdrv->_private._p = &bHlw811xRunInfo[pdrv->drv_no];
 	memset(pdrv->_private._p, 0, sizeof(bHlw811xPrivate_t));
-
+	
+	set_nsi8241_en1(pdrv->drv_no);
+	
 	if(HLW811x_Coefficient_checksum(pdrv))
 	{
 		return -1;
