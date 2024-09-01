@@ -95,22 +95,6 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     return len;
 }
 
-int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
-{
-    int           i     = 0;
-    McuUartReg_t *pUart = NULL;
-    if (uart > B_HAL_UART_2 || pbuf == NULL)
-    {
-        return -1;
-    }
-    pUart = UartTable[uart];
-    for (i = 0; i < len; i++)
-    {
-        pbuf[i] = pUart->SBUF;
-    }
-    return len;
-}
-
 #endif
 
 /************************ Copyright (c) 2020 Bean *****END OF FILE****/

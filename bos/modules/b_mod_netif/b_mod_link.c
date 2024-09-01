@@ -238,7 +238,7 @@ static void _bNetlinkCore()
         return;
     }
 
-    if (bHalGetSysTick() - tick > MS2TICKS(NETIF_LINK_CHECK_INTERVAL))
+    if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(NETIF_LINK_CHECK_INTERVAL))
     {
         tick = bHalGetSysTick();
         bCtl(bLinkFd, bCMD_GET_LINK_STATE, &link_state);

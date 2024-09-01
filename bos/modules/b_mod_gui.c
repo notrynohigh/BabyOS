@@ -263,7 +263,7 @@ static void _bGUI_Core()
 {
     static uint32_t tick = 0;
     bGuiTouchData_t tdata;
-    if (bHalGetSysTick() - tick > MS2TICKS(10))
+    if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(10))
     {
         tick = bHalGetSysTick();
 #if (defined(_USE_UGUI) && (_USE_UGUI == 1))

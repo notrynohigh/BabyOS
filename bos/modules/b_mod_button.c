@@ -148,7 +148,7 @@ static uint8_t _bButtonRead(void *p)
 static void _bButtonCore()
 {
     static uint32_t tick = 0;
-    if (bHalGetSysTick() - tick > MS2TICKS(1000 / FLEX_BTN_SCAN_FREQ_HZ))
+    if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(1000 / FLEX_BTN_SCAN_FREQ_HZ))
     {
         tick = bHalGetSysTick();
         flex_button_scan();
@@ -160,7 +160,7 @@ static void _bButtonCore()
 #endif
 BOS_REG_POLLING_FUNC(_bButtonCore);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 static void _bButtonCallback(void *p)
 {

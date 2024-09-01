@@ -186,26 +186,26 @@ struct pt
         }                                    \
     } while (0)
 
-#define PT_WAIT_UNTIL(pt, condition, timeout)                                   \
-    do                                                                          \
-    {                                                                           \
-        if ((pt)->wait == 0)                                                    \
-        {                                                                       \
-            (pt)->tick    = bHalGetSysTick();                                   \
-            (pt)->time_ms = MS2TICKS(timeout);                                  \
-            (pt)->wait    = 1;                                                  \
-            (pt)->retval  = PT_RETVAL_OK;                                       \
-        }                                                                       \
-        LC_SET((pt)->lc);                                                       \
-        if (!((condition) || (bHalGetSysTick() - (pt)->tick) >= (pt)->time_ms)) \
-        {                                                                       \
-            return PT_WAITING;                                                  \
-        }                                                                       \
-        if ((bHalGetSysTick() - (pt)->tick) >= (pt)->time_ms)                   \
-        {                                                                       \
-            (pt)->retval = PT_RETVAL_TIMEOUT;                                   \
-        }                                                                       \
-        (pt)->wait = 0;                                                         \
+#define PT_WAIT_UNTIL(pt, condition, timeout)                                                 \
+    do                                                                                        \
+    {                                                                                         \
+        if ((pt)->wait == 0)                                                                  \
+        {                                                                                     \
+            (pt)->tick    = bHalGetSysTick();                                                 \
+            (pt)->time_ms = MS2TICKS(timeout);                                                \
+            (pt)->wait    = 1;                                                                \
+            (pt)->retval  = PT_RETVAL_OK;                                                     \
+        }                                                                                     \
+        LC_SET((pt)->lc);                                                                     \
+        if (!((condition) || TICK_DIFF_BIT32((pt)->tick, bHalGetSysTick()) >= (pt)->time_ms)) \
+        {                                                                                     \
+            return PT_WAITING;                                                                \
+        }                                                                                     \
+        if (TICK_DIFF_BIT32((pt)->tick, bHalGetSysTick()) >= (pt)->time_ms)                   \
+        {                                                                                     \
+            (pt)->retval = PT_RETVAL_TIMEOUT;                                                 \
+        }                                                                                     \
+        (pt)->wait = 0;                                                                       \
     } while (0)
 
 /**

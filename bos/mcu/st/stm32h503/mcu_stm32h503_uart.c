@@ -72,29 +72,3 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     }
     return len;
 }
-
-int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
-{
-    int           i       = 0;
-    int           timeout = 0x000B0000;
-    McuUartReg_t *pUart   = NULL;
-    if (uart > B_HAL_UART_5 || pbuf == NULL)
-    {
-        return -1;
-    }
-    pUart = UartTable[uart];
-    for (i = 0; i < len; i++)
-    {
-        timeout = 0x000B0000;
-        while (timeout > 0 && ((pUart->ISR & (0x1 << 5)) == 0))
-        {
-            timeout--;
-        }
-        if (timeout <= 0)
-        {
-            return -2;
-        }
-        pbuf[i] = pUart->RDR;
-    }
-    return len;
-}

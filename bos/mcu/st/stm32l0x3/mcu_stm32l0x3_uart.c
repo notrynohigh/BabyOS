@@ -72,35 +72,31 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     return len;
 }
 
-int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
+int bMcuUartReceiveDma(bHalUartNumber_t uart, bHalDmaConfig_t *pconf)
 {
-    int           i       = 0;
-    int           timeout = 0x000B0000;
-    McuUartReg_t *pUart   = NULL;
-    if ((uart > B_HAL_UART_4 && uart != B_HAL_LPUART_1) || pbuf == NULL)
+    McuUartReg_t *pUart = NULL;
+    if ((uart > B_HAL_UART_2 && uart != B_HAL_LPUART_1) || pconf == NULL)
     {
         return -1;
     }
     if (uart == B_HAL_LPUART_1)
     {
-        pUart = MCU_LPUART1;
+        pUart          = MCU_LPUART1;
+        pconf->request = B_DMA_REQ_LPUART1_RX;
     }
     else
     {
         pUart = UartTable[uart];
-    }
-    for (i = 0; i < len; i++)
-    {
-        timeout = 0x000B0000;
-        while (timeout > 0 && ((pUart->ISR & (0x1 << 5)) == 0))
+        if (uart == B_HAL_UART_1)
         {
-            timeout--;
+            pconf->request = B_DMA_REQ_UART1_RX;
         }
-        if (timeout <= 0)
+        else if (uart == B_HAL_UART_2)
         {
-            return -2;
+            pconf->request = B_DMA_REQ_UART2_RX;
         }
-        pbuf[i] = pUart->RDR;
     }
-    return len;
+    B_SET_BIT(pUart->CR3, 0x1 << 6);
+    pconf->src = (uint32_t)(&(pUart->RDR));
+    return bMcuDmaConfig(pconf);
 }

@@ -196,9 +196,4 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     return len;
 }
 
-int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
-{
-    return len;
-}
-
 #endif

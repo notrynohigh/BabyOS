@@ -138,14 +138,14 @@ static void _bSoftPwmCore()
         ptmp = list_entry(pos, bSoftPwmInstance_t, list);
         if (ptmp->flag == 0)
         {
-            if (bHalGetSysTick() - ptmp->tick >= MS2TICKS(ptmp->ccr))
+            if (TICK_DIFF_BIT32(ptmp->tick, bHalGetSysTick()) >= MS2TICKS(ptmp->ccr))
             {
                 ptmp->handler(PWM_HANDLER_CCR);
                 ptmp->flag = 1;
             }
         }
 
-        if (bHalGetSysTick() - ptmp->tick >= MS2TICKS(ptmp->period))
+        if (TICK_DIFF_BIT32(ptmp->tick, bHalGetSysTick()) >= MS2TICKS(ptmp->period))
         {
             ptmp->handler(PWM_HANDLER_PERIOD);
             ptmp->flag = 0;
@@ -174,7 +174,7 @@ static void _bSoftPwmCore()
 #endif
 BOS_REG_POLLING_FUNC(_bSoftPwmCore);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

@@ -191,7 +191,7 @@ static int _bDS18B20Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
         pdrv->_private.v = bHalGetSysTick();
         return -1;
     }
-    else if (bHalGetSysTick() - pdrv->_private.v < MS2TICKS(500))
+    else if (TICK_DIFF_BIT32(pdrv->_private.v, bHalGetSysTick()) < MS2TICKS(500))
     {
         return -2;
     }
@@ -244,7 +244,7 @@ int bDS18B20_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_DS18B20, bDS18B20_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

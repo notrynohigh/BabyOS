@@ -561,7 +561,8 @@ static void _bMqttTimerCb(void *arg)
     if (pinstance->stat != B_MQTT_STA_INIT)
     {
         int len = MQTTSerialize_pingreq(buf, sizeof(buf));
-        if ((bHalGetSysTick() - pinstance->last_recv) > MS2TICKS(pinstance->keep_alive * 1000))
+        if ((TICK_DIFF_BIT32(pinstance->last_recv, bHalGetSysTick())) >
+            MS2TICKS(pinstance->keep_alive * 1000))
         {
             pbMqttInstance->stat = B_MQTT_STA_INIT;
         }

@@ -33,7 +33,9 @@
 #include "core/inc/b_timer.h"
 
 #include "b_section.h"
+#include "core/inc/b_task.h"
 #include "hal/inc/b_hal.h"
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -82,6 +84,8 @@
  */
 
 static LIST_HEAD(bTimerListHead);
+static bTaskId_t bTimerTaskId = NULL;
+B_TASK_CREATE_ATTR(bTimerTaskAttr);
 
 /**
  * \}
@@ -117,38 +121,46 @@ static bTimerAttr_t *_bTimerFind(bTimerId_t id)
     return pattr;
 }
 
-static void _bTimerCore()
+PT_THREAD(_bTimerTaskFunc)(struct pt *pt, void *arg)
 {
     struct list_head *pos   = NULL;
     bTimerAttr_t     *pattr = NULL;
-    list_for_each(pos, &bTimerListHead)
+    B_TASK_INIT_BEGIN();
+    // ...
+    B_TASK_INIT_END();
+
+    PT_BEGIN(pt);
+    while (1)
     {
-        pattr = list_entry(pos, bTimerAttr_t, list);
-        if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
+        if (list_empty(&bTimerListHead))
         {
-            if (bHalGetSysTick() - pattr->tick > MS2TICKS(pattr->cycle))
+            bTaskRestart(pt);
+        }
+        list_for_each(pos, &bTimerListHead)
+        {
+            pattr = list_entry(pos, bTimerAttr_t, list);
+            if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
             {
-                pattr->func(pattr->arg);
-                if (pattr->type == B_TIMER_ONCE)
+                if (TICK_DIFF_BIT32(pattr->tick, bHalGetSysTick()) > MS2TICKS(pattr->cycle))
                 {
-                    pattr->enable = 0;
-                }
-                else
-                {
-                    pattr->tick = bHalGetSysTick();
+                    pattr->func(pattr->arg);
+                    if (pattr->type == B_TIMER_ONCE)
+                    {
+                        pattr->enable = 0;
+                        __list_del(pos->prev, pos->next);
+                    }
+                    else
+                    {
+                        pattr->tick = bHalGetSysTick();
+                    }
                 }
             }
         }
+        bTaskYield(pt);
     }
+    PT_END(pt);
 }
 
-#ifdef BSECTION_NEED_PRAGMA
-#pragma section bos_polling
-#endif
-BOS_REG_POLLING_FUNC(_bTimerCore);
-#ifdef BSECTION_NEED_PRAGMA
-#pragma section 
-#endif
 /**
  * \}
  */
@@ -172,7 +184,10 @@ bTimerId_t bTimerCreate(bTimerFunc_t func, bTimerType_t type, void *argument, bT
     attr->arg    = argument;
     attr->type   = type;
     attr->enable = 0;
-    list_add(&attr->list, &bTimerListHead);
+    if (bTimerTaskId == NULL)
+    {
+        bTimerTaskId = bTaskCreate("timer", _bTimerTaskFunc, NULL, &bTimerTaskAttr);
+    }
     return attr;
 }
 
@@ -184,13 +199,14 @@ int bTimerStart(bTimerId_t id, uint32_t ms)
         return -1;
     }
     pattr = _bTimerFind(id);
-    if (pattr == NULL)
+    if (pattr)
     {
         return -1;
     }
     pattr->cycle  = ms;
     pattr->tick   = bHalGetSysTick();
     pattr->enable = 1;
+    list_add(&pattr->list, &bTimerListHead);
     return 0;
 }
 
@@ -207,6 +223,7 @@ int bTimerStop(bTimerId_t id)
         return -1;
     }
     pattr->enable = 0;
+    __list_del(pattr->list.prev, pattr->list.next);
     return 0;
 }
 

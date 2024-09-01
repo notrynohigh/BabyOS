@@ -38,6 +38,7 @@ extern "C" {
 /*Includes ----------------------------------------------*/
 #include "b_config.h"
 #include "b_hal_display.h"
+#include "b_hal_dma.h"
 #include "b_hal_eth.h"
 #include "b_hal_flash.h"
 #include "b_hal_gpio.h"
@@ -76,6 +77,10 @@ extern "C" {
  */
 #define MS2TICKS(m) (m / (1000 / TICK_FRQ_HZ))
 #define TICKS2MS(t) (t * (1000 / TICK_FRQ_HZ))
+
+#define TICK_MAX_UINT32 0xFFFFFFFF
+#define TICK_DIFF_BIT32(start, end) \
+    ((uint32_t)(((end) > (start)) ? ((end) - (start)) : (TICK_MAX_UINT32 - (start) + (end) + 1)))
 
 #if (defined(_HALIF_VARIABLE_ENABLE) && (_HALIF_VARIABLE_ENABLE == 1))
 #define HALIF_KEYWORD static
