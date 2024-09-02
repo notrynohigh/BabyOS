@@ -95,6 +95,27 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     return len;
 }
 
+int bMcuUartReceiveDma(bHalUartNumber_t uart, bHalDmaConfig_t *pconf)
+{
+    McuUartReg_t *pUart = NULL;
+    if ((uart > B_HAL_UART_2) || pconf == NULL)
+    {
+        return -1;
+    }
+    pUart = UartTable[uart];
+    if (uart == B_HAL_UART_1)
+    {
+        pconf->request = B_DMA_REQ_UART1_RX;
+    }
+    else if (uart == B_HAL_UART_2)
+    {
+        pconf->request = B_DMA_REQ_UART2_RX;
+    }
+    B_SET_BIT(pUart->SCON, 0x1 << 16);
+    pconf->src = (uint32_t)(&(pUart->SBUF));
+    return bMcuDmaConfig(pconf);
+}
+
 #endif
 
 /************************ Copyright (c) 2020 Bean *****END OF FILE****/
