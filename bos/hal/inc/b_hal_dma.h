@@ -95,6 +95,7 @@ typedef enum
     B_DMA_REQ_UART2_RX,
     B_DMA_REQ_UART3_RX,
     B_DMA_REQ_LPUART1_RX,
+    B_DMA_REQ_LPUART2_RX,
 } bHalDmaRequest_t;
 
 typedef struct
