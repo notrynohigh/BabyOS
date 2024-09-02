@@ -390,7 +390,7 @@ static void _IapBackupFirmware()
         return;
     }
 
-    if (bHalGetSysTick() - stick > MS2TICKS(1000))
+    if (TICK_DIFF_BIT32(stick, bHalGetSysTick()) > MS2TICKS(1000))
     {
         stick = bHalGetSysTick();
         sec += 1;

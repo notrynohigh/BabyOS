@@ -16,8 +16,3 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     STMK1 = 0U; /* add enable INTST1 interrupt */
     return len;
 }
-
-int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
-{
-    return -1;
-}

@@ -23,11 +23,11 @@ typedef struct
     volatile uint32_t SCNT;
 } bMcuLpuart_t;
 
-static bMcuUart_t * const pUartTable[4] = {
-    (( bMcuUart_t * const)0x40000000UL), (( bMcuUart_t * const)0x40000100UL),
-    (( bMcuUart_t * const)0x40006000UL), (( bMcuUart_t * const)0x40006400UL)};
-static bMcuLpuart_t * const pLpuartTable[2] = {(( bMcuLpuart_t * const)0x40000200UL),
-                                              (( bMcuLpuart_t * const)0x40004000UL)};
+static bMcuUart_t *const pUartTable[4] = {
+    ((bMcuUart_t *const)0x40000000UL), ((bMcuUart_t *const)0x40000100UL),
+    ((bMcuUart_t *const)0x40006000UL), ((bMcuUart_t *const)0x40006400UL)};
+static bMcuLpuart_t *const pLpuartTable[2] = {((bMcuLpuart_t *const)0x40000200UL),
+                                              ((bMcuLpuart_t *const)0x40004000UL)};
 
 int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 {
@@ -83,9 +83,4 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
         return -1;
     }
     return len;
-}
-
-int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
-{
-    return 0;
 }
