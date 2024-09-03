@@ -60,7 +60,7 @@ typedef struct
     uint8_t  slave_addr;
     uint16_t base_reg;  // Little endian
     uint16_t reg_num;   // Little endian
-    uint8_t  reserved[8];
+    uint8_t  reserved[4];
     uint16_t reg_value[1];  // Little endian
 } bModbusMasterWriteRegs_t;
 
@@ -136,10 +136,11 @@ typedef enum
 
 typedef enum
 {
-    B_PROTO_INFO_DEVICE_ID,              // 获取设备id
-    B_PROTO_INFO_MODBUS_REG_PERMISSION,  // 获取modbus寄存器的读写权限
-    B_PROTO_INFO_MODBUS_SLAVE_ADDR,      // 获取当前设备的从机地址
+    B_PROTO_INFO_DEVICE_ID,  // 获取设备id, uint8_t , uint16_t, uint32_t都有可能，依赖具体场景
+    B_PROTO_INFO_MODBUS_REG_PERMISSION,  // 获取modbus寄存器的读写权限 bModbusPerm_t *
+    B_PROTO_INFO_MODBUS_SLAVE_ADDR,      // 获取当前设备的从机地址  uint8_t
     B_PROTO_INFO_MODBUS_REG_VALUE,       // 获取modbus寄存器的值（做从机时使用）
+                                         // in: 寄存器地址  out:寄存器值 共用buf
     B_PROTO_INFO_NUMBER,
 } bProtoInfoType_t;
 

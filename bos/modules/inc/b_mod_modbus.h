@@ -63,14 +63,18 @@ extern "C" {
  * \defgroup MODBUS_Exported_TypesDefinitions
  * \{
  */
-#define COLS 2
-typedef int (*ArrayPtr)[COLS];
+
+#ifndef MY_DEVICE_MODBUS_REG_NUM
+#define MY_DEVICE_MODBUS_REG_NUM 1
+#endif
+
+// 每2bit表示1个寄存器的读写权限
+// 00：禁止读写  01:可读  10:可写  11:可读写
+// 使用 MODBUS_PERM_ 开头的宏方便创建表和使用表
 typedef struct
 {
-    uint32_t Reg_Rows;  // Modbus读写权限表中二维数组的行=从机寄存器的个数
-    uint32_t Cols;  // Modbus读写权限表中二维数组的列,第一个元素为读,第二个元素为写
-    uint16_t (*ArrayPtr)[COLS];  // 一维数组指针，指向二维数组第一行元素
-} bModbusInf_t;
+    uint8_t perm[(((MY_DEVICE_MODBUS_REG_NUM * 2) + 7) / 8)];
+} bModbusPerm_t;
 
 typedef enum
 {
@@ -104,6 +108,25 @@ typedef enum
  * \{
  */
 #define L2B_B2L_16b(n) ((((n) & 0xff) << 8) | (((n) & 0xff00) >> 8))
+
+#define MODBUS_PERM_NONE 0x00       // 00
+#define MODBUS_PERM_READABLE 0x01   // 01
+#define MODBUS_PERM_WRITABLE 0x02   // 10
+#define MODBUS_PERM_READWRITE 0x03  // 11
+#define MODBUS_PERM_CREATE_TABLE(name) static bModbusPerm_t name = {0}
+#define MODBUS_PERM_CREATE_SET_STATE(p_perm, reg, state)           \
+    do                                                             \
+    {                                                              \
+        uint8_t mask = 0x03;                                       \
+        (p_perm)->perm[(reg) / 4] &= ~(mask << (((reg) % 4) * 2)); \
+        (p_perm)->perm[(reg) / 4] |= (state << (((reg) % 4) * 2)); \
+    } while (0)
+
+#define MODBUS_PERM_IS_WRITEABLE(p_perm, reg) \
+    (((p_perm)->perm[(reg) / 4] >> (((reg) % 4) * 2)) & MODBUS_PERM_WRITABLE)
+#define MODBUS_PERM_IS_READABLE(p_perm, reg) \
+    (((p_perm)->perm[(reg) / 4] >> (((reg) % 4) * 2)) & MODBUS_PERM_READABLE)
+
 /**
  * \}
  */

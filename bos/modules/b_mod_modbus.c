@@ -436,7 +436,7 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
     uint16_t         crc    = 0;
     bProtocolAttr_t *pattr  = (bProtocolAttr_t *)attr;
     bModbusCbParm_t  param;
-    bModbusInf_t     modbus_inf;
+    bModbusPerm_t   *perm       = NULL;
     uint8_t          slave_addr = SLAVE_ADDR;
     int              i          = 0;
     uint16_t         o_real_len = 0;
@@ -454,7 +454,12 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         return MODBUS_FRAME_HEAD_ERR;
     }
 
-    memset(&modbus_inf, 0, sizeof(bModbusInf_t));
+    B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION, (uint8_t *)&perm,
+                      sizeof(perm));
+    if ((retval < 0) || (pattr->get_info == NULL))
+    {
+        perm = NULL;
+    }
 
     if (in[1] == MODBUS_RTU_READ_REGS)
     {
@@ -484,14 +489,11 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         }
         param.reg_value = NULL;
 
-        B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
-                          (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
-        if ((retval >= 0) && (pattr->get_info != NULL))
+        if (perm)
         {
-            // 判定待操作的寄存器指定动作与读写权限匹配?
             for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
             {
-                if (modbus_inf.ArrayPtr[i][0] == 0)
+                if (!MODBUS_PERM_IS_READABLE(perm, i))
                 {
                     return MODBUS_REG_OPERATION_ERR;
                 }
@@ -554,14 +556,11 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         tmp_reg_value   = L2B_B2L_16b(w_1->value);
         param.reg_value = &tmp_reg_value;
 
-        B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
-                          (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
-        if ((retval >= 0) && (pattr->get_info != NULL))
+        if (perm)
         {
-            // 判定待操作的寄存器指定动作与读写权限匹配?
             for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
             {
-                if (modbus_inf.ArrayPtr[i][1] == 0)
+                if (!MODBUS_PERM_IS_WRITEABLE(perm, i))
                 {
                     return MODBUS_REG_OPERATION_ERR;
                 }
@@ -624,14 +623,12 @@ static int _bModbusRTUSlaveParse(void *attr, uint8_t *in, uint16_t i_len, uint8_
         {
             param.reg_value[i] = L2B_B2L_16b((w->param)[i]);
         }
-        B_SAFE_INVOKE_RET(retval, pattr->get_info, B_PROTO_INFO_MODBUS_REG_PERMISSION,
-                          (uint8_t *)&modbus_inf, sizeof(bModbusInf_t));
-        if ((retval >= 0) && (pattr->get_info != NULL))
+
+        if (perm)
         {
-            // 判定待操作的寄存器指定动作与读写权限匹配?
             for (uint32_t i = param.base_reg; i <= param.base_reg + param.reg_num - 1; i++)
             {
-                if (modbus_inf.ArrayPtr[i][1] == 0)
+                if (!MODBUS_PERM_IS_WRITEABLE(perm, i))
                 {
                     return MODBUS_REG_OPERATION_ERR;
                 }
