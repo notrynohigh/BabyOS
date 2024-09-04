@@ -153,6 +153,16 @@ B_TIMER_CREATE_ATTR(bMqttTimerAttr);
  * \{
  */
 
+static void _bMqttFree(void *addr)
+{
+    bFree(addr);
+}
+
+static void *_bMqttMalloc(uint32_t len)
+{
+    return bMalloc(len);
+}
+
 static int _bMqttParseUrl(const char *url, char **host, uint16_t *port, uint8_t *is_mqtts)
 {
     // Check if the URL starts with "mqtt://" or "mqtts://"
@@ -200,7 +210,7 @@ static int _bMqttParseUrl(const char *url, char **host, uint16_t *port, uint8_t 
         return -1;
     }
 
-    char *phostname = bMalloc(hostname_len + 1);
+    char *phostname = _bMqttMalloc(hostname_len + 1);
     if (phostname == NULL)
     {
         return -1;
@@ -227,7 +237,7 @@ static int _bMqttParseUrl(const char *url, char **host, uint16_t *port, uint8_t 
 
         if (port_len >= sizeof(port_str))
         {
-            bFree(phostname);
+            _bMqttFree(phostname);
             return -1;  // Port number too long
         }
 
@@ -366,7 +376,7 @@ static int _bMqttConnect(bMqttSrvInstance_t *pinstance)
         return -1;
     }
 
-    uint8_t *pbuf = bMalloc(len);
+    uint8_t *pbuf = _bMqttMalloc(len);
     if (pbuf == NULL)
     {
         return -1;
@@ -374,12 +384,12 @@ static int _bMqttConnect(bMqttSrvInstance_t *pinstance)
 
     if ((len = MQTTSerialize_connect(pbuf, len, &options)) <= 0)
     {
-        bFree(pbuf);
+        _bMqttFree(pbuf);
         pbuf = NULL;
         return -1;
     }
     _bMqttWrite(pinstance, pbuf, len);
-    bFree(pbuf);
+    _bMqttFree(pbuf);
     pbuf = NULL;
     return 0;
 }
@@ -456,7 +466,7 @@ static int _bMqttAddSubscribe(bMqttSrvInstance_t *pinstance, const char **topic,
     int         len       = 0;
     int         ret       = 0;
     int         i         = 0;
-    MQTTString *topic_str = bMalloc(topic_num * sizeof(MQTTString));
+    MQTTString *topic_str = _bMqttMalloc(topic_num * sizeof(MQTTString));
     if (topic_str == NULL)
     {
         return -1;
@@ -468,10 +478,10 @@ static int _bMqttAddSubscribe(bMqttSrvInstance_t *pinstance, const char **topic,
         len += strlen(topic[i]) + 3;
     }
     b_log("sub malloc len:%d\r\n", len);
-    uint8_t *pack = bMalloc(len);
+    uint8_t *pack = _bMqttMalloc(len);
     if (pack == NULL)
     {
-        bFree(topic_str);
+        _bMqttFree(topic_str);
         return -1;
     }
     uint16_t pack_id = _bMqttGetNextPacketId(pinstance);
@@ -479,17 +489,17 @@ static int _bMqttAddSubscribe(bMqttSrvInstance_t *pinstance, const char **topic,
     if (len <= 0)
     {
         b_log_w("serialize sub err..%d.\r\n", len);
-        bFree(topic_str);
-        bFree(pack);
+        _bMqttFree(topic_str);
+        _bMqttFree(pack);
         return -1;
     }
-    bFree(topic_str);
+    _bMqttFree(topic_str);
     topic_str = NULL;
 
-    bMqttSubscribeNode_t *pnode = bMalloc(sizeof(bMqttSubscribeNode_t));
+    bMqttSubscribeNode_t *pnode = _bMqttMalloc(sizeof(bMqttSubscribeNode_t));
     if (pnode == NULL)
     {
-        bFree(pack);
+        _bMqttFree(pack);
         return -1;
     }
     pnode->state    = 0;
@@ -526,13 +536,13 @@ static int _bMqttReadPacket(bMqttSrvInstance_t *pinstance, bMqttPack_t *pack)
     len            = MQTTPacket_encode(buf, remain_len);
     pack->pack_len = remain_len + len + 1;
     b_log("pack length:%d\r\n", pack->pack_len);
-    pack->pack = bMalloc(pack->pack_len);
+    pack->pack = _bMqttMalloc(pack->pack_len);
     if (pack->pack == NULL)
     {
         b_log_e("mem error...\r\n");
         goto exit;
     }
-    pack->release = bFree;
+    pack->release = _bMqttFree;
     pack->pack[0] = fix_byte;
     memcpy(pack->pack + 1, buf, len);
     /* 3. read the rest of the buffer using a callback to supply the rest of the data */
@@ -547,7 +557,7 @@ static int _bMqttReadPacket(bMqttSrvInstance_t *pinstance, bMqttPack_t *pack)
 exit:
     if (pack->pack)
     {
-        bFree(pack->pack);
+        _bMqttFree(pack->pack);
         pack->pack    = NULL;
         pack->release = NULL;
     }
@@ -776,23 +786,23 @@ fail:
     }
     if (pinstance->host)
     {
-        bFree(pinstance->host);
+        _bMqttFree(pinstance->host);
     }
     if (pinstance->client_id)
     {
-        bFree(pinstance->client_id);
+        _bMqttFree(pinstance->client_id);
     }
     if (pinstance->user_passwd)
     {
-        bFree(pinstance->user_passwd);
+        _bMqttFree(pinstance->user_passwd);
     }
     if (pinstance->user_name)
     {
-        bFree(pinstance->user_name);
+        _bMqttFree(pinstance->user_name);
     }
     if (pinstance->pbroker)
     {
-        bFree(pinstance->pbroker);
+        _bMqttFree(pinstance->pbroker);
     }
     return -1;
 }
@@ -814,23 +824,23 @@ void bMqttSrvDestroy()
     }
     if (pinstance->host)
     {
-        bFree(pinstance->host);
+        _bMqttFree(pinstance->host);
     }
     if (pinstance->client_id)
     {
-        bFree(pinstance->client_id);
+        _bMqttFree(pinstance->client_id);
     }
     if (pinstance->user_passwd)
     {
-        bFree(pinstance->user_passwd);
+        _bMqttFree(pinstance->user_passwd);
     }
     if (pinstance->user_name)
     {
-        bFree(pinstance->user_name);
+        _bMqttFree(pinstance->user_name);
     }
     if (pinstance->pbroker)
     {
-        bFree(pinstance->pbroker);
+        _bMqttFree(pinstance->pbroker);
     }
     bMqttSubscribeNode_t *pnode = NULL;
     struct list_head     *pos   = NULL;
@@ -838,17 +848,17 @@ void bMqttSrvDestroy()
     {
         if (pnode != NULL)
         {
-            bFree(pnode);
+            _bMqttFree(pnode);
             pnode = NULL;
         }
         pnode = list_entry(pos, bMqttSubscribeNode_t, node);
-        bFree(pnode->pack);
+        _bMqttFree(pnode->pack);
         pnode->pack = NULL;
         __list_del(pos->prev, pos->next);
     }
     if (pnode != NULL)
     {
-        bFree(pnode);
+        _bMqttFree(pnode);
         pnode = NULL;
     }
 }

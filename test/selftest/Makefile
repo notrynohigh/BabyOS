@@ -41,6 +41,8 @@ $(SOURCE_ROOT)/bos/thirdparty/coremark/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/cjson/*.c  \
 $(SOURCE_ROOT)/bos/thirdparty/unity/*.c  \
 $(SOURCE_ROOT)/bos/thirdparty/qrcode/*.c  \
+$(SOURCE_ROOT)/bos/thirdparty/mqtt-pack/*.c  \
+$(SOURCE_ROOT)/bos/thirdparty/http-parser/*.c  \
 $(SOURCE_ROOT)/bos/services/*.c
 
 BOS_DRV_SOURCE_DIR = \

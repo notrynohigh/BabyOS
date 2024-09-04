@@ -203,6 +203,7 @@ int bTimerStart(bTimerId_t id, uint32_t ms)
     {
         return -1;
     }
+    pattr         = (bTimerAttr_t *)id;
     pattr->cycle  = ms;
     pattr->tick   = bHalGetSysTick();
     pattr->enable = 1;

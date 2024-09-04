@@ -6,6 +6,7 @@
 #define FW_VERSION 80106
 #define FW_NAME "BabyOS"
 #define TICK_FRQ_HZ 1000
+#define _WDT_ENABLE 1
 #define WDT_TIMEOUT_S 60
 #define VENDOR_UBUNTU 1
 #define _BOS_ALGO_ENABLE 1
@@ -42,6 +43,10 @@
 #define _ADCHUB_ENABLE 1
 #define FILTER_BUF_SIZE 10
 #define _ERROR_MANAGE_ENABLE 1
+#define _FS_ENABLE 1
+#define FS_FATFS 1
+#define FS_MOUNT_NUMBER 1
+#define FS_BLOCK_SIZE 1
 #define ERROR_Q_LENGTH 10
 #define _MODBUS_ENABLE 1
 #define MY_DEVICE_MODBUS_REG_NUM 36
@@ -80,6 +85,15 @@
 #define _WIFI_ENABLE 1
 #define _SELECT_ENABLE 1
 #define SELECT_FDS_NUMBER 32
+#define _NETIF_ENABLE 1
+#define _NETIF_USE_LWIP 1
+#define NETIF_DEV_NO 1
+#define NETIF_USE_DHCP 1
+#define NETIF_LINK_CHECK_INTERVAL 200
+#define MEM_SIZE_FOR_LWIP 10240
+#define REMOTE_ADDR_LEN_MAX 128
+#define CONNECT_RECVBUF_MAX 4096
+#define SERVER_MAX_CONNECTIONS 2
 #define _NR_MICRO_SHELL_ENABLE 1
 #define NR_SHELL_USER_NAME "nr@bos:"
 #define NR_ANSI_LINE_SIZE 100
@@ -100,12 +114,10 @@
 #define GUI_FONT_6X8 1
 #define ENCODING_UTF_8 1
 #define XBF_FILE_ADDR 0x0
-#define _FS_ENABLE 1
-#define _FS_TEST_ENABLE 1
-#define FS_FATFS 1
 #define _CJSON_ENABLE 1
 #define CJSON_MEM_USE_BMALLOC 1
 #define _QRCODE_ENABLE 1
+#define _HTTP_PARSER_ENABLE 1
 #define _DEBUG_ENABLE 1
 #define LOG_LEVEL_CUSTOMIZE 1
 #define _B_LOG_ENABLE 1
@@ -117,9 +129,27 @@
 #define LOG_UART 0
 #define _MEMP_ENABLE 1
 #define MEMP_MAX_SIZE 10240
+#define _MEMP_MONITOR_ENABLE 1
 #define _AT_ENABLE 1
 #define _BOS_SERVICES_ENABLE 1
 #define _PROTOCOL_SERVICE_ENABLE 1
+#define _TCPIP_SERVICE_ENABLE 1
+#define _NTP_SERVER_1 "ntp1.aliyun.com"
+#define _NTP_SERVER_2 "ntp2.aliyun.com"
+#define _NTP_SERVER_3 "ntp3.aliyun.com"
+#define _HTTP_HOST_LEN_MAX 64
+#define _HTTP_PATH_LEN_MAX 128
+#define _OTA_SERVICE_ENABLE 1
+#define OTA_TIMEOUT_S 30
+#define _MQTT_SERVICE_ENABLE 1
+#define BABYOS_MQTT_BROKER 1
+#define MQTT_CLIENT_ID "babyos"
+#define MQTT_BROKER_URL "mqtt://babyos.cn:1883"
+#define MQTT_USER_NAME "babyos"
+#define MQTT_USER_PASSWD "babyos"
+#define MQTT_SUB_TOPIC_DEFAULT "ogugO0zq_Qi7O3HxQn9G4X2rhH"
+#define MQTT_QOS_DEFAULT 0
+#define MQTT_KEEP_ALIVE 60
 
 
 #include "b_type.h" 
