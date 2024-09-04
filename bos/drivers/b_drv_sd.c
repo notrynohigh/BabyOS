@@ -107,7 +107,7 @@ static int _bSD_WaitReady(bDriverInterface_t *pdrv)
         {
             return 0;
         }
-        if (bHalGetSysTick() - tick > 500)
+        if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > 500)
         {
             break;
         }

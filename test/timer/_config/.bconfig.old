@@ -25,8 +25,8 @@ _BOS_ALGO_ENABLE=y
 # _ALGO_SHA1_ENABLE is not set
 # _ALGO_SORT_ENABLE is not set
 # _ALGO_UNICODE_ENABLE is not set
-_ALGO_MD5_ENABLE=y
-_ALGO_CRC_ENABLE=y
+# _ALGO_MD5_ENABLE is not set
+# _ALGO_CRC_ENABLE is not set
 # end of Algorithm Configuration
 
 #
@@ -49,7 +49,7 @@ _BOS_MODULES_ENABLE=y
 # _XMODEM128_ENABLE is not set
 # _YMODEM_ENABLE is not set
 # _MENU_ENABLE is not set
-# _TIMER_ENABLE is not set
+_TIMER_ENABLE=y
 # _PWM_ENABLE is not set
 # _PARAM_ENABLE is not set
 # _STATE_ENABLE is not set

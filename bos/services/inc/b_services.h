@@ -37,9 +37,11 @@ extern "C" {
 
 /*Includes ----------------------------------------------*/
 
+#include "b_srv_mqtt.h"
 #include "b_srv_ota.h"
 #include "b_srv_protocol.h"
 #include "b_srv_tcpip.h"
+
 
 #ifdef __cplusplus
 }

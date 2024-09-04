@@ -324,6 +324,48 @@ typedef struct
 } bMacAddress_t;
 
 ///////////////////////////////////////////////////////////
+// power meter and analysis, Command  &  Structure
+///////////////////////////////////////////////////////////
+#define bCMD_HLW811X_REG_CALLBACK 			0       //bHlw811xDrvCallback_t
+#define bCMD_HLW811X_SOFT_RST 					1       //none
+#define bCMD_HLW811X_MODE_AC 						2       //none
+#define bCMD_HLW811X_MODE_DC 						3       //none
+#define bCMD_HLW811X_SET_RESRATIO_IA 		4       //none
+#define bCMD_HLW811X_SET_RESRATIO_IB	 	5       //none
+#define bCMD_HLW811X_SET_RESRATIO_U 		6       //none
+#define bCMD_HLW811X_SET_CALLBACK_ARG 	15  		// void *
+
+typedef enum
+{
+    B_EVT_INT_PFA = 0,
+    B_EVT_INT_PFB,
+} bHlw811xDrvEvent_t;
+
+typedef struct
+{
+    void (*cb)(bHlw811xDrvEvent_t event, void *arg, void (*release)(void *), void *user_data);
+    void *user_data;
+} bHlw811xDrvCallback_t;
+
+typedef struct
+{
+    float RmsU;
+    float RmsIA;
+    float RmsIB;
+    float PowerPA;
+    float PowerPB;
+    float PowerSA;
+		float PowerSB;
+    float EnergyA;
+    float EnergyB;
+    float FreqU;
+    float PowerFactorA;	
+		float PowerFactorB;	
+		float PhaseAngleA;	
+		float PhaseAngleB;	
+} bPowerMeter_hlw811x_t;
+
+///////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////
 

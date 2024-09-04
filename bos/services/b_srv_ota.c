@@ -159,7 +159,7 @@ PT_THREAD(bOtaTaskFunc)(struct pt *pt, void *arg)
         }
         if (PT_WAIT_IS_TIMEOUT(pt))
         {
-            if (bHalGetSysTick() - timeout >= (MS2TICKS(OTA_TIMEOUT_S * 1000)))
+            if (TICK_DIFF_BIT32(timeout, bHalGetSysTick()) >= (MS2TICKS(OTA_TIMEOUT_S * 1000)))
             {
                 _bOtaSendResult(4);
                 bTaskDelayMs(pt, 1000);

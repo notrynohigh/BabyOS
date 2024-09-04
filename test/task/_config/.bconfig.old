@@ -27,6 +27,21 @@ _BOS_ALGO_ENABLE=y
 # _ALGO_UNICODE_ENABLE is not set
 _ALGO_MD5_ENABLE=y
 _ALGO_CRC_ENABLE=y
+# _ALGO_CRC8_ENABLE is not set
+# _ALGO_CRC8_ITU_ENABLE is not set
+# _ALGO_CRC8_ROHC_ENABLE is not set
+# _ALGO_CRC8_MAXIM_ENABLE is not set
+# _ALGO_CRC16_IBM_ENABLE is not set
+# _ALGO_CRC16_MAXIM_ENABLE is not set
+# _ALGO_CRC16_USB_ENABLE is not set
+# _ALGO_CRC16_MODBUS_ENABLE is not set
+# _ALGO_CRC16_CCITT_ENABLE is not set
+# _ALGO_CRC16_CCITT_FALSE_ENABLE is not set
+# _ALGO_CRC16_X25_ENABLE is not set
+# _ALGO_CRC16_XMODEM_ENABLE is not set
+# _ALGO_CRC16_DNP_ENABLE is not set
+# _ALGO_CRC32_ENABLE is not set
+# _ALGO_CRC32_MPEG2_ENABLE is not set
 # end of Algorithm Configuration
 
 #
@@ -56,6 +71,7 @@ _BOS_MODULES_ENABLE=y
 # _STATE_ENABLE is not set
 # _IAP_ENABLE is not set
 # _WIFI_ENABLE is not set
+# _SELECT_ENABLE is not set
 # end of Modules Configuration
 
 #
@@ -68,7 +84,7 @@ _BOS_MODULES_ENABLE=y
 # _FS_ENABLE is not set
 # _CJSON_ENABLE is not set
 # _COREMARK_ENABLE is not set
-_UNITY_ENABLE=y
+# _UNITY_ENABLE is not set
 # end of Thirdparty Configuration
 
 #
@@ -80,7 +96,5 @@ LOG_LEVEL_INFO=y
 # LOG_LEVEL_WARNING is not set
 # LOG_LEVEL_ERROR is not set
 LOG_BUF_SIZE=256
-_MEMP_ENABLE=y
-MEMP_MAX_SIZE=10240
-# _MEMP_MONITOR_ENABLE is not set
+# _MEMP_ENABLE is not set
 # end of Utils Configuration

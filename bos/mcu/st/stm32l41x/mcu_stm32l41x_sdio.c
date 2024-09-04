@@ -62,7 +62,7 @@ int bMcuSDIOWriteBlocks(const bHalSDIONumber_t sd, uint8_t *pdata, uint32_t addr
     tick = bHalGetSysTick();
     while (HAL_SD_GetCardState(&hsd1) != HAL_SD_CARD_TRANSFER)
     {
-        if (bHalGetSysTick() - tick >= MS2TICKS(5000))
+        if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) >= MS2TICKS(5000))
         {
             return -1;
         }

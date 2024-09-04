@@ -140,7 +140,7 @@ static void _bErrorCore()
 #endif
 BOS_REG_POLLING_FUNC(_bErrorCore);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}
@@ -192,7 +192,7 @@ int bErrorRegist(uint8_t err, uint32_t interval_ms, uint32_t level)
     {
         if (bErrorRecord[i].err == err)
         {
-            tick = bHalGetSysTick() - bErrorRecord[i].s_tick;
+            tick = TICK_DIFF_BIT32(bErrorRecord[i].s_tick, bHalGetSysTick());
             if (tick > bErrorRecord[i].d_tick)
             {
                 bErrorRecord[i].s_tick = 0;

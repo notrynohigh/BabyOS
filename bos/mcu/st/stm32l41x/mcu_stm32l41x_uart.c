@@ -110,39 +110,6 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     return len;
 }
 
-int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
-{
-    int           i       = 0;
-    int           timeout = 0x000B0000;
-    McuUartReg_t *pUart   = NULL;
-    if ((uart > B_HAL_UART_4 && uart != B_HAL_LPUART_1) || pbuf == NULL)
-    {
-        return -1;
-    }
-    if (uart == B_HAL_LPUART_1)
-    {
-        pUart = MCU_LPUART1;
-    }
-    else
-    {
-        pUart = UartTable[uart];
-    }
-    for (i = 0; i < len; i++)
-    {
-        timeout = 0x000B0000;
-        while (timeout > 0 && ((pUart->ISR & (0x1 << 5)) == 0))
-        {
-            timeout--;
-        }
-        if (timeout <= 0)
-        {
-            return -2;
-        }
-        pbuf[i] = pUart->RDR;
-    }
-    return len;
-}
-
 #endif
 
 /************************ Copyright (c) 2020 Bean *****END OF FILE****/

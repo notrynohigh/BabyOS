@@ -30,6 +30,7 @@
  */
 /*Includes ----------------------------------------------*/
 #include "b_section.h"
+#include "core/inc/b_task.h"
 #include "hal/inc/b_hal.h"
 
 /**
@@ -48,7 +49,8 @@
  */
 
 static LIST_HEAD(bHalUartListHead);
-
+B_TASK_CREATE_ATTR(bHalUartTaskAttr);
+static bTaskId_t bHalUartTaskId = NULL;
 /**
  * \}
  */
@@ -91,29 +93,38 @@ static void _bHalItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *para
     }
 }
 
-static void _bHalUartDetectIdle()
+PT_THREAD(_bHalUartDetectIdle)(struct pt *pt, void *arg)
 {
     struct list_head   *pos    = NULL;
     bHalUartIdleAttr_t *pattr  = NULL;
     int                 retval = -1;
-    list_for_each(pos, &bHalUartListHead)
+    B_TASK_INIT_BEGIN();
+    // ...
+    B_TASK_INIT_END();
+
+    PT_BEGIN(pt);
+    while (1)
     {
-        pattr = list_entry(pos, bHalUartIdleAttr_t, list);
-        if (pattr->index > 0)
+        if (list_empty(&bHalUartListHead))
         {
-            if (pattr->l_index == 0)
+            bTaskRestart(pt);
+        }
+        list_for_each(pos, &bHalUartListHead)
+        {
+            pattr = list_entry(pos, bHalUartIdleAttr_t, list);
+            if (pattr->chl < B_HAL_DMA_CHL_NUMBER)
             {
-                pattr->l_index = pattr->index;
-                pattr->l_tick  = bHalGetSysTick();
+                pattr->index = pattr->len - bHalDmaGetCount(pattr->chl);
             }
-            else
+            if (pattr->index > 0)
             {
-                if (pattr->index != pattr->l_index)
+                if (pattr->l_index == 0 ||
+                    ((pattr->l_index > 0) && (pattr->index != pattr->l_index)))
                 {
                     pattr->l_index = pattr->index;
                     pattr->l_tick  = bHalGetSysTick();
                 }
-                else if (bHalGetSysTick() - pattr->l_tick > pattr->idle_ms)
+                if (TICK_DIFF_BIT32(pattr->l_tick, bHalGetSysTick()) > MS2TICKS(pattr->idle_ms))
                 {
                     if (pattr->callback)
                     {
@@ -122,22 +133,24 @@ static void _bHalUartDetectIdle()
                         {
                             memset(pattr->pbuf, 0, pattr->len);
                             pattr->index = 0;
+                            if (pattr->chl < B_HAL_DMA_CHL_NUMBER)
+                            {
+                                bHalDmaStop(pattr->chl);
+                                bHalDmaSetDest(pattr->chl, (uint32_t)pattr->pbuf);
+                                bHalDmaSetCount(pattr->chl, pattr->len);
+                                bHalDmaStart(pattr->chl);
+                            }
                         }
                     }
                     pattr->l_tick = bHalGetSysTick();
                 }
             }
         }
+        bTaskDelayMs(pt, 5);
     }
+    PT_END(pt);
 }
 
-#ifdef BSECTION_NEED_PRAGMA
-#pragma section bos_polling
-#endif
-BOS_REG_POLLING_FUNC(_bHalUartDetectIdle);
-#ifdef BSECTION_NEED_PRAGMA
-#pragma section
-#endif
 /**
  * \}
  */
@@ -152,10 +165,11 @@ __WEAKDEF int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t 
     return -1;
 }
 
-__WEAKDEF int bMcuReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
+__WEAKDEF int bMcuUartReceiveDma(bHalUartNumber_t uart, bHalDmaConfig_t *pconf)
 {
     return -1;
 }
+
 #endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
@@ -169,16 +183,7 @@ int bHalUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     return bMcuUartSend(uart, pbuf, len);
 }
 
-int bHalReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
-{
-    if (IS_NULL(pbuf) || len == 0)
-    {
-        return -1;
-    }
-    return bMcuReceive(uart, pbuf, len);
-}
-
-int bHalUartReceiveIdle(bHalUartNumber_t uart, bHalUartIdleAttr_t *attr)
+int bHalUartReceive(bHalUartNumber_t uart, bHalUartIdleAttr_t *attr)
 {
     int                 retval = -1;
     bHalUartIdleAttr_t *pattr  = _bHalUartAttrFind(uart);
@@ -198,7 +203,45 @@ int bHalUartReceiveIdle(bHalUartNumber_t uart, bHalUartIdleAttr_t *attr)
     {
         list_add(&attr->list, &bHalUartListHead);
     }
+    if (bHalUartTaskId == NULL)
+    {
+        bHalUartTaskId = bTaskCreate("uart", _bHalUartDetectIdle, NULL, &bHalUartTaskAttr);
+    }
     return retval;
+}
+
+int bHalUartReceiveDma(bHalUartNumber_t uart, bHalUartIdleAttr_t *attr, bHalDmaChlNumber_t chl)
+{
+    bHalUartIdleAttr_t *pattr  = _bHalUartAttrFind(uart);
+    if (pattr != NULL || attr == NULL || attr->pbuf == NULL || chl >= B_HAL_DMA_CHL_NUMBER)
+    {
+        return -1;
+    }
+    attr->uart    = uart;
+    attr->chl     = chl;
+    attr->index   = 0;
+    attr->l_index = 0;
+    attr->l_tick  = 0;
+
+    bHalDmaConfig_t dma_conf;
+    dma_conf.dest        = (uint32_t)attr->pbuf;
+    dma_conf.src         = 0;
+    dma_conf.bits        = B_DMA_DATA_BIT8;
+    dma_conf.chl         = attr->chl;
+    dma_conf.count       = attr->len;
+    dma_conf.inc         = B_DMA_DEST_ADDR_INC;
+    dma_conf.is_circular = 0;
+    if (bMcuUartReceiveDma(uart, &dma_conf) < 0)
+    {
+        return -1;
+    }
+    list_add(&attr->list, &bHalUartListHead);
+    if (bHalUartTaskId == NULL)
+    {
+        bHalUartTaskId = bTaskCreate("uart", _bHalUartDetectIdle, NULL, &bHalUartTaskAttr);
+    }
+    bHalDmaStart(chl);
+    return 0;
 }
 
 /**

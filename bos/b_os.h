@@ -61,16 +61,6 @@ extern "C" {
  * \addtogroup BOS
  * \{
  */
-#define BOS_PERIODIC_TASK(pf, ms)                         \
-    {                                                     \
-        static uint32_t tick##pf = 0;                     \
-        if (bHalGetSysTick() - tick##pf > (MS2TICKS(ms))) \
-        {                                                 \
-            tick##pf = bHalGetSysTick();                  \
-            pf();                                         \
-        }                                                 \
-    }
-
 #if _BOS_ALGO_ENABLE
 #include "algorithm/inc/algorithm.h"
 #endif
@@ -103,8 +93,8 @@ extern "C" {
 #include "drivers/inc/b_drv_key.h"
 #include "drivers/inc/b_drv_lis3dh.h"
 #include "drivers/inc/b_drv_ltc2662iuh_12.h"
-#include "drivers/inc/b_drv_mcp4018.h"
 #include "drivers/inc/b_drv_matrixkeys.h"
+#include "drivers/inc/b_drv_mcp4018.h"
 #include "drivers/inc/b_drv_mcuflash.h"
 #include "drivers/inc/b_drv_oled.h"
 #include "drivers/inc/b_drv_paj7620u2.h"
@@ -118,12 +108,21 @@ extern "C" {
 #include "drivers/inc/b_drv_st7789.h"
 #include "drivers/inc/b_drv_xpt2046.h"
 
-
 // thirdparty
 #include "thirdparty/cjson/cjson.h"
 #include "thirdparty/pt/pt-sem.h"
 #include "thirdparty/pt/pt.h"
 #include "thirdparty/unity/unity.h"
+
+#define BOS_PERIODIC_TASK(pf, ms)                                         \
+    {                                                                     \
+        static uint32_t tick##pf = 0;                                     \
+        if (TICK_DIFF_BIT32(tick##pf, bHalGetSysTick()) > (MS2TICKS(ms))) \
+        {                                                                 \
+            tick##pf = bHalGetSysTick();                                  \
+            pf();                                                         \
+        }                                                                 \
+    }
 
 /**
  * \}

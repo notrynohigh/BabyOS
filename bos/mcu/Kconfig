@@ -41,6 +41,8 @@ config STM32G4XX
     bool "STM32G4XX"
 config STM32H5XX
     bool "STM32H5XX"    	
+config STM32L0X3
+    bool "STM32L0X3"        
 endchoice
 
 #选择国民技术的芯片
