@@ -662,6 +662,9 @@ int ADS1248SetDataRate(bDriverInterface_t *pdrv,int DataRate)
 	return dError;
 }
 
+//final output data = (input - ofc[2:0])* (fsc[2:0]/0x400000)
+
+//offset regsiter 
 // Relate to OFC (3 registers)
 int ADS1248SetOFC(bDriverInterface_t *pdrv,long RegOffset)
 {
@@ -676,7 +679,7 @@ int ADS1248SetOFC(bDriverInterface_t *pdrv,long RegOffset)
 	}
 	return ADS1248_NO_ERROR;
 }
-
+//full scale regsister
 // Relate to FSC (3 registers)
 int ADS1248SetFSC(bDriverInterface_t *pdrv,long RegGain)
 {
@@ -1186,7 +1189,7 @@ static int InitConfig(bDriverInterface_t *pdrv)
 	unsigned regArray[4];
 	// Send SDATAC command
 	ADS1248SendSDATAC(pdrv);
-	retval = ADS1248WaitForDataReady(pdrv,0);
+	retval = ADS1248WaitForDataReady(pdrv,1000);
 	ADS1248SendSDATAC(pdrv);
 	//write the desired default register settings for the first 4 registers NOTE: values shown are the POR values as per datasheet
 	regArray[0] = 0x01;
@@ -1194,6 +1197,26 @@ static int InitConfig(bDriverInterface_t *pdrv)
 	regArray[2] = 0x00;
 	regArray[3] = 0x00;
 	ADS1248WriteSequence(pdrv,ADS1248_0_MUX0, 4, regArray);
+	
+	
+	ADS1248SetDataRate(pdrv,2);						//DR 20
+	ADS1248SetIntRef(pdrv,1);						//内部基准打开 2.048V
+	ADS1248SetVoltageReference(pdrv,1);				//基准选择 REF1
+	
+	ADS1248SetGain(pdrv,5);							//gain = 32
+//	ADS1248SetBias((char) (hbias<<4 | lbias));		// AIN0~7 VBIAS 默认关闭
+	ADS1248SetBurnOutSource(pdrv,0);				//ADS1248_BCS_OFF
+	ADS1248SetSystemMonitor(pdrv,0);				//ADS1248_MEAS_NORM 
+
+	ADS1248SetCurrentDACOutput(pdrv,6);				//1mA
+
+	ADS1248SetChannel(pdrv,3,2);					//设施与ADC连接引脚 需要通过crtl 接口实现  ADS1248_AINN3  ADS1248_AINP2  端口1
+	ADS1248SetIDACRouting(pdrv,0, 0);				// IDACdir (0 = I1DIR, 1 = I2DIR)  ADS1248_IDAC1_A0
+	
+	ADS1248SetOFC(pdrv,0X000000);					//vin =0 ,output code = 0;
+	ADS1248SetFSC(pdrv,0x400000);					//Gain scale 1.0
+	ADS1248SetStart(pdrv,1);						//开始连续转换
+	retval = 0;
 	return retval;
 }
 
