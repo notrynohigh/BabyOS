@@ -1185,37 +1185,53 @@ int ADS1248SetReset(bDriverInterface_t *pdrv,int nReset)
 static int InitConfig(bDriverInterface_t *pdrv)
 {
 	int retval = -1;
+	int data_rate = 0;
 	//establish some startup register settings
 	unsigned regArray[4];
 	// Send SDATAC command
-	ADS1248SendSDATAC(pdrv);
-	retval = ADS1248WaitForDataReady(pdrv,1000);
-	ADS1248SendSDATAC(pdrv);
-	//write the desired default register settings for the first 4 registers NOTE: values shown are the POR values as per datasheet
-	regArray[0] = 0x01;
-	regArray[1] = 0x00;
-	regArray[2] = 0x00;
-	regArray[3] = 0x00;
-	ADS1248WriteSequence(pdrv,ADS1248_0_MUX0, 4, regArray);
+//	ADS1248SendSDATAC(pdrv);
+//	retval = ADS1248WaitForDataReady(pdrv,0);
+//	ADS1248SendSDATAC(pdrv);
+//	//write the desired default register settings for the first 4 registers NOTE: values shown are the POR values as per datasheet
+//	regArray[0] = 0x01;
+//	regArray[1] = 0x00;
+//	regArray[2] = 0x00;
+//	regArray[3] = 0x00;
+//	ADS1248WriteSequence(pdrv,ADS1248_0_MUX0, 4, regArray);
+	ADS1248AssertCS(pdrv,1);
+	ADS1248SetReset(pdrv,0);	
+	ADS1248SetStart(pdrv,0);
+	bHalDelayMs(4);
+	ADS1248SetReset(pdrv,1);	
+	ADS1248SetStart(pdrv,1);
+	bHalDelayMs(20);
 	
 	
+	
+	ADS1248SetGain(pdrv,5);							//gain = 32	
 	ADS1248SetDataRate(pdrv,2);						//DR 20
+	data_rate =  ADS1248GetDataRate(pdrv);
+	b_log("data_rate:%d\r\n",data_rate);
+	
 	ADS1248SetIntRef(pdrv,1);						//内部基准打开 2.048V
 	ADS1248SetVoltageReference(pdrv,1);				//基准选择 REF1
+	bHalDelayMs(10);	
 	
-	ADS1248SetGain(pdrv,5);							//gain = 32
+
 //	ADS1248SetBias((char) (hbias<<4 | lbias));		// AIN0~7 VBIAS 默认关闭
-	ADS1248SetBurnOutSource(pdrv,0);				//ADS1248_BCS_OFF
-	ADS1248SetSystemMonitor(pdrv,0);				//ADS1248_MEAS_NORM 
+//	ADS1248SetBurnOutSource(pdrv,0);				//ADS1248_BCS_OFF
+//	ADS1248SetSystemMonitor(pdrv,0);				//ADS1248_MEAS_NORM 
 
 	ADS1248SetCurrentDACOutput(pdrv,6);				//1mA
 
-	ADS1248SetChannel(pdrv,3,2);					//设施与ADC连接引脚 需要通过crtl 接口实现  ADS1248_AINN3  ADS1248_AINP2  端口1
+	ADS1248SetChannel(pdrv,2,0);					//设施与ADC连接引脚 需要通过crtl 接口实现  ADS1248_AINP2    端口1
+	ADS1248SetChannel(pdrv,3,1);					//设施与ADC连接引脚 需要通过crtl 接口实现  ADS1248_AINN3	端口1
 	ADS1248SetIDACRouting(pdrv,0, 0);				// IDACdir (0 = I1DIR, 1 = I2DIR)  ADS1248_IDAC1_A0
+
 	
-	ADS1248SetOFC(pdrv,0X000000);					//vin =0 ,output code = 0;
-	ADS1248SetFSC(pdrv,0x400000);					//Gain scale 1.0
-	ADS1248SetStart(pdrv,1);						//开始连续转换
+//	ADS1248SetOFC(pdrv,0X000000);					//vin =0 ,output code = 0;
+//	ADS1248SetFSC(pdrv,0x400000);					//Gain scale 1.0
+//	ADS1248SetStart(pdrv,1);						//开始连续转换
 	retval = 0;
 	return retval;
 }
@@ -1226,7 +1242,8 @@ static int InitConfig(bDriverInterface_t *pdrv)
 static int _bAds124xRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
 	uint32_t adc_raw_data = 0;
-	adc_raw_data = ADS1248RDATACRead(pdrv);
+	ADS1248WaitForDataReady(pdrv,0);
+	adc_raw_data = ADS1248ReadData(pdrv);
 	memcpy(pbuf, &adc_raw_data, sizeof(adc_raw_data));
 	return sizeof(adc_raw_data);
 
