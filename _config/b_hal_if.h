@@ -226,4 +226,16 @@
             },                                              \
     }
 
+#define HAL_ADS124X_IF \
+    {                                                           \
+        ._spi = {                                               \
+                .is_simulation = 0,                             \
+                .cs            = {B_HAL_GPIOD, B_HAL_PIN13},    \
+                ._if.spi       = B_HAL_SPI_1,                   \
+            },                                                  \      
+        .drdy  = {B_HAL_GPIOB, B_HAL_PIN2},                     \
+        .start = {B_HAL_GPIOB, B_HAL_PIN3},                     \
+        .reset = {B_HAL_GPIOB, B_HAL_PIN4},                     \
+    }
+
 #endif
