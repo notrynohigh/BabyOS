@@ -219,6 +219,26 @@ int bProtSrvSubscribe(bProtSrvId_t id, bProtSrvSubscribe_t *psub)
     return 0;
 }
 
+int bProtSrvUnsubscribe(bProtSrvId_t id, bProtSrvSubscribe_t *psub)
+{
+    bProtSrvAttr_t *pattr = (bProtSrvAttr_t *)id;
+    if (pattr == NULL || psub == NULL)
+    {
+        return -1;
+    }
+    struct list_head *pos     = &psub->list;
+    struct list_head *pos_tmp = NULL;
+    list_for_each(pos_tmp, &pattr->attr.list)
+    {
+        if (pos_tmp == pos)
+        {
+            __list_del(pos_tmp->prev, pos_tmp->next);
+            return 0;
+        }
+    }
+    return -1;
+}
+
 /**
  * \}
  */

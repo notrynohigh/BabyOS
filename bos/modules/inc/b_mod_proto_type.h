@@ -114,7 +114,10 @@ typedef struct
 } bProtoUtc_t;
 
 #define B_PROTO_TRANS_RESULT_OK 0
-#define B_PROTO_TRANS_RESULT_FAIL 1
+#define B_PROTO_TRANS_RESULT_CHECKSUM_FAIL 1
+#define B_PROTO_TRANS_RESULT_NAME_ERROR 2
+#define B_PROTO_TRANS_RESULT_LEN_INVALID 3
+#define B_PROTO_TRANS_RESULT_TIMEOUT 4
 
 typedef enum
 {
@@ -129,7 +132,7 @@ typedef enum
     B_PROTO_SET_FILE_LOCATION,  // callback [bProtoFileLocation_t]
     B_PROTO_REQ_FILE_DATA,      // package [bProtoReqFileData_t]
     B_PROTO_FILE_DATA,          // callback [bProtoFileData_t]
-    B_PROTO_TRANS_FILE_RESULT,  // package [uint8_t]
+    B_PROTO_TRANS_FILE_RESULT,  // package [uint8_t]  B_PROTO_TRANS_RESULT_xxxx
     B_PROTO_UTC,                // callback [bProtoUtc_t]
     B_PROTO_CMD_NUMBER,
 } bProtoCmd_t;

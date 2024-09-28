@@ -105,4 +105,11 @@ config MQTT_KEEP_ALIVE
 
 endif
 
+
+config _TRANSFILE_SERVICE_ENABLE
+    bool "Transfile Service Enable/Disable"
+    default n
+    depends on _BOS_SERVICES_ENABLE 
+    select _PROTOCOL_SERVICE_ENABLE
+
 endmenu
