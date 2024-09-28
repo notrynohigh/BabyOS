@@ -56,6 +56,7 @@ typedef struct
 #endif
     uint8_t            buf[RS485_RX_BUF_LEN];
     bHalUartIdleAttr_t attr;
+    uint32_t           switch_delay_us;
 } bRS485Private_t;
 
 /**
@@ -140,11 +141,12 @@ static int _bRS485Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
     {
         return -1;
     }
+    bDRIVER_GET_PRIVATE(_priv, bRS485Private_t, pdrv);
     bDRIVER_GET_HALIF(_if, bRS485_HalIf_t, pdrv);
     bHalGpioWritePin(_if->port, _if->pin, 1);
-	bHalDelayMs(1);
+    bHalDelayUs(_priv->switch_delay_us);
     bHalUartSend(_if->uart, pbuf, len);
-	bHalDelayMs(1);
+    bHalDelayUs(_priv->switch_delay_us);
     bHalGpioWritePin(_if->port, _if->pin, 0);
     return len;
 }
@@ -164,6 +166,14 @@ static int _bRS485Ctl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
             if (param)
             {
                 p->attr.idle_ms = *((uint16_t *)param);
+            }
+        }
+        break;
+        case bCMD_485_SWITCH_DELAY:
+        {
+            if (param)
+            {
+                p->switch_delay_us = *((uint32_t *)param);
             }
         }
         break;
@@ -201,6 +211,10 @@ int bRS485_Init(bDriverInterface_t *pdrv)
                         RS485_RX_BUF_LEN, RS485_RX_IDLE_MS, _bHalUartIdleCallback, pdrv);
     bHalUartReceiveIdle(bHalIf_RS485[pdrv->drv_no].uart, &bRS485RunInfo[pdrv->drv_no].attr);
     bHalGpioWritePin(bHalIf_RS485[pdrv->drv_no].port, bHalIf_RS485[pdrv->drv_no].pin, 0);
+#ifdef RS485_SWITCH_DELAY_US
+    bRS485RunInfo[pdrv->drv_no].switch_delay_us = RS485_SWITCH_DELAY_US;
+#endif
+
     return 0;
 }
 
@@ -209,7 +223,7 @@ int bRS485_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_RS485, bRS485_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}
