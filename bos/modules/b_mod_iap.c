@@ -604,7 +604,8 @@ static int _bIapUpdateFwData(uint32_t index, uint8_t *pbuf, uint32_t len)
 #endif
     int      retval = 0;
     uint32_t addr   = index;
-    if (pbuf == NULL || len == 0 || ((index) >= bIapFlag.info.len))
+    if (pbuf == NULL || len == 0 || ((index) >= bIapFlag.info.len) ||
+        bIapFlag.stat != B_IAP_STA_START)
     {
         return -1;
     }
@@ -814,7 +815,15 @@ int bIapEventHandler(bIapEvent_t event, void *arg)
                 data->release(data->pbuf);
                 data->pbuf = NULL;
             }
-            offset += data->len;
+            if (retval == 0)
+            {
+                offset += data->len;
+            }
+            else if (retval == -2)
+            {
+                offset = 0;
+            }
+            retval = offset;
         }
         break;
         default:

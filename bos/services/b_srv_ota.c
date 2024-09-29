@@ -215,10 +215,12 @@ static int _OtaProtCallback(bProtoCmd_t cmd, void *param)
         fwinfo.crc_type = ALGO_CRC32;
         fwinfo.len      = file_info->size;
         memcpy(fwinfo.name, file_info->name, sizeof(fwinfo.name));
-        bIapEventHandler(B_IAP_EVENT_START, &fwinfo);
-        _OtaProtStart();
+        if (0 == bIapEventHandler(B_IAP_EVENT_START, &fwinfo))
+        {
+            _OtaProtStart();
+        }
     }
-    else if (cmd == B_PROTO_FILE_DATA)
+    else if ((cmd == B_PROTO_FILE_DATA) && (bIapGetStatus() == B_IAP_STA_START))
     {
         bProtoFileData_t *pFileData = (bProtoFileData_t *)param;
         if (pFileData->size > 0 && pFileData->offset == bOtaFileOffset)
@@ -228,13 +230,9 @@ static int _OtaProtCallback(bProtoCmd_t cmd, void *param)
             fwdata.len     = pFileData->size;
             fwdata.release = NULL;
             int ret        = bIapEventHandler(B_IAP_EVENT_DATA, &fwdata);
-            if (ret == 0)
+            if (ret >= 0)
             {
-                bOtaFileOffset += pFileData->size;
-            }
-            else if (ret == 2)
-            {
-                bOtaFileOffset = 0;
+                bOtaFileOffset = ret;
             }
         }
         if ((bIapGetStatus() == B_IAP_STA_READY) && (bIapIsInBoot() == 0))

@@ -130,6 +130,7 @@ int bProtSrvPackage(bProtSrvId_t id, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf
 // 订阅协议的指令
 // psub 订阅信息 \ref bProtSrvSubscribe_t
 int bProtSrvSubscribe(bProtSrvId_t id, bProtSrvSubscribe_t *psub);
+int bProtSrvUnsubscribe(bProtSrvId_t id, bProtSrvSubscribe_t *psub);
 
 /**
  * \}

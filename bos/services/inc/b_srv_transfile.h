@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_services.h
+ * \file        b_srv_transfile.h
  * \version     v0.0.1
- * \date        2023/08/26
+ * \date        2023/08/27
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
@@ -28,20 +28,91 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_SERVICES_H__
-#define __B_SERVICES_H__
+#ifndef __B_SRV_TRANSFILE_H__
+#define __B_SRV_TRANSFILE_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
+#include <stdint.h>
 
-#include "b_srv_mqtt.h"
-#include "b_srv_ota.h"
-#include "b_srv_protocol.h"
-#include "b_srv_tcpip.h"
-#include "b_srv_transfile.h"
+#include "b_config.h"
+
+#if (defined(_TRANSFILE_SERVICE_ENABLE) && (_TRANSFILE_SERVICE_ENABLE == 1))
+
+#include "services/inc/b_srv_protocol.h"
+
+/**
+ * \addtogroup BABYOS
+ * \{
+ */
+
+/**
+ * \addtogroup SERVICES
+ * \{
+ */
+
+/**
+ * \addtogroup TRANSFILE
+ * \{
+ */
+
+/**
+ * \defgroup TRANSFILE_Exported_TypesDefinitions
+ * \{
+ */
+
+typedef void (*bTFLSrvSendData_t)(uint8_t *pbuf, uint16_t len);
+
+typedef struct
+{
+    uint32_t addr;
+    uint32_t len;
+} bTFLSrvFileInfo_t;
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TRANSFILE_Exported_Defines
+ * \{
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup TRANSFILE_Exported_Functions
+ * \{
+ */
+
+int bTFLSrvInit(bProtSrvId_t protocol_id, bTFLSrvSendData_t send);
+int bTFLSrvDeinit(void);
+
+int bTFLSrvGetFileInfo(uint32_t dev_no, uint32_t base_addr, const char *filename,
+                       bTFLSrvFileInfo_t *pinfo);
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+#endif
 
 #ifdef __cplusplus
 }
