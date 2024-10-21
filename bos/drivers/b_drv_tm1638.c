@@ -89,7 +89,9 @@ static bTm1638Private_t bTm1638RunInfo[bDRIVER_HALIF_NUM(bTM1638_HalIf_t, DRIVER
 /**
  * @brief  Commands
  */
-
+TM1638_Result_t
+TM1638_SetMultipleDigit(bDriverInterface_t *pdrv, const uint8_t *DigitData,
+                        uint8_t StartAddr, uint8_t Count);
 
 /* Private Constants ------------------------------------------------------------*/
 /**
@@ -874,7 +876,20 @@ int bTM1638_Init(bDriverInterface_t *pdrv)
 	bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bTM1638_Init);
 	pdrv->read        = _bTm1638Read;
 	pdrv->ctl         = _bTm1638Ctl;
+	
+	TM1638_Init(pdrv, TM1638DisplayTypeComCathode);
+	TM1638_ConfigDisplay(pdrv, 7, TM1638DisplayStateON);
+	
+	uint16_t i = 1234;
+	uint8_t Buffer[4] = {0};
+	Buffer[0] = i % 10;
+	Buffer[1] = (i / 10) % 10;
+	Buffer[2] = (i / 100) % 10;
+	Buffer[3] = (i / 1000) % 10;
 
+	Buffer[1] |= TM1638DecimalPoint;
+
+	TM1638_SetMultipleDigit_HEX(pdrv, Buffer, 0, 4);
 
 	return retval;
 }

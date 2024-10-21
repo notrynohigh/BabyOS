@@ -58,7 +58,7 @@ typedef struct
 	bHalGPIOInstance_t stb;
 	bHalGPIOInstance_t clk;
 	bHalGPIOInstance_t dio;
-} bADS124X_HalIf_t;
+} bTM1638_HalIf_t;
 
 
 #define TM1638_CONFIG_SUPPORT_COM_ANODE  1
