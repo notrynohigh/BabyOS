@@ -233,8 +233,8 @@ TM1638_ReadBytes(bDriverInterface_t *pdrv,
 			bHalDelayUs(1);
 		}
 
-	Data[j] = Buff;
-	bHalDelayUs(2);
+		Data[j] = Buff;
+		bHalDelayUs(2);
 	}
 }
 
@@ -876,20 +876,23 @@ int bTM1638_Init(bDriverInterface_t *pdrv)
 	bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bTM1638_Init);
 	pdrv->read        = _bTm1638Read;
 	pdrv->ctl         = _bTm1638Ctl;
+	pdrv->_private._p = &bTm1638RunInfo[pdrv->drv_no];
+	memset(pdrv->_private._p, 0, sizeof(bTm1638Private_t));
 	
 	TM1638_Init(pdrv, TM1638DisplayTypeComCathode);
-	TM1638_ConfigDisplay(pdrv, 7, TM1638DisplayStateON);
+	TM1638_ConfigDisplay(pdrv, 1, TM1638DisplayStateON);
 	
-	uint16_t i = 1234;
-	uint8_t Buffer[4] = {0};
-	Buffer[0] = i % 10;
-	Buffer[1] = (i / 10) % 10;
-	Buffer[2] = (i / 100) % 10;
-	Buffer[3] = (i / 1000) % 10;
+//	uint16_t i = 1234;
+//	uint8_t Buffer[4] = {0};
+//	Buffer[0] = i % 10;
+//	Buffer[1] = (i / 10) % 10;
+//	Buffer[2] = (i / 100) % 10;
+//	Buffer[3] = (i / 1000) % 10;
+	uint8_t Buffer[8] = {1,0,2,0,3,0,4,0};
 
-	Buffer[1] |= TM1638DecimalPoint;
+	Buffer[0] |= TM1638DecimalPoint;
 
-	TM1638_SetMultipleDigit_HEX(pdrv, Buffer, 0, 4);
+	TM1638_SetMultipleDigit_HEX(pdrv, Buffer, 0, 8);
 
 	return retval;
 }
