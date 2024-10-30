@@ -59,6 +59,7 @@ typedef struct
 	bHalGPIOInstance_t drdy;
 	bHalGPIOInstance_t start;
 	bHalGPIOInstance_t reset;
+	bHalItIf_t it;
 } bADS124X_HalIf_t;
 
 
@@ -71,6 +72,12 @@ typedef struct
 	uint8_t IDACroute;
 	uint8_t IDACdir;
 }bADS124X_IDACRouting_t;
+
+typedef struct
+{
+    uint32_t   data[32];
+	bAds124xDrvCallback_t	cb;
+} bAds124xPrivate_t;
 
 /**
  * \}

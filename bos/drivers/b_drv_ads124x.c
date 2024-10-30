@@ -83,7 +83,7 @@
  */
 bDRIVER_HALIF_TABLE(bADS124X_HalIf_t, DRIVER_NAME);
 
-//static bAds124xPrivate_t bAds124xRunInfo[bDRIVER_HALIF_NUM(bADS124X_HalIf_t, DRIVER_NAME)];
+static bAds124xPrivate_t bAds124xRunInfo[bDRIVER_HALIF_NUM(bADS124X_HalIf_t, DRIVER_NAME)];
 
 
 /* Private Constants ------------------------------------------------------------*/
@@ -1179,15 +1179,24 @@ int ADS1248SetReset(bDriverInterface_t *pdrv,int nReset)
 }
 
 
+
+static void _bAds124xItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *param,
+                              void *user_data)
+{
+	
+	
+}
+
 /*
  * ADS1248 Initial Configuration
  */
 static int InitConfig(bDriverInterface_t *pdrv)
 {
+	bDRIVER_GET_HALIF(_if, bADS124X_HalIf_t, pdrv);	
 	int retval = -1;
 	int data_rate = 0;
 	//establish some startup register settings
-	unsigned regArray[4];
+//	unsigned regArray[4];
 	// Send SDATAC command
 //	ADS1248SendSDATAC(pdrv);
 //	retval = ADS1248WaitForDataReady(pdrv,0);
@@ -1198,12 +1207,14 @@ static int InitConfig(bDriverInterface_t *pdrv)
 //	regArray[2] = 0x00;
 //	regArray[3] = 0x00;
 //	ADS1248WriteSequence(pdrv,ADS1248_0_MUX0, 4, regArray);
+	
+	
 	ADS1248AssertCS(pdrv,1);
 	ADS1248SetReset(pdrv,0);	
 	ADS1248SetStart(pdrv,0);
 	bHalDelayMs(4);
 	ADS1248SetReset(pdrv,1);	
-	ADS1248SetStart(pdrv,1);
+//	ADS1248SetStart(pdrv,1);
 	bHalDelayMs(20);
 	
 	
@@ -1232,6 +1243,11 @@ static int InitConfig(bDriverInterface_t *pdrv)
 //	ADS1248SetOFC(pdrv,0X000000);					//vin =0 ,output code = 0;
 //	ADS1248SetFSC(pdrv,0x400000);					//Gain scale 1.0
 //	ADS1248SetStart(pdrv,1);						//开始连续转换
+    if (_if->it.it == B_HAL_IT_EXTI)
+    {
+        bHAL_IT_REGISTER(ads124x_it, B_HAL_IT_EXTI, _if->it.index, _bAds124xItHandler, pdrv);
+    }
+
 	retval = 0;
 	return retval;
 }
@@ -1250,8 +1266,20 @@ static int _bAds124xRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
 }
 static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
+	bDRIVER_GET_PRIVATE(_priv, bAds124xPrivate_t, pdrv);
 	switch (cmd)
 	{
+		case bCMD_ADS124X_REG_CALLBACK :
+		{
+            if (param == NULL)
+            {
+                return -1;
+            }
+            bAds124xDrvCallback_t *pcb = (bAds124xDrvCallback_t *)param;
+            _priv->cb.cb            = pcb->cb;
+            _priv->cb.user_data     = pcb->user_data;
+        }
+		break;
 		case bCMD_ADS124X_SET_CH :
 		break;
 		case bCMD_ADS124X_SET_VREF :
@@ -1297,9 +1325,7 @@ static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 		}
 		break;
 		default:
-			break;
-		
-		
+			break;	
 	}
 	
 	return 0;
@@ -1315,8 +1341,13 @@ int bADS124X_Init(bDriverInterface_t *pdrv)
 	bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bADS124X_Init);
 	pdrv->read        = _bAds124xRead;
 	pdrv->ctl         = _bAds124xCtl;
+	pdrv->_private._p = &bAds124xRunInfo[pdrv->drv_no];
+    memset(pdrv->_private._p, 0, sizeof(bAds124xPrivate_t));
 
 	retval = InitConfig(pdrv);
+	
+    bDRIVER_SET_READCACHE(pdrv, &bAds124xRunInfo[pdrv->drv_no].data[0],
+                          sizeof(bAds124xRunInfo[pdrv->drv_no].data));
 
 	return retval;
 }

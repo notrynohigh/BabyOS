@@ -388,6 +388,19 @@ typedef struct
 #define bCMD_ADS124X_SET_GIO 17           // none
 #define bCMD_ADS124X_SET_IDAC 18          // none
 #define bCMD_ADS124X_SET_CALLBACK_ARG 32  // void *
+
+
+typedef enum
+{
+    B_EVT_CONV_STA_OK = 0,
+
+} bAds124xDrvEvent_t;
+
+typedef struct
+{
+    void (*cb)(bAds124xDrvEvent_t event, void *arg, void (*release)(void *), void *user_data);
+    void *user_data;
+} bAds124xDrvCallback_t;
 ///////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////
