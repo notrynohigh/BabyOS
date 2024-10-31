@@ -197,7 +197,7 @@ TM1638_WriteBytes(bDriverInterface_t *pdrv,
 	bDRIVER_GET_HALIF(_if, bTM1638_HalIf_t, pdrv);
 	uint8_t i, j, Buff;
 
-	bHalGpioConfig(_if->dio.port, _if->dio.pin, B_HAL_GPIO_OUTPUT, B_HAL_GPIO_NOPULL);
+//	bHalGpioConfig(_if->dio.port, _if->dio.pin, B_HAL_GPIO_OUTPUT, B_HAL_GPIO_NOPULL);
 	for (j = 0; j < NumOfBytes; j++)
 	{
 		for (i = 0, Buff = Data[j]; i < 8; ++i, Buff >>= 1)
@@ -218,7 +218,7 @@ TM1638_ReadBytes(bDriverInterface_t *pdrv,
 	bDRIVER_GET_HALIF(_if, bTM1638_HalIf_t, pdrv);
 	uint8_t i, j, Buff;
 
-	bHalGpioConfig(_if->dio.port, _if->dio.pin, B_HAL_GPIO_INPUT, B_HAL_GPIO_NOPULL);
+//	bHalGpioConfig(_if->dio.port, _if->dio.pin, B_HAL_GPIO_INPUT, B_HAL_GPIO_NOPULL);
 
 	bHalDelayUs(5);
 

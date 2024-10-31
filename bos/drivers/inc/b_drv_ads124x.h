@@ -75,6 +75,12 @@ typedef struct
 
 typedef struct
 {
+	uint8_t AINN;
+	uint8_t AINP;
+}bADS124X_InputPin_t;
+
+typedef struct
+{
     uint32_t   data[32];
 	bAds124xDrvCallback_t	cb;
 } bAds124xPrivate_t;

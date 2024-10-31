@@ -1183,7 +1183,12 @@ int ADS1248SetReset(bDriverInterface_t *pdrv,int nReset)
 static void _bAds124xItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *param,
                               void *user_data)
 {
+	bDriverInterface_t *pdrv = user_data;
+	bDRIVER_GET_PRIVATE(_priv, bAds124xPrivate_t, pdrv);
 	
+	uint32_t adc_raw_data = 0;
+	adc_raw_data = ADS1248ReadData(pdrv);
+	_priv->cb.cb(B_EVT_CONV_STA_OK, &adc_raw_data, NULL, _priv->cb.user_data);
 	
 }
 
@@ -1194,7 +1199,8 @@ static int InitConfig(bDriverInterface_t *pdrv)
 {
 	bDRIVER_GET_HALIF(_if, bADS124X_HalIf_t, pdrv);	
 	int retval = -1;
-	int data_rate = 0;
+	int read_data_rate = 0;
+	int write_data_rate = 2;
 	//establish some startup register settings
 //	unsigned regArray[4];
 	// Send SDATAC command
@@ -1214,41 +1220,45 @@ static int InitConfig(bDriverInterface_t *pdrv)
 	ADS1248SetStart(pdrv,0);
 	bHalDelayMs(4);
 	ADS1248SetReset(pdrv,1);	
-//	ADS1248SetStart(pdrv,1);
+	ADS1248SetStart(pdrv,1);
 	bHalDelayMs(20);
 	
 	
 	
-	ADS1248SetGain(pdrv,5);							//gain = 32	
-	ADS1248SetDataRate(pdrv,2);						//DR 20
-	data_rate =  ADS1248GetDataRate(pdrv);
-	b_log("data_rate:%d\r\n",data_rate);
+	ADS1248SetGain(pdrv,2);											//gain = 2	
+	ADS1248SetDataRate(pdrv,write_data_rate);						//DR 20
+	read_data_rate =  ADS1248GetDataRate(pdrv);
+	b_log("data_rate:%d\r\n",read_data_rate);
+	if(read_data_rate == write_data_rate)
+	{
+		retval = 0;
+	}
 	
 	ADS1248SetIntRef(pdrv,1);						//内部基准打开 2.048V
 	ADS1248SetVoltageReference(pdrv,1);				//基准选择 REF1
 	bHalDelayMs(10);	
 	
-
-//	ADS1248SetBias((char) (hbias<<4 | lbias));		// AIN0~7 VBIAS 默认关闭
-//	ADS1248SetBurnOutSource(pdrv,0);				//ADS1248_BCS_OFF
-//	ADS1248SetSystemMonitor(pdrv,0);				//ADS1248_MEAS_NORM 
-
+/*	这三条是默认配置
+	ADS1248SetBias((char) (hbias<<4 | lbias));		// AIN0~7 VBIAS 默认关闭
+	ADS1248SetBurnOutSource(pdrv,0);				//ADS1248_BCS_OFF
+	ADS1248SetSystemMonitor(pdrv,0);				//ADS1248_MEAS_NORM 
+*/
+/*  调试使用
 	ADS1248SetCurrentDACOutput(pdrv,6);				//1mA
-
 	ADS1248SetChannel(pdrv,2,0);					//设施与ADC连接引脚 需要通过crtl 接口实现  ADS1248_AINP2    端口1
 	ADS1248SetChannel(pdrv,3,1);					//设施与ADC连接引脚 需要通过crtl 接口实现  ADS1248_AINN3	端口1
 	ADS1248SetIDACRouting(pdrv,0, 0);				// IDACdir (0 = I1DIR, 1 = I2DIR)  ADS1248_IDAC1_A0
-
-	
+*/
+/*	设置校准寄存器，软件多点标定代替
 //	ADS1248SetOFC(pdrv,0X000000);					//vin =0 ,output code = 0;
 //	ADS1248SetFSC(pdrv,0x400000);					//Gain scale 1.0
 //	ADS1248SetStart(pdrv,1);						//开始连续转换
+*/
     if (_if->it.it == B_HAL_IT_EXTI)
     {
         bHAL_IT_REGISTER(ads124x_it, B_HAL_IT_EXTI, _if->it.index, _bAds124xItHandler, pdrv);
     }
 
-	retval = 0;
 	return retval;
 }
 
@@ -1280,13 +1290,23 @@ static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             _priv->cb.user_data     = pcb->user_data;
         }
 		break;
-		case bCMD_ADS124X_SET_CH :
+		case bCMD_ADS124X_SET_AIN :
+		{
+			bADS124X_InputPin_t *pAIN = (bADS124X_InputPin_t *)param;
+			ADS1248SetChannel(pdrv,pAIN->AINN,1);
+			ADS1248SetChannel(pdrv,pAIN->AINP,0);
+		}
 		break;
 		case bCMD_ADS124X_SET_VREF :
 		break;
-		case bCMD_ADS124X_SET_GCONFIG :
-		break;
-		case bCMD_ADS124X_SET_GDAT :
+//		case bCMD_ADS124X_SET_GCONFIG :
+//		break;
+		case bCMD_ADS124X_START_1CONV :
+		{
+			ADS1248SetStart(pdrv,1);	
+			bHalDelayUs(10);	// At least 3 clk times
+			ADS1248SetStart(pdrv,0);
+		}
 		break;
 		case bCMD_ADS124X_SET_FSC :
 		break;
@@ -1305,6 +1325,10 @@ static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 		case bCMD_ADS124X_SET_PWRDN :
 		break;
 		case bCMD_ADS124X_SET_PGA :
+		{
+			uint8_t *pPGA = (uint8_t *)param;
+			ADS1248SetGain(pdrv,*pPGA);	
+		}
 		break;
 		case bCMD_ADS124X_SET_IREF :
 		break;
