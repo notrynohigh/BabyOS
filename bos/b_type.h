@@ -86,6 +86,8 @@ extern "C" {
 #define __WEAKDEF __attribute__((weak))
 #elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 #define __WEAKDEF __attribute__((weak))
+#define __TIME_F_ENABLE 1
+#define __USE_LOGF 1
 #elif defined(__GNUC__)
 #define __WEAKDEF __attribute__((weak))
 #elif defined(__ICCARM__)
@@ -93,6 +95,7 @@ extern "C" {
 #elif defined(__RENESAS__)
 #else
 #define __WEAKDEF __attribute__((weak))
+#define __TIME_F_ENABLE 1
 #endif
 
 #if defined(__RENESAS__)

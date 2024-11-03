@@ -5,6 +5,35 @@ import os, sys
 import shutil
 import re
 
+def find_config_item(item):
+    current_directory = os.getcwd()
+    file_path = os.path.join(current_directory, 'b_config.h')
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+            if item in content:
+                return 1
+            else:
+                return 0
+    else:
+        return 0
+    
+def file_add_bconfig_limit(file_path, pat):
+    # 读取原始文件内容
+    with open(file_path, 'r', encoding='utf-8') as file:
+        original_content = file.read()
+
+    # 定义要添加的内容
+    header_content = f'#include "b_config.h" \r\n#if (defined({pat}) && {pat} == 1)\n'
+    footer_content = '\n#endif\r\n'
+
+    # 创建新的文件内容
+    new_content = header_content + original_content + footer_content
+
+    # 将新的内容写回文件
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(new_content)
+
 def find_files(dirs, des):
     source_file = []
     source_file_des = []
@@ -251,9 +280,43 @@ def cp_tinyusb_file(bos_dir):
     pattern = r'#\s*define\s+tu_printf\s+printf'
     replace_line_with_pattern_plus(tmp_dir + 'tusb_debug.h', pattern, '#include "utils/inc/b_util_log.h"\r\n  #define tu_printf  b_log')
 
+# lua
+# ----------------------------------------------------------------------
+def delete_specific_files(s_dir, del_files):
+    for file in del_files:
+        try:
+            file_path = os.path.join(s_dir, file)
+            os.remove(file_path)
+            print(f"Deleted {file_path}")
+        except FileNotFoundError:
+            print(f"{file} not found in {s_dir}, skipping.")
+#-----------------------------------------------------------------------
+def cp_lua_file(bos_dir):
+    lua_dir = bos_dir + "/thirdparty/lua/"
+    tmp_dir = lua_dir + "bos_lua/"
+    if not os.path.exists(tmp_dir):
+        os.makedirs(tmp_dir)
+    else:
+        print("bos_lua exist !")
+        return
+    extensions = (".c", ".h")
+    copy_specific_files(lua_dir + "lua-5.4.7/", tmp_dir, extensions, False)
+    delete_specific_files(tmp_dir, ['lua.c', 'luac.c', 'loslib.c', 'liolib.c', 'lcorolib.c'])
+    replace_line_with_pattern(tmp_dir + "lauxlib.c", "free(ptr);", "bFree(ptr);")
+    replace_line_with_pattern(tmp_dir + "lauxlib.c", "return realloc(ptr, nsize);", "return bRealloc(ptr, nsize);")
+    replace_line_with_pattern(tmp_dir + "lauxlib.c", '#include "lauxlib.h"', '#include "lauxlib.h"\r\n#include "utils/inc/b_util_memp.h"')
+    replace_line_with_pattern(tmp_dir + "linit.c", '{LUA_OSLIBNAME, luaopen_os},', '//{LUA_OSLIBNAME, luaopen_os},')
+    replace_line_with_pattern(tmp_dir + "linit.c", '{LUA_IOLIBNAME, luaopen_io},', '//{LUA_IOLIBNAME, luaopen_io},')
+    replace_line_with_pattern(tmp_dir + "linit.c", '{LUA_COLIBNAME, luaopen_coroutine},', '//{LUA_COLIBNAME, luaopen_coroutine},')
+    replace_line_with_pattern(tmp_dir + "luaconf.h", '#include <stddef.h>', '#include <stddef.h>\r\n#include "b_config.h"')
+    replace_line_with_pattern(tmp_dir + "linit.c", '{LUA_MATHLIBNAME, luaopen_math},', '#if (defined(_LUA_MATH_ENABLE) && (_LUA_MATH_ENABLE == 1))\n{LUA_MATHLIBNAME, luaopen_math},\n#endif')
+    replace_line_with_pattern(tmp_dir + "linit.c", '{LUA_UTF8LIBNAME, luaopen_utf8},', '#if (defined(_LUA_UTF8_ENABLE) && (_LUA_UTF8_ENABLE == 1))\n{LUA_UTF8LIBNAME, luaopen_utf8},\n#endif')
+    file_add_bconfig_limit(tmp_dir + "lmathlib.c", '_LUA_MATH_ENABLE')
+    file_add_bconfig_limit(tmp_dir + "lutf8lib.c", '_LUA_UTF8_ENABLE')
 #---------------------------------------------------------------------
 def cp_thirdparty_file(bos_dir):
     cp_arm_2d_file(bos_dir)
     cp_lwip_file(bos_dir)
     cp_tinyusb_file(bos_dir)
     cp_mbedtls_file(bos_dir)
+    cp_lua_file(bos_dir)
