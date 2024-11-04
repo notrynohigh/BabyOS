@@ -99,6 +99,9 @@ __attribute__((aligned(4))) static uint8_t bMempBuf[MEMP_SIZE];
  * \{
  */
 static uint8_t bMempInitFlag = 0;
+#if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+static uint32_t bMemFreeSizeMin = MEMP_SIZE;
+#endif
 /**
  * \}
  */
@@ -128,6 +131,21 @@ static void _bMempInit()
         phead->next   = NULL;
         bMempInitFlag = 1;
     }
+}
+
+static uint32_t _bGetFreeSize()
+{
+    bMempUnitHead_t *phead = (bMempUnitHead_t *)bMempBuf;
+    uint32_t         ret   = 0;
+    while (phead)
+    {
+        if (phead->status == MEMP_UNIT_FREE)
+        {
+            ret += phead->size;
+        }
+        phead = phead->next;
+    }
+    return ret;
 }
 
 static void *_bMempAlloc(uint32_t size)
@@ -178,6 +196,17 @@ static void *_bMempAlloc(uint32_t size)
         b_log_e("memp alloc fail, size:%d", size);
         bMallocFailedHook();
     }
+    else
+    {
+#if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+        uint32_t c_freesize = _bGetFreeSize();
+        if (bMemFreeSizeMin > c_freesize)
+        {
+            bMemFreeSizeMin = c_freesize;
+        }
+#endif
+    }
+
     return pret;
 }
 
@@ -205,21 +234,6 @@ static void _bMempFree(uint32_t addr)
         }
         phead = phead->next;
     }
-}
-
-static uint32_t _bGetFreeSize()
-{
-    bMempUnitHead_t *phead = (bMempUnitHead_t *)bMempBuf;
-    uint32_t         ret   = 0;
-    while (phead)
-    {
-        if (phead->status == MEMP_UNIT_FREE)
-        {
-            ret += phead->size;
-        }
-        phead = phead->next;
-    }
-    return ret;
 }
 
 static uint32_t _bGetUsableSize(uint32_t addr)
@@ -439,6 +453,13 @@ char *bStrDup(char *str)
     memcpy(tmp, str, strlen(str));
     return tmp;
 }
+
+#if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+uint32_t bGetMemThreshold()
+{
+    return bMemFreeSizeMin;
+}
+#endif
 
 /**
  * \}

@@ -85,6 +85,11 @@ void bMallocFailedHook(void);
 #else
 void bMallocRegisterHook(void (*hook)(void));
 #endif
+
+#if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+uint32_t bGetMemThreshold(void);
+#endif
+
 /**
  * \}
  */

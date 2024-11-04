@@ -110,9 +110,13 @@ extern "C" {
 #include "drivers/inc/b_drv_ads124x.h"
 // thirdparty
 #include "thirdparty/cjson/cjson.h"
+#include "thirdparty/lua/bos_lua/lauxlib.h"
+#include "thirdparty/lua/bos_lua/lua.h"
+#include "thirdparty/lua/bos_lua/lualib.h"
 #include "thirdparty/pt/pt-sem.h"
 #include "thirdparty/pt/pt.h"
 #include "thirdparty/unity/unity.h"
+
 
 #define BOS_PERIODIC_TASK(pf, ms)                                         \
     {                                                                     \

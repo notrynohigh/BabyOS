@@ -36,7 +36,11 @@ extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
+#include "b_config.h"
+
+#if (defined(__TIME_F_ENABLE) && (__TIME_F_ENABLE == 1))
+#include <time.h>
+#endif
 
 /**
  * \addtogroup B_UTILS
