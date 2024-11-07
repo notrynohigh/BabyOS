@@ -205,6 +205,7 @@ TM1638_WriteBytes(bDriverInterface_t *pdrv,
 			bHalGpioWritePin(_if->clk.port, _if->clk.pin, 0);
 			bHalDelayUs(1);
 			bHalGpioWritePin(_if->dio.port, _if->dio.pin, Buff & 0x01);
+			bHalDelayUs(1);
 			bHalGpioWritePin(_if->clk.port, _if->clk.pin, 1);
 			bHalDelayUs(1);
 		}
@@ -552,7 +553,7 @@ TM1638_Result_t
 TM1638_SetMultipleDigit_HEX(bDriverInterface_t *pdrv, const uint8_t *DigitData,
                             uint8_t StartAddr, uint8_t Count)
 {
-  uint8_t DigitDataHEX[10];
+  uint8_t DigitDataHEX[16];
   uint8_t DecimalPoint = 0;
 
   for (uint8_t i = 0; i < Count; i++)
@@ -888,11 +889,11 @@ int bTM1638_Init(bDriverInterface_t *pdrv)
 //	Buffer[1] = (i / 10) % 10;
 //	Buffer[2] = (i / 100) % 10;
 //	Buffer[3] = (i / 1000) % 10;
-	uint8_t Buffer[8] = {1,0,2,0,3,0,4,0};
+	uint8_t Buffer[16] = {4,0,3,0,2,0,1,0,1,0,2,0,3,0,4,0};
 
 	Buffer[0] |= TM1638DecimalPoint;
 
-	TM1638_SetMultipleDigit_HEX(pdrv, Buffer, 0, 8);
+	TM1638_SetMultipleDigit_HEX(pdrv, Buffer, 0, 16);
 
 	return retval;
 }
