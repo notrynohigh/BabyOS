@@ -244,4 +244,11 @@
 		.dio	={B_HAL_GPIOB, B_HAL_PIN13},					\
     }
 
+#define HAL_TMP112_IF                 \
+    {                                 \
+        .dev_addr      = (0x73 << 1), \
+        .is_simulation = 0,           \
+        ._if.i2c       = B_HAL_I2C_1, \
+    }
+
 #endif
