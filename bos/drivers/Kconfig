@@ -43,5 +43,8 @@ config RS485_CACHE_BUF_LEN
     default 1024
     depends on _485_USE_SELECT
 
+config RS485_SWITCH_DELAY_US
+    int "RS485 Direction Switch Delay (us)"
+    default 1000
 
 endmenu

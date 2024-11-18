@@ -192,6 +192,19 @@ bUTC_t bStruct2UTC(bUTC_DateTime_t tm, double zone)
 
     return seconds;
 }
+
+#if (defined(__TIME_F_ENABLE) && (__TIME_F_ENABLE == 1))
+time_t time(time_t *tloc)
+{
+    time_t ctime = bHalGetSysTickPlus();
+    if (tloc)
+    {
+        *tloc = ctime;
+    }
+    return ctime;
+}
+#endif
+
 /**
  * \}
  */

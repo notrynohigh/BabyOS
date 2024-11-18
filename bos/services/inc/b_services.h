@@ -41,7 +41,7 @@ extern "C" {
 #include "b_srv_ota.h"
 #include "b_srv_protocol.h"
 #include "b_srv_tcpip.h"
-
+#include "b_srv_transfile.h"
 
 #ifdef __cplusplus
 }

@@ -226,4 +226,30 @@
             },                                              \
     }
 
+#define HAL_ADS124X_IF \
+    {                                                           \
+        ._spi = {                                               \
+                .is_simulation = 0,                             \
+                .cs            = {B_HAL_GPIOD, B_HAL_PIN13},    \
+                ._if.spi       = B_HAL_SPI_1,                   \
+            },                                                  \      
+        .drdy  = {B_HAL_GPIOB, B_HAL_PIN2},                     \
+        .start = {B_HAL_GPIOB, B_HAL_PIN3},                     \
+        .reset = {B_HAL_GPIOB, B_HAL_PIN4},                     \
+    }
+
+#define HAL_TM1638_IF                                      \
+    {                                                       \
+		.stb	={B_HAL_GPIOB, B_HAL_PIN15},					\
+		.clk	={B_HAL_GPIOB, B_HAL_PIN10},					\
+		.dio	={B_HAL_GPIOB, B_HAL_PIN13},					\
+    }
+
+#define HAL_TMP112_IF                 \
+    {                                 \
+        .dev_addr      = (0x73 << 1), \
+        .is_simulation = 0,           \
+        ._if.i2c       = B_HAL_I2C_1, \
+    }
+
 #endif

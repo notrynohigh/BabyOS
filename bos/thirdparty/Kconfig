@@ -213,4 +213,20 @@ config LV_CONF_INCLUDE_SIMPLE
     default y
     depends on _LVGL_ENABLE
 
+config _LUA_ENABLE
+    bool "LUA Enable/Disable"
+    default n
+    select _MEMP_ENABLE
+
+config _LUA_MATH_ENABLE
+    bool "lmath Enable/Disable"
+    default n
+    depends on _LUA_ENABLE
+
+config _LUA_UTF8_ENABLE
+    bool "lutf8 Enable/Disable"
+    default n
+    depends on _LUA_ENABLE
+    
+
 endmenu

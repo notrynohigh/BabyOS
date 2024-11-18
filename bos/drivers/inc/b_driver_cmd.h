@@ -54,6 +54,7 @@ extern "C" {
 typedef void (*bRS485Callback_t)(uint8_t *pbuf, uint16_t len);
 #define bCMD_485_REG_CALLBACK 0  // bRS485Callback_t
 #define bCMD_485_IDLE_MS 1       // uint16_t
+#define bCMD_485_SWITCH_DELAY 2  // (us) uint32_t
 ///////////////////////////////////////////////////////////
 // eeprom Command & Data Structure
 ///////////////////////////////////////////////////////////
@@ -326,14 +327,14 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // power meter and analysis, Command  &  Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_HLW811X_REG_CALLBACK 			0       //bHlw811xDrvCallback_t
-#define bCMD_HLW811X_SOFT_RST 					1       //none
-#define bCMD_HLW811X_MODE_AC 						2       //none
-#define bCMD_HLW811X_MODE_DC 						3       //none
-#define bCMD_HLW811X_SET_RESRATIO_IA 		4       //none
-#define bCMD_HLW811X_SET_RESRATIO_IB	 	5       //none
-#define bCMD_HLW811X_SET_RESRATIO_U 		6       //none
-#define bCMD_HLW811X_SET_CALLBACK_ARG 	15  		// void *
+#define bCMD_HLW811X_REG_CALLBACK 0       // bHlw811xDrvCallback_t
+#define bCMD_HLW811X_SOFT_RST 1           // none
+#define bCMD_HLW811X_MODE_AC 2            // none
+#define bCMD_HLW811X_MODE_DC 3            // none
+#define bCMD_HLW811X_SET_RESRATIO_IA 4    // none
+#define bCMD_HLW811X_SET_RESRATIO_IB 5    // none
+#define bCMD_HLW811X_SET_RESRATIO_U 6     // none
+#define bCMD_HLW811X_SET_CALLBACK_ARG 15  // void *
 
 typedef enum
 {
@@ -355,16 +356,51 @@ typedef struct
     float PowerPA;
     float PowerPB;
     float PowerSA;
-		float PowerSB;
+    float PowerSB;
     float EnergyA;
     float EnergyB;
     float FreqU;
-    float PowerFactorA;	
-		float PowerFactorB;	
-		float PhaseAngleA;	
-		float PhaseAngleB;	
+    float PowerFactorA;
+    float PowerFactorB;
+    float PhaseAngleA;
+    float PhaseAngleB;
 } bPowerMeter_hlw811x_t;
+///////////////////////////////////////////////////////////
+// ads124x, Command  &  Structure
+///////////////////////////////////////////////////////////
+#define bCMD_ADS124X_REG_CALLBACK 		0       //
+#define bCMD_ADS124X_START_1CONV 		1       // none
+#define bCMD_ADS124X_SET_VREF 			2       // none
+#define bCMD_ADS124X_SET_AIN			3       // none
+#define bCMD_ADS124X_SET_AINP 			4       // none
+#define bCMD_ADS124X_SET_FSC 			5       // none
+#define bCMD_ADS124X_SET_CURRENT 		6       // none
+#define bCMD_ADS124X_GET_GDAT 			7       // none
+#define bCMD_ADS124X_SET_OFC 			8       // none
+#define bCMD_ADS124X_SET_MUX 			9       // none
+#define bCMD_ADS124X_SET_BURNOUT 		10      // none
+#define bCMD_ADS124X_SET_BIAS 			11      // none
+#define bCMD_ADS124X_SET_PWRDN 			12      // none
+#define bCMD_ADS124X_SET_PGA 			13      // none
+#define bCMD_ADS124X_SET_IREF 			14      // none
+#define bCMD_ADS124X_RESETDUT 			15      // none
+#define bCMD_ADS124X_SET_DATARATE 		16      // none
+#define bCMD_ADS124X_SET_GIO 			17      // none
+#define bCMD_ADS124X_SET_IDAC 			18      // none
+#define bCMD_ADS124X_SET_CALLBACK_ARG 	32  	// void *
 
+
+typedef enum
+{
+    B_EVT_CONV_STA_OK = 0,
+
+} bAds124xDrvEvent_t;
+
+typedef struct
+{
+    void (*cb)(bAds124xDrvEvent_t event, void *arg, void (*release)(void *), void *user_data);
+    void *user_data;
+} bAds124xDrvCallback_t;
 ///////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////
