@@ -854,6 +854,11 @@ TM1638_ScanKeys(bDriverInterface_t *pdrv, uint32_t *Keys)
 /**
  * \}
  */
+static int _bTm1638Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
+{
+	TM1638_SetMultipleDigit_HEX(pdrv, pbuf, off, len);
+	
+}
 static int _bTm1638Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
 
