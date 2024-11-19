@@ -1192,6 +1192,65 @@ static void _bAds124xItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *
 	
 }
 
+
+void set_nsi8241_en1(uint8_t dev_no)
+{
+	switch(dev_no)
+	{
+		case 0 :
+					bHalGpioWritePin(B_HAL_GPIOA, B_HAL_PIN5, 	1);
+					bHalGpioWritePin(B_HAL_GPIOB, B_HAL_PIN15, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN2, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOD, B_HAL_PIN9, 	0);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN9, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	0);			
+			break;
+		case 1 :
+					bHalGpioWritePin(B_HAL_GPIOA, B_HAL_PIN5, 	0);
+					bHalGpioWritePin(B_HAL_GPIOB, B_HAL_PIN15, 	1);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN2, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOD, B_HAL_PIN9, 	0);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN9, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	0);			
+			break;
+		case 2 :
+					bHalGpioWritePin(B_HAL_GPIOA, B_HAL_PIN5, 	0);
+					bHalGpioWritePin(B_HAL_GPIOB, B_HAL_PIN15, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN2, 	1);	
+					bHalGpioWritePin(B_HAL_GPIOD, B_HAL_PIN9, 	0);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN9, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	0);			
+			break;
+		case 3 :	
+					bHalGpioWritePin(B_HAL_GPIOA, B_HAL_PIN5, 	0);
+					bHalGpioWritePin(B_HAL_GPIOB, B_HAL_PIN15, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN2, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOD, B_HAL_PIN9, 	1);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN9, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	0);			
+			break;
+		case 4 :
+					bHalGpioWritePin(B_HAL_GPIOA, B_HAL_PIN5, 	0);
+					bHalGpioWritePin(B_HAL_GPIOB, B_HAL_PIN15, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN2, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOD, B_HAL_PIN9, 	0);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN9, 	1);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	0);			
+			break;
+		case 5 :
+					bHalGpioWritePin(B_HAL_GPIOA, B_HAL_PIN5, 	0);
+					bHalGpioWritePin(B_HAL_GPIOB, B_HAL_PIN15, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN2, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOD, B_HAL_PIN9, 	0);
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN9, 	0);	
+					bHalGpioWritePin(B_HAL_GPIOC, B_HAL_PIN14, 	1);			
+			break;
+		default:
+			break;
+	}
+	bHalDelayMs(10);
+}
+
 /*
  * ADS1248 Initial Configuration
  */
@@ -1201,6 +1260,8 @@ static int InitConfig(bDriverInterface_t *pdrv)
 	int retval = -1;
 	int read_data_rate = 0;
 	int write_data_rate = 2;
+	
+	set_nsi8241_en1(pdrv->drv_no);
 	//establish some startup register settings
 //	unsigned regArray[4];
 	// Send SDATAC command
@@ -1213,8 +1274,7 @@ static int InitConfig(bDriverInterface_t *pdrv)
 //	regArray[2] = 0x00;
 //	regArray[3] = 0x00;
 //	ADS1248WriteSequence(pdrv,ADS1248_0_MUX0, 4, regArray);
-	
-	
+		
 	ADS1248AssertCS(pdrv,1);
 	ADS1248SetReset(pdrv,0);	
 	ADS1248SetStart(pdrv,0);
@@ -1222,8 +1282,6 @@ static int InitConfig(bDriverInterface_t *pdrv)
 	ADS1248SetReset(pdrv,1);	
 	ADS1248SetStart(pdrv,1);
 	bHalDelayMs(20);
-	
-	
 	
 	ADS1248SetGain(pdrv,2);											//gain = 2	
 	ADS1248SetDataRate(pdrv,write_data_rate);						//DR 20
@@ -1233,27 +1291,6 @@ static int InitConfig(bDriverInterface_t *pdrv)
 	{
 		retval = 0;
 	}
-	
-	ADS1248SetIntRef(pdrv,1);						//内部基准打开 2.048V
-	ADS1248SetVoltageReference(pdrv,1);				//基准选择 REF1
-	bHalDelayMs(10);	
-	
-/*	这三条是默认配置
-	ADS1248SetBias((char) (hbias<<4 | lbias));		// AIN0~7 VBIAS 默认关闭
-	ADS1248SetBurnOutSource(pdrv,0);				//ADS1248_BCS_OFF
-	ADS1248SetSystemMonitor(pdrv,0);				//ADS1248_MEAS_NORM 
-*/
-/*  调试使用
-	ADS1248SetCurrentDACOutput(pdrv,6);				//1mA
-	ADS1248SetChannel(pdrv,2,0);					//设施与ADC连接引脚 需要通过crtl 接口实现  ADS1248_AINP2    端口1
-	ADS1248SetChannel(pdrv,3,1);					//设施与ADC连接引脚 需要通过crtl 接口实现  ADS1248_AINN3	端口1
-	ADS1248SetIDACRouting(pdrv,0, 0);				// IDACdir (0 = I1DIR, 1 = I2DIR)  ADS1248_IDAC1_A0
-*/
-/*	设置校准寄存器，软件多点标定代替
-//	ADS1248SetOFC(pdrv,0X000000);					//vin =0 ,output code = 0;
-//	ADS1248SetFSC(pdrv,0x400000);					//Gain scale 1.0
-//	ADS1248SetStart(pdrv,1);						//开始连续转换
-*/
     if (_if->it.it == B_HAL_IT_EXTI)
     {
         bHAL_IT_REGISTER(ads124x_it, B_HAL_IT_EXTI, _if->it.index, _bAds124xItHandler, pdrv);
@@ -1268,6 +1305,7 @@ static int InitConfig(bDriverInterface_t *pdrv)
 static int _bAds124xRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
 	uint32_t adc_raw_data = 0;
+	set_nsi8241_en1(pdrv->drv_no);
 	ADS1248WaitForDataReady(pdrv,0);
 	adc_raw_data = ADS1248ReadData(pdrv);
 	memcpy(pbuf, &adc_raw_data, sizeof(adc_raw_data));
@@ -1277,6 +1315,7 @@ static int _bAds124xRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
 static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
 	bDRIVER_GET_PRIVATE(_priv, bAds124xPrivate_t, pdrv);
+	set_nsi8241_en1(pdrv->drv_no);
 	switch (cmd)
 	{
 		case bCMD_ADS124X_REG_CALLBACK :
@@ -1298,6 +1337,10 @@ static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 		}
 		break;
 		case bCMD_ADS124X_SET_VREF :
+		{
+			uint8_t *pVREF = (uint8_t *)param;
+			ADS1248SetVoltageReference(pdrv,*pVREF);	
+		}
 		break;
 //		case bCMD_ADS124X_SET_GCONFIG :
 //		break;
@@ -1311,6 +1354,10 @@ static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 		case bCMD_ADS124X_SET_FSC :
 		break;
 		case bCMD_ADS124X_SET_CURRENT :
+		{
+			uint8_t *pCURRENT = (uint8_t *)param;
+			ADS1248SetCurrentDACOutput(pdrv,*pCURRENT);	
+		}
 		break;
 		case bCMD_ADS124X_GET_GDAT :
 		break;
@@ -1331,10 +1378,18 @@ static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 		}
 		break;
 		case bCMD_ADS124X_SET_IREF :
+		{
+			uint8_t *pIREF = (uint8_t *)param;
+			ADS1248SetIntRef(pdrv,*pIREF);	
+		}			
 		break;
 		case bCMD_ADS124X_RESETDUT :
 		break;
 		case bCMD_ADS124X_SET_DATARATE :
+		{
+			uint8_t *pDATARATE = (uint8_t *)param;
+			ADS1248SetDataRate(pdrv,*pDATARATE);	
+		}	
 		break;
 		case bCMD_ADS124X_SET_GIO :
 		{
@@ -1344,8 +1399,8 @@ static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 		break;
 		case bCMD_ADS124X_SET_IDAC :
 		{
-			bADS124X_IDACRouting_t *IDACRouting = (bADS124X_IDACRouting_t *)param;
-			ADS1248SetIDACRouting(pdrv,IDACRouting->IDACroute,IDACRouting->IDACdir);
+			bADS124X_IDACRouting_t *pIDACRouting = (bADS124X_IDACRouting_t *)param;
+			ADS1248SetIDACRouting(pdrv,pIDACRouting->IDACroute,pIDACRouting->IDACdir);
 		}
 		break;
 		default:
@@ -1354,6 +1409,7 @@ static int _bAds124xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 	
 	return 0;
 }
+
 /**
  * \addtogroup LIS3DH_Exported_Functions
  * \{
@@ -1367,7 +1423,7 @@ int bADS124X_Init(bDriverInterface_t *pdrv)
 	pdrv->ctl         = _bAds124xCtl;
 	pdrv->_private._p = &bAds124xRunInfo[pdrv->drv_no];
     memset(pdrv->_private._p, 0, sizeof(bAds124xPrivate_t));
-
+	
 	retval = InitConfig(pdrv);
 	
     bDRIVER_SET_READCACHE(pdrv, &bAds124xRunInfo[pdrv->drv_no].data[0],

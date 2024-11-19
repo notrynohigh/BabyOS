@@ -79,6 +79,7 @@ typedef struct
 	uint8_t AINP;
 }bADS124X_InputPin_t;
 
+
 typedef struct
 {
     uint32_t   data[32];
