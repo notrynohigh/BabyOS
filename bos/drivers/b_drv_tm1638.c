@@ -308,7 +308,8 @@ TM1638_Init(bDriverInterface_t *pdrv, uint8_t Type)
     _priv->DisplayType = TM1638DisplayTypeComAnode;
 #endif
 
-//  Handler->PlatformInit();
+	_priv->Tm1638MultipleDigit = B_TM1638_MULTIPLE_DIGIT_HEX;
+  
   return TM1638_OK;
 }
 
@@ -603,10 +604,13 @@ TM1638_SetMultipleDigit_HEX(bDriverInterface_t *pdrv, const uint8_t *DigitData,
         break;
       }
     }
+	TM1638_SetSingleDigit(pdrv,
+                          DigitDataHEX[i], StartAddr+i*2);
   }
 
-  return TM1638_SetMultipleDigit(pdrv,
-                                 (const uint8_t *)DigitDataHEX, StartAddr, Count);
+//  return TM1638_SetMultipleDigit(pdrv,
+//                                 (const uint8_t *)DigitDataHEX, StartAddr, Count);
+    return TM1638_OK;
 }
 
 
@@ -856,18 +860,40 @@ TM1638_ScanKeys(bDriverInterface_t *pdrv, uint32_t *Keys)
  */
 static int _bTm1638Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
-	TM1638_SetMultipleDigit_HEX(pdrv, pbuf, off, len);
+	bDRIVER_GET_PRIVATE(_priv, bTm1638Private_t, pdrv);
+	if(_priv->Tm1638MultipleDigit == B_TM1638_MULTIPLE_DIGIT_HEX)
+	{
+		TM1638_SetMultipleDigit_HEX(pdrv, pbuf, off, len);
+	}
+	else if(_priv->Tm1638MultipleDigit == B_TM1638_MULTIPLE_DIGIT_CHAR)
+	{
 	
+	}
+	else if(_priv->Tm1638MultipleDigit == B_TM1638_MULTIPLE_DIGIT_LED)
+	{
+		
+	}
+	return len;	
 }
 static int _bTm1638Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
 
-	return 0;
-
+	return len;
 }
 static int _bTm1638Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
-
+	bDRIVER_GET_PRIVATE(_priv, bTm1638Private_t, pdrv);
+	switch (cmd)
+	{
+		case bCMD_TM1638_SET_DIGIT_TYPE :
+		{
+			bTm1638MultipleDigit_t *pMultipleDigit = (bTm1638MultipleDigit_t *)param;
+			_priv->Tm1638MultipleDigit = *pMultipleDigit;
+		}
+			break;
+		default:
+			break;	
+	}
 	
 	return 0;
 }
@@ -880,6 +906,7 @@ int bTM1638_Init(bDriverInterface_t *pdrv)
 {
 	int retval = -1;
 	bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bTM1638_Init);
+	pdrv->write       = _bTm1638Write;
 	pdrv->read        = _bTm1638Read;
 	pdrv->ctl         = _bTm1638Ctl;
 	pdrv->_private._p = &bTm1638RunInfo[pdrv->drv_no];
