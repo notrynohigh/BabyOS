@@ -791,10 +791,13 @@ TM1638_SetMultipleDigit_CHAR(bDriverInterface_t *pdrv, const uint8_t *DigitData,
         break;
       }
     }
+	TM1638_SetSingleDigit(pdrv,
+					  DigitDataHEX[i], StartAddr+i*2);
   }
 
-  return TM1638_SetMultipleDigit(pdrv,
-                                 (const uint8_t *)DigitDataHEX, StartAddr, Count);
+//  return TM1638_SetMultipleDigit(pdrv,
+//                                 (const uint8_t *)DigitDataHEX, StartAddr, Count);
+      return TM1638_OK;
 }
 
 
@@ -867,7 +870,8 @@ static int _bTm1638Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
 	}
 	else if(_priv->Tm1638MultipleDigit == B_TM1638_MULTIPLE_DIGIT_CHAR)
 	{
-	
+		TM1638_SetMultipleDigit_CHAR(pdrv, pbuf,
+								off, len);
 	}
 	else if(_priv->Tm1638MultipleDigit == B_TM1638_MULTIPLE_DIGIT_LED)
 	{
@@ -913,7 +917,7 @@ int bTM1638_Init(bDriverInterface_t *pdrv)
 	memset(pdrv->_private._p, 0, sizeof(bTm1638Private_t));
 	
 	TM1638_Init(pdrv, TM1638DisplayTypeComCathode);
-	TM1638_ConfigDisplay(pdrv, 1, TM1638DisplayStateON);
+	retval = TM1638_ConfigDisplay(pdrv, 1, TM1638DisplayStateON);
 	
 //	uint16_t i = 1234;
 //	uint8_t Buffer[4] = {0};
@@ -921,11 +925,11 @@ int bTM1638_Init(bDriverInterface_t *pdrv)
 //	Buffer[1] = (i / 10) % 10;
 //	Buffer[2] = (i / 100) % 10;
 //	Buffer[3] = (i / 1000) % 10;
-	uint8_t Buffer[16] = {4,0,3,0,2,0,1,0,1,0,2,0,3,0,4,0};
+//	uint8_t Buffer[16] = {4,0,3,0,2,0,1,0,1,0,2,0,3,0,4,0};
 
-	Buffer[0] |= TM1638DecimalPoint;
+//	Buffer[0] |= TM1638DecimalPoint;
 
-	TM1638_SetMultipleDigit_HEX(pdrv, Buffer, 0, 16);
+//	TM1638_SetMultipleDigit_HEX(pdrv, Buffer, 0, 16);
 
 	return retval;
 }
