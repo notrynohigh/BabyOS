@@ -1262,26 +1262,27 @@ static int InitConfig(bDriverInterface_t *pdrv)
 	int write_data_rate = 2;
 	
 	set_nsi8241_en1(pdrv->drv_no);
-	//establish some startup register settings
-//	unsigned regArray[4];
-	// Send SDATAC command
-//	ADS1248SendSDATAC(pdrv);
-//	retval = ADS1248WaitForDataReady(pdrv,0);
-//	ADS1248SendSDATAC(pdrv);
-//	//write the desired default register settings for the first 4 registers NOTE: values shown are the POR values as per datasheet
-//	regArray[0] = 0x01;
-//	regArray[1] = 0x00;
-//	regArray[2] = 0x00;
-//	regArray[3] = 0x00;
-//	ADS1248WriteSequence(pdrv,ADS1248_0_MUX0, 4, regArray);
-		
+
 	ADS1248AssertCS(pdrv,1);
 	ADS1248SetReset(pdrv,0);	
 	ADS1248SetStart(pdrv,0);
 	bHalDelayMs(4);
 	ADS1248SetReset(pdrv,1);	
 	ADS1248SetStart(pdrv,1);
-	bHalDelayMs(20);
+	bHalDelayMs(20);	
+	
+	//establish some startup register settings
+	unsigned regArray[4];
+	// Send SDATAC command
+	ADS1248SendSDATAC(pdrv);
+	retval = ADS1248WaitForDataReady(pdrv,0);
+	ADS1248SendSDATAC(pdrv);
+	//write the desired default register settings for the first 4 registers NOTE: values shown are the POR values as per datasheet
+	regArray[0] = 0x01;
+	regArray[1] = 0x00;
+	regArray[2] = 0x00;
+	regArray[3] = 0x00;
+	ADS1248WriteSequence(pdrv,ADS1248_0_MUX0, 4, regArray);
 	
 	ADS1248SetGain(pdrv,2);											//gain = 2	
 	ADS1248SetDataRate(pdrv,write_data_rate);						//DR 20
