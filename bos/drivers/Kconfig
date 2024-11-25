@@ -47,4 +47,8 @@ config RS485_SWITCH_DELAY_US
     int "RS485 Direction Switch Delay (us)"
     default 1000
 
+config DISPLAY_CACHE_SIZE
+    int "Display Cache size, unit: pixels"
+    default 0
+
 endmenu
