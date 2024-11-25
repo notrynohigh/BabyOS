@@ -82,6 +82,16 @@ bDRIVER_HALIF_TABLE(bST7789_HalIf_t, DRIVER_NAME);
 
 static bST7789Private_t bST7789RunInfo[bDRIVER_HALIF_NUM(bST7789_HalIf_t, DRIVER_NAME)];
 
+#ifndef DISPLAY_CACHE_BUF_SIZE
+#define DISPLAY_CACHE_BUF_SIZE (8)
+#else
+#if (DISPLAY_CACHE_BUF_SIZE == 0)
+#error "invalid config ..."
+#endif
+#endif
+
+static uint16_t bST7789Buf[DISPLAY_CACHE_BUF_SIZE];
+
 /**
  * \}
  */
@@ -122,25 +132,6 @@ static void _bLcdWriteData(bDriverInterface_t *pdrv, uint16_t dat)
         bHalGpioWritePin(_if->_if._spi.rs.port, _if->_if._spi.rs.pin, 1);
         bHalGpioWritePin(_if->_if._spi._spi.cs.port, _if->_if._spi._spi.cs.pin, 0);
         bHalSpiSend(&_if->_if._spi._spi, (uint8_t *)&dat, 1);
-        bHalGpioWritePin(_if->_if._spi._spi.cs.port, _if->_if._spi._spi.cs.pin, 1);
-    }
-}
-
-static void _bLcdWriteGRam(bDriverInterface_t *pdrv, uint16_t dat)
-{
-    uint8_t tmp[2];
-    bDRIVER_GET_HALIF(_if, bST7789_HalIf_t, pdrv);
-    if (_if->if_type == LCD_IF_TYPE_RWADDR || _if->if_type == LCD_IF_TYPE_IO)
-    {
-        _bLcdWriteData(pdrv, dat);
-    }
-    else if (_if->if_type == LCD_IF_TYPE_SPI)
-    {
-        tmp[0] = (uint8_t)((dat & 0xff00) >> 8);
-        tmp[1] = (uint8_t)(dat & 0x00ff);
-        bHalGpioWritePin(_if->_if._spi.rs.port, _if->_if._spi.rs.pin, 1);
-        bHalGpioWritePin(_if->_if._spi._spi.cs.port, _if->_if._spi._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi._spi, tmp, 2);
         bHalGpioWritePin(_if->_if._spi._spi.cs.port, _if->_if._spi._spi.cs.pin, 1);
     }
 }
@@ -195,6 +186,93 @@ static uint16_t _bLcdReadData(bDriverInterface_t *pdrv)
     return dat;
 }
 
+static void _bLcdWriteGramPre(bDriverInterface_t *pdrv)
+{
+    bDRIVER_GET_HALIF(_if, bST7789_HalIf_t, pdrv);
+    if (_if->if_type == LCD_IF_TYPE_RWADDR)
+    {
+        ;
+    }
+    else if (_if->if_type == LCD_IF_TYPE_IO)
+    {
+        bHalGpioWritePin(_if->_if._io.rs.port, _if->_if._io.rs.pin, 1);
+        bHalGpioWritePin(_if->_if._io.rd.port, _if->_if._io.rd.pin, 1);
+        bHalGpioWritePin(_if->_if._io.cs.port, _if->_if._io.cs.pin, 0);
+    }
+    else if (_if->if_type == LCD_IF_TYPE_SPI)
+    {
+        bHalGpioWritePin(_if->_if._spi.rs.port, _if->_if._spi.rs.pin, 1);
+        bHalGpioWritePin(_if->_if._spi._spi.cs.port, _if->_if._spi._spi.cs.pin, 0);
+    }
+}
+
+static void _bLcdWriteGramEnd(bDriverInterface_t *pdrv)
+{
+    bDRIVER_GET_HALIF(_if, bST7789_HalIf_t, pdrv);
+    if (_if->if_type == LCD_IF_TYPE_RWADDR)
+    {
+        ;
+    }
+    else if (_if->if_type == LCD_IF_TYPE_IO)
+    {
+        bHalGpioWritePin(_if->_if._io.cs.port, _if->_if._io.cs.pin, 1);
+    }
+    else if (_if->if_type == LCD_IF_TYPE_SPI)
+    {
+        bHalGpioWritePin(_if->_if._spi._spi.cs.port, _if->_if._spi._spi.cs.pin, 1);
+    }
+}
+
+static void _bLcdWriteGRam(bDriverInterface_t *pdrv, uint16_t *pdat, uint32_t count, uint8_t inc)
+{
+    bDRIVER_GET_HALIF(_if, bST7789_HalIf_t, pdrv);
+    uint16_t j = 0;
+    uint32_t i = 0;
+    if (_if->if_type == LCD_IF_TYPE_RWADDR)
+    {
+        for (i = 0; i < count; i++)
+        {
+            ((bLcdRWAddress_t *)_if->_if.rw_addr)->dat = *pdat;
+            if (inc)
+            {
+                pdat += 1;
+            }
+        }
+    }
+    else if (_if->if_type == LCD_IF_TYPE_IO)
+    {
+        for (i = 0; i < count; i++)
+        {
+            bHalGpioWritePort(_if->_if._io.data.port, *pdat);
+            bHalGpioWritePin(_if->_if._io.wr.port, _if->_if._io.wr.pin, 0);
+            bHalGpioWritePin(_if->_if._io.wr.port, _if->_if._io.wr.pin, 1);
+            if (inc)
+            {
+                pdat += 1;
+            }
+        }
+    }
+    else if (_if->if_type == LCD_IF_TYPE_SPI)
+    {
+        uint8_t wlen = 0;
+        for (i = 0; i < count;)
+        {
+            wlen = ((count - i) > DISPLAY_CACHE_BUF_SIZE) ? DISPLAY_CACHE_BUF_SIZE : (count - i);
+            for (j = 0; j < wlen; j++)
+            {
+                bST7789Buf[j] = *pdat;
+                bST7789Buf[j] = B_SWAP_16(bST7789Buf[j]);
+                if (inc)
+                {
+                    pdat += 1;
+                }
+            }
+            bHalSpiSend(&_if->_if._spi._spi, (uint8_t *)bST7789Buf, wlen * 2);
+            i += wlen;
+        }
+    }
+}
+
 static int _bST7789CheckId(bDriverInterface_t *pdrv)
 {
     _bLcdReadData(pdrv);
@@ -215,7 +293,6 @@ static void _bST7789SetCursor(bDriverInterface_t *pdrv, uint16_t Xpos, uint16_t 
 static int _bST7789FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, uint16_t x2,
                             uint16_t y2, uint16_t color)
 {
-    int      i   = 0;
     uint16_t tmp = 0;
     bDRIVER_GET_PRIVATE(prv, bST7789Private_t, pdrv);
     if (x1 > x2)
@@ -248,17 +325,15 @@ static int _bST7789FillRect(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
     _bLcdWriteData(pdrv, y2);
     _bLcdWriteCmd(pdrv, 0x2C);
 
-    for (i = 0; i < ((x2 - x1 + 1) * (y2 - y1 + 1)); i++)
-    {
-        _bLcdWriteGRam(pdrv, color);
-    }
+    _bLcdWriteGramPre(pdrv);
+    _bLcdWriteGRam(pdrv, &color, ((x2 - x1 + 1) * (y2 - y1 + 1)), 0);
+    _bLcdWriteGramEnd(pdrv);
     return 0;
 }
 
 static int _bST7789FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, uint16_t x2,
                            uint16_t y2, uint8_t *color)
 {
-    int      i   = 0;
     uint16_t tmp = 0;
     bDRIVER_GET_PRIVATE(prv, bST7789Private_t, pdrv);
     if (x1 > x2)
@@ -273,12 +348,10 @@ static int _bST7789FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, u
         y1  = y2;
         y2  = tmp;
     }
-
     if (x2 >= (prv->width) || y2 >= (prv->length))
     {
         return -1;
     }
-
     _bLcdWriteCmd(pdrv, 0x2a);
     _bLcdWriteData(pdrv, x1 >> 8);
     _bLcdWriteData(pdrv, x1);
@@ -290,11 +363,9 @@ static int _bST7789FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, u
     _bLcdWriteData(pdrv, y2 >> 8);
     _bLcdWriteData(pdrv, y2);
     _bLcdWriteCmd(pdrv, 0x2C);
-
-    for (i = 0; i < ((x2 - x1 + 1) * (y2 - y1 + 1)); i++)
-    {
-        _bLcdWriteGRam(pdrv, ((uint16_t *)color)[i]);
-    }
+    _bLcdWriteGramPre(pdrv);
+    _bLcdWriteGRam(pdrv, (uint16_t *)color, ((x2 - x1 + 1) * (y2 - y1 + 1)), 1);
+    _bLcdWriteGramEnd(pdrv);
     return 0;
 }
 
@@ -355,7 +426,7 @@ static int _bST7789Write(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf,
         return -1;
     }
     _bST7789SetCursor(pdrv, x, y);
-    _bLcdWriteGRam(pdrv, pcolor->color);
+    _bLcdWriteGRam(pdrv, &pcolor->color, 1, 0);
     return 2;
 }
 
@@ -493,7 +564,7 @@ int bST7789_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_ST7789, bST7789_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}
