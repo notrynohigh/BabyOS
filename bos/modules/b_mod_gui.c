@@ -158,6 +158,7 @@ static void _LCD_SetColorPixel(int16_t x, int16_t y, bGUIColor_t c)
     bClose(fd);
 }
 
+#if (defined(_USE_UGUI) && (_USE_UGUI == 1))
 static void _LCD_FillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, bGUIColor_t c)
 {
     int            fd     = -1;
@@ -191,6 +192,7 @@ static void _LCD_FillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, bG
         }
     }
 }
+#endif
 
 #if defined(GUI_FONT_XBF)
 static int _bGUI_ReadXBF(uint32_t off, uint8_t *pbuf, uint16_t len)
@@ -262,11 +264,11 @@ static int _bGUI_TouchRead(bGuiTouchData_t *pdata)
 static void _bGUI_Core()
 {
     static uint32_t tick = 0;
-    bGuiTouchData_t tdata;
     if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(10))
     {
         tick = bHalGetSysTick();
 #if (defined(_USE_UGUI) && (_USE_UGUI == 1))
+        bGuiTouchData_t tdata;
         if (0 == _bGUI_TouchRead(&tdata))
         {
             UG_TouchUpdate(tdata.x, tdata.y,
