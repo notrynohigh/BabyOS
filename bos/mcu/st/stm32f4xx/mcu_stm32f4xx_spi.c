@@ -59,7 +59,6 @@ int bMcuSpiSetSpeed(const bHalSPIIf_t *spi_if, bHalSPISpeed_t speed)
 uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
 {
     uint8_t      tmp  = dat;
-    int          i    = 0;
     McuSpiReg_t *pSpi = NULL;
 
     if (IS_NULL(spi_if))
@@ -72,7 +71,7 @@ uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
         return 0;
     }
     pSpi = SpiTable[spi_if->_if.spi];
-    
+
     tmp = *(volatile uint8_t *)&pSpi->DR;
     /* Check if the SPI is already enabled */
     if ((pSpi->CR1 & (0x1 << 6)) == 0)
@@ -91,7 +90,7 @@ uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
         ;
     }
     tmp = *(volatile uint8_t *)&pSpi->DR;
-    for (i = 0; i < 8; i++)
+    while (B_READ_BIT(pSpi->SR, (0x1 << 7)))
     {
         ;
     }
@@ -102,7 +101,6 @@ int bMcuSpiSend(const bHalSPIIf_t *spi_if, const uint8_t *pbuf, uint16_t len)
 {
     int          i    = 0;
     McuSpiReg_t *pSpi = NULL;
-
     if (IS_NULL(spi_if) || IS_NULL(pbuf))
     {
         return -1;
@@ -120,15 +118,23 @@ int bMcuSpiSend(const bHalSPIIf_t *spi_if, const uint8_t *pbuf, uint16_t len)
         /* Enable SPI peripheral */
         B_SET_BIT(pSpi->CR1, 0x1 << 6);
     }
+    while (B_READ_BIT(pSpi->SR, (0x1 << 7)))
+    {
+        ;
+    }
+    while (B_READ_BIT(pSpi->SR, (0x1 << 1)) == 0)
+    {
+        ;
+    }
     for (i = 0; i < len; i++)
     {
+        *(volatile uint8_t *)&pSpi->DR = pbuf[i];
         while (B_READ_BIT(pSpi->SR, (0x1 << 1)) == 0)
         {
             ;
         }
-        *(volatile uint8_t *)&pSpi->DR = pbuf[i];
     }
-    for (i = 0; i < 8; i++)
+    while (B_READ_BIT(pSpi->SR, (0x1 << 7)))
     {
         ;
     }
