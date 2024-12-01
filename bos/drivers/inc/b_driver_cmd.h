@@ -402,8 +402,16 @@ typedef struct
     void *user_data;
 } bAds124xDrvCallback_t;
 ///////////////////////////////////////////////////////////
-//
+//TM1638 , Command  &  Structure
 ///////////////////////////////////////////////////////////
+#define bCMD_TM1638_SET_DIGIT_TYPE		0       //
+
+typedef enum
+{
+    B_TM1638_MULTIPLE_DIGIT_HEX = 0,
+    B_TM1638_MULTIPLE_DIGIT_CHAR,
+    B_TM1638_MULTIPLE_DIGIT_LED,
+} bTm1638MultipleDigit_t;
 
 #ifdef __cplusplus
 }

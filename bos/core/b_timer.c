@@ -143,7 +143,6 @@ PT_THREAD(_bTimerTaskFunc)(struct pt *pt, void *arg)
             {
                 if (TICK_DIFF_BIT32(pattr->tick, bHalGetSysTick()) > MS2TICKS(pattr->cycle))
                 {
-                    pattr->func(pattr->arg);
                     if (pattr->type == B_TIMER_ONCE)
                     {
                         pattr->enable = 0;
@@ -153,6 +152,7 @@ PT_THREAD(_bTimerTaskFunc)(struct pt *pt, void *arg)
                     {
                         pattr->tick = bHalGetSysTick();
                     }
+                    pattr->func(pattr->arg);
                 }
             }
         }

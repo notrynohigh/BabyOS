@@ -89,10 +89,10 @@ typedef enum TM1638_Result_e
 
 typedef struct
 {
-  uint8_t DisplayType;
-
+	uint8_t DisplayType;
+	bTm1638MultipleDigit_t Tm1638MultipleDigit;
 #if (TM1638_CONFIG_SUPPORT_COM_ANODE)
-  uint8_t DisplayRegister[16];
+	uint8_t DisplayRegister[16];
 #endif
 	
 } bTm1638Private_t;
