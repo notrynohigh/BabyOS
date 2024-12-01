@@ -108,9 +108,7 @@ static const char    bLogPrefix[3]     = {'I', 'W', 'E'};
  * \defgroup LOG_Private_Functions
  * \{
  */
-#if defined(__ARMCC_VERSION)
-#define B_FPUTC int fputc(int c, FILE *f)
-#elif defined(__GNUC__)
+#if defined(__GNUC__) && !(defined(__ARMCC_VERSION))
 #define B_FPUTC int _write(int file, char *ptr, int c)
 #elif defined(__RENESAS__)
 #define B_FPUTC int __far putchar(int c)
@@ -150,7 +148,7 @@ B_FPUTC
 {
     uint8_t ch = c & 0xff;
 #if defined(LOG_UART)
-#if defined(__GNUC__)
+#if defined(__GNUC__) && !(defined(__ARMCC_VERSION))
     bHalUartSend((bHalUartNumber_t)LOG_UART, ptr, c);
 #else
     bHalUartSend((bHalUartNumber_t)LOG_UART, &ch, 1);
