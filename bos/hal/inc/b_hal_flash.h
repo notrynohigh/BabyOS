@@ -61,6 +61,7 @@ int      bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len);
 int      bMcuFlashRead(uint32_t raddr, uint8_t *pbuf, uint32_t len);
 uint32_t bMcuFlashSectorSize(void);
 uint32_t bMcuFlashChipSize(void);
+int      bMcuFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen);
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 int      bHalFlashInit(void);
@@ -71,6 +72,7 @@ int      bHalFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len);
 int      bHalFlashRead(uint32_t raddr, uint8_t *pbuf, uint32_t len);
 uint32_t bHalFlashSectorSize(void);
 uint32_t bHalFlashChipSize(void);
+int      bHalFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen);
 /**
  * \}
  */

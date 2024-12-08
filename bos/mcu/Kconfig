@@ -17,6 +17,8 @@ config VENDOR_HOLTEK
     bool "holtek"
 config VENDOR_ARTERY
     bool "Artery"
+config VENDOR_HK
+    bool "HK"    
 endchoice
 
 #选择ST的芯片
@@ -99,4 +101,12 @@ choice
     depends on VENDOR_ARTERY
 config AT32F403A
     bool "AT32F403A"
+endchoice
+
+#选择航顺的芯片
+choice
+    prompt "Select HK Chip"
+    depends on VENDOR_HK
+config HK32F103
+    bool "HK32F103"
 endchoice
