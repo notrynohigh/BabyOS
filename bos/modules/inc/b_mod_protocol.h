@@ -88,10 +88,13 @@ typedef enum
     PROTO_CMD_FDATA,
     PROTO_CMD_OTA_RESULT,
     PROTO_CMD_TRANS_FILE,
+    PROTO_CMD_GET_UID,
+    PROTO_CMD_WRITE_SN,
 } bProtocolCmd_t;
 
-#define PROTOCOL_NEED_DEFAULT_ACK(c) \
-    (c == PROTO_CMD_TEST || c == PROTO_CMD_UTC || PROTO_CMD_TRANS_FILE || PROTO_CMD_FW_INFO)
+#define PROTOCOL_NEED_DEFAULT_ACK(c)                                                           \
+    (c == PROTO_CMD_TEST || c == PROTO_CMD_UTC || PROTO_CMD_TRANS_FILE || PROTO_CMD_FW_INFO || \
+     c == PROTO_CMD_GET_UID || c == PROTO_CMD_WRITE_SN)
 
 /**
 |      |                    |                     |       |          |       |
@@ -155,6 +158,18 @@ typedef struct
     uint32_t dev_no;
     uint32_t offset;
 } bProtoTransFileParam_t;
+
+typedef struct
+{
+    uint8_t len;
+    uint8_t uid[1];
+} bProtoUIDParam_t;
+
+typedef struct
+{
+    uint8_t len;
+    uint8_t sn[1];
+} bProtoSNParam_t;
 
 #pragma pack()
 
