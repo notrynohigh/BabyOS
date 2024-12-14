@@ -29,4 +29,30 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
     return -1;
 }
 
+int bMcuUartReceiveDma(bHalUartNumber_t uart, bHalDmaConfig_t *pconf)
+{
+    if ((uart > B_HAL_UART_3) || pconf == NULL)
+    {
+        return -1;
+    }
+
+    if (uart == B_HAL_UART_1)
+    {
+        pconf->request = B_DMA_REQ_UART1_RX;
+    }
+    else if (uart == B_HAL_UART_2)
+    {
+        pconf->request = B_DMA_REQ_UART2_RX;
+    }
+    else if (uart == B_HAL_UART_3)
+    {
+        pconf->request = B_DMA_REQ_UART3_RX;
+    }
+
+    USART_DMACmd(bMcuUartTable[uart], USART_DMAReq_Rx, ENABLE);
+
+    pconf->src = (uint32_t)(&(bMcuUartTable[uart]->DR));
+    return bMcuDmaConfig(pconf);
+}
+
 #endif

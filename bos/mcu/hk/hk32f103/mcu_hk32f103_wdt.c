@@ -16,8 +16,10 @@
 int bMcuWdtStart(uint8_t timeout_s)
 {
     B_UNUSED(timeout_s);
+    IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
     IWDG_SetPrescaler(IWDG_Prescaler_256);
     IWDG_SetReload(0xFFF);
+    IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
     IWDG_Enable();
     return 0;
 }
