@@ -12,6 +12,7 @@
 #else
 
 #include "hk32f10x.h"
+#include "utils/inc/b_util_log.h"
 
 #define FLASH_PAGE_SIZE (2048)
 #define FLASH_BASE_ADDR (0x8000000UL)
@@ -50,7 +51,9 @@ int bMcuFlashErase(uint32_t raddr, uint32_t pages)
     }
     for (int i = 0; i < pages; i++)
     {
-        FLASH_ErasePage(raddr);
+        FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR);
+        FLASH_Status status = FLASH_ErasePage(raddr);
+        b_log_w("erase status:%d\r\n", status);
         raddr += FLASH_PAGE_SIZE;
     }
     return 0;
@@ -58,7 +61,7 @@ int bMcuFlashErase(uint32_t raddr, uint32_t pages)
 
 int bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
 {
-    uint16_t wdata   = 0;
+    uint16_t wdata = 0;
     uint32_t wlen = (len + 1) / 2, i = 0;
     if (sMcuFlashSize == 0)
     {
@@ -74,10 +77,12 @@ int bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
     {
         wdata = (wdata << 8) | pbuf[i * 2 + 1];
         wdata = (wdata << 8) | pbuf[i * 2 + 0];
-
+        FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR);
         status = FLASH_ProgramHalfWord(raddr, wdata);
         if (status != FLASH_COMPLETE)
         {
+            b_log_e("write error:%x %d\r\n", raddr, status);
+            b_log_hex(pbuf, len);
             return -2;
         }
         raddr += 2;
@@ -116,7 +121,7 @@ uint32_t bMcuFlashChipSize()
 
 int bMcuFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen)
 {
-    uint8_t           uid_len = 12;
+    uint8_t  uid_len = 12;
     uint8_t *puid    = (uint8_t *)0x1FFFF7E8;
     if (pbuf == NULL || buf_size == 0)
     {
