@@ -189,6 +189,26 @@ uint32_t bMcuFlashChipSize()
     return FLASH_MAX_SIZE;
 }
 
+int bMcuFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen)
+{
+    uint8_t  uid_len = 12;
+    uint8_t *puid    = (uint8_t *)0x1FFFF7E8;
+    if (pbuf == NULL || buf_size == 0)
+    {
+        return -1;
+    }
+    if (buf_size < uid_len)
+    {
+        uid_len = buf_size;
+    }
+    memcpy(pbuf, puid, uid_len);
+    if (rlen)
+    {
+        *rlen = uid_len;
+    }
+    return 0;
+}
+
 #endif
 
 /************************ Copyright (c) 2021 Bean *****END OF FILE****/
