@@ -203,6 +203,17 @@ static int _bProtocolPack(bProtocolAttr_t *pattr, uint8_t cmd, uint8_t *param,
     phead->cmd       = cmd;
     phead->len       = 1 + param_size;
     memcpy(&pbuf[sizeof(bProtocolHead_t)], param, param_size);
+
+    if (cmd == PROTO_CMD_GET_UID && param_size == 0)
+    {
+        bProtoUIDParam_t *puid = (bProtoUIDParam_t *)&pbuf[sizeof(bProtocolHead_t) + param_size];
+        memset(puid, 0, sizeof(bProtoUIDParam_t));
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_MCU_UID,
+                      (uint8_t *)&pbuf[sizeof(bProtocolHead_t) + param_size],
+                      buf_len - sizeof(bProtocolHead_t) - param_size - 1);
+        phead->len += puid->len + 1;
+    }
+
     length           = sizeof(bProtocolHead_t) + phead->len;
     pbuf[length - 1] = _bProtocolCalCheck(pbuf, length - 1);
 #if (defined(_PROTO_ENCRYPT_ENABLE) && (_PROTO_ENCRYPT_ENABLE == 1))
@@ -286,6 +297,14 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         dat.size                  = 512;
         dat.dat                   = param->data;
         B_SAFE_INVOKE(pattr->callback, B_PROTO_FILE_DATA, &dat, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_WRITE_SN)
+    {
+        bProtoSN_t       dat;
+        bProtoSNParam_t *param = (bProtoSNParam_t *)(&in[sizeof(bProtocolHead_t)]);
+        dat.sn_len             = param->len;
+        memcpy(&dat.sn[0], &param->sn[0], param->len);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_WRITE_SN, &dat, pattr->arg);
     }
 
     length = 0;

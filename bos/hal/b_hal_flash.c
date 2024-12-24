@@ -85,6 +85,12 @@ __WEAKDEF uint32_t bMcuFlashChipSize()
 {
     return 0;
 }
+
+__WEAKDEF int bMcuFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen)
+{
+    return 0;
+}
+
 #endif
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
@@ -135,6 +141,11 @@ uint32_t bHalFlashSectorSize()
 uint32_t bHalFlashChipSize()
 {
     return bMcuFlashChipSize();
+}
+
+int bHalFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen)
+{
+    return bMcuFlashReadUID(pbuf, buf_size, rlen);
 }
 
 /**

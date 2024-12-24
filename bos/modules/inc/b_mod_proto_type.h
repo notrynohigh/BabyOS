@@ -113,6 +113,12 @@ typedef struct
     float    timezone;
 } bProtoUtc_t;
 
+typedef struct
+{
+    uint8_t sn_len;
+    uint8_t sn[64];
+} bProtoSN_t;
+
 #define B_PROTO_TRANS_RESULT_OK 0
 #define B_PROTO_TRANS_RESULT_CHECKSUM_FAIL 1
 #define B_PROTO_TRANS_RESULT_NAME_ERROR 2
@@ -134,6 +140,7 @@ typedef enum
     B_PROTO_FILE_DATA,          // callback [bProtoFileData_t]
     B_PROTO_TRANS_FILE_RESULT,  // package [uint8_t]  B_PROTO_TRANS_RESULT_xxxx
     B_PROTO_UTC,                // callback [bProtoUtc_t]
+    B_PROTO_WRITE_SN,           // callback [bProtoSN_t]
     B_PROTO_CMD_NUMBER,
 } bProtoCmd_t;
 
@@ -144,6 +151,8 @@ typedef enum
     B_PROTO_INFO_MODBUS_SLAVE_ADDR,      // 获取当前设备的从机地址  uint8_t
     B_PROTO_INFO_MODBUS_REG_VALUE,       // 获取modbus寄存器的值（做从机时使用）
                                          // in: 寄存器地址  out:寄存器值 共用buf
+    B_PROTO_INFO_MCU_UID,    // 获取MCU UID，放数据至buf： UID长度(1byte)UID内容(nbytes)
+    B_PROTO_INFO_DEVICE_SN,  // 设备SN，放数据至buf： SN长度(1byte)SN内容(nbytes)
     B_PROTO_INFO_NUMBER,
 } bProtoInfoType_t;
 
