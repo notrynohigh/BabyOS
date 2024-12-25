@@ -35,6 +35,8 @@
 
 #define SFUD_USING_SFDP
 
+//#define SFUD_USING_FAST_READ
+//#define SFUD_USING_QSPI
 #define SFUD_USING_FLASH_INFO_TABLE
 
 #endif /* _SFUD_CFG_H_ */
