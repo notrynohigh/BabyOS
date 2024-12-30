@@ -1,8 +1,8 @@
 /**
  *!
- * \file        b_drv_ads124x.h
+ * \file        b_drv_bq769x2.h
  * \version     v0.0.1
- * \date        2024/08/14
+ * \date        2024/12/30
  * \author      hmchen(chenhaimeng@189.cn)
  *******************************************************************************
  * @attention
@@ -28,8 +28,8 @@
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_DRV_ADS124X_H__
-#define __B_DRV_ADS124X_H__
+#ifndef __B_DRV_BQ769X2H__
+#define __B_DRV_BQ769X2H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,54 +37,23 @@ extern "C" {
 
 /*Includes ----------------------------------------------*/
 #include "drivers/inc/b_driver.h"
+
 /**
  * \addtogroup B_DRIVER
  * \{
  */
 
 /**
- * \addtogroup ADS124X
+ * \addtogroup BQ769X2
  * \{
  */
 
 /**
- * \defgroup ADS124X_Exported_TypesDefinitions
+ * \defgroup BQ769X2_Exported_TypesDefinitions
  * \{
  */
-//<HALIF 
-
-typedef struct
-{
-	bHalSPIIf_t _spi;
-	bHalGPIOInstance_t drdy;
-	bHalGPIOInstance_t start;
-	bHalGPIOInstance_t reset;
-	bHalItIf_t it;
-} bADS124X_HalIf_t;
-
-
-/* Error Return Values */
-#define ADS1248_NO_ERROR        0
-#define ADS1248_ERROR			-1
-
-typedef struct
-{
-	uint8_t IDACroute;
-	uint8_t IDACdir;
-}bADS124X_IDACRouting_t;
-
-typedef struct
-{
-	uint8_t AINN;
-	uint8_t AINP;
-}bADS124X_InputPin_t;
-
-
-typedef struct
-{
-    uint32_t   data[32];
-	bAds124xDrvCallback_t	cb;
-} bAds124xPrivate_t;
+//<HALIF 1 I2C
+typedef bHalI2CIf_t bBQ769X2_HalIf_t;
 
 /**
  * \}

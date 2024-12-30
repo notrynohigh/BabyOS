@@ -413,6 +413,19 @@ typedef enum
     B_TM1638_MULTIPLE_DIGIT_LED,
 } bTm1638MultipleDigit_t;
 
+///////////////////////////////////////////////////////////
+// BQ769X2 , Command  &  Structure
+///////////////////////////////////////////////////////////
+typedef struct
+{
+	uint16_t CellVoltage [16] ;
+	float Temperature [3] ;
+	uint16_t Stack_Voltage ;
+	uint16_t Pack_Voltage ;
+	uint16_t LD_Voltage ;
+	uint16_t Pack_Current;
+} bBMS_AFE_BQ769X2_t;
+
 #ifdef __cplusplus
 }
 #endif
