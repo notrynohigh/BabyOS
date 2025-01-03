@@ -36,6 +36,7 @@
 
 #include "utils/inc/b_util_log.h"
 
+//#include "main.h"
 /**
  * \addtogroup B_DRIVER
  * \{
@@ -85,11 +86,16 @@
  * \{
  */
 bDRIVER_HALIF_TABLE(bBQ769X2_HalIf_t, DRIVER_NAME);
+static bBQ769X2Private_t bBQ769X2RunInfo[bDRIVER_HALIF_NUM(bBQ769X2_HalIf_t, DRIVER_NAME)];
 
 /**
  * \}
  */
-
+// extern TIM_HandleTypeDef htim1;
+//void bHalDelayUs(uint32_t us) {   // Sets the delay in microseconds.
+//	__HAL_TIM_SET_COUNTER(&htim1,0);  // set the counter value a 0
+//	while (__HAL_TIM_GET_COUNTER(&htim1) < us);  // wait for the counter to reach the us input in the parameter
+//}
 /**
  * \defgroup BQ769X2_Private_FunctionPrototypes
  * \{
@@ -142,7 +148,7 @@ uint32_t AccumulatedCharge_Time;// in BQ769x2_READPASSQ func
  * \{
  */
  
- 
+#if CRC_Mode 
 static void CopyArray(uint8_t *source, uint8_t *dest, uint8_t count)
 {
     uint8_t copyIndex = 0;
@@ -151,6 +157,7 @@ static void CopyArray(uint8_t *source, uint8_t *dest, uint8_t count)
         dest[copyIndex] = source[copyIndex];
     }
 }
+#endif
 
 static unsigned char Checksum(unsigned char *ptr, unsigned char len)
 // Calculates the checksum when writing to a RAM register. The checksum is the inverse of the sum of the bytes.	
@@ -166,6 +173,7 @@ static unsigned char Checksum(unsigned char *ptr, unsigned char len)
 	return(checksum);
 }
 
+#if CRC_Mode 
 static unsigned char CRC8(unsigned char *ptr, unsigned char len)
 //Calculates CRC8 for passed bytes. Used in i2c read and write functions 
 {
@@ -190,6 +198,7 @@ static unsigned char CRC8(unsigned char *ptr, unsigned char len)
 	}
 	return(crc);
 }
+#endif
 
 static void I2C_WriteReg(bDriverInterface_t *pdrv,uint8_t reg_addr, uint8_t *reg_data, uint8_t count)
 {
@@ -385,96 +394,6 @@ static void DirectCommands(bDriverInterface_t *pdrv,uint8_t command, uint16_t da
 	}
 }
 
-
-void BQ769x2_Init(bDriverInterface_t *pdrv) {
-	// Configures all parameters in device RAM
-
-	// Enter CONFIGUPDATE mode (Subcommand 0x0090) - It is required to be in CONFIG_UPDATE mode to program the device RAM settings
-	// See TRM for full description of CONFIG_UPDATE mode
-	CommandSubcommands(pdrv, SET_CFGUPDATE);
-
-	// After entering CONFIG_UPDATE mode, RAM registers can be programmed. When programming RAM, checksum and length must also be
-	// programmed for the change to take effect. All of the RAM registers are described in detail in the BQ769x2 TRM.
-	// An easier way to find the descriptions is in the BQStudio Data Memory screen. When you move the mouse over the register name,
-	// a full description of the register and the bits will pop up on the screen.
-
-	// 'Power Config' - 0x9234 = 0x2D80
-	// Setting the DSLP_LDO bit allows the LDOs to remain active when the device goes into Deep Sleep mode
-  	// Set wake speed bits to 00 for best performance
-	BQ769x2_SetRegister(pdrv, PowerConfig, 0x2D80, 2);
-
-	// 'REG0 Config' - set REG0_EN bit to enable pre-regulator
-	BQ769x2_SetRegister(pdrv, REG0Config, 0x01, 1);
-
-	// 'REG12 Config' - Enable REG1 with 3.3V output (0x0D for 3.3V, 0x0F for 5V)
-	BQ769x2_SetRegister(pdrv, REG12Config, 0x0D, 1);
-
-	// Set DFETOFF pin to control BOTH CHG and DSG FET - 0x92FB = 0x42 (set to 0x00 to disable)
-	BQ769x2_SetRegister(pdrv, DFETOFFPinConfig, 0x42, 1);
-
-	// Set up ALERT Pin - 0x92FC = 0x2A
-	// This configures the ALERT pin to drive high (REG1 voltage) when enabled.
-	// The ALERT pin can be used as an interrupt to the MCU when a protection has triggered or new measurements are available
-	BQ769x2_SetRegister(pdrv, ALERTPinConfig, 0x2A, 1);
-
-	// Set TS1 to measure Cell Temperature - 0x92FD = 0x07
-	BQ769x2_SetRegister(pdrv, TS1Config, 0x07, 1);
-
-	// Set TS3 to measure FET Temperature - 0x92FF = 0x0F
-	BQ769x2_SetRegister(pdrv, TS3Config, 0x0F, 1);
-
-	// Set HDQ to measure Cell Temperature - 0x9300 = 0x07
-	BQ769x2_SetRegister(pdrv, HDQPinConfig, 0x00, 1);  // No thermistor installed on EVM HDQ pin, so set to 0x00
-
-	// 'VCell Mode' - Enable 16 cells - 0x9304 = 0x0000; Writing 0x0000 sets the default of 16 cells
-	BQ769x2_SetRegister(pdrv, VCellMode, 0x0000, 2);
-
-	// Enable protections in 'Enabled Protections A' 0x9261 = 0xBC
-	// Enables SCD (short-circuit), OCD1 (over-current in discharge), OCC (over-current in charge),
-	// COV (over-voltage), CUV (under-voltage)
-	BQ769x2_SetRegister(pdrv, EnabledProtectionsA, 0xBC, 1);
-
-	// Enable all protections in 'Enabled Protections B' 0x9262 = 0xF7
-	// Enables OTF (over-temperature FET), OTINT (internal over-temperature), OTD (over-temperature in discharge),
-	// OTC (over-temperature in charge), UTINT (internal under-temperature), UTD (under-temperature in discharge), UTC (under-temperature in charge)
-	BQ769x2_SetRegister(pdrv, EnabledProtectionsB, 0xF7, 1);
-
-	// 'Default Alarm Mask' - 0x..82 Enables the FullScan and ADScan bits, default value = 0xF800
-	BQ769x2_SetRegister(pdrv, DefaultAlarmMask, 0xF882, 2);
-
-	// Set up Cell Balancing Configuration - 0x9335 = 0x03   -  Automated balancing while in Relax or Charge modes
-	// Also see "Cell Balancing with BQ769x2 Battery Monitors" document on ti.com
-	BQ769x2_SetRegister(pdrv, BalancingConfiguration, 0x03, 1);
-
-	// Set up CUV (under-voltage) Threshold - 0x9275 = 0x31 (2479 mV)
-	// CUV Threshold is this value multiplied by 50.6mV
-	BQ769x2_SetRegister(pdrv, CUVThreshold, 0x31, 1);
-
-	// Set up COV (over-voltage) Threshold - 0x9278 = 0x55 (4301 mV)
-	// COV Threshold is this value multiplied by 50.6mV
-	BQ769x2_SetRegister(pdrv, COVThreshold, 0x55, 1);
-
-	// Set up OCC (over-current in charge) Threshold - 0x9280 = 0x05 (10 mV = 10A across 1mOhm sense resistor) Units in 2mV
-	BQ769x2_SetRegister(pdrv, OCCThreshold, 0x05, 1);
-
-	// Set up OCD1 Threshold - 0x9282 = 0x0A (20 mV = 20A across 1mOhm sense resistor) units of 2mV
-	BQ769x2_SetRegister(pdrv, OCD1Threshold, 0x0A, 1);
-
-	// Set up SCD Threshold - 0x9286 = 0x05 (100 mV = 100A across 1mOhm sense resistor)  0x05=100mV
-	BQ769x2_SetRegister(pdrv, SCDThreshold, 0x05, 1);
-
-	// Set up SCD Delay - 0x9287 = 0x03 (30 us) Enabled with a delay of (value - 1) * 15 µs; min value of 1    
-	BQ769x2_SetRegister(pdrv, SCDDelay, 0x03, 1);
-
-	// Set up SCDL Latch Limit to 1 to set SCD recovery only with load removal 0x9295 = 0x01
-	// If this is not set, then SCD will recover based on time (SCD Recovery Time parameter).
-	BQ769x2_SetRegister(pdrv, SCDLLatchLimit, 0x01, 1);
-
-	// Exit CONFIGUPDATE mode  - Subcommand 0x0092
-	CommandSubcommands(pdrv, EXIT_CFGUPDATE);
-}
-
-
 //  ********************************* FET Control Commands  ***************************************
 
 void BQ769x2_BOTHOFF () {
@@ -613,25 +532,132 @@ void BQ769x2_ReadPassQ(bDriverInterface_t *pdrv){ // Read Accumulated Charge and
 // ********************************* End of BQ769x2 Measurement Commands   *****************************************
 
 
+
+
+void BQ769x2_Init(bDriverInterface_t *pdrv) {
+	// Configures all parameters in device RAM
+
+	// Enter CONFIGUPDATE mode (Subcommand 0x0090) - It is required to be in CONFIG_UPDATE mode to program the device RAM settings
+	// See TRM for full description of CONFIG_UPDATE mode
+	CommandSubcommands(pdrv, SET_CFGUPDATE);
+
+	// After entering CONFIG_UPDATE mode, RAM registers can be programmed. When programming RAM, checksum and length must also be
+	// programmed for the change to take effect. All of the RAM registers are described in detail in the BQ769x2 TRM.
+	// An easier way to find the descriptions is in the BQStudio Data Memory screen. When you move the mouse over the register name,
+	// a full description of the register and the bits will pop up on the screen.
+
+	// 'Power Config' - 0x9234 = 0x2D80
+	// Setting the DSLP_LDO bit allows the LDOs to remain active when the device goes into Deep Sleep mode
+  	// Set wake speed bits to 00 for best performance
+	BQ769x2_SetRegister(pdrv, PowerConfig, 0x2D80, 2);
+
+	// 'REG0 Config' - set REG0_EN bit to enable pre-regulator
+	BQ769x2_SetRegister(pdrv, REG0Config, 0x01, 1);
+
+	// 'REG12 Config' - Enable REG1 with 3.3V output (0x0D for 3.3V, 0x0F for 5V)
+	BQ769x2_SetRegister(pdrv, REG12Config, 0x0D, 1);
+
+	// Set DFETOFF pin to control BOTH CHG and DSG FET - 0x92FB = 0x42 (set to 0x00 to disable)
+	BQ769x2_SetRegister(pdrv, DFETOFFPinConfig, 0x42, 1);
+
+	// Set up ALERT Pin - 0x92FC = 0x2A
+	// This configures the ALERT pin to drive high (REG1 voltage) when enabled.
+	// The ALERT pin can be used as an interrupt to the MCU when a protection has triggered or new measurements are available
+	BQ769x2_SetRegister(pdrv, ALERTPinConfig, 0x2A, 1);
+
+	// Set TS1 to measure Cell Temperature - 0x92FD = 0x07
+	BQ769x2_SetRegister(pdrv, TS1Config, 0x07, 1);
+
+	// Set TS3 to measure FET Temperature - 0x92FF = 0x0F
+	BQ769x2_SetRegister(pdrv, TS3Config, 0x0F, 1);
+
+	// Set HDQ to measure Cell Temperature - 0x9300 = 0x07
+	BQ769x2_SetRegister(pdrv, HDQPinConfig, 0x00, 1);  // No thermistor installed on EVM HDQ pin, so set to 0x00
+
+	// 'VCell Mode' - Enable 16 cells - 0x9304 = 0x0000; Writing 0x0000 sets the default of 16 cells
+	BQ769x2_SetRegister(pdrv, VCellMode, 0x0000, 2);
+
+	// Enable protections in 'Enabled Protections A' 0x9261 = 0xBC
+	// Enables SCD (short-circuit), OCD1 (over-current in discharge), OCC (over-current in charge),
+	// COV (over-voltage), CUV (under-voltage)
+	BQ769x2_SetRegister(pdrv, EnabledProtectionsA, 0xBC, 1);
+
+	// Enable all protections in 'Enabled Protections B' 0x9262 = 0xF7
+	// Enables OTF (over-temperature FET), OTINT (internal over-temperature), OTD (over-temperature in discharge),
+	// OTC (over-temperature in charge), UTINT (internal under-temperature), UTD (under-temperature in discharge), UTC (under-temperature in charge)
+	BQ769x2_SetRegister(pdrv, EnabledProtectionsB, 0xF7, 1);
+
+	// 'Default Alarm Mask' - 0x..82 Enables the FullScan and ADScan bits, default value = 0xF800
+	BQ769x2_SetRegister(pdrv, DefaultAlarmMask, 0xF882, 2);
+
+	// Set up Cell Balancing Configuration - 0x9335 = 0x03   -  Automated balancing while in Relax or Charge modes
+	// Also see "Cell Balancing with BQ769x2 Battery Monitors" document on ti.com
+	BQ769x2_SetRegister(pdrv, BalancingConfiguration, 0x03, 1);
+
+	// Set up CUV (under-voltage) Threshold - 0x9275 = 0x31 (2479 mV)
+	// CUV Threshold is this value multiplied by 50.6mV
+	BQ769x2_SetRegister(pdrv, CUVThreshold, 0x31, 1);
+
+	// Set up COV (over-voltage) Threshold - 0x9278 = 0x55 (4301 mV)
+	// COV Threshold is this value multiplied by 50.6mV
+	BQ769x2_SetRegister(pdrv, COVThreshold, 0x55, 1);
+
+	// Set up OCC (over-current in charge) Threshold - 0x9280 = 0x05 (10 mV = 10A across 1mOhm sense resistor) Units in 2mV
+	BQ769x2_SetRegister(pdrv, OCCThreshold, 0x05, 1);
+
+	// Set up OCD1 Threshold - 0x9282 = 0x0A (20 mV = 20A across 1mOhm sense resistor) units of 2mV
+	BQ769x2_SetRegister(pdrv, OCD1Threshold, 0x0A, 1);
+
+	// Set up SCD Threshold - 0x9286 = 0x05 (100 mV = 100A across 1mOhm sense resistor)  0x05=100mV
+	BQ769x2_SetRegister(pdrv, SCDThreshold, 0x05, 1);
+
+	// Set up SCD Delay - 0x9287 = 0x03 (30 us) Enabled with a delay of (value - 1) * 15 µs; min value of 1    
+	BQ769x2_SetRegister(pdrv, SCDDelay, 0x03, 1);
+
+	// Set up SCDL Latch Limit to 1 to set SCD recovery only with load removal 0x9295 = 0x01
+	// If this is not set, then SCD will recover based on time (SCD Recovery Time parameter).
+	BQ769x2_SetRegister(pdrv, SCDLLatchLimit, 0x01, 1);
+
+	// Exit CONFIGUPDATE mode  - Subcommand 0x0092
+	CommandSubcommands(pdrv, EXIT_CFGUPDATE);
+}
+
 static int _bBQ769X2Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
-    
-    bBMS_AFE_BQ769X2_t *ptmp = (bBMS_AFE_BQ769X2_t *)pbuf;
-    int              i    = 0;
-    uint8_t          c    = len / sizeof(bBMS_AFE_BQ769X2_t);
-	AlarmBits = BQ769x2_ReadAlarmStatus(pdrv);
-	if (AlarmBits & 0x80) {  // Check if FULLSCAN is complete. If set, new measurements are available
+    bDRIVER_GET_PRIVATE(_priv, bBQ769X2Private_t, pdrv);
+	if (pbuf == NULL || len < sizeof(bBMS_AFE_BQ769X2_Value_t))
+    {
+        return -1;
+    }
+	_priv->value.AlarmBits = BQ769x2_ReadAlarmStatus(pdrv);
+	if (_priv->value.AlarmBits & 0x80) {  // Check if FULLSCAN is complete. If set, new measurements are available
 		BQ769x2_ReadAllVoltages(pdrv);
 		Pack_Current = BQ769x2_ReadCurrent(pdrv);
 		Temperature[0] = BQ769x2_ReadTemperature(pdrv,TS1Temperature);
-		Temperature[1] = BQ769x2_ReadTemperature(pdrv, TS3Temperature);
+		Temperature[1] = BQ769x2_ReadTemperature(pdrv,TS3Temperature);
 		DirectCommands(pdrv, AlarmStatus, 0x0080, W);  // Clear the FULLSCAN bit
 	}
-    for (i = 0; i < c; i++)
-    {
+	
+    bBMS_AFE_BQ769X2_Value_t *pval = (bBMS_AFE_BQ769X2_Value_t *)pbuf;
+	pval->AlarmBits = _priv->value.AlarmBits;
+	
+	for (int x = 0; x < 16; x++){//Reads all cell voltages
+	pval->CellVoltage[x] = CellVoltage[x];
+	}
+	pval->Temperature[0] = Temperature[0];
+	pval->Temperature[1] = Temperature[1];
+	
+    return sizeof(bBMS_AFE_BQ769X2_Value_t);
+}
 
-    }
-    return (c * sizeof(bBMS_AFE_BQ769X2_t));
+static int _bBQ769X2Open(bDriverInterface_t *pdrv)
+{
+    return 0;
+}
+
+static int _bBQ769X2Close(bDriverInterface_t *pdrv)
+{
+    return 0;
 }
 
 /**
@@ -645,15 +671,20 @@ static int _bBQ769X2Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
 int bBQ769X2_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bBQ769X2_Init);
-    pdrv->read       = _bBQ769X2Read;
-    pdrv->_private.v = 0;
-
+    pdrv->read        = _bBQ769X2Read;  // read: bBMS_AFE_BQ769X2_Value_t
+    pdrv->write       = NULL;
+    pdrv->ctl         = NULL;
+    pdrv->open        = _bBQ769X2Open;
+    pdrv->close       = _bBQ769X2Close;
+    pdrv->_private._p = &bBQ769X2RunInfo[pdrv->drv_no];
+    memset(&bBQ769X2RunInfo[pdrv->drv_no], 0, sizeof(bBQ769X2Private_t));
+	bHalDelayMs(50);
 	CommandSubcommands(pdrv, BQ769x2_RESET);  // Resets the BQ769x2 registers
 	bHalDelayUs(60000);
 	BQ769x2_Init(pdrv);  // Configure all of the BQ769x2 register settings
 	bHalDelayUs(10000);
-//	CommandSubcommands(FET_ENABLE); // Enable the CHG and DSG FETs
-//	bHalDelayUs(10000);
+	CommandSubcommands(pdrv,FET_ENABLE); // Enable the CHG and DSG FETs
+	bHalDelayUs(10000);
 	CommandSubcommands(pdrv, SLEEP_DISABLE); // Sleep mode is enabled by default. For this example, Sleep is disabled to 
 									   // demonstrate full-speed measurements in Normal mode. 
 

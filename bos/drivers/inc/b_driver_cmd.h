@@ -424,7 +424,8 @@ typedef struct
 	uint16_t Pack_Voltage ;
 	uint16_t LD_Voltage ;
 	uint16_t Pack_Current;
-} bBMS_AFE_BQ769X2_t;
+	uint16_t AlarmBits ;
+} bBMS_AFE_BQ769X2_Value_t;
 
 #ifdef __cplusplus
 }

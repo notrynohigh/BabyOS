@@ -488,7 +488,7 @@ int bHalI2CAddressCheck(const bHalI2CIf_t *i2c_if)
     }
     else
     {
-        retval = bMcuI2CWriteByte(i2c_if, &dummy, 0);
+//        retval = bMcuI2CWriteByte(i2c_if, &dummy, 0);
     }
     return retval;
 }

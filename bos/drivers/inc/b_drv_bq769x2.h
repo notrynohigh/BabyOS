@@ -55,6 +55,11 @@ extern "C" {
 //<HALIF 1 I2C
 typedef bHalI2CIf_t bBQ769X2_HalIf_t;
 
+typedef struct
+{
+    bBMS_AFE_BQ769X2_Value_t value;
+} bBQ769X2Private_t;
+
 /**
  * \}
  */
