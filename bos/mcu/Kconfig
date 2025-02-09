@@ -18,7 +18,9 @@ config VENDOR_HOLTEK
 config VENDOR_ARTERY
     bool "Artery"
 config VENDOR_HK
-    bool "HK"    
+    bool "HK"  
+config VENDOR_ESPRESSIF
+    bool "ESPRESSIF"        
 endchoice
 
 #选择ST的芯片
@@ -112,3 +114,12 @@ choice
 config HK32F103
     bool "HK32F103"
 endchoice
+
+#选择ESPRESSIF的芯片
+choice
+    prompt "Select ESPRESSIF Chip"
+    depends on VENDOR_ESPRESSIF
+config ESP32C3
+    bool "ESP32C3"
+endchoice
+
