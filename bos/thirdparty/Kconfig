@@ -39,6 +39,11 @@ config NR_SHELL_USER_NAME_MAX_LENGTH
     default 30
     depends on _NR_MICRO_SHELL_ENABLE
 
+config NR_SHELL_CMD_NAME_MAX_LENGTH
+    int "Maximum Cmd length"
+    default 16
+    depends on _NR_MICRO_SHELL_ENABLE    
+
 config NR_SHELL_CMD_PARAS_MAX_NUM
     int "Maximum number of parameters in a command"
     default 10

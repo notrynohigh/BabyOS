@@ -9,7 +9,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2019 Ji Youzhou
+ * Copyright (C) 2019 Ji Youzhou. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,13 +36,8 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "../inc/ansi.h"
-
-#if (defined(_NR_MICRO_SHELL_ENABLE) && (_NR_MICRO_SHELL_ENABLE == 1))
-
-#ifdef NR_SHELL_USING_EXPORT_CMD
-NR_SHELL_CMD_EXPORT_START("/0", NULL);
-NR_SHELL_CMD_EXPORT_END("/0", NULL);
+#ifndef NULL
+#define NULL (void *)0
 #endif
 
 shell_st nr_shell = {
@@ -99,7 +94,17 @@ static char *nr_shell_strtok(char *string_org, const char *demial)
 
 void _shell_init(shell_st *shell)
 {
-    shell_printf(shell->user_name);
+
+#if 0
+    shell_printf(" _   _ ____    __  __ _                  ____  _          _ _ \r\n");
+    shell_printf("| \\ | |  _ \\  |  \\/  (_) ___ _ __ ___   / ___|| |__   ___| | |\r\n");
+    shell_printf("|  \\| | |_) | | |\\/| | |/ __| '__/ _ \\  \\___ \\| '_ \\ / _ \\ | |\r\n");
+    shell_printf("| |\\  |  _ <  | |  | | | (__| | | (_) |  ___) | | | |  __/ | |\r\n");
+    shell_printf("|_| \\_|_| \\_\\ |_|  |_|_|\\___|_|  \\___/  |____/|_| |_|\\___|_|_|\r\n");
+    shell_printf("                                                              \r\n");
+#endif
+
+    shell_printf("%s", shell->user_name);
     shell_his_queue_init(&shell->cmd_his);
     shell_his_queue_add_cmd(&shell->cmd_his, "ls cmd");
     shell->cmd_his.index = 1;
@@ -135,8 +140,8 @@ void shell_parser(shell_st *shell, char *str)
 
     if (strlen(str) > NR_SHELL_CMD_LINE_MAX_LENGTH)
     {
-        shell_printf("this command is too long.\r\n");
-        shell_printf(shell->user_name);
+        shell_printf("this command is too long." NR_SHELL_NEXT_LINE);
+        shell_printf("%s", shell->user_name);
         return;
     }
 
@@ -147,7 +152,7 @@ void shell_parser(shell_st *shell, char *str)
     {
         if (isalpha(str[0]))
         {
-            shell_printf("no command named: %s\r\n", token);
+            shell_printf("no command named: %s" NR_SHELL_NEXT_LINE, token);
         }
     }
     else
@@ -157,16 +162,15 @@ void shell_parser(shell_st *shell, char *str)
         index += strlen(str) + 1;
         argc++;
 
+        token = nr_shell_strtok(NULL, " ");
         while (token != NULL)
         {
-            token      = nr_shell_strtok(NULL, " ");
             argv[argc] = index;
             strcpy(argv + index, token);
             index += strlen(token) + 1;
             argc++;
+            token = nr_shell_strtok(NULL, " ");
         }
-
-        argc--;
     }
 
     if (fp != NULL)
@@ -174,12 +178,13 @@ void shell_parser(shell_st *shell, char *str)
         fp(argc, argv);
     }
 
-    shell_printf(shell->user_name);
+    shell_printf("%s", shell->user_name);
 }
 
 char *shell_cmd_complete(shell_st *shell, char *str)
 {
-    char         *temp         = NULL;
+    char         *temp = NULL;
+    unsigned char i;
     char         *best_matched = NULL;
     unsigned char min_position = 255;
 
@@ -197,6 +202,7 @@ char *shell_cmd_complete(shell_st *shell, char *str)
             }
         }
     }
+
     return best_matched;
 }
 
@@ -245,8 +251,8 @@ void shell_his_queue_add_cmd(shell_his_queue_st *queue, char *str)
     }
 
     queue->queue[queue->rp] = queue->store_rear;
-    queue->rp               = queue->rp++;
-    queue->rp               = (queue->rp > NR_SHELL_MAX_CMD_HISTORY_NUM) ? 0 : queue->rp;
+    queue->rp++;
+    queue->rp = (queue->rp > NR_SHELL_MAX_CMD_HISTORY_NUM) ? 0 : queue->rp;
     queue->len++;
 
     for (i = 0; i < str_len; i++)
@@ -365,7 +371,5 @@ void shell_his_copy_queue_item(shell_his_queue_st *queue, unsigned short i, char
         }
     }
 }
-
-#endif
 
 /******************* (C) COPYRIGHT 2019 Ji Youzhou *****END OF FILE*****************/
