@@ -111,6 +111,7 @@ typedef struct
     bLis3dhFifoMode_t fm;
     uint8_t           int_polarity;
     bGsensor3Axis_t   data[32];
+    bHalIt_t          it_instance[2];
 } bList3dhPrivate_t;
 
 /**

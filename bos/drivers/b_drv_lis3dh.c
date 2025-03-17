@@ -396,6 +396,7 @@ static void _bLis3dhItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *p
 static void _bLis3dhDefaultCfg(bDriverInterface_t *pdrv)
 {
     bDRIVER_GET_HALIF(_if, bLIS3DH_HalIf_t, pdrv);
+    bDRIVER_GET_PRIVATE(_private, bList3dhPrivate_t, pdrv);
     bLis3dhBlockDataUpdateSet(pdrv, 0);
     bLis3dhDataRateSet(pdrv, LIS3DH_ODR_25Hz);
     bLis3dhFullScaleSet(pdrv, LIS3DH_FS_4G);
@@ -407,7 +408,12 @@ static void _bLis3dhDefaultCfg(bDriverInterface_t *pdrv)
         bLis3dhFifoModeSet(pdrv, LIS3DH_DYNAMIC_STREAM_MODE);
         bLis3dhFifoSet(pdrv, 1);
         bLis3dhIntPolaritySet(pdrv, 0);
-        bHAL_IT_REGISTER(lis3dh_it, B_HAL_IT_EXTI, _if->it[0].index, _bLis3dhItHandler, pdrv);
+
+        _private->it_instance[0].handler   = _bLis3dhItHandler;
+        _private->it_instance[0].index     = _if->it[0].index;
+        _private->it_instance[0].it        = _if->it[0].it;
+        _private->it_instance[0].user_data = pdrv;
+        bHalItRegister(&_private->it_instance[0]);
     }
 }
 
@@ -471,7 +477,7 @@ int bLIS3DH_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_LIS3DH, bLIS3DH_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}
