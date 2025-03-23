@@ -378,20 +378,25 @@ config _NETIF_ENABLE
     default n
     depends on _BOS_MODULES_ENABLE
 
-config _NETIF_USE_LWIP
-    bool "NETIF USE LWIP"
+config _NETIF_LINK_USE_LWIP
+    bool "Physical link adapted to LWIP"
     default y
     depends on _NETIF_ENABLE
+
+config _NETIF_TRANS_USE_LWIP
+        bool "Network data transmission using LWIP"
+        default y
+        depends on _NETIF_ENABLE
 
 config NETIF_DEV_NO
     int "Network device number"
     default 1
-    depends on _NETIF_USE_LWIP
+    depends on _NETIF_LINK_USE_LWIP
 
 choice
     prompt "Ways to obtain an IP address"
-    depends on _NETIF_USE_LWIP
-    default _GUI_RGB_565
+    depends on _NETIF_TRANS_USE_LWIP
+    default NETIF_USE_DHCP
 config NETIF_USE_DHCP
     bool "Dynamic IP"
 config NETIF_USE_STATIC_IP
@@ -416,17 +421,17 @@ config NETIF_MASK_ADDRESS
 config NETIF_LINK_CHECK_INTERVAL
     int "Check Link Time Interval (ms)"
     default 200
-    depends on _NETIF_USE_LWIP
+    depends on _NETIF_LINK_USE_LWIP
 
 config NETIF_CHECKSUM_BY_HARDWARE
     bool "HECKSUM_BY_HARDWARE enabled"
     default n
-    depends on _NETIF_USE_LWIP
+    depends on _NETIF_TRANS_USE_LWIP
 
 config MEM_SIZE_FOR_LWIP
     int "Size of The Heap Memory"
     default 10240
-    depends on _NETIF_USE_LWIP
+    depends on _NETIF_LINK_USE_LWIP
 
 config REMOTE_ADDR_LEN_MAX
     int "Maximum length of remote address"

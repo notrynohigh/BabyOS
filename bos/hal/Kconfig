@@ -3,6 +3,10 @@ config TICK_FRQ_HZ
     int "Tick Frequncy HZ"
     default 1000
 
+config USER_TICK_ENABLE
+    bool "Use the user-provided interface to get ticks."
+    default n
+
 config _HALIF_VARIABLE_ENABLE
     bool "Hardware Interface Variable Enable/Disable"
     default n

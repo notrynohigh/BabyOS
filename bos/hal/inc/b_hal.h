@@ -75,8 +75,8 @@ extern "C" {
  * \defgroup HAL_Exported_Defines
  * \{
  */
-#define MS2TICKS(m) (m / (1000 / TICK_FRQ_HZ))
-#define TICKS2MS(t) (t * (1000 / TICK_FRQ_HZ))
+#define MS2TICKS(m) ((m) / (1000 / TICK_FRQ_HZ))
+#define TICKS2MS(t) ((t) * (1000 / TICK_FRQ_HZ))
 
 #define TICK_MAX_UINT32 0xFFFFFFFF
 #define TICK_DIFF_BIT32(start, end) \

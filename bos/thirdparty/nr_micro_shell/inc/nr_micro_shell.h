@@ -50,7 +50,7 @@ extern "C" {
 
 typedef void (*shell_fun_t)(char, char *);
 
-#ifndef NR_SHELL_CMD_MAX_LENGTH
+#ifndef NR_SHELL_CMD_NAME_MAX_LENGTH
 #define NR_SHELL_CMD_NAME_MAX_LENGTH (16)
 #endif
 

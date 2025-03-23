@@ -367,7 +367,7 @@ static char *_bHttpPostRequest(bHttpStruct_t *http, const char *head, const char
 
 static void _bHttpResult(bHttpStruct_t *http, bHttpEvent_t evt, void *param)
 {
-    if (evt < 0 || evt == B_HTTP_EVENT_RECV_DATA || evt == B_HTTP_STA_DESTROY)
+    if (evt < 0 || evt == B_HTTP_EVENT_RECV_DATA || evt == B_HTTP_EVENT_DESTROY)
     {
         if (http->request)
         {
