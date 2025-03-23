@@ -34,7 +34,7 @@
 
 #if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
 
-#if (defined(_NETIF_USE_LWIP) && (_NETIF_USE_LWIP == 1))
+#if (defined(_NETIF_TRANS_USE_LWIP) && (_NETIF_TRANS_USE_LWIP == 1))
 #include "core/inc/b_task.h"
 #include "core/inc/b_timer.h"
 #include "hal/inc/b_hal.h"
