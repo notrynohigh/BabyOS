@@ -1216,7 +1216,7 @@ static void _bAds124xItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *
     _priv->cb.cb(B_EVT_CONV_STA_OK, &adc_raw_data, NULL, _priv->cb.user_data);
 }
 
-void set_nsi8241_en1(uint8_t dev_no)
+static void set_nsi8241_en1(uint8_t dev_no)
 {
     switch (dev_no)
     {

@@ -224,4 +224,9 @@
         ._if.simulating_i2c.sda = {B_HAL_GPIOB, B_HAL_PIN11}, \
     }
 
+#define HAL_BQ769X2_IF                                                       \
+    {                                                                        \
+        .dev_addr = (0x10 << 1), .is_simulation = 0, ._if.i2c = B_HAL_I2C_1, \
+    }
+
 #endif

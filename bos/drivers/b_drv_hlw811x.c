@@ -2539,7 +2539,7 @@ static int _bHlw811xCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 	return 0;
 }
 
-void set_nsi8241_en1(uint8_t dev_no)
+static void set_nsi8241_en1(uint8_t dev_no)
 {
 	switch(dev_no)
 	{
