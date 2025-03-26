@@ -919,8 +919,10 @@ int bTM1638_Init(bDriverInterface_t *pdrv)
 	TM1638_Init(pdrv, TM1638DisplayTypeComCathode);
 	retval = TM1638_ConfigDisplay(pdrv, 1, TM1638DisplayStateON);
 	
-//	uint16_t i = 1234;
-//	uint8_t Buffer[4] = {0};
+	bTm1638RunInfo[pdrv->drv_no].Tm1638MultipleDigit = B_TM1638_MULTIPLE_DIGIT_CHAR;
+	
+
+	uint8_t Buffer[8] = {' ',' ',' ',' ',' ',' ',' ',' '};
 //	Buffer[0] = i % 10;
 //	Buffer[1] = (i / 10) % 10;
 //	Buffer[2] = (i / 100) % 10;
@@ -930,6 +932,8 @@ int bTM1638_Init(bDriverInterface_t *pdrv)
 //	Buffer[0] |= TM1638DecimalPoint;
 
 //	TM1638_SetMultipleDigit_HEX(pdrv, Buffer, 0, 16);
+
+	TM1638_SetMultipleDigit_CHAR(pdrv, Buffer, 0, 8);
 
 	return retval;
 }

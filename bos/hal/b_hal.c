@@ -49,9 +49,13 @@
  * \defgroup HAL_Private_Variables
  * \{
  */
-static volatile uint32_t bSysTickOvr   = 0;
-static volatile uint32_t bSysTick      = 0;
-static uint32_t          bUsDelayParam = 10;
+#if defined(USER_TICK_ENABLE) && (USER_TICK_ENABLE == 1)
+
+#else
+static volatile uint32_t bSysTickOvr = 0;
+static volatile uint32_t bSysTick    = 0;
+#endif
+static uint32_t bUsDelayParam = 10;
 /**
  * \}
  */
@@ -62,13 +66,26 @@ static uint32_t          bUsDelayParam = 10;
  */
 static void _bHalUpdateDelayParam()
 {
-    volatile uint32_t delay  = 100000 * bUsDelayParam;
+    uint32_t          base_value = 100000 * bUsDelayParam;
+    volatile uint32_t delay      = 0;
     volatile uint32_t tick_s = 0, tick_e = 0;
-    tick_s = bSysTick;
-    while (delay--)
-        ;
-    tick_e        = bSysTick;
-    bUsDelayParam = (uint32_t)((100.0 / (tick_e - tick_s)) * bUsDelayParam);
+    while (1)
+    {
+        delay  = base_value;
+        tick_s = bHalGetSysTick();
+        while (delay--)
+            ;
+        tick_e = bHalGetSysTick();
+        if (tick_e > tick_s)
+        {
+            bUsDelayParam = (uint32_t)((base_value * 1.0) / (TICKS2MS(tick_e - tick_s)) / 1000);
+            if (bUsDelayParam > 0)
+            {
+                break;
+            }
+        }
+        base_value *= 10;
+    }
 }
 /**
  * \}
@@ -111,6 +128,22 @@ void bHalInit()
     _bHalUpdateDelayParam();
 }
 
+#if defined(USER_TICK_ENABLE) && (USER_TICK_ENABLE == 1)
+
+#if defined(__WEAKDEF)
+__WEAKDEF uint32_t bHalGetSysTick()
+{
+    return 0;
+}
+
+__WEAKDEF uint64_t bHalGetSysTickPlus()
+{
+    return 0;
+}
+
+#endif
+
+#else
 void bHalIncSysTick()
 {
     bSysTick += 1;
@@ -131,6 +164,8 @@ uint64_t bHalGetSysTickPlus()
     tick          = bSysTick + (tick << (8 * sizeof(uint32_t)));
     return tick;
 }
+
+#endif
 
 void bHalDelayMs(uint16_t xms)
 {

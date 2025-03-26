@@ -34,7 +34,6 @@ $(SOURCE_ROOT)/bos/utils/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/fatfs/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/flexiblebutton/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/littlefs/*.c \
-$(SOURCE_ROOT)/bos/thirdparty/nr_micro_shell/src/*.c \
 $(SOURCE_ROOT)/bos/drivers/sfud/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/ugui/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/coremark/*.c \

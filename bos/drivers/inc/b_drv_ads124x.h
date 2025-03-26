@@ -7,7 +7,7 @@
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2020 Bean
+ * Copyright (c) 2024 hmchen
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ extern "C" {
  */
 
 /**
- * \addtogroup HLW811X
+ * \addtogroup ADS124X
  * \{
  */
 
@@ -51,39 +51,38 @@ extern "C" {
  * \defgroup ADS124X_Exported_TypesDefinitions
  * \{
  */
-//<HALIF 
+//<HALIF
 
 typedef struct
 {
-	bHalSPIIf_t _spi;
-	bHalGPIOInstance_t drdy;
-	bHalGPIOInstance_t start;
-	bHalGPIOInstance_t reset;
-	bHalItIf_t it;
+    bHalSPIIf_t        _spi;
+    bHalGPIOInstance_t drdy;
+    bHalGPIOInstance_t start;
+    bHalGPIOInstance_t reset;
+    bHalItIf_t         it;
 } bADS124X_HalIf_t;
 
-
 /* Error Return Values */
-#define ADS1248_NO_ERROR        0
-#define ADS1248_ERROR			-1
+#define ADS1248_NO_ERROR 0
+#define ADS1248_ERROR -1
 
 typedef struct
 {
-	uint8_t IDACroute;
-	uint8_t IDACdir;
-}bADS124X_IDACRouting_t;
+    uint8_t IDACroute;
+    uint8_t IDACdir;
+} bADS124X_IDACRouting_t;
 
 typedef struct
 {
-	uint8_t AINN;
-	uint8_t AINP;
-}bADS124X_InputPin_t;
-
+    uint8_t AINN;
+    uint8_t AINP;
+} bADS124X_InputPin_t;
 
 typedef struct
 {
-    uint32_t   data[32];
-	bAds124xDrvCallback_t	cb;
+    uint32_t              data[32];
+    bAds124xDrvCallback_t cb;
+    bHalIt_t              it_instance;
 } bAds124xPrivate_t;
 
 /**
@@ -104,4 +103,4 @@ typedef struct
 
 #endif
 
-/************************ Copyright (c) 2020 Bean *****END OF FILE****/
+/************************ Copyright (c) 2024 hmchen *****END OF FILE****/

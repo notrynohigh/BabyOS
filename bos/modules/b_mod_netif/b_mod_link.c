@@ -36,7 +36,7 @@
 
 #if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
 
-#if (defined(_NETIF_USE_LWIP) && (_NETIF_USE_LWIP == 1))
+#if (defined(_NETIF_LINK_USE_LWIP) && (_NETIF_LINK_USE_LWIP == 1))
 
 #include "b_section.h"
 #include "core/inc/b_core.h"
@@ -275,6 +275,11 @@ static void _bNetlinkCore()
     sys_check_timeouts();
 }
 
+uint32_t sys_now()
+{
+    return bHalGetSysTick();
+}
+
 #ifdef BSECTION_NEED_PRAGMA
 #pragma section bos_polling
 #endif
@@ -286,8 +291,3 @@ BOS_REG_POLLING_FUNC(_bNetlinkCore);
 #endif
 
 #endif
-
-uint32_t sys_now()
-{
-    return bHalGetSysTick();
-}

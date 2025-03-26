@@ -194,6 +194,12 @@ typedef struct
     int16_t tempx100;
 } bTempVal_t;
 
+typedef struct
+{
+    uint8_t humidity;
+    int16_t tempx100;
+} bTempHumidityVal_t;
+
 ///////////////////////////////////////////////////////////
 // Sensor Command & Data Structure
 ///////////////////////////////////////////////////////////
@@ -368,27 +374,26 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // ads124x, Command  &  Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_ADS124X_REG_CALLBACK 		0       //
-#define bCMD_ADS124X_START_1CONV 		1       // none
-#define bCMD_ADS124X_SET_VREF 			2       // none
-#define bCMD_ADS124X_SET_AIN			3       // none
-#define bCMD_ADS124X_SET_AINP 			4       // none
-#define bCMD_ADS124X_SET_FSC 			5       // none
-#define bCMD_ADS124X_SET_CURRENT 		6       // none
-#define bCMD_ADS124X_GET_GDAT 			7       // none
-#define bCMD_ADS124X_SET_OFC 			8       // none
-#define bCMD_ADS124X_SET_MUX 			9       // none
-#define bCMD_ADS124X_SET_BURNOUT 		10      // none
-#define bCMD_ADS124X_SET_BIAS 			11      // none
-#define bCMD_ADS124X_SET_PWRDN 			12      // none
-#define bCMD_ADS124X_SET_PGA 			13      // none
-#define bCMD_ADS124X_SET_IREF 			14      // none
-#define bCMD_ADS124X_RESETDUT 			15      // none
-#define bCMD_ADS124X_SET_DATARATE 		16      // none
-#define bCMD_ADS124X_SET_GIO 			17      // none
-#define bCMD_ADS124X_SET_IDAC 			18      // none
-#define bCMD_ADS124X_SET_CALLBACK_ARG 	32  	// void *
-
+#define bCMD_ADS124X_REG_CALLBACK 0       //
+#define bCMD_ADS124X_START_1CONV 1        // none
+#define bCMD_ADS124X_SET_VREF 2           // none
+#define bCMD_ADS124X_SET_AIN 3            // none
+#define bCMD_ADS124X_SET_AINP 4           // none
+#define bCMD_ADS124X_SET_FSC 5            // none
+#define bCMD_ADS124X_SET_CURRENT 6        // none
+#define bCMD_ADS124X_GET_GDAT 7           // none
+#define bCMD_ADS124X_SET_OFC 8            // none
+#define bCMD_ADS124X_SET_MUX 9            // none
+#define bCMD_ADS124X_SET_BURNOUT 10       // none
+#define bCMD_ADS124X_SET_BIAS 11          // none
+#define bCMD_ADS124X_SET_PWRDN 12         // none
+#define bCMD_ADS124X_SET_PGA 13           // none
+#define bCMD_ADS124X_SET_IREF 14          // none
+#define bCMD_ADS124X_RESETDUT 15          // none
+#define bCMD_ADS124X_SET_DATARATE 16      // none
+#define bCMD_ADS124X_SET_GIO 17           // none
+#define bCMD_ADS124X_SET_IDAC 18          // none
+#define bCMD_ADS124X_SET_CALLBACK_ARG 32  // void *
 
 typedef enum
 {
@@ -402,9 +407,9 @@ typedef struct
     void *user_data;
 } bAds124xDrvCallback_t;
 ///////////////////////////////////////////////////////////
-//TM1638 , Command  &  Structure
+// TM1638 , Command  &  Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_TM1638_SET_DIGIT_TYPE		0       //
+#define bCMD_TM1638_SET_DIGIT_TYPE 0  //
 
 typedef enum
 {
@@ -412,6 +417,20 @@ typedef enum
     B_TM1638_MULTIPLE_DIGIT_CHAR,
     B_TM1638_MULTIPLE_DIGIT_LED,
 } bTm1638MultipleDigit_t;
+
+///////////////////////////////////////////////////////////
+// BQ769X2 , Command  &  Structure
+///////////////////////////////////////////////////////////
+typedef struct
+{
+	uint16_t CellVoltage [16] ;
+	float Temperature [3] ;
+	uint16_t Stack_Voltage ;
+	uint16_t Pack_Voltage ;
+	uint16_t LD_Voltage ;
+	uint16_t Pack_Current;
+	uint16_t AlarmBits ;
+} bBMS_AFE_BQ769X2_Value_t;
 
 #ifdef __cplusplus
 }

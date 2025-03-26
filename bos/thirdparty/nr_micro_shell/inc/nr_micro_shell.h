@@ -9,7 +9,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2019 Ji Youzhou
+ * Copyright (C) 2019 Ji Youzhou. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,13 +39,10 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include <stdio.h>
-
-#include "../inc/nr_micro_shell_config.h"
 #include "ansi.h"
 #include "b_section.h"
-
-#if (defined(_NR_MICRO_SHELL_ENABLE) && (_NR_MICRO_SHELL_ENABLE == 1))
+#include "nr_micro_shell_config.h"
+#include "stdio.h"
 
 #ifndef shell_printf
 #define shell_printf(fmt, args...) printf(fmt, ##args);
@@ -53,10 +50,15 @@ extern "C" {
 
 typedef void (*shell_fun_t)(char, char *);
 
-typedef struct
+#ifndef NR_SHELL_CMD_NAME_MAX_LENGTH
+#define NR_SHELL_CMD_NAME_MAX_LENGTH (16)
+#endif
+
+typedef struct static_cmd_function_struct
 {
-    const char *cmd;
+    char cmd[NR_SHELL_CMD_NAME_MAX_LENGTH];
     void (*fp)(char argc, char *argv);
+    char *description;
 } static_cmd_st;
 
 typedef struct shell_history_queue_struct
@@ -78,8 +80,9 @@ typedef struct shell_history_queue_struct
 
 typedef struct nr_shell
 {
-    char               user_name[NR_SHELL_USER_NAME_MAX_LENGTH];
-    shell_his_queue_st cmd_his;
+    char                 user_name[NR_SHELL_USER_NAME_MAX_LENGTH];
+    const static_cmd_st *static_cmd;
+    shell_his_queue_st   cmd_his;
 } shell_st;
 
 void               _shell_init(shell_st *shell);
@@ -105,6 +108,18 @@ bSECTION_DEF_FLASH(b_mod_shell, static_cmd_st);
 #define NR_SHELL_END_CHAR '\n'
 #endif
 
+#if NR_SHELL_END_OF_LINE == 0
+#define NR_SHELL_NEXT_LINE "\n"
+#endif
+
+#if NR_SHELL_END_OF_LINE == 1
+#define NR_SHELL_NEXT_LINE "\r\n"
+#endif
+
+#if NR_SHELL_END_OF_LINE == 2
+#define NR_SHELL_NEXT_LINE "\r\n"
+#endif
+
 #define shell(c)                                             \
     {                                                        \
         if (ansi_get_char(c, &nr_ansi) == NR_SHELL_END_CHAR) \
@@ -121,7 +136,5 @@ int rt_nr_shell_system_init(void);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 /******************* (C) COPYRIGHT 2019 Ji Youzhou *****END OF FILE*****************/

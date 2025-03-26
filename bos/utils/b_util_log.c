@@ -149,7 +149,8 @@ B_FPUTC
     uint8_t ch = c & 0xff;
 #if defined(LOG_UART)
 #if defined(__GNUC__) && !(defined(__ARMCC_VERSION))
-    bHalUartSend((bHalUartNumber_t)LOG_UART, ptr, c);
+    (void)ch;
+    bHalUartSend((bHalUartNumber_t)LOG_UART, (uint8_t *)ptr, c);
 #else
     bHalUartSend((bHalUartNumber_t)LOG_UART, &ch, 1);
 #endif
@@ -235,7 +236,7 @@ void bLogOut(uint8_t type, const char *ptr_file, const char *ptr_func, uint32_t 
         }
         if (param & B_LOG_PARAM_LINE)
         {
-            str_len = sprintf(line_number, "%d", line);
+            str_len = sprintf(line_number, "%ld", line);
             if (str_len < 0)
             {
                 return;
