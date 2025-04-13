@@ -192,7 +192,7 @@ struct pt
         if ((pt)->wait == 0)                                                                  \
         {                                                                                     \
             (pt)->tick    = bHalGetSysTick();                                                 \
-            (pt)->time_ms = MS2TICKS(timeout);                                                \
+            (pt)->time_ms = (MS2TICKS(timeout) == 0) ? 1 : (MS2TICKS(timeout));               \
             (pt)->wait    = 1;                                                                \
             (pt)->retval  = PT_RETVAL_OK;                                                     \
         }                                                                                     \
