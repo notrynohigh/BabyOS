@@ -9,7 +9,7 @@ static int _bHalUartNo(bHalUartNumber_t uart)
     {
         uart_no = UART_NUM_0;
     }
-    else if (uart == B_HAL_UART_1)
+    else if (uart == B_HAL_UART_2)
     {
         uart_no = UART_NUM_1;
     }
