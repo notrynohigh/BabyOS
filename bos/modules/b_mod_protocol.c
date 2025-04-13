@@ -203,17 +203,6 @@ static int _bProtocolPack(bProtocolAttr_t *pattr, uint8_t cmd, uint8_t *param,
     phead->cmd       = cmd;
     phead->len       = 1 + param_size;
     memcpy(&pbuf[sizeof(bProtocolHead_t)], param, param_size);
-
-    if (cmd == PROTO_CMD_GET_UID && param_size == 0)
-    {
-        bProtoUIDParam_t *puid = (bProtoUIDParam_t *)&pbuf[sizeof(bProtocolHead_t) + param_size];
-        memset(puid, 0, sizeof(bProtoUIDParam_t));
-        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_MCU_UID,
-                      (uint8_t *)&pbuf[sizeof(bProtocolHead_t) + param_size],
-                      buf_len - sizeof(bProtocolHead_t) - param_size - 1);
-        phead->len += puid->len + 1;
-    }
-
     length           = sizeof(bProtocolHead_t) + phead->len;
     pbuf[length - 1] = _bProtocolCalCheck(pbuf, length - 1);
 #if (defined(_PROTO_ENCRYPT_ENABLE) && (_PROTO_ENCRYPT_ENABLE == 1))
@@ -229,6 +218,9 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
     bProtoID_t       id    = 0;
     int              length;
     uint8_t          crc;
+
+    uint8_t *reply_p   = NULL;
+    uint16_t reply_len = 0;
 
     if (in == NULL || i_len < (sizeof(bProtocolHead_t) + 1))
     {
@@ -254,6 +246,68 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         b_log_e("crc error!%d %d", crc, in[length - 1]);
         return -1;
     }
+#if (defined(PROTO_ROLE_HOST) && (PROTO_ROLE_HOST == 1))
+    uint8_t              tmp_value = 0;
+    bProtoNetInfoParam_t tmp_netinfo;
+    if (phead->cmd == PROTO_CMD_SETCFGNET_MODE)
+    {
+        bProtoCfgNetMode_t info;
+        memset(&info, 0, sizeof(info));
+        bProtoCfgNetModeParam_t *cfg = (bProtoCfgNetModeParam_t *)(&in[sizeof(bProtocolHead_t)]);
+
+        info.type = cfg->type;
+        memcpy(info.ssid, cfg->ssid, strlen((const char *)cfg->ssid));
+        memcpy(info.passwd, cfg->passwd, strlen((const char *)cfg->passwd));
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_SETCFGNET_MODE, &info, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_GET_NETINFO)
+    {
+        memset(&tmp_netinfo, 0, sizeof(bProtoNetInfoParam_t));
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_GET_SSID, &tmp_netinfo.ssid[0],
+                      sizeof(tmp_netinfo.ssid));
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_GET_IP, (uint8_t *)&tmp_netinfo.ip,
+                      sizeof(tmp_netinfo.ip));
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_GET_GW, (uint8_t *)&tmp_netinfo.gw,
+                      sizeof(tmp_netinfo.gw));
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_GET_MASK, (uint8_t *)&tmp_netinfo.mask,
+                      sizeof(tmp_netinfo.mask));
+        reply_p   = (uint8_t *)&tmp_netinfo;
+        reply_len = sizeof(bProtoNetInfoParam_t);
+    }
+    else if (phead->cmd == PROTO_CMD_SET_VOICE_SWITCH)
+    {
+        uint8_t *param = (uint8_t *)(&in[sizeof(bProtocolHead_t)]);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_SET_VOICE_SWITCH, param, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_SET_VOICE_VOLUME)
+    {
+        uint8_t *param = (uint8_t *)(&in[sizeof(bProtocolHead_t)]);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_SET_VOICE_VOLUME, param, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_GET_VOICE_VOLUME)
+    {
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_GET_VOICE_VOLUME, &tmp_value,
+                      sizeof(tmp_value));
+        reply_p   = (uint8_t *)&tmp_value;
+        reply_len = sizeof(uint8_t);
+    }
+    else if (phead->cmd == PROTO_CMD_GET_VOICE_STAT)
+    {
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_GET_VOICE_STAT, &tmp_value, sizeof(tmp_value));
+        reply_p   = (uint8_t *)&tmp_value;
+        reply_len = sizeof(uint8_t);
+    }
+    else if (phead->cmd == PROTO_CMD_DEVICEINFO)
+    {
+        bProtoDevInfo_t info;
+        memset(&info, 0, sizeof(info));
+        bProtoDevInfoParam_t *info_param = (bProtoDevInfoParam_t *)(&in[sizeof(bProtocolHead_t)]);
+
+        memcpy(info.version, info_param->version, strlen((const char *)info_param->version));
+        memcpy(info.name, info_param->name, strlen((const char *)info_param->name));
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_DEVICEINFO, &info, pattr->arg);
+    }
+#else
     if (phead->cmd == PROTO_CMD_TEST)
     {
         ;
@@ -306,22 +360,100 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         memcpy(&dat.sn[0], &param->sn[0], param->len);
         B_SAFE_INVOKE(pattr->callback, B_PROTO_WRITE_SN, &dat, pattr->arg);
     }
-
+    else if (phead->cmd == PROTO_CMD_GET_NETINFO)
+    {
+        bProtoNetInfo_t       dat;
+        bProtoNetInfoParam_t *param = (bProtoNetInfoParam_t *)(&in[sizeof(bProtocolHead_t)]);
+        memset(&dat, 0, sizeof(dat));
+        dat.ip   = param->ip;
+        dat.gw   = param->gw;
+        dat.mask = param->mask;
+        memcpy(dat.ssid, param->ssid, strlen((const char *)param->ssid));
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_GET_NETINFO, &dat, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_GET_VOICE_VOLUME)
+    {
+        uint8_t *param = (uint8_t *)(&in[sizeof(bProtocolHead_t)]);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_GET_VOICE_VOLUME, param, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_GET_VOICE_STAT)
+    {
+        uint8_t *param = (uint8_t *)(&in[sizeof(bProtocolHead_t)]);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_GET_VOICE_STATE, param, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_TTS_CONTENT)
+    {
+        uint8_t *param = (uint8_t *)(&in[sizeof(bProtocolHead_t)]);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_TTS_CONTENT, param, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_TSL_INVOKE)
+    {
+        uint8_t *param = (uint8_t *)(&in[sizeof(bProtocolHead_t)]);
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_TSL_INVOKE, param, pattr->arg);
+    }
+    else if (phead->cmd == PROTO_CMD_GET_UID)
+    {
+        bProtoUIDParam_t uid;
+        memset(&uid, 0, sizeof(bProtoUIDParam_t));
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_MCU_UID, (uint8_t *)&uid, sizeof(uid));
+        if (uid.len == 0)
+        {
+            return 0;
+        }
+        reply_p   = (uint8_t *)&uid;
+        reply_len = uid.len + 1;
+    }
+    else if (phead->cmd == PROTO_CMD_DEVICEINFO)
+    {
+        bProtoDevInfoParam_t devinfo;
+        memset(&devinfo, 0, sizeof(bProtoDevInfoParam_t));
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_DEVICE_VERSION, &devinfo.version[0],
+                      sizeof(devinfo.version));
+        B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_DEVICE_NAME, &devinfo.name[0],
+                      sizeof(devinfo.name));
+        if (strlen(devinfo.version) == 0 || strlen(devinfo.name) == 0)
+        {
+            return 0;
+        }
+        reply_p   = (uint8_t *)&devinfo;
+        reply_len = sizeof(bProtoDevInfoParam_t);
+    }
+#endif
     length = 0;
     if (PROTOCOL_NEED_DEFAULT_ACK(phead->cmd))
     {
         length = _bProtocolPack(pattr, phead->cmd, NULL, 0, out, o_len);
     }
+    else
+    {
+        length = _bProtocolPack(pattr, phead->cmd, reply_p, reply_len, out, o_len);
+    }
 
     return length;
+}
+
+static int _bShiftArray(uint8_t *raw, uint16_t len, uint16_t offset)
+{
+    if (len <= offset)
+    {
+        return -1;
+    }
+    for (int i = len - (offset + 1); i >= 0; i--)
+    {
+        raw[i + offset] = raw[i];
+    }
+    return 0;
 }
 
 static int _bProtocolPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t buf_len)
 {
     int      ret = -1;
-    uint8_t  tmp_buf[32];
+    uint8_t  trans_tmp_buf[128];
+    uint8_t *tmp_buf   = NULL;
     uint16_t tmp_size  = 0;
     uint8_t  proto_cmd = 0;
+
+    tmp_buf = &trans_tmp_buf[0];
 
     if (cmd == B_PROTO_REQ_FILE_DATA)
     {
@@ -339,6 +471,95 @@ static int _bProtocolPackage(void *attr, bProtoCmd_t cmd, uint8_t *buf, uint16_t
         ((bProtoOTAResultParam_t *)tmp_buf)->result = result;
         tmp_size                                    = sizeof(bProtoOTAResultParam_t);
         proto_cmd                                   = PROTO_CMD_OTA_RESULT;
+    }
+    else if (cmd == B_PROTO_SETCFGNET_MODE)
+    {
+        memset(trans_tmp_buf, 0, sizeof(trans_tmp_buf));
+        bProtoCfgNetModeParam_t *cfgnet_param = (bProtoCfgNetModeParam_t *)tmp_buf;
+        bProtoCfgNetMode_t      *pcfgnet      = (bProtoCfgNetMode_t *)buf;
+        cfgnet_param->type                    = pcfgnet->type;
+        memcpy(cfgnet_param->ssid, pcfgnet->ssid, strlen((const char *)pcfgnet->ssid));
+        memcpy(cfgnet_param->passwd, pcfgnet->passwd, strlen((const char *)pcfgnet->passwd));
+        tmp_size  = sizeof(bProtoCfgNetModeParam_t);
+        proto_cmd = PROTO_CMD_SETCFGNET_MODE;
+    }
+    else if (cmd == B_PROTO_GET_NETINFO)
+    {
+        proto_cmd = PROTO_CMD_GET_NETINFO;
+    }
+    else if (cmd == B_PROTO_SET_VOICE_SWITCH)
+    {
+        proto_cmd  = PROTO_CMD_SET_VOICE_SWITCH;
+        tmp_buf[0] = buf[0];
+        tmp_size   = 1;
+    }
+    else if (cmd == B_PROTO_SET_VOICE_VOLUME)
+    {
+        proto_cmd  = PROTO_CMD_SET_VOICE_VOLUME;
+        tmp_buf[0] = buf[0];
+        tmp_size   = 1;
+    }
+    else if (cmd == B_PROTO_GET_VOICE_VOLUME)
+    {
+        proto_cmd = PROTO_CMD_GET_VOICE_VOLUME;
+    }
+    else if (cmd == B_PROTO_GET_VOICE_STATE)
+    {
+#if (defined(PROTO_ROLE_HOST) && (PROTO_ROLE_HOST == 1))
+        proto_cmd  = PROTO_CMD_GET_VOICE_STAT;
+        tmp_buf[0] = buf[0];
+        tmp_size   = 1;
+#else
+        proto_cmd = PROTO_CMD_GET_VOICE_STAT;
+#endif
+    }
+    else if (cmd == B_PROTO_TTS_CONTENT)
+    {
+        proto_cmd = PROTO_CMD_TTS_CONTENT;
+        tmp_size  = strlen((const char *)buf);
+        if (_bShiftArray(buf, buf_len, sizeof(bProtocolHead_t)) == 0)
+        {
+            tmp_buf = buf + sizeof(bProtocolHead_t);
+        }
+    }
+    else if (cmd == B_PROTO_TSL_INVOKE)
+    {
+        proto_cmd = PROTO_CMD_TSL_INVOKE;
+        tmp_size  = strlen((const char *)buf);
+        if (_bShiftArray(buf, buf_len, sizeof(bProtocolHead_t)) == 0)
+        {
+            tmp_buf = buf + sizeof(bProtocolHead_t);
+        }
+    }
+    else if (cmd == B_PROTO_DEVICEINFO)
+    {
+        proto_cmd = PROTO_CMD_DEVICEINFO;
+    }
+    else if (cmd == B_PROTO_OTA_FILE_INFO)
+    {
+        proto_cmd                  = PROTO_CMD_FW_INFO;
+        bProtoFileInfo_t *pfwinfo  = (bProtoFileInfo_t *)buf;
+        bProtoFWParam_t  *fw_param = (bProtoFWParam_t *)tmp_buf;
+        fw_param->size             = pfwinfo->size;
+        fw_param->f_crc32          = pfwinfo->fcrc32;
+        memcpy(fw_param->filename, pfwinfo->name, strlen((const char *)pfwinfo->name));
+        tmp_size = sizeof(bProtoFWParam_t);
+    }
+    else if (cmd == B_PROTO_FILE_DATA)
+    {
+        proto_cmd                   = PROTO_CMD_FDATA;
+        bProtoFileData_t *file_data = (bProtoFileData_t *)buf;
+        bProtoFileData_t  tmp_file_data;
+        memcpy(&tmp_file_data, file_data, sizeof(bProtoFileData_t));
+
+        bProtoFDataParam_t *fdata_param = (bProtoFDataParam_t *)buf;
+        fdata_param->seq                = tmp_file_data.offset / sizeof(fdata_param->data);
+        memcpy(fdata_param->data, tmp_file_data.dat, sizeof(fdata_param->data));
+        if (_bShiftArray(buf, buf_len, sizeof(bProtocolHead_t)) == 0)
+        {
+            tmp_buf = buf + sizeof(bProtocolHead_t);
+        }
+        tmp_size = sizeof(bProtoFDataParam_t);
     }
     else
     {
