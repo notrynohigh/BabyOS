@@ -83,6 +83,7 @@ extern "C" {
 #endif
 
 #include "drivers/inc/b_drv_24cxx.h"
+#include "drivers/inc/b_drv_ads124x.h"
 #include "drivers/inc/b_drv_ds18b20.h"
 #include "drivers/inc/b_drv_esp12f.h"
 #include "drivers/inc/b_drv_fm25cl.h"
@@ -107,16 +108,17 @@ extern "C" {
 #include "drivers/inc/b_drv_ssd1289.h"
 #include "drivers/inc/b_drv_st7789.h"
 #include "drivers/inc/b_drv_xpt2046.h"
-#include "drivers/inc/b_drv_ads124x.h"
+
 // thirdparty
 #include "thirdparty/cjson/cjson.h"
+#if (defined(_LUA_ENABLE) && (_LUA_ENABLE == 1))
 #include "thirdparty/lua/bos_lua/lauxlib.h"
 #include "thirdparty/lua/bos_lua/lua.h"
 #include "thirdparty/lua/bos_lua/lualib.h"
+#endif
 #include "thirdparty/pt/pt-sem.h"
 #include "thirdparty/pt/pt.h"
 #include "thirdparty/unity/unity.h"
-
 
 #define BOS_PERIODIC_TASK(pf, ms)                                         \
     {                                                                     \
