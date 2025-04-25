@@ -128,6 +128,13 @@ typedef struct
 
 typedef struct
 {
+    float mag_arr[3];
+} bQMC5883P_3Axis_t;
+#define bCMD_QMC5883P_WHETHER_NEWDATA_READY 0
+#define bCMD_QMC5883P_SET_STATUS_ERR 1
+
+typedef struct
+{
     float acc_arr[3];  // m/s^2
 
     float gyro_arr[3];  // rad/s
