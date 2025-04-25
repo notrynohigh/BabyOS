@@ -30,21 +30,19 @@
  */
 #define DRIVER_NAME QMC5883P
 
-#define QMC5883P_ID 0xFF
+#define QMC5883P_ID 0x80
 
-#define MAG_X_REG_L 0X00
-#define MAG_X_REG_H 0X01
-#define MAG_Y_REG_L 0X02
-#define MAG_Y_REG_H 0X03
-#define MAG_Z_REG_L 0X04
-#define MAG_Z_REG_H 0X05
-#define STATUS_REG 0X06
-#define TEMP_L_REG 0X07
-#define TEMP_H_REG 0X08
-#define CONTROL_1_REG 0X09
-#define CONTROL_2_REG 0X0A
-#define PERIOD_REG 0X0B
-#define CHIP_ID_REG 0X0D
+#define CHIP_ID_REG 0X00
+#define MAG_X_REG_L 0X01
+#define MAG_X_REG_H 0X02
+#define MAG_Y_REG_L 0X03
+#define MAG_Y_REG_H 0X04
+#define MAG_Z_REG_L 0X05
+#define MAG_Z_REG_H 0X06
+#define STATUS_REG 0X09
+#define CONTROL_1_REG 0X0A
+#define CONTROL_2_REG 0X0B
+
 #define MAG_DATA_LEN 6
 
 /**
@@ -153,30 +151,84 @@ static int _bQMC5883PGetID(bDriverInterface_t *pdrv, uint8_t *id)
 
 static int _bQMC5883PDefaultCfg(bDriverInterface_t *pdrv)
 {
-    uint8_t control_1_reg_val = 0x1d;
-    uint8_t period_reg_val    = 0x01;
-    uint8_t cfg1_val          = 0x40;
-    uint8_t cfg2_val          = 0x01;
+    uint8_t control_0x0a_reg_val = 0x00;
+    uint8_t control_0x0b_reg_val = 0x00;
+    uint8_t control_0x0d_reg_val = 0x00;
+    uint8_t control_0x29_reg_val = 0x00;
 
-    if (_bQMC5883PWriteCheckRegs(pdrv, PERIOD_REG, &period_reg_val, 1) < 0)
+    control_0x0b_reg_val = 0x80;
+    if (_bQMC5883PWriteCheckRegs(pdrv, 0x0b, &control_0x0b_reg_val, 1) < 0)
     {
         return -1;
     }
 
-    if (_bQMC5883PWriteCheckRegs(pdrv, 0x21, &cfg2_val, 1) < 0)
+    bHalDelayMs(5);
+
+    control_0x0b_reg_val = 0x00;
+    if (_bQMC5883PWriteCheckRegs(pdrv, 0x0b, &control_0x0b_reg_val, 1) < 0)
     {
         return -1;
     }
 
-    if (_bQMC5883PWriteCheckRegs(pdrv, 0x20, &cfg1_val, 1) < 0)
+    bHalDelayMs(5);
+
+    /*
+    qmc5883p_write_reg(0x0a, 0x00);
+    qmc5883p_delay(1);
+    qmc5883p_write_reg(0x0d, 0x40);
+
+    qmc5883p_write_reg(0x29, 0x06);
+    //qmc5883p_write_reg(0x0a, 0x0F);//0XA9=ODR =100HZ 0XA5 = 50HZ
+    qmc5883p_write_reg(0x0b, 0x00); //30 GS
+    qmc5883p_write_reg(0x0a, 0xcd);
+    */
+    control_0x0a_reg_val = 0;
+    if (_bQMC5883PWriteCheckRegs(pdrv, 0x0a, &control_0x0a_reg_val, 1) < 0)
     {
         return -1;
     }
 
-    if (_bQMC5883PWriteCheckRegs(pdrv, CONTROL_1_REG, &control_1_reg_val, 1) < 0)
+    bHalDelayMs(1);
+
+    control_0x0d_reg_val = 0x40;
+    if (_bQMC5883PWriteCheckRegs(pdrv, 0x0d, &control_0x0d_reg_val, 1) < 0)
     {
         return -1;
     }
+    control_0x29_reg_val = 0x06;
+    if (_bQMC5883PWriteCheckRegs(pdrv, 0x29, &control_0x29_reg_val, 1) < 0)
+    {
+        return -1;
+    }
+    control_0x0b_reg_val = 0x08;
+    if (_bQMC5883PWriteCheckRegs(pdrv, 0x0b, &control_0x0b_reg_val, 1) < 0)
+    {
+        return -1;
+    }
+    control_0x0a_reg_val = 0xcd;
+    if (_bQMC5883PWriteCheckRegs(pdrv, 0x0a, &control_0x0a_reg_val, 1) < 0)
+    {
+        return -1;
+    }
+
+    bHalDelayMs(1);
+
+    uint8_t ctrl_value = 0x00;
+    if (_bQMC5883PReadCheckRegs(pdrv, CONTROL_1_REG, &ctrl_value, 1) < 0)
+    {
+        return -1;
+    }
+    b_log("QMC5883P  0x%x=0x%x \r\n", CONTROL_1_REG, ctrl_value);
+    if (_bQMC5883PReadCheckRegs(pdrv, CONTROL_2_REG, &ctrl_value, 1) < 0)
+    {
+        return -1;
+    }
+    b_log("QMC5883P  0x%x=0x%x \r\n", CONTROL_2_REG, ctrl_value);
+    if (_bQMC5883PReadCheckRegs(pdrv, 0x0d, &ctrl_value, 1) < 0)
+    {
+        return -1;
+    }
+    b_log("QMC5883P  0x%x=0x%x \r\n", 0x0d, ctrl_value);
 
     return 0;
 }
@@ -196,17 +248,9 @@ static int _bQMC5883PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
 
-    // _bQMC5883PReadCheckRegs(pdrv, MAG_X_REG_L, &mag_data[0], 1);
-    // _bQMC5883PReadCheckRegs(pdrv, MAG_X_REG_H, &mag_data[1], 1);
-    // _bQMC5883PReadCheckRegs(pdrv, MAG_Y_REG_L, &mag_data[2], 1);
-    // _bQMC5883PReadCheckRegs(pdrv, MAG_Y_REG_H, &mag_data[3], 1);
-    // _bQMC5883PReadCheckRegs(pdrv, MAG_Z_REG_L, &mag_data[4], 1);
-    // _bQMC5883PReadCheckRegs(pdrv, MAG_Z_REG_H, &mag_data[5], 1);
-    // b_log("mag_reg_dat:0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", mag_data[0], mag_data[1],
-    //       mag_data[2], mag_data[3], mag_data[4], mag_data[5]);
-    ptmp->mag_arr[0] = (float)((short)(U82U16(mag_data[1], mag_data[0]))) / 30.0f;
-    ptmp->mag_arr[1] = (float)((short)(U82U16(mag_data[3], mag_data[2]))) / 30.0f;
-    ptmp->mag_arr[2] = (float)((short)(U82U16(mag_data[5], mag_data[4]))) / 30.0f;
+    ptmp->mag_arr[0] = (float)((short)(U82U16(mag_data[1], mag_data[0]))) / 37.5f;
+    ptmp->mag_arr[1] = (float)((short)(U82U16(mag_data[3], mag_data[2]))) / 37.5f;
+    ptmp->mag_arr[2] = (float)((short)(U82U16(mag_data[5], mag_data[4]))) / 37.5f;
     // b_log("mag_dat:%f %f %f\n", ptmp->mag_arr[0], ptmp->mag_arr[1], ptmp->mag_arr[2]);
 
     return 0;
