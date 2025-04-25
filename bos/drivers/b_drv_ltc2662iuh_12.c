@@ -3,7 +3,7 @@
  * \version     v0.0.1
  * \date        2024-02-19
  * \author      miniminiminini (405553848@qq.com)
- * \brief       LTC2662IUH_12é©±åŠ¨
+ * \brief       LTC2662IUH_12Çı¶¯
  *
  * Copyright (c) 2024 by miniminiminini. All Rights Reserved.
  */
@@ -42,7 +42,7 @@
 #define DAC3 0X03
 #define DAC4 0X04
 
-#define L2B_B2L_16b(n) ((((n) & 0xff) << 8) | (((n) & 0xff00) >> 8))
+// #define L2B_B2L_16b(n) ((((n) & 0xff) << 8) | (((n) & 0xff00) >> 8))
 
 /**
  * }
@@ -99,7 +99,7 @@ static int _bLTC2662_Recv(bDriverInterface_t *pdrv, uint8_t *pbuf, uint16_t len)
 }
 
 /**
- * @brief é€šè¿‡å¯¹åº”dacé€šé“çš„expect_currentæ¥æ›´æ–°spanä¸span_value
+ * @brief Í¨¹ı¶ÔÓ¦dacÍ¨µÀµÄexpect_currentÀ´¸üĞÂspanÓëspan_value
  *
  * @param pdrv
  * @param dac_x
@@ -116,53 +116,53 @@ static int _bLTC2662_DACX_Updata_Span(bDriverInterface_t *pdrv, LTC2662_DAC_t da
         return -1;
     }
 
-    if (current < LTC_SPAN_3_125)
+    if (current <= LTC_SPAN_3_125)
     {
-        _priv->dac_attribute[dac_x].span = LTC_SPAN_3_125mA;
+        _priv->dac_attribute[dac_x].span       = LTC_SPAN_3_125mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_3_125;
-        _priv->dac_attribute[dac_x].span_div = LTC_SPAN_3_125 / 4095;
+        _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_3_125 / 4095;
     }
-    else if (current < LTC_SPAN_6_25)
+    else if (current <= LTC_SPAN_6_25)
     {
-        _priv->dac_attribute[dac_x].span = LTC_SPAN_6_25mA;
+        _priv->dac_attribute[dac_x].span       = LTC_SPAN_6_25mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_6_25;
-        _priv->dac_attribute[dac_x].span_div = LTC_SPAN_6_25 / 4095;
+        _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_6_25 / 4095;
     }
-    else if (current < LTC_SPAN_12_5)
+    else if (current <= LTC_SPAN_12_5)
     {
-        _priv->dac_attribute[dac_x].span = LTC_SPAN_12_5mA;
+        _priv->dac_attribute[dac_x].span       = LTC_SPAN_12_5mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_12_5;
-        _priv->dac_attribute[dac_x].span_div = LTC_SPAN_12_5 / 4095;
+        _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_12_5 / 4095;
     }
-    else if (current < LTC_SPAN_25)
+    else if (current <= LTC_SPAN_25)
     {
-        _priv->dac_attribute[dac_x].span = LTC_SPAN_25mA;
+        _priv->dac_attribute[dac_x].span       = LTC_SPAN_25mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_25;
-        _priv->dac_attribute[dac_x].span_div = LTC_SPAN_25 / 4095;
+        _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_25 / 4095;
     }
-    else if (current < LTC_SPAN_50)
+    else if (current <= LTC_SPAN_50)
     {
-        _priv->dac_attribute[dac_x].span = LTC_SPAN_50mA;
+        _priv->dac_attribute[dac_x].span       = LTC_SPAN_50mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_50;
-        _priv->dac_attribute[dac_x].span_div = LTC_SPAN_50 / 4095;
+        _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_50 / 4095;
     }
-    else if (current < LTC_SPAN_100)
+    else if (current <= LTC_SPAN_100)
     {
-        _priv->dac_attribute[dac_x].span = LTC_SPAN_100mA;
+        _priv->dac_attribute[dac_x].span       = LTC_SPAN_100mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_100;
-        _priv->dac_attribute[dac_x].span_div = LTC_SPAN_100 / 4095;
+        _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_100 / 4095;
     }
-    else if (current < LTC_SPAN_200)
+    else if (current <= LTC_SPAN_200)
     {
-        _priv->dac_attribute[dac_x].span = LTC_SPAN_200mA;
+        _priv->dac_attribute[dac_x].span       = LTC_SPAN_200mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_200;
-        _priv->dac_attribute[dac_x].span_div = LTC_SPAN_200 / 4095;
+        _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_200 / 4095;
     }
-    else if (current < LTC_SPAN_300)
+    else if (current <= LTC_SPAN_300)
     {
-        _priv->dac_attribute[dac_x].span = LTC_SPAN_300mA;
+        _priv->dac_attribute[dac_x].span       = LTC_SPAN_300mA;
         _priv->dac_attribute[dac_x].span_value = LTC_SPAN_300;
-        _priv->dac_attribute[dac_x].span_div = LTC_SPAN_300 / 4095;
+        _priv->dac_attribute[dac_x].span_div   = LTC_SPAN_300 / 4095;
     }
     else
     {
@@ -170,11 +170,18 @@ static int _bLTC2662_DACX_Updata_Span(bDriverInterface_t *pdrv, LTC2662_DAC_t da
         return -2;
     }
 
+    if ((dac_x == LTC_DAC_0))
+    {
+        // b_log("$$$ DAC4 current: %.2f, span: %d, span_value: %.2f, span_div: %.2f\r\n", current,
+        //       _priv->dac_attribute[dac_x].span, _priv->dac_attribute[dac_x].span_value,
+        //       _priv->dac_attribute[dac_x].span_div);
+    }
+
     return 0;
 }
 
 /**
- * @brief å½“æœŸå¾…ç”µæµå˜åŒ–æ—¶æ›´æ–°æŸä¸€ä¸ªé€šé“çš„DACå±æ€§å€¼
+ * @brief µ±ÆÚ´ıµçÁ÷±ä»¯Ê±¸üĞÂÄ³Ò»¸öÍ¨µÀµÄDACÊôĞÔÖµ
  *
  * @param pdrv
  * @param dac_x
@@ -196,20 +203,34 @@ static int _bLTC2662_DACX_Attribute_Updata(bDriverInterface_t *pdrv, LTC2662_DAC
         return -2;
     }
 
-    _priv->dac_attribute[dac_x].set_value = round(_priv->dac_attribute[dac_x].expect_current / _priv->dac_attribute[dac_x].span_div);
-    _priv->dac_attribute[dac_x].set_value = _priv->dac_attribute[dac_x].set_value > 4095 ? 4095 : _priv->dac_attribute[dac_x].set_value;
+    _priv->dac_attribute[dac_x].set_value =
+        round(_priv->dac_attribute[dac_x].expect_current / _priv->dac_attribute[dac_x].span_div);
+    if ((dac_x == LTC_DAC_0))
+    {
+        // b_log("^^^ set_value:%d", _priv->dac_attribute[dac_x].set_value);
+    }
+    _priv->dac_attribute[dac_x].set_value =
+        _priv->dac_attribute[dac_x].set_value > 4095 ? 4095 : _priv->dac_attribute[dac_x].set_value;
+    _priv->dac_attribute[dac_x].real_current =
+        _priv->dac_attribute[dac_x].set_value * _priv->dac_attribute[dac_x].span_div;
 
-    _priv->dac_attribute[dac_x].real_current = _priv->dac_attribute[dac_x].set_value * _priv->dac_attribute[dac_x].span_div;
+    _priv->dac_attribute[dac_x].err_current =
+        _priv->dac_attribute[dac_x].expect_current - _priv->dac_attribute[dac_x].real_current;
 
-    _priv->dac_attribute[dac_x].err_current = _priv->dac_attribute[dac_x].expect_current - _priv->dac_attribute[dac_x].real_current;
+    _priv->dac_attribute[dac_x].err_percentage_current =
+        _priv->dac_attribute[dac_x].err_current / _priv->dac_attribute[dac_x].expect_current;
 
-    _priv->dac_attribute[dac_x].err_percentage_current = _priv->dac_attribute[dac_x].err_current / _priv->dac_attribute[dac_x].expect_current;
+    if ((dac_x == LTC_DAC_0))
+    {
+        // b_log("^^^ set_value:%d real_current=%.2f\r\n", _priv->dac_attribute[dac_x].set_value,
+        // _priv->dac_attribute[dac_x].real_current);
+    }
 
     return 0;
 }
 
 /**
- * \brief     å†™å…¥èŒƒå›´åˆ°n
+ * \brief     Ğ´Èë·¶Î§µ½n
  * \param pdrv
  * \param dac_x
  * \param range
@@ -282,19 +303,33 @@ static int _bLTC2662_WriteSpanToN(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
         data.LT_uint16 = LTC_SPAN_VALUE_300mA;
     }
 
-    send_buf[1] = data.LT_byte[1];
-    send_buf[2] = data.LT_byte[0];
+    uint8_t temp_data = data.LT_byte[0];
+    data.LT_byte[0]   = data.LT_byte[1];
+    data.LT_byte[1]   = temp_data;
 
-    // spiå‘é€
+    send_buf[1] = data.LT_byte[0];
+    send_buf[2] = data.LT_byte[1];
+
+    uint8_t tmp_send_buf[4] = {0, 0, 0, 0};
+    memcpy(&tmp_send_buf[1], &send_buf[0], 3);
+
+    // spi·¢ËÍ
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
-    _bLTC2662_Send(pdrv, send_buf, 3);
+    _bLTC2662_Send(pdrv, tmp_send_buf, 4);
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
+    bHalGpioWritePin(_if->_if.simulating_spi.mosi.port, _if->_if.simulating_spi.mosi.pin, 1);
+
+    if ((dac_x == LTC_DAC_0))
+    {
+        b_log("%d###%02x %02X %02X %02X\r\n", _priv->dac_attribute[dac_x].span, tmp_send_buf[0],
+              tmp_send_buf[1], tmp_send_buf[2], tmp_send_buf[3]);
+    }
 
     return 0;
 }
 
 /**
- * \brief   å†™å…¥ä»£ç è‡³ nï¼Œæ›´æ–° nï¼ˆä¸Šç”µï¼‰
+ * \brief   Ğ´Èë´úÂëÖÁ n£¬¸üĞÂ n£¨ÉÏµç£©
  * \param pdrv
  * \param dac_x
  * \param range
@@ -334,21 +369,31 @@ static int _bLTC2662_WriteCodeToNUpdateN(bDriverInterface_t *pdrv, LTC2662_DAC_t
         send_buf[0] = WRITE_CODE_TO_N_UPDATE_N | DAC4;
     }
 
-    // å°†set_valueç”±16bitè½¬æ¢ä¸º12bit,åå››ä¸ªæ— å…³ä½,å¹¶ä¸”è¿›è¡ŒMSB-TO-LSB
+    // ½«set_valueÓÉ16bit×ª»»Îª12bit,ºóËÄ¸öÎŞ¹ØÎ»,²¢ÇÒ½øĞĞMSB-TO-LSB
     data.LT_uint16 = _priv->dac_attribute[dac_x].set_value;
 
-    // å°†LT_byteæŒ‰ç…§å¤§å°ç«¯è¿›è¡Œè½¬æ¢
-    data.LT_uint16 = L2B_B2L_16b(data.LT_uint16);
-    // å°†å…¶å·¦ç§»å››ä½
-    data.LT_uint16 = data.LT_uint16 << 4;
+    uint8_t temp_data = data.LT_byte[0];
+    data.LT_byte[0]   = data.LT_byte[1];
+    data.LT_byte[1]   = temp_data;
 
-    send_buf[1] = data.LT_byte[0];
-    send_buf[2] = data.LT_byte[1];
+    send_buf[1] = data.LT_byte[0] << 4 | data.LT_byte[1] >> 4;
+    send_buf[2] = data.LT_byte[1] << 4;
 
-    // spiå‘é€
+    uint8_t tmp_send_buf[4] = {0, 0, 0, 0};
+    memcpy(&tmp_send_buf[1], &send_buf[0], 3);
+
+    // spi·¢ËÍ
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
-    _bLTC2662_Send(pdrv, send_buf, 3);
+    _bLTC2662_Send(pdrv, tmp_send_buf, 4);
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
+    bHalGpioWritePin(_if->_if.simulating_spi.mosi.port, _if->_if.simulating_spi.mosi.pin, 1);
+
+    if ((dac_x == LTC_DAC_0))
+    {
+        b_log("%d %.2f||| %02X  %02X %02X %02X\r\n", _priv->dac_attribute[dac_x].set_value,
+              _priv->dac_attribute[dac_x].real_current, tmp_send_buf[0], tmp_send_buf[1],
+              tmp_send_buf[2], tmp_send_buf[3]);
+    }
 
     return 0;
 }
@@ -382,6 +427,7 @@ static int _bLTC2662_DACX_Exec(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     return 0;
 }
 
+// Power Down n
 static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
     uint8_t send_buf[3] = {0, 0, 0};
@@ -418,12 +464,15 @@ static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
     send_buf[1] = 0;
     send_buf[2] = 0;
 
-    // spiå‘é€
+    uint8_t tmp_send_buf[4] = {0, 0, 0, 0};
+    memcpy(&tmp_send_buf[1], &send_buf[0], 3);
+
+    // spi·¢ËÍ
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
-    _bLTC2662_Send(pdrv, send_buf, 3);
+    _bLTC2662_Send(pdrv, tmp_send_buf, 4);
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
 
-    _priv->dac_attribute[dac_x].status = 0;
+    _priv->dac_attribute[dac_x].status         = 0;
     _priv->dac_attribute[dac_x].expect_current = 0;
 
     // b_log_i("\r\n%d\t%d\t\r\n", dac_x, _priv->dac_attribute[dac_x].status);
@@ -433,7 +482,7 @@ static int _bLTC2662_DACX_Stop(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 
 static int _bLTC2662_GET_DACX_FR(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
 {
-    int ret = -1;
+    int     ret         = -1;
     uint8_t recv_buf[3] = {0, 0, 0};
     bDRIVER_GET_HALIF(_if, bLTC2662IUH_12_HalIf_t, pdrv);
 
@@ -443,31 +492,31 @@ static int _bLTC2662_GET_DACX_FR(bDriverInterface_t *pdrv, LTC2662_DAC_t dac_x)
         return -1;
     }
 
-    // spiæ¥æ”¶
+    // spi½ÓÊÕ
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
     _bLTC2662_Recv(pdrv, recv_buf, 3);
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
 
     switch (dac_x)
     {
-    case LTC_DAC_0:
-        ret = recv_buf[0] & 0x01;
-        break;
-    case LTC_DAC_1:
-        ret = recv_buf[0] & 0x02;
-        break;
-    case LTC_DAC_2:
-        ret = recv_buf[0] & 0x04;
-        break;
-    case LTC_DAC_3:
-        ret = recv_buf[0] & 0x08;
-        break;
-    case LTC_DAC_4:
-        ret = recv_buf[0] & 0x10;
-        break;
- 
-    default:
-        break;
+        case LTC_DAC_0:
+            ret = recv_buf[0] & 0x01;
+            break;
+        case LTC_DAC_1:
+            ret = recv_buf[0] & 0x02;
+            break;
+        case LTC_DAC_2:
+            ret = recv_buf[0] & 0x04;
+            break;
+        case LTC_DAC_3:
+            ret = recv_buf[0] & 0x08;
+            break;
+        case LTC_DAC_4:
+            ret = recv_buf[0] & 0x10;
+            break;
+
+        default:
+            break;
     }
 
     return ret;
@@ -596,7 +645,7 @@ static int _bLTC2662IUH_12Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param
 }
 
 /**
- * \brief å…³æ–­æ¨¡å¼
+ * \brief ¹Ø¶ÏÄ£Ê½
  * \param pdrv
  * \return int
  */
@@ -620,8 +669,8 @@ static int _bLTC2662IUH_12Close(bDriverInterface_t *pdrv)
 int bLTC2662IUH_12_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bLTC2662IUH_12_Init);
-    pdrv->ctl = _bLTC2662IUH_12Ctl;
-    pdrv->close = _bLTC2662IUH_12Close;
+    pdrv->ctl         = _bLTC2662IUH_12Ctl;
+    pdrv->close       = _bLTC2662IUH_12Close;
     pdrv->_private._p = &bLTC2662IUH_12RunInfo[pdrv->drv_no];
 
     _bLTC2662IUH_12Close(pdrv);

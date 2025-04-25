@@ -37,8 +37,13 @@ extern "C" {
 
 /*Includes ----------------------------------------------*/
 #include <stdint.h>
+#include <stdio.h>
 
 #include "b_config.h"
+#if (_RTT_EVR_ENABLE == 1)
+#include "SEGGER_RTT.h"
+#endif
+
 /**
  * \addtogroup B_UTILS
  * \{
@@ -75,74 +80,301 @@ extern "C" {
 
 #define B_LOG_PARAM_DEFAULT __FILE__, __func__, __LINE__
 
-#if ((defined(_DEBUG_ENABLE)) && (_DEBUG_ENABLE == 1))
+#if ((_DEBUG_ENABLE == 1) && (_RTT_EVR_ENABLE == 0))
 
-#if ((defined(LOG_LEVEL_ALL)) && (LOG_LEVEL_ALL == 1))
+#if ((defined(LOG_LEVEL_CUSTOMIZE)) && (LOG_LEVEL_CUSTOMIZE == 1))
 
+#if ((defined(_B_LOG_ENABLE)) && (_B_LOG_ENABLE == 1))
 #define b_log(...) bLogOut(3, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+#else
+#define b_log(...)
+#endif
+
+#if ((defined(_B_LOG_I_ENABLE)) && (_B_LOG_I_ENABLE == 1))
+#define b_log_i(...) bLogOut(0, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+#else
+#define b_log_i(...)
+#endif
+
+#if ((defined(_B_LOG_W_ENABLE)) && (_B_LOG_W_ENABLE == 1))
+#define b_log_w(...) bLogOut(1, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+#else
+#define b_log_w(...)
+#endif
+
+#if ((defined(_B_LOG_E_ENABLE)) && (_B_LOG_E_ENABLE == 1))
+#define b_log_e(...) bLogOut(2, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+#else
+#define b_log_e(...)
+#endif
+
+#elif ((defined(LOG_LEVEL_ALL)) && (LOG_LEVEL_ALL == 1))
+
 #define b_log_i(...) bLogOut(0, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 #define b_log_w(...) bLogOut(1, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 #define b_log_e(...) bLogOut(2, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
+#define b_log(...) bLogOut(3, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 
-#elif ((defined(LOG_LEVEL_LOW_FILTER_INFO)) && (LOG_LEVEL_LOW_FILTER_INFO == 1))
+#elif ((defined(LOG_LEVEL_INFO)) && (LOG_LEVEL_INFO == 1))
 
-#define b_log(...)
 #define b_log_i(...) bLogOut(0, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 #define b_log_w(...) bLogOut(1, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 #define b_log_e(...) bLogOut(2, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-
-#elif ((defined(LOG_LEVEL_LOW_FILTER_WARNING)) && (LOG_LEVEL_LOW_FILTER_WARNING == 1))
-
 #define b_log(...)
+
+#elif ((defined(LOG_LEVEL_WARNING)) && (LOG_LEVEL_WARNING == 1))
+
 #define b_log_i(...)
 #define b_log_w(...) bLogOut(1, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
 #define b_log_e(...) bLogOut(2, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-
-#elif ((defined(LOG_LEVEL_LOW_FILTER_ERROR)) && (LOG_LEVEL_LOW_FILTER_ERROR == 1))
-
 #define b_log(...)
+
+#elif ((defined(LOG_LEVEL_ERROR)) && (LOG_LEVEL_ERROR == 1))
+
 #define b_log_i(...)
 #define b_log_w(...)
 #define b_log_e(...) bLogOut(2, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-
-#elif ((defined(LOG_LEVEL_HIGH_FILTER_WARNING)) && (LOG_LEVEL_HIGH_FILTER_WARNING == 1))
-
-#define b_log(...) bLogOut(3, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-#define b_log_i(...) bLogOut(0, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-#define b_log_w(...) bLogOut(1, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-#define b_log_e(...)
-
-#elif ((defined(LOG_LEVEL_HIGH_FILTER_INFO)) && (LOG_LEVEL_HIGH_FILTER_INFO == 1))
-
-#define b_log(...) bLogOut(3, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-#define b_log_i(...) bLogOut(0, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-#define b_log_w(...)
-#define b_log_e(...)
-
-#elif ((defined(LOG_LEVEL_HIGH_FILTER_LOG)) && (LOG_LEVEL_HIGH_FILTER_LOG == 1))
-
-#define b_log(...) bLogOut(3, B_LOG_PARAM_DEFAULT, __VA_ARGS__)
-#define b_log_i(...)
-#define b_log_w(...)
-#define b_log_e(...)
+#define b_log(...)
 
 #else
 
-#define b_log(...)
 #define b_log_i(...)
 #define b_log_w(...)
 #define b_log_e(...)
+#define b_log(...)
+
+#endif
+
+#elif ((_DEBUG_ENABLE == 1) && (_RTT_EVR_ENABLE == 1) && (_EventRecorder_ENABLE == 1))
+
+#if ((defined(LOG_LEVEL_CUSTOMIZE)) && (LOG_LEVEL_CUSTOMIZE == 1))
+
+#if ((defined(_B_LOG_ENABLE)) && (_B_LOG_ENABLE == 1))
+#define b_log(...) printf(__VA_ARGS__)
+#else
+#define b_log(...)
+#endif
+
+#if ((defined(_B_LOG_I_ENABLE)) && (_B_LOG_I_ENABLE == 1))
+#define b_log_i(...) printf(__VA_ARGS__)
+#else
+#define b_log_i(...)
+#endif
+
+#if ((defined(_B_LOG_W_ENABLE)) && (_B_LOG_W_ENABLE == 1))
+#define b_log_w(...) printf(__VA_ARGS__)
+#else
+#define b_log_w(...)
+#endif
+
+#if ((defined(_B_LOG_E_ENABLE)) && (_B_LOG_E_ENABLE == 1))
+#define b_log_e(...) printf(__VA_ARGS__)
+#else
+#define b_log_e(...)
+#endif
+
+#elif ((defined(LOG_LEVEL_ALL)) && (LOG_LEVEL_ALL == 1))
+
+#define b_log_i(...) printf(__VA_ARGS__)
+#define b_log_w(...) printf(__VA_ARGS__)
+#define b_log_e(...) printf(__VA_ARGS__)
+#define b_log(...) printf(__VA_ARGS__)
+
+#elif ((defined(LOG_LEVEL_INFO)) && (LOG_LEVEL_INFO == 1))
+
+#define b_log_i(...) printf(__VA_ARGS__)
+#define b_log_w(...) printf(__VA_ARGS__)
+#define b_log_e(...) printf(__VA_ARGS__)
+#define b_log(...)
+
+#elif ((defined(LOG_LEVEL_WARNING)) && (LOG_LEVEL_WARNING == 1))
+
+#define b_log_i(...)
+#define b_log_w(...) printf(__VA_ARGS__)
+#define b_log_e(...) printf(__VA_ARGS__)
+#define b_log(...)
+
+#elif ((defined(LOG_LEVEL_ERROR)) && (LOG_LEVEL_ERROR == 1))
+
+#define b_log_i(...)
+#define b_log_w(...)
+#define b_log_e(...) printf(__VA_ARGS__)
+#define b_log(...)
+
+#else
+
+#define b_log_i(...)
+#define b_log_w(...)
+#define b_log_e(...)
+#define b_log(...)
+
+#endif
+
+#elif ((_DEBUG_ENABLE == 1) && (_RTT_EVR_ENABLE == 1) && (_RTTViewer_ENABLE == 1))
+
+#if ((defined(LOG_LEVEL_CUSTOMIZE)) && (LOG_LEVEL_CUSTOMIZE == 1))
+
+#if ((defined(_B_LOG_ENABLE)) && (_B_LOG_ENABLE == 1))
+#define b_log(...)                         \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(4);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#else
+#define b_log(...)
+#endif
+
+#if ((defined(_B_LOG_I_ENABLE)) && (_B_LOG_I_ENABLE == 1))
+#define b_log_i(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(1);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#else
+#define b_log_i(...)
+#endif
+
+#if ((defined(_B_LOG_W_ENABLE)) && (_B_LOG_W_ENABLE == 1))
+#define b_log_w(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(2);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#else
+#define b_log_w(...)
+#endif
+
+#if ((defined(_B_LOG_E_ENABLE)) && (_B_LOG_E_ENABLE == 1))
+#define b_log_e(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#else
+#define b_log_e(...)
+#endif
+
+#elif ((defined(LOG_LEVEL_ALL)) && (LOG_LEVEL_ALL == 1))
+
+#define b_log_i(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(1);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log_w(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(2);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log_e(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log(...)                         \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(4);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+
+#elif ((defined(LOG_LEVEL_INFO)) && (LOG_LEVEL_INFO == 1))
+
+#define b_log_i(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(1);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log_w(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(2);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log_e(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log(...)
+
+#elif ((defined(LOG_LEVEL_WARNING)) && (LOG_LEVEL_WARNING == 1))
+
+#define b_log_i(...)
+#define b_log_w(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(2);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log_e(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log(...)
+
+#elif ((defined(LOG_LEVEL_ERROR)) && (LOG_LEVEL_ERROR == 1))
+
+#define b_log_i(...)
+#define b_log_w(...)
+#define b_log_e(...)                       \
+    do                                     \
+    {                                      \
+        SEGGER_RTT_SetTerminal(3);         \
+        SEGGER_RTT_printf(0, __VA_ARGS__); \
+    } while (0);
+#define b_log(...)
+
+#else
+
+#define b_log_i(...)
+#define b_log_w(...)
+#define b_log_e(...)
+#define b_log(...)
 
 #endif
 
 #else
 
-#define b_log(...)
 #define b_log_i(...)
 #define b_log_w(...)
 #define b_log_e(...)
+#define b_log(...)
 
 #endif
+
+#define b_log_hex(buf, len)                  \
+    for (int ihex = 0; ihex < (len); ihex++) \
+    {                                        \
+        if ((ihex % 16) == 0)                \
+        {                                    \
+            b_log("\n");                     \
+        }                                    \
+        b_log("%02x ", (buf)[ihex]);         \
+    }
+
+#define b_assert_log(expr)                            \
+    do                                                \
+    {                                                 \
+        if (!(expr))                                  \
+        {                                             \
+            b_log_e("Assertion failed: %s\n", #expr); \
+            for (;;)                                  \
+            {                                         \
+            }                                         \
+        }                                             \
+    } while (0)
 
 /**
  * \}
@@ -156,8 +388,13 @@ extern "C" {
 void bLogOut(uint8_t type, const char *ptr_file, const char *ptr_func, uint32_t line,
              const char *fmt, ...);
 
+#if defined(__WEAKDEF)
 // 非串口打印日志时，用户重新实现此函数。
 void bLogOutputBytes(uint8_t *pbuf, uint16_t len);
+#else
+// 不支持弱函数，则通过函数注册进去
+void bLogRegOutputBytes(void (*pfn)(uint8_t *pbuf, uint16_t len));
+#endif
 
 #endif
 /**

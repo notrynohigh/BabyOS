@@ -27,7 +27,6 @@ typedef bHalSPIIf_t bLTC2662IUH_12_HalIf_t;
 
 typedef union LT_union_int16_2bytes
 {
-    int16_t  LT_int16;
     uint16_t LT_uint16;
     uint8_t  LT_byte[2];
 } U_LT_Write;
@@ -100,6 +99,8 @@ C3(bit7) 	C2(bit6) 	C1(bit5) 	C0(bit4)
 typedef enum
 {
     WRITE_SPAN_TO_N          = 0x60,
+    WRITE_CODE_TO_N          = 0x00,
+    UPDATE_N                 = 0x10,
     WRITE_CODE_TO_N_UPDATE_N = 0x30,
     POWER_DOWN_N             = 0x40,
 } LTC2662_CMD_DATA_t;
