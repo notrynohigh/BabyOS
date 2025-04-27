@@ -305,8 +305,8 @@ static int _bQMC5883PDefaultCfg(bDriverInterface_t *pdrv)
     {
         return -1;
     }
-    //+-2G
-    control_0x0b_reg_val = 0x0c;
+    //+-8G
+    control_0x0b_reg_val = 0x08;
     if (_bQMC5883PWriteCheckRegs(pdrv, 0x0b, &control_0x0b_reg_val, 1) < 0)
     {
         return -1;
