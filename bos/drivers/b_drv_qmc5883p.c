@@ -276,18 +276,16 @@ static int _bQMC5883PCtl(struct bDriverIf *pdrv, uint8_t cmd, void *param)
         {
             if (_bQMC5883PReadCheckRegs(pdrv, STATUS_REG, &read_dat, 1) < 0)
             {
-                retval = -1;
+                return -1;
+            }
+
+            if (read_dat & 0x01)
+            {
+                retval = QMC5883P_NEWDATA_READY;
             }
             else
             {
-                if (read_dat & 0x01)
-                {
-                    retval = QMC5883P_NEWDATA_READY;
-                }
-                else
-                {
-                    retval = QMC5883P_NEWDATA_NOT_READY;
-                }
+                retval = QMC5883P_NEWDATA_NOT_READY;
             }
         }
         break;
