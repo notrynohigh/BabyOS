@@ -340,9 +340,9 @@ static int _bQMC5883PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
 
-    hw_d[0] = (float)(((mag_data[1]) << 8) | mag_data[0]);
-    hw_d[1] = (float)(((mag_data[3]) << 8) | mag_data[2]);
-    hw_d[2] = (float)(((mag_data[5]) << 8) | mag_data[4]);
+    hw_d[0] = (float)((short)(U82U16(mag_data[1], mag_data[0])));
+    hw_d[1] = (float)((short)(U82U16(mag_data[3], mag_data[2])));
+    hw_d[2] = (float)((short)(U82U16(mag_data[5], mag_data[4])));
 
     // Unit:mG  1G = 100uT = 1000mG
     // printf("Hx=%d, Hy=%d, Hz=%d\n",hw_d[0],hw_d[1],hw_d[2]);
