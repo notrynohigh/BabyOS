@@ -250,10 +250,16 @@ static int _bQMC5883PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
 
+    float temp = 0.0f;
+
     ptmp->mag_arr[0] = (float)((short)(U82U16(mag_data[1], mag_data[0]))) / 37.5f;
     ptmp->mag_arr[1] = (float)((short)(U82U16(mag_data[3], mag_data[2]))) / 37.5f;
     ptmp->mag_arr[2] = (float)((short)(U82U16(mag_data[5], mag_data[4]))) / 37.5f;
     // b_log("mag_dat:%f %f %f\n", ptmp->mag_arr[0], ptmp->mag_arr[1], ptmp->mag_arr[2]);
+
+    temp             = ptmp->mag_arr[1];
+    ptmp->mag_arr[1] = ptmp->mag_arr[0];
+    ptmp->mag_arr[0] = (-1.0f) * temp;
 
     return 0;
 }
