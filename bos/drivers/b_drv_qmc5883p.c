@@ -200,11 +200,13 @@ static int _bQMC5883PDefaultCfg(bDriverInterface_t *pdrv)
     {
         return -1;
     }
+    //+-8G
     control_0x0b_reg_val = 0x08;
     if (_bQMC5883PWriteCheckRegs(pdrv, 0x0b, &control_0x0b_reg_val, 1) < 0)
     {
         return -1;
     }
+    // Normal Mode,ODR = 200Hz,
     control_0x0a_reg_val = 0xcd;
     if (_bQMC5883PWriteCheckRegs(pdrv, 0x0a, &control_0x0a_reg_val, 1) < 0)
     {
