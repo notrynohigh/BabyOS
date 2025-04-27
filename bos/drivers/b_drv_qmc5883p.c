@@ -45,6 +45,23 @@
 
 #define MAG_DATA_LEN 6
 
+enum
+{
+    AXIS_X = 0,
+    AXIS_Y = 1,
+    AXIS_Z = 2,
+
+    AXIS_TOTAL
+};
+
+typedef struct
+{
+    signed char   sign[3];
+    unsigned char map[3];
+} QMC5883P_map;
+
+static QMC5883P_map c_map;
+
 /**
  * }
  */
@@ -82,6 +99,92 @@ bDRIVER_HALIF_TABLE(bQMC5883P_HalIf_t, DRIVER_NAME);
  * \defgroup QMC5883P_Private_Functions
  * \{
  */
+
+static void qmc5883p_set_layout(int layout)
+{
+    if (layout == 0)
+    {
+        c_map.sign[AXIS_X] = 1;
+        c_map.sign[AXIS_Y] = 1;
+        c_map.sign[AXIS_Z] = 1;
+        c_map.map[AXIS_X]  = AXIS_X;
+        c_map.map[AXIS_Y]  = AXIS_Y;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+    else if (layout == 1)
+    {
+        c_map.sign[AXIS_X] = -1;
+        c_map.sign[AXIS_Y] = 1;
+        c_map.sign[AXIS_Z] = 1;
+        c_map.map[AXIS_X]  = AXIS_Y;
+        c_map.map[AXIS_Y]  = AXIS_X;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+    else if (layout == 2)
+    {
+        c_map.sign[AXIS_X] = -1;
+        c_map.sign[AXIS_Y] = -1;
+        c_map.sign[AXIS_Z] = 1;
+        c_map.map[AXIS_X]  = AXIS_X;
+        c_map.map[AXIS_Y]  = AXIS_Y;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+    else if (layout == 3)
+    {
+        c_map.sign[AXIS_X] = 1;
+        c_map.sign[AXIS_Y] = -1;
+        c_map.sign[AXIS_Z] = 1;
+        c_map.map[AXIS_X]  = AXIS_Y;
+        c_map.map[AXIS_Y]  = AXIS_X;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+    else if (layout == 4)
+    {
+        c_map.sign[AXIS_X] = -1;
+        c_map.sign[AXIS_Y] = 1;
+        c_map.sign[AXIS_Z] = -1;
+        c_map.map[AXIS_X]  = AXIS_X;
+        c_map.map[AXIS_Y]  = AXIS_Y;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+    else if (layout == 5)
+    {
+        c_map.sign[AXIS_X] = 1;
+        c_map.sign[AXIS_Y] = 1;
+        c_map.sign[AXIS_Z] = -1;
+        c_map.map[AXIS_X]  = AXIS_Y;
+        c_map.map[AXIS_Y]  = AXIS_X;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+    else if (layout == 6)
+    {
+        c_map.sign[AXIS_X] = 1;
+        c_map.sign[AXIS_Y] = -1;
+        c_map.sign[AXIS_Z] = -1;
+        c_map.map[AXIS_X]  = AXIS_X;
+        c_map.map[AXIS_Y]  = AXIS_Y;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+    else if (layout == 7)
+    {
+        c_map.sign[AXIS_X] = -1;
+        c_map.sign[AXIS_Y] = -1;
+        c_map.sign[AXIS_Z] = -1;
+        c_map.map[AXIS_X]  = AXIS_Y;
+        c_map.map[AXIS_Y]  = AXIS_X;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+    else
+    {
+        c_map.sign[AXIS_X] = 1;
+        c_map.sign[AXIS_Y] = 1;
+        c_map.sign[AXIS_Z] = 1;
+        c_map.map[AXIS_X]  = AXIS_X;
+        c_map.map[AXIS_Y]  = AXIS_Y;
+        c_map.map[AXIS_Z]  = AXIS_Z;
+    }
+}
+
 /**
  * \brief        读寄存器并且判定是否iic失败
  * \param pdrv
@@ -172,6 +275,8 @@ static int _bQMC5883PDefaultCfg(bDriverInterface_t *pdrv)
 
     bHalDelayMs(5);
 
+    qmc5883p_set_layout(0);
+
     /*
     qmc5883p_write_reg(0x0a, 0x00);
     qmc5883p_delay(1);
@@ -200,8 +305,8 @@ static int _bQMC5883PDefaultCfg(bDriverInterface_t *pdrv)
     {
         return -1;
     }
-    //+-8G
-    control_0x0b_reg_val = 0x08;
+    //+-2G
+    control_0x0b_reg_val = 0x0c;
     if (_bQMC5883PWriteCheckRegs(pdrv, 0x0b, &control_0x0b_reg_val, 1) < 0)
     {
         return -1;
@@ -215,28 +320,13 @@ static int _bQMC5883PDefaultCfg(bDriverInterface_t *pdrv)
 
     bHalDelayMs(1);
 
-    uint8_t ctrl_value = 0x00;
-    if (_bQMC5883PReadCheckRegs(pdrv, CONTROL_1_REG, &ctrl_value, 1) < 0)
-    {
-        return -1;
-    }
-    b_log("QMC5883P  0x%x=0x%x \r\n", CONTROL_1_REG, ctrl_value);
-    if (_bQMC5883PReadCheckRegs(pdrv, CONTROL_2_REG, &ctrl_value, 1) < 0)
-    {
-        return -1;
-    }
-    b_log("QMC5883P  0x%x=0x%x \r\n", CONTROL_2_REG, ctrl_value);
-    if (_bQMC5883PReadCheckRegs(pdrv, 0x0d, &ctrl_value, 1) < 0)
-    {
-        return -1;
-    }
-    b_log("QMC5883P  0x%x=0x%x \r\n", 0x0d, ctrl_value);
-
     return 0;
 }
 
 static int _bQMC5883PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
+    float              hw_d[3] = {0};
+    float              raw_c[3];
     uint8_t            mag_data[6];
     bQMC5883P_3Axis_t *ptmp = (bQMC5883P_3Axis_t *)pbuf;
 
@@ -250,16 +340,19 @@ static int _bQMC5883PRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
 
-    float temp = 0.0f;
+    hw_d[0] = (float)(((mag_data[1]) << 8) | mag_data[0]);
+    hw_d[1] = (float)(((mag_data[3]) << 8) | mag_data[2]);
+    hw_d[2] = (float)(((mag_data[5]) << 8) | mag_data[4]);
 
-    ptmp->mag_arr[0] = (float)((short)(U82U16(mag_data[1], mag_data[0]))) / 37.5f;
-    ptmp->mag_arr[1] = (float)((short)(U82U16(mag_data[3], mag_data[2]))) / 37.5f;
-    ptmp->mag_arr[2] = (float)((short)(U82U16(mag_data[5], mag_data[4]))) / 37.5f;
-    // b_log("mag_dat:%f %f %f\n", ptmp->mag_arr[0], ptmp->mag_arr[1], ptmp->mag_arr[2]);
+    // Unit:mG  1G = 100uT = 1000mG
+    // printf("Hx=%d, Hy=%d, Hz=%d\n",hw_d[0],hw_d[1],hw_d[2]);
+    raw_c[AXIS_X] = (int)(c_map.sign[AXIS_X] * hw_d[c_map.map[AXIS_X]]);
+    raw_c[AXIS_Y] = (int)(c_map.sign[AXIS_Y] * hw_d[c_map.map[AXIS_Y]]);
+    raw_c[AXIS_Z] = (int)(c_map.sign[AXIS_Z] * hw_d[c_map.map[AXIS_Z]]);
 
-    temp             = ptmp->mag_arr[1];
-    ptmp->mag_arr[1] = ptmp->mag_arr[0];
-    ptmp->mag_arr[0] = (-1.0f) * temp;
+    ptmp->mag_arr[0] = (float)raw_c[0] / 37.5f;
+    ptmp->mag_arr[1] = (float)raw_c[1] / 37.5f;
+    ptmp->mag_arr[2] = (float)raw_c[2] / 37.5f;
 
     return 0;
 }
