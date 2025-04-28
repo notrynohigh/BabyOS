@@ -275,18 +275,8 @@ static int _bQMC5883PDefaultCfg(bDriverInterface_t *pdrv)
 
     bHalDelayMs(5);
 
-    qmc5883p_set_layout(0);
+    qmc5883p_set_layout(3);
 
-    /*
-    qmc5883p_write_reg(0x0a, 0x00);
-    qmc5883p_delay(1);
-    qmc5883p_write_reg(0x0d, 0x40);
-
-    qmc5883p_write_reg(0x29, 0x06);
-    //qmc5883p_write_reg(0x0a, 0x0F);//0XA9=ODR =100HZ 0XA5 = 50HZ
-    qmc5883p_write_reg(0x0b, 0x00); //30 GS
-    qmc5883p_write_reg(0x0a, 0xcd);
-    */
     control_0x0a_reg_val = 0;
     if (_bQMC5883PWriteCheckRegs(pdrv, 0x0a, &control_0x0a_reg_val, 1) < 0)
     {
