@@ -307,7 +307,20 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
         memcpy(info.name, info_param->name, strlen((const char *)info_param->name));
         B_SAFE_INVOKE(pattr->callback, B_PROTO_DEVICEINFO, &info, pattr->arg);
     }
+    else if (phead->cmd == PROTO_CMD_FDATA)
+    {
+        bProtoReqFileData_t reqfile;
+        memset(&reqfile, 0, sizeof(reqfile));
+
+        bProtoReqFDataParam_t *reqfile_param =
+            (bProtoReqFDataParam_t *)(&in[sizeof(bProtocolHead_t)]);
+        reqfile.offset = reqfile_param->seq * 512;
+        reqfile.size   = 512;
+        B_SAFE_INVOKE(pattr->callback, B_PROTO_REQ_FILE_DATA, &reqfile, pattr->arg);
+    }
 #else
+    bProtoUIDParam_t     uid;
+    bProtoDevInfoParam_t devinfo;
     if (phead->cmd == PROTO_CMD_TEST)
     {
         ;
@@ -393,7 +406,6 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
     }
     else if (phead->cmd == PROTO_CMD_GET_UID)
     {
-        bProtoUIDParam_t uid;
         memset(&uid, 0, sizeof(bProtoUIDParam_t));
         B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_MCU_UID, (uint8_t *)&uid, sizeof(uid));
         if (uid.len == 0)
@@ -405,13 +417,12 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
     }
     else if (phead->cmd == PROTO_CMD_DEVICEINFO)
     {
-        bProtoDevInfoParam_t devinfo;
         memset(&devinfo, 0, sizeof(bProtoDevInfoParam_t));
         B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_DEVICE_VERSION, &devinfo.version[0],
                       sizeof(devinfo.version));
         B_SAFE_INVOKE(pattr->get_info, B_PROTO_INFO_DEVICE_NAME, &devinfo.name[0],
                       sizeof(devinfo.name));
-        if (strlen(devinfo.version) == 0 || strlen(devinfo.name) == 0)
+        if (strlen((const char *)devinfo.version) == 0 || strlen((const char *)devinfo.name) == 0)
         {
             return 0;
         }
@@ -424,7 +435,7 @@ static int _bProtocolParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out
     {
         length = _bProtocolPack(pattr, phead->cmd, NULL, 0, out, o_len);
     }
-    else
+    else if (reply_p)
     {
         length = _bProtocolPack(pattr, phead->cmd, reply_p, reply_len, out, o_len);
     }

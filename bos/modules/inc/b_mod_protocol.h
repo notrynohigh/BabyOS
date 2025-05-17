@@ -105,15 +105,16 @@ typedef enum
 
 #if (defined(PROTO_ROLE_HOST) && (PROTO_ROLE_HOST == 1))
 
-#define PROTOCOL_NEED_DEFAULT_ACK(c)                                                            \
-    (c == PROTO_CMD_TEST || c == PROTO_CMD_SETCFGNET_MODE || c == PROTO_CMD_SET_VOICE_VOLUME || \
-     c == PROTO_CMD_SET_VOICE_SWITCH)
+#define PROTOCOL_NEED_DEFAULT_ACK(c)                             \
+    ((c) == PROTO_CMD_TEST || (c) == PROTO_CMD_SETCFGNET_MODE || \
+     (c) == PROTO_CMD_SET_VOICE_VOLUME || (c) == PROTO_CMD_SET_VOICE_SWITCH)
 
 #else
 
-#define PROTOCOL_NEED_DEFAULT_ACK(c)                                                           \
-    (c == PROTO_CMD_TEST || c == PROTO_CMD_UTC || PROTO_CMD_TRANS_FILE || PROTO_CMD_FW_INFO || \
-     c == PROTO_CMD_WRITE_SN || c == PROTO_CMD_TTS_CONTENT || c == PROTO_CMD_TSL_INVOKE)
+#define PROTOCOL_NEED_DEFAULT_ACK(c)                                                          \
+    ((c) == PROTO_CMD_TEST || (c) == PROTO_CMD_UTC || (c) == PROTO_CMD_TRANS_FILE ||          \
+     (c) == PROTO_CMD_FW_INFO || (c) == PROTO_CMD_WRITE_SN || (c) == PROTO_CMD_TTS_CONTENT || \
+     (c) == PROTO_CMD_TSL_INVOKE)
 
 #endif
 /**
