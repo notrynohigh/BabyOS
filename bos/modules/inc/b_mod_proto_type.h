@@ -119,6 +119,34 @@ typedef struct
     uint8_t sn[64];
 } bProtoSN_t;
 
+typedef struct
+{
+    uint8_t version[32];
+    uint8_t name[32];
+} bProtoDevInfo_t;
+
+typedef struct
+{
+    uint8_t type;  // 配网方式 1字节  AP配网（0）  BLE配网（1）
+    uint8_t ssid[32];
+    uint8_t passwd[64];
+} bProtoCfgNetMode_t;
+
+typedef struct
+{
+    uint8_t  ssid[32];  // 连接的热点名
+    uint32_t ip;        // 例如：uint32_t ip = 0xC0A80101（对应 192.168.1.1）：
+    uint32_t gw;
+    uint32_t mask;
+} bProtoNetInfo_t;
+
+typedef enum
+{
+    VOICE_STAT_IDLE,
+    VOICE_STAT_LISTEN,
+    VOICE_STAT_PLAY
+} bProtoVoiceState_t;
+
 #define B_PROTO_TRANS_RESULT_OK 0
 #define B_PROTO_TRANS_RESULT_CHECKSUM_FAIL 1
 #define B_PROTO_TRANS_RESULT_NAME_ERROR 2
@@ -127,12 +155,14 @@ typedef struct
 
 typedef enum
 {
-    B_XYMODEM_CMD_START,        // package [null],
-    B_XYMODEM_CMD_STOP,         // package [null]
-    B_XYMODEM_DATA,             // callback [bXYModemCbParam_t]
-    B_MODBUS_CMD_READ_REG,      // pakage [bModbusMasterRead_t], callback [bModbusCbParm_t]
-    B_MODBUS_CMD_WRITE_REG,     // pakage [bModbusMasterWriteRegs_t], callback [bModbusCbParm_t]
-    B_MODBUS_CMD_WRITE_REGS,    // pakage [bModbusMasterWriteRegs_t], callback [bModbusCbParm_t]
+    B_XYMODEM_CMD_START,  // package [null],
+    B_XYMODEM_CMD_STOP,   // package [null]
+    B_XYMODEM_DATA,       // callback [bXYModemCbParam_t]
+
+    B_MODBUS_CMD_READ_REG,    // pakage [bModbusMasterRead_t], callback [bModbusCbParm_t]
+    B_MODBUS_CMD_WRITE_REG,   // pakage [bModbusMasterWriteRegs_t], callback [bModbusCbParm_t]
+    B_MODBUS_CMD_WRITE_REGS,  // pakage [bModbusMasterWriteRegs_t], callback [bModbusCbParm_t]
+
     B_PROTO_TRANS_FILE_INFO,    // callback [bProtoFileInfo_t]
     B_PROTO_OTA_FILE_INFO,      // callback [bProtoFileInfo_t]
     B_PROTO_SET_FILE_LOCATION,  // callback [bProtoFileLocation_t]
@@ -141,6 +171,19 @@ typedef enum
     B_PROTO_TRANS_FILE_RESULT,  // package [uint8_t]  B_PROTO_TRANS_RESULT_xxxx
     B_PROTO_UTC,                // callback [bProtoUtc_t]
     B_PROTO_WRITE_SN,           // callback [bProtoSN_t]
+    B_PROTO_DEVICEINFO,         // callback [bProtoDevInfo_t]
+
+    B_PROTO_SETCFGNET_MODE,  // 设置进入配网模式 pakage [bProtoCfgNetMode_t]
+    B_PROTO_GET_NETINFO,     // 获取网络信息 callback [bProtoNetInfo_t]
+
+    B_PROTO_SET_VOICE_SWITCH,  // 设置语音开关 pakage [uint8_t]
+    B_PROTO_SET_VOICE_VOLUME,  // 设置语音音量 pakage [uint8_t]
+    B_PROTO_GET_VOICE_VOLUME,  // 获取语音音量 callback [uint8_t]
+    B_PROTO_GET_VOICE_STATE,   // 获取语音状态 callback [uint8_t]  @ref bProtoVoiceState_t
+    B_PROTO_TTS_CONTENT,       // 获取语音状态 callback [char *]
+
+    B_PROTO_TSL_INVOKE,  // 物模型调用方法 callback [char *]
+
     B_PROTO_CMD_NUMBER,
 } bProtoCmd_t;
 
@@ -153,6 +196,17 @@ typedef enum
                                          // in: 寄存器地址  out:寄存器值 共用buf
     B_PROTO_INFO_MCU_UID,    // 获取MCU UID，放数据至buf： UID长度(1byte)UID内容(nbytes)
     B_PROTO_INFO_DEVICE_SN,  // 设备SN，放数据至buf： SN长度(1byte)SN内容(nbytes)
+    B_PROTO_INFO_DEVICE_VERSION,  // 设备版本 char *
+    B_PROTO_INFO_DEVICE_NAME,     // 设备型号（名称） char *
+
+    B_PROTO_INFO_GET_SSID,  // 获取设备当前连接的SSID char *
+    B_PROTO_INFO_GET_IP,    // 获取设备的IP   uint32_t
+    B_PROTO_INFO_GET_GW,    // 获取设备的网关 uint32_t
+    B_PROTO_INFO_GET_MASK,  // 获取设备的掩码 uint32_t
+
+    B_PROTO_INFO_GET_VOICE_VOLUME,  // 获取语音音量 uint8_t
+    B_PROTO_INFO_GET_VOICE_STAT,    // 获取语音状态 uint8_t @ref bProtoVoiceState_t
+
     B_PROTO_INFO_NUMBER,
 } bProtoInfoType_t;
 

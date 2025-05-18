@@ -88,6 +88,28 @@ config _PROTO_ENABLE
     select _BOS_SERVICES_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
 
+choice
+    prompt "Protocol Role"
+    default PROTO_ROLE_MCU
+    depends on _PROTO_ENABLE
+    help
+        Select the role of the protocol user.
+        Choose 'MCU' if the protocol is used by the microcontroller.
+        Choose 'Host' if the protocol is used by the upper-level system.
+
+config PROTO_ROLE_MCU
+    bool "MCU"
+    help
+        Select this option if the protocol is used by the microcontroller.
+
+config PROTO_ROLE_HOST
+    bool "Host"
+    help
+        Select this option if the protocol is used by the upper-level system.
+
+endchoice
+    
+
 config PROTO_FID_SIZE
     int "Size of The Device ID Field 2 or 4 Bytes"
     default 4
