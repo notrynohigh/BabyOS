@@ -132,9 +132,13 @@ static int _bAHT20Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, ui
         uint8_t tmp[8];
         int32_t s32x  = 0;
         double  tmp_f = 0.001;
-        bHalI2CMemRead(_if, 0, 1, tmp, 7);
-        if ((_bAHT20CRC(tmp, 6) == tmp[6]) && ((tmp[0] & 0x98) == 0x18))
+        bHalI2CReadByte(_if, tmp, 7);
+        if ((_bAHT20CRC(tmp, 6) == tmp[6]))
         {
+            if ((tmp[0] & 0x98) != 0x18)
+            {
+                return -1;
+            }
             s32x = tmp[1];
             s32x = s32x << 8;
             s32x += tmp[2];
