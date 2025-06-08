@@ -101,6 +101,7 @@ extern "C" {
 #include "drivers/inc/b_drv_paj7620u2.h"
 #include "drivers/inc/b_drv_pcf8574.h"
 #include "drivers/inc/b_drv_qmc5883l.h"
+#include "drivers/inc/b_drv_qmc5883p.h"
 #include "drivers/inc/b_drv_qmi8658a.h"
 #include "drivers/inc/b_drv_rs485.h"
 #include "drivers/inc/b_drv_sd.h"
