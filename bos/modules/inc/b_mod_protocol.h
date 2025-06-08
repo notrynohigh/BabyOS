@@ -90,12 +90,33 @@ typedef enum
     PROTO_CMD_TRANS_FILE,
     PROTO_CMD_GET_UID,
     PROTO_CMD_WRITE_SN,
+    PROTO_CMD_TSL_INVOKE,
+    PROTO_CMD_DEVICEINFO,
+
+    PROTO_CMD_SETCFGNET_MODE = 0x30,
+    PROTO_CMD_GET_NETINFO,
+
+    PROTO_CMD_SET_VOICE_SWITCH = 0x40,
+    PROTO_CMD_SET_VOICE_VOLUME,
+    PROTO_CMD_GET_VOICE_VOLUME,
+    PROTO_CMD_GET_VOICE_STAT,
+    PROTO_CMD_TTS_CONTENT,
 } bProtocolCmd_t;
 
-#define PROTOCOL_NEED_DEFAULT_ACK(c)                                                           \
-    (c == PROTO_CMD_TEST || c == PROTO_CMD_UTC || PROTO_CMD_TRANS_FILE || PROTO_CMD_FW_INFO || \
-     c == PROTO_CMD_GET_UID || c == PROTO_CMD_WRITE_SN)
+#if (defined(PROTO_ROLE_HOST) && (PROTO_ROLE_HOST == 1))
 
+#define PROTOCOL_NEED_DEFAULT_ACK(c)                             \
+    ((c) == PROTO_CMD_TEST || (c) == PROTO_CMD_SETCFGNET_MODE || \
+     (c) == PROTO_CMD_SET_VOICE_VOLUME || (c) == PROTO_CMD_SET_VOICE_SWITCH)
+
+#else
+
+#define PROTOCOL_NEED_DEFAULT_ACK(c)                                                          \
+    ((c) == PROTO_CMD_TEST || (c) == PROTO_CMD_UTC || (c) == PROTO_CMD_TRANS_FILE ||          \
+     (c) == PROTO_CMD_FW_INFO || (c) == PROTO_CMD_WRITE_SN || (c) == PROTO_CMD_TTS_CONTENT || \
+     (c) == PROTO_CMD_TSL_INVOKE)
+
+#endif
 /**
 |      |                    |                     |       |          |       |
 | :--- | ------------------ | ------------------- | ----- | -------- | ----- |
@@ -162,7 +183,7 @@ typedef struct
 typedef struct
 {
     uint8_t len;
-    uint8_t uid[1];
+    uint8_t uid[64];
 } bProtoUIDParam_t;
 
 typedef struct
@@ -170,6 +191,27 @@ typedef struct
     uint8_t len;
     uint8_t sn[1];
 } bProtoSNParam_t;
+
+typedef struct
+{
+    uint8_t type;  // 配网方式 1字节  AP配网（0）  BLE配网（1）
+    uint8_t ssid[32];
+    uint8_t passwd[64];
+} bProtoCfgNetModeParam_t;
+
+typedef struct
+{
+    uint8_t  ssid[32];  // 连接的热点名
+    uint32_t ip;        // 例如：uint32_t ip = 0xC0A80101（对应 192.168.1.1）：
+    uint32_t gw;
+    uint32_t mask;
+} bProtoNetInfoParam_t;
+
+typedef struct
+{
+    uint8_t version[16];
+    uint8_t name[16];
+} bProtoDevInfoParam_t;
 
 #pragma pack()
 
