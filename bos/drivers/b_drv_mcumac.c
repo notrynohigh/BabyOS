@@ -32,6 +32,8 @@
 /*Includes ----------------------------------------------*/
 #include "drivers/inc/b_drv_mcumac.h"
 
+#include "core/inc/b_task.h"
+
 /**
  * \addtogroup B_DRIVER
  * \{
@@ -76,7 +78,7 @@
 bDRIVER_HALIF_TABLE(bMCUMAC_HalIf_t, DRIVER_NAME);
 
 static bMCUMACPrivate_t bMCUMACRunInfo[bDRIVER_HALIF_NUM(bMCUMAC_HalIf_t, DRIVER_NAME)];
-
+static bTaskAttr_t      bMcuMacTaskAttr;
 /**
  * \}
  */
@@ -117,7 +119,7 @@ static int _bMCUMACCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     switch (cmd)
     {
-        case bCMD_MAC_ADDRESS:
+        case bCMD_GET_MAC_ADDRESS:
         {
             if (param == NULL)
             {
@@ -127,15 +129,23 @@ static int _bMCUMACCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             bHalEthGetMacAddr(&paddr->address[0], sizeof(paddr->address));
         }
         break;
+        case bCMD_SET_MAC_ADDRESS:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            bMacAddress_t *paddr = (bMacAddress_t *)param;
+            bHalEthSetMacAddr(&paddr->address[0], sizeof(paddr->address));
+        }
+        break;
         case bCMD_GET_LINK_STATE:
         {
             if (param == NULL)
             {
                 return -1;
             }
-            uint8_t link_state  = 0;
-            link_state          = bHalEthIsLinked();
-            *((uint8_t *)param) = link_state;
+            *((uint8_t *)param) = bMCUMACRunInfo[pdrv->drv_no].link_state;
         }
         break;
         case bCMD_REG_BUF_LIST:
@@ -147,17 +157,48 @@ static int _bMCUMACCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             bHalEthInit((bHalBufList_t *)param);
         }
         break;
-        case bCMD_LINK_STATE_CHANGE:
+        case bCMD_REG_LINK_CALLBACK:
         {
             if (param == NULL)
             {
                 return -1;
             }
-            bHalEthLinkUpdate(*((uint8_t *)param));
+            bMCUMACRunInfo[pdrv->drv_no].plink_state_cb = (void (*)(uint8_t))param;
+            bMCUMACRunInfo[pdrv->drv_no].link_state     = 0;
         }
         break;
     }
     return 0;
+}
+
+PT_THREAD(_bMcuMacLinkTask)(struct pt *pt, void *arg)
+{
+    static uint8_t dev_count  = 0;
+    uint8_t        i          = 0;
+    uint8_t        link_state = 0;
+    B_TASK_INIT_BEGIN();
+    dev_count = sizeof(bMCUMACRunInfo) / sizeof(bMCUMACPrivate_t);
+    B_TASK_INIT_END();
+
+    PT_BEGIN(pt);
+    while (1)
+    {
+        for (i = 0; i < dev_count; i++)
+        {
+            link_state = bHalEthIsLinked();  // MCU 内置MAC可控制器默认只有1个
+            if (link_state != bMCUMACRunInfo[i].link_state)
+            {
+                bMCUMACRunInfo[i].link_state = link_state;
+                if (bMCUMACRunInfo[i].plink_state_cb)
+                {
+                    bMCUMACRunInfo[i].plink_state_cb(link_state);
+                }
+                bHalEthLinkUpdate(link_state);
+            }
+        }
+        bTaskDelayMs(pt, 500);
+    }
+    PT_END(pt);
 }
 
 /**
@@ -171,10 +212,12 @@ static int _bMCUMACCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 int bMCUMAC_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bMCUMAC_Init);
-    pdrv->read        = _bMCUMACRead;
-    pdrv->write       = _bMCUMACWrite;
-    pdrv->ctl         = _bMCUMACCtl;
+    pdrv->read  = _bMCUMACRead;
+    pdrv->write = _bMCUMACWrite;
+    pdrv->ctl   = _bMCUMACCtl;
+    memset(&bMCUMACRunInfo[pdrv->drv_no], 0, sizeof(bMCUMACPrivate_t));
     pdrv->_private._p = &bMCUMACRunInfo[pdrv->drv_no];
+    bTaskCreate("link", _bMcuMacLinkTask, NULL, &bMcuMacTaskAttr);
     return 0;
 }
 
@@ -183,7 +226,7 @@ int bMCUMAC_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_MCUMAC, bMCUMAC_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

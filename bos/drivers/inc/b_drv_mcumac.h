@@ -58,7 +58,9 @@ typedef struct
 
 typedef struct
 {
+    uint8_t       link_state;
     bHalBufList_t buf_list;
+    void (*plink_state_cb)(uint8_t);
 } bMCUMACPrivate_t;
 
 /**

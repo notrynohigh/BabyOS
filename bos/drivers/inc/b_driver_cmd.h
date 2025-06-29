@@ -327,10 +327,11 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // MAC Device Command and Param
 ///////////////////////////////////////////////////////////
-#define bCMD_MAC_ADDRESS 0        // bMacAddress_t
-#define bCMD_GET_LINK_STATE 1     // uint8_t  0 or 1 (linked)
-#define bCMD_LINK_STATE_CHANGE 2  // uint8_t  0 or 1 (linked)
-#define bCMD_REG_BUF_LIST 3       // bHalBufList_t
+#define bCMD_GET_MAC_ADDRESS 0    // bMacAddress_t
+#define bCMD_SET_MAC_ADDRESS 1    // bMacAddress_t
+#define bCMD_GET_LINK_STATE 2     // uint8_t  0 or 1 (linked)
+#define bCMD_REG_LINK_CALLBACK 3  // void (*link_state_cb)(uint8_t);
+#define bCMD_REG_BUF_LIST 4       // bHalBufList_t
 
 typedef struct
 {
@@ -430,13 +431,13 @@ typedef enum
 ///////////////////////////////////////////////////////////
 typedef struct
 {
-	uint16_t CellVoltage [16] ;
-	float Temperature [3] ;
-	uint16_t Stack_Voltage ;
-	uint16_t Pack_Voltage ;
-	uint16_t LD_Voltage ;
-	uint16_t Pack_Current;
-	uint16_t AlarmBits ;
+    uint16_t CellVoltage[16];
+    float    Temperature[3];
+    uint16_t Stack_Voltage;
+    uint16_t Pack_Voltage;
+    uint16_t LD_Voltage;
+    uint16_t Pack_Current;
+    uint16_t AlarmBits;
 } bBMS_AFE_BQ769X2_Value_t;
 
 #ifdef __cplusplus

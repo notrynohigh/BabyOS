@@ -82,6 +82,7 @@ typedef struct
  */
 int     bMcuEthInit(bHalBufList_t *pbuf_list);
 int     bMcuEthGetMacAddr(uint8_t *paddr, uint8_t len);
+int     bMcuEthSetMacAddr(uint8_t *paddr, uint8_t len);
 uint8_t bMcuEthIsLinked(void);
 int     bMcuEthLinkUpdate(uint8_t link_state);
 int     bMcuEthReceive(void **pbuf, uint32_t *plen);
@@ -90,6 +91,7 @@ int     bMcuEthTransmit(void *pbuf, uint32_t len);
 //---------------------------------------------------------------------------------------
 int     bHalEthInit(bHalBufList_t *pbuf_list);
 int     bHalEthGetMacAddr(uint8_t *paddr, uint8_t len);
+int     bHalEthSetMacAddr(uint8_t *paddr, uint8_t len);
 uint8_t bHalEthIsLinked(void);
 int     bHalEthLinkUpdate(uint8_t link_state);
 int     bHalEthReceive(void **pbuf, uint32_t *plen);

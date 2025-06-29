@@ -236,7 +236,7 @@ void bLogOut(uint8_t type, const char *ptr_file, const char *ptr_func, uint32_t 
         }
         if (param & B_LOG_PARAM_LINE)
         {
-            str_len = sprintf(line_number, "%ld", line);
+            str_len = sprintf(line_number, "%u", line);
             if (str_len < 0)
             {
                 return;

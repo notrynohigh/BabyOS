@@ -202,9 +202,8 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
     while (1)
     {
         bNtpPcb.sockfd = bSocket(B_TRANS_CONN_UDP, _bNtpConnCallback, NULL);
-        if (bNtpPcb.sockfd < 0)
+        if (SOCKFD_IS_INVALID(bNtpPcb.sockfd))
         {
-            b_log_e("socket fail...\r\n");
             break;
         }
         b_log("sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
@@ -431,7 +430,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
             break;  // task end
         }
         http->sockfd = bSocket(B_TRANS_CONN_TCP, _bHttpTransCb, http);
-        if (http->sockfd < 0)
+        if (SOCKFD_IS_INVALID(http->sockfd))
         {
             event = B_HTTP_EVENT_ERROR;
             param = NULL;
@@ -573,6 +572,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
 
 int bTcpipSrvInit()
 {
+    bTcpIpInit(_TCPIP_NETCARD_DEVNO);
     return 0;
 }
 

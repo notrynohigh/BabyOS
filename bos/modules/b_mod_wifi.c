@@ -39,7 +39,7 @@
 #include "utils/inc/b_util_log.h"
 #include "utils/inc/b_util_memp.h"
 
-#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
 #include "modules/inc/b_mod_netif/b_mod_trans.h"
 #include "utils/inc/b_util_fifo.h"
 
@@ -242,7 +242,7 @@ static void _bWifiConnApHandle(bWifiDrvEvent_t event, void *arg, void (*release)
 
 static void _bWifiDrvCb(bWifiDrvEvent_t event, void *arg, void (*release)(void *), void *user_data)
 {
-#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
     bTrans_t *ptrans = (bTrans_t *)user_data;
 #endif
     bWifiApInfo_t apinfo;
@@ -257,7 +257,7 @@ static void _bWifiDrvCb(bWifiDrvEvent_t event, void *arg, void (*release)(void *
         bTcpUdpData_t *pdat = (bTcpUdpData_t *)arg;
         if (pdat->len > 0 && pdat->pbuf != NULL)
         {
-#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
             struct list_head *pos    = NULL;
             bTrans_t         *ptrans = NULL;
             list_for_each(pos, &bWifiTransList)
@@ -325,7 +325,7 @@ static void _bWifiDrvCb(bWifiDrvEvent_t event, void *arg, void (*release)(void *
     {
         if (event == B_EVT_CONN_TCP_SERVER_OK)
         {
-#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
             if (ptrans != NULL)
             {
                 ptrans->writeable = 1;
@@ -339,7 +339,7 @@ static void _bWifiDrvCb(bWifiDrvEvent_t event, void *arg, void (*release)(void *
     {
         if (event == B_EVT_CONN_UDP_SERVER_OK)
         {
-#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
             if (ptrans != NULL)
             {
                 ptrans->writeable = 1;
@@ -627,7 +627,7 @@ int bWifiSend(const char *remote, uint16_t port, uint8_t *pbuf, uint16_t len)
     return retval;
 }
 
-#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+#if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
 
 int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
 {

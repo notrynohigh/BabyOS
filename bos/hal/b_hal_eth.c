@@ -55,6 +55,11 @@ __WEAKDEF int bMcuEthGetMacAddr(uint8_t *paddr, uint8_t len)
     return -1;
 }
 
+__WEAKDEF int bMcuEthSetMacAddr(uint8_t *paddr, uint8_t len)
+{
+    return -1;
+}
+
 __WEAKDEF uint8_t bMcuEthIsLinked()
 {
     return 0;
@@ -94,6 +99,15 @@ int bHalEthGetMacAddr(uint8_t *paddr, uint8_t len)
         return -1;
     }
     return bMcuEthGetMacAddr(paddr, len);
+}
+
+int bHalEthSetMacAddr(uint8_t *paddr, uint8_t len)
+{
+    if (paddr == NULL || len == 0)
+    {
+        return -1;
+    }
+    return bMcuEthSetMacAddr(paddr, len);
 }
 
 uint8_t bHalEthIsLinked()

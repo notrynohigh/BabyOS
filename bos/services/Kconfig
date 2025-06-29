@@ -16,7 +16,12 @@ config _TCPIP_SERVICE_ENABLE
     depends on _BOS_SERVICES_ENABLE 
     select _HTTP_PARSER_ENABLE
     select _MEMP_ENABLE
-    select _NETIF_ENABLE
+    select _TCPIP_ENABLE
+
+config _TCPIP_NETCARD_DEVNO
+    int "The network card device number used by the TCPIP module"
+    default 1
+    depends on _TCPIP_SERVICE_ENABLE
 
 config _NTP_SERVER_1
     string "ntp server 1"
@@ -61,7 +66,7 @@ config _MQTT_SERVICE_ENABLE
     default n
     depends on _BOS_SERVICES_ENABLE
     select _MEMP_ENABLE
-    select _NETIF_ENABLE
+    select _TCPIP_ENABLE
 
 choice
     prompt "Select Mqtt Broker"
