@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_device_list.h
+ * \file        b_drv_testmac.h
  * \version     v0.0.1
- * \date        2019/06/05
+ * \date        2022/10/29
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2019 Bean
+ * Copyright (c) 2022 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,58 +28,58 @@
  * SOFTWARE.
  *******************************************************************************
  */
+#ifndef __B_DRV_TESTMAC_H__
+#define __B_DRV_TESTMAC_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*Includes ----------------------------------------------*/
+#include "drivers/inc/b_driver.h"
+
 /**
-typedef enum
-{
-    B_DRIVER_NULL = 0,
-    B_DRIVER_MCP4018,
-    B_DRIVER_LTC2662IUH_12,
-    B_DRIVER_ICM20948,
-    B_DRIVER_ICM42688P,
-    B_DRIVER_QMC5883L,
-    B_DRIVER_QMC5883P,
-    B_DRIVER_QMI8658A,
-    B_DRIVER_24CXX,
-    B_DRIVER_DS18B20,
-    B_DRIVER_ESP12F,
-    B_DRIVER_FM25CL,
-    B_DRIVER_ILI9320,
-    B_DRIVER_ILI9341,
-    B_DRIVER_KEY,
-    B_DRIVER_LIS3DH,
-    B_DRIVER_MATRIXKEYS,
-    B_DRIVER_MCUFLASH,
-    B_DRIVER_MCUMAC,
-    B_DRIVER_OLED,
-    B_DRIVER_PAJ7620U2,
-    B_DRIVER_PCF8574,
-    B_DRIVER_RS485,
-    B_DRIVER_SD,
-    B_DRIVER_SPIFLASH,
-    B_DRIVER_SSD1289,
-    B_DRIVER_ST7789,
-    B_DRIVER_TESTFLASH,
-    B_DRIVER_TESTMAC,
-    B_DRIVER_XPT2046,
-    B_DRIVER_APDS9930,
-    B_DRIVER_ML307R,
-    B_DRIVER_HLW8112,
-    B_DRIVER_ADS124X,
-    B_DRIVER_TM1638,
-    B_DRIVER_TMP112,
-    B_DRIVER_BQ769X2,
-    B_DRIVER_AHT20,
-    B_DRIVER_NUMBER
-} bDriverNumber_t;
-*/
-/**
-    B_DEVICE_REG(dev_1, bDriverNumber_t, "description")
-    .....
-    B_DEVICE_REG(dev_n, bDriverNumber_t, "description")
+ * \addtogroup BABYOS
+ * \{
  */
 
-B_DEVICE_REG(bTESTMAC, B_DRIVER_TESTMAC, "testmac")
+/**
+ * \addtogroup B_DRIVER
+ * \{
+ */
 
-#undef B_DEVICE_REG
+/**
+ * \addtogroup TESTMAC
+ * \{
+ */
 
-/************************ Copyright (c) 2019 Bean *****END OF FILE****/
+/**
+ * \defgroup TESTMAC_Exported_TypesDefinitions
+ * \{
+ */
+
+typedef uint8_t bTESTMAC_HalIf_t;
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+
+/************************ Copyright (c) 2022 Bean *****END OF FILE****/

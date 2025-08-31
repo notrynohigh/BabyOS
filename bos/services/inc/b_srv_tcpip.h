@@ -110,7 +110,7 @@ typedef void (*pHttpCb_t)(bHttpEvent_t event, void *param, void *arg);
  * \{
  */
 
-int bTcpipSrvInit(void);
+int bTcpipSrvInit(bNetCardInfo_t *pnetcard, uint8_t number);
 
 int bSntpStart(uint32_t interval_s);
 

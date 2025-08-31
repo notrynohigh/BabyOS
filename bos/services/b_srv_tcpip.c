@@ -201,69 +201,56 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
     PT_BEGIN(pt);
     while (1)
     {
-        bNtpPcb.sockfd = bSocket(B_TRANS_CONN_UDP, _bNtpConnCallback, NULL);
         if (SOCKFD_IS_INVALID(bNtpPcb.sockfd))
         {
-            break;
-        }
-        b_log("sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
-        if (bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123) < 0)
-        {
-            b_log_e("ntp connect fail...\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
-            break;
-        }
-        PT_WAIT_UNTIL(pt, bSockIsWriteable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
-        if (pt->retval == PT_RETVAL_TIMEOUT)
-        {
-            b_log_e("ntp send fail...\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            b_log_e("shutdown..\r\n");
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            break;
-        }
-        memset(&packet, 0, sizeof(bNtpPacket_t));
-        packet.li_vn_mode = 0x1b;
-        if (bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL) < 0)
-        {
-            b_log_e("ntp send fail...\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
-            break;
-        }
-        PT_WAIT_UNTIL(pt, bSockIsReadable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
-        if (pt->retval == PT_RETVAL_TIMEOUT)
-        {
-            b_log_e("ntp recv timeout.. \r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            b_log_e("shutdown..\r\n");
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
-            break;
-        }
-        if (bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen) < 0)
-        {
-            b_log_e("ntp recv fail..\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
-            break;
-        }
-        if (rlen == sizeof(bNtpPacket_t))
-        {
-            if (packet.recv_time.seconds <= packet.trans_time.seconds &&
-                (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
+            bNtpPcb.sockfd = bSocket(B_TRANS_CONN_UDP, _bNtpConnCallback, NULL);
+            if (SOCKFD_IS_INVALID(bNtpPcb.sockfd))
             {
-                ntp_time = B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
-                bUTC_SetTime(ntp_time);
+                break;
+            }
+            b_log("ntp sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
+        }
+        else
+        {
+            if (bSocketIsConnected(bNtpPcb.sockfd))
+            {
+                if (bSockIsWriteable(bNtpPcb.sockfd))
+                {
+                    memset(&packet, 0, sizeof(bNtpPacket_t));
+                    packet.li_vn_mode = 0x1b;
+                    bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
+                    PT_WAIT_UNTIL(pt, bSockIsReadable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
+                    bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
+                    if (rlen == sizeof(bNtpPacket_t))
+                    {
+                        if (packet.recv_time.seconds <= packet.trans_time.seconds &&
+                            (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
+                        {
+                            ntp_time = B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
+                            bUTC_SetTime(ntp_time);
+                        }
+                        PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+                        bNtpPcb.sockfd = -1;
+                        b_log_e("shutdown..\r\n");
+                        bTaskDelayMs(pt, bNtpPcb.interval_s * 1000);
+                    }
+                }
+            }
+            else
+            {
+                bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123);
+                PT_WAIT_UNTIL(pt, bSocketIsConnected(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
+                if (pt->retval == PT_RETVAL_TIMEOUT)
+                {
+                    b_log_e("ntp connect fail...\r\n");
+                    PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+                    b_log_e("shutdown..\r\n");
+                    ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
+                    bNtpPcb.sockfd   = -1;
+                    break;
+                }
             }
         }
-        PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-        b_log_e("shutdown..\r\n");
-        bTaskDelayMs(pt, bNtpPcb.interval_s * 1000);
     }
     PT_END(pt);
 }
@@ -459,7 +446,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
         }
         b_log("sockfd: %x %s %d %s\r\n", http->sockfd, http->host, http->port, http->path);
         bConnect(http->sockfd, http->host, http->port);
-        PT_WAIT_UNTIL(pt, bSockIsWriteable(http->sockfd) == 1, 5000);
+        PT_WAIT_UNTIL(pt, bSocketIsConnected(http->sockfd) == 1, 5000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             event = B_HTTP_EVENT_CONN_FAIL;
@@ -591,10 +578,13 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
  * \{
  */
 
-int bTcpipSrvInit()
+int bTcpipSrvInit(bNetCardInfo_t *pnetcard, uint8_t number)
 {
-    bTcpIpInit(_TCPIP_NETCARD_DEVNO);
-    return 0;
+    if (pnetcard == NULL || number == 0)
+    {
+        return -1;
+    }
+    return bTcpIpInit(pnetcard, number);
 }
 
 int bSntpStart(uint32_t interval_s)

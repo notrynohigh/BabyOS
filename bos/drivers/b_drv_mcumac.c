@@ -163,8 +163,9 @@ static int _bMCUMACCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             {
                 return -1;
             }
-            bMCUMACRunInfo[pdrv->drv_no].plink_state_cb = (void (*)(uint8_t))param;
-            bMCUMACRunInfo[pdrv->drv_no].link_state     = 0;
+            bLinkStateCb_t *pcallback = (bLinkStateCb_t *)param;
+            memcpy(&bMCUMACRunInfo[pdrv->drv_no].link_cb, pcallback, sizeof(bLinkStateCb_t));
+            bMCUMACRunInfo[pdrv->drv_no].link_state = 0;
         }
         break;
     }
@@ -189,9 +190,9 @@ PT_THREAD(_bMcuMacLinkTask)(struct pt *pt, void *arg)
             if (link_state != bMCUMACRunInfo[i].link_state)
             {
                 bMCUMACRunInfo[i].link_state = link_state;
-                if (bMCUMACRunInfo[i].plink_state_cb)
+                if (bMCUMACRunInfo[i].link_cb)
                 {
-                    bMCUMACRunInfo[i].plink_state_cb(link_state);
+                    bMCUMACRunInfo[i].link_cb.cb(link_state, bMCUMACRunInfo[i].link_cb.arg);
                 }
                 bHalEthLinkUpdate(link_state);
             }
