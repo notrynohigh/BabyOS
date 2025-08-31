@@ -7,29 +7,16 @@
  *
  * Copyright (c) 2020 by notrynohigh. All Rights Reserved.
  */
-#include "port.h"
 
-#include <pthread.h>
+#define _POSIX_C_SOURCE 199309L
+#include <time.h>  // 包含 struct timespec 的定义
+//--------------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 #include "b_os.h"
-
-typedef void (*pfunc_t)(void);
-
-void *port_tick(void *arg)
-{
-    while (1)
-    {
-        if (arg)
-        {
-            ((pfunc_t)arg)();
-        }
-        usleep(1000);
-    }
-    return NULL;
-}
+#include "port.h"
 
 int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 {
@@ -39,6 +26,22 @@ int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 
 void port_init()
 {
-    pthread_t tick_thread;
-    pthread_create(&tick_thread, NULL, port_tick, bHalIncSysTick);
+    ;
+}
+
+uint64_t _bGetClock()
+{
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+}
+
+uint32_t bHalGetSysTick()
+{
+    return ((uint32_t)_bGetClock());
+}
+
+uint64_t bHalGetSysTickPlus()
+{
+    return _bGetClock();
 }

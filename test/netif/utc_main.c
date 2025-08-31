@@ -75,12 +75,23 @@ void bMallocFailedHook()
     b_log_e("=========================\r\n");
 }
 
+const static bNetCardInfo_t bNetCardInfo[] = {
+    [0] =
+        {
+            .dev_no   = bTESTMAC,
+            .priority = 0,
+            .ip       = 0x01010101,
+            .mask     = 0x01010101,
+            .gateway  = 0x01010101,
+        },
+};
+
 int main()
 {
     port_init();
     bInit();
 
-    bTcpipSrvInit();
+    bTcpipSrvInit(&bNetCardInfo[0], 1);
     bSntpStart(60 * 60);
     httpfd = bHttpInit(HttpCb, NULL);
     while (1)

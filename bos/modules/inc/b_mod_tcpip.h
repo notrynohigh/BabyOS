@@ -62,6 +62,19 @@ extern "C" {
  * \{
  */
 
+/*
+   ip,mask,gateway 有为0的值，表示使用DHCP;
+   priority 表示优先级，数值越小优先级越高
+*/
+typedef struct
+{
+    uint32_t dev_no;
+    uint32_t ip;
+    uint32_t mask;
+    uint32_t gateway;
+    uint8_t  priority;
+} bNetCardInfo_t;
+
 typedef enum
 {
     B_TRANS_CONN_TCP,
@@ -73,6 +86,7 @@ typedef enum
     B_TRANS_DNS_SUCCESS = 0,
     B_TRANS_CONNECTED,
     B_TRANS_NEW_DATA,
+    B_TRANS_SEND_DONE,
     B_TRANS_ERR_BASE = -128,
     B_TRANS_DISCONNECT,  // 收到此事件后，不要再对socket做任何操作
     B_TRANS_ERROR,
@@ -111,7 +125,7 @@ typedef void (*pbTransPingCb_t)(int result, uint32_t ms, void *arg);
  * \{
  */
 
-int     bTcpIpInit(uint32_t eth_dev_no);
+int     bTcpIpInit(bNetCardInfo_t *pnetcard, uint8_t number);
 int     bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway);
 int     bTcpIpGetIp(char *ipaddr, char *netmask, char *gateway);
 int     bTcpIpSetMac(const uint8_t mac[6]);
@@ -119,6 +133,7 @@ int     bTcpIpGetMac(uint8_t mac[6]);
 uint8_t bTcpIpPhyIsLinked(void);
 
 int     bSocket(bTransType_t type, pbTransCb_t cb, void *user_data);
+int     bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data);
 int     bConnect(int sockfd, char *remote, uint16_t port);
 int     bBind(int sockfd, uint16_t port);
 int     bListen(int sockfd, int backlog);
@@ -127,9 +142,12 @@ int     bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
 int     bShutdown(int sockfd);  // 建议使用 SOCKET_SHUTDOWN 一直等到关闭完成
 uint8_t bSockIsReadable(int sockfd);
 uint8_t bSockIsWriteable(int sockfd);
+uint8_t bSocketIsConnected(int sockfd);
 
 int bDnsParse(char *remote, pbTransDnsCb_t cb, void *user_data);
 int bPing(char *remote, uint32_t timeout_ms, pbTransPingCb_t cb, void *user_data);
+
+uint32_t bIPStr2Uint32(const char *ip);
 
 /**
  * \}

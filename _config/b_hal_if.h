@@ -122,6 +122,11 @@
         .e_size = 4096, .w_size = 1, \
     }
 
+#define HAL_TESTMAC_IF \
+    {                  \
+        0              \
+    }
+
 #define HAL_XPT2046_IF                                                               \
     {                                                                                \
         ._if.spi = B_HAL_SPI_3, .cs = {B_HAL_GPIOC, B_HAL_PIN9}, .is_simulation = 0, \

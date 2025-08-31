@@ -330,13 +330,66 @@ typedef struct
 #define bCMD_GET_MAC_ADDRESS 0    // bMacAddress_t
 #define bCMD_SET_MAC_ADDRESS 1    // bMacAddress_t
 #define bCMD_GET_LINK_STATE 2     // uint8_t  0 or 1 (linked)
-#define bCMD_REG_LINK_CALLBACK 3  // void (*link_state_cb)(uint8_t);
+#define bCMD_REG_LINK_CALLBACK 3  // bLinkStateCb_t
 #define bCMD_REG_BUF_LIST 4       // bHalBufList_t
+#define bCMD_GET_STACK_IF 5       // bTcpIpStackIf_t
 
 typedef struct
 {
     uint8_t address[6];
 } bMacAddress_t;
+
+typedef struct
+{
+    void (*cb)(uint8_t, void *);
+    void *arg;
+} bLinkStateCb_t;
+
+typedef enum
+{
+    B_TCPIP_E_CONNECTING,
+    B_TCPIP_E_CONNECTED,
+    B_TCPIP_E_DISCONNECT,
+    B_TCPIP_E_NEW_DATA,
+    B_TCPIP_E_SEND_DONE,
+} bTcpIpEvent_t;
+
+typedef void (*pTcpIpCallback_t)(bTcpIpEvent_t event, void *pcb, void *arg);
+
+typedef struct
+{
+    int (*init)(void);
+    int (*set_mac)(uint8_t mac[6]);
+    int (*set_ip)(uint32_t ip, uint32_t mask, uint32_t gateway);
+    int (*set_link_state)(uint8_t state);
+    void (*loop)(void);
+    struct
+    {
+        void *(*new)(void);
+        int (*bind)(void *, uint16_t);
+        int (*listen)(void *, uint16_t);
+        int (*connect)(void *, uint32_t, uint16_t);
+        int (*send)(void *, const uint8_t *, uint16_t);
+        int (*recv)(void *, uint8_t *, uint16_t);
+        int (*delete)(void *);
+    } tcp;
+
+    struct
+    {
+        void *(*new)(void);
+        int (*bind)(void *, uint16_t);
+        int (*listen)(void *, uint16_t);
+        int (*connect)(void *, uint32_t, uint16_t);
+        int (*send)(void *, const uint8_t *, uint16_t);
+        int (*recv)(void *, uint8_t *, uint16_t);
+        int (*delete)(void *);
+    } udp;
+
+    uint8_t (*is_readable)(void *);
+    uint8_t (*is_writeable)(void *);
+
+    void (*callback)(pTcpIpCallback_t cb, void *arg);
+} bTcpIpStackIf_t;
 
 ///////////////////////////////////////////////////////////
 // power meter and analysis, Command  &  Structure

@@ -31,8 +31,6 @@ $(SOURCE_ROOT)/bos/core/*.c \
 $(SOURCE_ROOT)/bos/services/*.c \
 $(SOURCE_ROOT)/bos/hal/*.c \
 $(SOURCE_ROOT)/bos/modules/*.c \
-$(SOURCE_ROOT)/bos/modules/b_mod_netif/*.c \
-$(SOURCE_ROOT)/bos/modules/b_mod_netif/b_mod_trans/*.c \
 $(SOURCE_ROOT)/bos/utils/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/fatfs/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/flexiblebutton/*.c \
@@ -44,7 +42,7 @@ $(SOURCE_ROOT)/bos/thirdparty/cjson/*.c  \
 $(SOURCE_ROOT)/bos/thirdparty/http-parser/*.c
 
 BOS_DRV_SOURCE_DIR = \
-$(SOURCE_ROOT)/bos/drivers/b_drv_testflash.c
+$(SOURCE_ROOT)/bos/drivers/b_drv_testmac.c
 
 EXAMPLE_SOURCE_DIR = \
 $(SOURCE_ROOT)/test/*.c \
