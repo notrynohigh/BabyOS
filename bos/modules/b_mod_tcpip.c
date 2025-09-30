@@ -41,6 +41,8 @@
 #include "utils/inc/b_util_log.h"
 #include "utils/inc/b_util_memp.h"
 
+#define _TCPIP_STACK_LWIP_ENABLE 1
+
 #if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
 
 #if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
@@ -108,7 +110,8 @@ typedef struct
     uint32_t         remote_ip;
     uint8_t          remote_url[REMOTE_ADDR_LEN_MAX + 1];
     bTransType_t     type;
-    void            *netcard;
+    void            *stack_if;
+    void            *netif;
     struct list_head node;
 } bTrans_t;
 
@@ -406,24 +409,21 @@ enum
 };
 
 //------------------------------------------tcpipinfo----------------------------
-
 typedef struct
 {
-    uint32_t        dev_no;
-    int             fd;
     uint8_t         priority;
-    uint8_t         is_linked;
-    uint8_t         is_dhcp;
-    uint8_t         get_ip_done;
-    uint32_t        ipaddr;
-    uint32_t        netmask;
-    uint32_t        gateway;
-    uint8_t         mac[6];
+    bTcpIpNetif_t   netif;
     bTcpIpStackIf_t stack_if;
-#if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
-    struct netif *pnetif;
-#endif
-    bDhcpCtx_t dhcp_ctx;
+    bDhcpCtx_t      dhcp_ctx;
+    struct
+    {
+        uint8_t  ignore_ip;
+        uint8_t  is_dhcp;
+        uint8_t  get_ip_done;
+        uint32_t ipaddr;
+        uint32_t netmask;
+        uint32_t gateway;
+    } ip_info;
 } bTcpIpInfo_t;
 
 typedef struct
@@ -522,11 +522,9 @@ static void _bIpInt2Str(char *ip_str, uint32_t ip)
 
 static void _bMainNetcardUpdate()
 {
-    int           i     = 0;
-    bTcpIpInfo_t *pinfo = NULL;
-#if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
+    int           i          = 0;
+    bTcpIpInfo_t *pinfo      = NULL;
     bTcpIpInfo_t *pinfo_last = bTcpIpCtx.pinfo;
-#endif
     if (bTcpIpCtx.pinfo_table == NULL)
     {
         return;
@@ -534,7 +532,7 @@ static void _bMainNetcardUpdate()
     for (i = 0; i < bTcpIpCtx.info_number; i++)
     {
         pinfo = &bTcpIpCtx.pinfo_table[i];
-        if (pinfo->fd >= 0 && pinfo->is_linked)
+        if (pinfo->netif.fd >= 0 && pinfo->netif.is_linked)
         {
             if (bTcpIpCtx.pinfo == NULL)
             {
@@ -549,15 +547,13 @@ static void _bMainNetcardUpdate()
             }
         }
     }
-#if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
     if (bTcpIpCtx.pinfo != pinfo_last && bTcpIpCtx.pinfo != NULL)
     {
-        if (bTcpIpCtx.pinfo->pnetif != NULL)
+        if (bTcpIpCtx.pinfo->netif.private != NULL)
         {
-            netif_set_default(bTcpIpCtx.pinfo->pnetif);
+            B_SAFE_INVOKE(pinfo->stack_if.set_default_netif, &bTcpIpCtx.pinfo->netif);
         }
     }
-#endif
 }
 
 static void _bPhyLinkStateCb(uint8_t state, void *arg)
@@ -567,12 +563,12 @@ static void _bPhyLinkStateCb(uint8_t state, void *arg)
     {
         return;
     }
-    pinfo->is_linked = state;
-    if (pinfo->is_dhcp)
+    pinfo->netif.is_linked = state;
+    if ((pinfo->ip_info.ignore_ip == 0) && (pinfo->ip_info.is_dhcp))
     {
-        pinfo->get_ip_done = 0;
+        pinfo->ip_info.get_ip_done = 0;
     }
-    B_SAFE_INVOKE(pinfo->stack_if.set_link_state, state);
+    B_SAFE_INVOKE(pinfo->stack_if.set_link_state, state, &pinfo->netif);
     _bMainNetcardUpdate();
 }
 
@@ -1109,9 +1105,9 @@ static void bDhcpTimeoutReset(bTcpIpInfo_t *pinfo)
 
 static int _bDhcpRequestInit(bTcpIpInfo_t *pinfo)
 {
-    pinfo->stack_if.set_ip(0, 0, 0);
+    pinfo->stack_if.set_ip(0, 0, 0, &pinfo->netif);
     memset(&pinfo->dhcp_ctx, 0, sizeof(bDhcpCtx_t));
-    pinfo->dhcp_ctx.fd = bSocket2(pinfo->dev_no, B_TRANS_CONN_UDP, _bDhcpTransCb, NULL);
+    pinfo->dhcp_ctx.fd = bSocket2(pinfo->netif.dev_no, B_TRANS_CONN_UDP, _bDhcpTransCb, NULL);
     if (SOCKFD_IS_INVALID(pinfo->dhcp_ctx.fd))
     {
         return -1;
@@ -1122,10 +1118,10 @@ static int _bDhcpRequestInit(bTcpIpInfo_t *pinfo)
     bBind(pinfo->dhcp_ctx.fd, DHCP_CLIENT_PORT);
     pinfo->dhcp_ctx.xid = 0x12345678;
     {
-        pinfo->dhcp_ctx.xid += pinfo->mac[3];
-        pinfo->dhcp_ctx.xid += pinfo->mac[4];
-        pinfo->dhcp_ctx.xid += pinfo->mac[5];
-        pinfo->dhcp_ctx.xid += (pinfo->mac[3] ^ pinfo->mac[4] ^ pinfo->mac[5]);
+        pinfo->dhcp_ctx.xid += pinfo->netif.mac[3];
+        pinfo->dhcp_ctx.xid += pinfo->netif.mac[4];
+        pinfo->dhcp_ctx.xid += pinfo->netif.mac[5];
+        pinfo->dhcp_ctx.xid += (pinfo->netif.mac[3] ^ pinfo->netif.mac[4] ^ pinfo->netif.mac[5]);
     }
     bDhcpTimeoutReset(pinfo);
     pinfo->dhcp_ctx.state = STATE_DHCP_INIT;
@@ -1150,12 +1146,12 @@ static int8_t bDhcpParseMsg(bTcpIpInfo_t *pinfo)
         if (len > 0)
         {
             // compare mac address
-            if ((pinfo->dhcp_ctx.rip_info.chaddr[0] != pinfo->mac[0]) ||
-                (pinfo->dhcp_ctx.rip_info.chaddr[1] != pinfo->mac[1]) ||
-                (pinfo->dhcp_ctx.rip_info.chaddr[2] != pinfo->mac[2]) ||
-                (pinfo->dhcp_ctx.rip_info.chaddr[3] != pinfo->mac[3]) ||
-                (pinfo->dhcp_ctx.rip_info.chaddr[4] != pinfo->mac[4]) ||
-                (pinfo->dhcp_ctx.rip_info.chaddr[5] != pinfo->mac[5]))
+            if ((pinfo->dhcp_ctx.rip_info.chaddr[0] != pinfo->netif.mac[0]) ||
+                (pinfo->dhcp_ctx.rip_info.chaddr[1] != pinfo->netif.mac[1]) ||
+                (pinfo->dhcp_ctx.rip_info.chaddr[2] != pinfo->netif.mac[2]) ||
+                (pinfo->dhcp_ctx.rip_info.chaddr[3] != pinfo->netif.mac[3]) ||
+                (pinfo->dhcp_ctx.rip_info.chaddr[4] != pinfo->netif.mac[4]) ||
+                (pinfo->dhcp_ctx.rip_info.chaddr[5] != pinfo->netif.mac[5]))
             {
                 b_log_e("No My DHCP Message. This message is ignored.\r\n");
                 return 0;
@@ -1298,12 +1294,12 @@ static void _bDhcpMakeMsg(bTcpIpInfo_t *pinfo)
     pinfo->dhcp_ctx.rip_info.giaddr[2] = 0;
     pinfo->dhcp_ctx.rip_info.giaddr[3] = 0;
 
-    pinfo->dhcp_ctx.rip_info.chaddr[0] = pinfo->mac[0];
-    pinfo->dhcp_ctx.rip_info.chaddr[1] = pinfo->mac[1];
-    pinfo->dhcp_ctx.rip_info.chaddr[2] = pinfo->mac[2];
-    pinfo->dhcp_ctx.rip_info.chaddr[3] = pinfo->mac[3];
-    pinfo->dhcp_ctx.rip_info.chaddr[4] = pinfo->mac[4];
-    pinfo->dhcp_ctx.rip_info.chaddr[5] = pinfo->mac[5];
+    pinfo->dhcp_ctx.rip_info.chaddr[0] = pinfo->netif.mac[0];
+    pinfo->dhcp_ctx.rip_info.chaddr[1] = pinfo->netif.mac[1];
+    pinfo->dhcp_ctx.rip_info.chaddr[2] = pinfo->netif.mac[2];
+    pinfo->dhcp_ctx.rip_info.chaddr[3] = pinfo->netif.mac[3];
+    pinfo->dhcp_ctx.rip_info.chaddr[4] = pinfo->netif.mac[4];
+    pinfo->dhcp_ctx.rip_info.chaddr[5] = pinfo->netif.mac[5];
 
     for (i = 6; i < 16; i++)
         pinfo->dhcp_ctx.rip_info.chaddr[i] = 0;
@@ -1355,24 +1351,24 @@ static void _bDhcpSendDiscover(bTcpIpInfo_t *pinfo)
     pinfo->dhcp_ctx.rip_info.OPT[k++] = dhcpClientIdentifier;
     pinfo->dhcp_ctx.rip_info.OPT[k++] = 0x07;
     pinfo->dhcp_ctx.rip_info.OPT[k++] = 0x01;
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[0];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[1];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[2];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[3];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[4];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[5];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[0];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[1];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[2];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[3];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[4];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[5];
 
     // host name
     pinfo->dhcp_ctx.rip_info.OPT[k++] = hostName;
     pinfo->dhcp_ctx.rip_info.OPT[k++] = 0;  // fill zero length of hostname
     for (i = 0; HOST_NAME[i] != 0; i++)
         pinfo->dhcp_ctx.rip_info.OPT[k++] = HOST_NAME[i];
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[3] >> 4);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[3]);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[4] >> 4);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[4]);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[5] >> 4);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[5]);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[3] >> 4);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[3]);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[4] >> 4);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[4]);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[5] >> 4);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[5]);
     pinfo->dhcp_ctx.rip_info.OPT[k - (i + 6 + 1)] = i + 6;  // length of hostname
 
     pinfo->dhcp_ctx.rip_info.OPT[k++] = dhcpParamRequest;
@@ -1434,12 +1430,12 @@ static void bDhcpSendRequest(bTcpIpInfo_t *pinfo)
     pinfo->dhcp_ctx.rip_info.OPT[k++] = dhcpClientIdentifier;
     pinfo->dhcp_ctx.rip_info.OPT[k++] = 0x07;
     pinfo->dhcp_ctx.rip_info.OPT[k++] = 0x01;
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[0];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[1];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[2];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[3];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[4];
-    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->mac[5];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[0];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[1];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[2];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[3];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[4];
+    pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[5];
 
     if (ip[3] == 255)  // if(dchp_state == STATE_DHCP_LEASED || dchp_state == DHCP_REREQUEST_STATE)
     {
@@ -1463,12 +1459,12 @@ static void bDhcpSendRequest(bTcpIpInfo_t *pinfo)
     pinfo->dhcp_ctx.rip_info.OPT[k++] = 0;  // length of hostname
     for (i = 0; HOST_NAME[i] != 0; i++)
         pinfo->dhcp_ctx.rip_info.OPT[k++] = HOST_NAME[i];
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[3] >> 4);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[3]);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[4] >> 4);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[4]);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[5] >> 4);
-    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->mac[5]);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[3] >> 4);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[3]);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[4] >> 4);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[4]);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[5] >> 4);
+    pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[5]);
     pinfo->dhcp_ctx.rip_info.OPT[k - (i + 6 + 1)] = i + 6;  // length of hostname
 
     pinfo->dhcp_ctx.rip_info.OPT[k++] = dhcpParamRequest;
@@ -1588,13 +1584,12 @@ static void _bDhcpSetIp(bTcpIpInfo_t *pinfo)
     dns |= pinfo->dhcp_ctx.allocated_dns[2];
     dns <<= 8;
     dns |= pinfo->dhcp_ctx.allocated_dns[3];
-
-    pinfo->stack_if.set_ip(ip, mask, gw);
-    bTcpIpDNS[2]       = dns;
-    pinfo->ipaddr      = ip;
-    pinfo->gateway     = gw;
-    pinfo->netmask     = mask;
-    pinfo->get_ip_done = 1;
+    pinfo->stack_if.set_ip(ip, mask, gw, &pinfo->netif);
+    bTcpIpDNS[2]               = dns;
+    pinfo->ip_info.ipaddr      = ip;
+    pinfo->ip_info.gateway     = gw;
+    pinfo->ip_info.netmask     = mask;
+    pinfo->ip_info.get_ip_done = 1;
 #if DHCP_MODULE_DEBUG_EN
     b_log("dhcp set ip:%x %x %x %x\r\n", ip, gw, mask, dns);
 #endif
@@ -1609,7 +1604,7 @@ static uint8_t _bDhcpLoopHandle(bTcpIpInfo_t *pinfo)
 
     if (SOCKFD_IS_INVALID(pinfo->dhcp_ctx.fd))
     {
-        pinfo->dhcp_ctx.fd = bSocket2(pinfo->dev_no, B_TRANS_CONN_UDP, _bDhcpTransCb, NULL);
+        pinfo->dhcp_ctx.fd = bSocket2(pinfo->netif.dev_no, B_TRANS_CONN_UDP, _bDhcpTransCb, NULL);
         if (!SOCKFD_IS_INVALID(pinfo->dhcp_ctx.fd))
         {
             bBind(pinfo->dhcp_ctx.fd, DHCP_CLIENT_PORT);
@@ -1771,7 +1766,7 @@ static void _bTcpIpTransState(bTrans_t *trans, int state)
 
 static void _bDhcpHandler(bTcpIpInfo_t *pinfo)
 {
-    if (pinfo->is_dhcp)
+    if ((pinfo->ip_info.ignore_ip == 0) && (pinfo->ip_info.is_dhcp))
     {
         if (pinfo->dhcp_ctx.state == STATE_DHCP_STOP)
         {
@@ -1811,7 +1806,7 @@ static bTrans_t *_bTransFindNodeByPcb(void *pcb)
 
 static void _bSocketHandler()
 {
-    bTcpIpInfo_t *pinfo = NULL;
+    bTcpIpStackIf_t *pstack_if = NULL;
     if (list_empty(&bSocketHead))
     {
         return;
@@ -1820,8 +1815,8 @@ static void _bSocketHandler()
     bTrans_t         *ptrans = NULL;
     list_for_each_safe(pos, n, &bSocketHead)
     {
-        ptrans = list_entry(pos, bTrans_t, node);
-        pinfo  = (bTcpIpInfo_t *)ptrans->netcard;
+        ptrans    = list_entry(pos, bTrans_t, node);
+        pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
         if (ptrans->state == B_SOCKET_STATE_DNS)
         {
             _bTcpIpTransState(ptrans, B_SOCKET_STATE_DNS_WAIT);
@@ -1838,11 +1833,11 @@ static void _bSocketHandler()
         {
             if (ptrans->type == B_TRANS_CONN_UDP)
             {
-                pinfo->stack_if.udp.delete(ptrans->pcb);
+                pstack_if->udp.delete(ptrans->pcb);
             }
             else
             {
-                pinfo->stack_if.tcp.delete(ptrans->pcb);
+                pstack_if->tcp.delete(ptrans->pcb);
             }
             __list_del(ptrans->node.prev, ptrans->node.next);
             _bDnsListDelNode(ptrans);
@@ -1921,7 +1916,7 @@ static err_t _bNetifLinkoutput(struct netif *netif, struct pbuf *p)
     {
         return ERR_IF;
     }
-    bWrite(pinfo->fd, (uint8_t *)p, p->tot_len);
+    bWrite(pinfo->netif.fd, (uint8_t *)p, p->tot_len);
     return ERR_OK;
 }
 
@@ -1938,22 +1933,22 @@ static err_t _bNetifInit(struct netif *netif)
     }
     /* Initialize interface hostname */
     netif->hostname = "babyos";
-    netif->name[0]  = (pinfo->dev_no % 10) + '0';
-    netif->name[1]  = ((pinfo->dev_no % 100) / 10) + '0';
+    netif->name[0]  = (pinfo->netif.dev_no % 10) + '0';
+    netif->name[1]  = ((pinfo->netif.dev_no % 100) / 10) + '0';
 
     netif->output     = etharp_output;
     netif->linkoutput = _bNetifLinkoutput;
 
     netif->hwaddr_len = ETHARP_HWADDR_LEN;
-    netif->hwaddr[0]  = pinfo->mac[0];
-    netif->hwaddr[1]  = pinfo->mac[1];
-    netif->hwaddr[2]  = pinfo->mac[2];
-    netif->hwaddr[3]  = pinfo->mac[3];
-    netif->hwaddr[4]  = pinfo->mac[4];
-    netif->hwaddr[5]  = pinfo->mac[5];
+    netif->hwaddr[0]  = pinfo->netif.mac[0];
+    netif->hwaddr[1]  = pinfo->netif.mac[1];
+    netif->hwaddr[2]  = pinfo->netif.mac[2];
+    netif->hwaddr[3]  = pinfo->netif.mac[3];
+    netif->hwaddr[4]  = pinfo->netif.mac[4];
+    netif->hwaddr[5]  = pinfo->netif.mac[5];
 
     uint8_t link_state = 0;
-    bCtl(pinfo->fd, bCMD_GET_LINK_STATE, &link_state);
+    bCtl(pinfo->netif.fd, bCMD_GET_LINK_STATE, &link_state);
     if (link_state)
     {
         netif->flags |= NETIF_FLAG_LINK_UP;
@@ -1963,21 +1958,41 @@ static err_t _bNetifInit(struct netif *netif)
     return ERR_OK;
 }
 
-static int _bStackLwipSetIp(uint32_t ip, uint32_t mask, uint32_t gateway)
+static int _bStackLwipSetIp(uint32_t ip, uint32_t mask, uint32_t gateway, bTcpIpNetif_t *pnetif)
 {
-    ip4_addr_t ip_addr, gw_addr, mask_addr;
-
+    ip4_addr_t    ip_addr, gw_addr, mask_addr;
+    struct netif *real_netif = (struct netif *)pnetif->private;
+    if (real_netif == NULL)
+    {
+        return -1;
+    }
     ip4_addr_set_u32(&ip_addr, PP_HTONL(ip));
     ip4_addr_set_u32(&mask_addr, PP_HTONL(mask));
     ip4_addr_set_u32(&gw_addr, PP_HTONL(gateway));
-    netif_set_addr(&bLinkNetif, &ip_addr, &mask_addr, &gw_addr);
+    netif_set_addr(real_netif, &ip_addr, &mask_addr, &gw_addr);
     return 0;
 }
 
-static int _bStackLwipSetMac(uint8_t mac[6])
+static int _bStackLwipSetMac(uint8_t mac[6], bTcpIpNetif_t *pnetif)
 {
-    memcpy(bLinkNetif.hwaddr, mac, 6);
-    bLinkNetif.hwaddr_len = 6;
+    struct netif *real_netif = (struct netif *)pnetif->private;
+    if (real_netif == NULL)
+    {
+        return -1;
+    }
+    memcpy(real_netif->hwaddr, mac, 6);
+    real_netif->hwaddr_len = 6;
+    return 0;
+}
+
+static int _bStackLwipSetDefaultNetif(bTcpIpNetif_t *pnetif)
+{
+    struct netif *real_netif = (struct netif *)pnetif->private;
+    if (real_netif == NULL)
+    {
+        return -1;
+    }
+    netif_set_default(real_netif);
     return 0;
 }
 
@@ -2142,7 +2157,6 @@ static int _bLwipTcpRecv(void *pcb, uint8_t *pbuf, uint16_t len)
             pbuf_free(tmp_buf);
             ptrans->p           = NULL;
             ptrans->read_offset = 0;
-            ptrans->readable    = 0;
         }
     }
     return rlen;
@@ -2162,12 +2176,8 @@ static int _bLwipTcpSend(void *pcb, const uint8_t *pbuf, uint16_t len)
         return -1;
     }
     uint16_t writeable_len = tcp_sndbuf((struct tcp_pcb *)ptrans->pcb);
-    if (writeable_len <= len)
-    {
-        ptrans->writeable = 0;
-    }
-    writeable_len = (writeable_len > len) ? len : writeable_len;
-    err           = tcp_write(ptrans->pcb, pbuf, writeable_len, TCP_WRITE_FLAG_COPY);
+    writeable_len          = (writeable_len > len) ? len : writeable_len;
+    err                    = tcp_write(ptrans->pcb, pbuf, writeable_len, TCP_WRITE_FLAG_COPY);
     if (err == ERR_OK)
     {
         return writeable_len;
@@ -2285,6 +2295,16 @@ static int _bLwipUdpDelete(void *pcb)
 
 static int _bLwipUdpSend(void *pcb, const uint8_t *pbuf, uint16_t len)
 {
+    bTrans_t *ptrans = NULL;
+    if (pcb == NULL)
+    {
+        return -1;
+    }
+    ptrans = _bTransFindNodeByPcb(pcb);
+    if (ptrans == NULL)
+    {
+        return -1;
+    }
     struct udp_pcb *real_udp_pcb = (struct udp_pcb *)pcb;
     struct pbuf    *p            = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_RAM);
     err_t           err;
@@ -2292,10 +2312,10 @@ static int _bLwipUdpSend(void *pcb, const uint8_t *pbuf, uint16_t len)
     {
         memcpy(p->payload, pbuf, len);
 
-        if (ip4_addr_isbroadcast(&real_udp_pcb->remote_ip, &bLinkNetif))
+        if (ip4_addr_isbroadcast(&real_udp_pcb->remote_ip, ptrans->netif))
         {
             err = udp_sendto_if_src(real_udp_pcb, p, IP_ADDR_BROADCAST, real_udp_pcb->remote_port,
-                                    &bLinkNetif, &real_udp_pcb->local_ip);
+                                    ptrans->netif, &real_udp_pcb->local_ip);
         }
         else
         {
@@ -2340,52 +2360,66 @@ static int _bLwipUdpRecv(void *pcb, uint8_t *pbuf, uint16_t len)
             pbuf_free(tmp_buf);
             ptrans->p           = NULL;
             ptrans->read_offset = 0;
-            ptrans->readable    = 0;
         }
     }
     return rlen;
 }
 
-void *_bLwipTcpNew()
+void *_bLwipTcpNew(void *pnetif)
 {
+    B_UNUSED(pnetif);
     return tcp_new();
 }
 
-void *_bLwipUdpNew()
+void *_bLwipUdpNew(void *pnetif)
 {
+    B_UNUSED(pnetif);
     return udp_new();
 }
 
-int _bStackLwipSetLinkState(uint8_t state)
+int _bStackLwipSetLinkState(uint8_t state, bTcpIpNetif_t *pnetif)
 {
+    struct netif *real_netif = (struct netif *)pnetif->private;
+    if (real_netif == NULL)
+    {
+        return -1;
+    }
     if (state)
     {
-        netif_set_link_up(&bLinkNetif);
-        netif_set_up(&bLinkNetif);
+        netif_set_link_up(real_netif);
+        netif_set_up(real_netif);
     }
     else
     {
-        netif_set_link_down(&bLinkNetif);
-        netif_set_down(&bLinkNetif);
+        netif_set_link_down(real_netif);
+        netif_set_down(real_netif);
     }
     return 0;
 }
 
-void _bStackLwipLoop()
+void _bStackLwipLoop(bTcpIpNetif_t *netif)
 {
-    static uint32_t tick = 0;
-    struct pbuf    *p    = NULL;
-    err_t           err;
-
-    if (pinfo->is_linked)
+    struct pbuf  *p           = NULL;
+    err_t         err         = ERR_ARG;
+    struct netif *preal_netif = NULL;
+    if (netif == NULL)
+    {
+        return;
+    }
+    if (netif->is_linked)
     {
         p = NULL;
-        bRead(pinfo->fd, (uint8_t *)&p, 0);
+        bRead(netif->fd, (uint8_t *)&p, 0);
         if (p != NULL)
         {
             // b_log("mac rec:\r\n");
             // b_log_hex((uint8_t *)p->payload, p->len);
-            err = bLinkNetif.input(p, &bLinkNetif);
+            err         = ERR_ARG;
+            preal_netif = (struct netif *)netif->private;
+            if (preal_netif)
+            {
+                err = netif_input(p, preal_netif);
+            }
             if (err != ERR_OK)
             {
                 pbuf_free(p);
@@ -2494,8 +2528,9 @@ static uint8_t _bLwipIsWriteable(void *pcb)
     return (writeable_len > 0);
 }
 
-static void _bLwipCallback(pTcpIpCallback_t cb, void *arg)
+static void _bLwipCallback(pTcpIpCallback_t cb, void *arg, void *netif)
 {
+    B_UNUSED(netif);
     bLwipEventCb    = cb;
     bLwipEventCbArg = arg;
 }
@@ -2546,7 +2581,7 @@ static bTcpIpInfo_t *_bFindNetcard(uint32_t dev_no)
     }
     for (i = 0; i < bTcpIpCtx.info_number; i++)
     {
-        if (bTcpIpCtx.pinfo_table[i].dev_no == dev_no)
+        if (bTcpIpCtx.pinfo_table[i].netif.dev_no == dev_no)
         {
             return &bTcpIpCtx.pinfo_table[i];
         }
@@ -2567,42 +2602,41 @@ static void _bNetCardHandler()
     for (i = 0; i < bTcpIpCtx.info_number; i++)
     {
         pinfo = &bTcpIpCtx.pinfo_table[i];
-        if (pinfo->fd < 0)
+        if (pinfo->netif.fd < 0)
         {
-            pinfo->fd = bOpen(pinfo->dev_no, BCORE_FLAG_RW);
-            if (pinfo->fd < 0)
+            pinfo->netif.fd = bOpen(pinfo->netif.dev_no, BCORE_FLAG_RW);
+            if (pinfo->netif.fd < 0)
             {
                 continue;
             }
-
             uint8_t link_state = 0;
-            if (0 == bCtl(pinfo->fd, bCMD_GET_LINK_STATE, &link_state))
+            if (0 == bCtl(pinfo->netif.fd, bCMD_GET_LINK_STATE, &link_state))
             {
-                pinfo->is_linked = link_state;
+                pinfo->netif.is_linked = link_state;
             }
             bMacAddress_t mac_addr;
-            if (0 == bCtl(pinfo->fd, bCMD_GET_MAC_ADDRESS, &mac_addr))
+            if (0 == bCtl(pinfo->netif.fd, bCMD_GET_MAC_ADDRESS, &mac_addr))
             {
-                memcpy(pinfo->mac, mac_addr.address, 6);
+                memcpy(pinfo->netif.mac, mac_addr.address, 6);
             }
-
-            bCtl(pinfo->fd, bCMD_GET_STACK_IF, &pinfo->stack_if);
+            bCtl(pinfo->netif.fd, bCMD_GET_STACK_IF, &pinfo->stack_if);
             if (pinfo->stack_if.set_ip == NULL)
             {
 #if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
-
                 bHalBufList_t buf_list;
                 buf_list.m_create  = _bNetifMalloc;
                 buf_list.m_next    = _bNetifBufNext;
                 buf_list.m_payload = _bNetifBufPayload;
-                bCtl(pinfo->fd, bCMD_REG_BUF_LIST, &buf_list);
+                bCtl(pinfo->netif.fd, bCMD_REG_BUF_LIST, &buf_list);
 
-                pinfo->stack_if.init    = NULL;
-                pinfo->stack_if.set_ip  = _bStackLwipSetIp;
-                pinfo->stack_if.set_mac = _bStackLwipSetMac;
+                pinfo->stack_if.init         = NULL;
+                pinfo->stack_if.loop         = _bStackLwipLoop;
+                pinfo->stack_if.reg_callback = _bLwipCallback;
 
-                pinfo->stack_if.set_link_state = _bStackLwipSetLinkState;
-                pinfo->stack_if.loop           = _bStackLwipLoop;
+                pinfo->stack_if.set_ip            = _bStackLwipSetIp;
+                pinfo->stack_if.set_mac           = _bStackLwipSetMac;
+                pinfo->stack_if.set_link_state    = _bStackLwipSetLinkState;
+                pinfo->stack_if.set_default_netif = _bStackLwipSetDefaultNetif;
 
                 pinfo->stack_if.tcp.new     = _bLwipTcpNew;
                 pinfo->stack_if.tcp.bind    = _bLwipTcpBind;
@@ -2623,32 +2657,40 @@ static void _bNetCardHandler()
                 pinfo->stack_if.is_readable  = _bLwipIsReadable;
                 pinfo->stack_if.is_writeable = _bLwipIsWriteable;
 
-                pinfo->stack_if.callback = _bLwipCallback;
-
-                pinfo->pnetif = bMalloc(sizeof(struct netif));
-                b_assert_log(pinfo->pnetif != NULL);
+                pinfo->netif.private = bMalloc(sizeof(struct netif));
+                b_assert_log(pinfo->netif.private != NULL);
                 ip4_addr_t addr_ip, addr_mask, addr_gw;
-                ip4_addr_set_u32(&addr_ip, PP_HTONL(pinfo->ipaddr));
-                ip4_addr_set_u32(&addr_mask, PP_HTONL(pinfo->netmask));
-                ip4_addr_set_u32(&addr_gw, PP_HTONL(pinfo->gateway));
-                netif_add(pinfo->pnetif, &addr_ip, &addr_mask, &addr_gw, pinfo, _bNetifInit,
-                          ethernet_input);
+                if (pinfo->ip_info.ignore_ip == 0)
+                {
+                    ip4_addr_set_u32(&addr_ip, PP_HTONL(pinfo->ip_info.ipaddr));
+                    ip4_addr_set_u32(&addr_mask, PP_HTONL(pinfo->ip_info.netmask));
+                    ip4_addr_set_u32(&addr_gw, PP_HTONL(pinfo->ip_info.gateway));
+                }
+                netif_add((struct netif *)pinfo->netif.private, &addr_ip, &addr_mask, &addr_gw,
+                          pinfo, _bNetifInit, ethernet_input);
 #endif
             }
-            B_SAFE_INVOKE(pinfo->stack_if.init);
-            B_SAFE_INVOKE(pinfo->stack_if.callback, bTcpIpCallback, pinfo);
+            if (pinfo->netif.private == NULL)
+            {
+                bDriverNetif_t drv_info;
+                if (0 == bCtl(pinfo->netif.fd, bCMD_GET_DRIVER_NETIF, &drv_info))
+                {
+                    pinfo->netif.private = drv_info.private;
+                }
+            }
+            B_SAFE_INVOKE(pinfo->stack_if.init, &pinfo->netif);
+            B_SAFE_INVOKE(pinfo->stack_if.reg_callback, bTcpIpCallback, pinfo, &pinfo->netif);
 
             bLinkStateCb_t link_cb;
             link_cb.cb  = _bPhyLinkStateCb;
             link_cb.arg = pinfo;
-            bCtl(pinfo->fd, bCMD_REG_LINK_CALLBACK, &link_cb);
-
+            bCtl(pinfo->netif.fd, bCMD_REG_LINK_CALLBACK, &link_cb);
             netcard_update = 1;
         }
         else
         {
             _bDhcpHandler(pinfo);
-            B_SAFE_INVOKE(pinfo->stack_if.loop);
+            B_SAFE_INVOKE(pinfo->stack_if.loop, &pinfo->netif);
         }
     }
     if (netcard_update)
@@ -2692,28 +2734,28 @@ int bTcpIpInit(bNetCardInfo_t *pnetcard, uint8_t number)
     {
         return -1;
     }
-
     if (bTcpIpCtx.pinfo_table)
     {
         return -2;
     }
-
     bTcpIpCtx.pinfo_table = (bTcpIpInfo_t *)bMalloc(number * sizeof(bTcpIpInfo_t));
     b_assert_log(bTcpIpCtx.pinfo_table != NULL);
     bTcpIpCtx.info_number = number;
-
     for (i = 0; i < number; i++)
     {
         memset(&bTcpIpCtx.pinfo_table[i], 0, sizeof(bTcpIpInfo_t));
-        bTcpIpCtx.pinfo_table[i].dev_no   = pnetcard[i].dev_no;
-        bTcpIpCtx.pinfo_table[i].fd       = -1;
-        bTcpIpCtx.pinfo_table[i].priority = pnetcard[i].priority;
-        bTcpIpCtx.pinfo_table[i].ipaddr   = pnetcard[i].ip;
-        bTcpIpCtx.pinfo_table[i].netmask  = pnetcard[i].mask;
-        bTcpIpCtx.pinfo_table[i].gateway  = pnetcard[i].gateway;
-        if (pnetcard[i].ip == 0 || pnetcard[i].mask == 0 || pnetcard[i].gateway == 0)
+
+        bTcpIpCtx.pinfo_table[i].priority          = pnetcard[i].priority;
+        bTcpIpCtx.pinfo_table[i].netif.dev_no      = pnetcard[i].dev_no;
+        bTcpIpCtx.pinfo_table[i].netif.fd          = -1;
+        bTcpIpCtx.pinfo_table[i].ip_info.ignore_ip = pnetcard[i].ignore_ip;
+        bTcpIpCtx.pinfo_table[i].ip_info.ipaddr    = pnetcard[i].assigned_ip.ip;
+        bTcpIpCtx.pinfo_table[i].ip_info.netmask   = pnetcard[i].assigned_ip.mask;
+        bTcpIpCtx.pinfo_table[i].ip_info.gateway   = pnetcard[i].assigned_ip.gateway;
+        if (pnetcard[i].assigned_ip.ip == 0 || pnetcard[i].assigned_ip.mask == 0 ||
+            pnetcard[i].assigned_ip.gateway == 0)
         {
-            bTcpIpCtx.pinfo_table[i].is_dhcp = 1;
+            bTcpIpCtx.pinfo_table[i].ip_info.is_dhcp = 1;
         }
         bTcpIpCtx.pinfo_table[i].dhcp_ctx.fd    = -1;
         bTcpIpCtx.pinfo_table[i].dhcp_ctx.state = STATE_DHCP_STOP;
@@ -2736,23 +2778,25 @@ int bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway)
     }
     if (ip_addr == NULL || netmask == NULL || gateway == NULL)
     {
-        pinfo->is_dhcp     = 1;
-        pinfo->get_ip_done = 0;
+        pinfo->ip_info.is_dhcp     = 1;
+        pinfo->ip_info.get_ip_done = 0;
     }
     else
     {
-        pinfo->is_dhcp = 0;
-        pinfo->ipaddr  = _bIpStr2Uint32(ip_addr);
-        pinfo->netmask = _bIpStr2Uint32(netmask);
-        pinfo->gateway = _bIpStr2Uint32(gateway);
-        if (pinfo->ipaddr == 0 || pinfo->netmask == 0 || pinfo->gateway == 0)
+        pinfo->ip_info.is_dhcp = 0;
+        pinfo->ip_info.ipaddr  = _bIpStr2Uint32(ip_addr);
+        pinfo->ip_info.netmask = _bIpStr2Uint32(netmask);
+        pinfo->ip_info.gateway = _bIpStr2Uint32(gateway);
+        if (pinfo->ip_info.ipaddr == 0 || pinfo->ip_info.netmask == 0 ||
+            pinfo->ip_info.gateway == 0)
         {
-            pinfo->is_dhcp = 1;
+            pinfo->ip_info.is_dhcp = 1;
             return -1;
         }
-        pinfo->get_ip_done = 1;
-        bTcpIpDNS[2]       = pinfo->gateway;
-        pinfo->stack_if.set_ip(pinfo->ipaddr, pinfo->netmask, pinfo->gateway);
+        pinfo->ip_info.get_ip_done = 1;
+        bTcpIpDNS[2]               = pinfo->ip_info.gateway;
+        pinfo->stack_if.set_ip(pinfo->ip_info.ipaddr, pinfo->ip_info.netmask,
+                               pinfo->ip_info.gateway, &pinfo->netif);
     }
     return 0;
 }
@@ -2764,21 +2808,21 @@ int bTcpIpGetIp(char *ipaddr, char *netmask, char *gateway)
     {
         return -1;
     }
-    if (pinfo->get_ip_done == 0)
+    if (pinfo->ip_info.get_ip_done == 0)
     {
         return -1;
     }
     if (ipaddr != NULL)
     {
-        _bIpInt2Str(ipaddr, pinfo->ipaddr);
+        _bIpInt2Str(ipaddr, pinfo->ip_info.ipaddr);
     }
     if (netmask != NULL)
     {
-        _bIpInt2Str(netmask, pinfo->netmask);
+        _bIpInt2Str(netmask, pinfo->ip_info.netmask);
     }
     if (gateway != NULL)
     {
-        _bIpInt2Str(gateway, pinfo->gateway);
+        _bIpInt2Str(gateway, pinfo->ip_info.gateway);
     }
     return 0;
 }
@@ -2792,16 +2836,16 @@ int bTcpIpSetMac(const uint8_t mac[6])
     {
         return -1;
     }
-    if (pinfo->stack_if.set_mac == NULL || pinfo->fd < 0)
+    if (pinfo->stack_if.set_mac == NULL || pinfo->netif.fd < 0)
     {
         return -1;
     }
     memcpy(mac_addr.address, mac, 6);
-    ret = bCtl(pinfo->fd, bCMD_GET_MAC_ADDRESS, &mac_addr);
+    ret = bCtl(pinfo->netif.fd, bCMD_GET_MAC_ADDRESS, &mac_addr);
     if (ret == 0)
     {
-        memcpy(pinfo->mac, mac, 6);
-        pinfo->stack_if.set_mac((uint8_t *)mac);
+        memcpy(pinfo->netif.mac, mac, 6);
+        pinfo->stack_if.set_mac((uint8_t *)mac, &pinfo->netif);
     }
     return ret;
 }
@@ -2813,7 +2857,7 @@ int bTcpIpGetMac(uint8_t mac[6])
     {
         return -1;
     }
-    memcpy(mac, pinfo->mac, 6);
+    memcpy(mac, pinfo->netif.mac, 6);
     return 0;
 }
 
@@ -2824,7 +2868,7 @@ uint8_t bTcpIpPhyIsLinked(void)
     {
         return -1;
     }
-    return pinfo->is_linked;
+    return pinfo->netif.is_linked;
 }
 
 int bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data)
@@ -2842,11 +2886,11 @@ int bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data
     memset(ptrans, 0, sizeof(bTrans_t));
     if (type == B_TRANS_CONN_TCP)
     {
-        ptrans->pcb = pinfo->stack_if.tcp.new();
+        ptrans->pcb = pinfo->stack_if.tcp.new(&pinfo->netif);
     }
     else
     {
-        ptrans->pcb = pinfo->stack_if.udp.new();
+        ptrans->pcb = pinfo->stack_if.udp.new(&pinfo->netif);
     }
     if (ptrans->pcb == NULL)
     {
@@ -2856,7 +2900,8 @@ int bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data
     ptrans->type     = type;
     ptrans->callback = cb;
     ptrans->cb_arg   = user_data;
-    ptrans->netcard  = pinfo;
+    ptrans->stack_if = &pinfo->stack_if;
+    ptrans->netif    = &pinfo->netif;
     _bTcpIpTransState(ptrans, B_SOCKET_STATE_INIT);
     list_add_tail(&ptrans->node, &bSocketHead);
     return (int)ptrans;
@@ -2877,11 +2922,11 @@ int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
     memset(ptrans, 0, sizeof(bTrans_t));
     if (type == B_TRANS_CONN_TCP)
     {
-        ptrans->pcb = pinfo->stack_if.tcp.new();
+        ptrans->pcb = pinfo->stack_if.tcp.new(&pinfo->netif);
     }
     else
     {
-        ptrans->pcb = pinfo->stack_if.udp.new();
+        ptrans->pcb = pinfo->stack_if.udp.new(&pinfo->netif);
     }
     if (ptrans->pcb == NULL)
     {
@@ -2891,7 +2936,8 @@ int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
     ptrans->type     = type;
     ptrans->callback = cb;
     ptrans->cb_arg   = user_data;
-    ptrans->netcard  = pinfo;
+    ptrans->stack_if = &pinfo->stack_if;
+    ptrans->netif    = &pinfo->netif;
     _bTcpIpTransState(ptrans, B_SOCKET_STATE_INIT);
     list_add_tail(&ptrans->node, &bSocketHead);
     return (int)ptrans;
@@ -2903,9 +2949,9 @@ int bConnect(int sockfd, char *remote, uint16_t port)
     {
         return -1;
     }
-    bTrans_t     *ptrans = (bTrans_t *)sockfd;
-    bTcpIpInfo_t *pinfo  = (bTcpIpInfo_t *)ptrans->netcard;
-    if (ptrans->pcb == NULL || pinfo == NULL)
+    bTrans_t        *ptrans    = (bTrans_t *)sockfd;
+    bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
+    if (ptrans->pcb == NULL || pstack_if == NULL)
     {
         b_log_e("pcb == NULL ...\r\n");
         return -1;
@@ -2924,31 +2970,31 @@ int bConnect(int sockfd, char *remote, uint16_t port)
     ptrans->remote_ip = remote_ip_tmp;
     if (ptrans->type == B_TRANS_CONN_TCP)
     {
-        pinfo->stack_if.tcp.connect(ptrans->pcb, ptrans->remote_ip, ptrans->remote_port);
+        pstack_if->tcp.connect(ptrans->pcb, ptrans->remote_ip, ptrans->remote_port);
     }
     else if (ptrans->type == B_TRANS_CONN_UDP)
     {
-        pinfo->stack_if.udp.connect(ptrans->pcb, ptrans->remote_ip, ptrans->remote_port);
+        pstack_if->udp.connect(ptrans->pcb, ptrans->remote_ip, ptrans->remote_port);
     }
     return 0;
 }
 
 int bBind(int sockfd, uint16_t port)
 {
-    bTrans_t     *ptrans = (bTrans_t *)sockfd;
-    bTcpIpInfo_t *pinfo  = (bTcpIpInfo_t *)ptrans->netcard;
-    if (SOCKFD_IS_INVALID(sockfd) || pinfo == NULL)
+    bTrans_t        *ptrans    = (bTrans_t *)sockfd;
+    bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
+    if (SOCKFD_IS_INVALID(sockfd) || pstack_if == NULL)
     {
         return -1;
     }
     ptrans->local_port = port;
     if (ptrans->type == B_TRANS_CONN_UDP)
     {
-        pinfo->stack_if.udp.bind(ptrans->pcb, port);
+        pstack_if->udp.bind(ptrans->pcb, port);
     }
     else
     {
-        pinfo->stack_if.tcp.bind(ptrans->pcb, port);
+        pstack_if->tcp.bind(ptrans->pcb, port);
     }
     return 0;
 }
@@ -2956,19 +3002,19 @@ int bBind(int sockfd, uint16_t port)
 int bListen(int sockfd, int backlog)
 {
     B_UNUSED(backlog);
-    bTrans_t     *ptrans = (bTrans_t *)sockfd;
-    bTcpIpInfo_t *pinfo  = (bTcpIpInfo_t *)ptrans->netcard;
-    if (SOCKFD_IS_INVALID(sockfd) || pinfo == NULL)
+    bTrans_t        *ptrans    = (bTrans_t *)sockfd;
+    bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
+    if (SOCKFD_IS_INVALID(sockfd) || pstack_if == NULL)
     {
         return -1;
     }
     if (ptrans->type == B_TRANS_CONN_TCP)
     {
-        pinfo->stack_if.tcp.listen(ptrans->pcb, backlog);
+        pstack_if->tcp.listen(ptrans->pcb, backlog);
     }
     else if (ptrans->type == B_TRANS_CONN_UDP)
     {
-        pinfo->stack_if.udp.listen(ptrans->pcb, backlog);
+        pstack_if->udp.listen(ptrans->pcb, backlog);
     }
     return 0;
 }
@@ -2981,19 +3027,19 @@ int bRecv(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen)
     {
         return -1;
     }
-    bTrans_t     *ptrans = (bTrans_t *)sockfd;
-    bTcpIpInfo_t *pinfo  = (bTcpIpInfo_t *)ptrans->netcard;
-    if (pinfo == NULL)
+    bTrans_t        *ptrans    = (bTrans_t *)sockfd;
+    bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
+    if (pstack_if == NULL)
     {
         return -1;
     }
     if (ptrans->type == B_TRANS_CONN_UDP)
     {
-        read_len = pinfo->stack_if.udp.recv(ptrans->pcb, pbuf, buf_len);
+        read_len = pstack_if->udp.recv(ptrans->pcb, pbuf, buf_len);
     }
     else if (ptrans->type == B_TRANS_CONN_TCP)
     {
-        read_len = pinfo->stack_if.tcp.recv(ptrans->pcb, pbuf, buf_len);
+        read_len = pstack_if->tcp.recv(ptrans->pcb, pbuf, buf_len);
     }
     if (rlen)
     {
@@ -3009,19 +3055,19 @@ int bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
     {
         return -1;
     }
-    bTrans_t     *ptrans = (bTrans_t *)sockfd;
-    bTcpIpInfo_t *pinfo  = (bTcpIpInfo_t *)ptrans->netcard;
-    if (pinfo == NULL)
+    bTrans_t        *ptrans    = (bTrans_t *)sockfd;
+    bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
+    if (pstack_if == NULL)
     {
         return -1;
     }
     if (ptrans->type == B_TRANS_CONN_TCP)
     {
-        retval = pinfo->stack_if.tcp.send(ptrans->pcb, pbuf, buf_len);
+        retval = pstack_if->tcp.send(ptrans->pcb, pbuf, buf_len);
     }
     else if (ptrans->type == B_TRANS_CONN_UDP)
     {
-        retval = pinfo->stack_if.udp.send(ptrans->pcb, pbuf, buf_len);
+        retval = pstack_if->udp.send(ptrans->pcb, pbuf, buf_len);
     }
     return retval;
 }
@@ -3032,13 +3078,13 @@ uint8_t bSockIsReadable(int sockfd)
     {
         return 0;
     }
-    bTrans_t     *ptrans = (bTrans_t *)sockfd;
-    bTcpIpInfo_t *pinfo  = (bTcpIpInfo_t *)ptrans->netcard;
-    if (pinfo == NULL)
+    bTrans_t        *ptrans    = (bTrans_t *)sockfd;
+    bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
+    if (pstack_if == NULL)
     {
         return -1;
     }
-    return pinfo->stack_if.is_readable(ptrans->pcb);
+    return pstack_if->is_readable(ptrans->pcb);
 }
 
 uint8_t bSockIsWriteable(int sockfd)
@@ -3047,13 +3093,13 @@ uint8_t bSockIsWriteable(int sockfd)
     {
         return 0;
     }
-    bTrans_t     *ptrans = (bTrans_t *)sockfd;
-    bTcpIpInfo_t *pinfo  = (bTcpIpInfo_t *)ptrans->netcard;
-    if (pinfo == NULL)
+    bTrans_t        *ptrans    = (bTrans_t *)sockfd;
+    bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
+    if (pstack_if == NULL)
     {
         return -1;
     }
-    return pinfo->stack_if.is_writeable(ptrans->pcb);
+    return pstack_if->is_writeable(ptrans->pcb);
 }
 
 uint8_t bSocketIsConnected(int sockfd)

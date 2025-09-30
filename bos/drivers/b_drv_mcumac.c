@@ -190,7 +190,7 @@ PT_THREAD(_bMcuMacLinkTask)(struct pt *pt, void *arg)
             if (link_state != bMCUMACRunInfo[i].link_state)
             {
                 bMCUMACRunInfo[i].link_state = link_state;
-                if (bMCUMACRunInfo[i].link_cb)
+                if(bMCUMACRunInfo[i].link_cb.cb)
                 {
                     bMCUMACRunInfo[i].link_cb.cb(link_state, bMCUMACRunInfo[i].link_cb.arg);
                 }

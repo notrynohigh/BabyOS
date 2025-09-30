@@ -40,7 +40,7 @@ extern "C" {
 
 #include "b_config.h"
 #include "utils/inc/b_util_list.h"
-
+#define _TCPIP_ENABLE 1
 #if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
 /**
  * \addtogroup BABYOS
@@ -64,15 +64,21 @@ extern "C" {
 
 /*
    ip,mask,gateway 有为0的值，表示使用DHCP;
+   ip格式："192.168.0.1" >> 0xc0a80001 或者使用bIPStr2Uint32辅助函数转换
    priority 表示优先级，数值越小优先级越高
+   当 ignore_ip 为 1时，assiged_ip内容被忽略，不会执行DHCP或者相关IP操作
 */
 typedef struct
 {
     uint32_t dev_no;
-    uint32_t ip;
-    uint32_t mask;
-    uint32_t gateway;
     uint8_t  priority;
+    uint8_t  ignore_ip;
+    struct
+    {
+        uint32_t ip;
+        uint32_t mask;
+        uint32_t gateway;
+    } assigned_ip;
 } bNetCardInfo_t;
 
 typedef enum

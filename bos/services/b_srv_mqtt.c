@@ -623,7 +623,7 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
             }
             b_log("connect:%s:%d\r\n", pinstance->host, pinstance->port);
             bConnect(sock_fd, pinstance->host, pinstance->port);
-            PT_WAIT_UNTIL(pt, bSockIsWriteable(sock_fd), MS2TICKS(3000));
+            PT_WAIT_UNTIL(pt, bSocketIsConnected(sock_fd) == 1, MS2TICKS(3000));
             if (PT_WAIT_IS_TIMEOUT(pt))
             {
                 b_log_e("connect timeout\r\n");

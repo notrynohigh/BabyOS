@@ -39,6 +39,11 @@ extern "C" {
 #include <stdint.h>
 
 ///////////////////////////////////////////////////////////
+// Base value of a certain type of general instruction
+///////////////////////////////////////////////////////////
+#define bCMD_TCPIP_GENERAL_BASE_VALUE (127)
+
+///////////////////////////////////////////////////////////
 // eeprom Command & Data Structure
 ///////////////////////////////////////////////////////////
 #define bCMD_LTC_GET_DACX_STATUS 0  // uint32_t 获取某个DAC输出状态
@@ -216,49 +221,25 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // Wifi Module Command & Data Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_WIFI_REG_CALLBACK 0       // bWifiDrvCallback_t
-#define bCMD_WIFI_MODE_STA 1           // none
-#define bCMD_WIFI_MODE_AP 2            // bApInfo_t
-#define bCMD_WIFI_MODE_STA_AP 3        // bApInfo_t
-#define bCMD_WIFI_JOIN_AP 4            // bApInfo_t
-#define bCMD_WIFI_PING 5               // char *
-#define bCMD_WIFI_LOCAL_TCP_SERVER 6   // bTcpUdpInfo_t
-#define bCMD_WIFI_LOCAL_UDP_SERVER 7   // bTcpUdpInfo_t
-#define bCMD_WIFI_REMOT_TCP_SERVER 8   // bTcpUdpInfo_t
-#define bCMD_WIFI_REMOT_UDP_SERVER 9   // bTcpUdpInfo_t
-#define bCMD_WIFI_TCPUDP_CLOSE 10      // bTcpUdpInfo_t
-#define bCMD_WIFI_TCPUDP_SEND 11       // bTcpUdpData_t
-#define bCMD_WIFI_MQTT_CONN 12         // bMqttConnInfo_t
-#define bCMD_WIFI_MQTT_SUB 13          // bMqttTopic_t
-#define bCMD_WIFI_MQTT_PUB 14          // bMqttData_t
-#define bCMD_WIFI_SET_CALLBACK_ARG 15  // void *
+#define bCMD_WIFI_REG_CALLBACK 0  // bWifiDrvCallback_t
+#define bCMD_WIFI_MODE_STA 1      // none
+#define bCMD_WIFI_MODE_AP 2       // bApInfo_t
+#define bCMD_WIFI_MODE_STA_AP 3   // bApInfo_t
+#define bCMD_WIFI_JOIN_AP 4       // bApInfo_t
+#define bCMD_WIFI_NUMBER_MAX (5)
+
 typedef enum
 {
     B_EVT_MODE_STA_OK = 0,
     B_EVT_MODE_AP_OK,
     B_EVT_MODE_STA_AP_OK,
     B_EVT_JOIN_AP_OK,
-    B_EVT_PING_OK,
-    B_EVT_LOCAL_TCP_SERVER_OK,
-    B_EVT_LOCAL_UDP_SERVER_OK,
-    B_EVT_CONN_TCP_SERVER_OK,
-    B_EVT_CONN_UDP_SERVER_OK,
-    B_EVT_CLOSE_CONN_OK,
-    B_EVT_CONN_SEND_OK,
-    B_EVT_CONN_NEW_DATA,
 
     B_EVT_FAIL_BASE = -100,
     B_EVT_MODE_STA_FAIL,
     B_EVT_MODE_AP_FAIL,
     B_EVT_MODE_STA_AP_FAIL,
     B_EVT_JOIN_AP_FAIL,
-    B_EVT_PING_FAIL,
-    B_EVT_LOCAL_TCP_SERVER_FAIL,
-    B_EVT_LOCAL_UDP_SERVER_FAIL,
-    B_EVT_CONN_TCP_SERVER_FAIL,
-    B_EVT_CONN_UDP_SERVER_FAIL,
-    B_EVT_CLOSE_CONN_FAIL,
-    B_EVT_CONN_SEND_FAIL,
 } bWifiDrvEvent_t;
 
 typedef struct
@@ -278,43 +259,6 @@ typedef struct
     // 0(open) 1(WPA_PSK) 2(WPA2_PSK) 3(WPA_WPA2_PSK)
 } bApInfo_t;
 
-typedef struct
-{
-    char     ip[WIFI_REMOTE_ADDR_LEN_MAX + 1];
-    uint16_t port;
-} bTcpUdpInfo_t;
-
-typedef struct
-{
-    bTcpUdpInfo_t conn;
-    uint8_t      *pbuf;
-    uint16_t      len;
-    void (*release)(void *);
-} bTcpUdpData_t;
-
-typedef struct
-{
-    char     broker[64];
-    uint16_t port;
-    char     device_id[64];
-    char     user[64];
-    char     passwd[64];
-} bMqttConnInfo_t;
-
-typedef struct
-{
-    char    topic[64];
-    uint8_t qos;
-} bMqttTopic_t;
-
-typedef struct
-{
-    bMqttTopic_t topic;
-    uint8_t     *pbuf;
-    uint16_t     len;
-    void (*release)(void *);
-} bMqttData_t;
-
 ///////////////////////////////////////////////////////////
 // Proximity_AmbientLightsensor Data Structure
 ///////////////////////////////////////////////////////////
@@ -328,12 +272,18 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // MAC Device Command and Param
 ///////////////////////////////////////////////////////////
-#define bCMD_GET_MAC_ADDRESS 0    // bMacAddress_t
-#define bCMD_SET_MAC_ADDRESS 1    // bMacAddress_t
-#define bCMD_GET_LINK_STATE 2     // uint8_t  0 or 1 (linked)
-#define bCMD_REG_LINK_CALLBACK 3  // bLinkStateCb_t
-#define bCMD_REG_BUF_LIST 4       // bHalBufList_t
-#define bCMD_GET_STACK_IF 5       // bTcpIpStackIf_t
+#define bCMD_GET_DRIVER_NETIF (0 + bCMD_TCPIP_GENERAL_BASE_VALUE)   // bDriverNetif_t
+#define bCMD_GET_MAC_ADDRESS (1 + bCMD_TCPIP_GENERAL_BASE_VALUE)    // bMacAddress_t
+#define bCMD_SET_MAC_ADDRESS (2 + bCMD_TCPIP_GENERAL_BASE_VALUE)    // bMacAddress_t
+#define bCMD_GET_LINK_STATE (3 + bCMD_TCPIP_GENERAL_BASE_VALUE)     // uint8_t  0 or 1 (linked)
+#define bCMD_REG_LINK_CALLBACK (4 + bCMD_TCPIP_GENERAL_BASE_VALUE)  // bLinkStateCb_t
+#define bCMD_REG_BUF_LIST (5 + bCMD_TCPIP_GENERAL_BASE_VALUE)       // bHalBufList_t
+#define bCMD_GET_STACK_IF (6 + bCMD_TCPIP_GENERAL_BASE_VALUE)       // bTcpIpStackIf_t
+
+typedef struct
+{
+    void *private;
+} bDriverNetif_t;
 
 typedef struct
 {
@@ -359,14 +309,29 @@ typedef void (*pTcpIpCallback_t)(bTcpIpEvent_t event, void *pcb, void *arg);
 
 typedef struct
 {
-    int (*init)(void);
-    int (*set_mac)(uint8_t mac[6]);
-    int (*set_ip)(uint32_t ip, uint32_t mask, uint32_t gateway);
-    int (*set_link_state)(uint8_t state);
-    void (*loop)(void);
+    uint32_t dev_no;
+    int      fd;
+    uint8_t  is_linked;
+    uint8_t  mac[6];
+    void *private;
+} bTcpIpNetif_t;
+
+typedef struct
+{
+    int (*init)(bTcpIpNetif_t *netif);
+    void (*loop)(bTcpIpNetif_t *netif);
+    void (*reg_callback)(pTcpIpCallback_t cb, void *arg, bTcpIpNetif_t *netif);
+
+    // 网卡相关接口，如果有协议栈管理多张网卡的情况，会传入网卡信息；
+    int (*set_mac)(uint8_t mac[6], bTcpIpNetif_t *netif);
+    int (*set_ip)(uint32_t ip, uint32_t mask, uint32_t gateway, bTcpIpNetif_t *netif);
+    int (*set_link_state)(uint8_t state, bTcpIpNetif_t *netif);
+    int (*set_default_netif)(bTcpIpNetif_t *netif);
+
+    // tcp/udp相关接口
     struct
     {
-        void *(*new)(void);
+        void *(*new)(bTcpIpNetif_t *pnetif);
         int (*bind)(void *, uint16_t);
         int (*listen)(void *, uint16_t);
         int (*connect)(void *, uint32_t, uint16_t);
@@ -377,7 +342,7 @@ typedef struct
 
     struct
     {
-        void *(*new)(void);
+        void *(*new)(bTcpIpNetif_t *pnetif);
         int (*bind)(void *, uint16_t);
         int (*listen)(void *, uint16_t);
         int (*connect)(void *, uint32_t, uint16_t);
@@ -388,8 +353,6 @@ typedef struct
 
     uint8_t (*is_readable)(void *);
     uint8_t (*is_writeable)(void *);
-
-    void (*callback)(pTcpIpCallback_t cb, void *arg);
 } bTcpIpStackIf_t;
 
 ///////////////////////////////////////////////////////////

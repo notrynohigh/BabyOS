@@ -40,6 +40,8 @@ extern "C" {
 
 #include "b_config.h"
 
+#define _WIFI_ENABLE 1
+
 #if (defined(_WIFI_ENABLE) && (_WIFI_ENABLE == 1))
 
 /**
@@ -83,17 +85,20 @@ typedef struct
 
 typedef enum
 {
-    B_WIFI_EVT_APCFGNET,  // arg：bWifiApInfo_t
-    B_WIFI_EVT_CONN_AP,   // arg: uint8_t 1:成功 0:失败
-    B_WIFI_EVT_CONN_TCP,
-    B_WIFI_EVT_CONN_UDP,
-    B_WIFI_EVT_DISCONN,
-    B_WIFI_EVT_PING,
-    B_WIFI_EVT_SEND,
-    B_WIFI_EVT_RECV,  // bWifiNewData_t
+    B_WIFI_EVT_SWITCH_MODE,  // arg: uint8_t 1:成功 0:失败
+    B_WIFI_EVT_CONN_AP,      // arg: uint8_t 1:成功 0:失败
 } bWifiEvent_t;
 
 typedef void (*pWifiEvtCb_t)(bWifiEvent_t evt, void *arg, void (*release)(void *), void *user_data);
+
+typedef enum
+{
+    B_WIFI_MODE_STA = 0,
+    B_WIFI_MODE_AP,
+    B_WIFI_MODE_STA_AP,
+    B_WIFI_MODE_MAX,
+    B_WIFI_MODE_UNKNOWN = 0xFF,
+} bWifiMode_t;
 
 /**
  * \}
@@ -113,24 +118,10 @@ typedef void (*pWifiEvtCb_t)(bWifiEvent_t evt, void *arg, void (*release)(void *
  * \{
  */
 int bWifiInit(uint32_t dev_no, pWifiEvtCb_t cb, void *user_data);
+int bWifiSetMode(bWifiMode_t mode);
 int bWifiDeinit(void);
-/*
- * \brief      AP配置网络
- 端口号 666
- 配网数据：
- {
-    "ssid": "xxxxx",
-    "passwd": "xxxxx"
- }
-*/
-int bWifiApConfigNet(const char *ssid, const char *passwd);
+int bWifiApConfig(const char *ssid, const char *passwd);
 int bWifiJoinAp(const char *ssid, const char *passwd);
-
-int bWifiConnTcp(const char *remote, uint16_t port);
-int bWifiConnUdp(const char *remote, uint16_t port);
-int bWifiDisconn(const char *remote, uint16_t port);
-int bWifiPing(const char *remote);
-int bWifiSend(const char *remote, uint16_t port, uint8_t *pbuf, uint16_t len);
 
 /**
  * \}

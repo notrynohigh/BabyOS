@@ -35,6 +35,9 @@
 #include <stdio.h>
 
 #include "core/inc/b_task.h"
+
+#define _AT_ENABLE 1
+
 #include "utils/inc/b_util_at.h"
 #include "utils/inc/b_util_log.h"
 #include "utils/inc/b_util_memp.h"
@@ -59,25 +62,60 @@
  */
 #define DRIVER_NAME ESP12F
 
-#ifndef ESP12F_CMD_BUF_LEN
-#define ESP12F_CMD_BUF_LEN (128)
-#endif  // !ESP12F_CMD_BUF_LEN
-
 #ifndef ESP12F_CMD_TIMEOUT
-#define ESP12F_CMD_TIMEOUT (5000)
+#define WIFIMODULE_CMD_TIMEOUT (5000)
+#else
+#define WIFIMODULE_CMD_TIMEOUT (ESP12F_CMD_TIMEOUT)
 #endif
 
-#define ESP12F_CONN_NUM_MAX (5)
+#define WIFIMODULE_PCB_NUM_MAX (5)
+#define WIFIMODULE_PCB_INDEX_IS_VALID(index) (index < WIFIMODULE_PCB_NUM_MAX)
 
-#define ESP12F_CMD_RESET_BIT (0x01)
-#define ESP12F_CMD_INIT_BIT (0x02)
+#define WIFIMODULE_CMD_RESULT_OK (0x01)
+#define WIFIMODULE_CMD_RESULT_FAIL (0x02)
 
-#define ESP12F_CMD_RESULT_OK (0x01)
-#define ESP12F_CMD_RESULT_FAIL (0x02)
+#define WIFIMODULE_CLEAR_CMD_RESULT(p) (((p)->cmd_ctx.cmd_result) = 0)
+#define WIFIMODULE_SET_CMD_RESULT_OK(p) (((p)->cmd_ctx.cmd_result) = 1)
+#define WIFIMODULE_SET_CMD_RESULT_FAIL(p) (((p)->cmd_ctx.cmd_result) = 2)
+#define WIFIMODULE_CMD_RESULT_IS_OK(p) (((p)->cmd_ctx.cmd_result) == 1)
+#define WIFIMODULE_CMD_RESULT_IS_FAIL(p) (((p)->cmd_ctx.cmd_result) == 2)
 
-#ifndef CONNECT_RECVBUF_MAX
-#define CONNECT_RECVBUF_MAX (1024)
+#define WIFIMODULE_CMD_IS_FORCE_WAIT(timeout) ((timeout) & 0x8000)
+#define WIFIMODULE_CMD_SET_FORCE_WAIT(timeout) (((timeout) & 0x7fff) | 0x8000)
+#define WIFIMODULE_CMD_TIMEOUT_GET(timeout) (((timeout) & 0x7fff))
+
+#define WIFIMODULE_CONN_NUMBER_RESET(p) (((p)->link_number) = 0)
+#define WIFIMODULE_CONN_NUMBER_INCREASE(p) (((p)->link_number) += 0)
+#define WIFIMODULE_CONN_NUMBER_DECREASE(p) (((p)->link_number > 0) ? (((p)->link_number) -= 1) : 0)
+#define WIFIMODULE_CONN_NUMBER_GET(p) (((p)->link_number))
+
+#define WIFIMODULE_IS_BUSY(p) (((p)->busy) != 0)
+#define WIFIMODULE_SET_BUSY(p) (((p)->busy) = 1)
+#define WIFIMODULE_CLEAR_BUSY(p) (((p)->busy) = 0)
+
+#define WIFIMODULE_CLEAR_CTL_CMD(p) (((p)->ctl_ctx.ctl_cmd) = 0xff)
+#define WIFIMODULE_SET_CTL_CMD(p, cmd) (((p)->ctl_ctx.ctl_cmd) = (cmd))
+
+#ifndef ESP12F_CMD_TX_BUF_LEN
+#define WIFIMODULE_SENDBUF_MAX (128)
+#else
+#define WIFIMODULE_SENDBUF_MAX (ESP12F_CMD_TX_BUF_LEN)
 #endif
+
+#ifndef ESP12F_CMD_RX_BUF_LEN
+#define WIFIMODULE_RECVBUF_MAX (1024)
+#else
+#define WIFIMODULE_RECVBUF_MAX (ESP12F_CMD_RX_BUF_LEN)
+#endif
+
+#define WIFIMODULE_CMD_TABLE_NUMBER_MAX (3)
+
+#define WIFI_PCB_STATE_IDLE (0)
+#define WIFI_PCB_STATE_ASSIGNED (1)
+#define WIFI_PCB_STATE_WAIT_CONNECT (2)
+#define WIFI_PCB_STATE_CONNECTING (3)
+#define WIFI_PCB_STATE_CONNECTED (4)
+#define WIFI_PCB_STATE_DISCONNECT (5)
 
 /**
  * \}
@@ -96,43 +134,74 @@ typedef struct
     char         *resp;
     uint16_t      timeout;
     pbAtCmdFunc_t cmd_f;
-} bEsp12fCmd_t;
+} bWifiModuleCmdUnit_t;
 
 typedef struct
 {
     bWifiDrvEvent_t ok_event;
     bWifiDrvEvent_t fail_event;
-} bEsp12fCtlEvent_t;
+} bWifiModuleCtlEvent_t;
 
 typedef struct
 {
-    uint8_t busy;
+    uint8_t number;
     struct
     {
-        bTcpUdpInfo_t info;
-        uint8_t       connected;
-    } conn[ESP12F_CONN_NUM_MAX];
-    uint8_t             conn_id;
-    uint8_t             cmd;
-    const bEsp12fCmd_t *pcmd;
-    uint8_t             cmd_num;
-    uint8_t             cmd_index;
-    uint8_t             result;
-    uint8_t             step;
-    uint8_t             uart_buf[CONNECT_RECVBUF_MAX];
-    char                cmd_tmp[ESP12F_CMD_BUF_LEN + 1];
-    union
+        bWifiModuleCmdUnit_t *pcmdunit;
+        uint8_t               unit_number;
+    } cmd_table[WIFIMODULE_CMD_TABLE_NUMBER_MAX];
+} bWifiModuleCmd_t;
+
+typedef struct
+{
+    uint8_t       busy;
+    uint8_t       link_number;
+    bMacAddress_t mac;
+    bTaskAttr_t   task_attr;
+    struct
     {
-        bApInfo_t     ap;
-        bTcpUdpInfo_t tcpudp;
-        char          remote[WIFI_REMOTE_ADDR_LEN_MAX + 1];
-        bTcpUdpData_t dat;
-    } param;
-    bAtStruct_t        at;
-    bHalUartIdleAttr_t uart_attr;
-    bTaskAttr_t        task_attr;
-    bWifiDrvCallback_t cb;
+        uint8_t ctl_cmd;
+        union
+        {
+            bApInfo_t ap;
+        } ctl_param;
+    } ctl_ctx;
+    struct
+    {
+        uint8_t          cmd_index;
+        uint8_t          cmd_result;
+        uint8_t          cmd_unit_index;
+        bWifiModuleCmd_t cmd_data;
+    } cmd_ctx;
+    struct
+    {
+        bLinkStateCb_t     link_cb;
+        pTcpIpCallback_t   tcpip_cb;
+        void              *tcpip_cb_arg;
+        bWifiDrvCallback_t cb;
+    } cb_ctx;
+    struct
+    {
+        bAtStruct_t        at;
+        bHalUartIdleAttr_t uart_attr;
+        uint8_t            uart_recv_buf[WIFIMODULE_RECVBUF_MAX + 1];
+        uint8_t            uart_send_buf[WIFIMODULE_SENDBUF_MAX + 1];
+    } at_ctx;
+
+    struct
+    {
+        uint8_t  is_tcp;
+        uint8_t  state;
+        uint32_t ip;
+        uint16_t port;
+    } pcb_ctx[WIFIMODULE_PCB_NUM_MAX];
 } bEsp12fPrivate_t;
+
+typedef struct
+{
+    uint8_t pcb_index;
+    void *private;
+} bWifiModulePcb_t;
 
 /**
  * \}
@@ -153,12 +222,6 @@ typedef struct
  */
 static char *_bSetApInfo(void *arg);
 static char *_bJoinAp(void *arg);
-static char *_bPing(void *arg);
-static char *_bLocalTcpServer(void *arg);
-static char *_bRemoteTcpServer(void *arg);
-static char *_bRemoteUdpServer(void *arg);
-static char *_bCloseTcpUdp(void *arg);
-static char *_bTcpUdpSend(void *arg);
 /**
  * \}
  */
@@ -172,42 +235,34 @@ bDRIVER_HALIF_TABLE(bESP12F_HalIf_t, DRIVER_NAME);
 
 static bEsp12fPrivate_t bEspRunInfo[bDRIVER_HALIF_NUM(bESP12F_HalIf_t, DRIVER_NAME)];
 
-const static bEsp12fCtlEvent_t bEsp12fCtlEvent[] = {
+const static bWifiModuleCtlEvent_t bEsp12fCtlEvent[bCMD_WIFI_NUMBER_MAX] = {
     {0, 0},                                       // reserved
     {B_EVT_MODE_STA_OK, B_EVT_MODE_STA_FAIL},     // bCMD_WIFI_MODE_STA
     {B_EVT_MODE_AP_OK, B_EVT_MODE_STA_FAIL},      // bCMD_WIFI_MODE_AP
     {B_EVT_MODE_STA_AP_OK, B_EVT_MODE_STA_FAIL},  // bCMD_WIFI_MODE_STA_AP
     {B_EVT_JOIN_AP_OK, B_EVT_MODE_STA_FAIL},      // bCMD_WIFI_JOIN_AP
-    {B_EVT_PING_OK, B_EVT_PING_FAIL},             // bCMD_WIFI_PING
-
-    {B_EVT_LOCAL_TCP_SERVER_OK, B_EVT_LOCAL_TCP_SERVER_FAIL},  // bCMD_WIFI_LOCAL_TCP_SERVER
-    {B_EVT_LOCAL_UDP_SERVER_OK, B_EVT_LOCAL_UDP_SERVER_FAIL},  // bCMD_WIFI_LOCAL_UDP_SERVER
-    {B_EVT_CONN_TCP_SERVER_OK, B_EVT_CONN_TCP_SERVER_FAIL},    // bCMD_WIFI_REMOT_TCP_SERVER
-    {B_EVT_CONN_UDP_SERVER_OK, B_EVT_CONN_UDP_SERVER_FAIL},    // bCMD_WIFI_REMOT_UDP_SERVER
-    {B_EVT_CLOSE_CONN_OK, B_EVT_CLOSE_CONN_FAIL},              // bCMD_WIFI_TCPUDP_CLOSE
-    {B_EVT_CONN_SEND_OK, B_EVT_CONN_SEND_FAIL},                // bCMD_WIFI_TCPUDP_SEND
 };
 
-const static bEsp12fCmd_t bEspCmdReset             = {"AT+RST\r\n", "OK", 300, NULL};
-const static bEsp12fCmd_t bEspCmdInit[2]           = {{"AT\r\n", "OK", 300, NULL},
-                                                      {"ATE0\r\n", "OK", 300, NULL}};
-const static bEsp12fCmd_t bEspCmdStaMode[2]        = {{"AT+CWMODE=1\r\n", "OK", 300, NULL},
-                                                      {"AT+CIPMUX=1\r\n", "OK", 300, NULL}};
-const static bEsp12fCmd_t bEspCmdApMode[3]         = {{"AT+CWMODE=2\r\n", "OK", 300, NULL},
-                                                      {NULL, NULL, 300, _bSetApInfo},
-                                                      {"AT+CIPMUX=1\r\n", "OK", 300, NULL}};
-const static bEsp12fCmd_t bEspCmdApStaMode[3]      = {{"AT+CWMODE=3\r\n", "OK", 300, NULL},
-                                                      {NULL, NULL, 300, _bSetApInfo},
-                                                      {"AT+CIPMUX=1\r\n", "OK", 300, NULL}};
-const static bEsp12fCmd_t bEspCmdJoinAp[1]         = {{NULL, "OK", 15000, _bJoinAp}};
-const static bEsp12fCmd_t bEspCmdPing[1]           = {{NULL, "OK", 3000, _bPing}};
-const static bEsp12fCmd_t bEspCmdLocalTcpServer[1] = {{NULL, "OK", 300, _bLocalTcpServer}};
-const static bEsp12fCmd_t bEspCmdRemotTcpServer[1] = {{NULL, "OK", 1000, _bRemoteTcpServer}};
-const static bEsp12fCmd_t bEspCmdRemotUdpServer[1] = {{NULL, "OK", 1000, _bRemoteUdpServer}};
-const static bEsp12fCmd_t bEspCmdCloseTcpUdp[1]    = {{NULL, "OK", 300, _bCloseTcpUdp}};
-const static bEsp12fCmd_t bEspCmdSendData[1]       = {{NULL, ">", 300, _bTcpUdpSend}};
-/**
- * \}
+const static bWifiModuleCmdUnit_t bEspCmdReset[1] = {
+    {"AT+RST\r\n", "OK", WIFIMODULE_CMD_SET_FORCE_WAIT(4000), NULL}};
+
+const static bWifiModuleCmdUnit_t bEspCmdInit[2]      = {{"AT\r\n", "OK", 300, NULL},
+                                                         {"ATE0\r\n", "OK", 300, NULL},
+                                                         {"AT+CIPSTAMAC_CUR?\r\n", ">", 300, NULL}};
+const static bWifiModuleCmdUnit_t bEspCmdStaMode[2]   = {{"AT+CWMODE=1\r\n", "OK", 300, NULL},
+                                                         {"AT+CIPMUX=1\r\n", "OK", 300, NULL}};
+const static bWifiModuleCmdUnit_t bEspCmdApMode[3]    = {{"AT+CWMODE=2\r\n", "OK", 300, NULL},
+                                                         {NULL, NULL, 300, _bSetApInfo},
+                                                         {"AT+CIPMUX=1\r\n", "OK", 300, NULL}};
+const static bWifiModuleCmdUnit_t bEspCmdApStaMode[3] = {{"AT+CWMODE=3\r\n", "OK", 300, NULL},
+                                                         {NULL, NULL, 300, _bSetApInfo},
+                                                         {"AT+CIPMUX=1\r\n", "OK", 300, NULL}};
+const static bWifiModuleCmdUnit_t bEspCmdJoinAp[1]    = {{NULL, "OK", 15000, _bJoinAp}};
+
+const static bWifiModuleCmdUnit_t bEspCmdConnectRemote[1] = {{NULL, "OK", 1000, _bConnectRemote}};
+
+/*/**
+ * \brief
  */
 
 /**
@@ -221,126 +276,12 @@ static void _bAtCmdCb(uint8_t isok, void *user_data)
 {
     bDriverInterface_t *pdrv = (bDriverInterface_t *)user_data;
     bDRIVER_GET_PRIVATE(_priv, bEsp12fPrivate_t, pdrv);
-    _priv->result = (isok) ? ESP12F_CMD_RESULT_OK : ESP12F_CMD_RESULT_FAIL;
+    _priv->cmd_ctx.cmd_result = (isok) ? WIFIMODULE_CMD_RESULT_OK : WIFIMODULE_CMD_RESULT_FAIL;
     b_log_w("at result:%d\r\n", isok);
-}
-
-static void _bEsp12fFree(void *addr)
-{
-    bFree(addr);
-}
-static void *_bAtNewDataMalloc(uint8_t *pbuf, uint16_t len)
-{
-    if (len == 0 || pbuf == NULL)
-    {
-        return NULL;
-    }
-    bTcpUdpData_t *pdat = bMalloc(sizeof(bTcpUdpData_t));
-    if (pdat == NULL)
-    {
-        return NULL;
-    }
-    uint8_t *ptmp = bMalloc(len + 1);
-    if (ptmp == NULL)
-    {
-        bFree(pdat);
-        return NULL;
-    }
-    memset(ptmp, 0, len + 1);
-    memcpy(ptmp, pbuf, len);
-    pdat->len     = len;
-    pdat->pbuf    = ptmp;
-    pdat->release = _bEsp12fFree;
-    return pdat;
-}
-
-static void _bAtNewDataFree(void *p)
-{
-    bTcpUdpData_t *dat = (bTcpUdpData_t *)p;
-    if (dat == NULL)
-    {
-        return;
-    }
-    if (dat->release)
-    {
-        if (dat->pbuf)
-        {
-            dat->release(dat->pbuf);
-            dat->pbuf = NULL;
-        }
-    }
-    bFree(dat);
 }
 
 static void _bAtNewDataCb(uint8_t *pbuf, uint16_t len, void (*pfree)(void *), void *user_data)
 {
-    bDriverInterface_t *pdrv = (bDriverInterface_t *)user_data;
-    bDRIVER_GET_PRIVATE(_priv, bEsp12fPrivate_t, pdrv);
-    bTcpUdpData_t *pdat    = NULL;
-    char          *p       = NULL;
-    char          *tmp_p   = NULL;
-    int            conn_id = 0;
-    int            rlen    = 0;
-    int            retval  = -1;
-    //+IPD,0,16:12312312312313
-    tmp_p = (char *)pbuf;
-    while (1)
-    {
-        p = strstr((const char *)tmp_p, "+IPD,");
-        if (p != NULL)
-        {
-            retval = sscanf(p, "+IPD,%d,%d:%*s", &conn_id, &rlen);
-            if (retval == 2 && rlen > 0)
-            {
-                if (conn_id >= 0 && conn_id < ESP12F_CONN_NUM_MAX)
-                {
-                    p = strstr(p, ":");
-                    p = p + 1;
-                    b_log("read:%p, %d\r\n", p, rlen);
-
-#if 1
-                    bTcpUdpData_t new_data;
-                    new_data.pbuf    = (uint8_t *)p;
-                    new_data.len     = rlen;
-                    new_data.release = NULL;
-                    memcpy(&new_data.conn, &_priv->conn[conn_id].info, sizeof(bTcpUdpInfo_t));
-                    _priv->cb.cb(B_EVT_CONN_NEW_DATA, &new_data, NULL, _priv->cb.user_data);
-#else
-                    pdat = (bTcpUdpData_t *)_bAtNewDataMalloc((uint8_t *)p, rlen);
-                    if (pdat != NULL)
-                    {
-                        memcpy(&pdat->conn, &_priv->conn[conn_id].info, sizeof(bTcpUdpInfo_t));
-                        _priv->cb.cb(B_EVT_CONN_NEW_DATA, pdat, _bAtNewDataFree,
-                                     _priv->cb.user_data);
-                    }
-#endif
-                }
-                tmp_p = p + rlen;
-                if (((uint32_t)tmp_p) >= ((uint32_t)(pbuf + len)))
-                {
-                    break;
-                }
-            }
-            else
-            {
-                b_log_e("sscanf error %d %d \r\n", retval, rlen);
-                break;
-            }
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    if (pfree)
-    {
-        if (pbuf)
-        {
-            pfree(pbuf);
-            pbuf = NULL;
-        }
-    }
 }
 
 static void _bAtSendData(const uint8_t *pbuf, uint16_t len, void *user_data)
@@ -353,7 +294,7 @@ static void _bAtSendData(const uint8_t *pbuf, uint16_t len, void *user_data)
 static int _bHalUartIdleCb(uint8_t *pbuf, uint16_t len, void *user_data)
 {
     bDRIVER_GET_PRIVATE(_priv, bEsp12fPrivate_t, (bDriverInterface_t *)user_data);
-    bAtFeedData(&_priv->at, pbuf, len);
+    bAtFeedData(&_priv->at_ctx.at, pbuf, len);
     return 0;
 }
 
@@ -363,182 +304,209 @@ static int _bHalUartIdleCb(uint8_t *pbuf, uint16_t len, void *user_data)
 static char *_bSetApInfo(void *arg)
 {
     bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)arg;
-    memset(prv->cmd_tmp, 0, ESP12F_CMD_BUF_LEN);
-    snprintf(prv->cmd_tmp, ESP12F_CMD_BUF_LEN, "AT+CWSAP=\"%s\",\"%s\",5,%d\r\n",
-             prv->param.ap.ssid, prv->param.ap.passwd, prv->param.ap.encryption);
-    return &prv->cmd_tmp[0];
+    memset(prv->at_ctx.uart_send_buf, 0, sizeof(prv->at_ctx.uart_send_buf));
+    snprintf(prv->at_ctx.uart_send_buf, ESP12F_CMD_BUF_LEN, "AT+CWSAP=\"%s\",\"%s\",5,%d\r\n",
+             prv->ctl_ctx.ctl_param.ap.ssid, prv->ctl_ctx.ctl_param.ap.passwd,
+             prv->ctl_ctx.ctl_param.ap.encryption);
+    return &prv->at_ctx.uart_send_buf[0];
 }
 
 static char *_bJoinAp(void *arg)
 {
     bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)arg;
-    memset(prv->cmd_tmp, 0, ESP12F_CMD_BUF_LEN);
-    snprintf(prv->cmd_tmp, ESP12F_CMD_BUF_LEN, "AT+CWJAP=\"%s\",\"%s\"\r\n", prv->param.ap.ssid,
-             prv->param.ap.passwd);
-    return &prv->cmd_tmp[0];
+    memset(prv->at_ctx.uart_send_buf, 0, sizeof(prv->at_ctx.uart_send_buf));
+    snprintf(prv->at_ctx.uart_send_buf, ESP12F_CMD_BUF_LEN, "AT+CWJAP=\"%s\",\"%s\"\r\n",
+             prv->ctl_ctx.ctl_param.ap.ssid, prv->ctl_ctx.ctl_param.ap.passwd);
+    return &prv->at_ctx.uart_send_buf[0];
 }
 
-static char *_bPing(void *arg)
+static char *_bConnectRemote(void *arg)
 {
-    bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)arg;
-    memset(prv->cmd_tmp, 0, ESP12F_CMD_BUF_LEN);
-    snprintf(prv->cmd_tmp, ESP12F_CMD_BUF_LEN, "AT+PING=\"%s\"\r\n", prv->param.remote);
-    return &prv->cmd_tmp[0];
-}
-
-static char *_bLocalTcpServer(void *arg)
-{
-    bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)arg;
-    memset(prv->cmd_tmp, 0, ESP12F_CMD_BUF_LEN);
-    snprintf(prv->cmd_tmp, ESP12F_CMD_BUF_LEN, "AT+CIPSERVER=1,%d\r\n", prv->param.tcpudp.port);
-    return &prv->cmd_tmp[0];
-}
-
-static char *_bRemoteTcpServer(void *arg)
-{
-    bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)arg;
-    memset(prv->cmd_tmp, 0, ESP12F_CMD_BUF_LEN);
-    snprintf(prv->cmd_tmp, ESP12F_CMD_BUF_LEN, "AT+CIPSTART=%d,\"TCP\",\"%s\",%d\r\n", prv->conn_id,
-             prv->param.tcpudp.ip, prv->param.tcpudp.port);
-    return &prv->cmd_tmp[0];
-}
-
-static char *_bRemoteUdpServer(void *arg)
-{
-    bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)arg;
-    memset(prv->cmd_tmp, 0, ESP12F_CMD_BUF_LEN);
-    snprintf(prv->cmd_tmp, ESP12F_CMD_BUF_LEN, "AT+CIPSTART=%d,\"UDP\",\"%s\",%d\r\n", prv->conn_id,
-             prv->param.tcpudp.ip, prv->param.tcpudp.port);
-    return &prv->cmd_tmp[0];
-}
-
-static char *_bCloseTcpUdp(void *arg)
-{
-    bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)arg;
-    memset(prv->cmd_tmp, 0, ESP12F_CMD_BUF_LEN);
-    snprintf(prv->cmd_tmp, ESP12F_CMD_BUF_LEN, "AT+CIPCLOSE=%d\r\n", prv->conn_id);
-    return &prv->cmd_tmp[0];
-}
-
-static char *_bTcpUdpSend(void *arg)
-{
-    bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)arg;
-    memset(prv->cmd_tmp, 0, ESP12F_CMD_BUF_LEN);
-    snprintf(prv->cmd_tmp, ESP12F_CMD_BUF_LEN, "AT+CIPSEND=%d,%d\r\n", prv->conn_id,
-             prv->param.dat.len);
-    return &prv->cmd_tmp[0];
+    int               i          = 0;
+    char             *pcb_type   = "TCP";
+    char              ip_str[16] = {0};
+    bEsp12fPrivate_t *prv        = (bEsp12fPrivate_t *)arg;
+    memset(prv->at_ctx.uart_send_buf, 0, sizeof(prv->at_ctx.uart_send_buf));
+    for (i = 0; i < WIFIMODULE_PCB_NUM_MAX; i++)
+    {
+        if (prv->pcb_ctx[i].state == WIFI_PCB_STATE_WAIT_CONNECT)
+        {
+            prv->pcb_ctx[i].state = WIFI_PCB_STATE_CONNECTING;
+            break;
+        }
+    }
+    if (i >= WIFIMODULE_PCB_NUM_MAX)
+    {
+        return NULL;
+    }
+    if (prv->pcb_ctx[i].is_tcp == 0)
+    {
+        pcb_type = "UDP";
+    }
+    sprintf(ip_str, "%d.%d.%d.%d", (prv->pcb_ctx[i].ip >> 24) & 0xff,
+            (prv->pcb_ctx[i].ip >> 16) & 0xff, (prv->pcb_ctx[i].ip >> 8) & 0xff,
+            prv->pcb_ctx[i].ip & 0xff);
+    snprintf(prv->at_ctx.uart_send_buf, ESP12F_CMD_BUF_LEN, "AT+CIPSTART=%d,\"%s\",\"%s\",%d\r\n",
+             i, pcb_type, ip_str, prv->pcb_ctx[i].port);
+    return &prv->at_ctx.uart_send_buf[0];
 }
 
 //--------------------------------------------------------------------------------------------------
 
-static void _bEsp12fCtlResult(uint8_t cmd, uint8_t isok, bDriverInterface_t *pdrv)
+static void _bWifiModuleCtlCmdResult(bEsp12fPrivate_t *_priv, uint8_t is_ok)
 {
-    bDRIVER_GET_PRIVATE(_priv, bEsp12fPrivate_t, pdrv);
-    if (cmd == bCMD_WIFI_TCPUDP_SEND)
+    if (_priv->cb_ctx.cb.cb && (_priv->ctl_ctx.ctl_cmd < (bCMD_WIFI_NUMBER_MAX)))
     {
-        b_log("send data...\r\n");
-        if (isok)
+        if (is_ok)
         {
-            _bAtSendData(_priv->param.dat.pbuf, _priv->param.dat.len, pdrv);
+            _priv->cb_ctx.cb.cb(bEsp12fCtlEvent[_priv->ctl_ctx.ctl_cmd].ok_event, NULL, NULL,
+                                _priv->cb_ctx.cb.user_data);
         }
-        if (_priv->param.dat.release)
+        else
         {
-            _priv->param.dat.release(_priv->param.dat.pbuf);
-            _priv->param.dat.pbuf = NULL;
+            _priv->cb_ctx.cb.cb(bEsp12fCtlEvent[_priv->ctl_ctx.ctl_cmd].fail_event, NULL, NULL,
+                                _priv->cb_ctx.cb.user_data);
         }
     }
-    _priv->busy      = 0;
-    _priv->cmd_index = 0;
-    _priv->cmd_num   = 0;
-    _priv->pcmd      = NULL;
-    _priv->cb.cb(isok ? bEsp12fCtlEvent[cmd].ok_event : bEsp12fCtlEvent[cmd].fail_event, NULL, NULL,
-                 _priv->cb.user_data);
+}
+
+static int _bWifiModuleAddExecCmd(bEsp12fPrivate_t *_priv, const bWifiModuleCmdUnit_t *pcmdunit,
+                                  uint8_t unit_number)
+{
+    if (WIFIMODULE_IS_BUSY(_priv))
+    {
+        return -1;
+    }
+    if (_priv->cmd_ctx.cmd_data.number >= WIFIMODULE_CMD_TABLE_NUMBER_MAX)
+    {
+        b_log_e("cmd table is full\r\n");
+        return -1;
+    }
+    _priv->cmd_ctx.cmd_data.cmd_table[_priv->cmd_ctx.cmd_data.number].pcmdunit    = pcmdunit;
+    _priv->cmd_ctx.cmd_data.cmd_table[_priv->cmd_ctx.cmd_data.number].unit_number = unit_number;
+    _priv->cmd_ctx.cmd_data.number += 1;
+    return 0;
+}
+
+static void _bWifiModuleExecCmdStart(bEsp12fPrivate_t *_priv)
+{
+    if (WIFIMODULE_IS_BUSY(_priv))
+    {
+        return;
+    }
+    if (_priv->cmd_ctx.cmd_data.number == 0)
+    {
+        return;
+    }
+    _priv->cmd_ctx.cmd_unit_index = 0;
+    _priv->cmd_ctx.cmd_index      = 0;
+    WIFIMODULE_SET_BUSY(_priv);
+}
+
+static void _bWifiModuleExecCmdStop(bEsp12fPrivate_t *_priv)
+{
+    _priv->cmd_ctx.cmd_data.number = 0;
+    _priv->cmd_ctx.cmd_unit_index  = 0;
+    _priv->cmd_ctx.cmd_index       = 0;
+    WIFIMODULE_CLEAR_BUSY(_priv);
+}
+
+static bWifiModuleCmdUnit_t *_bWifiModuleCurrentCmdUnit(bEsp12fPrivate_t *_priv)
+{
+    if (WIFIMODULE_IS_BUSY(_priv))
+    {
+        return &_priv->cmd_ctx.cmd_data.cmd_table[_priv->cmd_ctx.cmd_index]
+                    .pcmdunit[_priv->cmd_ctx.cmd_unit_index];
+    }
+    return NULL;
+}
+
+static bWifiModuleCmdUnit_t *_bWifiModuleNextCmd(bEsp12fPrivate_t *_priv)
+{
+    bWifiModuleCmdUnit_t *pcmdunit = NULL;
+    if (_priv->cmd_ctx.cmd_data.number == 0)
+    {
+        return NULL;
+    }
+    _priv->cmd_ctx.cmd_unit_index += 1;
+    if (_priv->cmd_ctx.cmd_unit_index >=
+        _priv->cmd_ctx.cmd_data.cmd_table[_priv->cmd_ctx.cmd_index].unit_number)
+    {
+        _priv->cmd_ctx.cmd_unit_index = 0;
+        _priv->cmd_ctx.cmd_index += 1;
+        if (_priv->cmd_ctx.cmd_index >= _priv->cmd_ctx.cmd_data.number)
+        {
+            _priv->cmd_ctx.cmd_index = 0;
+            WIFIMODULE_CLEAR_BUSY(_priv);
+            return NULL;
+        }
+    }
+    pcmdunit = &_priv->cmd_ctx.cmd_data.cmd_table[_priv->cmd_ctx.cmd_index]
+                    .pcmdunit[_priv->cmd_ctx.cmd_unit_index];
+    return pcmdunit;
+}
+
+static void _bEsp12fCtlResult(uint8_t cmd, uint8_t isok, bEsp12fPrivate_t *_priv)
+{
+    _priv->cb_ctx.cb.cb(isok ? bEsp12fCtlEvent[cmd].ok_event : bEsp12fCtlEvent[cmd].fail_event,
+                        NULL, NULL, _priv->cb_ctx.cb.user_data);
 }
 
 PT_THREAD(bEsp12fTask)(struct pt *pt, void *arg)
 {
-    bDriverInterface_t *pdrv = (bDriverInterface_t *)arg;
+    bWifiModuleCmdUnit_t *pcmdunit = NULL;
+    bDriverInterface_t   *pdrv     = (bDriverInterface_t *)arg;
     bDRIVER_GET_PRIVATE(_priv, bEsp12fPrivate_t, pdrv);
-    if (_priv->busy == 0)
-    {
-        return 0;
-    }
     PT_BEGIN(pt);
     while (1)
     {
-        if (_priv->step & ESP12F_CMD_RESET_BIT)
+        if (WIFIMODULE_IS_BUSY(_priv))
         {
-            _priv->result = 0;
-            bAtSendCmd(&_priv->at, bEspCmdReset.pcmd, bEspCmdReset.resp, bEspCmdReset.timeout);
-            PT_WAIT_UNTIL(pt, _priv->result != 0, ESP12F_CMD_TIMEOUT);
-            if (_priv->result == ESP12F_CMD_RESULT_OK)
+            pcmdunit = _bWifiModuleCurrentCmdUnit(_priv);
+            if (pcmdunit != NULL)
             {
-                bTaskDelayMs(pt, 4000);
-                _priv->step &= ~(ESP12F_CMD_RESET_BIT);
-            }
-            else
-            {
-                _bEsp12fCtlResult(_priv->cmd, 0, pdrv);
-            }
-        }
-        else if (_priv->step & ESP12F_CMD_INIT_BIT)
-        {
-            _priv->result = 0;
-            if (bEspCmdInit[_priv->cmd_index].pcmd)
-            {
-                bAtSendCmd(&_priv->at, bEspCmdInit[_priv->cmd_index].pcmd,
-                           bEspCmdInit[_priv->cmd_index].resp,
-                           bEspCmdInit[_priv->cmd_index].timeout);
-            }
-            else
-            {
-                bAtSendCmd(&_priv->at, bEspCmdInit[_priv->cmd_index].cmd_f(_priv),
-                           bEspCmdInit[_priv->cmd_index].resp,
-                           bEspCmdInit[_priv->cmd_index].timeout);
-            }
-            PT_WAIT_UNTIL(pt, _priv->result != 0, ESP12F_CMD_TIMEOUT);
-            if (_priv->result == ESP12F_CMD_RESULT_OK)
-            {
-                _priv->cmd_index += 1;
-                if (_priv->cmd_index >= sizeof(bEspCmdInit) / sizeof(bEsp12fCmd_t))
+                WIFIMODULE_CLEAR_CMD_RESULT(_priv);
+                if (pcmdunit->pcmd)
                 {
-                    _priv->cmd_index = 0;
-                    _priv->step &= ~(ESP12F_CMD_INIT_BIT);
+                    bAtSendCmd(&_priv->at_ctx.at, pcmdunit->pcmd, pcmdunit->resp,
+                               WIFIMODULE_CMD_TIMEOUT_GET(pcmdunit->timeout));
                 }
-            }
-            else
-            {
-                _bEsp12fCtlResult(_priv->cmd, 0, pdrv);
-            }
-        }
-        else if (_priv->pcmd != NULL && _priv->cmd_num > 0 && _priv->cmd_index < _priv->cmd_num)
-        {
-            _priv->result = 0;
+                else
+                {
+                    bAtSendCmd(&_priv->at_ctx.at, pcmdunit->cmd_f(_priv), pcmdunit->resp,
+                               WIFIMODULE_CMD_TIMEOUT_GET(pcmdunit->timeout));
+                }
+                PT_WAIT_UNTIL(
+                    pt, WIFIMODULE_CMD_RESULT_IS_OK(_priv) || WIFIMODULE_CMD_RESULT_IS_FAIL(_priv),
+                    ESP12F_CMD_TIMEOUT);
 
-            if (_priv->pcmd[_priv->cmd_index].pcmd)
-            {
-                bAtSendCmd(&_priv->at, _priv->pcmd[_priv->cmd_index].pcmd,
-                           _priv->pcmd[_priv->cmd_index].resp,
-                           _priv->pcmd[_priv->cmd_index].timeout);
-            }
-            else
-            {
-                bAtSendCmd(&_priv->at, _priv->pcmd[_priv->cmd_index].cmd_f(_priv),
-                           _priv->pcmd[_priv->cmd_index].resp,
-                           _priv->pcmd[_priv->cmd_index].timeout);
-            }
-            PT_WAIT_UNTIL(pt, _priv->result != 0, ESP12F_CMD_TIMEOUT);
-            if (_priv->result == ESP12F_CMD_RESULT_OK)
-            {
-                _priv->cmd_index += 1;
-                if (_priv->cmd_index >= _priv->cmd_num)
+                if (WIFIMODULE_CMD_RESULT_IS_OK(_priv))
                 {
-                    _bEsp12fCtlResult(_priv->cmd, 1, pdrv);
+                    if (WIFIMODULE_CMD_IS_FORCE_WAIT(pcmdunit->timeout))
+                    {
+                        bTaskDelayMs(pt, WIFIMODULE_CMD_TIMEOUT_GET(pcmdunit->timeout));
+                    }
+                    if (_bWifiModuleNextCmd(_priv) == NULL)
+                    {
+                        _bWifiModuleCtlCmdResult(_priv, 1);
+                    }
+                }
+                else if (WIFIMODULE_CMD_RESULT_IS_FAIL(_priv))
+                {
+                    _bWifiModuleExecCmdStop(_priv);
+                    _bWifiModuleCtlCmdResult(_priv, 0);
                 }
             }
-            else
+            if (!WIFIMODULE_IS_BUSY(_priv))
             {
-                _bEsp12fCtlResult(_priv->cmd, 0, pdrv);
+                if (WIFIMODULE_CMD_RESULT_IS_OK(_priv))
+                {
+                    _bEsp12fCtlResult(_priv->ctl_ctx.ctl_cmd, 1, _priv);
+                }
+                else if (WIFIMODULE_CMD_RESULT_IS_FAIL(_priv))
+                {
+                    _bEsp12fCtlResult(_priv->ctl_ctx.ctl_cmd, 0, _priv);
+                }
             }
         }
         bTaskYield(pt);
@@ -546,203 +514,265 @@ PT_THREAD(bEsp12fTask)(struct pt *pt, void *arg)
     PT_END(pt);
 }
 //--------------------------------------------------------------------------------------------------
-//  私有功能函数
 //--------------------------------------------------------------------------------------------------
-static void _bEsp12fProcessCmd(bEsp12fPrivate_t *_priv, uint8_t cmd, const bEsp12fCmd_t *pcmdtable,
-                               uint8_t cmdtable_size, uint8_t reset, uint8_t init)
+
+static void _bEsp12fRegCallback(pTcpIpCallback_t cb, void *arg, bTcpIpNetif_t *pnetif)
 {
-    _priv->cmd_index = 0;
-    _priv->step      = 0;
-    _priv->busy      = 1;
-    _priv->cmd       = cmd;
-    _priv->pcmd      = pcmdtable;
-    _priv->cmd_num   = cmdtable_size;
-    if (reset)
+    if (pnetif == NULL || cb == NULL)
     {
-        _priv->step |= ESP12F_CMD_RESET_BIT;
+        return;
     }
-    if (init)
+    bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)pnetif->private;
+    if (prv != NULL)
     {
-        _priv->step |= ESP12F_CMD_INIT_BIT;
+        prv->cb_ctx.tcpip_cb     = cb;
+        prv->cb_ctx.tcpip_cb_arg = arg;
     }
 }
 
-static int _bEsp12fGetConn(bEsp12fPrivate_t *_priv, bTcpUdpInfo_t *pinfo, uint8_t *unused_connid)
+static int _bEsp12fGetPcb(bEsp12fPrivate_t *prv)
 {
-    int i      = 0;
-    int retval = -1;
-    for (i = 0; i < ESP12F_CONN_NUM_MAX; i++)
+    int i = 0;
+    for (i = 0; i < WIFIMODULE_PCB_NUM_MAX; i++)
     {
-        if (_priv->conn[i].connected == 1)
+        if (prv->pcb_ctx[i].state == WIFI_PCB_STATE_IDLE)
         {
-            if (_priv->conn[i].info.port == pinfo->port &&
-                strcmp(_priv->conn[i].info.ip, pinfo->ip) == 0)
-            {
-                return i;
-            }
-        }
-        else if (unused_connid)
-        {
-            *unused_connid = i;
+            prv->pcb_ctx[i].state = WIFI_PCB_STATE_ASSIGNED;
+            return i;
         }
     }
-    return retval;
+    return -1;
 }
 
-//--------------------------------------------------------------------------------------------------
-static int _bESP12FCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
+static void *_bEsp12fNewTcp(bTcpIpNetif_t *pnetif)
 {
-    int     retval  = -1;
-    uint8_t conn_id = 0;
-    bDRIVER_GET_PRIVATE(_priv, bEsp12fPrivate_t, pdrv);
-    if (_priv->busy)
+    bWifiModulePcb_t *module_pcb = NULL;
+    if (pnetif == NULL)
+    {
+        return NULL;
+    }
+    bEsp12fPrivate_t *prv = (bEsp12fPrivate_t *)pnetif->private;
+    if (prv == NULL)
+    {
+        return NULL;
+    }
+    module_pcb = (bWifiModulePcb_t *)bCalloc(1, sizeof(bWifiModulePcb_t));
+    if (module_pcb == NULL)
+    {
+        return NULL;
+    }
+    int pcb_index = _bEsp12fGetPcb(prv);
+    if (pcb_index < 0)
+    {
+        bFree(module_pcb);
+        return NULL;
+    }
+    prv->pcb_ctx[pcb_index].is_tcp = 1;
+    module_pcb->pcb_index          = pcb_index;
+    module_pcb->private            = prv;
+    return module_pcb;
+}
+
+static int _bEsp12fBind(void *pcb, uint16_t port)
+{
+    return 0;
+}
+
+static int _bEsp12fConnect(void *pcb, uint32_t ip, uint16_t port)
+{
+    bWifiModulePcb_t *_pcb = (bWifiModulePcb_t *)pcb;
+
+    if (_pcb == NULL || !WIFIMODULE_PCB_INDEX_IS_VALID(_pcb->pcb_index))
     {
         return -1;
     }
+    bEsp12fPrivate_t *_priv = (bEsp12fPrivate_t *)_pcb->private;
+    if (_priv == NULL)
+    {
+        return NULL;
+    }
+    if (WIFIMODULE_IS_BUSY(_priv))
+    {
+        return -2;
+    }
+    WIFIMODULE_CLEAR_CTL_CMD(_priv);
+    _priv->pcb_ctx[_pcb->pcb_index].ip    = ip;
+    _priv->pcb_ctx[_pcb->pcb_index].port  = port;
+    _priv->pcb_ctx[_pcb->pcb_index].state = WIFI_PCB_STATE_WAIT_CONNECT;
+    _bWifiModuleAddExecCmd(_priv, &bEspCmdConnectRemote[0],
+                           sizeof(bEspCmdConnectRemote) / sizeof(bWifiModuleCmdUnit_t));
+    _bWifiModuleExecCmdStart(_priv);
+    return 0;
+}
+
+/*
+typedef struct
+{
+    int (*init)(void *netif);
+    void (*loop)(void *netif);
+    void (*callback)(pTcpIpCallback_t cb, void *arg);
+
+    // 网卡相关接口，如果有协议栈管理多张网卡的情况，会传入网卡信息；
+    int (*set_mac)(uint8_t mac[6], void *netif);
+    int (*set_ip)(uint32_t ip, uint32_t mask, uint32_t gateway, void *netif);
+    int (*set_link_state)(uint8_t state, void *netif);
+    int (*set_default_netif)(void *netif);
+
+    // tcp/udp相关接口
+    struct
+    {
+        void *(*new)(void);
+        int (*bind)(void *, uint16_t);
+        int (*listen)(void *, uint16_t);
+        int (*connect)(void *, uint32_t, uint16_t);
+        int (*send)(void *, const uint8_t *, uint16_t);
+        int (*recv)(void *, uint8_t *, uint16_t);
+        int (*delete)(void *);
+    } tcp;
+
+    struct
+    {
+        void *(*new)(void);
+        int (*bind)(void *, uint16_t);
+        int (*listen)(void *, uint16_t);
+        int (*connect)(void *, uint32_t, uint16_t);
+        int (*send)(void *, const uint8_t *, uint16_t);
+        int (*recv)(void *, uint8_t *, uint16_t);
+        int (*delete)(void *);
+    } udp;
+
+    uint8_t (*is_readable)(void *);
+    uint8_t (*is_writeable)(void *);
+} bTcpIpStackIf_t;
+*/
+
+static int _bESP12FCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
+{
+    bMacAddress_t *pmac = NULL;
+    bDRIVER_GET_PRIVATE(_priv, bEsp12fPrivate_t, pdrv);
     b_log("ctl:%d\r\n", cmd);
-    _priv->cmd = cmd;
+    if (!WIFIMODULE_IS_BUSY(_priv))
+    {
+        _priv->ctl_ctx.ctl_cmd = cmd;
+    }
     switch (cmd)
     {
+        case bCMD_GET_DRIVER_NETIF:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            ((bDriverNetif_t *)param)->private = _priv;
+        }
+        break;
         case bCMD_WIFI_REG_CALLBACK:
         {
             if (param == NULL)
             {
                 return -1;
             }
-            bWifiDrvCallback_t *pcb = (bWifiDrvCallback_t *)param;
-            _priv->cb.cb            = pcb->cb;
-            _priv->cb.user_data     = pcb->user_data;
-        }
-        break;
-        case bCMD_WIFI_SET_CALLBACK_ARG:
-        {
-            _priv->cb.user_data = param;
+            bWifiDrvCallback_t *pcb    = (bWifiDrvCallback_t *)param;
+            _priv->cb_ctx.cb.cb        = pcb->cb;
+            _priv->cb_ctx.cb.user_data = pcb->user_data;
         }
         break;
         case bCMD_WIFI_MODE_STA:
         {
-            _bEsp12fProcessCmd(_priv, cmd, &bEspCmdStaMode[0],
-                               sizeof(bEspCmdStaMode) / sizeof(bEsp12fCmd_t), 1, 1);
+            if (WIFIMODULE_IS_BUSY(_priv))
+            {
+                return -1;
+            }
+            _bWifiModuleAddExecCmd(_priv, &bEspCmdReset[0],
+                                   sizeof(bEspCmdReset) / sizeof(bWifiModuleCmdUnit_t));
+            _bWifiModuleAddExecCmd(_priv, &bEspCmdInit[0],
+                                   sizeof(bEspCmdInit) / sizeof(bWifiModuleCmdUnit_t));
+            _bWifiModuleAddExecCmd(_priv, &bEspCmdStaMode[0],
+                                   sizeof(bEspCmdStaMode) / sizeof(bWifiModuleCmdUnit_t));
+            _bWifiModuleExecCmdStart(_priv);
+            WIFIMODULE_CONN_NUMBER_RESET(_priv);
         }
         break;
         case bCMD_WIFI_MODE_AP:
         case bCMD_WIFI_MODE_STA_AP:
         case bCMD_WIFI_JOIN_AP:
         {
-            if (param == NULL)
+            if (param == NULL || WIFIMODULE_IS_BUSY(_priv))
             {
                 return -1;
             }
-            memcpy(&_priv->param.ap, param, sizeof(bApInfo_t));
+            memcpy(&_priv->ctl_ctx.ctl_param.ap, param, sizeof(bApInfo_t));
+
+            if (cmd == bCMD_WIFI_MODE_AP || cmd == bCMD_WIFI_MODE_STA_AP)
+            {
+                _bWifiModuleAddExecCmd(_priv, &bEspCmdReset[0],
+                                       sizeof(bEspCmdReset) / sizeof(bWifiModuleCmdUnit_t));
+                _bWifiModuleAddExecCmd(_priv, &bEspCmdInit[0],
+                                       sizeof(bEspCmdInit) / sizeof(bWifiModuleCmdUnit_t));
+            }
             if (cmd == bCMD_WIFI_MODE_AP)
             {
-                _bEsp12fProcessCmd(_priv, cmd, &bEspCmdApMode[0],
-                                   sizeof(bEspCmdApMode) / sizeof(bEsp12fCmd_t), 1, 1);
+                _bWifiModuleAddExecCmd(_priv, &bEspCmdApMode[0],
+                                       sizeof(bEspCmdApMode) / sizeof(bWifiModuleCmdUnit_t));
             }
             else if (cmd == bCMD_WIFI_MODE_STA_AP)
             {
-                _bEsp12fProcessCmd(_priv, cmd, &bEspCmdApStaMode[0],
-                                   sizeof(bEspCmdApStaMode) / sizeof(bEsp12fCmd_t), 1, 1);
+                _bWifiModuleAddExecCmd(_priv, &bEspCmdApStaMode[0],
+                                       sizeof(bEspCmdApStaMode) / sizeof(bWifiModuleCmdUnit_t));
             }
             else if (cmd == bCMD_WIFI_JOIN_AP)
             {
-                _bEsp12fProcessCmd(_priv, cmd, &bEspCmdJoinAp[0],
-                                   sizeof(bEspCmdJoinAp) / sizeof(bEsp12fCmd_t), 0, 0);
+                _bWifiModuleAddExecCmd(_priv, &bEspCmdJoinAp[0],
+                                       sizeof(bEspCmdJoinAp) / sizeof(bWifiModuleCmdUnit_t));
             }
+            _bWifiModuleExecCmdStart(_priv);
+            WIFIMODULE_CONN_NUMBER_RESET(_priv);
         }
         break;
-        case bCMD_WIFI_PING:
-        {
-            if (param == NULL || strlen(param) > WIFI_REMOTE_ADDR_LEN_MAX)
-            {
-                return -1;
-            }
-            memset(&_priv->param.remote[0], 0, sizeof(_priv->param.remote));
-            memcpy(&_priv->param.remote[0], param, strlen(param));
-            _bEsp12fProcessCmd(_priv, cmd, &bEspCmdPing[0],
-                               sizeof(bEspCmdPing) / sizeof(bEsp12fCmd_t), 0, 0);
-        }
-        break;
-        case bCMD_WIFI_LOCAL_TCP_SERVER:
-        case bCMD_WIFI_LOCAL_UDP_SERVER:
-        case bCMD_WIFI_REMOT_TCP_SERVER:
-        case bCMD_WIFI_REMOT_UDP_SERVER:
-        case bCMD_WIFI_TCPUDP_CLOSE:
+        case bCMD_GET_MAC_ADDRESS:
         {
             if (param == NULL)
             {
                 return -1;
             }
-            memcpy(&_priv->param.tcpudp, param, sizeof(bTcpUdpInfo_t));
-            conn_id = 0xff;
-            retval  = _bEsp12fGetConn(_priv, &_priv->param.tcpudp, &conn_id);
-            b_log_w("retval %d cnn_id %02x \r\n", retval, conn_id);
-            if (cmd == bCMD_WIFI_LOCAL_TCP_SERVER)
-            {
-                _bEsp12fProcessCmd(_priv, cmd, &bEspCmdLocalTcpServer[0],
-                                   sizeof(bEspCmdLocalTcpServer) / sizeof(bEsp12fCmd_t), 0, 0);
-            }
-            else if (cmd == bCMD_WIFI_REMOT_TCP_SERVER)
-            {
-                if (conn_id == 0xff)
-                {
-                    b_log_e("conn full, use conn_id 0\r\n");
-                    return -2;
-                }
-                _priv->conn_id = conn_id;
-                memcpy(&_priv->conn[conn_id], &_priv->param.tcpudp, sizeof(bTcpUdpInfo_t));
-                _priv->conn[conn_id].connected = 1;
-                _bEsp12fProcessCmd(_priv, cmd, &bEspCmdRemotTcpServer[0],
-                                   sizeof(bEspCmdRemotTcpServer) / sizeof(bEsp12fCmd_t), 0, 0);
-            }
-            else if (cmd == bCMD_WIFI_REMOT_UDP_SERVER)
-            {
-                if (conn_id == 0xff)
-                {
-                    b_log_e("conn full\r\n");
-                    return -2;
-                }
-                _priv->conn_id = conn_id;
-                memcpy(&_priv->conn[conn_id], &_priv->param.tcpudp, sizeof(bTcpUdpInfo_t));
-                _priv->conn[conn_id].connected = 1;
-                _bEsp12fProcessCmd(_priv, cmd, &bEspCmdRemotUdpServer[0],
-                                   sizeof(bEspCmdRemotUdpServer) / sizeof(bEsp12fCmd_t), 0, 0);
-            }
-            else if (cmd == bCMD_WIFI_TCPUDP_CLOSE)
-            {
-                if (retval < 0)
-                {
-                    b_log_e("cannt find..\r\n");
-                    return -2;
-                }
-                _priv->conn_id                = retval;
-                _priv->conn[retval].connected = 0;
-                _bEsp12fProcessCmd(_priv, cmd, &bEspCmdCloseTcpUdp[0],
-                                   sizeof(bEspCmdCloseTcpUdp) / sizeof(bEsp12fCmd_t), 0, 0);
-            }
+            pmac = (bMacAddress_t *)param;
+            memcpy(pmac->address, &_priv->mac.address[0], sizeof(_priv->mac.address));
         }
         break;
-        case bCMD_WIFI_TCPUDP_SEND:
+        case bCMD_SET_MAC_ADDRESS:
+        {
+            ;
+        }
+        break;
+        case bCMD_GET_LINK_STATE:
         {
             if (param == NULL)
             {
                 return -1;
             }
-            bTcpUdpData_t *pdat = (bTcpUdpData_t *)param;
-            if (pdat->pbuf == NULL)
+            *(uint8_t *)param = (WIFIMODULE_CONN_NUMBER_GET(_priv) > 0);
+        }
+        break;
+        case bCMD_REG_BUF_LIST:
+        {
+            ;
+        }
+        break;
+        case bCMD_REG_LINK_CALLBACK:
+        {
+            if (param == NULL)
             {
                 return -1;
             }
-            retval = _bEsp12fGetConn(_priv, &_priv->param.tcpudp, NULL);
-            if (retval < 0)
+            memcpy(&_priv->cb_ctx.link_cb, param, sizeof(bLinkStateCb_t));
+        }
+        break;
+        case bCMD_GET_STACK_IF:
+        {
+            if (param == NULL)
             {
-                b_log_e("cannt find..\r\n");
-                return -2;
+                return -1;
             }
-            memcpy(&_priv->param.dat, param, sizeof(bTcpUdpData_t));
-            _priv->conn_id = retval;
-            _bEsp12fProcessCmd(_priv, cmd, &bEspCmdSendData[0],
-                               sizeof(bEspCmdSendData) / sizeof(bEsp12fCmd_t), 0, 0);
         }
         break;
         default:
@@ -767,12 +797,13 @@ int bESP12F_Init(bDriverInterface_t *pdrv)
     // 创建异步消息处理任务
     bTaskCreate("esp12f", bEsp12fTask, pdrv, &bEspRunInfo[pdrv->drv_no].task_attr);
     // AT初始化，注册回调和发送函数
-    bAtInit(&bEspRunInfo[pdrv->drv_no].at, _bAtCmdCb, _bAtNewDataCb, _bAtSendData, pdrv);
+    bAtInit(&bEspRunInfo[pdrv->drv_no].at_ctx.at, _bAtCmdCb, _bAtNewDataCb, _bAtSendData, pdrv);
     // 串口接收初始化，注册接收空闲回调
-    bHAL_UART_INIT_ATTR(&bEspRunInfo[pdrv->drv_no].uart_attr,
-                        &(bEspRunInfo[pdrv->drv_no].uart_buf[0]), CONNECT_RECVBUF_MAX, 50,
-                        _bHalUartIdleCb, pdrv);
-    bHalUartReceiveIdle(*((bESP12F_HalIf_t *)pdrv->hal_if), &bEspRunInfo[pdrv->drv_no].uart_attr);
+    bHAL_UART_INIT_ATTR(&bEspRunInfo[pdrv->drv_no].at_ctx.uart_attr,
+                        &(bEspRunInfo[pdrv->drv_no].at_ctx.uart_recv_buf[0]),
+                        WIFIMODULE_RECVBUF_MAX, 50, _bHalUartIdleCb, pdrv);
+    bHalUartReceiveIdle(*((bESP12F_HalIf_t *)pdrv->hal_if),
+                        &bEspRunInfo[pdrv->drv_no].at_ctx.uart_attr);
     return 0;
 }
 

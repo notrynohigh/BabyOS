@@ -110,17 +110,17 @@ static int _bTestMacInit()
     return 0;
 }
 
-static int _bTestMacSetMac(uint8_t mac[6])
+static int _bTestMacSetMac(uint8_t mac[6], void *pnetif)
 {
     return 0;
 }
 
-static int _bTestMacSetIp(uint32_t ip, uint32_t mask, uint32_t gateway)
+static int _bTestMacSetIp(uint32_t ip, uint32_t mask, uint32_t gateway, void *pnetif)
 {
     return 0;
 }
 
-static int _bTestMacSetLinkState(uint8_t state)
+static int _bTestMacSetLinkState(uint8_t state, void *pnetif)
 {
     return 0;
 }
@@ -303,11 +303,15 @@ static void _bTestMacCallback(pTcpIpCallback_t cb, void *arg)
 }
 
 const bTcpIpStackIf_t bTestMacIf = {
-    .init           = _bTestMacInit,
-    .set_mac        = _bTestMacSetMac,
-    .set_ip         = _bTestMacSetIp,
-    .set_link_state = _bTestMacSetLinkState,
-    .loop           = _bTestMacLoop,
+    .init     = _bTestMacInit,
+    .loop     = _bTestMacLoop,
+    .callback = _bTestMacCallback,
+
+    .set_mac           = _bTestMacSetMac,
+    .set_ip            = _bTestMacSetIp,
+    .set_link_state    = _bTestMacSetLinkState,
+    .set_default_netif = NULL,
+
     .tcp =
         {
             .new     = _bTestMacTcpNew,
@@ -331,7 +335,6 @@ const bTcpIpStackIf_t bTestMacIf = {
     .is_readable  = _bTestMacIsReadable,
     .is_writeable = _bTestMacIsWriteable,
 
-    .callback = _bTestMacCallback,
 };
 
 /**
