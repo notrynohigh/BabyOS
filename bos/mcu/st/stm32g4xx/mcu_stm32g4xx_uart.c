@@ -32,9 +32,10 @@
 /*Includes ----------------------------------------------*/
 #include "b_config.h"
 #include "hal/inc/b_hal_uart.h"
+#include "hal/inc/b_hal.h"
 
 #if (defined(STM32G4XX))
-
+#include "stm32g4xx.h"
 //      Register Address
 #define UART1_BASE_ADDR (0x40013800)
 #define UART2_BASE_ADDR (0x40004400)
@@ -72,6 +73,45 @@ typedef struct
 
 static McuUartReg_t *UartTable[9] = {MCU_UART1, MCU_UART2, MCU_UART3, MCU_UART4,  MCU_UART5,
                                      MCU_UART6, MCU_UART7, MCU_UART8, MCU_LPUART1};
+
+#if 0
+static USART_TypeDef *const uart_tbl[] = {
+		USART1,
+		USART2,
+		USART3,
+		UART4,
+		UART5,
+		LPUART1
+    };
+enum {
+    UART_MAX = sizeof(uart_tbl) / sizeof(uart_tbl[0])
+};
+static int uart_wait_txe(USART_TypeDef * u, uint32_t tout) {
+    uint32_t t0 = bHalGetSysTick();
+    while (!(u -> ISR & USART_ISR_TXE))
+        if ((bHalGetSysTick() - t0) > tout) return -1;
+    return 0;
+}
+static int uart_wait_tc(USART_TypeDef * u, uint32_t tout) {
+    uint32_t t0 = bHalGetSysTick();
+    while (!(u -> ISR & USART_ISR_TC))
+        if ((bHalGetSysTick() - t0) > tout) return -1;
+    return 0;
+}
+
+int bMcuUartSend(bHalUartNumber_t uart,
+    const uint8_t * pbuf, uint16_t len) {
+    if (uart >= UART_MAX || pbuf == NULL) return -1;
+    USART_TypeDef * u = uart_tbl[uart];
+
+    for (uint16_t i = 0; i < len; ++i) {
+        if (uart_wait_txe(u, 100)) return -2; /* 超时 */
+        u -> TDR = pbuf[i];
+    }
+    return uart_wait_tc(u, 100) ? -2 : 0;
+}
+#endif
+
 
 int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
 {
