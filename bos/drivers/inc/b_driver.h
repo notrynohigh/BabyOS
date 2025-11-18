@@ -124,6 +124,8 @@ typedef enum
     B_DRIVER_TMP112,
     B_DRIVER_BQ769X2,
     B_DRIVER_AHT20,
+    B_DRIVER_ADS125X,
+    B_DRIVER_SMP3011,
     B_DRIVER_NUMBER
 } bDriverNumber_t;
 

@@ -439,6 +439,44 @@ typedef struct
 	uint16_t AlarmBits ;
 } bBMS_AFE_BQ769X2_Value_t;
 
+///////////////////////////////////////////////////////////
+// ADS125X , Command  &  Structure
+///////////////////////////////////////////////////////////
+typedef enum
+{
+  ADS125X_SET_CHANNLE_CMD,
+  ADS125X_SET_GAIN_CMD,
+  ADS125X_SET_BRATE_CMD,
+  ADS125X_READ_CHANNLE_CMD,
+  ADS125X_READ_GAIN_CMD,
+  ADS125X_READ_BRATE_CMD,
+  ADS125X_READ_STATUS_CMD
+}bAds125xCommandEnum;
+
+typedef struct 
+{
+    uint8_t ads125x_channle;
+    uint8_t ads125x_gain;
+    uint8_t ads125x_brate;
+    uint8_t ads125x_status;
+    uint32_t ads125x_sum;
+    double   ads125x_voltage;
+}bAds125xDrvData_t;
+
+///////////////////////////////////////////////////////////
+// SMP3011 , Command  &  Structure
+///////////////////////////////////////////////////////////
+typedef enum
+{
+  SMP3011_READ_P_CMD,
+  SMP3011_READ_T_CMD,
+  SMP3011_READ_P_T_CMD,
+  SMP3011_READ_OTP_CMD,
+  SMP3011_SET_P_UPRANG_CMD,
+  SMP3011_SET_P_LOWRANG_CMD,
+}bSMP3011CommandEnum;
+
+
 #ifdef __cplusplus
 }
 #endif
