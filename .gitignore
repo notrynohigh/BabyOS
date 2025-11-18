@@ -56,3 +56,7 @@ dkms.conf
 .history
 
 bos/thirdparty/__pycache__/thirdparty.cpython-311.pyc
+
+_config/.bconfig
+_config/.bconfig.old
+_config/b_config.h

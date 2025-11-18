@@ -84,6 +84,7 @@ extern "C" {
 
 #include "drivers/inc/b_drv_24cxx.h"
 #include "drivers/inc/b_drv_ads124x.h"
+#include "drivers/inc/b_drv_ads125x.h"
 #include "drivers/inc/b_drv_ds18b20.h"
 #include "drivers/inc/b_drv_esp12f.h"
 #include "drivers/inc/b_drv_fm25cl.h"
@@ -109,6 +110,7 @@ extern "C" {
 #include "drivers/inc/b_drv_ssd1289.h"
 #include "drivers/inc/b_drv_st7789.h"
 #include "drivers/inc/b_drv_xpt2046.h"
+#include "drivers/inc/b_drv_smp3011.h"
 
 // thirdparty
 #include "thirdparty/cjson/cjson.h"
