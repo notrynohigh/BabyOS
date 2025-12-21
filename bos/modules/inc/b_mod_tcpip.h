@@ -40,7 +40,7 @@ extern "C" {
 
 #include "b_config.h"
 #include "utils/inc/b_util_list.h"
-#define _TCPIP_ENABLE 1
+
 #if (defined(_TCPIP_ENABLE) && (_TCPIP_ENABLE == 1))
 /**
  * \addtogroup BABYOS
@@ -91,6 +91,7 @@ typedef enum
 {
     B_TRANS_DNS_SUCCESS = 0,
     B_TRANS_CONNECTED,
+    B_TRANS_ACCEPTED,   
     B_TRANS_NEW_DATA,
     B_TRANS_SEND_DONE,
     B_TRANS_ERR_BASE = -128,
@@ -131,7 +132,7 @@ typedef void (*pbTransPingCb_t)(int result, uint32_t ms, void *arg);
  * \{
  */
 
-int     bTcpIpInit(bNetCardInfo_t *pnetcard, uint8_t number);
+int     bTcpIpInit(const bNetCardInfo_t *pnetcard, uint8_t number);
 int     bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway);
 int     bTcpIpGetIp(char *ipaddr, char *netmask, char *gateway);
 int     bTcpIpSetMac(const uint8_t mac[6]);

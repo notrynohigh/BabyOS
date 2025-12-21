@@ -61,8 +61,8 @@
 
 typedef struct
 {
-    uint8_t linked;
-    int     fd;
+    uint8_t  linked;
+    uint32_t dev_no;
 
     bWifiMode_t mode;
     bWifiMode_t cur_mode;
@@ -105,7 +105,7 @@ typedef struct
  */
 
 static bWifiModule_t bWifiModule = {
-    .fd = -1,
+    .dev_no = 0,
 };
 
 /**
@@ -201,6 +201,7 @@ static void _bWifiDrvCb(bWifiDrvEvent_t event, void *arg, void (*release)(void *
 static PT_THREAD(_bWifiTask)(struct pt *pt, void *arg)
 {
     uint8_t link_state = 0;
+    int     fd = -1, ret = -1;
     B_TASK_INIT_BEGIN();
     // ...
     B_TASK_INIT_END();
@@ -208,29 +209,45 @@ static PT_THREAD(_bWifiTask)(struct pt *pt, void *arg)
     PT_BEGIN(pt);
     while (1)
     {
-        PT_WAIT_UNTIL_FOREVER(pt, bWifiModule.fd >= 0);
         if (bWifiModule.cur_mode != bWifiModule.mode)
         {
+            fd = bOpen(bWifiModule.dev_no, BCORE_FLAG_RW);
+            if (fd < 0)
+            {
+                b_log_e("open wifi dev fail\r\n");
+                bTaskRestart(pt);
+            }
             if (bWifiModule.mode == B_WIFI_MODE_STA)
             {
-                if (0 == bCtl(bWifiModule.fd, bCMD_WIFI_MODE_STA, NULL))
+                ret = bCtl(fd, bCMD_WIFI_MODE_STA, NULL);
+                bClose(fd);
+                if (0 == ret)
                 {
                     PT_WAIT_UNTIL(pt, bWifiModule.cur_mode == bWifiModule.mode, MS2TICKS(5000));
                 }
             }
             else if (bWifiModule.mode == B_WIFI_MODE_AP)
             {
-                if (0 == bCtl(bWifiModule.fd, bCMD_WIFI_MODE_AP, &bWifiModule.soft_ap))
+                ret = bCtl(fd, bCMD_WIFI_MODE_AP, &bWifiModule.soft_ap);
+                bClose(fd);
+                if (0 == ret)
                 {
                     PT_WAIT_UNTIL(pt, bWifiModule.cur_mode == bWifiModule.mode, MS2TICKS(5000));
                 }
             }
             else if (bWifiModule.mode == B_WIFI_MODE_STA_AP)
             {
-                if (0 == bCtl(bWifiModule.fd, bCMD_WIFI_MODE_STA_AP, &bWifiModule.soft_ap))
+                ret = bCtl(fd, bCMD_WIFI_MODE_STA_AP, &bWifiModule.soft_ap);
+                bClose(fd);
+                if (0 == ret)
                 {
                     PT_WAIT_UNTIL(pt, bWifiModule.cur_mode == bWifiModule.mode, MS2TICKS(5000));
                 }
+            }
+            else
+            {
+                b_log_e("wifi mode error\r\n");
+                bClose(fd);
             }
         }
         else
@@ -239,16 +256,24 @@ static PT_THREAD(_bWifiTask)(struct pt *pt, void *arg)
                  bWifiModule.cur_mode == B_WIFI_MODE_STA_AP) &&
                 (strlen(&bWifiModule.ap.ssid[0]) > 0))
             {
-                if ((0 == bCtl(bWifiModule.fd, bCMD_GET_LINK_STATE, &link_state)) &&
-                    (link_state == 0))
+                if (bWifiModule.linked == 0)
                 {
-                    if (0 == bCtl(bWifiModule.fd, bCMD_WIFI_JOIN_AP, &bWifiModule.ap))
+                    fd = bOpen(bWifiModule.dev_no, BCORE_FLAG_RW);
+                    if (fd < 0)
                     {
-                        bTaskDelayMs(pt, 10000);
+                        b_log_e("open wifi dev fail\r\n");
+                        bTaskRestart(pt);
+                    }
+                    ret = bCtl(fd, bCMD_WIFI_JOIN_AP, &bWifiModule.ap);
+                    bClose(fd);
+                    if (0 == ret)
+                    {
+                        PT_WAIT_UNTIL(pt, bWifiModule.linked == 1, MS2TICKS(10000));
                     }
                 }
             }
         }
+        bTaskYield(pt);
     }
     PT_END(pt);
 }
@@ -265,7 +290,7 @@ static PT_THREAD(_bWifiTask)(struct pt *pt, void *arg)
 int bWifiInit(uint32_t dev_no, pWifiEvtCb_t cb, void *user_data)
 {
     bWifiDrvCallback_t drv_cb;
-    if (bWifiModule.fd >= 0 || cb == NULL)
+    if (cb == NULL)
     {
         return -1;
     }
@@ -274,21 +299,18 @@ int bWifiInit(uint32_t dev_no, pWifiEvtCb_t cb, void *user_data)
     {
         return -1;
     }
-    bWifiModule.fd        = fd;
+    bWifiModule.dev_no    = dev_no;
     bWifiModule.cb        = cb;
     bWifiModule.user_data = user_data;
     drv_cb.cb             = _bWifiDrvCb;
     drv_cb.user_data      = NULL;
     bCtl(fd, bCMD_WIFI_REG_CALLBACK, &drv_cb);
+    bClose(fd);
     return 0;
 }
 
 int bWifiSetMode(bWifiMode_t mode)
 {
-    if (bWifiModule.fd < 0)
-    {
-        return -1;
-    }
     bWifiModule.cur_mode = B_WIFI_MODE_UNKNOWN;
     bWifiModule.mode     = mode;
     if (bWifiModule.task_id == NULL)
@@ -300,18 +322,12 @@ int bWifiSetMode(bWifiMode_t mode)
 
 int bWifiDeinit()
 {
-    if (bWifiModule.fd < 0)
-    {
-        return -1;
-    }
-    bClose(bWifiModule.fd);
-    bWifiModule.fd = -1;
     return 0;
 }
 
 int bWifiApConfig(const char *ssid, const char *passwd)
 {
-    if (bWifiModule.fd < 0 || ssid == NULL)
+    if (ssid == NULL)
     {
         return -1;
     }
@@ -348,7 +364,7 @@ int bWifiApConfig(const char *ssid, const char *passwd)
 int bWifiJoinAp(const char *ssid, const char *passwd)
 {
     int retval = -1;
-    if (bWifiModule.fd < 0 || ssid == NULL)
+    if (ssid == NULL)
     {
         return -1;
     }

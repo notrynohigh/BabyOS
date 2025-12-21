@@ -578,7 +578,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
  * \{
  */
 
-int bTcpipSrvInit(bNetCardInfo_t *pnetcard, uint8_t number)
+int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number)
 {
     if (pnetcard == NULL || number == 0)
     {

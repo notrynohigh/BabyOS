@@ -296,21 +296,41 @@ typedef struct
     void *arg;
 } bLinkStateCb_t;
 
+typedef struct
+{
+    void *listen_pcb;
+    void *new_pcb;
+} bTcpIpAccetpArg_t;
+
+typedef struct
+{
+    void    *pcb;
+    uint8_t *pbuf;
+    uint16_t len;
+    void (*release)(void *);
+} bTcpIpNewDataArg_t;
+
+typedef struct
+{
+    void    *pcb;
+    uint16_t len;
+} bTcpIpSendDoneArg_t;
+
 typedef enum
 {
     B_TCPIP_E_CONNECTING,
     B_TCPIP_E_CONNECTED,
+    B_TCPIP_E_ACCEPT,  // bTcpIpAccetpArg_t
     B_TCPIP_E_DISCONNECT,
-    B_TCPIP_E_NEW_DATA,
-    B_TCPIP_E_SEND_DONE,
+    B_TCPIP_E_NEW_DATA,   // bTcpIpNewDataArg_t
+    B_TCPIP_E_SEND_DONE,  // bTcpIpSendDoneArg_t
 } bTcpIpEvent_t;
 
-typedef void (*pTcpIpCallback_t)(bTcpIpEvent_t event, void *pcb, void *arg);
+typedef void (*pTcpIpCallback_t)(bTcpIpEvent_t event, void *param, void *arg);
 
 typedef struct
 {
     uint32_t dev_no;
-    int      fd;
     uint8_t  is_linked;
     uint8_t  mac[6];
     void *private;
@@ -333,7 +353,7 @@ typedef struct
     {
         void *(*new)(bTcpIpNetif_t *pnetif);
         int (*bind)(void *, uint16_t);
-        int (*listen)(void *, uint16_t);
+        void *(*listen)(void *, uint16_t);
         int (*connect)(void *, uint32_t, uint16_t);
         int (*send)(void *, const uint8_t *, uint16_t);
         int (*recv)(void *, uint8_t *, uint16_t);
@@ -344,9 +364,9 @@ typedef struct
     {
         void *(*new)(bTcpIpNetif_t *pnetif);
         int (*bind)(void *, uint16_t);
-        int (*listen)(void *, uint16_t);
+        void *(*listen)(void *, uint16_t);
         int (*connect)(void *, uint32_t, uint16_t);
-        int (*send)(void *, const uint8_t *, uint16_t);
+        int (*send)(void *netif, void *pcb, const uint8_t *, uint16_t);
         int (*recv)(void *, uint8_t *, uint16_t);
         int (*delete)(void *);
     } udp;

@@ -400,6 +400,26 @@ config _TCPIP_ENABLE
     default n
     depends on _BOS_MODULES_ENABLE
 
+config _TCPIP_RECV_BUF_ENABLE
+    bool "TCPIP Receive Buffer Enable/Disable"
+    default n
+    depends on _TCPIP_ENABLE
+
+config TCPIP_RECV_BUF_LEN_MAX
+    int "TCPIP Receive Buffer Length Limit"
+    default 4096
+    depends on _TCPIP_RECV_BUF_ENABLE    
+
+config _TCPIP_SEND_BUF_ENABLE
+    bool "TCPIP Send Buffer Enable/Disable"
+    default n
+    depends on _TCPIP_ENABLE
+
+config TCPIP_SEND_BUF_LEN_MAX
+    int "TCPIP Send Buffer Length Limit"
+    default 4096
+    depends on _TCPIP_SEND_BUF_ENABLE      
+
 config TCPIP_DNS_CACHE_NUM
     int "DNS Cache Entries Count"
     default 5

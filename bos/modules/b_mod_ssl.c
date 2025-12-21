@@ -34,7 +34,7 @@
 
 #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
 #include "hal/inc/b_hal.h"
-#include "modules/inc/b_mod_netif/b_mod_trans.h"
+#include "modules/inc/b_mod_tcpip.h"
 
 /**
  * \addtogroup BABYOS
