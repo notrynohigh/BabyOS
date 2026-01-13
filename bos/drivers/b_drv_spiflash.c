@@ -363,6 +363,19 @@ static int _bSPIFLASH_Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             }
         }
         break;
+        case bCMD_GET_ID:
+        {
+            if (param)
+            {
+				// Unique ID 指令序列: 0x4B + 4 bytes Dummy
+                uint8_t cmd_buf[5] = {0x4B, 0x00, 0x00, 0x00, 0x00};
+                if (flash->spi.wr(&flash->spi, cmd_buf, 5, (uint8_t *)param, 8) == SFUD_SUCCESS)
+                {
+                    retval = 0;
+                }
+            }
+        }
+        break;
     }
     return retval;
 }

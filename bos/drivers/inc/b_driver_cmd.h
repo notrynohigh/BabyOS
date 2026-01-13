@@ -68,6 +68,7 @@ typedef void (*bRS485Callback_t)(uint8_t *pbuf, uint16_t len);
 #define bCMD_ERASE_SECTOR 0      // bFlashErase_t
 #define bCMD_GET_SECTOR_SIZE 1   // uint32_t
 #define bCMD_GET_SECTOR_COUNT 2  // uint32_t
+#define bCMD_GET_ID	3 			
 
 typedef struct
 {
