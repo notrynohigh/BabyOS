@@ -75,14 +75,27 @@ void bMallocFailedHook()
     b_log_e("=========================\r\n");
 }
 
+/*
+typedef struct
+{
+    uint32_t dev_no;
+    uint8_t  priority;
+    uint8_t  ignore_ip;
+    struct
+    {
+        uint32_t ip;
+        uint32_t mask;
+        uint32_t gateway;
+    } assigned_ip;
+} bNetCardInfo_t;
+ */
+
 const static bNetCardInfo_t bNetCardInfo[] = {
     [0] =
         {
-            .dev_no   = bTESTMAC,
-            .priority = 0,
-            .ip       = 0x01010101,
-            .mask     = 0x01010101,
-            .gateway  = 0x01010101,
+            .dev_no    = bTESTMAC,
+            .priority  = 0,
+            .ignore_ip = 1,
         },
 };
 
@@ -92,12 +105,12 @@ int main()
     bInit();
 
     bTcpipSrvInit(&bNetCardInfo[0], 1);
-    bSntpStart(60 * 60);
+    bSntpStart(60 * 5);
     httpfd = bHttpInit(HttpCb, NULL);
     while (1)
     {
         bExec();
-        BOS_PERIODIC_TASK(ntp_test, 1000 * 10);
+        BOS_PERIODIC_TASK(ntp_test, 1000 * 60);
     }
     return 0;
 }

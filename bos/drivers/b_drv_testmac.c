@@ -105,27 +105,27 @@ static void            *bTestMacEventCbArg = NULL;
  * \{
  */
 
-static int _bTestMacInit()
+static int _bTestMacInit(bTcpIpNetif_t *netif)
 {
     return 0;
 }
 
-static int _bTestMacSetMac(uint8_t mac[6], void *pnetif)
+static int _bTestMacSetMac(uint8_t mac[6], bTcpIpNetif_t *netif)
 {
     return 0;
 }
 
-static int _bTestMacSetIp(uint32_t ip, uint32_t mask, uint32_t gateway, void *pnetif)
+static int _bTestMacSetIp(uint32_t ip, uint32_t mask, uint32_t gateway, bTcpIpNetif_t *netif)
 {
     return 0;
 }
 
-static int _bTestMacSetLinkState(uint8_t state, void *pnetif)
+static int _bTestMacSetLinkState(uint8_t state, bTcpIpNetif_t *netif)
 {
     return 0;
 }
 
-static void _bTestMacLoop()
+static void _bTestMacLoop(bTcpIpNetif_t *netif)
 {
     ;
 }
@@ -189,7 +189,9 @@ static uint8_t _bTestMacIsWriteable(void *sockfd)
     timeout.tv_usec = 0;
 
     // 使用select检查可写性
+    b_log("check wr select\r\n");
     int ret = select(sock + 1, NULL, &write_fds, NULL, &timeout);
+    b_log("wr select:%d\r\n", ret);
     if (ret == -1)
     {
         return 0;
@@ -198,11 +200,10 @@ static uint8_t _bTestMacIsWriteable(void *sockfd)
     {
         return 0;  // 超时，不可写
     }
-    B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_SEND_DONE, sock, bTestMacEventCbArg);
     return 1;  // 可写
 }
 
-static void *_bTestMacTcpNew()
+static void *_bTestMacTcpNew(bTcpIpNetif_t *pnetif)
 {
     int sockfd = -1;
     sockfd     = socket(AF_INET, SOCK_STREAM, 0);
@@ -215,7 +216,7 @@ static void *_bTestMacTcpNew()
     return sockfd;
 }
 
-static void *_bTestMacUdpNew()
+static void *_bTestMacUdpNew(bTcpIpNetif_t *pnetif)
 {
     int sockfd = -1;
     sockfd     = socket(AF_INET, SOCK_DGRAM, 0);
@@ -225,6 +226,7 @@ static void *_bTestMacUdpNew()
         return -1;
     }
     _bSockfdSetNonlocking(sockfd);
+    b_log("new udp :%d\r\n", sockfd);
     return sockfd;
 }
 
@@ -248,7 +250,7 @@ static int _bTestMacListen(void *sockfd, uint16_t backlog)
 static int _bTestMacConnect(void *sockfd, uint32_t ip, uint16_t port)
 {
     int sock = (int)sockfd;
-
+    b_log("[%d] connect %x %d\r\n", sock, ip, port);
     struct sockaddr_in serverAddr;
     serverAddr.sin_family      = AF_INET;
     serverAddr.sin_port        = htons(port);
@@ -274,15 +276,27 @@ static int _bTestMacRecv(void *sockfd, uint8_t *pbuf, uint16_t len)
 
 static int _bTestMacSend(void *sockfd, uint8_t *pbuf, uint16_t len)
 {
+    bTcpIpSendDoneArg_t param;
     if (sockfd == NULL || pbuf == NULL || len == 0)
     {
         return 0;
     }
     int sock   = (int)sockfd;
     int retval = send(sock, pbuf, len, 0);
-    // b_log("socket send:%d %d\r\n", len, retval);
-    // b_log_hex(pbuf, len);
+    b_log("socket send:%d %d\r\n", len, retval);
+    b_log_hex(pbuf, len);
+    if (retval > 0)
+    {
+        param.len = len;
+        param.pcb = sock;
+        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_SEND_DONE, &param, bTestMacEventCbArg);
+    }
     return retval;
+}
+
+static int _bTestMacUdpSend(void *netif, void *sockfd, uint8_t *pbuf, uint16_t len)
+{
+    return _bTestMacSend(sockfd, pbuf, len);
 }
 
 static int _bTestMacDelete(void *sockfd)
@@ -296,16 +310,16 @@ static int _bTestMacDelete(void *sockfd)
     return 0;
 }
 
-static void _bTestMacCallback(pTcpIpCallback_t cb, void *arg)
+static void _bTestMacCallback(pTcpIpCallback_t cb, void *arg, bTcpIpNetif_t *netif)
 {
     bTestMacEventCb    = cb;
     bTestMacEventCbArg = arg;
 }
 
 const bTcpIpStackIf_t bTestMacIf = {
-    .init     = _bTestMacInit,
-    .loop     = _bTestMacLoop,
-    .callback = _bTestMacCallback,
+    .init         = _bTestMacInit,
+    .loop         = _bTestMacLoop,
+    .reg_callback = _bTestMacCallback,
 
     .set_mac           = _bTestMacSetMac,
     .set_ip            = _bTestMacSetIp,
@@ -326,7 +340,7 @@ const bTcpIpStackIf_t bTestMacIf = {
         {
             .new     = _bTestMacUdpNew,
             .delete  = _bTestMacDelete,
-            .send    = _bTestMacSend,
+            .send    = _bTestMacUdpSend,
             .recv    = _bTestMacRecv,
             .bind    = _bTestMacBind,
             .listen  = _bTestMacListen,

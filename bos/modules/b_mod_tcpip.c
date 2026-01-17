@@ -2655,7 +2655,7 @@ static void _bTcpIpCallback(bTcpIpEvent_t event, void *param, void *arg)
     {
         return;
     }
-    b_log("tcpip callback: %d\r\n");
+    b_log("tcpip callback: %d\r\n", event);
     if (event == B_TCPIP_E_ACCEPT)
     {
         bTcpIpAccetpArg_t *pinfo = (bTcpIpAccetpArg_t *)param;

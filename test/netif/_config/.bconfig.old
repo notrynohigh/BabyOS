@@ -6,7 +6,7 @@ FW_NAME="BabyOS"
 # Hal Configuration
 #
 TICK_FRQ_HZ=1000
-# USER_TICK_ENABLE is not set
+USER_TICK_ENABLE=y
 # _HALIF_VARIABLE_ENABLE is not set
 # _WDT_ENABLE is not set
 # end of Hal Configuration
