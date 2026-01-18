@@ -70,12 +70,22 @@
 #define WIFIMODULE_CMD_TIMEOUT (ESP12F_CMD_TIMEOUT)
 #endif
 
-#define WIFIMODULE_PCB_NUM_MAX (5)
+#define WIFIMODULE_TCPUDP_PCB_NUM (5)
+#ifdef ESP12F_LISTEN_PCB_NUMBER
+#define WIFIMODULE_LISTEN_PCB_NUM (ESP12F_LISTEN_PCB_NUMBER)
+#else
+#define WIFIMODULE_LISTEN_PCB_NUM (2)
+#endif
+#define WIFIMODULE_PCB_NUM_MAX (WIFIMODULE_TCPUDP_PCB_NUM + WIFIMODULE_LISTEN_PCB_NUM)
+#define WIFIMODULE_TCPUDP_PCB_INDEX_IS_VALID(index) (index < WIFIMODULE_TCPUDP_PCB_NUM)
+#define WIFIMODULE_LISTEN_PCB_INDEX_IS_VALID(index) \
+    (index >= WIFIMODULE_TCPUDP_PCB_NUM && (index < WIFIMODULE_PCB_NUM_MAX))
 #define WIFIMODULE_PCB_INDEX_IS_VALID(index) (index < WIFIMODULE_PCB_NUM_MAX)
 
 #define WIFIMODULE_PRIV_CMD_PCB_CONNECT (bCMD_WIFI_NUMBER_MAX + 0)
 #define WIFIMODULE_PRIV_CMD_PCB_SENDDATA (bCMD_WIFI_NUMBER_MAX + 1)
 #define WIFIMODULE_PRIV_CMD_PCB_DISCONNECT (bCMD_WIFI_NUMBER_MAX + 2)
+#define WIFIMODULE_PRIV_CMD_PCB_LISTEN (bCMD_WIFI_NUMBER_MAX + 3)
 
 #define WIFIMODULE_CMD_RESULT_OK (0x01)
 #define WIFIMODULE_CMD_RESULT_FAIL (0x02)
@@ -119,22 +129,30 @@
 #define WIFIMODULE_CMD_TABLE_NUMBER_MAX (3)
 
 #define WIFI_PCB_STATE_IDLE (0)
-#define WIFI_PCB_STATE_ASSIGNED (1)
-#define WIFI_PCB_STATE_WAIT_CONNECT (2)
-#define WIFI_PCB_STATE_CONNECTING (3)
-#define WIFI_PCB_STATE_CONNECTED (4)
-#define WIFI_PCB_STATE_SENDING (5)
-#define WIFI_PCB_STATE_WAIT_DISCONNECT (6)
-#define WIFI_PCB_STATE_DISCONNECTING (7)
+#define WIFI_PCB_STATE_ASSIGNED (WIFI_PCB_STATE_IDLE + 1)
+#define WIFI_PCB_STATE_WAIT_LISTEN (WIFI_PCB_STATE_ASSIGNED + 1)
+#define WIFI_PCB_STATE_WAIT_STOP_LISTEN (WIFI_PCB_STATE_WAIT_LISTEN + 1)
+#define WIFI_PCB_STATE_LISTENING (WIFI_PCB_STATE_WAIT_STOP_LISTEN + 1)
+#define WIFI_PCB_STATE_LISTEN_STOP (WIFI_PCB_STATE_LISTENING + 1)
+#define WIFI_PCB_STATE_ACCEPT (WIFI_PCB_STATE_LISTEN_STOP + 1)
+#define WIFI_PCB_STATE_WAIT_CONNECT (WIFI_PCB_STATE_ACCEPT + 1)
+#define WIFI_PCB_STATE_CONNECTING (WIFI_PCB_STATE_WAIT_CONNECT + 1)
+#define WIFI_PCB_STATE_CONNECTED (WIFI_PCB_STATE_CONNECTING + 1)
+#define WIFI_PCB_STATE_SENDING (WIFI_PCB_STATE_CONNECTED + 1)
+#define WIFI_PCB_STATE_WAIT_DISCONNECT (WIFI_PCB_STATE_SENDING + 1)
+#define WIFI_PCB_STATE_DISCONNECTING (WIFI_PCB_STATE_WAIT_DISCONNECT + 1)
 
-const char *bWifiPcbStateStr[] = {"IDLE",      "ASSIGNED", "WAIT_CONNECT",    "CONNECTING",
-                                  "CONNECTED", "SENDING",  "WAIT_DISCONNECT", "DISCONNECTING"};
+const char *bWifiPcbStateStr[] = {"IDLE",         "ASSIGNED",    "WAIT_LISTEN", "WAIT_STOP_LISTEN",
+                                  "LISTENING",    "LISTEN_STOP", "ACCEPT",      "WAIT_CONNECT",
+                                  "CONNECTING",   "CONNECTED",   "SENDING",     "WAIT_DISCONNECT",
+                                  "DISCONNECTING"};
 
 #define WIFI_PCB_STATE_IS_WRITEABLE(state) \
     (((state) == WIFI_PCB_STATE_CONNECTED) || ((state) == WIFI_PCB_STATE_SENDING))
 
 #define WIFI_STA_CONNECTED_STR "WIFI GOT IP"
 #define WIFI_STA_DISCONNECTED_STR "WIFI DISCONNECT"
+#define WIFI_IP_CONNECT_STR ",CONNECT"
 #define WIFI_IP_RECV_DATA_STR "+IPD,"
 #define WIFI_IP_DISCONNECT_STR ",CLOSED"
 #define WIFI_AP_CONNECTED_STR "+STA_CONNECTED:"
@@ -148,7 +166,7 @@ const char *bWifiPcbStateStr[] = {"IDLE",      "ASSIGNED", "WAIT_CONNECT",    "C
  * \{
  */
 
-typedef uint16_t(*pbAtCmdFunc_t)(void *arg, char **pcmdbuf);
+typedef uint16_t (*pbAtCmdFunc_t)(void *arg, char **pcmdbuf);
 typedef void (*pbRelease_t)(void *p);
 typedef struct
 {
@@ -216,6 +234,7 @@ typedef struct
         uint8_t  state;
         uint32_t ip;
         uint16_t port;
+        uint16_t local_port;
         void    *pcb;
         struct
         {
@@ -254,6 +273,7 @@ static uint16_t _bConnectRemote(void *arg, char **pcmdbuf);
 static uint16_t _bTcpUdpSendStart(void *arg, char **pcmdbuf);
 static uint16_t _bTcpUdpSendData(void *arg, char **pcmdbuf);
 static uint16_t _bDisconnectRemote(void *arg, char **pcmdbuf);
+static uint16_t _bTcpListen(void *arg, char **pcmdbuf);
 /**
  * \}
  */
@@ -268,11 +288,11 @@ bDRIVER_HALIF_TABLE(bESP12F_HalIf_t, DRIVER_NAME);
 static DRIVER_PRIVATE_TYPE bEspRunInfo[bDRIVER_HALIF_NUM(bESP12F_HalIf_t, DRIVER_NAME)];
 
 const static bWifiModuleCtlEvent_t bWifiCtlEvent[bCMD_WIFI_NUMBER_MAX] = {
-    {0, 0},                                       // reserved
-    {B_EVT_MODE_STA_OK, B_EVT_MODE_STA_FAIL},     // bCMD_WIFI_MODE_STA
-    {B_EVT_MODE_AP_OK, B_EVT_MODE_STA_FAIL},      // bCMD_WIFI_MODE_AP
-    {B_EVT_MODE_STA_AP_OK, B_EVT_MODE_STA_FAIL},  // bCMD_WIFI_MODE_STA_AP
-    {B_EVT_JOIN_AP_OK, B_EVT_MODE_STA_FAIL},      // bCMD_WIFI_JOIN_AP
+    {0, 0},                                          // reserved
+    {B_EVT_MODE_STA_OK, B_EVT_MODE_STA_FAIL},        // bCMD_WIFI_MODE_STA
+    {B_EVT_MODE_AP_OK, B_EVT_MODE_AP_FAIL},          // bCMD_WIFI_MODE_AP
+    {B_EVT_MODE_STA_AP_OK, B_EVT_MODE_STA_AP_FAIL},  // bCMD_WIFI_MODE_STA_AP
+    {B_EVT_JOIN_AP_OK, B_EVT_JOIN_AP_FAIL},          // bCMD_WIFI_JOIN_AP
 };
 
 const static bWifiModuleCmdUnit_t bEspCmdReset[] = {
@@ -289,7 +309,7 @@ const static bWifiModuleCmdUnit_t bEspCmdApMode[]    = {{"AT+CWMODE=2\r\n", "OK"
 const static bWifiModuleCmdUnit_t bEspCmdApStaMode[] = {{"AT+CWMODE=3\r\n", "OK", 300, NULL},
                                                         {NULL, NULL, 300, _bSetApInfo},
                                                         {"AT+CIPMUX=1\r\n", "OK", 300, NULL}};
-const static bWifiModuleCmdUnit_t bEspCmdJoinAp[]    = {{NULL, "OK", 15000, _bJoinAp}};
+const static bWifiModuleCmdUnit_t bEspCmdJoinAp[]    = {{NULL, "OK,WIFI GOT IP", 15000, _bJoinAp}};
 
 const static bWifiModuleCmdUnit_t bEspCmdConnectRemote[] = {
     {NULL, "OK,ALREADY CONNECTED", 1000, _bConnectRemote}};
@@ -299,6 +319,8 @@ const static bWifiModuleCmdUnit_t bEspCmdSendData[] = {{NULL, ">", 300, _bTcpUdp
 
 const static bWifiModuleCmdUnit_t bEspCmdDisconnectRemote[] = {
     {NULL, "OK,UNLINK", 300, _bDisconnectRemote}};
+
+const static bWifiModuleCmdUnit_t bEspCmdTcpListen[] = {{NULL, "OK", 300, _bTcpListen}};
 
 /*/**
  * \brief
@@ -331,6 +353,7 @@ static void _bWifiSetPcbStatus(DRIVER_PRIVATE_TYPE *_priv, uint8_t pcb_index, ui
 {
     if (pcb_index < WIFIMODULE_PCB_NUM_MAX)
     {
+        // b_log("current:%d --> %d\r\n", _priv->pcb_ctx[pcb_index].state, status);
         b_log_i("wifi set pcb[%d] status %s --> %s\r\n", pcb_index,
                 bWifiPcbStateStr[_priv->pcb_ctx[pcb_index].state], bWifiPcbStateStr[status]);
         _priv->pcb_ctx[pcb_index].state = status;
@@ -407,6 +430,28 @@ static void _bEsp12fDataParse(bDriverInterface_t *pdrv, char *pdata, uint16_t le
                 _bWifiSetPcbStatus(_priv, conn_index, WIFI_PCB_STATE_ASSIGNED);
                 _bWifiInvokeTcpIpCb(_priv, B_TCPIP_E_DISCONNECT, _priv->pcb_ctx[conn_index].pcb);
             }
+        }
+    }
+    else if ((len >= strlen(WIFI_IP_CONNECT_STR)) && (strstr(pdata, WIFI_IP_CONNECT_STR) != 0))
+    {
+        ret = bParseString(pdata, ",", 0, &conn_index, &pstr);
+        if ((0 == ret) && WIFIMODULE_TCPUDP_PCB_INDEX_IS_VALID(conn_index) &&
+            _priv->pcb_ctx[conn_index].state == WIFI_PCB_STATE_IDLE)
+        {
+            bWifiModulePcb_t *module_pcb = NULL;
+            module_pcb                   = (bWifiModulePcb_t *)bCalloc(1, sizeof(bWifiModulePcb_t));
+            b_assert_log(module_pcb != NULL);
+            _priv->pcb_ctx[conn_index].is_tcp         = 1;
+            _priv->pcb_ctx[conn_index].pcb            = module_pcb;
+            _priv->pcb_ctx[conn_index].send_data.pbuf = NULL;
+            _priv->pcb_ctx[conn_index].send_data.len  = 0;
+            module_pcb->pcb_index                     = conn_index;
+            module_pcb->private                       = _priv;
+            _bWifiSetPcbStatus(_priv, conn_index, WIFI_PCB_STATE_CONNECTED);
+            bTcpIpAccetpArg_t accept_arg;
+            accept_arg.new_pcb       = module_pcb;
+            accept_arg.netif.private = _priv;
+            _bWifiInvokeTcpIpCb(_priv, B_TCPIP_E_ACCEPT, &accept_arg);
         }
     }
 }
@@ -504,9 +549,19 @@ static uint16_t _bConnectRemote(void *arg, char **pcmdbuf)
     sprintf(ip_str, "%d.%d.%d.%d", (prv->pcb_ctx[i].ip >> 24) & 0xff,
             (prv->pcb_ctx[i].ip >> 16) & 0xff, (prv->pcb_ctx[i].ip >> 8) & 0xff,
             prv->pcb_ctx[i].ip & 0xff);
-    b_log("connecting to %s:%d\r\n", ip_str, prv->pcb_ctx[i].port);
-    snprintf((char *)prv->at_ctx.uart_send_buf, WIFIMODULE_SENDBUF_MAX,
-             "AT+CIPSTART=%d,\"%s\",\"%s\",%d\r\n", i, pcb_type, ip_str, prv->pcb_ctx[i].port);
+    b_log("connecting to %s:%d %d\r\n", ip_str, prv->pcb_ctx[i].port, prv->pcb_ctx[i].local_port);
+
+    if (prv->pcb_ctx[i].is_tcp == 0 && prv->pcb_ctx[i].local_port != 0)
+    {
+        snprintf((char *)prv->at_ctx.uart_send_buf, WIFIMODULE_SENDBUF_MAX,
+                 "AT+CIPSTART=%d,\"%s\",\"%s\",%d,%d\r\n", i, pcb_type, ip_str,
+                 prv->pcb_ctx[i].port, prv->pcb_ctx[i].local_port);
+    }
+    else
+    {
+        snprintf((char *)prv->at_ctx.uart_send_buf, WIFIMODULE_SENDBUF_MAX,
+                 "AT+CIPSTART=%d,\"%s\",\"%s\",%d\r\n", i, pcb_type, ip_str, prv->pcb_ctx[i].port);
+    }
     *pcmdbuf = ((char *)&prv->at_ctx.uart_send_buf[0]);
     return strlen(*pcmdbuf);
 }
@@ -563,21 +618,60 @@ static uint16_t _bTcpUdpSendData(void *arg, char **pcmdbuf)
     int                  i   = 0;
     DRIVER_PRIVATE_TYPE *prv = (DRIVER_PRIVATE_TYPE *)arg;
     memset(prv->at_ctx.uart_send_buf, 0, sizeof(prv->at_ctx.uart_send_buf));
-    for (i = 0; i < WIFIMODULE_PCB_NUM_MAX; i++)
+    for (i = 0; i < WIFIMODULE_TCPUDP_PCB_NUM; i++)
     {
         if (prv->pcb_ctx[i].state == WIFI_PCB_STATE_SENDING)
         {
             break;
         }
     }
+    if (i >= WIFIMODULE_TCPUDP_PCB_NUM)
+    {
+        return 0;
+    }
     b_log("[%d][%p]sending %d bytes\r\n", i, (char *)prv->pcb_ctx[i].send_data.pbuf,
           prv->pcb_ctx[i].send_data.len);
+    *pcmdbuf = (char *)prv->pcb_ctx[i].send_data.pbuf;
+    return prv->pcb_ctx[i].send_data.len;
+}
+
+static uint16_t _bTcpListen(void *arg, char **pcmdbuf)
+{
+    int                  i   = 0;
+    DRIVER_PRIVATE_TYPE *prv = (DRIVER_PRIVATE_TYPE *)arg;
+    memset(prv->at_ctx.uart_send_buf, 0, sizeof(prv->at_ctx.uart_send_buf));
+    for (i = 0; i < WIFIMODULE_PCB_NUM_MAX; i++)
+    {
+        if (prv->pcb_ctx[i].state == WIFI_PCB_STATE_WAIT_LISTEN)
+        {
+            break;
+        }
+        else if (prv->pcb_ctx[i].state == WIFI_PCB_STATE_WAIT_STOP_LISTEN)
+        {
+            break;
+        }
+    }
     if (i >= WIFIMODULE_PCB_NUM_MAX)
     {
         return 0;
     }
-    *pcmdbuf = (char *)prv->pcb_ctx[i].send_data.pbuf;
-    return prv->pcb_ctx[i].send_data.len;
+
+    if (prv->pcb_ctx[i].state == WIFI_PCB_STATE_WAIT_LISTEN)
+    {
+        b_log("[%d] listen %d\r\n", i, prv->pcb_ctx[i].local_port);
+        _bWifiSetPcbStatus(prv, i, WIFI_PCB_STATE_LISTENING);
+        snprintf((char *)prv->at_ctx.uart_send_buf, WIFIMODULE_SENDBUF_MAX, "AT+CIPSERVER=1,%d\r\n",
+                 prv->pcb_ctx[i].local_port);
+    }
+    else if (prv->pcb_ctx[i].state == WIFI_PCB_STATE_WAIT_STOP_LISTEN)
+    {
+        b_log("[%d] stop listen %d\r\n", i, prv->pcb_ctx[i].local_port);
+        _bWifiSetPcbStatus(prv, i, WIFI_PCB_STATE_LISTEN_STOP);
+        snprintf((char *)prv->at_ctx.uart_send_buf, WIFIMODULE_SENDBUF_MAX, "AT+CIPSERVER=0,%d\r\n",
+                 prv->pcb_ctx[i].local_port);
+    }
+    *pcmdbuf = ((char *)&prv->at_ctx.uart_send_buf[0]);
+    return strlen(*pcmdbuf);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -702,6 +796,11 @@ static void _bWifiPrivCmdHandle(DRIVER_PRIVATE_TYPE *_priv, uint8_t cmd)
             _bWifiModuleAddExecCmd(_priv, &bEspCmdDisconnectRemote[0],
                                    sizeof(bEspCmdDisconnectRemote) / sizeof(bWifiModuleCmdUnit_t));
     }
+    else if (cmd == WIFIMODULE_PRIV_CMD_PCB_LISTEN)
+    {
+        ret = _bWifiModuleAddExecCmd(_priv, &bEspCmdTcpListen[0],
+                                     sizeof(bEspCmdTcpListen) / sizeof(bWifiModuleCmdUnit_t));
+    }
     b_log_i("priv cmd handle ret %d\r\n", ret);
     WIFIMODULE_SET_CTL_CMD(_priv, cmd);
     _bWifiModuleExecCmdStart(_priv);
@@ -780,6 +879,39 @@ static void _bWifiPrivCmdResultHandle(uint8_t cmd, uint8_t isok, DRIVER_PRIVATE_
             }
         }
     }
+    else if (cmd == WIFIMODULE_PRIV_CMD_PCB_LISTEN)
+    {
+        for (i = 0; i < WIFIMODULE_PCB_NUM_MAX; i++)
+        {
+            if (_priv->pcb_ctx[i].state == WIFI_PCB_STATE_LISTENING)
+            {
+                if (isok)
+                {
+                    _bWifiSetPcbStatus(_priv, i, WIFI_PCB_STATE_ACCEPT);
+                }
+                else
+                {
+                    _bWifiSetPcbStatus(_priv, i, WIFI_PCB_STATE_WAIT_LISTEN);
+                }
+            }
+            else if (_priv->pcb_ctx[i].state == WIFI_PCB_STATE_LISTEN_STOP)
+            {
+                if (isok)
+                {
+                    if (_priv->pcb_ctx[i].pcb)
+                    {
+                        bFree(_priv->pcb_ctx[i].pcb);
+                        _priv->pcb_ctx[i].pcb = NULL;
+                    }
+                    _bWifiSetPcbStatus(_priv, i, WIFI_PCB_STATE_IDLE);
+                }
+                else
+                {
+                    _bWifiSetPcbStatus(_priv, i, WIFI_PCB_STATE_WAIT_STOP_LISTEN);
+                }
+            }
+        }
+    }
 }
 
 PT_THREAD(bEsp12fTask)(struct pt *pt, void *arg)
@@ -827,7 +959,7 @@ PT_THREAD(bEsp12fTask)(struct pt *pt, void *arg)
                     PT_WAIT_UNTIL(
                         pt,
                         WIFIMODULE_CMD_RESULT_IS_OK(_priv) || WIFIMODULE_CMD_RESULT_IS_FAIL(_priv),
-                        ESP12F_CMD_TIMEOUT);
+                        ESP12F_CMD_TIMEOUT + WIFIMODULE_CMD_TIMEOUT_GET(pcmdunit->timeout));
                 }
                 if (WIFIMODULE_CMD_RESULT_IS_OK(_priv))
                 {
@@ -884,6 +1016,12 @@ PT_THREAD(bEsp12fTask)(struct pt *pt, void *arg)
                         _bWifiPrivCmdHandle(_priv, WIFIMODULE_PRIV_CMD_PCB_DISCONNECT);
                         break;
                     }
+                    else if (_priv->pcb_ctx[i].state == WIFI_PCB_STATE_WAIT_LISTEN ||
+                             _priv->pcb_ctx[i].state == WIFI_PCB_STATE_WAIT_STOP_LISTEN)
+                    {
+                        _bWifiPrivCmdHandle(_priv, WIFIMODULE_PRIV_CMD_PCB_LISTEN);
+                        break;
+                    }
                 }
             }
         }
@@ -911,12 +1049,40 @@ static void _bTcpIpRegCallback(pTcpIpCallback_t cb, void *arg, bTcpIpNetif_t *pn
 static int _bTcpIpGetPcb(DRIVER_PRIVATE_TYPE *prv)
 {
     int i = 0;
-    for (i = 0; i < WIFIMODULE_PCB_NUM_MAX; i++)
+    for (i = 0; i < WIFIMODULE_TCPUDP_PCB_NUM; i++)
     {
         if (prv->pcb_ctx[i].state == WIFI_PCB_STATE_IDLE)
         {
+            prv->pcb_ctx[i].is_tcp         = 0;
+            prv->pcb_ctx[i].ip             = 0;
+            prv->pcb_ctx[i].port           = 0;
+            prv->pcb_ctx[i].local_port     = 0;
+            prv->pcb_ctx[i].pcb            = NULL;
+            prv->pcb_ctx[i].send_data.len  = 0;
+            prv->pcb_ctx[i].send_data.pbuf = NULL;
             _bWifiSetPcbStatus(prv, i, WIFI_PCB_STATE_ASSIGNED);
             return i;
+        }
+    }
+    return -1;
+}
+
+static int _bTcpIpGetListenPcb(DRIVER_PRIVATE_TYPE *prv)
+{
+    int i = 0;
+    for (i = 0; i < WIFIMODULE_LISTEN_PCB_NUM; i++)
+    {
+        if (prv->pcb_ctx[i + WIFIMODULE_TCPUDP_PCB_NUM].state == WIFI_PCB_STATE_IDLE)
+        {
+            prv->pcb_ctx[i + WIFIMODULE_TCPUDP_PCB_NUM].is_tcp         = 0;
+            prv->pcb_ctx[i + WIFIMODULE_TCPUDP_PCB_NUM].ip             = 0;
+            prv->pcb_ctx[i + WIFIMODULE_TCPUDP_PCB_NUM].port           = 0;
+            prv->pcb_ctx[i + WIFIMODULE_TCPUDP_PCB_NUM].local_port     = 0;
+            prv->pcb_ctx[i + WIFIMODULE_TCPUDP_PCB_NUM].pcb            = NULL;
+            prv->pcb_ctx[i + WIFIMODULE_TCPUDP_PCB_NUM].send_data.len  = 0;
+            prv->pcb_ctx[i + WIFIMODULE_TCPUDP_PCB_NUM].send_data.pbuf = NULL;
+            _bWifiSetPcbStatus(prv, i + WIFIMODULE_TCPUDP_PCB_NUM, WIFI_PCB_STATE_ASSIGNED);
+            return (i + WIFIMODULE_TCPUDP_PCB_NUM);
         }
     }
     return -1;
@@ -990,11 +1156,6 @@ static void *_bTcpIpNewUdp(bTcpIpNetif_t *pnetif)
 
 static int _bTcpIpBind(void *pcb, uint16_t port)
 {
-    return 0;
-}
-
-static int _bTcpIpListen(void *pcb, uint16_t port)
-{
     bWifiModulePcb_t *_pcb = (bWifiModulePcb_t *)pcb;
 
     if (_pcb == NULL || !WIFIMODULE_PCB_INDEX_IS_VALID(_pcb->pcb_index))
@@ -1006,10 +1167,44 @@ static int _bTcpIpListen(void *pcb, uint16_t port)
     {
         return NULL;
     }
-    b_log("listen localhost:%d\r\n", port);
-    _priv->pcb_ctx[_pcb->pcb_index].port = port;
-    _bWifiSetPcbStatus(_priv, _pcb->pcb_index, WIFI_PCB_STATE_WAIT_CONNECT);
+    _priv->pcb_ctx[_pcb->pcb_index].local_port = port;
     return 0;
+}
+
+static void *_bTcpIpListen(void *pcb, uint16_t num)
+{
+    bWifiModulePcb_t *_pcb = (bWifiModulePcb_t *)pcb;
+
+    if (_pcb == NULL || !WIFIMODULE_TCPUDP_PCB_INDEX_IS_VALID(_pcb->pcb_index))
+    {
+        return NULL;
+    }
+
+    DRIVER_PRIVATE_TYPE *_priv = (DRIVER_PRIVATE_TYPE *)_pcb->private;
+    if (_priv == NULL)
+    {
+        return NULL;
+    }
+
+    if (_priv->pcb_ctx[_pcb->pcb_index].local_port == 0)
+    {
+        return NULL;
+    }
+
+    int listen_pcb_index = _bTcpIpGetListenPcb(_priv);
+    if (listen_pcb_index < 0)
+    {
+        return NULL;
+    }
+    _priv->pcb_ctx[listen_pcb_index].is_tcp     = _priv->pcb_ctx[_pcb->pcb_index].is_tcp;
+    _priv->pcb_ctx[listen_pcb_index].local_port = _priv->pcb_ctx[_pcb->pcb_index].local_port;
+    _priv->pcb_ctx[listen_pcb_index].pcb        = _priv->pcb_ctx[_pcb->pcb_index].pcb;
+    _priv->pcb_ctx[_pcb->pcb_index].pcb         = NULL;
+    _bWifiSetPcbStatus(_priv, _pcb->pcb_index, WIFI_PCB_STATE_IDLE);
+    _pcb->pcb_index = listen_pcb_index;
+    _bWifiSetPcbStatus(_priv, _pcb->pcb_index, WIFI_PCB_STATE_WAIT_LISTEN);
+    b_log("listen localhost:%d\r\n", _priv->pcb_ctx[_pcb->pcb_index].local_port);
+    return _pcb;
 }
 
 static int _bTcpIpConnect(void *pcb, uint32_t ip, uint16_t port)
@@ -1078,7 +1273,15 @@ static int _bTcpIpDelete(void *pcb)
     {
         return NULL;
     }
-    _bWifiSetPcbStatus(_priv, _pcb->pcb_index, WIFI_PCB_STATE_WAIT_DISCONNECT);
+
+    if (WIFIMODULE_LISTEN_PCB_INDEX_IS_VALID(_pcb->pcb_index))
+    {
+        _bWifiSetPcbStatus(_priv, _pcb->pcb_index, WIFI_PCB_STATE_WAIT_STOP_LISTEN);
+    }
+    else
+    {
+        _bWifiSetPcbStatus(_priv, _pcb->pcb_index, WIFI_PCB_STATE_WAIT_DISCONNECT);
+    }
     return 0;
 }
 
@@ -1264,7 +1467,7 @@ static int _bESP12FCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             ((bTcpIpStackIf_t *)param)->set_default_netif = NULL;
             ((bTcpIpStackIf_t *)param)->tcp.new           = _bTcpIpNewTcp;
             ((bTcpIpStackIf_t *)param)->tcp.bind          = _bTcpIpBind;
-            ((bTcpIpStackIf_t *)param)->tcp.listen        = NULL;
+            ((bTcpIpStackIf_t *)param)->tcp.listen        = _bTcpIpListen;
             ((bTcpIpStackIf_t *)param)->tcp.connect       = _bTcpIpConnect;
             ((bTcpIpStackIf_t *)param)->tcp.send          = _bTcpIpSend;
             ((bTcpIpStackIf_t *)param)->tcp.recv          = NULL;
@@ -1398,6 +1601,29 @@ SEND OK
 [18:58:42.230]收←◆+STA_CONNECTED:"xxxxxxxxxxx"
 
 [18:59:04.006]收←◆+STA_DISCONNECTED:"xxxxxxxxxx"
+
+[22:40:55.306]发→◇AT+CIPSERVER=1,123
+□
+[22:40:55.308]收←◆AT+CIPSERVER=1,123
+
+OK
+
+[22:42:31.709]收←◆0,CONNECT
+
+[22:42:38.532]收←◆
++IPD,0,8:123445
+
+[22:42:44.579]收←◆
++IPD,0,8:123445
+
+[22:42:58.104]发→◇AT+CIPSERVER=1,123
+□
+[22:42:58.107]收←◆AT+CIPSERVER=1,123
+no change
+
+OK
+
+[22:43:03.319]收←◆0,CLOSED
 
  */
 /************************ Copyright (c) 2019 Bean *****END OF FILE********/

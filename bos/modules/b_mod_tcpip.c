@@ -87,14 +87,15 @@
 
 #define B_SOCKET_STATE_INIT (0)
 #define B_SOCKET_STATE_DNS (1)
-#define B_SOCKET_STATE_DNS_WAIT (2)
+#define B_SOCKET_STATE_DNS_FAIL (2)
 #define B_SOCKET_STATE_CONNECT (3)
 #define B_SOCKET_STATE_WAIT_CONNECTED (4)
 #define B_SOCKET_STATE_CONNECTED (5)
 #define B_SOCKET_STATE_WAIT_DISCONNECT (6)
+#define B_SOCKET_STATE_DISCONNECT (7)
 
-const char *bSocketStateStr[] = {"INIT",           "DNS",       "DNS_WAIT",       "CONNECT",
-                                 "WAIT_CONNECTED", "CONNECTED", "WAIT_DISCONNECT"};
+const char *bSocketStateStr[] = {"INIT",           "DNS",       "DNS_FAIL",        "CONNECT",
+                                 "WAIT_CONNECTED", "CONNECTED", "WAIT_DISCONNECT", "DISCONNECT"};
 
 typedef struct
 {
@@ -165,8 +166,6 @@ typedef struct
 {
     char             url[REMOTE_ADDR_LEN_MAX + 1];
     uint32_t         ip;
-    pbTransDnsCb_t   cb;
-    void            *cb_arg;
     struct list_head node;
 } bDnsInfo_t;
 
@@ -452,6 +451,11 @@ typedef struct
         uint32_t netmask;
         uint32_t gateway;
     } ip_info;
+    struct
+    {
+        pbTransCb_t cb;
+        void       *arg;
+    } trans_listen_cb;
 } bTcpIpInfo_t;
 
 typedef struct
@@ -594,6 +598,7 @@ static uint16_t _bTransPcbAddData(struct list_head *phead, uint8_t *pbuf, uint16
     }
     pdata->len = len;
     list_add_tail(&pdata->node, phead);
+    b_log("[add data %d limit %d]\r\n", len, limit);
     return len;
 }
 
@@ -707,6 +712,7 @@ static void _bTransPcbClear(bTrans_t *ptrans)
     {
         _bTransPcbDataFree(&ptrans->recv_head);
         _bTransPcbDataFree(&ptrans->send_head);
+        ptrans->send_busy = 0;
     }
 }
 
@@ -801,7 +807,7 @@ static int bDnsCacheAdd(char *domain, uint32_t ip, uint32_t ttl)
     return -1;
 }
 
-static int bDnsCacheGet(char *domain, uint32_t *ip)
+static int bDnsCacheGet(const char *domain, uint32_t *ip)
 {
     uint32_t ctick = bHalGetSysTick();
     for (int i = 0; i < B_TCPIP_DNS_CACHE_NUM; i++)
@@ -1153,20 +1159,74 @@ static int8_t _bDnsParseMsg(struct dhdr *pdhdr, uint8_t *pbuf, uint8_t *ip_from_
         return 0;
 }
 
-static void _bDnsListDelNode(void *arg)
+static void _bDnsListDeletNode(const char *url)
 {
-    struct list_head *pos, *n;
-    bDnsInfo_t       *pinfo;
-    list_for_each_safe(pos, n, &bDnsHead)
+    bDnsInfo_t *pos, *n;
+    list_for_each_entry_safe(pos, n, bDnsInfo_t, &bDnsHead, node)
     {
-        pinfo = list_entry(pos, bDnsInfo_t, node);
-        if (pinfo->cb_arg == arg)
+        if (strcmp(pos->url, url) == 0)
         {
-            pinfo->cb     = NULL;
-            pinfo->cb_arg = NULL;
-            break;
+            list_del(&pos->node);
+            bFree(pos);
+            return;
         }
     }
+}
+
+static bDnsInfo_t *_bDnsListFindNode(const char *url)
+{
+    bDnsInfo_t *pos, *n;
+    list_for_each_entry_safe(pos, n, bDnsInfo_t, &bDnsHead, node)
+    {
+        if (strcmp(pos->url, url) == 0)
+        {
+            return pos;
+        }
+    }
+    return NULL;
+}
+
+static bDnsResult_t _bDnsParse(const char *remote, uint32_t *ip, uint8_t create_dns)
+{
+    if (remote == NULL || strlen(remote) > REMOTE_ADDR_LEN_MAX || ip == NULL)
+    {
+        return DNS_PARSE_FAILED;
+    }
+
+    uint32_t remote_ip_tmp = _bIpStr2Uint32(remote);
+    if (remote_ip_tmp != 0)
+    {
+        *ip = remote_ip_tmp;
+        return DNS_PARSE_SUCCESS;
+    }
+
+    if (0 == bDnsCacheGet(remote, &remote_ip_tmp))
+    {
+        *ip = remote_ip_tmp;
+        return DNS_PARSE_SUCCESS;
+    }
+
+    if (_bDnsListFindNode(remote) != NULL)
+    {
+        return DNS_PARSE_ONGING;
+    }
+
+    if (create_dns == 0)
+    {
+        return DNS_PARSE_FAILED;
+    }
+
+    bDnsInfo_t *pdns = (bDnsInfo_t *)bMalloc(sizeof(bDnsInfo_t));
+    if (pdns == NULL)
+    {
+        return -2;
+    }
+    memset(pdns, 0, sizeof(bDnsInfo_t));
+    pdns->ip = 0;
+    memcpy(pdns->url, remote, strlen(remote));
+    list_add_tail(&pdns->node, &bDnsHead);
+    b_log("dns add %s\r\n", pdns->url);
+    return DNS_PARSE_ONGING;
 }
 
 static void _bDNSTransCb(bTransEvent_t event, void *param, void *arg)
@@ -1193,8 +1253,7 @@ static void _bDnsHandler()
         }
         return;
     }
-    node  = bDnsHead.next;
-    pinfo = list_entry(node, bDnsInfo_t, node);
+    pinfo = list_first_entry(&bDnsHead, bDnsInfo_t, node);
     if (SOCKFD_IS_INVALID(bDnsRunCtx.socket))
     {
         bDnsRunCtx.socket = bSocket(B_TRANS_CONN_UDP, _bDNSTransCb, NULL);
@@ -1204,15 +1263,9 @@ static void _bDnsHandler()
         }
         bDnsRunCtx.state = DNS_STATE_IDLE;
     }
+    // b_log("state:%d\r\n", bDnsRunCtx.state);
     if (bDnsRunCtx.state == DNS_STATE_IDLE)
     {
-        if (pinfo->cb == NULL)
-        {
-            __list_del(node->prev, node->next);
-            bFree(pinfo);
-            pinfo = NULL;
-            return;
-        }
         memset(dns_str, 0, sizeof(dns_str));
         _bIpInt2Str((char *)dns_str, bTcpIpDNS[bDnsRunCtx.dns_index]);
         bConnect(bDnsRunCtx.socket, (char *)dns_str, IPPORT_DOMAIN);
@@ -1228,8 +1281,10 @@ static void _bDnsHandler()
     }
     else if (bDnsRunCtx.state == DNS_STATE_WAIT_RESPONSE)
     {
+        // b_log("dns wait response %d \r\n", bDnsRunCtx.socket);
         if (bSockIsReadable(bDnsRunCtx.socket))
         {
+            // b_log("readable..\r\n");
             len = bRecv(bDnsRunCtx.socket, bDnsRunCtx.buf, MAX_DNS_BUF_SIZE, NULL);
             if (len > 0)
             {
@@ -1253,25 +1308,23 @@ static void _bDnsHandler()
                     pinfo->ip = (pinfo->ip << 8) | parse_ip_buf[3];
 
                     bDnsCacheAdd(pinfo->url, pinfo->ip, ip_ttl / 2);
-
-                    if (pinfo->cb)
-                    {
-                        pinfo->cb(pinfo->url, pinfo->ip, pinfo->cb_arg);
-                    }
-                    __list_del(node->prev, node->next);
-                    bFree(pinfo);
-                    pinfo            = NULL;
+                    _bDnsListDeletNode(pinfo->url);
                     bDnsRunCtx.state = DNS_STATE_REQUEST;
                     return;
                 }
             }
         }
         // Check Timeout
+        // b_log("checktimeout..\r\n");
         ret_check_timeout = bDnsCheckTimeout();
         if (ret_check_timeout < 0)
         {
             bDnsRunCtx.dns_index = (bDnsRunCtx.dns_index + 1) % B_TCPIP_DNS_NUM;
-            bDnsRunCtx.state     = DNS_STATE_IDLE;
+            if (bDnsRunCtx.dns_index == 0)
+            {
+                _bDnsListDeletNode(pinfo->url);
+            }
+            bDnsRunCtx.state = DNS_STATE_IDLE;
         }
         else if (ret_check_timeout == 0)
         {
@@ -1697,17 +1750,14 @@ static uint8_t _bDhcpCheckTimeout(bTcpIpInfo_t *pinfo)
             switch (pinfo->dhcp_ctx.state)
             {
                 case STATE_DHCP_DISCOVER:
-                    //					printf("<<timeout>> state : STATE_DHCP_DISCOVER\r\n");
                     _bDhcpSendDiscover(pinfo);
                     break;
 
                 case STATE_DHCP_REQUEST:
-                    //					printf("<<timeout>> state : STATE_DHCP_REQUEST\r\n");
                     bDhcpSendRequest(pinfo);
                     break;
 
                 case STATE_DHCP_REREQUEST:
-                    //					printf("<<timeout>> state : STATE_DHCP_REREQUEST\r\n");
                     bDhcpSendRequest(pinfo);
                     break;
 
@@ -1862,7 +1912,7 @@ static uint8_t _bDhcpLoopHandle(bTcpIpInfo_t *pinfo)
             else if (type == DHCP_NAK)
             {
 #if DHCP_MODULE_DEBUG_EN
-                printf("> Receive DHCP_NACK\r\n");
+                b_log("> Receive DHCP_NACK\r\n");
 #endif
                 bDhcpTimeoutReset(pinfo);
                 pinfo->dhcp_ctx.state = STATE_DHCP_DISCOVER;
@@ -1952,7 +2002,8 @@ static void _bTcpIpTransState(bTrans_t *trans, int state)
     {
         return;
     }
-    b_log("trans state:%s --> %s\r\n", bSocketStateStr[trans->state], bSocketStateStr[state]);
+    b_log("trans[%p] state:%s --> %s\r\n", trans, bSocketStateStr[trans->state],
+          bSocketStateStr[state]);
     trans->state = state;
     if (state == B_SOCKET_STATE_CONNECTED)
     {
@@ -1970,15 +2021,6 @@ static void _bDhcpHandler(bTcpIpInfo_t *pinfo)
         }
         _bDhcpLoopHandle(pinfo);
     }
-}
-
-static void _bTransDnsCb(const char *name, uint32_t ipaddr, void *arg)
-{
-    b_log("dns:%s %x\r\n", name, ipaddr);
-    bTrans_t *trans  = (bTrans_t *)arg;
-    trans->remote_ip = ipaddr;
-    _bTcpIpTransState(trans, B_SOCKET_STATE_CONNECT);
-    _bTcpIpEvent(trans, B_TRANS_DNS_SUCCESS, trans);
 }
 
 static bTrans_t *_bTransFindNodeByPcb(void *pcb)
@@ -2048,9 +2090,27 @@ static int _bTransSendData(bTrans_t *ptrans)
 
 #endif
 
+static void _bSocketClearDataBuffer(bTrans_t *ptrans)
+{
+#if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
+    if (ptrans->p)
+    {
+        pbuf_free(ptrans->p);
+        ptrans->p           = NULL;
+        ptrans->read_offset = 0;
+    }
+#endif
+
+#if ((defined(_TCPIP_SEND_BUF_ENABLE) && (_TCPIP_SEND_BUF_ENABLE == 1)) || \
+     (defined(_TCPIP_RECV_BUF_ENABLE) && (_TCPIP_RECV_BUF_ENABLE == 1)))
+    _bTransPcbClear(ptrans);
+#endif
+}
+
 static void _bSocketHandler()
 {
-    bTcpIpStackIf_t *pstack_if = NULL;
+    bTcpIpStackIf_t *pstack_if  = NULL;
+    bDnsResult_t     dns_result = DNS_PARSE_FAILED;
     if (list_empty(&bSocketHead))
     {
         return;
@@ -2063,8 +2123,16 @@ static void _bSocketHandler()
         pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
         if (ptrans->state == B_SOCKET_STATE_DNS)
         {
-            _bTcpIpTransState(ptrans, B_SOCKET_STATE_DNS_WAIT);
-            bDnsParse((char *)ptrans->remote_url, _bTransDnsCb, ptrans);
+            dns_result = _bDnsParse((char *)ptrans->remote_url, &ptrans->remote_ip, 0);
+            if (dns_result == DNS_PARSE_FAILED)
+            {
+                _bTcpIpTransState(ptrans, B_SOCKET_STATE_DNS_FAIL);
+                _bTcpIpEvent(ptrans, B_TRANS_DISCONNECT, ptrans);
+            }
+            else if (dns_result == DNS_PARSE_SUCCESS)
+            {
+                _bTcpIpTransState(ptrans, B_SOCKET_STATE_CONNECT);
+            }
         }
         else if (ptrans->state == B_SOCKET_STATE_CONNECT)
         {
@@ -2075,6 +2143,7 @@ static void _bSocketHandler()
         }
         else if (ptrans->state == B_SOCKET_STATE_WAIT_DISCONNECT)
         {
+            _bTcpIpTransState(ptrans, B_SOCKET_STATE_DISCONNECT);
             if (ptrans->type == B_TRANS_CONN_UDP)
             {
                 pstack_if->udp.delete(ptrans->pcb);
@@ -2083,22 +2152,9 @@ static void _bSocketHandler()
             {
                 pstack_if->tcp.delete(ptrans->pcb);
             }
-            __list_del(ptrans->node.prev, ptrans->node.next);
-            _bDnsListDelNode(ptrans);
+            list_del(&ptrans->node);
             _bTcpIpEvent(ptrans, B_TRANS_DISCONNECT, ptrans);
-#if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
-            if (ptrans->p)
-            {
-                pbuf_free(ptrans->p);
-                ptrans->p           = NULL;
-                ptrans->read_offset = 0;
-            }
-#endif
-
-#if ((defined(_TCPIP_SEND_BUF_ENABLE) && (_TCPIP_SEND_BUF_ENABLE == 1)) || \
-     (defined(_TCPIP_RECV_BUF_ENABLE) && (_TCPIP_RECV_BUF_ENABLE == 1)))
-            _bTransPcbClear(ptrans);
-#endif
+            _bSocketClearDataBuffer(ptrans);
             bFree(ptrans);
         }
         else if (ptrans->state == B_SOCKET_STATE_CONNECTED)
@@ -2589,17 +2645,12 @@ static err_t _bTcpServerAccept(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
     int               sockfd = -1;
     bTcpIpAccetpArg_t accept_arg;
-    bTrans_t         *ptrans = (bTrans_t *)arg;
-    if (ptrans == NULL)
-    {
-        return ERR_OK;
-    }
     tcp_arg(newpcb, newpcb);
     tcp_err(newpcb, _bTcpErrorFn);
     tcp_recv(newpcb, _bTcpRecvFn);
     tcp_sent(newpcb, _bTcpSendFn);
-    accept_arg.listen_pcb = ptrans->pcb;
-    accept_arg.new_pcb    = newpcb;
+    accept_arg.new_pcb        = newpcb;
+    accept_arg.netif->private = netif_get_by_index(pcb->netif_idx);
     B_SAFE_INVOKE(bLwipEventCb, B_TCPIP_E_ACCEPT, &accept_arg, bLwipEventCbArg);
     return ERR_OK;
 }
@@ -2648,9 +2699,46 @@ static void _bLwipCallback(pTcpIpCallback_t cb, void *arg, bTcpIpNetif_t *netif)
 
 #endif
 
+static bTcpIpInfo_t *_bFindNetcard(uint32_t dev_no)
+{
+    int           i     = 0;
+    bTcpIpInfo_t *pinfo = NULL;
+    if (bTcpIpCtx.pinfo_table == NULL)
+    {
+        return NULL;
+    }
+    for (i = 0; i < bTcpIpCtx.info_number; i++)
+    {
+        if (bTcpIpCtx.pinfo_table[i].netif.dev_no == dev_no)
+        {
+            return &bTcpIpCtx.pinfo_table[i];
+        }
+    }
+    return NULL;
+}
+
+static bTcpIpInfo_t *_bFindNetcardByPriv(void *priv)
+{
+    int           i     = 0;
+    bTcpIpInfo_t *pinfo = NULL;
+    if (bTcpIpCtx.pinfo_table == NULL)
+    {
+        return NULL;
+    }
+    for (i = 0; i < bTcpIpCtx.info_number; i++)
+    {
+        if (bTcpIpCtx.pinfo_table[i].netif.private == priv)
+        {
+            return &bTcpIpCtx.pinfo_table[i];
+        }
+    }
+    return NULL;
+}
+
 static void _bTcpIpCallback(bTcpIpEvent_t event, void *param, void *arg)
 {
-    bTrans_t *ptrans = NULL;
+    bTcpIpInfo_t *tcpip_info = NULL;
+    bTrans_t     *ptrans     = NULL;
     if (param == NULL)
     {
         return;
@@ -2658,17 +2746,30 @@ static void _bTcpIpCallback(bTcpIpEvent_t event, void *param, void *arg)
     b_log("tcpip callback: %d\r\n", event);
     if (event == B_TCPIP_E_ACCEPT)
     {
-        bTcpIpAccetpArg_t *pinfo = (bTcpIpAccetpArg_t *)param;
-        ptrans                   = _bTransFindNodeByPcb(pinfo->listen_pcb);
-        bTrans_t *pnewtrans      = (bTrans_t *)bMalloc(sizeof(bTrans_t));
-        if (pnewtrans == NULL)
+        bTcpIpAccetpArg_t *pinfo     = (bTcpIpAccetpArg_t *)param;
+        bTrans_t          *pnewtrans = (bTrans_t *)bCalloc(1, sizeof(bTrans_t));
+        b_assert_log(pnewtrans != NULL);
+        tcpip_info = _bFindNetcardByPriv(pinfo->netif.private);
+        if (tcpip_info == NULL)
         {
             return;
         }
-        memcpy(pnewtrans, ptrans, sizeof(bTrans_t));
-        ptrans->pcb = pinfo->new_pcb;
-        _bTcpIpTransState(ptrans, B_SOCKET_STATE_CONNECTED);
-        list_add_tail(&ptrans->node, &bSocketHead);
+        pnewtrans->pcb       = pinfo->new_pcb;
+        pnewtrans->type      = B_TRANS_CONN_TCP;
+        pnewtrans->callback  = tcpip_info->trans_listen_cb.cb;
+        pnewtrans->cb_arg    = tcpip_info->trans_listen_cb.arg;
+        pnewtrans->stack_if  = &tcpip_info->stack_if;
+        pnewtrans->stack_opt = tcpip_info->stack_opt;
+        pnewtrans->netif     = &tcpip_info->netif;
+#if (defined(_TCPIP_RECV_BUF_ENABLE) && (_TCPIP_RECV_BUF_ENABLE == 1))
+        INIT_LIST_HEAD(&pnewtrans->recv_head);
+#endif
+#if (defined(_TCPIP_SEND_BUF_ENABLE) && (_TCPIP_SEND_BUF_ENABLE == 1))
+        INIT_LIST_HEAD(&pnewtrans->send_head);
+#endif
+        _bTcpIpTransState(pnewtrans, B_SOCKET_STATE_CONNECTED);
+        list_add_tail(&pnewtrans->node, &bSocketHead);
+        B_SAFE_INVOKE(pnewtrans->callback, B_TRANS_ACCEPTED, pnewtrans, pnewtrans->cb_arg);
     }
     else if (event == B_TCPIP_E_NEW_DATA)
     {
@@ -2740,30 +2841,14 @@ static void _bTcpIpCallback(bTcpIpEvent_t event, void *param, void *arg)
     }
     else if (event == B_TCPIP_E_DISCONNECT)
     {
-        _bTcpIpTransState(ptrans, B_SOCKET_STATE_WAIT_DISCONNECT);
+        _bSocketClearDataBuffer(ptrans);
+        _bTcpIpTransState(ptrans, B_SOCKET_STATE_DISCONNECT);
+        _bTcpIpEvent(ptrans, B_TRANS_DISCONNECT, ptrans);
     }
     else if (event == B_TCPIP_E_CONNECTING)
     {
         _bTcpIpTransState(ptrans, B_SOCKET_STATE_WAIT_CONNECTED);
     }
-}
-
-static bTcpIpInfo_t *_bFindNetcard(uint32_t dev_no)
-{
-    int           i     = 0;
-    bTcpIpInfo_t *pinfo = NULL;
-    if (bTcpIpCtx.pinfo_table == NULL)
-    {
-        return NULL;
-    }
-    for (i = 0; i < bTcpIpCtx.info_number; i++)
-    {
-        if (bTcpIpCtx.pinfo_table[i].netif.dev_no == dev_no)
-        {
-            return &bTcpIpCtx.pinfo_table[i];
-        }
-    }
-    return NULL;
 }
 
 static void _bNetCardHandler()
@@ -3113,6 +3198,7 @@ int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
     {
         return -2;
     }
+    b_log("socket:%s ...\r\n", type == B_TRANS_CONN_TCP ? "tcp" : "udp");
     memset(ptrans, 0, sizeof(bTrans_t));
     if (type == B_TRANS_CONN_TCP)
     {
@@ -3144,22 +3230,40 @@ int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
     return (int)ptrans;
 }
 
+int bSocketRegCallback(int sockfd, pbTransCb_t cb, void *user_data)
+{
+    if (SOCKFD_IS_INVALID(sockfd))
+    {
+        return -1;
+    }
+    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    ptrans->callback = cb;
+    ptrans->cb_arg   = user_data;
+    return 0;
+}
+
 int bConnect(int sockfd, char *remote, uint16_t port)
 {
     if (SOCKFD_IS_INVALID(sockfd) || remote == NULL || strlen(remote) > REMOTE_ADDR_LEN_MAX)
     {
         return -1;
     }
-    bTrans_t        *ptrans    = (bTrans_t *)sockfd;
-    bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
+    uint32_t         remote_ip_tmp = 0;
+    bDnsResult_t     dns_result    = DNS_PARSE_FAILED;
+    bTrans_t        *ptrans        = (bTrans_t *)sockfd;
+    bTcpIpStackIf_t *pstack_if     = (bTcpIpStackIf_t *)ptrans->stack_if;
     if (ptrans->pcb == NULL || pstack_if == NULL)
     {
         b_log_e("pcb == NULL ...\r\n");
         return -1;
     }
-    ptrans->remote_port    = port;
-    uint32_t remote_ip_tmp = _bIpStr2Uint32(remote);
-    if (remote_ip_tmp == 0)
+    b_log("[%p]connect:%s:%d ...\r\n", ptrans, remote, port);
+    ptrans->remote_port = port;
+    if ((dns_result = _bDnsParse(remote, &remote_ip_tmp, 1)) == DNS_PARSE_FAILED)
+    {
+        return -1;
+    }
+    if (dns_result == DNS_PARSE_ONGING)
     {
         b_log("dns:%s\r\n", remote);
         memset(ptrans->remote_url, 0, REMOTE_ADDR_LEN_MAX);
@@ -3223,6 +3327,9 @@ int bListen(int sockfd, int backlog)
     {
         pstack_if->udp.listen(ptrans->pcb, backlog);
     }
+    bTcpIpInfo_t *pinfo        = list_entry(ptrans->netif, bTcpIpInfo_t, netif);
+    pinfo->trans_listen_cb.cb  = ptrans->callback;
+    pinfo->trans_listen_cb.arg = ptrans->cb_arg;
     return 0;
 }
 
@@ -3296,6 +3403,7 @@ int bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
     {
         return -1;
     }
+
 #if (defined(_TCPIP_SEND_BUF_ENABLE) && (_TCPIP_SEND_BUF_ENABLE == 1))
     if (TCPIP_STACK_OPT_IS_NO_BUFFER(ptrans->stack_opt))
     {
@@ -3343,6 +3451,7 @@ uint8_t bSockIsReadable(int sockfd)
 #if (defined(_TCPIP_RECV_BUF_ENABLE) && (_TCPIP_RECV_BUF_ENABLE == 1))
     if (TCPIP_STACK_OPT_IS_NO_BUFFER(ptrans->stack_opt))
     {
+        // b_log("list head:%p\r\n", &ptrans->recv_head);
         return (!list_empty(&ptrans->recv_head));
     }
 #endif
@@ -3421,218 +3530,6 @@ int bShutdown(int sockfd)
     _bTcpIpTransState(ptrans, B_SOCKET_STATE_WAIT_DISCONNECT);
     return 0;
 }
-
-int bDnsParse(char *remote, pbTransDnsCb_t cb, void *user_data)
-{
-    if (remote == NULL || cb == NULL || strlen(remote) > REMOTE_ADDR_LEN_MAX)
-    {
-        return 0;
-    }
-
-    uint32_t remote_ip_tmp = _bIpStr2Uint32(remote);
-    if (remote_ip_tmp != 0)
-    {
-        cb(remote, remote_ip_tmp, user_data);
-        return 0;
-    }
-
-    if (0 == bDnsCacheGet(remote, &remote_ip_tmp))
-    {
-        cb(remote, remote_ip_tmp, user_data);
-        return 0;
-    }
-
-    bDnsInfo_t *pdns = (bDnsInfo_t *)bMalloc(sizeof(bDnsInfo_t));
-    if (pdns == NULL)
-    {
-        return -2;
-    }
-    memset(pdns, 0, sizeof(bDnsInfo_t));
-    pdns->cb     = cb;
-    pdns->cb_arg = user_data;
-    pdns->ip     = 0;
-    memcpy(pdns->url, remote, strlen(remote));
-    list_add_tail(&pdns->node, &bDnsHead);
-    return 0;
-}
-
-//---------------------------------------------------------------------------------------------------
-// ping
-//---------------------------------------------------------------------------------------------------
-#if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
-typedef struct
-{
-    uint8_t         busy;
-    void           *pcb;
-    void           *timer_id;
-    uint32_t        s_tick;
-    pbTransPingCb_t callback;
-    void           *cb_arg;
-} bPing_t;
-
-B_TIMER_CREATE_ATTR(bPingTimerAttr);
-
-static bPing_t bPingHd = {
-    .busy     = 0,
-    .pcb      = NULL,
-    .timer_id = NULL,
-    .cb_arg   = NULL,
-};
-
-static void _bPingResult(int result, uint32_t ms)
-{
-    if (bPingHd.timer_id != NULL)
-    {
-        bTimerStop(bPingHd.timer_id);
-    }
-    if (bPingHd.pcb != NULL)
-    {
-        raw_remove(bPingHd.pcb);
-        bPingHd.pcb = NULL;
-    }
-    bPingHd.busy = 0;
-    if (bPingHd.callback != NULL)
-    {
-        bPingHd.callback(result, ms, bPingHd.cb_arg);
-    }
-}
-
-static void _bSendPing(uint32_t ip)
-{
-    struct ip_hdr        *ip_pack = NULL;
-    struct icmp_echo_hdr *icmp_pack;
-    struct pbuf          *p     = NULL;
-    static uint16_t       seqno = 0;
-
-    p = pbuf_alloc(PBUF_IP, sizeof(struct icmp_echo_hdr) + 32, PBUF_RAM);
-    if (p == NULL)
-    {
-        _bPingResult(-1, 0);
-        return;
-    }
-    memset(p->payload, 0, sizeof(struct icmp_echo_hdr) + 32);
-    icmp_pack         = (struct icmp_echo_hdr *)p->payload;
-    icmp_pack->code   = 0;
-    icmp_pack->type   = ICMP_ECHO;
-    icmp_pack->id     = PP_HTONS(0x1);
-    icmp_pack->seqno  = PP_HTONS(seqno);
-    icmp_pack->chksum = 0;
-    seqno += 1;
-    for (int i = 0; i < 26; i++)
-    {
-        ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + i] = 'a' + i;
-    }
-    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 26] = 'B';
-    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 27] = 'a';
-    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 28] = 'b';
-    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 29] = 'y';
-    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 30] = 'O';
-    ((char *)icmp_pack)[sizeof(struct icmp_echo_hdr) + 31] = 'S';
-#if CHECKSUM_CHECK_ICMP
-    icmp_pack->chksum = inet_chksum(icmp_pack, p->len);
-#endif
-    if (bPingHd.pcb != NULL)
-    {
-        ip_addr_t ipaddr;
-        ipaddr.addr = PP_HTONL(ip);
-        raw_sendto(bPingHd.pcb, p, &ipaddr);
-        bPingHd.s_tick = bHalGetSysTick();
-    }
-    pbuf_free(p);
-    p = NULL;
-}
-
-static void _bPingTimerCb(void *arg)
-{
-    _bPingResult(-1, 0);
-}
-
-static uint8_t _bRawRecvFn(void *arg, struct raw_pcb *pcb, struct pbuf *p, const ip_addr_t *addr)
-{
-    struct ip_hdr        *ip_pack   = NULL;
-    struct icmp_echo_hdr *icmp_pack = NULL;
-    uint8_t               ip_hlen   = 0;
-    uint32_t              r_tick    = 0;
-
-    if (bPingHd.busy && p != NULL)
-    {
-        r_tick  = bHalGetSysTick();
-        ip_pack = (struct ip_hdr *)p->payload;
-        ip_hlen = IPH_HL(ip_pack) * 4;
-        pbuf_header(p, -ip_hlen);
-        icmp_pack = (struct icmp_echo_hdr *)p->payload;
-        if (icmp_pack->code == 0 && icmp_pack->type == 0)
-        {
-            _bPingResult(0, TICKS2MS((r_tick - bPingHd.s_tick)));
-            pbuf_free(p);
-            return 1;
-        }
-    }
-    return 0;
-}
-
-static void _bPingDnsCb(const char *name, uint32_t ipaddr, void *arg)
-{
-    if (ipaddr == 0)
-    {
-        _bPingResult(-1, 0);
-    }
-    else
-    {
-        _bSendPing(ipaddr);
-    }
-}
-
-int bPing(char *remote, uint32_t timeout_ms, pbTransPingCb_t cb, void *user_data)
-{
-    if (remote == NULL || cb == NULL || timeout_ms == 0)
-    {
-        return -1;
-    }
-    if (bPingHd.busy)
-    {
-        b_log_e("ping busy...\r\n");
-        return -2;
-    }
-    if (bPingHd.timer_id == NULL)
-    {
-        bPingHd.timer_id = bTimerCreate(_bPingTimerCb, B_TIMER_ONCE, NULL, &bPingTimerAttr);
-    }
-    if (bPingHd.pcb == NULL)
-    {
-        bPingHd.pcb = raw_new(IP_PROTO_ICMP);
-        if (bPingHd.pcb == NULL)
-        {
-            b_log_e("raw pcb new fail ...\r\n");
-            return -3;
-        }
-        raw_bind(bPingHd.pcb, IP4_ADDR_ANY);
-        raw_recv(bPingHd.pcb, _bRawRecvFn, NULL);
-    }
-    bPingHd.callback = cb;
-    bPingHd.cb_arg   = user_data;
-    bPingHd.busy     = 1;
-    bTimerStart(bPingHd.timer_id, timeout_ms);
-    uint32_t remote_ip_tmp = _bIpStr2Uint32(remote);
-    if (remote_ip_tmp == 0)
-    {
-        if (bDnsParse(remote, _bPingDnsCb, &bPingHd) < 0)
-        {
-            _bPingResult(-1, 0);
-        }
-    }
-    else
-    {
-        _bSendPing(remote_ip_tmp);
-    }
-    return 0;
-}
-#else
-int bPing(char *remote, uint32_t timeout_ms, pbTransPingCb_t cb, void *user_data)
-{
-    return -1;
-}
-#endif
 
 uint32_t bIPStr2Uint32(const char *ip)
 {

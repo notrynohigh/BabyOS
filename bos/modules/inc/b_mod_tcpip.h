@@ -91,7 +91,7 @@ typedef enum
 {
     B_TRANS_DNS_SUCCESS = 0,
     B_TRANS_CONNECTED,
-    B_TRANS_ACCEPTED,   
+    B_TRANS_ACCEPTED,
     B_TRANS_NEW_DATA,
     B_TRANS_SEND_DONE,
     B_TRANS_ERR_BASE = -128,
@@ -101,8 +101,14 @@ typedef enum
 } bTransEvent_t;
 
 typedef void (*pbTransCb_t)(bTransEvent_t event, void *param, void *arg);
-typedef void (*pbTransDnsCb_t)(const char *name, uint32_t ipaddr, void *arg);
 typedef void (*pbTransPingCb_t)(int result, uint32_t ms, void *arg);
+
+typedef enum
+{
+    DNS_PARSE_ONGING  = 1,
+    DNS_PARSE_SUCCESS = 0,
+    DNS_PARSE_FAILED  = -1,
+} bDnsResult_t;
 
 /**
  * \}
@@ -150,9 +156,6 @@ int     bShutdown(int sockfd);  // 建议使用 SOCKET_SHUTDOWN 一直等到关�
 uint8_t bSockIsReadable(int sockfd);
 uint8_t bSockIsWriteable(int sockfd);
 uint8_t bSocketIsConnected(int sockfd);
-
-int bDnsParse(char *remote, pbTransDnsCb_t cb, void *user_data);
-int bPing(char *remote, uint32_t timeout_ms, pbTransPingCb_t cb, void *user_data);
 
 uint32_t bIPStr2Uint32(const char *ip);
 

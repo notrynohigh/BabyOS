@@ -298,8 +298,8 @@ typedef struct
 
 typedef struct
 {
-    void *listen_pcb;
-    void *new_pcb;
+    bDriverNetif_t netif;
+    void          *new_pcb;
 } bTcpIpAccetpArg_t;
 
 typedef struct

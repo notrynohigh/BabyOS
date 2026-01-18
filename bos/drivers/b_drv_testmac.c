@@ -257,6 +257,7 @@ static int _bTestMacConnect(void *sockfd, uint32_t ip, uint16_t port)
     serverAddr.sin_addr.s_addr = htonl(ip);
     if (connect(sock, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
     {
+        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, sock, bTestMacEventCbArg);
         return -1;
     }
     B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_CONNECTED, sock, bTestMacEventCbArg);
