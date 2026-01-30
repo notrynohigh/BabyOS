@@ -20,7 +20,9 @@ config VENDOR_ARTERY
 config VENDOR_HK
     bool "HK"  
 config VENDOR_ESPRESSIF
-    bool "ESPRESSIF"        
+    bool "ESPRESSIF" 
+config VENDOR_PY
+    bool "PY"  	
 endchoice
 
 #选择ST的芯片
@@ -121,5 +123,13 @@ choice
     depends on VENDOR_ESPRESSIF
 config ESP32C3
     bool "ESP32C3"
+endchoice
+
+#选择普冉的芯片
+choice
+    prompt "Select PUYA Chip"
+    depends on VENDOR_PY
+config PY32F002B
+    bool "PY32F002B"
 endchoice
 

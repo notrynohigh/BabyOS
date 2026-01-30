@@ -120,3 +120,4 @@ uint16_t bMcuGpioReadPort(bHalGPIOPort_t port)
     }
     return (uint16_t)(pGpio->IDR & 0xFFFF);
 }
+

@@ -123,3 +123,4 @@ int bMcuSpiReceive(const bHalSPIIf_t *spi_if, uint8_t *pbuf, uint16_t len)
     }
     return -1;
 }
+

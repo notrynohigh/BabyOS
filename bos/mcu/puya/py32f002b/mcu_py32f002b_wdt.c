@@ -37,3 +37,4 @@ int bMcuWdtFeed()
     IWDG->KR = 0xAAAA;
     return 0;
 }
+
