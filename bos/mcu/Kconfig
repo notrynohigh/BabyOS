@@ -23,6 +23,8 @@ config VENDOR_ESPRESSIF
     bool "ESPRESSIF" 
 config VENDOR_PY
     bool "PY"  	
+config VENDOR_CW
+    bool "CW"  
 endchoice
 
 #选择ST的芯片
@@ -133,3 +135,10 @@ config PY32F002B
     bool "PY32F002B"
 endchoice
 
+#选择芯源的芯片
+choice
+    prompt "Select CW Chip"
+    depends on VENDOR_CW
+config CW32L010
+    bool "CW32L010"
+endchoice

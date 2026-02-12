@@ -3,7 +3,7 @@
 #include "cw32l010.h"
 
 /* CW32L010 UART 寄存器基地址映射 */
-static UART_TypeDef *const bMcuUartTable[] = {UART1, UART2};
+static UART_TypeDef *const bMcuUartTable[] = {CW_UART1, CW_UART2};
 
 /**
  * @brief UART 发送数据函数
@@ -57,8 +57,8 @@ int bMcuUartReceive(bHalUartNumber_t uart, uint8_t *pbuf, uint16_t len)
 
     for (int i = 0; i < len; i++)
     {
-        // 检查接收缓冲非空标志 (RXNE)
-        if (pUART->ISR & UARTx_ISR_RXNE_Msk)
+        // 检查接收缓冲完成
+        if (pUART->ISR & UARTx_ISR_RC_Msk)
         {
             pbuf[count++] = (uint8_t)(pUART->RDR & 0xFF);
         }

@@ -4,30 +4,15 @@
 #include "utils/inc/b_util_log.h"
 #include <string.h>
 
+#include "cw32l010_flash.h"
+#include "cw32l010_digitalsign.h"
+
 /* CW32L010 Flash 配置 */
 #define FLASH_PAGE_SIZE      (512)           // 每页 512 字节
 #define FLASH_BASE_ADDR      (0x00000000UL)  // 存储起始物理地址
-#define CW32_UID_ADDR        (0x001007E4UL)  // UID 存放起始地址
+#define CW32_UID_ADDR        (0x001007B0)  // UID 存放起始地址
 
 static uint32_t sMcuFlashSize = 0;
-
-/**
- * @brief Flash 解锁
- */
-void bMcuFlashUnlock(void)
-{
-    FLASH->KEY = 0x5A5A;
-    FLASH->KEY = 0xA5A5;
-}
-
-/**
- * @brief Flash 上锁
- */
-void bMcuFlashLock(void)
-{
-    FLASH->CR1_f.OP = 0x00; // 恢复读取模式
-    FLASH->KEY = 0x0000;    // 锁定
-}
 
 /**
  * @brief 初始化 Flash 信息
@@ -35,58 +20,92 @@ void bMcuFlashLock(void)
 int bMcuFlashInit(void)
 {
     // CW32L010 通常为 64KB
-    sMcuFlashSize = 64 * 1024;
+    sMcuFlashSize = DIGITALSIGN_GetFlashSize();
     return 0;
 }
 
 /**
- * @brief 获取 Flash 总大小 (字节)
+ * @brief Flash 解锁
  */
-uint32_t bMcuFlashChipSize(void)
+int bMcuFlashUnlock(void)
 {
-    if (sMcuFlashSize == 0)
-    {
-        bMcuFlashInit();
-    }
-    return sMcuFlashSize;
+	FLASH_UnlockAllPages();
+	return 0;
 }
 
 /**
- * @brief 获取扇区大小
+ * @brief Flash 上锁
  */
-uint32_t bMcuFlashSectorSize(void)
+int bMcuFlashLock(void)
 {
-    return FLASH_PAGE_SIZE;
+	FLASH_LockAllPages();
+	return 0;
 }
+
+
 
 /**
  * @brief 擦除 Flash
  * @param addr 相对偏移地址
  * @param num  要擦除的页数
  */
-int bMcuFlashErase(uint32_t addr, uint32_t num)
+int bMcuFlashErase(uint32_t raddr, uint32_t pages)
 {
-    uint32_t i;
-    uint32_t page_addr = FLASH_BASE_ADDR + addr;
-
-    for (i = 0; i < num; i++)
+	raddr = FLASH_BASE_ADDR + raddr;
+    raddr = raddr / FLASH_PAGE_SIZE * FLASH_PAGE_SIZE;
+    if (sMcuFlashSize == 0)
     {
-        // 1. 配置为页擦除模式
-        FLASH->CR1_f.OP = 0x02;
-        
-        // 2. 触发擦除 (向页内任一地址写数据)
-        *((volatile uint32_t *)page_addr) = 0xFFFFFFFF;
-
-        // 3. 等待 BUSY 清零
-        while (FLASH->ISR_f.BUSY);
-        
-        // 4. 清除操作完成标志
-        FLASH->ICR_f.PC = 0;
-
-        page_addr += FLASH_PAGE_SIZE;
+        bMcuFlashInit();
     }
-    return 0;
+    if ((raddr + (pages * FLASH_PAGE_SIZE)) > (FLASH_BASE_ADDR + sMcuFlashSize))
+    {
+        return -1;
+    }
+	uint32_t EndAddr = raddr + pages * FLASH_PAGE_SIZE;
+	uint8_t status = FLASH_ErasePages(raddr, EndAddr);
+	b_log_w("erase status:%x,%d, %d\r\n", raddr,pages,status);
+    return 0;	
+	
+/*	
+    uint16_t CR1BAK;
+    uint32_t i;
+
+    // Boundary check: CW32L010 flash is 64KB (0x0000FFFF)
+    // We also check if the range (addr + pages * 512) exceeds memory limits
+    if ((raddr > 0x0000FFFF) || (pages == 0) || (raddr + (pages * 512) > 0x00010000))
+    {
+        return -1; // Standard error return (replaces FLASH_ERROR_ADDR)
+    }
+
+    // Wait for any previous operation to complete
+    while(CW_FLASH->ISR_f.BUSY);
+
+    CW_FLASH->ICR = 0x00;           // Clear all interrupt flags
+    CR1BAK = CW_FLASH->CR1;
+
+    // Enter Page Erase Mode (using the required 0x5A5A unlock prefix)
+    CW_FLASH->CR1 = 0x5A5A0000 | (CR1BAK | 0x02u);
+
+    for(i = 0; i < pages; i++)
+    {
+        // Trigger page erase by writing 0 to any address within the page
+        *((volatile uint32_t *)(raddr)) = 0x00;
+
+        // Wait for current page erase to finish
+        while(CW_FLASH->ISR_f.BUSY);
+
+        // Move to the next page address (512 bytes)
+        raddr += 512;
+    }
+
+    // Restore original CR1 settings (sets FLASH back to Read mode)
+    CW_FLASH->CR1 = 0x5A5A0000 | CR1BAK;
+
+    // Return the status register (0 usually indicates success if no error bits set)
+    return (int)(CW_FLASH->ISR);
+	*/
 }
+
 
 /**
  * @brief 写入 Flash
@@ -94,36 +113,36 @@ int bMcuFlashErase(uint32_t addr, uint32_t num)
  * @param pbuf 数据缓冲区
  * @param len  写入长度 (字节)
  */
-int bMcuFlashWrite(uint32_t addr, const uint8_t *pbuf, uint32_t len)
+int bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
 {
-    uint32_t i;
-    uint32_t raddr = FLASH_BASE_ADDR + addr;
-
-    if (sMcuFlashSize == 0) bMcuFlashInit();
-    if (pbuf == NULL || (addr + len) > sMcuFlashSize)
+	uint16_t wdata = 0;
+    uint32_t wlen = (len + 1) / 2, i = 0;
+    if (sMcuFlashSize == 0)
+    {
+        bMcuFlashInit();
+    }
+    raddr = FLASH_BASE_ADDR + raddr;
+    if (pbuf == NULL || (raddr & 0x1) || (raddr + len) > (sMcuFlashSize + FLASH_BASE_ADDR))
     {
         return -1;
     }
-
-    // 设置为编程模式
-    FLASH->CR1_f.OP = 0x01;
-
-    for (i = 0; i < len; i++)
+	uint8_t status;
+    for (i = 0; i < wlen; i++)
     {
-        // CW32 支持直接字节编程
-        *((volatile uint8_t *)(raddr + i)) = pbuf[i];
-        
-        // 等待操作完成
-        while (FLASH->ISR_f.BUSY);
-        
-        // 检查编程错误
-        if (FLASH->ISR_f.PROGERR)
+        wdata = (wdata << 8) | pbuf[i * 2 + 1];
+        wdata = (wdata << 8) | pbuf[i * 2 + 0];
+//        FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR);
+//        status = FLASH_ProgramHalfWord(raddr, wdata);
+		status = FLASH_WriteHalfWords(raddr, &wdata,1);
+        if ((status != 0x00)&&(status != 0x10))
         {
-            FLASH->ICR_f.PROGERR = 0;
+            b_log_e("write error:%x %d\r\n", raddr, status);
+            b_log_hex(pbuf, len);
             return -2;
         }
-    }
-    return (int)len;
+        raddr += 2;
+    }	
+	return (wlen * 2);	
 }
 
 /**
@@ -144,11 +163,31 @@ int bMcuFlashRead(uint32_t raddr, uint8_t *pbuf, uint32_t len)
 }
 
 /**
+ * @brief 获取扇区大小
+ */
+uint32_t bMcuFlashSectorSize(void)
+{
+    return FLASH_PAGE_SIZE;
+}
+
+/**
+ * @brief 获取 Flash 总大小 (字节)
+ */
+uint32_t bMcuFlashChipSize(void)
+{
+    if (sMcuFlashSize == 0)
+    {
+        bMcuFlashInit();
+    }
+    return sMcuFlashSize;
+}
+
+/**
  * @brief 读取芯片唯一标识 (UID)
  */
 int bMcuFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen)
 {
-    uint8_t  uid_len = 12; // CW32L010 UID 为 12 字节
+    uint8_t  uid_len = 10; // CW32L010 UID 为 10 字节
     uint8_t *puid    = (uint8_t *)CW32_UID_ADDR;
 
     if (pbuf == NULL || buf_size == 0)
