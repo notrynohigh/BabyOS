@@ -61,49 +61,10 @@ int bMcuFlashErase(uint32_t raddr, uint32_t pages)
     {
         return -1;
     }
-	uint32_t EndAddr = raddr + pages * FLASH_PAGE_SIZE;
+	uint32_t EndAddr = raddr + (pages-1) * FLASH_PAGE_SIZE;
 	uint8_t status = FLASH_ErasePages(raddr, EndAddr);
-	b_log_w("erase status:%x,%d, %d\r\n", raddr,pages,status);
+	b_log_w("erase status:%x,%x, %d, %d\r\n", raddr,EndAddr,pages,status);
     return 0;	
-	
-/*	
-    uint16_t CR1BAK;
-    uint32_t i;
-
-    // Boundary check: CW32L010 flash is 64KB (0x0000FFFF)
-    // We also check if the range (addr + pages * 512) exceeds memory limits
-    if ((raddr > 0x0000FFFF) || (pages == 0) || (raddr + (pages * 512) > 0x00010000))
-    {
-        return -1; // Standard error return (replaces FLASH_ERROR_ADDR)
-    }
-
-    // Wait for any previous operation to complete
-    while(CW_FLASH->ISR_f.BUSY);
-
-    CW_FLASH->ICR = 0x00;           // Clear all interrupt flags
-    CR1BAK = CW_FLASH->CR1;
-
-    // Enter Page Erase Mode (using the required 0x5A5A unlock prefix)
-    CW_FLASH->CR1 = 0x5A5A0000 | (CR1BAK | 0x02u);
-
-    for(i = 0; i < pages; i++)
-    {
-        // Trigger page erase by writing 0 to any address within the page
-        *((volatile uint32_t *)(raddr)) = 0x00;
-
-        // Wait for current page erase to finish
-        while(CW_FLASH->ISR_f.BUSY);
-
-        // Move to the next page address (512 bytes)
-        raddr += 512;
-    }
-
-    // Restore original CR1 settings (sets FLASH back to Read mode)
-    CW_FLASH->CR1 = 0x5A5A0000 | CR1BAK;
-
-    // Return the status register (0 usually indicates success if no error bits set)
-    return (int)(CW_FLASH->ISR);
-	*/
 }
 
 
@@ -127,21 +88,22 @@ int bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
         return -1;
     }
 	uint8_t status;
+	
     for (i = 0; i < wlen; i++)
     {
         wdata = (wdata << 8) | pbuf[i * 2 + 1];
         wdata = (wdata << 8) | pbuf[i * 2 + 0];
-//        FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR);
-//        status = FLASH_ProgramHalfWord(raddr, wdata);
 		status = FLASH_WriteHalfWords(raddr, &wdata,1);
         if ((status != 0x00)&&(status != 0x10))
+//		if ((status != 0x00))
         {
             b_log_e("write error:%x %d\r\n", raddr, status);
             b_log_hex(pbuf, len);
             return -2;
         }
         raddr += 2;
-    }	
+    }
+	
 	return (wlen * 2);	
 }
 
