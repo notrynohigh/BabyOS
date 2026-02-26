@@ -138,12 +138,13 @@ typedef enum
  * \{
  */
 
-int     bTcpIpInit(const bNetCardInfo_t *pnetcard, uint8_t number);
-int     bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway);
-int     bTcpIpGetIp(char *ipaddr, char *netmask, char *gateway);
-int     bTcpIpSetMac(const uint8_t mac[6]);
-int     bTcpIpGetMac(uint8_t mac[6]);
-uint8_t bTcpIpPhyIsLinked(void);
+int      bTcpIpInit(const bNetCardInfo_t *pnetcard, uint8_t number);
+int      bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway);
+int      bTcpIpGetIp(char *ipaddr, char *netmask, char *gateway);
+int      bTcpIpSetMac(const uint8_t mac[6]);
+int      bTcpIpGetMac(uint8_t mac[6]);
+uint8_t  bTcpIpPhyIsLinked(void);
+uint32_t bTcpIpGetCurrentDevNo(void);
 
 int     bSocket(bTransType_t type, pbTransCb_t cb, void *user_data);
 int     bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data);

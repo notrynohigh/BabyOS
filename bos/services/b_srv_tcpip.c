@@ -196,8 +196,10 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
 {
     static uint8_t ntp_server_index = 0;
     bNtpPacket_t   packet;
-    uint16_t       rlen     = 0;
-    uint64_t       ntp_time = 0;
+    uint16_t       rlen      = 0;
+    uint64_t       ntp_time  = 0;
+    uint32_t       wait_time = 0;
+    wait_time                = 10;
     PT_BEGIN(pt);
     while (1)
     {
@@ -206,7 +208,7 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
             bNtpPcb.sockfd = bSocket(B_TRANS_CONN_UDP, _bNtpConnCallback, NULL);
             if (SOCKFD_IS_INVALID(bNtpPcb.sockfd))
             {
-                break;
+                bTaskRestart(pt);
             }
             b_log("ntp sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
         }
@@ -220,21 +222,31 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
                     packet.li_vn_mode = 0x1b;
                     bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
                     PT_WAIT_UNTIL(pt, bSockIsReadable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
-                    bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
-                    if (rlen == sizeof(bNtpPacket_t))
+                    if (PT_WAIT_IS_TIMEOUT(pt))
                     {
-                        if (packet.recv_time.seconds <= packet.trans_time.seconds &&
-                            (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
+                        b_log_e("ntp recv timeout...\r\n");
+                    }
+                    else
+                    {
+                        bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
+                        b_log("ntp recv len: %d == %d\r\n", rlen, sizeof(bNtpPacket_t));
+                        if (rlen == sizeof(bNtpPacket_t))
                         {
-                            ntp_time = B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
-                            bUTC_SetTime(ntp_time);
+                            if (packet.recv_time.seconds <= packet.trans_time.seconds &&
+                                (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
+                            {
+                                ntp_time =
+                                    B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
+                                bUTC_SetTime(ntp_time);
+                                wait_time = bNtpPcb.interval_s;
+                            }
                         }
-                        PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-                        bNtpPcb.sockfd = -1;
-                        b_log_e("shutdown..\r\n");
-                        bTaskDelayMs(pt, bNtpPcb.interval_s * 1000);
                     }
                 }
+                PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+                bNtpPcb.sockfd = -1;
+                b_log_e("shutdown..\r\n");
+                bTaskDelayMs(pt, wait_time * 1000);
             }
             else
             {
@@ -247,10 +259,11 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
                     b_log_e("shutdown..\r\n");
                     ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
                     bNtpPcb.sockfd   = -1;
-                    break;
+                    bTaskDelayMs(pt, wait_time * 1000);
                 }
             }
         }
+        bTaskYield(pt);
     }
     PT_END(pt);
 }

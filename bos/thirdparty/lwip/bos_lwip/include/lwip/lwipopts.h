@@ -52,15 +52,6 @@
 #define LWIP_DHCP 1
 /*----- use DHCP_OPTION_HOSTNAME with netif's hostname */
 #define LWIP_NETIF_HOSTNAME 1
-/**
- * LWIP_DNS==1: Turn on DNS module. UDP must be available for DNS
- * transport.
- */
-#define LWIP_DNS 1
-/**
- * LWIP_RAW==1: Enable application layer to hook into the IP layer itself.
- */
-#define LWIP_RAW 1
 
 #ifdef CONNECT_RECVBUF_MAX
 #define TCP_WND CONNECT_RECVBUF_MAX
@@ -68,6 +59,17 @@
 
 #ifdef MEM_SIZE_FOR_LWIP
 #define MEM_SIZE MEM_SIZE_FOR_LWIP
+#endif
+
+#define TCP_MSS 1460
+#define TCP_WND_SCALE 0
+#define LWIP_TCP_WND_SCALE 0
+
+#if ((defined(_LWIP_DEBUG_ENABLE)) && (_LWIP_DEBUG_ENABLE == 1))
+#define LWIP_DEBUG
+#define IP_DEBUG LWIP_DBG_ON
+#define UDP_DEBUG LWIP_DBG_ON
+#define TCPIP_DEBUG LWIP_DBG_ON
 #endif
 
 #if defined(TCPIP_CHECKSUM_BY_HARDWARE) && (TCPIP_CHECKSUM_BY_HARDWARE == 1)

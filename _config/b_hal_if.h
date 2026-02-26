@@ -244,14 +244,19 @@
                 .cs            = {B_HAL_GPIOB, B_HAL_PIN12},                   \
                 ._if.spi       = B_HAL_SPI_2,                                  \
             },                                                                 \
-        .drdy = {B_HAL_GPIOB, B_HAL_PIN10},                                    \
-        .rst  = {B_HAL_GPIOB, B_HAL_PIN11},                                    \
-    }                                
+        .drdy = {B_HAL_GPIOB, B_HAL_PIN10}, .rst = {B_HAL_GPIOB, B_HAL_PIN11}, \
+    }
 
-#define HAL_SMP3011_IF                                                                         \
-{                                                                                              \
-    .dev_addr = (0x78 << 1), .is_simulation = 1, ._if.simulating_i2c.clk = {B_HAL_GPIOG, B_HAL_PIN7}, \
-    ._if.simulating_i2c.sda = {B_HAL_GPIOG, B_HAL_PIN6}, ._if.simulating_i2c.frq = 100000     \
-}
+#define HAL_SMP3011_IF                                                                        \
+    {                                                                                         \
+        .dev_addr = (0x78 << 1), .is_simulation = 1,                                          \
+        ._if.simulating_i2c.clk = {B_HAL_GPIOG, B_HAL_PIN7},                                  \
+        ._if.simulating_i2c.sda = {B_HAL_GPIOG, B_HAL_PIN6}, ._if.simulating_i2c.frq = 100000 \
+    }
+#define HAL_ENC28J60_IF                                                  \
+    {                                                                    \
+        ._spi.is_simulation = 0, ._spi.cs = {B_HAL_GPIOA, B_HAL_PIN4},   \
+        ._spi._if.spi = B_HAL_SPI_1, .reset = {B_HAL_GPIOA, B_HAL_PIN8}, \
+    }
 
 #endif

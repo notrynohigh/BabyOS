@@ -450,6 +450,11 @@ config MEM_SIZE_FOR_LWIP
     default 10240
     depends on _TCPIP_STACK_LWIP_ENABLE
 
+config _LWIP_DEBUG_ENABLE
+    bool "LwIP Debug Enable"
+    default n
+    depends on _TCPIP_STACK_LWIP_ENABLE    
+
 config REMOTE_ADDR_LEN_MAX
     int "Maximum length of remote address"
     default 128

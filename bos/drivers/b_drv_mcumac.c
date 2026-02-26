@@ -105,12 +105,17 @@ static int _bMCUMACWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
 
 static int _bMCUMACRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
-    void    *p    = NULL;
-    uint32_t rlen = 0;
+    void    *p        = NULL;
+    void   **real_buf = (void **)pbuf;
+    uint32_t rlen     = 0;
+    if (real_buf == NULL)
+    {
+        return 0;
+    }
     bHalEthReceive(&p, &rlen);
     if (p != NULL)
     {
-        memcpy(pbuf, (void *)&p, sizeof(void *));
+        *real_buf = p;
     }
     return rlen;
 }
@@ -190,7 +195,7 @@ PT_THREAD(_bMcuMacLinkTask)(struct pt *pt, void *arg)
             if (link_state != bMCUMACRunInfo[i].link_state)
             {
                 bMCUMACRunInfo[i].link_state = link_state;
-                if(bMCUMACRunInfo[i].link_cb.cb)
+                if (bMCUMACRunInfo[i].link_cb.cb)
                 {
                     bMCUMACRunInfo[i].link_cb.cb(link_state, bMCUMACRunInfo[i].link_cb.arg);
                 }
