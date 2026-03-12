@@ -12,15 +12,19 @@
 #define FLASH_BASE_ADDR      (0x00000000UL)  // 存储起始物理地址
 #define CW32_UID_ADDR        (0x001007B0)  // UID 存放起始地址
 
-static uint32_t sMcuFlashSize = 0;
+static volatile uint32_t sMcuFlashSize = 0;
+static volatile uint8_t  sFlashInited = 0;
 
 /**
- * @brief 初始化 Flash 信息
+ * @brief 初始化 Flash 信息（线程安全）
  */
 int bMcuFlashInit(void)
 {
-    // CW32L010 通常为 64KB
-    sMcuFlashSize = DIGITALSIGN_GetFlashSize();
+    if (!sFlashInited)
+    {
+        sMcuFlashSize = DIGITALSIGN_GetFlashSize();
+        sFlashInited = 1;
+    }
     return 0;
 }
 
