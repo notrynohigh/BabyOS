@@ -132,7 +132,12 @@ static int _bAHT20Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, ui
         uint8_t tmp[8];
         int32_t s32x  = 0;
         double  tmp_f = 0.001;
-        bHalI2CReadByte(_if, tmp, 7);
+        int i2c_ret = bHalI2CReadByte(_if, tmp, 7);
+        if (i2c_ret != 7)
+        {
+            b_log_e("AHT20 I2C read failed: ret=%d\r\n", i2c_ret);
+            return -1;
+        }
         if ((_bAHT20CRC(tmp, 6) == tmp[6]))
         {
             if ((tmp[0] & 0x98) != 0x18)
