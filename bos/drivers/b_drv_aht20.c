@@ -132,10 +132,9 @@ static int _bAHT20Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, ui
         uint8_t tmp[8];
         int32_t s32x  = 0;
         double  tmp_f = 0.001;
-        int i2c_ret = bHalI2CReadByte(_if, tmp, 7);
-        if (i2c_ret != 7)
+        if (bHalI2CReadByte(_if, tmp, 7) != 0)
         {
-            b_log_e("AHT20 I2C read failed: ret=%d\r\n", i2c_ret);
+            b_log_e("AHT20 I2C read failed\r\n");
             return -1;
         }
         if ((_bAHT20CRC(tmp, 6) == tmp[6]))
@@ -214,10 +213,18 @@ int bAHT20_Init(bDriverInterface_t *pdrv)
     uint8_t count       = 0;
     do
     {
-        bHalI2CReadByte(pdrv->hal_if, &status, 1);
+        if (bHalI2CReadByte(pdrv->hal_if, &status, 1) != 0)
+        {
+            b_log_e("AHT20 init: I2C read failed\r\n");
+            return -1;
+        }
         if ((status & (0x1 << 3)) == 0)
         {
-            bHalI2CMemWrite(pdrv->hal_if, 0xBE, 1, cmd_table, 2);
+            if (bHalI2CMemWrite(pdrv->hal_if, 0xBE, 1, cmd_table, 2) != 0)
+            {
+                b_log_e("AHT20 init: I2C write failed\r\n");
+                return -1;
+            }
             bHalDelayMs(10);
         }
         count++;
@@ -228,7 +235,11 @@ int bAHT20_Init(bDriverInterface_t *pdrv)
     } while ((status & (0x1 << 3)) == 0);
 
     cmd_table[0] = 0x33;
-    bHalI2CMemWrite(pdrv->hal_if, 0xAC, 1, cmd_table, 2);
+    if (bHalI2CMemWrite(pdrv->hal_if, 0xAC, 1, cmd_table, 2) != 0)
+    {
+        b_log_e("AHT20 init: I2C write failed\r\n");
+        return -1;
+    }
     return 0;
 }
 
