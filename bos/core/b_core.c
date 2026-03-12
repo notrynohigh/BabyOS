@@ -225,6 +225,11 @@ int bRead(int fd, uint8_t *pdata, uint32_t len)
         return -1;
     }
 
+    if (len == 0)
+    {
+        return 0;
+    }
+
     if (!READ_IS_VALID(bCoreFdTable[fd].flag) || bCoreFdTable[fd].status == BCORE_STA_NULL)
     {
         return -1;
@@ -248,6 +253,11 @@ int bWrite(int fd, uint8_t *pdata, uint32_t len)
     if (fd < 0 || fd >= B_REG_DEV_NUMBER || pdata == NULL)
     {
         return -1;
+    }
+
+    if (len == 0)
+    {
+        return 0;
     }
 
     if (!WRITE_IS_VALID(bCoreFdTable[fd].flag) || bCoreFdTable[fd].status == BCORE_STA_NULL)
