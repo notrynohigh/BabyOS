@@ -340,8 +340,23 @@ static int _bSPIFLASH_Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             if (param)
             {
                 bFlashErase_t *perase_param = (bFlashErase_t *)param;
-                sfud_erase(flash, perase_param->addr, perase_param->num * flash->chip.erase_gran);
-                retval = 0;
+                uint32_t erase_size = perase_param->num * flash->chip.erase_gran;
+                
+                // 边界检查：防止溢出和越界擦除
+                if (perase_param->addr >= flash->chip.capacity ||
+                    perase_param->num == 0 ||
+                    erase_size > flash->chip.capacity ||
+                    (perase_param->addr + erase_size) > flash->chip.capacity)
+                {
+                    b_log_e("SPIFlash erase param error: addr=0x%x, num=%d, cap=0x%x\r\n",
+                            perase_param->addr, perase_param->num, flash->chip.capacity);
+                    retval = -1;
+                }
+                else
+                {
+                    sfud_erase(flash, perase_param->addr, erase_size);
+                    retval = 0;
+                }
             }
         }
         break;
