@@ -7,20 +7,24 @@
 #include "cw32l010_flash.h"
 #include "cw32l010_digitalsign.h"
 
-/* CW32L010 Flash 配置 */
-#define FLASH_PAGE_SIZE      (512)           // 每页 512 字节
-#define FLASH_BASE_ADDR      (0x00000000UL)  // 存储起始物理地址
-#define CW32_UID_ADDR        (0x001007B0)  // UID 存放起始地址
+/* CW32L010 Flash Configuration */
+#define FLASH_PAGE_SIZE      (512)           // Page size in bytes
+#define FLASH_BASE_ADDR      (0x00000000UL)  // Flash base physical address
+#define CW32_UID_ADDR        (0x001007B0)  // UID address
 
-static uint32_t sMcuFlashSize = 0;
+static volatile uint32_t sMcuFlashSize = 0;
+static volatile uint8_t  sFlashInited = 0;
 
 /**
- * @brief 初始化 Flash 信息
+ * @brief Initialize Flash info (thread-safe)
  */
 int bMcuFlashInit(void)
 {
-    // CW32L010 通常为 64KB
-    sMcuFlashSize = DIGITALSIGN_GetFlashSize();
+    if (!sFlashInited)
+    {
+        sMcuFlashSize = DIGITALSIGN_GetFlashSize();
+        sFlashInited = 1;
+    }
     return 0;
 }
 
