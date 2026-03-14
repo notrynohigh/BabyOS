@@ -416,7 +416,7 @@ int bFSMount(uint8_t index, uint8_t mkfs)
     fs->partition = partition;
     fs->used      = 1;
     memset(&(fs->prefix[0]), 0, sizeof(fs->prefix));
-    sprintf(&(fs->prefix[0]), "%d:", partition->index);
+    snprintf(fs->prefix, sizeof(fs->prefix), "%d:", partition->index);
 #if defined(FS_FATFS)
     FRESULT result = FR_OK;
 
