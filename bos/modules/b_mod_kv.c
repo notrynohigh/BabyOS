@@ -205,7 +205,8 @@ static int _bReadEncrypt(int fd, uint8_t *pbuf, uint32_t len)
 static void _bKVKey2hex8(const char *key, uint8_t *pdes)
 {
     int i = 0;
-    if (strlen(key) >= 8)
+    size_t key_len = strlen(key);
+    if (key_len >= 8)
     {
         memcpy(pdes, key, 8);
     }
@@ -213,7 +214,7 @@ static void _bKVKey2hex8(const char *key, uint8_t *pdes)
     {
         for (i = 0; i < 8; i++)
         {
-            if (i < strlen(key))
+            if (i < key_len)
             {
                 pdes[i] = key[i];
             }
