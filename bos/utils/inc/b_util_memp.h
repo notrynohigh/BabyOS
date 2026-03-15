@@ -91,6 +91,18 @@ uint32_t bGetMemThreshold(void);
 #endif
 
 /**
+ * \brief Print memory statistics
+ * \note  Displays total size, free size, used size, and fragmentation info
+ */
+void bMemPrintStats(void);
+
+/**
+ * \brief Get memory fragmentation ratio
+ * \return Fragmentation ratio (0-100), higher means more fragmented
+ */
+uint8_t bMemGetFragmentation(void);
+
+/**
  * \}
  */
 #endif
