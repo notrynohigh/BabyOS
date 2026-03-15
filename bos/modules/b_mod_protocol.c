@@ -107,6 +107,10 @@ static uint8_t _bProtocolCalCheck(uint8_t *pbuf, bProtoLen_t len)
 {
     uint8_t     tmp;
     bProtoLen_t i;
+    if (pbuf == NULL || len == 0)
+    {
+        return 0;
+    }
     tmp = pbuf[0];
     for (i = 1; i < len; i++)
     {
