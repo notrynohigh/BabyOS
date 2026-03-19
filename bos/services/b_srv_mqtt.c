@@ -547,8 +547,9 @@ static int _bMqttReadPacket(bMqttSrvInstance_t *pinstance, bMqttPack_t *pack)
     memcpy(pack->pack + 1, buf, len);
     /* 3. read the rest of the buffer using a callback to supply the rest of the data */
     if (remain_len > 0 &&
-        (rc = _bMqttRead(pinstance, pack->pack + 1 + len, remain_len) != remain_len))
+        (rc = _bMqttRead(pinstance, pack->pack + 1 + len, remain_len)) != remain_len)
     {
+        b_log_e("read packet data failed, expect %d, got %d\r\n", remain_len, rc);
         goto exit;
     }
     header.byte = fix_byte;

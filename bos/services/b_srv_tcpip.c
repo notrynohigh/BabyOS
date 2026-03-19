@@ -208,7 +208,14 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
             break;
         }
         b_log("sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
-        bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123);
+        if (bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123) < 0)
+        {
+            b_log_e("ntp connect fail...\r\n");
+            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
+            bTaskDelayMs(pt, 10000);
+            break;
+        }
         PT_WAIT_UNTIL(pt, bSockIsWriteable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
@@ -220,7 +227,14 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
         }
         memset(&packet, 0, sizeof(bNtpPacket_t));
         packet.li_vn_mode = 0x1b;
-        bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
+        if (bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL) < 0)
+        {
+            b_log_e("ntp send fail...\r\n");
+            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
+            bTaskDelayMs(pt, 10000);
+            break;
+        }
         PT_WAIT_UNTIL(pt, bSockIsReadable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
@@ -231,7 +245,14 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
             bTaskDelayMs(pt, 10000);
             break;
         }
-        bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
+        if (bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen) < 0)
+        {
+            b_log_e("ntp recv fail..\r\n");
+            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
+            bTaskDelayMs(pt, 10000);
+            break;
+        }
         if (rlen == sizeof(bNtpPacket_t))
         {
             if (packet.recv_time.seconds <= packet.trans_time.seconds &&
