@@ -814,6 +814,7 @@ void bMqttSrvDestroy()
     {
         return;
     }
+    pbMqttInstance = NULL;
     if (pinstance->task_id > 0)
     {
         bTaskRemove(pinstance->task_id);
@@ -861,6 +862,7 @@ void bMqttSrvDestroy()
         _bMqttFree(pnode);
         pnode = NULL;
     }
+    _bMqttFree(pinstance);
 }
 
 /**

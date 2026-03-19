@@ -123,7 +123,7 @@ static bTimerAttr_t *_bTimerFind(bTimerId_t id)
 
 PT_THREAD(_bTimerTaskFunc)(struct pt *pt, void *arg)
 {
-    struct list_head *pos   = NULL;
+    struct list_head *pos = NULL, *n = NULL;
     bTimerAttr_t     *pattr = NULL;
     B_TASK_INIT_BEGIN();
     // ...
@@ -136,7 +136,7 @@ PT_THREAD(_bTimerTaskFunc)(struct pt *pt, void *arg)
         {
             bTaskRestart(pt);
         }
-        list_for_each(pos, &bTimerListHead)
+        list_for_each_safe(pos, n, &bTimerListHead)
         {
             pattr = list_entry(pos, bTimerAttr_t, list);
             if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
