@@ -450,7 +450,7 @@ char *bStrDup(char *str)
     {
         return NULL;
     }
-    memcpy(tmp, str, strlen(str));
+    memcpy(tmp, str, strlen(str) + 1);  // Include null terminator
     return tmp;
 }
 

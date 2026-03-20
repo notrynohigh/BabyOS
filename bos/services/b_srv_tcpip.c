@@ -335,7 +335,8 @@ static char *_bHttpGetRequest(bHttpStruct_t *http)
 {
     char *request      = NULL;
     int   request_size = 0;
-    request_size       = strlen("GET /") + strlen(http->path) + strlen(" HTTP/1.1\r\n") +
+    // http->path already starts with '/', so don't add another '/'
+    request_size       = strlen("GET ") + strlen(http->path) + strlen(" HTTP/1.1\r\n") +
                    strlen("Host: ") + strlen(http->host) + strlen("\r\n") +
                    strlen("Connection: close\r\n") + strlen("\r\n") + 1;
 
@@ -343,7 +344,7 @@ static char *_bHttpGetRequest(bHttpStruct_t *http)
     if (request != NULL)
     {
         memset(request, 0, request_size);
-        snprintf(request, request_size, "GET /%s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n",
+        snprintf(request, request_size, "GET %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n",
                  http->path, http->host);
     }
     return request;
@@ -353,8 +354,8 @@ static char *_bHttpPostRequest(bHttpStruct_t *http, const char *head, const char
 {
     char *request      = NULL;
     int   request_size = 0;
-
-    request_size = strlen("POST /") + strlen(http->path) + strlen(" HTTP/1.1\r\n") +
+    // http->path already starts with '/', so don't add another '/'
+    request_size = strlen("POST ") + strlen(http->path) + strlen(" HTTP/1.1\r\n") +
                    strlen("Host: ") + strlen(http->host) + strlen("\r\n") +
                    strlen("Content-Length: xxxxxx\r\n") + strlen("\r\n") + strlen(body) +
                    strlen("\r\n") + 1;
@@ -372,14 +373,14 @@ static char *_bHttpPostRequest(bHttpStruct_t *http, const char *head, const char
     if (head != NULL)
     {
         snprintf(request, request_size,
-                 "POST /%s HTTP/1.1\r\nHost: %s\r\n%sContent-Length: %d\r\n\r\n"
+                 "POST %s HTTP/1.1\r\nHost: %s\r\n%sContent-Length: %d\r\n\r\n"
                  "%s\r\n",
                  http->path, http->host, head, strlen(body), body);
     }
     else
     {
         snprintf(request, request_size,
-                 "POST /%s HTTP/1.1\r\nHost: %s\r\nContent-Length: %d\r\n\r\n"
+                 "POST %s HTTP/1.1\r\nHost: %s\r\nContent-Length: %d\r\n\r\n"
                  "%s\r\n",
                  http->path, http->host, strlen(body), body);
     }
