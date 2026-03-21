@@ -322,11 +322,13 @@ static int _bHttpParseUrl(const char *url, char *host, char *path, uint16_t *por
         {
             return -1;
         }
-        strcpy(path, end);
+        strncpy(path, end, _HTTP_PATH_LEN_MAX);
+        path[_HTTP_PATH_LEN_MAX] = '\0';
     }
     else
     {
-        strcpy(path, "/");
+        strncpy(path, "/", _HTTP_PATH_LEN_MAX);
+        path[_HTTP_PATH_LEN_MAX] = '\0';
     }
     return 0;
 }
