@@ -451,6 +451,7 @@ char *bStrDup(char *str)
         return NULL;
     }
     memcpy(tmp, str, strlen(str));
+    tmp[strlen(str)] = '\0';  // Ensure null terminator
     return tmp;
 }
 

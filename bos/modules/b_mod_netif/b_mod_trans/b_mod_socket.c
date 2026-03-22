@@ -56,6 +56,7 @@ void *thread_function(void *arg)
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, ptrans->sockfd, &ev) == -1)
     {
         b_log("epoll_ctl fail\r\n");
+        close(epoll_fd);
         return NULL;
     }
     while (1)
@@ -63,6 +64,7 @@ void *thread_function(void *arg)
         if (epoll_wait(epoll_fd, &ev, 1, -1) == -1)
         {
             b_log("epoll_wait fail\r\n");
+            close(epoll_fd);
             return NULL;
         }
         if (ev.data.fd == ptrans->sockfd && ev.events & EPOLLIN)
