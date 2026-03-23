@@ -439,18 +439,19 @@ void *bReallocPlus(void *ptr, uint32_t size, const char *func, int line)
 
 #endif
 
-char *bStrDup(char *str)
+char *bStrDup(const char *str)
 {
     if (str == NULL)
     {
         return NULL;
     }
-    char *tmp = bCalloc(1, strlen(str) + 1);
+    size_t len = strlen(str) + 1;  // Include null terminator
+    char *tmp = bMalloc(len);
     if (tmp == NULL)
     {
         return NULL;
     }
-    memcpy(tmp, str, strlen(str));
+    memcpy(tmp, str, len);  // Copy full string including null terminator
     return tmp;
 }
 
