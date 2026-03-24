@@ -318,6 +318,13 @@ static int _bSPIFLASH_Close(bDriverInterface_t *pdrv)
 static int _bSPIFLASH_ReadBuf(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
     sfud_flash *flash = &((bSpiFlashPrivate_t *)(pdrv->_private._p))->sflash;
+    // 边界检查：防止越界读取
+    if (addr >= flash->chip.capacity || (addr + len) > flash->chip.capacity)
+    {
+        b_log_e("SPIFlash read out of bounds: addr=0x%x, len=%d, cap=0x%x\r\n",
+                addr, len, flash->chip.capacity);
+        return -1;
+    }
     sfud_read(flash, addr, len, pbuf);
     return len;
 }
@@ -325,6 +332,13 @@ static int _bSPIFLASH_ReadBuf(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *
 static int _bSPIFLASH_WriteBuf(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
     sfud_flash *flash = &((bSpiFlashPrivate_t *)(pdrv->_private._p))->sflash;
+    // 边界检查：防止越界写入
+    if (addr >= flash->chip.capacity || (addr + len) > flash->chip.capacity)
+    {
+        b_log_e("SPIFlash write out of bounds: addr=0x%x, len=%d, cap=0x%x\r\n",
+                addr, len, flash->chip.capacity);
+        return -1;
+    }
     sfud_write(flash, addr, len, pbuf);
     return len;
 }

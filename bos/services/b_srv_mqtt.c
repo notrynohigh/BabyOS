@@ -436,11 +436,17 @@ static int _bMqttSubscribeAckHandle(bMqttPack_t *pack)
 {
     int      index   = 1;
     uint16_t pack_id = 0;
-    while (pack->pack[index] & 0x80)
+    // 跳过所有返回码字节 (QoS 0-2 对应不同的字节数)
+    while (index < pack->pack_len && pack->pack[index] & 0x80)
     {
         index += 1;
     }
-    index += 1;
+    if (index + 1 >= pack->pack_len)
+    {
+        b_log_e("MQTT suback packet too short\r\n");
+        return -1;
+    }
+    index += 1;  // 跳过第一个返回码
     pack_id |= pack->pack[index];
     pack_id <<= 8;
     pack_id |= pack->pack[index + 1];
