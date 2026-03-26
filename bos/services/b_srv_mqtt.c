@@ -846,23 +846,16 @@ void bMqttSrvDestroy()
     }
     bMqttSubscribeNode_t *pnode = NULL;
     struct list_head     *pos   = NULL;
-    list_for_each(pos, &bMqttSubscribeListHead)
+    struct list_head     *n     = NULL;
+    list_for_each_safe(pos, n, &bMqttSubscribeListHead)
     {
-        if (pnode != NULL)
-        {
-            _bMqttFree(pnode);
-            pnode = NULL;
-        }
         pnode = list_entry(pos, bMqttSubscribeNode_t, node);
         _bMqttFree(pnode->pack);
         pnode->pack = NULL;
         __list_del(pos->prev, pos->next);
-    }
-    if (pnode != NULL)
-    {
         _bMqttFree(pnode);
-        pnode = NULL;
     }
+    pnode = NULL;
     _bMqttFree(pinstance);
 }
 
