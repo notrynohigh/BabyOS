@@ -342,7 +342,7 @@ static void md5(uint8_t* input, int ilen, uint8_t output[16])
 void md5_16(uint8_t* input, uint32_t ilen, uint8_t output[16])
 {
     uint8_t out[16], i = 0;
-    if (input == NULL || ilen == 0)
+    if (input == NULL || ilen == 0 || output == NULL)
     {
         return;
     }
@@ -357,7 +357,7 @@ void md5_16(uint8_t* input, uint32_t ilen, uint8_t output[16])
 void md5_32(uint8_t* input, uint32_t ilen, uint8_t output[32])
 {
     uint8_t out[16], i = 0;
-    if (input == NULL || ilen == 0)
+    if (input == NULL || ilen == 0 || output == NULL)
     {
         return;
     }
@@ -371,7 +371,7 @@ void md5_32(uint8_t* input, uint32_t ilen, uint8_t output[32])
 
 void md5_hex_16(uint8_t* input, uint32_t ilen, uint8_t output[16])
 {
-    if (input == NULL || ilen == 0)
+    if (input == NULL || ilen == 0 || output == NULL)
     {
         return;
     }
