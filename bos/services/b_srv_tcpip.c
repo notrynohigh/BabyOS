@@ -526,7 +526,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
                 param = NULL;
                 goto http_restart;
             }
-            if ((http->recvbuf_len - http->recvbuf_index) <= 128)
+            if ((http->recvbuf_len - http->recvbuf_index) < 128)
             {
                 http->recvbuf_len += 1024;
                 http->precv = bRealloc(http->precv, http->recvbuf_len);
