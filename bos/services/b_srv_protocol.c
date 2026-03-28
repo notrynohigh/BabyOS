@@ -226,13 +226,13 @@ int bProtSrvUnsubscribe(bProtSrvId_t id, bProtSrvSubscribe_t *psub)
     {
         return -1;
     }
-    struct list_head *pos     = &psub->list;
-    struct list_head *pos_tmp = NULL;
-    list_for_each(pos_tmp, &pattr->attr.list)
+    struct list_head *pos     = NULL;
+    struct list_head *n        = NULL;
+    list_for_each_safe(pos, n, &pattr->attr.list)
     {
-        if (pos_tmp == pos)
+        if (pos == &psub->list)
         {
-            __list_del(pos_tmp->prev, pos_tmp->next);
+            __list_del(pos->prev, pos->next);
             return 0;
         }
     }
