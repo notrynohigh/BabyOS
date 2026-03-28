@@ -577,15 +577,21 @@ static void _bMqttTimerCb(void *arg)
     uint8_t             buf[4];
     if (pinstance->stat != B_MQTT_STA_INIT)
     {
-        int len = MQTTSerialize_pingreq(buf, sizeof(buf));
+        // Check if keep-alive timeout occurred
         if ((TICK_DIFF_BIT32(pinstance->last_recv, bHalGetSysTick())) >
             MS2TICKS(pinstance->keep_alive * 1000))
         {
+            // Timeout: disconnect and reconnect
             pbMqttInstance->stat = B_MQTT_STA_INIT;
         }
         else
         {
-            bSend(pinstance->sock_fd, buf, len, NULL);
+            // Send PINGREQ to keep connection alive
+            int len = MQTTSerialize_pingreq(buf, sizeof(buf));
+            if (len > 0)
+            {
+                bSend(pinstance->sock_fd, buf, len, NULL);
+            }
         }
     }
 }

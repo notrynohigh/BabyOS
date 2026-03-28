@@ -140,13 +140,13 @@ static int _bProtoCallback(bProtoCmd_t cmd, void *param, void *arg)
 
 bProtSrvId_t bProtSrvInit(bProtSrvAttr_t *attr, bProtSrvGetInfo_t func)
 {
-    if (attr == NULL)
+    if (attr == NULL || attr->name == NULL)
     {
         return NULL;
     }
     bSECTION_FOR_EACH(b_srv_protocol, bProtocolInstance_t, instance)
     {
-        if (strcmp(instance->name, attr->name) == 0)
+        if (instance->name != NULL && strcmp(instance->name, attr->name) == 0)
         {
             attr->attr.get_info = func;
             attr->attr.package  = instance->package;

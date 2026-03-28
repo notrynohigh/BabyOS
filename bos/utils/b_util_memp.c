@@ -439,7 +439,7 @@ void *bReallocPlus(void *ptr, uint32_t size, const char *func, int line)
 
 #endif
 
-char *bStrDup(char *str)
+char *bStrDup(const char *str)
 {
     if (str == NULL)
     {
