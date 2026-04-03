@@ -163,30 +163,32 @@ typedef struct
 #if (defined(_KV_ENCRYPT_ENABLE) && (_KV_ENCRYPT_ENABLE == 1))
 static int _bWriteEncrypt(int fd, uint8_t *pbuf, uint32_t len)
 {
-    uint32_t i   = 0;
-    int      ret = 0;
+    uint32_t i = 0;
     uint8_t  tmp = 0;
     for (i = 0; i < len; i++)
     {
-        tmp = pbuf[i];
-        tmp ^= _KV_ENCRYPT_KEY;
-        ret = bWrite(fd, &tmp, sizeof(uint8_t));
+        tmp = pbuf[i] ^ _KV_ENCRYPT_KEY;
+        if (bWrite(fd, &tmp, 1) != 1)
+        {
+            return -1;
+        }
     }
-    return ret;
+    return len;
 }
 
 static int _bReadEncrypt(int fd, uint8_t *pbuf, uint32_t len)
 {
-    uint32_t i   = 0;
-    int      ret = 0;
+    uint32_t i = 0;
     uint8_t  tmp = 0;
     for (i = 0; i < len; i++)
     {
-        ret = bRead(fd, &tmp, sizeof(uint8_t));
-        tmp ^= _KV_ENCRYPT_KEY;
-        pbuf[i] = tmp;
+        if (bRead(fd, &tmp, 1) != 1)
+        {
+            return -1;
+        }
+        pbuf[i] = tmp ^ _KV_ENCRYPT_KEY;
     }
-    return ret;
+    return len;
 }
 
 #define IF_READ _bReadEncrypt
@@ -241,8 +243,16 @@ static int _bKVReadSectorHead(bKVInstance_t *pinstance, uint32_t sector_index,
     {
         return -1;
     }
-    bLseek(fd, pinstance->address + sector_index * pinstance->erase_size);
-    IF_READ(fd, (uint8_t *)phead, sizeof(bKVSectorHead_t));
+    if (bLseek(fd, pinstance->address + sector_index * pinstance->erase_size) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (IF_READ(fd, (uint8_t *)phead, sizeof(bKVSectorHead_t)) != sizeof(bKVSectorHead_t))
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     return 0;
 }
@@ -262,7 +272,11 @@ static int _bKVEraseSector(bKVInstance_t *pinstance, uint32_t sector_index)
     }
     param.addr = pinstance->address + sector_index * pinstance->erase_size;
     param.num  = 1;
-    bCtl(fd, bCMD_ERASE_SECTOR, &param);
+    if (bCtl(fd, bCMD_ERASE_SECTOR, &param) != 0)
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     return 0;
 }
@@ -283,8 +297,16 @@ static int _bKVSetSectorFlag(bKVInstance_t *pinstance, uint32_t sector_index)
         return -1;
     }
     head.flag = B_KV_FLAG;
-    bLseek(fd, pinstance->address + sector_index * pinstance->erase_size);
-    IF_WRITE(fd, (uint8_t *)&head.flag, sizeof(head.flag));
+    if (bLseek(fd, pinstance->address + sector_index * pinstance->erase_size) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (IF_WRITE(fd, (uint8_t *)&head.flag, sizeof(head.flag)) != sizeof(head.flag))
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     return 0;
 }
@@ -322,9 +344,17 @@ static int _bKVSetSectorState(bKVInstance_t *pinstance, uint32_t sector_index, b
     {
         head.state[sta] = B_KV_STA_MESSY;
     }
-    bLseek(fd, pinstance->address + sector_index * pinstance->erase_size + sizeof(uint32_t) +
-                   sta * sizeof(uint32_t));
-    IF_WRITE(fd, (uint8_t *)&head.state[sta], sizeof(uint32_t));
+    if (bLseek(fd, pinstance->address + sector_index * pinstance->erase_size + sizeof(uint32_t) +
+                   sta * sizeof(uint32_t)) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (IF_WRITE(fd, (uint8_t *)&head.state[sta], sizeof(uint32_t)) != sizeof(uint32_t))
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     return 0;
 }
@@ -351,7 +381,11 @@ static int _bKVSetDataState(bKVInstance_t *pinstance, uint32_t addr, bKVDataStat
         b_log("open fail %d \r\n", fd);
         return -1;
     }
-    bLseek(fd, addr);
+    if (bLseek(fd, addr) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
     retval = IF_WRITE(fd, (uint8_t *)&wdata, sizeof(uint32_t));
     bClose(fd);
     if (retval < 0)
@@ -375,7 +409,10 @@ static void _bKVFindMessyEmptySector(bKVInstance_t *pinstance, int *messy, int *
 
     for (i = 0; i < B_KV_SECTOR_NUM(pinstance); i++)
     {
-        _bKVReadSectorHead(pinstance, (i + sindex + 1) % B_KV_SECTOR_NUM(pinstance), &sector_head);
+        if (_bKVReadSectorHead(pinstance, (i + sindex + 1) % B_KV_SECTOR_NUM(pinstance), &sector_head) < 0)
+        {
+            continue;
+        }
         if (sector_head.state[KV_SECTOR_STA_MESSY] == B_KV_STA_MESSY &&
             sector_head.state[KV_SECTOR_STA_FULL] == B_KV_STA_FULL)
         {
@@ -412,8 +449,16 @@ static int _bKVReadDataHead(bKVInstance_t *pinstance, uint32_t addr, bKVDataHead
     {
         return -1;
     }
-    bLseek(fd, addr);
-    IF_READ(fd, (uint8_t *)phead, sizeof(bKVDataHead_t));
+    if (bLseek(fd, addr) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (IF_READ(fd, (uint8_t *)phead, sizeof(bKVDataHead_t)) != sizeof(bKVDataHead_t))
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     return 0;
 }
@@ -431,11 +476,29 @@ static int _bKVCopyData(bKVInstance_t *pinstance, int src, int des, uint32_t len
     }
     while (rlen < len)
     {
-        bLseek(fd, src + rlen);
-        IF_READ(fd, tmp, sizeof(tmp));
-        bLseek(fd, des + rlen);
-        IF_WRITE(fd, tmp, ((len - rlen) > sizeof(tmp)) ? sizeof(tmp) : (len - rlen));
-        rlen += sizeof(tmp);
+        uint32_t cur = (len - rlen) > sizeof(tmp) ? sizeof(tmp) : (len - rlen);
+        if (bLseek(fd, src + rlen) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        int rd = IF_READ(fd, tmp, cur);
+        if (rd <= 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (bLseek(fd, des + rlen) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (IF_WRITE(fd, tmp, rd) != rd)
+        {
+            bClose(fd);
+            return -1;
+        }
+        rlen += rd;
     }
     bClose(fd);
     return len;
@@ -608,8 +671,16 @@ static int _bKVGetJointSectorAddr(bKVInstance_t *pinstance, uint32_t addr, uint3
     {
         return -1;
     }
-    bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head) + index * sizeof(uint32_t));
-    IF_READ(fd, (uint8_t *)&retval, sizeof(uint32_t));
+    if (bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head) + index * sizeof(uint32_t)) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (IF_READ(fd, (uint8_t *)&retval, sizeof(uint32_t)) != sizeof(uint32_t))
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     return retval;
 }
@@ -625,14 +696,23 @@ static int _bKVReconfirmKey(bKVInstance_t *pinstance, uint32_t sector, const cha
     {
         return -1;
     }
-    bLseek(fd, key_addr);
+    if (bLseek(fd, key_addr) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
     while (rlen < key_len)
     {
-        IF_READ(fd, tmp, sizeof(tmp));
-        if (strncmp((const char *)tmp, key + rlen,
-                    ((key_len - rlen) > sizeof(tmp)) ? sizeof(tmp) : (key_len - rlen)) == 0)
+        uint32_t cur = ((key_len - rlen) > sizeof(tmp)) ? sizeof(tmp) : (key_len - rlen);
+        int rd = IF_READ(fd, tmp, cur);
+        if (rd != cur)
         {
-            rlen += sizeof(tmp);
+            bClose(fd);
+            return -1;
+        }
+        if (strncmp((const char *)tmp, key + rlen, cur) == 0)
+        {
+            rlen += cur;
         }
         else
         {
@@ -766,15 +846,31 @@ static int _bKVReadData(bKVInstance_t *pinstance, uint32_t addr, bKVDataHead_t h
                 bClose(fd);
                 return -1;
             }
-            bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head) + i * sizeof(uint32_t));
-            IF_READ(fd, (uint8_t *)&r_addr, sizeof(r_addr));
+            if (bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head) + i * sizeof(uint32_t)) < 0)
+            {
+                bClose(fd);
+                return -1;
+            }
+            if (IF_READ(fd, (uint8_t *)&r_addr, sizeof(r_addr)) != sizeof(r_addr))
+            {
+                bClose(fd);
+                return -1;
+            }
             len = ((head.value_len - r_len) > B_KV_SECTOR_DATA_SIZE(pinstance))
                       ? B_KV_SECTOR_DATA_SIZE(pinstance)
                       : (head.value_len - r_len);
             if (B_KV_ADDR_IS_VALID(pinstance, r_addr))
             {
-                bLseek(fd, r_addr + sizeof(bKVSectorHead_t));
-                IF_READ(fd, pbuf + r_len, len);
+                if (bLseek(fd, r_addr + sizeof(bKVSectorHead_t)) < 0)
+                {
+                    bClose(fd);
+                    return -1;
+                }
+                if (IF_READ(fd, pbuf + r_len, len) != len)
+                {
+                    bClose(fd);
+                    return -1;
+                }
                 r_len += len;
             }
             else
@@ -786,8 +882,16 @@ static int _bKVReadData(bKVInstance_t *pinstance, uint32_t addr, bKVDataHead_t h
     }
     else
     {
-        bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head));
-        IF_READ(fd, pbuf, head.value_len);
+        if (bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head)) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (IF_READ(fd, pbuf, head.value_len) != head.value_len)
+        {
+            bClose(fd);
+            return -1;
+        }
     }
     bClose(fd);
     return 0;
@@ -859,17 +963,33 @@ static int _bKVCompValue(bKVInstance_t *pinstance, uint32_t addr, uint8_t *pbuf,
     {
         for (i = 0; i < B_KV_JVALUE_SECOTR_NUM(pinstance, head); i++)
         {
-            bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head) + i * sizeof(uint32_t));
-            IF_READ(fd, (uint8_t *)&r_addr, sizeof(uint32_t));
+            if (bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head) + i * sizeof(uint32_t)) < 0)
+            {
+                bClose(fd);
+                return -1;
+            }
+            if (IF_READ(fd, (uint8_t *)&r_addr, sizeof(uint32_t)) != sizeof(uint32_t))
+            {
+                bClose(fd);
+                return -1;
+            }
             cmp_len = ((len - r_index) > B_KV_SECTOR_DATA_SIZE(pinstance))
                           ? (B_KV_SECTOR_DATA_SIZE(pinstance))
                           : (len - r_index);
             j       = 0;
-            bLseek(fd, r_addr + sizeof(bKVSectorHead_t));
+            if (bLseek(fd, r_addr + sizeof(bKVSectorHead_t)) < 0)
+            {
+                bClose(fd);
+                return -1;
+            }
             while (j < cmp_len)
             {
                 rtmp_len = ((cmp_len - j) > sizeof(tmp)) ? sizeof(tmp) : (cmp_len - j);
-                IF_READ(fd, tmp, rtmp_len);
+                if (IF_READ(fd, tmp, rtmp_len) != rtmp_len)
+                {
+                    bClose(fd);
+                    return -1;
+                }
                 for (k = 0; k < rtmp_len; k++)
                 {
                     if (tmp[k] != pbuf[r_index + k])
@@ -885,12 +1005,20 @@ static int _bKVCompValue(bKVInstance_t *pinstance, uint32_t addr, uint8_t *pbuf,
     }
     else
     {
-        bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head));
+        if (bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head)) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
         j = 0;
         while (j < len)
         {
             rtmp_len = ((len - j) > sizeof(tmp)) ? sizeof(tmp) : (len - j);
-            IF_READ(fd, tmp, rtmp_len);
+            if (IF_READ(fd, tmp, rtmp_len) != rtmp_len)
+            {
+                bClose(fd);
+                return -1;
+            }
             for (k = 0; k < rtmp_len; k++)
             {
                 if (tmp[k] != pbuf[j + k])
@@ -929,11 +1057,31 @@ static int _bKVWriteJointData(bKVInstance_t *pinstance, uint32_t addr, const cha
     {
         return -1;
     }
-    bLseek(fd, addr);
-    IF_WRITE(fd, (uint8_t *)&head, sizeof(head.flag));
-    bLseek(fd, addr + 8);
-    IF_WRITE(fd, ((uint8_t *)&head) + 8, sizeof(bKVDataHead_t) - 8);
-    IF_WRITE(fd, (uint8_t *)key, strlen(key));
+    if (bLseek(fd, addr) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (IF_WRITE(fd, (uint8_t *)&head, sizeof(head.flag)) != sizeof(head.flag))
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (bLseek(fd, addr + 8) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (IF_WRITE(fd, ((uint8_t *)&head) + 8, sizeof(bKVDataHead_t) - 8) != sizeof(bKVDataHead_t) - 8)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (IF_WRITE(fd, (uint8_t *)key, strlen(key)) != strlen(key))
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     while (w_index < len)
     {
@@ -946,14 +1094,30 @@ static int _bKVWriteJointData(bKVInstance_t *pinstance, uint32_t addr, const cha
         {
             return -1;
         }
-        bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head) +
-                       (w_index / B_KV_SECTOR_DATA_SIZE(pinstance)) * sizeof(uint32_t));
-        IF_WRITE(fd, (uint8_t *)&empty_addr, sizeof(uint32_t));
-        bLseek(fd, empty_addr + sizeof(bKVSectorHead_t));
-        IF_WRITE(fd, pbuf + w_index,
-                 ((len - w_index) > B_KV_SECTOR_DATA_SIZE(pinstance))
-                     ? B_KV_SECTOR_DATA_SIZE(pinstance)
-                     : (len - w_index));
+        if (bLseek(fd, addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head) +
+                       (w_index / B_KV_SECTOR_DATA_SIZE(pinstance)) * sizeof(uint32_t)) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (IF_WRITE(fd, (uint8_t *)&empty_addr, sizeof(uint32_t)) != sizeof(uint32_t))
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (bLseek(fd, empty_addr + sizeof(bKVSectorHead_t)) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        uint32_t wlen = ((len - w_index) > B_KV_SECTOR_DATA_SIZE(pinstance))
+                            ? B_KV_SECTOR_DATA_SIZE(pinstance)
+                            : (len - w_index);
+        if (IF_WRITE(fd, pbuf + w_index, wlen) != wlen)
+        {
+            bClose(fd);
+            return -1;
+        }
         bClose(fd);
         w_index += B_KV_SECTOR_DATA_SIZE(pinstance);
     }
@@ -965,7 +1129,10 @@ static int _bKVClearJointData(bKVInstance_t *pinstance, uint32_t addr)
     uint32_t      sector_num = 0;
     int           i = 0, retval = -1;
     bKVDataHead_t head;
-    _bKVReadDataHead(pinstance, addr, &head);
+    if (_bKVReadDataHead(pinstance, addr, &head) < 0)
+    {
+        return -1;
+    }
     if (head.joint_f == 0)
     {
         return -1;
@@ -1050,7 +1217,10 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
     {
         if (old_addr != -1)
         {
-            _bKVReadDataHead(pinstance, old_addr, &head);
+            if (_bKVReadDataHead(pinstance, old_addr, &head) < 0)
+            {
+                return -1;
+            }
             if ((B_KV_JVALUE_SECOTR_NUM(pinstance, head) + pinstance->empty_count - 1) < empty_num)
             {
                 return -2;
@@ -1115,20 +1285,52 @@ static int _bKVAddValue(bKVInstance_t *pinstance, const char *key, uint8_t *pbuf
         {
             return -1;
         }
-        bLseek(fd, w_addr);
-        IF_WRITE(fd, (uint8_t *)&head, sizeof(head.flag));
+        if (bLseek(fd, w_addr) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (IF_WRITE(fd, (uint8_t *)&head, sizeof(head.flag)) != sizeof(head.flag))
+        {
+            bClose(fd);
+            return -1;
+        }
         if (pinstance->erase_size == 0)
         {
-            IF_WRITE(fd, (uint8_t *)&tmp_zero, sizeof(tmp_zero));
+            if (IF_WRITE(fd, (uint8_t *)&tmp_zero, sizeof(tmp_zero)) != sizeof(tmp_zero))
+            {
+                bClose(fd);
+                return -1;
+            }
         }
         else
         {
-            bLseek(fd, w_addr + 8);
+            if (bLseek(fd, w_addr + 8) < 0)
+            {
+                bClose(fd);
+                return -1;
+            }
         }
-        IF_WRITE(fd, ((uint8_t *)&head) + 8, sizeof(bKVDataHead_t) - 8);
-        IF_WRITE(fd, (uint8_t *)key, strlen(key));
-        bLseek(fd, w_addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head));
-        IF_WRITE(fd, pbuf, len);
+        if (IF_WRITE(fd, ((uint8_t *)&head) + 8, sizeof(bKVDataHead_t) - 8) != sizeof(bKVDataHead_t) - 8)
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (IF_WRITE(fd, (uint8_t *)key, strlen(key)) != strlen(key))
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (bLseek(fd, w_addr + sizeof(bKVDataHead_t) + B_KV_KEY_RLEN(head)) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (IF_WRITE(fd, pbuf, len) != len)
+        {
+            bClose(fd);
+            return -1;
+        }
         bClose(fd);
     }
     pinstance->write_offset += kv_len;

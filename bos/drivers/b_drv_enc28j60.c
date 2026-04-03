@@ -347,13 +347,18 @@ static void _bENC28J60WriteOp(bDriverInterface_t *pdrv, uint8_t op, uint8_t addr
     bHalGpioWritePin(_if->_spi.cs.port, _if->_spi.cs.pin, 1);
 }
 
-static void _bENC28J60ReadBuffer(bDriverInterface_t *pdrv, uint8_t *pdata, uint16_t len)
+static int _bENC28J60ReadBuffer(bDriverInterface_t *pdrv, uint8_t *pdata, uint16_t len)
 {
     bDRIVER_GET_HALIF(_if, bENC28J60_HalIf_t, pdrv);
     bHalGpioWritePin(_if->_spi.cs.port, _if->_spi.cs.pin, 0);
     bHalSpiTransfer(&_if->_spi, ENC28J60_READ_BUF_MEM);
-    bHalSpiReceive(&_if->_spi, pdata, len);
+    if (bHalSpiReceive(&_if->_spi, pdata, len) != 0)
+    {
+        bHalGpioWritePin(_if->_spi.cs.port, _if->_spi.cs.pin, 1);
+        return -1;
+    }
     bHalGpioWritePin(_if->_spi.cs.port, _if->_spi.cs.pin, 1);
+    return 0;
 }
 
 static void _bENC28J60WriteBuffer(bDriverInterface_t *pdrv, uint8_t *pdata, uint16_t len)
@@ -659,10 +664,18 @@ static void _bENC28J60PacketRead(bDriverInterface_t *pdrv, void **p, uint32_t *p
         _priv->list_opt.m_create(len, &buf);
         if (buf != NULL)
         {
-            *p    = buf;
-            *plen = len;
             _priv->list_opt.m_payload(buf, &payload, &payload_len);
-            _bENC28J60ReadBuffer(pdrv, payload, len);
+            if (_bENC28J60ReadBuffer(pdrv, payload, len) == 0)
+            {
+                *p    = buf;
+                *plen = len;
+            }
+            else
+            {
+                _priv->list_opt.m_free(buf);
+                *p    = NULL;
+                *plen = 0;
+            }
         }
     }
     _bENC28J60WriteReg(pdrv, ERXRDPTL, (_priv->next_packet_ptr) & 0xff);

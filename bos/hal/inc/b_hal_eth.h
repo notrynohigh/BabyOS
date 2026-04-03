@@ -61,6 +61,10 @@ typedef struct
     // p :  申请空间的指针
     int (*m_create)(uint16_t len, void **p);
 
+    // m_delete 释放空间
+    // p : 释放的空间的指针
+    int (*m_free)(void *p);
+
     // m_next 申请的空间是链表形式，调用这个接口切换到下一块空间
     // current_p: 指向当前使用的空间
     // p :  得到的下一个空间的指针

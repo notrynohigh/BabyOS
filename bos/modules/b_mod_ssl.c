@@ -222,6 +222,7 @@ bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
     }
     if (_bSSLDRBGInit(&p_ssl->random) < 0)
     {
+        bFree(p_ssl);
         return NULL;
     }
     mbedtls_ssl_init(&p_ssl->ssl_ctx);

@@ -1277,14 +1277,22 @@ static void _bDnsHandler()
     {
         memset(dns_str, 0, sizeof(dns_str));
         _bIpInt2Str((char *)dns_str, bTcpIpDNS[bDnsRunCtx.dns_index]);
-        bConnect(bDnsRunCtx.socket, (char *)dns_str, IPPORT_DOMAIN);
+        if (bConnect(bDnsRunCtx.socket, (char *)dns_str, IPPORT_DOMAIN) < 0)
+        {
+            bDnsRunCtx.state = DNS_STATE_IDLE;
+            return;
+        }
         bDnsRunCtx.state = DNS_STATE_REQUEST;
         bDnsRunCtx.retry = 0;
     }
     else if (bDnsRunCtx.state == DNS_STATE_REQUEST)
     {
         len = _bDnsMakequery(0, (char *)pinfo->url, bDnsRunCtx.buf, MAX_DNS_BUF_SIZE);
-        bSend(bDnsRunCtx.socket, bDnsRunCtx.buf, len, NULL);
+        if (bSend(bDnsRunCtx.socket, bDnsRunCtx.buf, len, NULL) <= 0)
+        {
+            bDnsRunCtx.state = DNS_STATE_IDLE;
+            return;
+        }
         bDnsRunCtx.state = DNS_STATE_WAIT_RESPONSE;
         bDnsRunCtx.tick  = bHalGetSysTickPlus();
     }
@@ -1295,51 +1303,54 @@ static void _bDnsHandler()
         {
             // b_log("readable..\r\n");
             len = bRecv(bDnsRunCtx.socket, bDnsRunCtx.buf, MAX_DNS_BUF_SIZE, NULL);
-            if (len > 0)
+            if (len <= 0)
             {
+                bDnsRunCtx.state = DNS_STATE_IDLE;
+                return;
+            }
 #if DNS_MODULE_DEBUG_EN
-                b_log("dns rec:%d\r\n", len);
-                b_log_hex(bDnsRunCtx.buf, len);
+            b_log("dns rec:%d\r\n", len);
+            b_log_hex(bDnsRunCtx.buf, len);
 #endif
-                node  = bDnsHead.next;
-                pinfo = list_entry(node, bDnsInfo_t, node);
-                uint8_t  parse_ip_buf[4];
-                uint32_t ip_ttl = 0;
-                ret             = _bDnsParseMsg(&dhp, bDnsRunCtx.buf, parse_ip_buf, &ip_ttl);
+            node  = bDnsHead.next;
+            pinfo = list_entry(node, bDnsInfo_t, node);
+            uint8_t  parse_ip_buf[4];
+            uint32_t ip_ttl = 0;
+            ret             = _bDnsParseMsg(&dhp, bDnsRunCtx.buf, parse_ip_buf, &ip_ttl);
 #if DNS_MODULE_DEBUG_EN
-                b_log("dns parse ret:%d\r\n", ret);
+            b_log("dns parse ret:%d\r\n", ret);
 #endif
-                if (ret == 1)
-                {
-                    pinfo->ip = parse_ip_buf[0];
-                    pinfo->ip = (pinfo->ip << 8) | parse_ip_buf[1];
-                    pinfo->ip = (pinfo->ip << 8) | parse_ip_buf[2];
-                    pinfo->ip = (pinfo->ip << 8) | parse_ip_buf[3];
+            if (ret == 1)
+            {
+                pinfo->ip = parse_ip_buf[0];
+                pinfo->ip = (pinfo->ip << 8) | parse_ip_buf[1];
+                pinfo->ip = (pinfo->ip << 8) | parse_ip_buf[2];
+                pinfo->ip = (pinfo->ip << 8) | parse_ip_buf[3];
 
-                    bDnsCacheAdd(pinfo->url, pinfo->ip, ip_ttl / 2);
-                    _bDnsListDeletNode(pinfo->url);
-                    bDnsRunCtx.state = DNS_STATE_REQUEST;
-                    return;
-                }
-            }
-        }
-        // Check Timeout
-        // b_log("checktimeout..\r\n");
-        ret_check_timeout = bDnsCheckTimeout();
-        if (ret_check_timeout < 0)
-        {
-            bDnsRunCtx.dns_index = (bDnsRunCtx.dns_index + 1) % B_TCPIP_DNS_NUM;
-            if (bDnsRunCtx.dns_index == 0)
-            {
+                bDnsCacheAdd(pinfo->url, pinfo->ip, ip_ttl / 2);
                 _bDnsListDeletNode(pinfo->url);
+                bDnsRunCtx.state = DNS_STATE_REQUEST;
+                return;
             }
-            bDnsRunCtx.state = DNS_STATE_IDLE;
-        }
-        else if (ret_check_timeout == 0)
-        {
-            bDnsRunCtx.state = DNS_STATE_REQUEST;
         }
     }
+    // Check Timeout
+    // b_log("checktimeout..\r\n");
+    ret_check_timeout = bDnsCheckTimeout();
+    if (ret_check_timeout < 0)
+    {
+        bDnsRunCtx.dns_index = (bDnsRunCtx.dns_index + 1) % B_TCPIP_DNS_NUM;
+        if (bDnsRunCtx.dns_index == 0)
+        {
+            _bDnsListDeletNode(pinfo->url);
+        }
+        bDnsRunCtx.state = DNS_STATE_IDLE;
+    }
+    else if (ret_check_timeout == 0)
+    {
+        bDnsRunCtx.state = DNS_STATE_REQUEST;
+    }
+}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1371,7 +1382,10 @@ static int _bDhcpRequestInit(bTcpIpInfo_t *pinfo)
 #if DHCP_MODULE_DEBUG_EN
     b_log("dhcp init ok %d \r\n", pinfo->dhcp_ctx.sockfd);
 #endif
-    bBind(pinfo->dhcp_ctx.sockfd, DHCP_CLIENT_PORT);
+    if (bBind(pinfo->dhcp_ctx.sockfd, DHCP_CLIENT_PORT) < 0)
+    {
+        return DHCP_FAILED;
+    }
     pinfo->dhcp_ctx.xid = 0x12345678;
     {
         pinfo->dhcp_ctx.xid += pinfo->netif.mac[3];
@@ -1394,8 +1408,11 @@ static int8_t bDhcpParseMsg(bTcpIpInfo_t *pinfo)
 
     if (bSockIsReadable(pinfo->dhcp_ctx.sockfd))
     {
-        bRecv(pinfo->dhcp_ctx.sockfd, (uint8_t *)&(pinfo->dhcp_ctx.rip_info),
-              sizeof(pinfo->dhcp_ctx.rip_info), &len);
+        if (bRecv(pinfo->dhcp_ctx.sockfd, (uint8_t *)&(pinfo->dhcp_ctx.rip_info),
+                  sizeof(pinfo->dhcp_ctx.rip_info), &len) < 0)
+        {
+            return -1;
+        }
 #if DHCP_MODULE_DEBUG_EN
         b_log("dhcp recv %d bytes [%d]\r\n", len, sizeof(bRequestIp_t));
 #endif
@@ -1656,11 +1673,18 @@ static void _bDhcpSendDiscover(bTcpIpInfo_t *pinfo)
     for (i = k; i < OPT_SIZE; i++)
         pinfo->dhcp_ctx.rip_info.OPT[i] = 0;
     // send broadcasting packet
-    bConnect(pinfo->dhcp_ctx.sockfd, "255.255.255.255", DHCP_SERVER_PORT);
+    if (bConnect(pinfo->dhcp_ctx.sockfd, "255.255.255.255", DHCP_SERVER_PORT) < 0)
+    {
+        return;
+    }
 #if DHCP_MODULE_DEBUG_EN
     b_log("> Send DHCP_DISCOVER\r\n");
 #endif
-    bSend(pinfo->dhcp_ctx.sockfd, (uint8_t *)&pinfo->dhcp_ctx.rip_info, RIP_MSG_SIZE, NULL);
+    if (bSend(pinfo->dhcp_ctx.sockfd, (uint8_t *)&pinfo->dhcp_ctx.rip_info, RIP_MSG_SIZE, NULL) <=
+        0)
+    {
+        return;
+    }
 }
 
 static void bDhcpSendRequest(bTcpIpInfo_t *pinfo)
@@ -1765,8 +1789,15 @@ static void bDhcpSendRequest(bTcpIpInfo_t *pinfo)
 #if DHCP_MODULE_DEBUG_EN
     b_log("> Send DHCP_REQUEST %s\r\n", ip_addr);
 #endif
-    bConnect(pinfo->dhcp_ctx.sockfd, (char *)ip_addr, DHCP_SERVER_PORT);
-    bSend(pinfo->dhcp_ctx.sockfd, (uint8_t *)&pinfo->dhcp_ctx.rip_info, RIP_MSG_SIZE, NULL);
+    if (bConnect(pinfo->dhcp_ctx.sockfd, (char *)ip_addr, DHCP_SERVER_PORT) < 0)
+    {
+        return;
+    }
+    if (bSend(pinfo->dhcp_ctx.sockfd, (uint8_t *)&pinfo->dhcp_ctx.rip_info, RIP_MSG_SIZE, NULL) <=
+        0)
+    {
+        return;
+    }
 }
 
 static uint8_t _bDhcpCheckTimeout(bTcpIpInfo_t *pinfo)
@@ -1881,7 +1912,10 @@ static uint8_t _bDhcpLoopHandle(bTcpIpInfo_t *pinfo)
             bSocket2(pinfo->netif.dev_no, B_TRANS_CONN_UDP, _bDhcpTransCb, NULL);
         if (!SOCKFD_IS_INVALID(pinfo->dhcp_ctx.sockfd))
         {
-            bBind(pinfo->dhcp_ctx.sockfd, DHCP_CLIENT_PORT);
+            if (bBind(pinfo->dhcp_ctx.sockfd, DHCP_CLIENT_PORT) < 0)
+            {
+                return DHCP_FAILED;
+            }
         }
         else
         {
@@ -2174,7 +2208,10 @@ static void _bSocketHandler()
             uint8_t ip_addr[16];
             memset(ip_addr, 0, sizeof(ip_addr));
             _bIpInt2Str((char *)ip_addr, ptrans->remote_ip);
-            bConnect((int)ptrans, (char *)ip_addr, ptrans->remote_port);
+            if (bConnect((int)ptrans, (char *)ip_addr, ptrans->remote_port) < 0)
+            {
+                return;
+            }
         }
         else if (ptrans->state == B_SOCKET_STATE_WAIT_DISCONNECT)
         {
@@ -2231,6 +2268,17 @@ static int _bNetifMalloc(uint16_t len, void **p)
     return 0;
 }
 
+static int _bNetifFree(void *p)
+{
+    struct pbuf *tmp_buf = (struct pbuf *)p;
+    if (tmp_buf == NULL)
+    {
+        return -1;
+    }
+    pbuf_free(tmp_buf);
+    return 0;
+}
+
 static int _bNetifBufNext(void *current_p, void **p)
 {
     struct pbuf *tmp_buf = (struct pbuf *)current_p;
@@ -2269,7 +2317,11 @@ static err_t _bNetifLinkoutput(struct netif *netif, struct pbuf *p)
     fd = bOpen(pinfo->netif.dev_no, BCORE_FLAG_RW);
     if (fd >= 0)
     {
-        bWrite(fd, (uint8_t *)p, p->tot_len);
+        if (bWrite(fd, (uint8_t *)p, p->tot_len) < 0)
+        {
+            bClose(fd);
+            return ERR_IF;
+        }
         bClose(fd);
     }
     return ERR_OK;
@@ -2311,7 +2363,11 @@ static err_t _bNetifInit(struct netif *netif)
     {
         return ERR_IF;
     }
-    bCtl(fd, bCMD_GET_LINK_STATE, &link_state);
+    if (bCtl(fd, bCMD_GET_LINK_STATE, &link_state) != 0)
+    {
+        bClose(fd);
+        return ERR_IF;
+    }
     bClose(fd);
     if (link_state)
     {
@@ -2631,7 +2687,11 @@ void _bStackLwipLoop(bTcpIpNetif_t *netif)
         fd = bOpen(netif->dev_no, BCORE_FLAG_RW);
         if (fd >= 0)
         {
-            bRead(fd, (uint8_t *)&p, CONNECT_RECVBUF_MAX);
+            if (bRead(fd, (uint8_t *)&p, CONNECT_RECVBUF_MAX) < 0)
+            {
+                bClose(fd);
+                return;
+            }
             bClose(fd);
         }
         if (p != NULL)
@@ -2898,7 +2958,12 @@ static void _bNetCardHandler()
             buf_list.m_create  = _bNetifMalloc;
             buf_list.m_next    = _bNetifBufNext;
             buf_list.m_payload = _bNetifBufPayload;
-            bCtl(fd, bCMD_REG_BUF_LIST, &buf_list);
+            buf_list.m_free    = _bNetifFree;
+            if (bCtl(fd, bCMD_REG_BUF_LIST, &buf_list) != 0)
+            {
+                bClose(fd);
+                continue;
+            }
 #endif
             uint8_t link_state = 0;
             if (0 == bCtl(fd, bCMD_GET_LINK_STATE, &link_state))
@@ -2918,8 +2983,16 @@ static void _bNetCardHandler()
             bLinkStateCb_t link_cb;
             link_cb.cb  = _bPhyLinkStateCb;
             link_cb.arg = pinfo;
-            bCtl(fd, bCMD_REG_LINK_CALLBACK, &link_cb);
-            bCtl(fd, bCMD_GET_STACK_IF, &pinfo->stack_if);
+            if (bCtl(fd, bCMD_REG_LINK_CALLBACK, &link_cb) != 0)
+            {
+                bClose(fd);
+                continue;
+            }
+            if (bCtl(fd, bCMD_GET_STACK_IF, &pinfo->stack_if) != 0)
+            {
+                bClose(fd);
+                continue;
+            }
             bClose(fd);
             fd = -1;
             if (pinfo->stack_if.tcp.new == NULL && pinfo->stack_if.udp.new == NULL)

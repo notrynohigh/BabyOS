@@ -114,7 +114,10 @@ static int _bTMP112ReadTemperarute(bDriverInterface_t *pdrv, uint32_t off, uint8
 	
 	bDRIVER_GET_HALIF(_if, bTMP112_HalIf_t, pdrv);
 	reg = TEMPERATURE_REGISTER;
-	bHalI2CMemRead(_if, reg, 1, data, 2);
+	if (bHalI2CMemRead(_if, reg, 1, data, 2) != 0)
+	{
+		return -1;
+	}
 	_temp_hi = data[0];
 	_temp_lo = data[1];
     // Bit 0 of second byte will always be 0 in 12-bit readings and 1 in 13-bit

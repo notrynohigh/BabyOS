@@ -34,6 +34,7 @@
 
 
 #include "utils/inc/b_util_log.h"
+#include "hal/inc/b_hal.h"
 
 /**
  * \addtogroup B_DRIVER
@@ -102,7 +103,16 @@ static void _bADS125XSendByte(bDriverInterface_t *pdrv,uint8_t data)
 {
    bDRIVER_GET_HALIF(_if, bADS125X_HalIf_t, pdrv);
 
-   while (bHalGpioReadPin(_if->drdy.port,_if->drdy.pin)){};//当ADS1256_DRDY为低时才能读寄存器
+   {
+       uint32_t tick = bHalGetSysTick();
+       while (bHalGpioReadPin(_if->drdy.port,_if->drdy.pin))
+       {
+           if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(1000))
+           {
+               return;
+           }
+       }
+   }
    bHalSpiSend(&_if->_spi,&data,1);
 }
 
@@ -111,7 +121,10 @@ static uint8_t _bADS125XReceiveByte(bDriverInterface_t *pdrv)
     bDRIVER_GET_HALIF(_if, bADS125X_HalIf_t, pdrv);
     uint8_t Result = 0;
 
-    bHalSpiReceive(&_if->_spi, &Result, 1);
+    if (bHalSpiReceive(&_if->_spi, &Result, 1) != 0)
+    {
+        return 0;
+    }
     return Result;
 }
 
@@ -136,12 +149,22 @@ static void _bADS125XReadReg(bDriverInterface_t *pdrv,uint8_t regaddr, uint8_t *
 
     bHalGpioWritePin(_if->_spi.cs.port ,_if->_spi.cs.pin,0); //片选
 
-    while (bHalGpioReadPin(_if->drdy.port,_if->drdy.pin)){};//当ADS1256_DRDY为低时才能读寄存器
+    {
+        uint32_t tick = bHalGetSysTick();
+        while (bHalGpioReadPin(_if->drdy.port,_if->drdy.pin))
+        {
+            if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(1000))
+            {
+                bHalGpioWritePin(_if->_spi.cs.port ,_if->_spi.cs.pin,1);
+                return;
+            }
+        }
+    }
 
     _bADS125XSendByte(pdrv,read_regaddr);//向寄存器读取数据地址
 
     _bADS125XSendByte(pdrv,0x00);//读取数据的个数n-1
-    
+
     bHalDelayUs(200);
 
     *rx_data = _bADS125XReceiveByte(pdrv);//读取N字节数据

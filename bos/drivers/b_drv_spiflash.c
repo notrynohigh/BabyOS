@@ -228,7 +228,10 @@ static sfud_err _bSPIFlashSPI_WR(const sfud_spi *spi, const uint8_t *write_buf, 
         }
         if (read_buf && read_size)
         {
-            bHalSpiReceive(&_if->_if._spi, (uint8_t *)read_buf, read_size);
+            if (bHalSpiReceive(&_if->_if._spi, (uint8_t *)read_buf, read_size) != 0)
+            {
+                result = SFUD_ERR_READ;
+            }
         }
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
     }

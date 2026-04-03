@@ -304,7 +304,11 @@ int bWifiInit(uint32_t dev_no, pWifiEvtCb_t cb, void *user_data)
     bWifiModule.user_data = user_data;
     drv_cb.cb             = _bWifiDrvCb;
     drv_cb.user_data      = NULL;
-    bCtl(fd, bCMD_WIFI_REG_CALLBACK, &drv_cb);
+    if (bCtl(fd, bCMD_WIFI_REG_CALLBACK, &drv_cb) != 0)
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     return 0;
 }

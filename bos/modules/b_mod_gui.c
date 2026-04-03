@@ -153,8 +153,16 @@ static void _LCD_SetColorPixel(int16_t x, int16_t y, bGUIColor_t c)
     {
         return;
     }
-    bLseek(fd, off * pGUICurrent->lcd_x_size + x);
-    bWrite(fd, (uint8_t *)&c, sizeof(bGUIColor_t));
+    if (bLseek(fd, off * pGUICurrent->lcd_x_size + x) < 0)
+    {
+        bClose(fd);
+        return;
+    }
+    if (bWrite(fd, (uint8_t *)&c, sizeof(bGUIColor_t)) != sizeof(bGUIColor_t))
+    {
+        bClose(fd);
+        return;
+    }
     bClose(fd);
 }
 
@@ -204,8 +212,16 @@ static int _bGUI_ReadXBF(uint32_t off, uint8_t *pbuf, uint16_t len)
         b_log_e("open err\r\n");
         return -1;
     }
-    bLseek(fd, off);
-    bRead(fd, pbuf, len);
+    if (bLseek(fd, off) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (bRead(fd, pbuf, len) != len)
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
     return 0;
 }
@@ -227,7 +243,11 @@ static int _bGUI_TouchRead(bGuiTouchData_t *pdata)
     }
     if (pGUICurrent->touch_type == TOUCH_TYPE_RES)
     {
-        bRead(fd, (uint8_t *)&ad_val, sizeof(bTouchAdVal_t));
+        if (bRead(fd, (uint8_t *)&ad_val, sizeof(bTouchAdVal_t)) != sizeof(bTouchAdVal_t))
+        {
+            bClose(fd);
+            return -1;
+        }
     }
     bClose(fd);
 
@@ -378,7 +398,11 @@ int bGUIRegist(bGUIInstance_t *pInstance)
         bLcdSize_t lsize;
         lsize.width  = pInstance->lcd_x_size;
         lsize.length = pInstance->lcd_y_size;
-        bCtl(fd, bCMD_SET_SIZE, &lsize);
+        if (bCtl(fd, bCMD_SET_SIZE, &lsize) != 0)
+        {
+            bClose(fd);
+            return -2;
+        }
         bClose(fd);
     }
 

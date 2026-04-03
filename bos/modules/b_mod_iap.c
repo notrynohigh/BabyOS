@@ -142,11 +142,19 @@ static int _bIapEraseSpace()
     {
         return -1;
     }
-    bCtl(fd, bCMD_GET_SECTOR_SIZE, &sector_size);
+    if (bCtl(fd, bCMD_GET_SECTOR_SIZE, &sector_size) != 0 || sector_size == 0)
+    {
+        bClose(fd);
+        return -1;
+    }
     param.addr = IAP_FW_SAVE_ADDR;
     param.num  = (bIapFlag.info.len + sector_size - 1) / sector_size;
     // 根据固件的大小，擦除区域等待数据写入
-    bCtl(fd, bCMD_ERASE_SECTOR, &param);
+    if (bCtl(fd, bCMD_ERASE_SECTOR, &param) != 0)
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
 #endif
     return 0;
@@ -215,11 +223,19 @@ static int _IapCheckFwData()
     {
         return -1;
     }
-    bLseek(fd, IAP_FW_SAVE_ADDR);
+    if (bLseek(fd, IAP_FW_SAVE_ADDR) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
     while (tmp_len < bIapFlag.info.len)
     {
         r_len = ((bIapFlag.info.len - tmp_len) > 64) ? 64 : (bIapFlag.info.len - tmp_len);
-        bRead(fd, tmp, r_len);
+        if (bRead(fd, tmp, r_len) != r_len)
+        {
+            bClose(fd);
+            return -1;
+        }
         crc_calculate_sbs(&tmp_crc, tmp, r_len);
         tmp_len += r_len;
     }
@@ -282,11 +298,19 @@ static int _IapCopyFwData()
         bHalFlashUnlock();
         bHalFlashErase((APP_START_ADDR - MCUFLASH_BASE_ADDR),
                        (bIapFlag.info.len + bHalFlashSectorSize() - 1) / bHalFlashSectorSize());
-        bLseek(fd, IAP_FW_SAVE_ADDR);
+        if (bLseek(fd, IAP_FW_SAVE_ADDR) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
         while (tmp_len < bIapFlag.info.len)
         {
             r_len = ((bIapFlag.info.len - tmp_len) > 64) ? 64 : (bIapFlag.info.len - tmp_len);
-            bRead(fd, tmp, r_len);
+            if (bRead(fd, tmp, r_len) != r_len)
+            {
+                bClose(fd);
+                return -1;
+            }
             bHalFlashWrite((APP_START_ADDR - MCUFLASH_BASE_ADDR + tmp_len), tmp, r_len);
             tmp_len += r_len;
         }
@@ -345,11 +369,19 @@ static int _IapCopyBackupData()
         bHalFlashUnlock();
         bHalFlashErase((APP_START_ADDR - MCUFLASH_BASE_ADDR),
                        (IAP_BACKUP_SIZE + bHalFlashSectorSize() - 1) / bHalFlashSectorSize());
-        bLseek(fd, IAP_BACKUP_ADDR);
+        if (bLseek(fd, IAP_BACKUP_ADDR) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
         while (tmp_len < IAP_BACKUP_SIZE)
         {
             r_len = ((IAP_BACKUP_SIZE - tmp_len) > 64) ? 64 : (IAP_BACKUP_SIZE - tmp_len);
-            bRead(fd, tmp, r_len);
+            if (bRead(fd, tmp, r_len) != r_len)
+            {
+                bClose(fd);
+                return -1;
+            }
             bHalFlashWrite((APP_START_ADDR - MCUFLASH_BASE_ADDR + tmp_len), tmp, r_len);
             tmp_len += r_len;
         }
@@ -415,20 +447,44 @@ static void _IapBackupFirmware()
             {
                 return;
             }
-            bCtl(fd, bCMD_GET_SECTOR_SIZE, &sector_size);
+            if (bCtl(fd, bCMD_GET_SECTOR_SIZE, &sector_size) != 0 || sector_size == 0)
+            {
+                bClose(fd);
+                return;
+            }
             param.addr = IAP_BACKUP_ADDR;
             param.num  = (IAP_BACKUP_SIZE + sector_size - 1) / sector_size;
             // 根据固件的大小，擦除区域等待数据写入
-            bCtl(fd, bCMD_ERASE_SECTOR, &param);
+            if (bCtl(fd, bCMD_ERASE_SECTOR, &param) != 0)
+            {
+                bClose(fd);
+                return;
+            }
 
-            bLseek(fd, IAP_BACKUP_ADDR);
-            bWrite(fd, (uint8_t *)APP_START_ADDR, IAP_BACKUP_SIZE);
+            if (bLseek(fd, IAP_BACKUP_ADDR) < 0)
+            {
+                bClose(fd);
+                return;
+            }
+            if (bWrite(fd, (uint8_t *)APP_START_ADDR, IAP_BACKUP_SIZE) != IAP_BACKUP_SIZE)
+            {
+                bClose(fd);
+                return;
+            }
 
-            bLseek(fd, IAP_BACKUP_ADDR);
+            if (bLseek(fd, IAP_BACKUP_ADDR) < 0)
+            {
+                bClose(fd);
+                return;
+            }
             while (rtmp < IAP_BACKUP_SIZE)
             {
                 rlen = (IAP_BACKUP_SIZE - rtmp > 64) ? 64 : (IAP_BACKUP_SIZE - rtmp);
-                bRead(fd, tmp, rlen);
+                if (bRead(fd, tmp, rlen) != rlen)
+                {
+                    bClose(fd);
+                    return;
+                }
                 crc_calculate_sbs(&tmp_crc, tmp, rlen);
                 rtmp += rlen;
             }
@@ -616,8 +672,16 @@ static int _bIapUpdateFwData(uint32_t index, uint8_t *pbuf, uint32_t len)
         return -1;
     }
     addr += IAP_FW_SAVE_ADDR;
-    bLseek(fd, addr);
-    bWrite(fd, pbuf, len);
+    if (bLseek(fd, addr) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
+    if (bWrite(fd, pbuf, len) != len)
+    {
+        bClose(fd);
+        return -1;
+    }
     bClose(fd);
 #elif ((IAP_FILE_CACHE == 0) || (IAP_FILE_CACHE == 1))
     if (IAP_FILE_CACHE == 0)

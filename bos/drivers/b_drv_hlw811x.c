@@ -164,7 +164,10 @@ HLW811x_WriteReg(bDriverInterface_t *pdrv,
 		{
 			bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
 			bHalSpiSend(&_if->_if._spi, BufferCheckTX, 1);
-			bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 2);
+			if (bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 2) != 0)
+			{
+				Result = -1;
+			}
 			bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
 		}
 		else
@@ -236,7 +239,10 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
 		{
 			bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
 			bHalSpiSend(&_if->_if._spi, BufferTx, 1);
-			bHalSpiReceive(&_if->_if._spi, BufferRx, Size);
+			if (bHalSpiReceive(&_if->_if._spi, BufferRx, Size) != 0)
+			{
+				Result = -1;
+			}
 			bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
 		}
 		else
@@ -249,7 +255,10 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
 		{
 			bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
 			bHalSpiSend(&_if->_if._spi, BufferCheckTX, 1);
-			bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 4);
+			if (bHalSpiReceive(&_if->_if._spi, BufferCheckRX, 4) != 0)
+			{
+				Result = -1;
+			}
 			bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
 		}
 		else
@@ -277,7 +286,10 @@ HLW811x_ReadReg(bDriverInterface_t *pdrv,
 	{
 		bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
 		bHalSpiSend(&_if->_if._spi, BufferTx, 1);
-		bHalSpiReceive(&_if->_if._spi, BufferRx, Size);
+		if (bHalSpiReceive(&_if->_if._spi, BufferRx, Size) != 0)
+		{
+			Result = -1;
+		}
 		bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
 	}
 	else

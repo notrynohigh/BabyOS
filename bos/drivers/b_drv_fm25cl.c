@@ -134,7 +134,11 @@ static int _FM25_ReadBuff(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pDat
 
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 0);
     bHalSpiSend(_if, cmd, 3);
-    bHalSpiReceive(_if, pDat, len);
+    if (bHalSpiReceive(_if, pDat, len) != 0)
+    {
+        bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
+        return -1;
+    }
     bHalGpioWritePin(_if->cs.port, _if->cs.pin, 1);
     return len;
 }

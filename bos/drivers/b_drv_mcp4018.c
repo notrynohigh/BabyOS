@@ -83,7 +83,10 @@ static int _bMCP4018Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return -1;
     }
 
-    bHalI2CReadByte(_if, tmp, 1);
+    if (bHalI2CReadByte(_if, tmp, 1) != 0)
+    {
+        return -1;
+    }
 
     if (tmp[0] == pbuf[0])
     {
@@ -91,7 +94,10 @@ static int _bMCP4018Write(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf,
         return len;
     }
 
-    bHalI2CWriteByte(_if, pbuf, 1);
+    if (bHalI2CWriteByte(_if, pbuf, 1) != 0)
+    {
+        return -1;
+    }
 
     return len;
 }
@@ -106,7 +112,10 @@ static int _bMCP4018Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, 
         return -1;
     }
 
-    bHalI2CReadByte(_if, pbuf, 1);
+    if (bHalI2CReadByte(_if, pbuf, 1) != 0)
+    {
+        return -1;
+    }
 
     return len;
 }

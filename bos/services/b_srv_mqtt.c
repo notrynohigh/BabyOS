@@ -307,6 +307,7 @@ static int _bMqttRead(bMqttSrvInstance_t *pinstance, uint8_t *pbuf, uint16_t len
     }
     else
     {
+        return -1;
     }
     return rlen;
 }
@@ -325,6 +326,7 @@ static int _bMqttWrite(bMqttSrvInstance_t *pinstance, uint8_t *pbuf, uint16_t le
     }
     else
     {
+        return -1;
     }
     return rlen;
 }
@@ -388,7 +390,11 @@ static int _bMqttConnect(bMqttSrvInstance_t *pinstance)
         pbuf = NULL;
         return -1;
     }
-    _bMqttWrite(pinstance, pbuf, len);
+    if (_bMqttWrite(pinstance, pbuf, len) < 0)
+    {
+        _bMqttFree(pbuf);
+        return -1;
+    }
     _bMqttFree(pbuf);
     pbuf = NULL;
     return 0;
@@ -424,8 +430,10 @@ static int _bMqttSubscribe(bMqttSrvInstance_t *pinstance)
             b_log("sub:%d\r\n", pnode->pack_id);
             if (pnode->pack != NULL)
             {
-                bSend(pinstance->sock_fd, (uint8_t *)pnode->pack, pnode->pack_len, NULL);
-                break;
+                if (bSend(pinstance->sock_fd, (uint8_t *)pnode->pack, pnode->pack_len, NULL) > 0)
+                {
+                    break;
+                }
             }
         }
     }
@@ -622,7 +630,11 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
                 bTaskRestart(pt);
             }
             b_log("connect:%s:%d\r\n", pinstance->host, pinstance->port);
-            bConnect(sock_fd, pinstance->host, pinstance->port);
+            if (bConnect(sock_fd, pinstance->host, pinstance->port) < 0)
+            {
+                SOCKET_SHUTDOWN(pt, sock_fd);
+                bTaskRestart(pt);
+            }
             PT_WAIT_UNTIL(pt, bSocketIsConnected(sock_fd) == 1, MS2TICKS(3000));
             if (PT_WAIT_IS_TIMEOUT(pt))
             {
