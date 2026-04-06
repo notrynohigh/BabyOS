@@ -90,7 +90,8 @@ _BOS_MODULES_ENABLE=y
 # _FLEXIBLEBUTTON_ENABLE is not set
 # _UGUI_ENABLE is not set
 # _FS_ENABLE is not set
-# _CJSON_ENABLE is not set
+_CJSON_ENABLE=y
+CJSON_MEM_USE_BMALLOC=y
 # _COREMARK_ENABLE is not set
 # _UNITY_ENABLE is not set
 # _ARM_2D_ENABLE is not set

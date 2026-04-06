@@ -63,7 +63,7 @@ extern "C" {
  * \defgroup TCPIP_Exported_TypesDefinitions
  * \{
  */
-
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 typedef enum
 {
     B_HTTP_GET,
@@ -91,7 +91,7 @@ typedef enum
 } bHttpEvent_t;
 
 typedef void (*pHttpCb_t)(bHttpEvent_t event, void *param, void *arg);
-
+#endif
 /**
  * \}
  */
@@ -111,14 +111,16 @@ typedef void (*pHttpCb_t)(bHttpEvent_t event, void *param, void *arg);
  */
 
 int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number);
-
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 int bSntpStart(uint32_t interval_s);
-
+#endif
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 int bHttpInit(pHttpCb_t cb, void *user_data);
 int bHttpDeInit(int httpfd);
 // 默认头部有Content-Length; head为自定义头部，以\r\n结尾
 int bHttpRequest(int httpfd, bHttpReqType_t type, const char *url, const char *head,
                  const char *body);
+#endif
 /**
  * \}
  */

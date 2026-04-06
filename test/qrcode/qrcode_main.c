@@ -16,23 +16,22 @@ int main()
 {
     port_init();
     bInit();
-    
+
     bQRCodeCreate(&qrInstance, "BabyOS", strlen("BabyOS"));
-    
+
     int i = 0, j = 0;
-    for(i = 0;i < qrInstance.qr.size;i++)
+    for (i = 0; i < qrInstance.qr.size; i++)
     {
-    	for(j = 0;j < qrInstance.qr.size;j++)
-    	{
-    		printf("%s", bQRCodeGetValue(&qrInstance, j, i) == 0 ? "  " : "**");
-    	}
-    	printf("\n");
+        for (j = 0; j < qrInstance.qr.size; j++)
+        {
+            b_log("%s", bQRCodeGetValue(&qrInstance, j, i) == 0 ? "  " : "**");
+        }
+        b_log("\n");
     }
 
     while (1)
     {
         bExec();
-        
     }
     return 0;
 }

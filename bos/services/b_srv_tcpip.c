@@ -39,12 +39,15 @@
 
 #include "core/inc/b_sem.h"
 #include "core/inc/b_task.h"
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 #include "modules/inc/b_mod_ssl.h"
 #include "thirdparty/http-parser/http_parser.h"
+#endif
 #include "utils/inc/b_util_log.h"
 #include "utils/inc/b_util_memp.h"
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 #include "utils/inc/b_util_utc.h"
-
+#endif
 /**
  * \addtogroup BABYOS
  * \{
@@ -64,7 +67,7 @@
  * \defgroup TCPIP_Private_TypesDefinitions
  * \{
  */
-
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 typedef struct
 {
     uint32_t seconds;
@@ -92,8 +95,9 @@ typedef struct
     int       sockfd;
     uint32_t  interval_s;
 } bNtpPcb_t;
-
+#endif
 //----------------------------------------------------------------------------
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 typedef enum
 {
     B_HTTP_STA_INIT,
@@ -126,7 +130,7 @@ typedef struct
     bSSLHandle_t ssl;
 #endif
 } bHttpStruct_t;
-
+#endif
 /**
  * \}
  */
@@ -135,10 +139,12 @@ typedef struct
  * \defgroup TCPIP_Private_Defines
  * \{
  */
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 // NTP时间的起始时间
 #define B_NTP_TIMESTAMP_DELTA 2208988800ull
 #define B_NTP_SERVER_NUM (3)
 #define B_NTP_TIMEOUT_S (20)
+#endif
 /**
  * \}
  */
@@ -156,12 +162,13 @@ typedef struct
  * \defgroup TCPIP_Private_Variables
  * \{
  */
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 static bNtpPcb_t bNtpPcb = {
     .task_id = 0,
 };
 B_TASK_CREATE_ATTR(bNtpTask);
 static const char *bNtpServer[B_NTP_SERVER_NUM] = {_NTP_SERVER_1, _NTP_SERVER_2, _NTP_SERVER_3};
-
+#endif
 //------------------------------------------------------------------------------------------------
 
 /**
@@ -186,7 +193,7 @@ static void _bTcpipSrvFree(void *addr)
 {
     bFree(addr);
 }
-
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 static void _bNtpConnCallback(bTransEvent_t event, void *param, void *arg)
 {
     ;
@@ -267,9 +274,9 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
     }
     PT_END(pt);
 }
-
+#endif
 //--------------------------------------------------------http--
-//--------------------------------------------------------http--
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 static int _bHttpParseUrl(const char *url, char *host, char *path, uint16_t *port, uint8_t *ishttps)
 {
     // 检查是否是HTTPS
@@ -335,8 +342,8 @@ static char *_bHttpGetRequest(bHttpStruct_t *http)
     char *request      = NULL;
     int   request_size = 0;
     request_size       = strlen("GET /") + strlen(http->path) + strlen(" HTTP/1.1\r\n") +
-                   strlen("Host: ") + strlen(http->host) + strlen("\r\n") +
-                   strlen("Connection: close\r\n") + strlen("\r\n") + 1;
+                         strlen("Host: ") + strlen(http->host) + strlen("\r\n") +
+                         strlen("Connection: close\r\n") + strlen("\r\n") + 1;
 
     request = (char *)bMalloc(request_size);
     if (request != NULL)
@@ -581,7 +588,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
     }
     PT_END(pt);
 }
-
+#endif
 /**
  * \}
  */
@@ -599,7 +606,7 @@ int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number)
     }
     return bTcpIpInit(pnetcard, number);
 }
-
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 int bSntpStart(uint32_t interval_s)
 {
     if (bNtpPcb.task_id == NULL)
@@ -616,10 +623,10 @@ int bSntpStart(uint32_t interval_s)
     bNtpPcb.interval_s = interval_s;
     return 0;
 }
-
+#endif
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
-
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 int bHttpInit(pHttpCb_t cb, void *user_data)
 {
     bHttpStruct_t *http = NULL;
@@ -717,7 +724,7 @@ int bHttpDeInit(int httpfd)
     http->state         = B_HTTP_STA_DESTROY;
     return 0;
 }
-
+#endif
 /**
  * \}
  */

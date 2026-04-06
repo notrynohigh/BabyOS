@@ -12,6 +12,15 @@
 #include "../port.h"
 #include "b_os.h"
 
+const static bNetCardInfo_t bNetCardInfo[] = {
+    [0] =
+        {
+            .dev_no    = bTESTMAC,
+            .priority  = 0,
+            .ignore_ip = 1,
+        },
+};
+
 void bMallocFailedHook()
 {
     b_log_e("=========================\r\n");
@@ -40,6 +49,7 @@ int main()
 {
     port_init();
     bInit();
+    bTcpipSrvInit(&bNetCardInfo[0], 1);
     bMqttSrvStartWithCfg(bMqttCallback, NULL);
     while (1)
     {

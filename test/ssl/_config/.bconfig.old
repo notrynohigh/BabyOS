@@ -85,7 +85,7 @@ _HTTP_PARSER_ENABLE=y
 # _TINYUSB_ENABLE is not set
 _MBEDTLS_ENABLE=y
 MBEDTLS_CONFIG_FILE="b_mbedtls_config.h"
-MBEDTLS_DEBUG_LEVEL=4
+MBEDTLS_DEBUG_LEVEL=1
 # _LVGL_ENABLE is not set
 # end of Thirdparty Configuration
 

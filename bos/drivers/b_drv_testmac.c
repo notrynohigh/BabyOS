@@ -131,7 +131,7 @@ static void _bTestMacLoop(bTcpIpNetif_t *netif)
 }
 
 // 设置socket为非阻塞模式
-static int _bSockfdSetNonlocking(int sockfd)
+static int _bSockSetNonblocking(int sockfd)
 {
     int flags = fcntl(sockfd, F_GETFL, 0);
     if (flags == -1)
@@ -205,29 +205,25 @@ static uint8_t _bTestMacIsWriteable(void *sockfd)
 
 static void *_bTestMacTcpNew(bTcpIpNetif_t *pnetif)
 {
-    int sockfd = -1;
-    sockfd     = socket(AF_INET, SOCK_STREAM, 0);
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1)
     {
-        b_log_e("Error: socket creation failed\r\n");
-        return -1;
+        b_log_e("socket create failed\n");
+        return NULL;
     }
-    _bSockfdSetNonlocking(sockfd);
-    return sockfd;
+    return (void *)(intptr_t)sockfd;
 }
 
 static void *_bTestMacUdpNew(bTcpIpNetif_t *pnetif)
 {
-    int sockfd = -1;
-    sockfd     = socket(AF_INET, SOCK_DGRAM, 0);
+    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (sockfd == -1)
     {
-        b_log_e("Error: socket creation failed\r\n");
-        return -1;
+        b_log_e("udp socket create failed\n");
+        return NULL;
     }
-    _bSockfdSetNonlocking(sockfd);
-    b_log("new udp :%d\r\n", sockfd);
-    return sockfd;
+    _bSockSetNonblocking(sockfd);
+    return (void *)(intptr_t)sockfd;
 }
 
 static int _bTestMacBind(void *sockfd, uint16_t port)
@@ -242,7 +238,7 @@ static int _bTestMacBind(void *sockfd, uint16_t port)
     return 0;
 }
 
-static int _bTestMacListen(void *sockfd, uint16_t backlog)
+static void *_bTestMacListen(void *sockfd, uint16_t backlog)
 {
     return 0;
 }
@@ -255,12 +251,20 @@ static int _bTestMacConnect(void *sockfd, uint32_t ip, uint16_t port)
     serverAddr.sin_family      = AF_INET;
     serverAddr.sin_port        = htons(port);
     serverAddr.sin_addr.s_addr = htonl(ip);
-    if (connect(sock, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
+    int ret                    = connect(sock, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
+    if (ret == -1)
     {
+        b_log_e("connect error:%d\r\n", ret);
         B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, sock, bTestMacEventCbArg);
         return -1;
     }
     B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_CONNECTED, sock, bTestMacEventCbArg);
+    if (_bSockSetNonblocking(sockfd) < 0)
+    {
+        close(sockfd);
+        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, sock, bTestMacEventCbArg);
+        return NULL;
+    }
     return 0;
 }
 

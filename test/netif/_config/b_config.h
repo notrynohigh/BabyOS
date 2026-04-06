@@ -39,11 +39,10 @@
 #define MEMP_MAX_SIZE 102400
 #define _BOS_SERVICES_ENABLE 1
 #define _TCPIP_SERVICE_ENABLE 1
+#define _TCPIP_SERVICE_NTP_ENABLE 1
 #define _NTP_SERVER_1 "ntp1.aliyun.com"
 #define _NTP_SERVER_2 "ntp2.aliyun.com"
 #define _NTP_SERVER_3 "ntp3.aliyun.com"
-#define _HTTP_HOST_LEN_MAX 64
-#define _HTTP_PATH_LEN_MAX 128
 
 
 #include "b_type.h" 
