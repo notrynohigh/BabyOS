@@ -73,7 +73,7 @@ typedef void (*bRS485Callback_t)(uint8_t *pbuf, uint16_t len);
 #define bCMD_ERASE_SECTOR 0      // bFlashErase_t
 #define bCMD_GET_SECTOR_SIZE 1   // uint32_t
 #define bCMD_GET_SECTOR_COUNT 2  // uint32_t
-#define bCMD_GET_ID	3 			
+#define bCMD_GET_ID 3
 
 typedef struct
 {
@@ -151,9 +151,10 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // LCD  Command & Data Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_FILL_RECT 0  // bLcdRectInfo_t
-#define bCMD_FILL_BMP 1   // bLcdBmpInfo_t
-#define bCMD_SET_SIZE 2   // bLcdSize_t
+#define bCMD_FILL_RECT 0      // bLcdRectInfo_t
+#define bCMD_FILL_BMP 1       // bLcdBmpInfo_t
+#define bCMD_SET_SIZE 2       // bLcdSize_t
+#define bCMD_BACKLIGHT_CTL 3  // uint8_t   0:off 1:on
 
 typedef struct
 {
@@ -482,38 +483,37 @@ typedef struct
 ///////////////////////////////////////////////////////////
 typedef enum
 {
-  ADS125X_SET_CHANNLE_CMD,
-  ADS125X_SET_GAIN_CMD,
-  ADS125X_SET_BRATE_CMD,
-  ADS125X_READ_CHANNLE_CMD,
-  ADS125X_READ_GAIN_CMD,
-  ADS125X_READ_BRATE_CMD,
-  ADS125X_READ_STATUS_CMD
-}bAds125xCommandEnum;
+    ADS125X_SET_CHANNLE_CMD,
+    ADS125X_SET_GAIN_CMD,
+    ADS125X_SET_BRATE_CMD,
+    ADS125X_READ_CHANNLE_CMD,
+    ADS125X_READ_GAIN_CMD,
+    ADS125X_READ_BRATE_CMD,
+    ADS125X_READ_STATUS_CMD
+} bAds125xCommandEnum;
 
-typedef struct 
+typedef struct
 {
-    uint8_t ads125x_channle;
-    uint8_t ads125x_gain;
-    uint8_t ads125x_brate;
-    uint8_t ads125x_status;
+    uint8_t  ads125x_channle;
+    uint8_t  ads125x_gain;
+    uint8_t  ads125x_brate;
+    uint8_t  ads125x_status;
     uint32_t ads125x_sum;
     double   ads125x_voltage;
-}bAds125xDrvData_t;
+} bAds125xDrvData_t;
 
 ///////////////////////////////////////////////////////////
 // SMP3011 , Command  &  Structure
 ///////////////////////////////////////////////////////////
 typedef enum
 {
-  SMP3011_READ_P_CMD,
-  SMP3011_READ_T_CMD,
-  SMP3011_READ_P_T_CMD,
-  SMP3011_READ_OTP_CMD,
-  SMP3011_SET_P_UPRANG_CMD,
-  SMP3011_SET_P_LOWRANG_CMD,
-}bSMP3011CommandEnum;
-
+    SMP3011_READ_P_CMD,
+    SMP3011_READ_T_CMD,
+    SMP3011_READ_P_T_CMD,
+    SMP3011_READ_OTP_CMD,
+    SMP3011_SET_P_UPRANG_CMD,
+    SMP3011_SET_P_LOWRANG_CMD,
+} bSMP3011CommandEnum;
 
 #ifdef __cplusplus
 }

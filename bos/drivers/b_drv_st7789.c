@@ -372,6 +372,7 @@ static int _bST7789FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, u
 static int _bST7789Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     int retval = -1;
+    bDRIVER_GET_HALIF(_if, bST7789_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(prv, bST7789Private_t, pdrv);
     switch (cmd)
     {
@@ -407,6 +408,23 @@ static int _bST7789Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             prv->width  = pinfo->width;
             prv->length = pinfo->length;
             retval      = 0;
+        }
+        break;
+        case bCMD_BACKLIGHT_CTL:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            if (((uint8_t *)param)[0] == 1)
+            {
+                LCD_IF_LIGHT_ON(_if);
+            }
+            else
+            {
+                LCD_IF_LIGHT_OFF(_if);
+            }
+            retval = 0;
         }
         break;
         default:
@@ -449,16 +467,12 @@ int bST7789_Init(bDriverInterface_t *pdrv)
     bST7789RunInfo[pdrv->drv_no].width  = 240;  // default
     bST7789RunInfo[pdrv->drv_no].length = 320;  // default
 
-    if (((bST7789_HalIf_t *)pdrv->hal_if)->reset.port != B_HAL_GPIO_INVALID &&
-        ((bST7789_HalIf_t *)pdrv->hal_if)->reset.pin != B_HAL_PIN_INVALID)
-    {
-        bHalGpioWritePin(((bST7789_HalIf_t *)pdrv->hal_if)->reset.port,
-                         ((bST7789_HalIf_t *)pdrv->hal_if)->reset.pin, 0);
-        bHalDelayMs(100);
-        bHalGpioWritePin(((bST7789_HalIf_t *)pdrv->hal_if)->reset.port,
-                         ((bST7789_HalIf_t *)pdrv->hal_if)->reset.pin, 1);
-        bHalDelayMs(100);
-    }
+    LCD_IF_LIGHT_OFF((bST7789_HalIf_t *)pdrv->hal_if);
+
+    LCD_IF_ENABLE_RESET((bST7789_HalIf_t *)pdrv->hal_if);
+    bHalDelayMs(100);
+    LCD_IF_DISABLE_RESET((bST7789_HalIf_t *)pdrv->hal_if);
+    bHalDelayMs(100);
 
     if (_bST7789CheckId(pdrv) < 0)
     {
@@ -556,6 +570,8 @@ int bST7789_Init(bDriverInterface_t *pdrv)
     /* Display Inversion On */
     _bLcdWriteCmd(pdrv, 0x21);
     _bLcdWriteCmd(pdrv, 0x29);
+
+    LCD_IF_LIGHT_ON((bST7789_HalIf_t *)pdrv->hal_if);
     return 0;
 }
 

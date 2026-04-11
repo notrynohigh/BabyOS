@@ -226,6 +226,7 @@ static int _bSSD1289FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
 static int _bSSD1289Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     int retval = -1;
+    bDRIVER_GET_HALIF(_if, bSSD1289_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(prv, bSSD1289Private_t, pdrv);
     switch (cmd)
     {
@@ -261,6 +262,23 @@ static int _bSSD1289Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             prv->width  = pinfo->width;
             prv->length = pinfo->length;
             retval      = 0;
+        }
+        break;
+        case bCMD_BACKLIGHT_CTL:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            if (((uint8_t *)param)[0] == 1)
+            {
+                LCD_IF_LIGHT_ON(_if);
+            }
+            else
+            {
+                LCD_IF_LIGHT_OFF(_if);
+            }
+            retval = 0;
         }
         break;
         default:
@@ -303,16 +321,12 @@ int bSSD1289_Init(bDriverInterface_t *pdrv)
     bSSD1289RunInfo[pdrv->drv_no].width  = 240;  // default
     bSSD1289RunInfo[pdrv->drv_no].length = 320;  // default
 
-    if (((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.port != B_HAL_GPIO_INVALID &&
-        ((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.pin != B_HAL_PIN_INVALID)
-    {
-        bHalGpioWritePin(((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.port,
-                         ((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.pin, 0);
-        bHalDelayMs(100);
-        bHalGpioWritePin(((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.port,
-                         ((bSSD1289_HalIf_t *)pdrv->hal_if)->reset.pin, 1);
-        bHalDelayMs(100);
-    }
+    LCD_IF_LIGHT_OFF((bSSD1289_HalIf_t *)pdrv->hal_if);
+
+    LCD_IF_ENABLE_RESET((bSSD1289_HalIf_t *)pdrv->hal_if);
+    bHalDelayMs(100);
+    LCD_IF_DISABLE_RESET((bSSD1289_HalIf_t *)pdrv->hal_if);
+    bHalDelayMs(100);
 
     _SSD1289WriteReg(pdrv, 0x0007, 0x0021);
     _SSD1289WriteReg(pdrv, 0x0000, 0x0001);
@@ -322,6 +336,9 @@ int bSSD1289_Init(bDriverInterface_t *pdrv)
     _SSD1289WriteReg(pdrv, 0x0011, 0x6838);
     _SSD1289WriteReg(pdrv, 0x0002, 0x0600);
     _SSD1289WriteReg(pdrv, 0x0001, 0x2B3F);
+
+    LCD_IF_LIGHT_ON((bSSD1289_HalIf_t *)pdrv->hal_if);
+
     return 0;
 }
 
@@ -330,7 +347,7 @@ int bSSD1289_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_SSD1289, bSSD1289_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

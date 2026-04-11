@@ -41,16 +41,17 @@
         .is_simulation = 0, .cs = {B_HAL_GPIOB, B_HAL_PIN1}, ._if.spi = B_HAL_SPI_1, \
     }
 
-#define HAL_ILI9320_IF                                       \
-    {                                                        \
-        .if_type = 2, .reset = {B_HAL_GPIOC, B_HAL_PIN7},    \
-        ._if._spi._spi =                                     \
-            {                                                \
-                .is_simulation = 0,                          \
-                .cs            = {B_HAL_GPIOD, B_HAL_PIN13}, \
-                ._if.spi       = B_HAL_SPI_1,                \
-            },                                               \
-        ._if._spi.rs = {B_HAL_GPIOD, B_HAL_PIN15},           \
+#define HAL_ILI9320_IF                                                                         \
+    {                                                                                          \
+        .if_type = 2, .reset = {B_HAL_GPIOC, B_HAL_PIN7}, .light = {B_HAL_GPIOB, B_HAL_PIN15}, \
+        .reset_pin_level = 0, .light_pin_level = 1,                                            \
+        ._if._spi._spi =                                                                       \
+            {                                                                                  \
+                .is_simulation = 0,                                                            \
+                .cs            = {B_HAL_GPIOC, B_HAL_PIN13},                                   \
+                ._if.spi       = B_HAL_SPI_2,                                                  \
+            },                                                                                 \
+        ._if._spi.rs = {B_HAL_GPIOC, B_HAL_PIN6},                                              \
     }
 
 #define HAL_ILI9341_IF HAL_ILI9320_IF
