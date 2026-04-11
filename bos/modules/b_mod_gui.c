@@ -398,11 +398,7 @@ int bGUIRegist(bGUIInstance_t *pInstance)
         bLcdSize_t lsize;
         lsize.width  = pInstance->lcd_x_size;
         lsize.length = pInstance->lcd_y_size;
-        if (bCtl(fd, bCMD_SET_SIZE, &lsize) != 0)
-        {
-            bClose(fd);
-            return -2;
-        }
+        bCtl(fd, bCMD_SET_SIZE, &lsize);
         bClose(fd);
     }
 
