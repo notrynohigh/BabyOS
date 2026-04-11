@@ -34,6 +34,8 @@
 
 #include <string.h>
 
+#include "hal/inc/b_hal.h"
+
 #include "drivers/inc/ADS124x_regs.h"
 #include "utils/inc/b_util_log.h"
 
@@ -118,12 +120,22 @@ int ADS1248WaitForDataReady(bDriverInterface_t *pdrv, int Timeout)
     }
     else
     {
-        // wait for /DRDY = 1
+        uint32_t tick = bHalGetSysTick();
         while (!(bHalGpioReadPin(_if->drdy.port, _if->drdy.pin)))
-            ;
-        // wait for /DRDY = 0
+        {
+            if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(1000))
+            {
+                return ADS1248_ERROR;
+            }
+        }
+        tick = bHalGetSysTick();
         while ((bHalGpioReadPin(_if->drdy.port, _if->drdy.pin)))
-            ;
+        {
+            if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(1000))
+            {
+                return ADS1248_ERROR;
+            }
+        }
     }
     return ADS1248_NO_ERROR;
 }
@@ -154,8 +166,10 @@ unsigned char ADS1248ReceiveByte(bDriverInterface_t *pdrv)
 {
     bDRIVER_GET_HALIF(_if, bADS124X_HalIf_t, pdrv);
     unsigned char Result = 0;
-    bHalSpiReceive(&_if->_spi, &Result, 1);
-
+    if (bHalSpiReceive(&_if->_spi, &Result, 1) != 0)
+    {
+        return 0;
+    }
     return Result;
 }
 
@@ -219,7 +233,7 @@ long ADS1248ReadData(bDriverInterface_t *pdrv)
     // get the conversion result
 #ifdef ADS1148
     Data = ADS1248ReceiveByte(pdrv);
-    Data = (Data << 8) | ADS1248ReceiveByte();
+    Data = (Data << 8) | ADS1248ReceiveByte(pdrv);
     // sign extend data if the MSB is high (16 to 32 bit sign extension)
     if (Data & 0x8000)
         Data |= 0xffff0000;

@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_mod_link.h
+ * \file        b_drv_enc28j60.h
  * \version     v0.0.1
- * \date        2020/01/02
- * \author      Bean(notrynohigh@outlook.com)
+ * \date        2023/03/25
+ * \author      babyos
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2020 Bean
+ * Copyright (c) 2023 babyos
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,69 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO PARAM SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_MOD_LINK_H__
-#define __B_MOD_LINK_H__
+#ifndef __B_DRV_ENC28J60_H__
+#define __B_DRV_ENC28J60_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*Includes ----------------------------------------------*/
-#include <stdint.h>
+#include "drivers/inc/b_driver.h"
+/**
+ * \addtogroup B_DRIVER
+ * \{
+ */
 
-#include "b_config.h"
+/**
+ * \addtogroup ENC28J60
+ * \{
+ */
 
-#if (defined(_NETIF_ENABLE) && (_NETIF_ENABLE == 1))
+/**
+ * \defgroup ENC28J60_Exported_TypesDefinitions
+ * \{
+ */
 
-#endif
+typedef struct
+{
+    bHalSPIIf_t        _spi;
+    bHalGPIOInstance_t reset;
+} bENC28J60_HalIf_t;
+
+typedef struct
+{
+    uint8_t        cur_bank;
+    uint8_t        link_state;
+    uint8_t        mac_addr[6];
+    uint16_t       next_packet_ptr;
+    bLinkStateCb_t link_cb;
+    bHalBufList_t  list_opt;
+} bENC28J60Private_t;
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
+
+/**
+ * \}
+ */
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
+
+/************************ Copyright (c) 2023 babyos *****END OF FILE****/

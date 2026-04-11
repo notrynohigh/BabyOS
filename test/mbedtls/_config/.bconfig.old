@@ -100,9 +100,6 @@ _BOS_MODULES_ENABLE=y
 # _TINYUSB_ENABLE is not set
 _MBEDTLS_ENABLE=y
 MBEDTLS_CONFIG_FILE="b_mbedtls_config.h"
-MBEDTLS_USER_CONFIG_FILE="b_mbedtls_user_config.h"
-MBEDTLS_PSA_CRYPTO_CONFIG_FILE="b_mbedtls_crypto_config.h"
-MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="b_mbedtls_crypto_user_config.h"
 # end of Thirdparty Configuration
 
 #

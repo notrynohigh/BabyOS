@@ -30,6 +30,7 @@
  */
 /*Includes ----------------------------------------------*/
 #include "drivers/inc/b_drv_smp3011.h"
+
 #include "utils/inc/b_util_log.h"
 
 /**
@@ -65,11 +66,11 @@
  * \{
  */
 // Define the upper and lower limits of the calibration pressure
-#define PMIN 0.0  //Full range pressure for example 20Kpa
-#define PMAX 35000.0 //Zero Point Pressure Value, for example 120Kpa
-#define DMIN 2516582.0 //AD value corresponding to pressure zero, for example 15%AD
-#define DMAX 14260633.0 //AD Value Corresponding to Full Pressure Range, for example 85%AD
-#define TMAX 150 //ÎÂ¶È
+#define PMIN 0.0         // Full range pressure for example 20Kpa
+#define PMAX 35000.0     // Zero Point Pressure Value, for example 120Kpa
+#define DMIN 2516582.0   // AD value corresponding to pressure zero, for example 15%AD
+#define DMAX 14260633.0  // AD Value Corresponding to Full Pressure Range, for example 85%AD
+#define TMAX 150         // æ¸©åº¦
 #define TMIN -40
 /**
  * \}
@@ -100,12 +101,15 @@ static bSMP3011Private_t bSMP3011RunInfo[bDRIVER_HALIF_NUM(bSMP3011_HalIf_t, DRI
  * \defgroup SMP3011_Private_Functions
  * \{
  */
-uint8_t _bSMP3011IsBusy(const bHalI2CIf_t *i2c_if)
+int _bSMP3011IsBusy(const bHalI2CIf_t *i2c_if)
 {
-	uint8_t status = 0;
-    bHalI2CReadByte(i2c_if,&status,1);
-	status = (status >> 5) & 0x01;
-	return status;
+    uint8_t status = 0;
+    if (bHalI2CReadByte(i2c_if, &status, 1) != 0)
+    {
+        return -1;
+    }
+    status = (status >> 5) & 0x01;
+    return status;
 }
 
 /*****************************************driver interface***************************************/
@@ -113,27 +117,39 @@ uint8_t _bSMP3011IsBusy(const bHalI2CIf_t *i2c_if)
 static int _bSMP3011Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
     bDRIVER_GET_HALIF(_if, bSMP3011_HalIf_t, pdrv);
-    uint8_t calibration_cmd = 0xAC; //Ğ£×¼ÃüÁî
+    uint8_t calibration_cmd = 0xAC;  // æ ¡å‡†å‘½ä»¤
     uint8_t smp3011_timeout = 0;
 
-    bHalI2CWriteByte(_if,&calibration_cmd,1);//·¢ËÍĞ£×¼ÃüÁî
-    while(1)
+    if (bHalI2CWriteByte(_if, &calibration_cmd, 1) != 0)  // å‘é€æ ¡å‡†å‘½ä»¤
     {
-       if(_bSMP3011IsBusy(_if))
-       {
-          smp3011_timeout++;
-          bHalDelayMs(1);
-          if(smp3011_timeout == 256)
-          {
-             return 0; //³¬Ê±,±¾´Î¶ÁÈ¡Êı¾İÊ§°Ü
-          }
-       }else
-       {
-          break; //Êı¾İÒÑ×¼±¸ºÃ
-       }
+        return -1;
+    }
+    while (1)
+    {
+        int busy = _bSMP3011IsBusy(_if);
+        if (busy < 0)
+        {
+            return -1;
+        }
+        if (busy)
+        {
+            smp3011_timeout++;
+            bHalDelayMs(1);
+            if (smp3011_timeout == 256)
+            {
+                return 0;  // è¶…æ—¶,æœ¬æ¬¡è¯»å–æ•°æ®å¤±è´¥
+            }
+        }
+        else
+        {
+            break;  // æ•°æ®å·²å‡†å¤‡å¥½
+        }
     }
 
-    bHalI2CReadByte(_if,pbuf,len); //¶ÁÈ¡6×Ö½ÚÔ­Ê¼Êı¾İ
+    if (bHalI2CReadByte(_if, pbuf, len) != 0)  // è¯»å–6å­—èŠ‚åŸå§‹æ•°æ®
+    {
+        return -1;
+    }
 
     return len;
 }
@@ -143,81 +159,94 @@ static int _bSMP3011Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
     bDRIVER_GET_HALIF(_if, bSMP3011_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(_priv, bSMP3011Private_t, pdrv);
 
-    uint16_t temp_raw = 0;
-    uint32_t pressure_raw = 0;
-    double  pressure = 0.0, temp = 0.0;
-    uint8_t smp3011_buffer[6] = {0};
-    bSMP3011Private_t *smp3011_param = (bSMP3011Private_t *)param;
-    uint8_t otp_reg_adrr = 0x14; 
-    uint16_t otp_value = 0;
-    
-    _bSMP3011Read(pdrv,0,smp3011_buffer,6);
+    uint16_t           temp_raw     = 0;
+    uint32_t           pressure_raw = 0;
+    double             pressure = 0.0, temp = 0.0;
+    uint8_t            smp3011_buffer[6] = {0};
+    bSMP3011Private_t *smp3011_param     = (bSMP3011Private_t *)param;
+    uint8_t            otp_reg_adrr      = 0x14;
+    uint16_t           otp_value         = 0;
+
+    _bSMP3011Read(pdrv, 0, smp3011_buffer, 6);
 
     switch (cmd)
     {
         case SMP3011_READ_P_CMD:
-            {
-                /*·µ»ØµÄÑ¹Á¦Öµ¸ù¾İĞ£×¼·¶Î§×ª»»ÎªÊµ¼ÊÖµ*/
-                pressure_raw = ((uint32_t)smp3011_buffer[1] << 16) | ((uint16_t)smp3011_buffer[2] << 8) | smp3011_buffer[3];
+        {
+            /*è¿”å›çš„å‹åŠ›å€¼æ ¹æ®æ ¡å‡†èŒƒå›´è½¬æ¢ä¸ºå®é™…å€¼*/
+            pressure_raw = ((uint32_t)smp3011_buffer[1] << 16) |
+                           ((uint16_t)smp3011_buffer[2] << 8) | smp3011_buffer[3];
 
-                /*Pressure = (Pmax - Pmin)/(Dmax - Dmin)*(Dtest - Dmin) + Pmin
-                  Pressure:Êµ¼ÊÑ¹Á¦Öµ;  Dtest:´«¸ĞÆ÷µÄÊı×ÖÊä³öÖµ£»
-                  Pmax:´«¸ĞÆ÷ÂúÁ¿³ÌÑ¹Á¦Öµ£»Pmin:´«¸ĞÆ÷ÁãµãÑ¹Á¦Öµ;
-                  Dmax:´«¸ĞÆ÷ÂúÁ¿³ÌÊ±¶ÔÓ¦µÄÊı×ÖÊä³öÖµ£»DminÁãµãÊ±¶ÔÓ¦µÄÊı×ÖÊä³öÖµ£»
-                */
-                pressure = (_priv->pressure_rang_up - _priv->pressure_rang_low)/(DMAX-DMIN)*(pressure_raw-DMIN) + _priv->pressure_rang_low;
-                smp3011_param->pressure = pressure; 
-            }
-            break;
+            /*Pressure = (Pmax - Pmin)/(Dmax - Dmin)*(Dtest - Dmin) + Pmin
+              Pressure:å®é™…å‹åŠ›å€¼;  Dtest:ä¼ æ„Ÿå™¨çš„æ•°å­—è¾“å‡ºå€¼ï¼›
+              Pmax:ä¼ æ„Ÿå™¨æ»¡é‡ç¨‹å‹åŠ›å€¼ï¼›Pmin:ä¼ æ„Ÿå™¨é›¶ç‚¹å‹åŠ›å€¼;
+              Dmax:ä¼ æ„Ÿå™¨æ»¡é‡ç¨‹æ—¶å¯¹åº”çš„æ•°å­—è¾“å‡ºå€¼ï¼›Dminé›¶ç‚¹æ—¶å¯¹åº”çš„æ•°å­—è¾“å‡ºå€¼ï¼›
+            */
+            pressure = (_priv->pressure_rang_up - _priv->pressure_rang_low) / (DMAX - DMIN) *
+                           (pressure_raw - DMIN) +
+                       _priv->pressure_rang_low;
+            smp3011_param->pressure = pressure;
+        }
+        break;
         case SMP3011_READ_T_CMD:
-            {
-                /*·µ»ØµÄÎÂ¶ÈÖµ¸ù¾İĞ£×¼·¶Î§×ª»»ÎªÊµ¼ÊÖµ*/
-                temp_raw = ((uint16_t)smp3011_buffer[4] << 8) | (smp3011_buffer[5] << 0);
-                
-                /*Temperature = (Tmax - Tmin)*temp + Tmin
-                  Temperature:Ğ£×¼ºóµÄÊµ¼ÊÎÂ¶ÈÖµ
-                  Tmax:Ğ£×¼·¶Î§×î´óÖµ
-                  Tmin:Ğ£×¼·¶Î§×îĞ¡Öµ
-                */
-                temp = (double)temp_raw / 65536.0;
-                temp = (_priv->temperature_rang_up - _priv->temperature_rang_low)*temp + _priv->temperature_rang_low;
+        {
+            /*è¿”å›çš„æ¸©åº¦å€¼æ ¹æ®æ ¡å‡†èŒƒå›´è½¬æ¢ä¸ºå®é™…å€¼*/
+            temp_raw = ((uint16_t)smp3011_buffer[4] << 8) | (smp3011_buffer[5] << 0);
 
-                smp3011_param->temperature = temp;
-            }
-            break; 
+            /*Temperature = (Tmax - Tmin)*temp + Tmin
+              Temperature:æ ¡å‡†åçš„å®é™…æ¸©åº¦å€¼
+              Tmax:æ ¡å‡†èŒƒå›´æœ€å¤§å€¼
+              Tmin:æ ¡å‡†èŒƒå›´æœ€å°å€¼
+            */
+            temp = (double)temp_raw / 65536.0;
+            temp = (_priv->temperature_rang_up - _priv->temperature_rang_low) * temp +
+                   _priv->temperature_rang_low;
+
+            smp3011_param->temperature = temp;
+        }
+        break;
         case SMP3011_READ_P_T_CMD:
-            {
-                /*·µ»ØµÄÑ¹Á¦ºÍÎÂ¶ÈÖµ¸ù¾İĞ£×¼·¶Î§×ª»»ÎªÊµ¼ÊÖµ*/
-                pressure_raw = ((uint32_t)smp3011_buffer[1] << 16) | ((uint16_t)smp3011_buffer[2] << 8) | smp3011_buffer[3];
-                pressure = (_priv->pressure_rang_up - _priv->pressure_rang_low)/(DMAX-DMIN)*(pressure_raw-DMIN) + _priv->pressure_rang_low;
-                smp3011_param->pressure = pressure; 
+        {
+            /*è¿”å›çš„å‹åŠ›å’Œæ¸©åº¦å€¼æ ¹æ®æ ¡å‡†èŒƒå›´è½¬æ¢ä¸ºå®é™…å€¼*/
+            pressure_raw = ((uint32_t)smp3011_buffer[1] << 16) |
+                           ((uint16_t)smp3011_buffer[2] << 8) | smp3011_buffer[3];
+            pressure = (_priv->pressure_rang_up - _priv->pressure_rang_low) / (DMAX - DMIN) *
+                           (pressure_raw - DMIN) +
+                       _priv->pressure_rang_low;
+            smp3011_param->pressure = pressure;
 
-                temp_raw = ((uint16_t)smp3011_buffer[4] << 8) | (smp3011_buffer[5] << 0);
-                temp = (double)temp_raw / 65536.0;
-                temp = (_priv->temperature_rang_up - _priv->temperature_rang_low)*temp + _priv->temperature_rang_low;
-                smp3011_param->temperature = temp;
-            }
-            break; 
+            temp_raw = ((uint16_t)smp3011_buffer[4] << 8) | (smp3011_buffer[5] << 0);
+            temp     = (double)temp_raw / 65536.0;
+            temp     = (_priv->temperature_rang_up - _priv->temperature_rang_low) * temp +
+                   _priv->temperature_rang_low;
+            smp3011_param->temperature = temp;
+        }
+        break;
         case SMP3011_SET_P_UPRANG_CMD:
-            {
-                _priv->pressure_rang_up = smp3011_param->pressure_rang_up;//ÉèÖÃÑ¹Á¦Á¿³ÌÉÏÏŞ
-            }
-            break;             
+        {
+            _priv->pressure_rang_up = smp3011_param->pressure_rang_up;  // è®¾ç½®å‹åŠ›é‡ç¨‹ä¸Šé™
+        }
+        break;
         case SMP3011_SET_P_LOWRANG_CMD:
-            {
-                _priv->pressure_rang_low = smp3011_param->pressure_rang_low;//ÉèÖÃÑ¹Á¦Á¿³ÌÏÂÏŞ
-            }
-            break;   
+        {
+            _priv->pressure_rang_low = smp3011_param->pressure_rang_low;  // è®¾ç½®å‹åŠ›é‡ç¨‹ä¸‹é™
+        }
+        break;
         case SMP3011_READ_OTP_CMD:
+        {
+            if (bHalI2CWriteByte(_if, &otp_reg_adrr, 1) != 0)  // è¯»å–OTPå¯„å­˜å™¨æ•°æ®è¯·æ±‚
             {
-                bHalI2CWriteByte(_if,&otp_reg_adrr,1);//¶ÁÈ¡OTP¼Ä´æÆ÷Êı¾İÇëÇó
-                bHalI2CReadByte(_if,(uint8_t*)&otp_value,2); //¶ÁÈ¡3×Ö½ÚÔ­Ê¼Êı¾İ
-                b_log("otp_value:0x%x\r\n",otp_value);
-            } 
+                return -1;
+            }
+            if (bHalI2CReadByte(_if, (uint8_t *)&otp_value, 2) != 0)  // è¯»å–3å­—èŠ‚åŸå§‹æ•°æ®
+            {
+                return -1;
+            }
+            b_log("otp_value:0x%x\r\n", otp_value);
+        }
         default:
             break;
     }
-    
 
     return 0;
 }
@@ -243,15 +272,15 @@ static int _bSMP3011Close(bDriverInterface_t *pdrv)
 int bSMP3011_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bSMP3011_Init);
-    pdrv->read  = _bSMP3011Read;
-    pdrv->write = NULL;
-    pdrv->ctl   = _bSMP3011Ctl;
-    pdrv->open  = _bSMP3011Open;
-    pdrv->close = _bSMP3011Close;
-    pdrv->_private._p = &bSMP3011RunInfo[pdrv->drv_no]; 
+    pdrv->read        = _bSMP3011Read;
+    pdrv->write       = NULL;
+    pdrv->ctl         = _bSMP3011Ctl;
+    pdrv->open        = _bSMP3011Open;
+    pdrv->close       = _bSMP3011Close;
+    pdrv->_private._p = &bSMP3011RunInfo[pdrv->drv_no];
     memset(pdrv->_private._p, 0, sizeof(bSMP3011Private_t));
-    bSMP3011RunInfo[pdrv->drv_no].pressure_rang_up = 35.0;
-    bSMP3011RunInfo[pdrv->drv_no].pressure_rang_low = 0.0;
+    bSMP3011RunInfo[pdrv->drv_no].pressure_rang_up     = 35.0;
+    bSMP3011RunInfo[pdrv->drv_no].pressure_rang_low    = 0.0;
     bSMP3011RunInfo[pdrv->drv_no].temperature_rang_up  = TMAX;
     bSMP3011RunInfo[pdrv->drv_no].temperature_rang_low = TMIN;
 
@@ -271,4 +300,3 @@ bDRIVER_REG_INIT(B_DRIVER_SMP3011, bSMP3011_Init);
 /**
  * \}
  */
-

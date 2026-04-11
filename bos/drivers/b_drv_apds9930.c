@@ -210,7 +210,10 @@ static int _bAPDS9930ReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *da
 {
 	bDRIVER_GET_HALIF(_if, bAPDS9930_HalIf_t, pdrv);
 	reg = reg | 0xA0;
-	bHalI2CMemRead(_if, reg, 1, data, len);
+	if (bHalI2CMemRead(_if, reg, 1, data, len) != 0)
+	{
+		return -1;
+	}
 	return 0;
 }
 
@@ -218,8 +221,10 @@ static int _bAPDS9930WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
 {
 	bDRIVER_GET_HALIF(_if, bAPDS9930_HalIf_t, pdrv);
 	reg = reg | 0x80;
-	bHalI2CMemWrite(_if, reg, 1, data, len);
-
+	if (bHalI2CMemWrite(_if, reg, 1, data, len) != 0)
+	{
+		return -1;
+	}
 	return 0;
 }
 static uint8_t _bAPDS9930GetID(bDriverInterface_t *pdrv)

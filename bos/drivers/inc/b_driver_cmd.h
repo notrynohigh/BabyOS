@@ -39,6 +39,11 @@ extern "C" {
 #include <stdint.h>
 
 ///////////////////////////////////////////////////////////
+// Base value of a certain type of general instruction
+///////////////////////////////////////////////////////////
+#define bCMD_TCPIP_GENERAL_BASE_VALUE (127)
+
+///////////////////////////////////////////////////////////
 // eeprom Command & Data Structure
 ///////////////////////////////////////////////////////////
 #define bCMD_LTC_GET_DACX_STATUS 0  // uint32_t 获取某个DAC输出状态
@@ -68,7 +73,7 @@ typedef void (*bRS485Callback_t)(uint8_t *pbuf, uint16_t len);
 #define bCMD_ERASE_SECTOR 0      // bFlashErase_t
 #define bCMD_GET_SECTOR_SIZE 1   // uint32_t
 #define bCMD_GET_SECTOR_COUNT 2  // uint32_t
-#define bCMD_GET_ID	3 			
+#define bCMD_GET_ID 3
 
 typedef struct
 {
@@ -146,9 +151,10 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // LCD  Command & Data Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_FILL_RECT 0  // bLcdRectInfo_t
-#define bCMD_FILL_BMP 1   // bLcdBmpInfo_t
-#define bCMD_SET_SIZE 2   // bLcdSize_t
+#define bCMD_FILL_RECT 0      // bLcdRectInfo_t
+#define bCMD_FILL_BMP 1       // bLcdBmpInfo_t
+#define bCMD_SET_SIZE 2       // bLcdSize_t
+#define bCMD_BACKLIGHT_CTL 3  // uint8_t   0:off 1:on
 
 typedef struct
 {
@@ -216,49 +222,25 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // Wifi Module Command & Data Structure
 ///////////////////////////////////////////////////////////
-#define bCMD_WIFI_REG_CALLBACK 0       // bWifiDrvCallback_t
-#define bCMD_WIFI_MODE_STA 1           // none
-#define bCMD_WIFI_MODE_AP 2            // bApInfo_t
-#define bCMD_WIFI_MODE_STA_AP 3        // bApInfo_t
-#define bCMD_WIFI_JOIN_AP 4            // bApInfo_t
-#define bCMD_WIFI_PING 5               // char *
-#define bCMD_WIFI_LOCAL_TCP_SERVER 6   // bTcpUdpInfo_t
-#define bCMD_WIFI_LOCAL_UDP_SERVER 7   // bTcpUdpInfo_t
-#define bCMD_WIFI_REMOT_TCP_SERVER 8   // bTcpUdpInfo_t
-#define bCMD_WIFI_REMOT_UDP_SERVER 9   // bTcpUdpInfo_t
-#define bCMD_WIFI_TCPUDP_CLOSE 10      // bTcpUdpInfo_t
-#define bCMD_WIFI_TCPUDP_SEND 11       // bTcpUdpData_t
-#define bCMD_WIFI_MQTT_CONN 12         // bMqttConnInfo_t
-#define bCMD_WIFI_MQTT_SUB 13          // bMqttTopic_t
-#define bCMD_WIFI_MQTT_PUB 14          // bMqttData_t
-#define bCMD_WIFI_SET_CALLBACK_ARG 15  // void *
+#define bCMD_WIFI_REG_CALLBACK 0  // bWifiDrvCallback_t
+#define bCMD_WIFI_MODE_STA 1      // none
+#define bCMD_WIFI_MODE_AP 2       // bApInfo_t
+#define bCMD_WIFI_MODE_STA_AP 3   // bApInfo_t
+#define bCMD_WIFI_JOIN_AP 4       // bApInfo_t
+#define bCMD_WIFI_NUMBER_MAX (5)
+
 typedef enum
 {
     B_EVT_MODE_STA_OK = 0,
     B_EVT_MODE_AP_OK,
     B_EVT_MODE_STA_AP_OK,
     B_EVT_JOIN_AP_OK,
-    B_EVT_PING_OK,
-    B_EVT_LOCAL_TCP_SERVER_OK,
-    B_EVT_LOCAL_UDP_SERVER_OK,
-    B_EVT_CONN_TCP_SERVER_OK,
-    B_EVT_CONN_UDP_SERVER_OK,
-    B_EVT_CLOSE_CONN_OK,
-    B_EVT_CONN_SEND_OK,
-    B_EVT_CONN_NEW_DATA,
 
     B_EVT_FAIL_BASE = -100,
     B_EVT_MODE_STA_FAIL,
     B_EVT_MODE_AP_FAIL,
     B_EVT_MODE_STA_AP_FAIL,
     B_EVT_JOIN_AP_FAIL,
-    B_EVT_PING_FAIL,
-    B_EVT_LOCAL_TCP_SERVER_FAIL,
-    B_EVT_LOCAL_UDP_SERVER_FAIL,
-    B_EVT_CONN_TCP_SERVER_FAIL,
-    B_EVT_CONN_UDP_SERVER_FAIL,
-    B_EVT_CLOSE_CONN_FAIL,
-    B_EVT_CONN_SEND_FAIL,
 } bWifiDrvEvent_t;
 
 typedef struct
@@ -278,43 +260,6 @@ typedef struct
     // 0(open) 1(WPA_PSK) 2(WPA2_PSK) 3(WPA_WPA2_PSK)
 } bApInfo_t;
 
-typedef struct
-{
-    char     ip[WIFI_REMOTE_ADDR_LEN_MAX + 1];
-    uint16_t port;
-} bTcpUdpInfo_t;
-
-typedef struct
-{
-    bTcpUdpInfo_t conn;
-    uint8_t      *pbuf;
-    uint16_t      len;
-    void (*release)(void *);
-} bTcpUdpData_t;
-
-typedef struct
-{
-    char     broker[64];
-    uint16_t port;
-    char     device_id[64];
-    char     user[64];
-    char     passwd[64];
-} bMqttConnInfo_t;
-
-typedef struct
-{
-    char    topic[64];
-    uint8_t qos;
-} bMqttTopic_t;
-
-typedef struct
-{
-    bMqttTopic_t topic;
-    uint8_t     *pbuf;
-    uint16_t     len;
-    void (*release)(void *);
-} bMqttData_t;
-
 ///////////////////////////////////////////////////////////
 // Proximity_AmbientLightsensor Data Structure
 ///////////////////////////////////////////////////////////
@@ -328,15 +273,108 @@ typedef struct
 ///////////////////////////////////////////////////////////
 // MAC Device Command and Param
 ///////////////////////////////////////////////////////////
-#define bCMD_MAC_ADDRESS 0        // bMacAddress_t
-#define bCMD_GET_LINK_STATE 1     // uint8_t  0 or 1 (linked)
-#define bCMD_LINK_STATE_CHANGE 2  // uint8_t  0 or 1 (linked)
-#define bCMD_REG_BUF_LIST 3       // bHalBufList_t
+#define bCMD_GET_DRIVER_NETIF (0 + bCMD_TCPIP_GENERAL_BASE_VALUE)   // bDriverNetif_t
+#define bCMD_GET_MAC_ADDRESS (1 + bCMD_TCPIP_GENERAL_BASE_VALUE)    // bMacAddress_t
+#define bCMD_SET_MAC_ADDRESS (2 + bCMD_TCPIP_GENERAL_BASE_VALUE)    // bMacAddress_t
+#define bCMD_GET_LINK_STATE (3 + bCMD_TCPIP_GENERAL_BASE_VALUE)     // uint8_t  0 or 1 (linked)
+#define bCMD_REG_LINK_CALLBACK (4 + bCMD_TCPIP_GENERAL_BASE_VALUE)  // bLinkStateCb_t
+#define bCMD_REG_BUF_LIST (5 + bCMD_TCPIP_GENERAL_BASE_VALUE)       // bHalBufList_t
+#define bCMD_GET_STACK_IF (6 + bCMD_TCPIP_GENERAL_BASE_VALUE)       // bTcpIpStackIf_t
+
+typedef struct
+{
+    void *private;
+} bDriverNetif_t;
 
 typedef struct
 {
     uint8_t address[6];
 } bMacAddress_t;
+
+typedef struct
+{
+    void (*cb)(uint8_t, void *);
+    void *arg;
+} bLinkStateCb_t;
+
+typedef struct
+{
+    bDriverNetif_t netif;
+    void          *new_pcb;
+} bTcpIpAccetpArg_t;
+
+typedef struct
+{
+    void    *pcb;
+    uint8_t *pbuf;
+    uint16_t len;
+    void (*release)(void *);
+} bTcpIpNewDataArg_t;
+
+typedef struct
+{
+    void    *pcb;
+    uint16_t len;
+} bTcpIpSendDoneArg_t;
+
+typedef enum
+{
+    B_TCPIP_E_CONNECTING,
+    B_TCPIP_E_CONNECTED,
+    B_TCPIP_E_ACCEPT,  // bTcpIpAccetpArg_t
+    B_TCPIP_E_DISCONNECT,
+    B_TCPIP_E_NEW_DATA,   // bTcpIpNewDataArg_t
+    B_TCPIP_E_SEND_DONE,  // bTcpIpSendDoneArg_t
+} bTcpIpEvent_t;
+
+typedef void (*pTcpIpCallback_t)(bTcpIpEvent_t event, void *param, void *arg);
+
+typedef struct
+{
+    uint32_t dev_no;
+    uint8_t  is_linked;
+    uint8_t  mac[6];
+    void *private;
+} bTcpIpNetif_t;
+
+typedef struct
+{
+    int (*init)(bTcpIpNetif_t *netif);
+    void (*loop)(bTcpIpNetif_t *netif);
+    void (*reg_callback)(pTcpIpCallback_t cb, void *arg, bTcpIpNetif_t *netif);
+
+    // 网卡相关接口，如果有协议栈管理多张网卡的情况，会传入网卡信息；
+    int (*set_mac)(uint8_t mac[6], bTcpIpNetif_t *netif);
+    int (*set_ip)(uint32_t ip, uint32_t mask, uint32_t gateway, bTcpIpNetif_t *netif);
+    int (*set_link_state)(uint8_t state, bTcpIpNetif_t *netif);
+    int (*set_default_netif)(bTcpIpNetif_t *netif);
+
+    // tcp/udp相关接口
+    struct
+    {
+        void *(*new)(bTcpIpNetif_t *pnetif);
+        int (*bind)(void *, uint16_t);
+        void *(*listen)(void *, uint16_t);
+        int (*connect)(void *, uint32_t, uint16_t);
+        int (*send)(void *, const uint8_t *, uint16_t);
+        int (*recv)(void *, uint8_t *, uint16_t);
+        int (*delete)(void *);
+    } tcp;
+
+    struct
+    {
+        void *(*new)(bTcpIpNetif_t *pnetif);
+        int (*bind)(void *, uint16_t);
+        void *(*listen)(void *, uint16_t);
+        int (*connect)(void *, uint32_t, uint16_t);
+        int (*send)(void *netif, void *pcb, const uint8_t *, uint16_t);
+        int (*recv)(void *, uint8_t *, uint16_t);
+        int (*delete)(void *);
+    } udp;
+
+    uint8_t (*is_readable)(void *);
+    uint8_t (*is_writeable)(void *);
+} bTcpIpStackIf_t;
 
 ///////////////////////////////////////////////////////////
 // power meter and analysis, Command  &  Structure
@@ -431,13 +469,13 @@ typedef enum
 ///////////////////////////////////////////////////////////
 typedef struct
 {
-	uint16_t CellVoltage [16] ;
-	float Temperature [3] ;
-	uint16_t Stack_Voltage ;
-	uint16_t Pack_Voltage ;
-	uint16_t LD_Voltage ;
-	uint16_t Pack_Current;
-	uint16_t AlarmBits ;
+    uint16_t CellVoltage[16];
+    float    Temperature[3];
+    uint16_t Stack_Voltage;
+    uint16_t Pack_Voltage;
+    uint16_t LD_Voltage;
+    uint16_t Pack_Current;
+    uint16_t AlarmBits;
 } bBMS_AFE_BQ769X2_Value_t;
 
 ///////////////////////////////////////////////////////////
@@ -445,38 +483,37 @@ typedef struct
 ///////////////////////////////////////////////////////////
 typedef enum
 {
-  ADS125X_SET_CHANNLE_CMD,
-  ADS125X_SET_GAIN_CMD,
-  ADS125X_SET_BRATE_CMD,
-  ADS125X_READ_CHANNLE_CMD,
-  ADS125X_READ_GAIN_CMD,
-  ADS125X_READ_BRATE_CMD,
-  ADS125X_READ_STATUS_CMD
-}bAds125xCommandEnum;
+    ADS125X_SET_CHANNLE_CMD,
+    ADS125X_SET_GAIN_CMD,
+    ADS125X_SET_BRATE_CMD,
+    ADS125X_READ_CHANNLE_CMD,
+    ADS125X_READ_GAIN_CMD,
+    ADS125X_READ_BRATE_CMD,
+    ADS125X_READ_STATUS_CMD
+} bAds125xCommandEnum;
 
-typedef struct 
+typedef struct
 {
-    uint8_t ads125x_channle;
-    uint8_t ads125x_gain;
-    uint8_t ads125x_brate;
-    uint8_t ads125x_status;
+    uint8_t  ads125x_channle;
+    uint8_t  ads125x_gain;
+    uint8_t  ads125x_brate;
+    uint8_t  ads125x_status;
     uint32_t ads125x_sum;
     double   ads125x_voltage;
-}bAds125xDrvData_t;
+} bAds125xDrvData_t;
 
 ///////////////////////////////////////////////////////////
 // SMP3011 , Command  &  Structure
 ///////////////////////////////////////////////////////////
 typedef enum
 {
-  SMP3011_READ_P_CMD,
-  SMP3011_READ_T_CMD,
-  SMP3011_READ_P_T_CMD,
-  SMP3011_READ_OTP_CMD,
-  SMP3011_SET_P_UPRANG_CMD,
-  SMP3011_SET_P_LOWRANG_CMD,
-}bSMP3011CommandEnum;
-
+    SMP3011_READ_P_CMD,
+    SMP3011_READ_T_CMD,
+    SMP3011_READ_P_T_CMD,
+    SMP3011_READ_OTP_CMD,
+    SMP3011_SET_P_UPRANG_CMD,
+    SMP3011_SET_P_LOWRANG_CMD,
+} bSMP3011CommandEnum;
 
 #ifdef __cplusplus
 }

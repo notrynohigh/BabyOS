@@ -49,16 +49,14 @@
 /*----- Value in opt.h for LWIP_NETIF_LINK_CALLBACK: 0 -----*/
 #define LWIP_NETIF_LINK_CALLBACK 1
 /*----- Value in opt.h for LWIP_DHCP: 0 -----*/
-#ifdef NETIF_USE_DHCP
-#define LWIP_DHCP NETIF_USE_DHCP
-#endif
+#define LWIP_DHCP 0
 /*----- use DHCP_OPTION_HOSTNAME with netif's hostname */
 #define LWIP_NETIF_HOSTNAME 1
 /**
  * LWIP_DNS==1: Turn on DNS module. UDP must be available for DNS
  * transport.
  */
-#define LWIP_DNS 1
+#define LWIP_DNS 0
 /**
  * LWIP_RAW==1: Enable application layer to hook into the IP layer itself.
  */
@@ -72,7 +70,7 @@
 #define MEM_SIZE MEM_SIZE_FOR_LWIP
 #endif
 
-#if defined(NETIF_CHECKSUM_BY_HARDWARE) && (NETIF_CHECKSUM_BY_HARDWARE == 1)
+#if defined(TCPIP_CHECKSUM_BY_HARDWARE) && (TCPIP_CHECKSUM_BY_HARDWARE == 1)
 /*----- Value in opt.h for CHECKSUM_GEN_IP: 1 -----*/
 #define CHECKSUM_GEN_IP 0
 /*----- Value in opt.h for CHECKSUM_GEN_UDP: 1 -----*/

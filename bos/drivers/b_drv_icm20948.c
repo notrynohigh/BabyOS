@@ -245,8 +245,10 @@ static int _bICM20948WriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *d
 {
     bDRIVER_GET_HALIF(_if, bICM20948_HalIf_t, pdrv);
 
-    bHalI2CMemWrite(_if, reg, 1, data, len);
-
+    if (bHalI2CMemWrite(_if, reg, 1, data, len) != 0)
+    {
+        return -1;
+    }
     return len;
 }
 

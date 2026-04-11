@@ -61,6 +61,10 @@ typedef struct
     // p :  申请空间的指针
     int (*m_create)(uint16_t len, void **p);
 
+    // m_delete 释放空间
+    // p : 释放的空间的指针
+    int (*m_free)(void *p);
+
     // m_next 申请的空间是链表形式，调用这个接口切换到下一块空间
     // current_p: 指向当前使用的空间
     // p :  得到的下一个空间的指针
@@ -82,6 +86,7 @@ typedef struct
  */
 int     bMcuEthInit(bHalBufList_t *pbuf_list);
 int     bMcuEthGetMacAddr(uint8_t *paddr, uint8_t len);
+int     bMcuEthSetMacAddr(uint8_t *paddr, uint8_t len);
 uint8_t bMcuEthIsLinked(void);
 int     bMcuEthLinkUpdate(uint8_t link_state);
 int     bMcuEthReceive(void **pbuf, uint32_t *plen);
@@ -90,6 +95,7 @@ int     bMcuEthTransmit(void *pbuf, uint32_t len);
 //---------------------------------------------------------------------------------------
 int     bHalEthInit(bHalBufList_t *pbuf_list);
 int     bHalEthGetMacAddr(uint8_t *paddr, uint8_t len);
+int     bHalEthSetMacAddr(uint8_t *paddr, uint8_t len);
 uint8_t bHalEthIsLinked(void);
 int     bHalEthLinkUpdate(uint8_t link_state);
 int     bHalEthReceive(void **pbuf, uint32_t *plen);

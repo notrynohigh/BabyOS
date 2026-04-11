@@ -170,7 +170,7 @@ static int _bAHT20Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, ui
             b_log_hex(tmp, 7);
         }
         uint8_t cmd_table[] = {0x33, 0x00};
-        bHalI2CMemWrite(pdrv->hal_if, 0xAC, 1, cmd_table, 2);
+        if (bHalI2CMemWrite(pdrv->hal_if, 0xAC, 1, cmd_table, 2) != 0) {}  // trigger next measurement (non-critical)
         _priv->tick = bHalGetSysTick();
     }
     bTempHumidityVal_t *pval = (bTempHumidityVal_t *)pbuf;

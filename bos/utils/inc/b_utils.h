@@ -38,6 +38,7 @@
 #include "b_util_log.h"
 #include "b_util_lunar.h"
 #include "b_util_memp.h"
+#include "b_util_tools.h"
 #include "b_util_uart.h"
 #include "b_util_utc.h"
 

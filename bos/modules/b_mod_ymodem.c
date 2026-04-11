@@ -123,7 +123,7 @@ static uint16_t _bYmodemCalCheck(uint8_t *pbuf, uint16_t len)
 
     for (i = 0; i < len; i++)
     {
-        crc = crc ^ pbuf[i] << 8;
+        crc = (crc ^ pbuf[i]) << 8;
         for (j = 0; j < 8; j++)
         {
             if (crc & 0x8000)
@@ -150,7 +150,7 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
         i_len >= sizeof(bYmodem128Struct_t))
     {
         crc = _bYmodemCalCheck(in + 3, sizeof(bYmodem128Struct_t) - 5);
-        if (((crc & 0xff00) >> 8) == in[sizeof(bYmodem128Struct_t) - 2] ||
+        if (((crc & 0xff00) >> 8) == in[sizeof(bYmodem128Struct_t) - 2] &&
             (crc & 0xff) == in[sizeof(bYmodem128Struct_t) - 1])
         {
             param.seq     = phead->number;
@@ -163,7 +163,7 @@ static int _bYmodemParse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *out, 
              i_len >= sizeof(bYmodem1kStruct_t))
     {
         crc = _bYmodemCalCheck(in + 3, sizeof(bYmodem1kStruct_t) - 5);
-        if (((crc & 0xff00) >> 8) == in[sizeof(bYmodem1kStruct_t) - 2] ||
+        if (((crc & 0xff00) >> 8) == in[sizeof(bYmodem1kStruct_t) - 2] &&
             (crc & 0xff) == in[sizeof(bYmodem1kStruct_t) - 1])
         {
             param.seq     = phead->number;

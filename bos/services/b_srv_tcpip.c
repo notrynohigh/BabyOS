@@ -39,12 +39,15 @@
 
 #include "core/inc/b_sem.h"
 #include "core/inc/b_task.h"
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 #include "modules/inc/b_mod_ssl.h"
 #include "thirdparty/http-parser/http_parser.h"
+#endif
 #include "utils/inc/b_util_log.h"
 #include "utils/inc/b_util_memp.h"
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 #include "utils/inc/b_util_utc.h"
-
+#endif
 /**
  * \addtogroup BABYOS
  * \{
@@ -64,7 +67,7 @@
  * \defgroup TCPIP_Private_TypesDefinitions
  * \{
  */
-
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 typedef struct
 {
     uint32_t seconds;
@@ -92,8 +95,9 @@ typedef struct
     int       sockfd;
     uint32_t  interval_s;
 } bNtpPcb_t;
-
+#endif
 //----------------------------------------------------------------------------
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 typedef enum
 {
     B_HTTP_STA_INIT,
@@ -126,7 +130,7 @@ typedef struct
     bSSLHandle_t ssl;
 #endif
 } bHttpStruct_t;
-
+#endif
 /**
  * \}
  */
@@ -135,10 +139,12 @@ typedef struct
  * \defgroup TCPIP_Private_Defines
  * \{
  */
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 // NTP时间的起始时间
 #define B_NTP_TIMESTAMP_DELTA 2208988800ull
 #define B_NTP_SERVER_NUM (3)
 #define B_NTP_TIMEOUT_S (20)
+#endif
 /**
  * \}
  */
@@ -156,12 +162,13 @@ typedef struct
  * \defgroup TCPIP_Private_Variables
  * \{
  */
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 static bNtpPcb_t bNtpPcb = {
     .task_id = 0,
 };
 B_TASK_CREATE_ATTR(bNtpTask);
 static const char *bNtpServer[B_NTP_SERVER_NUM] = {_NTP_SERVER_1, _NTP_SERVER_2, _NTP_SERVER_3};
-
+#endif
 //------------------------------------------------------------------------------------------------
 
 /**
@@ -186,7 +193,7 @@ static void _bTcpipSrvFree(void *addr)
 {
     bFree(addr);
 }
-
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 static void _bNtpConnCallback(bTransEvent_t event, void *param, void *arg)
 {
     ;
@@ -196,81 +203,80 @@ PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
 {
     static uint8_t ntp_server_index = 0;
     bNtpPacket_t   packet;
-    uint16_t       rlen     = 0;
-    uint64_t       ntp_time = 0;
+    uint16_t       rlen      = 0;
+    uint64_t       ntp_time  = 0;
+    uint32_t       wait_time = 0;
+    wait_time                = 10;
     PT_BEGIN(pt);
     while (1)
     {
-        bNtpPcb.sockfd = bSocket(B_TRANS_CONN_UDP, _bNtpConnCallback, NULL);
-        if (bNtpPcb.sockfd < 0)
+        if (SOCKFD_IS_INVALID(bNtpPcb.sockfd))
         {
-            b_log_e("socket fail...\r\n");
-            break;
-        }
-        b_log("sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
-        if (bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123) < 0)
-        {
-            b_log_e("ntp connect fail...\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
-            break;
-        }
-        PT_WAIT_UNTIL(pt, bSockIsWriteable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
-        if (pt->retval == PT_RETVAL_TIMEOUT)
-        {
-            b_log_e("ntp send fail...\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            b_log_e("shutdown..\r\n");
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            break;
-        }
-        memset(&packet, 0, sizeof(bNtpPacket_t));
-        packet.li_vn_mode = 0x1b;
-        if (bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL) < 0)
-        {
-            b_log_e("ntp send fail...\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
-            break;
-        }
-        PT_WAIT_UNTIL(pt, bSockIsReadable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
-        if (pt->retval == PT_RETVAL_TIMEOUT)
-        {
-            b_log_e("ntp recv timeout.. \r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            b_log_e("shutdown..\r\n");
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
-            break;
-        }
-        if (bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen) < 0)
-        {
-            b_log_e("ntp recv fail..\r\n");
-            PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-            ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
-            bTaskDelayMs(pt, 10000);
-            break;
-        }
-        if (rlen == sizeof(bNtpPacket_t))
-        {
-            if (packet.recv_time.seconds <= packet.trans_time.seconds &&
-                (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
+            bNtpPcb.sockfd = bSocket(B_TRANS_CONN_UDP, _bNtpConnCallback, NULL);
+            if (SOCKFD_IS_INVALID(bNtpPcb.sockfd))
             {
-                ntp_time = B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
-                bUTC_SetTime(ntp_time);
+                bTaskRestart(pt);
+            }
+            b_log("ntp sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
+        }
+        else
+        {
+            if (bSocketIsConnected(bNtpPcb.sockfd))
+            {
+                if (bSockIsWriteable(bNtpPcb.sockfd))
+                {
+                    memset(&packet, 0, sizeof(bNtpPacket_t));
+                    packet.li_vn_mode = 0x1b;
+                    bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
+                    PT_WAIT_UNTIL(pt, bSockIsReadable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
+                    if (PT_WAIT_IS_TIMEOUT(pt))
+                    {
+                        b_log_e("ntp recv timeout...\r\n");
+                    }
+                    else
+                    {
+                        bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
+                        b_log("ntp recv len: %d == %d\r\n", rlen, sizeof(bNtpPacket_t));
+                        if (rlen == sizeof(bNtpPacket_t))
+                        {
+                            if (packet.recv_time.seconds <= packet.trans_time.seconds &&
+                                (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
+                            {
+                                ntp_time =
+                                    B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
+                                bUTC_SetTime(ntp_time);
+                                wait_time = bNtpPcb.interval_s;
+                            }
+                        }
+                    }
+                }
+                PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+                bNtpPcb.sockfd = -1;
+                b_log_e("shutdown..\r\n");
+                bTaskDelayMs(pt, wait_time * 1000);
+            }
+            else
+            {
+                bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123);
+                PT_WAIT_UNTIL(pt, bSocketIsConnected(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
+                if (pt->retval == PT_RETVAL_TIMEOUT)
+                {
+                    b_log_e("ntp connect fail...\r\n");
+                    PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+                    b_log_e("shutdown..\r\n");
+                    ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
+                    bNtpPcb.sockfd   = -1;
+                    bTaskDelayMs(pt, wait_time * 1000);
+                }
             }
         }
-        PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
-        b_log_e("shutdown..\r\n");
-        bTaskDelayMs(pt, bNtpPcb.interval_s * 1000);
+        bTaskYield(pt);
     }
     PT_END(pt);
 }
-
+#endif
 //--------------------------------------------------------http--
-//--------------------------------------------------------http--
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 static int _bHttpParseUrl(const char *url, char *host, char *path, uint16_t *port, uint8_t *ishttps)
 {
     // 检查是否是HTTPS
@@ -336,8 +342,8 @@ static char *_bHttpGetRequest(bHttpStruct_t *http)
     char *request      = NULL;
     int   request_size = 0;
     request_size       = strlen("GET /") + strlen(http->path) + strlen(" HTTP/1.1\r\n") +
-                   strlen("Host: ") + strlen(http->host) + strlen("\r\n") +
-                   strlen("Connection: close\r\n") + strlen("\r\n") + 1;
+                         strlen("Host: ") + strlen(http->host) + strlen("\r\n") +
+                         strlen("Connection: close\r\n") + strlen("\r\n") + 1;
 
     request = (char *)bMalloc(request_size);
     if (request != NULL)
@@ -452,7 +458,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
             break;  // task end
         }
         http->sockfd = bSocket(B_TRANS_CONN_TCP, _bHttpTransCb, http);
-        if (http->sockfd < 0)
+        if (SOCKFD_IS_INVALID(http->sockfd))
         {
             event = B_HTTP_EVENT_ERROR;
             param = NULL;
@@ -460,7 +466,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
         }
         b_log("sockfd: %x %s %d %s\r\n", http->sockfd, http->host, http->port, http->path);
         bConnect(http->sockfd, http->host, http->port);
-        PT_WAIT_UNTIL(pt, bSockIsWriteable(http->sockfd) == 1, 5000);
+        PT_WAIT_UNTIL(pt, bSocketIsConnected(http->sockfd) == 1, 5000);
         if (pt->retval == PT_RETVAL_TIMEOUT)
         {
             event = B_HTTP_EVENT_CONN_FAIL;
@@ -582,7 +588,7 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
     }
     PT_END(pt);
 }
-
+#endif
 /**
  * \}
  */
@@ -592,11 +598,15 @@ PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
  * \{
  */
 
-int bTcpipSrvInit()
+int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number)
 {
-    return 0;
+    if (pnetcard == NULL || number == 0)
+    {
+        return -1;
+    }
+    return bTcpIpInit(pnetcard, number);
 }
-
+#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
 int bSntpStart(uint32_t interval_s)
 {
     if (bNtpPcb.task_id == NULL)
@@ -613,10 +623,10 @@ int bSntpStart(uint32_t interval_s)
     bNtpPcb.interval_s = interval_s;
     return 0;
 }
-
+#endif
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
-
+#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
 int bHttpInit(pHttpCb_t cb, void *user_data)
 {
     bHttpStruct_t *http = NULL;
@@ -714,7 +724,7 @@ int bHttpDeInit(int httpfd)
     http->state         = B_HTTP_STA_DESTROY;
     return 0;
 }
-
+#endif
 /**
  * \}
  */

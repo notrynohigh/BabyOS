@@ -77,6 +77,10 @@ struct list_head
 #define list_entry(ptr, type, member) \
     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
 
+#define list_first_entry(ptr, type, member) list_entry((ptr)->next, type, member)
+
+#define list_next_entry(pos, type, member) list_entry((pos)->member.next, type, member)
+
 /*
  * Insert a new entry between two known consecutive entries.
  *
@@ -131,6 +135,11 @@ static __INLINE_DEF void __list_del(struct list_head *prev, struct list_head *ne
     WRITE_ONCE(prev->next, next);
 }
 
+static __INLINE_DEF void list_del(struct list_head *item)
+{
+    __list_del(item->prev, item->next);
+}
+
 /**
  * list_is_first -- tests whether @list is the first entry in list @head
  * @list: the entry to test
@@ -178,6 +187,10 @@ static __INLINE_DEF int list_empty(const struct list_head *head)
 #define list_for_each(pos, head) \
     for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
 
+#define list_for_each_entry(pos, type, head, number)                         \
+    for (pos = list_first_entry(head, type, number); &pos->number != (head); \
+         pos = list_next_entry(pos, type, number))
+
 /**
  * list_for_each_continue - continue iteration over a list
  * @pos:	the &struct list_head to use as a loop cursor.
@@ -204,6 +217,10 @@ static __INLINE_DEF int list_empty(const struct list_head *head)
  */
 #define list_for_each_safe(pos, n, head) \
     for (pos = (head)->next, n = pos->next; !list_is_head(pos, (head)); pos = n, n = pos->next)
+
+#define list_for_each_entry_safe(pos, n, type, head, number)                                 \
+    for (pos = list_first_entry(head, type, number), n = list_next_entry(pos, type, number); \
+         &pos->number != (head); pos = n, n = list_next_entry(n, type, number))
 
 /**
  * list_for_each_prev_safe - iterate over a list backwards safe against removal of list entry

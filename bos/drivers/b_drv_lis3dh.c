@@ -152,13 +152,20 @@ static int _bLis3dhReadRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *data
         reg |= 0xC0;
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
         bHalSpiSend(&_if->_if._spi, &reg, 1);
-        bHalSpiReceive(&_if->_if._spi, data, len);
+        if (bHalSpiReceive(&_if->_if._spi, data, len) != 0)
+        {
+            bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+            return -1;
+        }
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
     }
     else
     {
         reg = reg | 0x80;
-        bHalI2CMemRead(&_if->_if._i2c, reg, 1, data, len);
+        if (bHalI2CMemRead(&_if->_if._i2c, reg, 1, data, len) != 0)
+        {
+            return -1;
+        }
     }
     return 0;
 }
@@ -170,13 +177,24 @@ static int _bLis3dhWriteRegs(bDriverInterface_t *pdrv, uint8_t reg, uint8_t *dat
     {
         reg |= 0x40;
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 0);
-        bHalSpiSend(&_if->_if._spi, &reg, 1);
-        bHalSpiSend(&_if->_if._spi, data, len);
+        if (bHalSpiSend(&_if->_if._spi, &reg, 1) != 0)
+        {
+            bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+            return -1;
+        }
+        if (bHalSpiSend(&_if->_if._spi, data, len) != 0)
+        {
+            bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
+            return -1;
+        }
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
     }
     else
     {
-        bHalI2CMemWrite(&_if->_if._i2c, reg, 1, data, len);
+        if (bHalI2CMemWrite(&_if->_if._i2c, reg, 1, data, len) != 0)
+        {
+            return -1;
+        }
     }
     return 0;
 }

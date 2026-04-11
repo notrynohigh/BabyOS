@@ -37,7 +37,7 @@ $(SOURCE_ROOT)/bos/utils/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/mqtt-pack/*.c
 
 BOS_DRV_SOURCE_DIR = \
-$(SOURCE_ROOT)/bos/drivers/b_drv_testflash.c
+$(SOURCE_ROOT)/bos/drivers/b_drv_testmac.c
 
 EXAMPLE_SOURCE_DIR = \
 $(SOURCE_ROOT)/test/*.c \

@@ -82,6 +82,7 @@ extern "C" {
 #include "modules/inc/b_modules.h"
 #endif
 
+#include "drivers/inc/b_drv_enc28j60.h"
 #include "drivers/inc/b_drv_24cxx.h"
 #include "drivers/inc/b_drv_ads124x.h"
 #include "drivers/inc/b_drv_ads125x.h"

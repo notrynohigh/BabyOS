@@ -165,14 +165,18 @@ const uint8_t bGestureTable[][2] = {
  * \{
  */
 
-static void _bPAJ7620U2SelectBank(bDriverInterface_t *pdrv, uint8_t bank)
+static int _bPAJ7620U2SelectBank(bDriverInterface_t *pdrv, uint8_t bank)
 {
     bDRIVER_GET_HALIF(_if, bPAJ7620U2_HalIf_t, pdrv);
     if (bank > 1)
     {
-        return;
+        return -1;
     }
-    bHalI2CMemWrite(_if, PAJ_REGITER_BANK_SEL, 1, &bank, 1);
+    if (bHalI2CMemWrite(_if, PAJ_REGITER_BANK_SEL, 1, &bank, 1) != 0)
+    {
+        return -1;
+    }
+    return 0;
 }
 
 static int _bPAJ7620U2ReadId(bDriverInterface_t *pdrv)
@@ -182,8 +186,14 @@ static int _bPAJ7620U2ReadId(bDriverInterface_t *pdrv)
     bDRIVER_GET_HALIF(_if, bPAJ7620U2_HalIf_t, pdrv);
     for (i = 0; i < 3; i++)
     {
-        _bPAJ7620U2SelectBank(pdrv, 0);
-        bHalI2CMemRead(_if, PAJ_CHIPID_L, 1, (uint8_t *)&chip_id, 2);
+        if (_bPAJ7620U2SelectBank(pdrv, 0) < 0)
+        {
+            return -1;
+        }
+        if (bHalI2CMemRead(_if, PAJ_CHIPID_L, 1, (uint8_t *)&chip_id, 2) != 0)
+        {
+            return -1;
+        }
         b_log("chip id:%x\r\n", chip_id);
         if (chip_id == PAJ_CHIPID_VALUE)
         {
@@ -193,15 +203,22 @@ static int _bPAJ7620U2ReadId(bDriverInterface_t *pdrv)
     return -1;
 }
 
-static void _bPAJ7620U2SetGestureMode(bDriverInterface_t *pdrv)
+static int _bPAJ7620U2SetGestureMode(bDriverInterface_t *pdrv)
 {
     int i = 0;
     bDRIVER_GET_HALIF(_if, bPAJ7620U2_HalIf_t, pdrv);
     for (i = 0; i < (sizeof(bGestureTable) / (sizeof(uint8_t) * 2)); i++)
     {
-        bHalI2CMemWrite(_if, bGestureTable[i][0], 1, &bGestureTable[i][1], 1);
+        if (bHalI2CMemWrite(_if, bGestureTable[i][0], 1, &bGestureTable[i][1], 1) != 0)
+        {
+            return -1;
+        }
     }
-    _bPAJ7620U2SelectBank(pdrv, 0);
+    if (_bPAJ7620U2SelectBank(pdrv, 0) < 0)
+    {
+        return -1;
+    }
+    return 0;
 }
 
 static int _bPAJ7620U2Init(bDriverInterface_t *pdrv)
@@ -214,9 +231,15 @@ static int _bPAJ7620U2Init(bDriverInterface_t *pdrv)
     }
     for (i = 0; i < (sizeof(bPAJInitTable) / (sizeof(uint8_t) * 2)); i++)
     {
-        bHalI2CMemWrite(_if, bPAJInitTable[i][0], 1, &bPAJInitTable[i][1], 1);
+        if (bHalI2CMemWrite(_if, bPAJInitTable[i][0], 1, &bPAJInitTable[i][1], 1) != 0)
+        {
+            return -1;
+        }
     }
-    _bPAJ7620U2SelectBank(pdrv, 0);
+    if (_bPAJ7620U2SelectBank(pdrv, 0) < 0)
+    {
+        return -1;
+    }
     return 0;
 }
 
@@ -231,7 +254,10 @@ static int _bPAJ7620U2Read(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf
 {
     uint16_t gesture = 0;
     bDRIVER_GET_HALIF(_if, bPAJ7620U2_HalIf_t, pdrv);
-    bHalI2CMemRead(_if, PAJ_GET_INT_FLAG1, 1, (uint8_t *)&gesture, 2);
+    if (bHalI2CMemRead(_if, PAJ_GET_INT_FLAG1, 1, (uint8_t *)&gesture, 2) != 0)
+    {
+        return -1;
+    }
     if (pbuf == NULL || len < 2)
     {
         return -1;
@@ -252,7 +278,10 @@ static int _bPAJ7620U2Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 
 static int _bPAJ7620U2Open(bDriverInterface_t *pdrv)
 {
-    _bPAJ7620U2SetGestureMode(pdrv);
+    if (_bPAJ7620U2SetGestureMode(pdrv) < 0)
+    {
+        return -1;
+    }
     return 0;
 }
 
@@ -260,8 +289,14 @@ static int _bPAJ7620U2Close(bDriverInterface_t *pdrv)
 {
     uint8_t tmp = 0;
     bDRIVER_GET_HALIF(_if, bPAJ7620U2_HalIf_t, pdrv);
-    bHalI2CMemWrite(_if, PAJ_SET_INT_FLAG1, 1, &tmp, 1);
-    bHalI2CMemWrite(_if, PAJ_SET_INT_FLAG2, 1, &tmp, 1);
+    if (bHalI2CMemWrite(_if, PAJ_SET_INT_FLAG1, 1, &tmp, 1) != 0)
+    {
+        return -1;
+    }
+    if (bHalI2CMemWrite(_if, PAJ_SET_INT_FLAG2, 1, &tmp, 1) != 0)
+    {
+        return -1;
+    }
     return 0;
 }
 

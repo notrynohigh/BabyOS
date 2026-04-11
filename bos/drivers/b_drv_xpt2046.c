@@ -110,9 +110,12 @@ static void _bXPT2046_SPIW(bDriverInterface_t *pdrv, uint8_t dat)
 
 static uint8_t _bXPT2046_SPIR(bDriverInterface_t *pdrv)
 {
-    uint8_t tmp;
+    uint8_t tmp = 0;
     bDRIVER_GET_HALIF(_if, bXPT2046_HalIf_t, pdrv);
-    bHalSpiReceive(_if, &tmp, 1);
+    if (bHalSpiReceive(_if, &tmp, 1) != 0)
+    {
+        return 0;
+    }
     return tmp;
 }
 

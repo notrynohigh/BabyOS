@@ -34,7 +34,7 @@
 
 #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
 #include "hal/inc/b_hal.h"
-#include "modules/inc/b_mod_netif/b_mod_trans.h"
+#include "modules/inc/b_mod_tcpip.h"
 
 /**
  * \addtogroup BABYOS
@@ -222,6 +222,7 @@ bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
     }
     if (_bSSLDRBGInit(&p_ssl->random) < 0)
     {
+        bFree(p_ssl);
         return NULL;
     }
     mbedtls_ssl_init(&p_ssl->ssl_ctx);

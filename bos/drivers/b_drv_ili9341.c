@@ -389,6 +389,7 @@ static int _bILI9341FillBmp(bDriverInterface_t *pdrv, uint16_t x1, uint16_t y1, 
 static int _bILI9341Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     int retval = -1;
+    bDRIVER_GET_HALIF(_if, bILI9341_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(prv, bILI9341Private_t, pdrv);
     switch (cmd)
     {
@@ -424,6 +425,23 @@ static int _bILI9341Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             prv->width  = pinfo->width;
             prv->length = pinfo->length;
             retval      = 0;
+        }
+        break;
+        case bCMD_BACKLIGHT_CTL:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            if (((uint8_t *)param)[0] == 1)
+            {
+                LCD_IF_LIGHT_ON(_if);
+            }
+            else
+            {
+                LCD_IF_LIGHT_OFF(_if);
+            }
+            retval = 0;
         }
         break;
         default:
@@ -466,16 +484,12 @@ int bILI9341_Init(bDriverInterface_t *pdrv)
     bILI9341RunInfo[pdrv->drv_no].width  = 240;  // default
     bILI9341RunInfo[pdrv->drv_no].length = 320;  // default
 
-    if (((bILI9341_HalIf_t *)pdrv->hal_if)->reset.port != B_HAL_GPIO_INVALID &&
-        ((bILI9341_HalIf_t *)pdrv->hal_if)->reset.pin != B_HAL_PIN_INVALID)
-    {
-        bHalGpioWritePin(((bILI9341_HalIf_t *)pdrv->hal_if)->reset.port,
-                         ((bILI9341_HalIf_t *)pdrv->hal_if)->reset.pin, 0);
-        bHalDelayMs(100);
-        bHalGpioWritePin(((bILI9341_HalIf_t *)pdrv->hal_if)->reset.port,
-                         ((bILI9341_HalIf_t *)pdrv->hal_if)->reset.pin, 1);
-        bHalDelayMs(100);
-    }
+    LCD_IF_LIGHT_OFF((bILI9341_HalIf_t *)pdrv->hal_if);
+
+    LCD_IF_ENABLE_RESET((bILI9341_HalIf_t *)pdrv->hal_if);
+    bHalDelayMs(100);
+    LCD_IF_DISABLE_RESET((bILI9341_HalIf_t *)pdrv->hal_if);
+    bHalDelayMs(100);
 
     if (_bILI9341CheckId(pdrv) < 0)
     {
@@ -576,6 +590,9 @@ int bILI9341_Init(bDriverInterface_t *pdrv)
     _bLcdWriteCmd(pdrv, 0x11);
     bHalDelayMs(120);
     _bLcdWriteCmd(pdrv, 0x29);
+
+    LCD_IF_LIGHT_ON((bILI9341_HalIf_t *)pdrv->hal_if);
+
     return 0;
 }
 

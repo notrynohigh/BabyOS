@@ -114,12 +114,12 @@ static bButtonInstance_t *_bButtonFindInstance(void *pflex, uint8_t id)
     addr_val             = (((uint32_t)pflex) - id * sizeof(flex_button_t));
     while (p != NULL)
     {
-        bDeviceReadMessage(p->dev_no, &msg);
-        if (msg.v == addr_val)
+        if (bDeviceReadMessage(p->dev_no, &msg) < 0 || msg.v != addr_val)
         {
-            break;
+            p = p->next;
+            continue;
         }
-        p = p->next;
+        break;
     }
     return p;
 }
@@ -139,8 +139,16 @@ static uint8_t _bButtonRead(void *p)
     {
         return 0;
     }
-    bLseek(fd, btn->id);
-    bRead(fd, &tmp, 1);
+    if (bLseek(fd, btn->id) < 0)
+    {
+        bClose(fd);
+        return 0;
+    }
+    if (bRead(fd, &tmp, 1) != 1)
+    {
+        bClose(fd);
+        return 0;
+    }
     bClose(fd);
     return tmp;
 }

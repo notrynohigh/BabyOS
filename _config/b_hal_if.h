@@ -41,16 +41,17 @@
         .is_simulation = 0, .cs = {B_HAL_GPIOB, B_HAL_PIN1}, ._if.spi = B_HAL_SPI_1, \
     }
 
-#define HAL_ILI9320_IF                                       \
-    {                                                        \
-        .if_type = 2, .reset = {B_HAL_GPIOC, B_HAL_PIN7},    \
-        ._if._spi._spi =                                     \
-            {                                                \
-                .is_simulation = 0,                          \
-                .cs            = {B_HAL_GPIOD, B_HAL_PIN13}, \
-                ._if.spi       = B_HAL_SPI_1,                \
-            },                                               \
-        ._if._spi.rs = {B_HAL_GPIOD, B_HAL_PIN15},           \
+#define HAL_ILI9320_IF                                                                         \
+    {                                                                                          \
+        .if_type = 2, .reset = {B_HAL_GPIOC, B_HAL_PIN7}, .light = {B_HAL_GPIOB, B_HAL_PIN15}, \
+        .reset_pin_level = 0, .light_pin_level = 1,                                            \
+        ._if._spi._spi =                                                                       \
+            {                                                                                  \
+                .is_simulation = 0,                                                            \
+                .cs            = {B_HAL_GPIOC, B_HAL_PIN13},                                   \
+                ._if.spi       = B_HAL_SPI_2,                                                  \
+            },                                                                                 \
+        ._if._spi.rs = {B_HAL_GPIOC, B_HAL_PIN6},                                              \
     }
 
 #define HAL_ILI9341_IF HAL_ILI9320_IF
@@ -120,6 +121,11 @@
 #define HAL_TESTFLASH_IF             \
     {                                \
         .e_size = 4096, .w_size = 1, \
+    }
+
+#define HAL_TESTMAC_IF \
+    {                  \
+        0              \
     }
 
 #define HAL_XPT2046_IF                                                               \
@@ -239,14 +245,19 @@
                 .cs            = {B_HAL_GPIOB, B_HAL_PIN12},                   \
                 ._if.spi       = B_HAL_SPI_2,                                  \
             },                                                                 \
-        .drdy = {B_HAL_GPIOB, B_HAL_PIN10},                                    \
-        .rst  = {B_HAL_GPIOB, B_HAL_PIN11},                                    \
-    }                                
+        .drdy = {B_HAL_GPIOB, B_HAL_PIN10}, .rst = {B_HAL_GPIOB, B_HAL_PIN11}, \
+    }
 
-#define HAL_SMP3011_IF                                                                         \
-{                                                                                              \
-    .dev_addr = (0x78 << 1), .is_simulation = 1, ._if.simulating_i2c.clk = {B_HAL_GPIOG, B_HAL_PIN7}, \
-    ._if.simulating_i2c.sda = {B_HAL_GPIOG, B_HAL_PIN6}, ._if.simulating_i2c.frq = 100000     \
-}
+#define HAL_SMP3011_IF                                                                        \
+    {                                                                                         \
+        .dev_addr = (0x78 << 1), .is_simulation = 1,                                          \
+        ._if.simulating_i2c.clk = {B_HAL_GPIOG, B_HAL_PIN7},                                  \
+        ._if.simulating_i2c.sda = {B_HAL_GPIOG, B_HAL_PIN6}, ._if.simulating_i2c.frq = 100000 \
+    }
+#define HAL_ENC28J60_IF                                                  \
+    {                                                                    \
+        ._spi.is_simulation = 0, ._spi.cs = {B_HAL_GPIOA, B_HAL_PIN4},   \
+        ._spi._if.spi = B_HAL_SPI_1, .reset = {B_HAL_GPIOA, B_HAL_PIN8}, \
+    }
 
 #endif

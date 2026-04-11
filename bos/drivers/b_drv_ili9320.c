@@ -199,6 +199,7 @@ static int _bILI9320Write(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf
 static int _bILI9320Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     int retval = -1;
+    bDRIVER_GET_HALIF(_if, bILI9320_HalIf_t, pdrv);
     bDRIVER_GET_PRIVATE(prv, bILI9320Private_t, pdrv);
     switch (cmd)
     {
@@ -212,6 +213,23 @@ static int _bILI9320Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             prv->width  = pinfo->width;
             prv->length = pinfo->length;
             retval      = 0;
+        }
+        break;
+        case bCMD_BACKLIGHT_CTL:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            if (((uint8_t *)param)[0] == 1)
+            {
+                LCD_IF_LIGHT_ON(_if);
+            }
+            else
+            {
+                LCD_IF_LIGHT_OFF(_if);
+            }
+            retval = 0;
         }
         break;
         default:
@@ -238,16 +256,12 @@ int bILI9320_Init(bDriverInterface_t *pdrv)
     bILI9320RunInfo[pdrv->drv_no].width  = 240;  // default
     bILI9320RunInfo[pdrv->drv_no].length = 320;  // default
 
-    if (((bILI9320_HalIf_t *)pdrv->hal_if)->reset.port != B_HAL_GPIO_INVALID &&
-        ((bILI9320_HalIf_t *)pdrv->hal_if)->reset.pin != B_HAL_PIN_INVALID)
-    {
-        bHalGpioWritePin(((bILI9320_HalIf_t *)pdrv->hal_if)->reset.port,
-                         ((bILI9320_HalIf_t *)pdrv->hal_if)->reset.pin, 0);
-        bHalDelayMs(100);
-        bHalGpioWritePin(((bILI9320_HalIf_t *)pdrv->hal_if)->reset.port,
-                         ((bILI9320_HalIf_t *)pdrv->hal_if)->reset.pin, 1);
-        bHalDelayMs(100);
-    }
+    LCD_IF_LIGHT_OFF((bILI9320_HalIf_t *)pdrv->hal_if);
+
+    LCD_IF_ENABLE_RESET((bILI9320_HalIf_t *)pdrv->hal_if);
+    bHalDelayMs(100);
+    LCD_IF_DISABLE_RESET((bILI9320_HalIf_t *)pdrv->hal_if);
+    bHalDelayMs(100);
 
     _bLcdWriteCmd(pdrv, 0x0);
     if (_bLcdReadData(pdrv) != 0x9320)
@@ -255,9 +269,9 @@ int bILI9320_Init(bDriverInterface_t *pdrv)
         return -1;
     }
     _bILI9320WriteReg(pdrv, 0x00, 0x0000);
-    _bILI9320WriteReg(pdrv, 0x01, 0x0100);    // Driver Output Contral.
-    _bILI9320WriteReg(pdrv, 0x02, 0x0700);    // LCD Driver Waveform Contral.
-    _bILI9320WriteReg(pdrv, 0x03, 0x1010);    // Entry Mode Set.
+    _bILI9320WriteReg(pdrv, 0x01, 0x0100);  // Driver Output Contral.
+    _bILI9320WriteReg(pdrv, 0x02, 0x0700);  // LCD Driver Waveform Contral.
+    _bILI9320WriteReg(pdrv, 0x03, 0x1010);  // Entry Mode Set.
 
     _bILI9320WriteReg(pdrv, 0x04, 0x0000);    // Scalling Contral.
     _bILI9320WriteReg(pdrv, 0x08, 0x0202);    // Display Contral 2.(0x0207)
@@ -267,7 +281,7 @@ int bILI9320_Init(bDriverInterface_t *pdrv)
     _bILI9320WriteReg(pdrv, 0x0d, 0x0000);    // Frame Maker Position.
     _bILI9320WriteReg(pdrv, 0x0f, 0x0000);    // Extern Display Interface Contral 2.
     bHalDelayMs(50);
-    _bILI9320WriteReg(pdrv, 0x07, 0x0101);    // Display Contral.
+    _bILI9320WriteReg(pdrv, 0x07, 0x0101);  // Display Contral.
     bHalDelayMs(50);
     _bILI9320WriteReg(
         pdrv, 0x10,
@@ -278,22 +292,22 @@ int bILI9320_Init(bDriverInterface_t *pdrv)
     _bILI9320WriteReg(pdrv, 0x29, 0x0000);                          // Power Control 7.
 
     _bILI9320WriteReg(pdrv, 0x2b, (1 << 14) | (1 << 4));
-    _bILI9320WriteReg(pdrv, 0x50, 0);                     // Set X Star
+    _bILI9320WriteReg(pdrv, 0x50, 0);  // Set X Star
 
-    _bILI9320WriteReg(pdrv, 0x51, 239);                   // Set Y Star
-    _bILI9320WriteReg(pdrv, 0x52, 0);                     // Set Y End.t.
-    _bILI9320WriteReg(pdrv, 0x53, 319);                   //
+    _bILI9320WriteReg(pdrv, 0x51, 239);  // Set Y Star
+    _bILI9320WriteReg(pdrv, 0x52, 0);    // Set Y End.t.
+    _bILI9320WriteReg(pdrv, 0x53, 319);  //
 
-    _bILI9320WriteReg(pdrv, 0x60, 0x2700);                // Driver Output Control.
-    _bILI9320WriteReg(pdrv, 0x61, 0x0001);                // Driver Output Control.
-    _bILI9320WriteReg(pdrv, 0x6a, 0x0000);                // Vertical Srcoll Control.
+    _bILI9320WriteReg(pdrv, 0x60, 0x2700);  // Driver Output Control.
+    _bILI9320WriteReg(pdrv, 0x61, 0x0001);  // Driver Output Control.
+    _bILI9320WriteReg(pdrv, 0x6a, 0x0000);  // Vertical Srcoll Control.
 
-    _bILI9320WriteReg(pdrv, 0x80, 0x0000);                // Display Position? Partial Display 1.
-    _bILI9320WriteReg(pdrv, 0x81, 0x0000);                // RAM Address Start? Partial Display 1.
-    _bILI9320WriteReg(pdrv, 0x82, 0x0000);                // RAM Address End-Partial Display 1.
-    _bILI9320WriteReg(pdrv, 0x83, 0x0000);                // Displsy Position? Partial Display 2.
-    _bILI9320WriteReg(pdrv, 0x84, 0x0000);                // RAM Address Start? Partial Display 2.
-    _bILI9320WriteReg(pdrv, 0x85, 0x0000);                // RAM Address End? Partial Display 2.
+    _bILI9320WriteReg(pdrv, 0x80, 0x0000);  // Display Position? Partial Display 1.
+    _bILI9320WriteReg(pdrv, 0x81, 0x0000);  // RAM Address Start? Partial Display 1.
+    _bILI9320WriteReg(pdrv, 0x82, 0x0000);  // RAM Address End-Partial Display 1.
+    _bILI9320WriteReg(pdrv, 0x83, 0x0000);  // Displsy Position? Partial Display 2.
+    _bILI9320WriteReg(pdrv, 0x84, 0x0000);  // RAM Address Start? Partial Display 2.
+    _bILI9320WriteReg(pdrv, 0x85, 0x0000);  // RAM Address End? Partial Display 2.
 
     _bILI9320WriteReg(pdrv, 0x90, (0 << 7) | (16 << 0));  // Frame Cycle Contral.(0x0013)
     _bILI9320WriteReg(pdrv, 0x92, 0x0000);                // Panel Interface Contral 2.(0x0000)
@@ -303,6 +317,8 @@ int bILI9320_Init(bDriverInterface_t *pdrv)
     _bILI9320WriteReg(pdrv, 0x98, 0x0000);                // Frame Cycle Contral.
     _bILI9320WriteReg(pdrv, 0x07, 0x0173);                //(0x0173)
 
+    LCD_IF_LIGHT_ON((bILI9320_HalIf_t *)pdrv->hal_if);
+
     return 0;
 }
 
@@ -311,7 +327,7 @@ int bILI9320_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_ILI9320, bILI9320_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

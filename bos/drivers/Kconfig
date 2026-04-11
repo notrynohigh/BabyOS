@@ -13,13 +13,21 @@ config MATRIX_KEYS_COLUMNS
     int "Maximum number of columns of matrix keys"
     default 4
 
-config ESP12F_CMD_BUF_LEN  
-    int "ESP12F Cmd Buffer Length"
+config ESP12F_CMD_TX_BUF_LEN  
+    int "ESP12F Cmd TX Buffer Length"
     default 128 
+
+config ESP12F_CMD_RX_BUF_LEN  
+    int "ESP12F Cmd RX Buffer Length"
+    default 1024     
 
 config ESP12F_CMD_TIMEOUT  
     int "ESP12F Cmd Timeout (ms)"
-    default 5000       
+    default 5000    
+
+config ESP12F_LISTEN_PCB_NUMBER
+    int "ESP12F Listen Pcb Number"
+    default 2
 
 config RS485_RX_BUF_LEN
     int "RS485 Rx Buffer Length"

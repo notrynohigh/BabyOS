@@ -75,14 +75,27 @@ typedef struct
             bHalSPIIf_t        _spi;
         } _spi;
     } _if;
-    // If reset pin is not used, set it to {B_HAL_GPIO_INVALID, B_HAL_PIN_INVALID}
+    // If reset or light pin is not used, set it to {B_HAL_GPIO_INVALID, B_HAL_PIN_INVALID}
     bHalGPIOInstance_t reset;
+    bHalGPIOInstance_t light;
+    uint8_t            reset_pin_level;
+    uint8_t            light_pin_level;
     uint8_t            if_type;  // 0: _io  1: rw_addr  2: _spi
 } bLCD_HalIf_t;
 
 #define LCD_IF_TYPE_IO (0)
 #define LCD_IF_TYPE_RWADDR (1)
 #define LCD_IF_TYPE_SPI (2)
+
+#define LCD_IF_ENABLE_RESET(_if) \
+    bHalGpioWritePin((_if)->reset.port, (_if)->reset.pin, (_if)->reset_pin_level)
+#define LCD_IF_DISABLE_RESET(_if) \
+    bHalGpioWritePin((_if)->reset.port, (_if)->reset.pin, !((_if)->reset_pin_level))
+
+#define LCD_IF_LIGHT_ON(_if) \
+    bHalGpioWritePin((_if)->light.port, (_if)->light.pin, (_if)->light_pin_level)
+#define LCD_IF_LIGHT_OFF(_if) \
+    bHalGpioWritePin((_if)->light.port, (_if)->light.pin, !((_if)->light_pin_level))
 
 /**
  * \}

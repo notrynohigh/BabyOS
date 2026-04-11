@@ -120,6 +120,10 @@ static int _b24CXXWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
         off += l_c;
         pbuf += l_c;
         len -= l_c;
+        if (_priv->page_size == 0)
+        {
+            return -1;
+        }
         for (i = 0; i < len / (_priv->page_size); i++)
         {
 					if(bHalI2CMemWrite(_if, off, 1 + (_priv->capacity > 256), pbuf, _priv->page_size) != 0)

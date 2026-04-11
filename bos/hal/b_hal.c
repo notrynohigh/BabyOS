@@ -174,7 +174,7 @@ void bHalDelayMs(uint16_t xms)
 
 void bHalDelayUs(uint32_t xus)
 {
-    volatile uint32_t delay = xus * bUsDelayParam;
+    volatile uint64_t delay = (uint64_t)xus * bUsDelayParam;
     while (delay--)
         ;
 }
