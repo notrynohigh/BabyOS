@@ -10,32 +10,32 @@
  * Copyright (c) 2020 Bean
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * of this software and associated documentation files (the "Software")
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  *******************************************************************************
  */
 
 /*Includes ----------------------------------------------*/
-
 #include "inc/algo_md5.h"
 
 #include <string.h>
 
 #if (defined(_ALGO_MD5_ENABLE) && (_ALGO_MD5_ENABLE == 1))
+
 /**
  * \addtogroup ALGORITHM
  * \{
@@ -50,14 +50,12 @@
  * \defgroup MD5_Private_TypesDefinitions
  * \{
  */
-
 typedef struct
 {
-    uint32_t total[2];   /*!< number of bytes processed  */
-    uint32_t state[4];   /*!< intermediate digest state  */
-    uint8_t  buffer[64]; /*!< data block being processed */
+    uint32_t total[2];
+    uint32_t state[4];
+    uint8_t  buffer[64];
 } md5_context;
-
 /**
  * \}
  */
@@ -65,10 +63,6 @@ typedef struct
 /**
  * \defgroup MD5_Private_Defines
  * \{
- */
-
-/*
- * 32-bit integer manipulation macros (little endian)
  */
 #ifndef GET_ULONG_LE
 #define GET_ULONG_LE(n, b, i)                                                  \
@@ -87,7 +81,6 @@ typedef struct
         (b)[(i) + 3] = (uint8_t)((n) >> 24); \
     }
 #endif
-
 /**
  * \}
  */
@@ -105,11 +98,7 @@ const char hexstring[] = "0123456789abcdef";
  * \defgroup MD5_Private_Functions
  * \{
  */
-
-/*
- * MD5 context setup
- */
-static void md5_starts(md5_context* ctx)
+static void md5_starts(md5_context *ctx)
 {
     ctx->total[0] = 0;
     ctx->total[1] = 0;
@@ -120,7 +109,7 @@ static void md5_starts(md5_context* ctx)
     ctx->state[3] = 0x10325476;
 }
 
-static void md5_process(md5_context* ctx, const uint8_t data[64])
+static void md5_process(md5_context *ctx, const uint8_t data[64])
 {
     uint32_t X[16], A, B, C, D;
 
@@ -142,7 +131,6 @@ static void md5_process(md5_context* ctx, const uint8_t data[64])
     GET_ULONG_LE(X[15], data, 60);
 
 #define S(x, n) ((x << n) | ((x & 0xFFFFFFFF) >> (32 - n)))
-
 #define P(a, b, c, d, k, s, t)      \
     {                               \
         a += F(b, c, d) + X[k] + t; \
@@ -155,7 +143,6 @@ static void md5_process(md5_context* ctx, const uint8_t data[64])
     D = ctx->state[3];
 
 #define F(x, y, z) (z ^ (x & (y ^ z)))
-
     P(A, B, C, D, 0, 7, 0xD76AA478);
     P(D, A, B, C, 1, 12, 0xE8C7B756);
     P(C, D, A, B, 2, 17, 0x242070DB);
@@ -172,11 +159,9 @@ static void md5_process(md5_context* ctx, const uint8_t data[64])
     P(D, A, B, C, 13, 12, 0xFD987193);
     P(C, D, A, B, 14, 17, 0xA679438E);
     P(B, C, D, A, 15, 22, 0x49B40821);
-
 #undef F
 
 #define F(x, y, z) (y ^ (z & (x ^ y)))
-
     P(A, B, C, D, 1, 5, 0xF61E2562);
     P(D, A, B, C, 6, 9, 0xC040B340);
     P(C, D, A, B, 11, 14, 0x265E5A51);
@@ -193,11 +178,9 @@ static void md5_process(md5_context* ctx, const uint8_t data[64])
     P(D, A, B, C, 2, 9, 0xFCEFA3F8);
     P(C, D, A, B, 7, 14, 0x676F02D9);
     P(B, C, D, A, 12, 20, 0x8D2A4C8A);
-
 #undef F
 
 #define F(x, y, z) (x ^ y ^ z)
-
     P(A, B, C, D, 5, 4, 0xFFFA3942);
     P(D, A, B, C, 8, 11, 0x8771F681);
     P(C, D, A, B, 11, 16, 0x6D9D6122);
@@ -214,11 +197,9 @@ static void md5_process(md5_context* ctx, const uint8_t data[64])
     P(D, A, B, C, 12, 11, 0xE6DB99E5);
     P(C, D, A, B, 15, 16, 0x1FA27CF8);
     P(B, C, D, A, 2, 23, 0xC4AC5665);
-
 #undef F
 
 #define F(x, y, z) (y ^ (x | ~z))
-
     P(A, B, C, D, 0, 6, 0xF4292244);
     P(D, A, B, C, 7, 10, 0x432AFF97);
     P(C, D, A, B, 14, 15, 0xAB9423A7);
@@ -235,7 +216,6 @@ static void md5_process(md5_context* ctx, const uint8_t data[64])
     P(D, A, B, C, 11, 10, 0xBD3AF235);
     P(C, D, A, B, 2, 15, 0x2AD7D2BB);
     P(B, C, D, A, 9, 21, 0xEB86D391);
-
 #undef F
 
     ctx->state[0] += A;
@@ -244,29 +224,20 @@ static void md5_process(md5_context* ctx, const uint8_t data[64])
     ctx->state[3] += D;
 }
 
-/*
- * MD5 process buffer
- */
-static void md5_update(md5_context* ctx, const uint8_t* input, int ilen)
+static void md5_update(md5_context *ctx, const uint8_t *input, uint32_t ilen)
 {
-    int      fill;
-    uint32_t left;
-
-    if (ilen <= 0)
-        return;
+    uint32_t fill, left;
 
     left = ctx->total[0] & 0x3F;
     fill = 64 - left;
 
     ctx->total[0] += ilen;
-    ctx->total[0] &= 0xFFFFFFFF;
-
-    if (ctx->total[0] < (uint32_t)ilen)
+    if (ctx->total[0] < ilen)
         ctx->total[1]++;
 
     if (left && ilen >= fill)
     {
-        memcpy((void*)(ctx->buffer + left), input, fill);
+        memcpy(ctx->buffer + left, input, fill);
         md5_process(ctx, ctx->buffer);
         input += fill;
         ilen -= fill;
@@ -282,7 +253,7 @@ static void md5_update(md5_context* ctx, const uint8_t* input, int ilen)
 
     if (ilen > 0)
     {
-        memcpy((void*)(ctx->buffer + left), input, ilen);
+        memcpy(ctx->buffer + left, input, ilen);
     }
 }
 
@@ -291,17 +262,14 @@ static const uint8_t md5_padding[64] = {0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                                         0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                         0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-/*
- * MD5 final digest
- */
-static void md5_finish(md5_context* ctx, uint8_t output[16])
+static void md5_finish(md5_context *ctx, uint8_t output[16])
 {
     uint32_t last, padn;
     uint32_t high, low;
     uint8_t  msglen[8];
 
+    low  = ctx->total[0] << 3;
     high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
-    low  = (ctx->total[0] << 3);
 
     PUT_ULONG_LE(low, msglen, 0);
     PUT_ULONG_LE(high, msglen, 4);
@@ -318,18 +286,13 @@ static void md5_finish(md5_context* ctx, uint8_t output[16])
     PUT_ULONG_LE(ctx->state[3], output, 12);
 }
 
-/*
- * output = MD5( input buffer )
- */
-static void md5(uint8_t* input, int ilen, uint8_t output[16])
+static void md5(const uint8_t *input, uint32_t ilen, uint8_t output[16])
 {
     md5_context ctx;
-    memset(&ctx, 0, sizeof(md5_context));
     md5_starts(&ctx);
     md5_update(&ctx, input, ilen);
     md5_finish(&ctx, output);
 }
-
 /**
  * \}
  */
@@ -339,59 +302,59 @@ static void md5(uint8_t* input, int ilen, uint8_t output[16])
  * \{
  */
 
-void md5_16(uint8_t* input, uint32_t ilen, uint8_t output[16])
+void md5_hex_16(uint8_t *input, uint32_t ilen, uint8_t output[16])
 {
-    uint8_t out[16], i = 0;
-    if (input == NULL || ilen == 0)
-    {
+    if (output == NULL)
         return;
-    }
-    md5(input, ilen, out);
-    for (i = 0; i < 8; i++)
-    {
-        output[i * 2]     = hexstring[(out[4 + i] & 0xf0) >> 4];
-        output[i * 2 + 1] = hexstring[(out[4 + i] & 0x0f) >> 0];
-    }
-}
-
-void md5_32(uint8_t* input, uint32_t ilen, uint8_t output[32])
-{
-    uint8_t out[16], i = 0;
-    if (input == NULL || ilen == 0)
-    {
-        return;
-    }
-    md5(input, ilen, out);
-    for (i = 0; i < 16; i++)
-    {
-        output[i * 2]     = hexstring[(out[i] & 0xf0) >> 4];
-        output[i * 2 + 1] = hexstring[(out[i] & 0x0f) >> 0];
-    }
-}
-
-void md5_hex_16(uint8_t* input, uint32_t ilen, uint8_t output[16])
-{
-    if (input == NULL || ilen == 0)
-    {
-        return;
-    }
     md5(input, ilen, output);
 }
 
-void md5_hex_8(uint8_t* input, uint32_t ilen, uint8_t output[8])
+void md5_16(uint8_t *input, uint32_t ilen, uint8_t output[16])
 {
-    uint8_t out[16], i = 0;
-    if (input == NULL || ilen == 0)
-    {
+    uint8_t  out[16];
+    uint32_t i;
+
+    if (output == NULL)
         return;
+
+    md5(input, ilen, out);
+    for (i = 0; i < 8; i++)
+    {
+        output[i * 2]     = hexstring[(out[4 + i] >> 4) & 0x0F];
+        output[i * 2 + 1] = hexstring[out[4 + i] & 0x0F];
     }
+}
+
+void md5_32(uint8_t *input, uint32_t ilen, uint8_t output[32])
+{
+    uint8_t  out[16];
+    uint32_t i;
+
+    if (output == NULL)
+        return;
+
+    md5(input, ilen, out);
+    for (i = 0; i < 16; i++)
+    {
+        output[i * 2]     = hexstring[(out[i] >> 4) & 0x0F];
+        output[i * 2 + 1] = hexstring[out[i] & 0x0F];
+    }
+}
+
+void md5_hex_8(uint8_t *input, uint32_t ilen, uint8_t output[8])
+{
+    uint8_t  out[16];
+    uint32_t i;
+
+    if (output == NULL)
+        return;
+
     md5(input, ilen, out);
     for (i = 0; i < 8; i++)
     {
         output[i] = out[4 + i];
     }
 }
-
 /**
  * \}
  */

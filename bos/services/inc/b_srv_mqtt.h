@@ -42,8 +42,7 @@ extern "C" {
 
 #if (defined(_MQTT_SERVICE_ENABLE) && (_MQTT_SERVICE_ENABLE == 1))
 
-#include "modules/inc/b_mod_netif/b_mod_link.h"
-#include "modules/inc/b_mod_netif/b_mod_trans.h"
+#include "modules/inc/b_mod_tcpip.h"
 
 /**
  * \addtogroup BABYOS

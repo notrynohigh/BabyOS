@@ -307,6 +307,7 @@ static int _bMqttRead(bMqttSrvInstance_t *pinstance, uint8_t *pbuf, uint16_t len
     }
     else
     {
+        return -1;
     }
     return rlen;
 }
@@ -325,6 +326,7 @@ static int _bMqttWrite(bMqttSrvInstance_t *pinstance, uint8_t *pbuf, uint16_t le
     }
     else
     {
+        return -1;
     }
     return rlen;
 }
@@ -388,7 +390,11 @@ static int _bMqttConnect(bMqttSrvInstance_t *pinstance)
         pbuf = NULL;
         return -1;
     }
-    _bMqttWrite(pinstance, pbuf, len);
+    if (_bMqttWrite(pinstance, pbuf, len) < 0)
+    {
+        _bMqttFree(pbuf);
+        return -1;
+    }
     _bMqttFree(pbuf);
     pbuf = NULL;
     return 0;
@@ -424,8 +430,10 @@ static int _bMqttSubscribe(bMqttSrvInstance_t *pinstance)
             b_log("sub:%d\r\n", pnode->pack_id);
             if (pnode->pack != NULL)
             {
-                bSend(pinstance->sock_fd, (uint8_t *)pnode->pack, pnode->pack_len, NULL);
-                break;
+                if (bSend(pinstance->sock_fd, (uint8_t *)pnode->pack, pnode->pack_len, NULL) > 0)
+                {
+                    break;
+                }
             }
         }
     }
@@ -436,11 +444,17 @@ static int _bMqttSubscribeAckHandle(bMqttPack_t *pack)
 {
     int      index   = 1;
     uint16_t pack_id = 0;
-    while (pack->pack[index] & 0x80)
+    // 跳过所有返回码字节 (QoS 0-2 对应不同的字节数)
+    while (index < pack->pack_len && pack->pack[index] & 0x80)
     {
         index += 1;
     }
-    index += 1;
+    if (index + 1 >= pack->pack_len)
+    {
+        b_log_e("MQTT suback packet too short\r\n");
+        return -1;
+    }
+    index += 1;  // 跳过第一个返回码
     pack_id |= pack->pack[index];
     pack_id <<= 8;
     pack_id |= pack->pack[index + 1];
@@ -547,8 +561,9 @@ static int _bMqttReadPacket(bMqttSrvInstance_t *pinstance, bMqttPack_t *pack)
     memcpy(pack->pack + 1, buf, len);
     /* 3. read the rest of the buffer using a callback to supply the rest of the data */
     if (remain_len > 0 &&
-        (rc = _bMqttRead(pinstance, pack->pack + 1 + len, remain_len) != remain_len))
+        (rc = _bMqttRead(pinstance, pack->pack + 1 + len, remain_len)) != remain_len)
     {
+        b_log_e("read packet data failed, expect %d, got %d\r\n", remain_len, rc);
         goto exit;
     }
     header.byte = fix_byte;
@@ -615,8 +630,12 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
                 bTaskRestart(pt);
             }
             b_log("connect:%s:%d\r\n", pinstance->host, pinstance->port);
-            bConnect(sock_fd, pinstance->host, pinstance->port);
-            PT_WAIT_UNTIL(pt, bSockIsWriteable(sock_fd), MS2TICKS(3000));
+            if (bConnect(sock_fd, pinstance->host, pinstance->port) < 0)
+            {
+                SOCKET_SHUTDOWN(pt, sock_fd);
+                bTaskRestart(pt);
+            }
+            PT_WAIT_UNTIL(pt, bSocketIsConnected(sock_fd) == 1, MS2TICKS(3000));
             if (PT_WAIT_IS_TIMEOUT(pt))
             {
                 b_log_e("connect timeout\r\n");
@@ -814,6 +833,7 @@ void bMqttSrvDestroy()
     {
         return;
     }
+    pbMqttInstance = NULL;
     if (pinstance->task_id > 0)
     {
         bTaskRemove(pinstance->task_id);
@@ -844,23 +864,17 @@ void bMqttSrvDestroy()
     }
     bMqttSubscribeNode_t *pnode = NULL;
     struct list_head     *pos   = NULL;
-    list_for_each(pos, &bMqttSubscribeListHead)
+    struct list_head     *n     = NULL;
+    list_for_each_safe(pos, n, &bMqttSubscribeListHead)
     {
-        if (pnode != NULL)
-        {
-            _bMqttFree(pnode);
-            pnode = NULL;
-        }
         pnode = list_entry(pos, bMqttSubscribeNode_t, node);
         _bMqttFree(pnode->pack);
         pnode->pack = NULL;
         __list_del(pos->prev, pos->next);
-    }
-    if (pnode != NULL)
-    {
         _bMqttFree(pnode);
-        pnode = NULL;
     }
+    pnode = NULL;
+    _bMqttFree(pinstance);
 }
 
 /**

@@ -200,7 +200,7 @@ static unsigned char CRC8(unsigned char *ptr, unsigned char len)
 }
 #endif
 
-static void I2C_WriteReg(bDriverInterface_t *pdrv,uint8_t reg_addr, uint8_t *reg_data, uint8_t count)
+static int I2C_WriteReg(bDriverInterface_t *pdrv,uint8_t reg_addr, uint8_t *reg_data, uint8_t count)
 {
 	bDRIVER_GET_HALIF(_if, bBQ769X2_HalIf_t, pdrv);
 
@@ -226,12 +226,19 @@ static void I2C_WriteReg(bDriverInterface_t *pdrv,uint8_t reg_addr, uint8_t *reg
 			TX_Buffer[j] = CRC8(temp_crc_buffer,1);
 			j = j + 1;
 		}
-		
-		bHalI2CMemWrite(_if, reg_addr, 1, TX_Buffer, crc_count);
+
+		if (bHalI2CMemWrite(_if, reg_addr, 1, TX_Buffer, crc_count) != 0)
+		{
+			return -1;
+		}
 	}
-#else 
-	bHalI2CMemWrite(_if, reg_addr, 1, reg_data, count);
+#else
+	if (bHalI2CMemWrite(_if, reg_addr, 1, reg_data, count) != 0)
+	{
+		return -1;
+	}
 #endif
+	return 0;
 }
 
 static int I2C_ReadReg(bDriverInterface_t *pdrv,uint8_t reg_addr, uint8_t *reg_data, uint8_t count)
@@ -250,7 +257,10 @@ static int I2C_ReadReg(bDriverInterface_t *pdrv,uint8_t reg_addr, uint8_t *reg_d
 		unsigned char CRCc = 0;
 		uint8_t temp_crc_buffer [3];
 
-		bHalI2CMemRead(_if, reg_addr, 1, ReceiveBuffer, crc_count);
+		if (bHalI2CMemRead(_if, reg_addr, 1, ReceiveBuffer, crc_count) != 0)
+		{
+			return -1;
+		}
 		uint8_t crc1stByteBuffer [4] = {0x10, reg_addr, 0x11, ReceiveBuffer[0]};
 		CRCc = CRC8(crc1stByteBuffer,4);
 		if (CRCc != ReceiveBuffer[1])
@@ -273,7 +283,10 @@ static int I2C_ReadReg(bDriverInterface_t *pdrv,uint8_t reg_addr, uint8_t *reg_d
 		CopyArray(RX_Buffer, reg_data, crc_count);
 	}
 #else
-	bHalI2CMemRead(_if, reg_addr, 1, reg_data, count);
+	if (bHalI2CMemRead(_if, reg_addr, 1, reg_data, count) != 0)
+	{
+		return -1;
+	}
 #endif
 	return 0;
 }
@@ -291,31 +304,31 @@ static void BQ769x2_SetRegister(bDriverInterface_t *pdrv,uint16_t reg_addr, uint
 	switch(datalen)
     {
 		case 1: //1 byte datalength
-      		I2C_WriteReg(pdrv, 0x3E, TX_RegData, 3);
+			if (I2C_WriteReg(pdrv, 0x3E, TX_RegData, 3) < 0) {}
 			bHalDelayUs(2000);
-			TX_Buffer[0] = Checksum(TX_RegData, 3); 
+			TX_Buffer[0] = Checksum(TX_RegData, 3);
 			TX_Buffer[1] = 0x05; //combined length of register address and data
-      		I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2); // Write the checksum and length
+			if (I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2) < 0) {} // Write the checksum and length
 			bHalDelayUs(2000);
 			break;
 		case 2: //2 byte datalength
 			TX_RegData[3] = (reg_data >> 8) & 0xff;
-			I2C_WriteReg(pdrv, 0x3E, TX_RegData, 4);
+			if (I2C_WriteReg(pdrv, 0x3E, TX_RegData, 4) < 0) {}
 			bHalDelayUs(2000);
-			TX_Buffer[0] = Checksum(TX_RegData, 4); 
+			TX_Buffer[0] = Checksum(TX_RegData, 4);
 			TX_Buffer[1] = 0x06; //combined length of register address and data
-      		I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2); // Write the checksum and length
+			if (I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2) < 0) {} // Write the checksum and length
 			bHalDelayUs(2000);
 			break;
 		case 4: //4 byte datalength, Only used for CCGain and Capacity Gain
 			TX_RegData[3] = (reg_data >> 8) & 0xff;
 			TX_RegData[4] = (reg_data >> 16) & 0xff;
 			TX_RegData[5] = (reg_data >> 24) & 0xff;
-			I2C_WriteReg(pdrv, 0x3E, TX_RegData, 6);
+			if (I2C_WriteReg(pdrv, 0x3E, TX_RegData, 6) < 0) {}
 			bHalDelayUs(2000);
-			TX_Buffer[0] = Checksum(TX_RegData, 6); 
+			TX_Buffer[0] = Checksum(TX_RegData, 6);
 			TX_Buffer[1] = 0x08; //combined length of register address and data
-      		I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2); // Write the checksum and length
+			if (I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2) < 0) {} // Write the checksum and length
 			bHalDelayUs(2000);
 			break;
     }
@@ -330,7 +343,7 @@ static void CommandSubcommands(bDriverInterface_t *pdrv,uint16_t command) //For 
 	TX_Reg[0] = command & 0xff;
 	TX_Reg[1] = (command >> 8) & 0xff;
 
-	I2C_WriteReg(pdrv, 0x3E,TX_Reg,2); 
+	if (I2C_WriteReg(pdrv, 0x3E,TX_Reg,2) < 0) {}
 	bHalDelayUs(2000);
 }
 
@@ -344,33 +357,33 @@ static void Subcommands(bDriverInterface_t *pdrv,uint16_t command, uint16_t data
 
 	//TX_Reg in little endian format
 	TX_Reg[0] = command & 0xff;
-	TX_Reg[1] = (command >> 8) & 0xff; 
+	TX_Reg[1] = (command >> 8) & 0xff;
 
 	if (type == R) {//read
-		I2C_WriteReg(pdrv, 0x3E,TX_Reg,2);
+		if (I2C_WriteReg(pdrv, 0x3E,TX_Reg,2) < 0) {}
 		bHalDelayUs(2000);
 		I2C_ReadReg(pdrv, 0x40, RX_32Byte, 32); //RX_32Byte is a global variable
 	}
 	else if (type == W) {
 		//FET_Control, REG12_Control
-		TX_Reg[2] = data & 0xff; 
-		I2C_WriteReg(pdrv, 0x3E,TX_Reg,3);
+		TX_Reg[2] = data & 0xff;
+		if (I2C_WriteReg(pdrv, 0x3E,TX_Reg,3) < 0) {}
 		bHalDelayUs(1000);
 		TX_Buffer[0] = Checksum(TX_Reg, 3);
 		TX_Buffer[1] = 0x05; //combined length of registers address and data
-		I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2);
-		bHalDelayUs(1000); 
+		if (I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2) < 0) {}
+		bHalDelayUs(1000);
 	}
 	else if (type == W2){ //write data with 2 bytes
 		//CB_Active_Cells, CB_SET_LVL
-		TX_Reg[2] = data & 0xff; 
+		TX_Reg[2] = data & 0xff;
 		TX_Reg[3] = (data >> 8) & 0xff;
-		I2C_WriteReg(pdrv, 0x3E,TX_Reg,4);
+		if (I2C_WriteReg(pdrv, 0x3E,TX_Reg,4) < 0) {}
 		bHalDelayUs(1000);
-		TX_Buffer[0] = Checksum(TX_Reg, 4); 
+		TX_Buffer[0] = Checksum(TX_Reg, 4);
 		TX_Buffer[1] = 0x06; //combined length of registers address and data
-		I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2);
-		bHalDelayUs(1000); 
+		if (I2C_WriteReg(pdrv, 0x60, TX_Buffer, 2) < 0) {}
+		bHalDelayUs(1000);
 	}
 }
 
@@ -389,7 +402,7 @@ static void DirectCommands(bDriverInterface_t *pdrv,uint8_t command, uint16_t da
 	}
 	if (type == W) {//write
     //Control_status, alarm_status, alarm_enable all 2 bytes long
-		I2C_WriteReg(pdrv, command,TX_data,2);
+		if (I2C_WriteReg(pdrv, command,TX_data,2) < 0) {}
 		bHalDelayUs(2000);
 	}
 }

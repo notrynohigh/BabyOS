@@ -71,20 +71,33 @@ extern "C" {
  * \{
  */
 
-typedef void (*pAtCmdCb_t)(uint8_t isok, void *user_data);
-typedef void (*pAtNewDataCb_t)(uint8_t *pbuf, uint16_t len, void (*pfree)(void *), void *user_data);
+typedef enum
+{
+    AT_CMD_RESULT_OK = 0,
+    AT_CMD_RESULT_ERROR,
+    AT_CMD_RESULT_TIMEOUT,
+    AT_CMD_RESULT_UNKNOWN,
+    AT_CMD_RESULT_MAX,
+} bAtCmdResult_t;
+
+typedef void (*pAtCmdCb_t)(bAtCmdResult_t cmd_result, char *pdata, uint16_t len,
+                           void (*release)(void *), void *user_data);
 typedef void (*pAtSendData_t)(const uint8_t *pbuf, uint16_t len, void *user_data);
 
 typedef struct
 {
-    const char    *pcmd;
-    const char    *resp;
-    void          *user_data;
-    uint16_t       timeout;
-    pAtCmdCb_t     cmd_cb;
-    pAtNewDataCb_t data_cb;
-    pAtSendData_t  send;
-    bTaskAttr_t    attr;
+    const char *pcmd;
+    uint16_t    cmd_len;
+    const char *resp;
+    void       *user_data;
+    uint16_t    timeout;
+    pAtCmdCb_t  cmd_cb;
+#if _AT_DYNAMIC_ENABLE
+    char    *recv_resp_data;
+    uint16_t recv_resp_len;
+#endif
+    pAtSendData_t send;
+    bTaskAttr_t   attr;
 } bAtStruct_t;
 
 /**
@@ -96,9 +109,10 @@ typedef struct
  * \{
  */
 
-int bAtInit(bAtStruct_t *pat, pAtCmdCb_t cmd_cb, pAtNewDataCb_t data_cb, pAtSendData_t send,
-            void *user_data);
+int bAtInit(bAtStruct_t *pat, pAtCmdCb_t cmd_cb, pAtSendData_t send, void *user_data);
 int bAtSendCmd(bAtStruct_t *pat, const char *pcmd, const char *resp, uint16_t timeout);
+int bAtSendCmd2(bAtStruct_t *pat, const char *pcmd, uint16_t cmd_len, const char *resp,
+                uint16_t timeout);
 int bAtFeedData(bAtStruct_t *pat, uint8_t *pbuf, uint16_t len);
 /**
  * \}

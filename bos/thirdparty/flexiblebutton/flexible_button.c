@@ -261,6 +261,7 @@ static uint8_t flex_button_process(void)
                 }
                 else /* button up */
                 {
+					EVENT_SET_AND_EXEC_CB(target, FLEX_BTN_PRESS_UP);
                     if (target->scan_cnt >= long_hold_start_tick)
                     {
                         EVENT_SET_AND_EXEC_CB(target, FLEX_BTN_PRESS_LONG_HOLD_UP);

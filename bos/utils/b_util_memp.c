@@ -450,7 +450,7 @@ char *bStrDup(char *str)
     {
         return NULL;
     }
-    memcpy(tmp, str, strlen(str));
+    memcpy(tmp, str, strlen(str) + 1);  // include null terminator
     return tmp;
 }
 
@@ -460,6 +460,56 @@ uint32_t bGetMemThreshold()
     return bMemFreeSizeMin;
 }
 #endif
+
+void bMemPrintStats(void)
+{
+    _bMempInit();
+    uint32_t total      = MEMP_SIZE;
+    uint32_t free_size  = _bGetFreeSize();
+    uint32_t used_size  = total - free_size;
+    uint8_t  frag_ratio = bMemGetFragmentation();
+    
+    b_log("\r\n========== Memory Statistics ==========\r\n");
+    b_log("Total:      %u bytes\r\n", total);
+    b_log("Used:       %u bytes (%.1f%%)\r\n", used_size, (float)used_size * 100 / total);
+    b_log("Free:       %u bytes (%.1f%%)\r\n", free_size, (float)free_size * 100 / total);
+    b_log("Fragmentation: %d%%\r\n", frag_ratio);
+#if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+    b_log("Waterline:  %u bytes (min free)\r\n", bMemFreeSizeMin);
+#endif
+    b_log("=======================================\r\n");
+}
+
+uint8_t bMemGetFragmentation(void)
+{
+    _bMempInit();
+    bMempUnitHead_t *phead       = (bMempUnitHead_t *)bMempBuf;
+    uint32_t         free_size   = 0;
+    uint32_t         max_block   = 0;
+    uint32_t         block_count = 0;
+    
+    while (phead)
+    {
+        if (phead->status == MEMP_UNIT_FREE)
+        {
+            free_size += phead->size;
+            if (phead->size > max_block)
+            {
+                max_block = phead->size;
+            }
+            block_count++;
+        }
+        phead = phead->next;
+    }
+    
+    if (free_size == 0 || block_count <= 1)
+    {
+        return 0;
+    }
+    
+    /* Fragmentation = (1 - max_block / free_size) * 100 */
+    return (uint8_t)((100 * (free_size - max_block)) / free_size);
+}
 
 /**
  * \}

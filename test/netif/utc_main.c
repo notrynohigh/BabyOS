@@ -12,81 +12,75 @@
 #include "../port.h"
 #include "b_os.h"
 
-int  httpfd = -1;
-void ntp_test()
+static bTaskAttr_t sTaskAttrTcp;
+
+const static bNetCardInfo_t bNetCardInfo[] = {
+    [0] =
+        {
+            .dev_no    = bTESTMAC,
+            .priority  = 0,
+            .ignore_ip = 1,
+        },
+};
+
+static void _MainMonitor()
 {
+    uint32_t        free_memory = 0;
     bUTC_DateTime_t tm;
-    bUTC_t          now_utc = bUTC_GetTime();
-
-    bUTC2Struct(&tm, now_utc, 8);
-    b_log("%d-%02d-%02d %02d:%02d:%02d %02d\r\n", tm.year, tm.month, tm.day, tm.hour, tm.minute,
-          tm.second, tm.week);
-    b_log_w(":::::%d\r\n", bGetFreeSize());
-    if (now_utc > 1711855508)
-    {
-        bHttpRequest(httpfd, B_HTTP_GET,
-                     "http://restapi.amap.com/v3/weather/"
-                     "weatherInfo?city=440300&key=2ecb62606e0682a50cae3ade6b30c3b1",
-                     NULL, NULL);
-    }
+    bUTC2Struct(&tm, bUTC_GetTime(), 8.0);
+    free_memory = bGetFreeSize();
+    b_log("[%d:%d:%d]i am alive ..%d Bytes \r\n", tm.hour, tm.minute, tm.second, free_memory);
 }
 
-void HttpCb(bHttpEvent_t event, void *param, void *arg)
+void bTcpCallback(bTransEvent_t event, void *param, void *arg)
 {
-    if (event == B_HTTP_EVENT_RECV_DATA)
-    {
-        bHttpRecvData_t *dat = (bHttpRecvData_t *)param;
-        if (dat->pdat != NULL && dat->len > 0)
-        {
-            b_log("%s", dat->pdat);
-            char *pstr = strstr(dat->pdat, "\r\n\r\n");
-            if (pstr != NULL)
-            {
-                cJSON *root = cJSON_Parse(pstr);
-                if (root)
-                {
-                    cJSON *lives = cJSON_GetObjectItem(root, "lives");
-                    if (lives != NULL && lives->type == cJSON_Array)
-                    {
-                        lives              = cJSON_GetArrayItem(lives, 0);
-                        cJSON *weather     = cJSON_GetObjectItem(lives, "weather");
-                        cJSON *temperature = cJSON_GetObjectItem(lives, "temperature");
-                        cJSON *humidity    = cJSON_GetObjectItem(lives, "humidity");
-                        b_log("\r\n\r\nweather: %s\r\n", weather->valuestring);
-                        b_log("\r\ntemperature:%s℃\r\n", temperature->valuestring);
-                        b_log("\r\nhumidity:%s%%\r\n", humidity->valuestring);
-                    }
-                    cJSON_Delete(root);
-                }
-            }
-        }
-        if (dat)
-        {
-            if (dat->release)
-            {
-                dat->release(dat->pdat);
-            }
-        }
-    }
+    b_log("trans event:%d param:%p arg:%p \r\n", event, param, arg);
 }
 
-void bMallocFailedHook()
+PT_THREAD(bWifiTestTask666)(struct pt *pt, void *arg)
 {
-    b_log_e("=========================\r\n");
+    static int sockfd = -1;
+    B_TASK_INIT_BEGIN();
+    // ...
+    B_TASK_INIT_END();
+
+    PT_BEGIN(pt);
+    while (1)
+    {
+        sockfd = bSocket(B_TRANS_CONN_TCP, bTcpCallback, NULL);
+        if (sockfd >= 0)
+        {
+            b_log("sockfd:%d \r\n", sockfd);
+            b_log("connecting... \r\n");
+            bConnect(sockfd, "192.168.3.50", 666);
+            PT_WAIT_UNTIL(pt, bSocketIsConnected(sockfd), 2000);
+            b_log("connected???%d\r\n", bSocketIsConnected(sockfd));
+            if (bSocketIsConnected(sockfd))
+            {
+                bSend(sockfd, (uint8_t *)"[linux]hello world666\r\n", strlen("[linux]hello world666\r\n"), NULL);
+                bTaskDelayMs(pt, 5000);
+            }
+            bShutdown(sockfd);
+            sockfd = -1;
+        }
+        bTaskDelayMs(pt, 5000);
+    }
+    PT_END(pt);
 }
+
 
 int main()
 {
     port_init();
     bInit();
 
-    bTcpipSrvInit();
-    bSntpStart(60 * 60);
-    httpfd = bHttpInit(HttpCb, NULL);
+    bTcpipSrvInit(&bNetCardInfo[0], 1);
+    bSntpStart(300);
+    bTaskCreate("tcp", bWifiTestTask666, NULL, &sTaskAttrTcp);
     while (1)
     {
         bExec();
-        BOS_PERIODIC_TASK(ntp_test, 1000 * 10);
+        BOS_PERIODIC_TASK(_MainMonitor, 5000);
     }
     return 0;
 }

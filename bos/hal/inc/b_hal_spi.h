@@ -68,6 +68,7 @@ typedef enum
 typedef enum
 {
     B_HAL_SPI_SLOW,
+	B_HAL_SPI_MEDIUM,
     B_HAL_SPI_FAST,
     B_HAL_SPI_SPEED_INVALID,
 } bHalSPISpeed_t;

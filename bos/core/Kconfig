@@ -5,7 +5,7 @@ config HW_VERSION
 
 config FW_VERSION
     int "Firmware version"
-    default 80504
+    default 80600
 
 config FW_NAME
     string "Firware Name"

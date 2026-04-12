@@ -170,11 +170,19 @@ static int _bTFLCheck()
     {
         return -1;
     }
-    bLseek(fd, bCurrentLocation.offset);
+    if (bLseek(fd, bCurrentLocation.offset) < 0)
+    {
+        bClose(fd);
+        return -1;
+    }
     while (tmp_len < bCurrentFileInfo.size)
     {
         r_len = ((bCurrentFileInfo.size - tmp_len) > 64) ? 64 : (bCurrentFileInfo.size - tmp_len);
-        bRead(fd, tmp, r_len);
+        if (bRead(fd, tmp, r_len) != r_len)
+        {
+            bClose(fd);
+            return -1;
+        }
         crc_calculate_sbs(&tmp_crc, tmp, r_len);
         tmp_len += r_len;
     }
@@ -281,8 +289,7 @@ static int _TFLProtCallback(bProtoCmd_t cmd, void *param)
             if (bFileOffset == 0)
             {
                 uint32_t sector_size = 0;
-                bCtl(fd, bCMD_GET_SECTOR_SIZE, &sector_size);
-                if (sector_size == 0)
+                if (bCtl(fd, bCMD_GET_SECTOR_SIZE, &sector_size) != 0 || sector_size == 0)
                 {
                     bClose(fd);
                     return -1;
@@ -290,13 +297,28 @@ static int _TFLProtCallback(bProtoCmd_t cmd, void *param)
                 bFlashErase_t eparam;
                 eparam.addr = bCurrentLocation.offset;
                 eparam.num  = (bCurrentFileInfo.size + sector_size - 1) / sector_size;
-                bCtl(fd, bCMD_ERASE_SECTOR, &eparam);
+                if (bCtl(fd, bCMD_ERASE_SECTOR, &eparam) != 0)
+                {
+                    bClose(fd);
+                    bSemRelease(bTFLSemId);
+                    return -1;
+                }
             }
-            bLseek(fd, bCurrentLocation.offset + bFileOffset);
+            if (bLseek(fd, bCurrentLocation.offset + bFileOffset) < 0)
+            {
+                bClose(fd);
+                bSemRelease(bTFLSemId);
+                return -1;
+            }
             uint32_t w_len = ((bCurrentFileInfo.size - bFileOffset) > pFileData->size)
                                  ? pFileData->size
                                  : (bCurrentFileInfo.size - bFileOffset);
-            bWrite(fd, pFileData->dat, w_len);
+            if (bWrite(fd, pFileData->dat, w_len) != w_len)
+            {
+                bClose(fd);
+                bSemRelease(bTFLSemId);
+                return -1;
+            }
             bFileOffset += w_len;
             bClose(fd);
             bSemRelease(bTFLSemId);
@@ -374,8 +396,16 @@ int bTFLSrvGetFileInfo(uint32_t dev_no, uint32_t base_addr, const char *filename
     }
     while (1)
     {
-        bLseek(fd, base_addr);
-        bRead(fd, (uint8_t *)&key, sizeof(key));
+        if (bLseek(fd, base_addr) < 0)
+        {
+            bClose(fd);
+            return -1;
+        }
+        if (bRead(fd, (uint8_t *)&key, sizeof(key)) != sizeof(key))
+        {
+            bClose(fd);
+            return -1;
+        }
         base_addr += sizeof(key);
         key = B_SWAP_16(key);
         if (key != TFL_KLV_FILENAME_ID && key != TFL_KLV_FILEVALUE_ID)
@@ -383,7 +413,11 @@ int bTFLSrvGetFileInfo(uint32_t dev_no, uint32_t base_addr, const char *filename
             bClose(fd);
             return -1;
         }
-        bRead(fd, (uint8_t *)&len, sizeof(len));
+        if (bRead(fd, (uint8_t *)&len, sizeof(len)) != sizeof(len))
+        {
+            bClose(fd);
+            return -1;
+        }
         base_addr += sizeof(len);
         len = B_SWAP_32(len);
         if (key == TFL_KLV_FILENAME_ID && len == filename_len)
@@ -391,7 +425,11 @@ int bTFLSrvGetFileInfo(uint32_t dev_no, uint32_t base_addr, const char *filename
             int tmp_i = 0;
             while (tmp_i < len)
             {
-                bRead(fd, tmp_buf, 16);
+                if (bRead(fd, tmp_buf, 16) != 16)
+                {
+                    bClose(fd);
+                    return -1;
+                }
                 for (i = 0; i < 16; i++)
                 {
                     if (filename[tmp_i + i] == '\0')

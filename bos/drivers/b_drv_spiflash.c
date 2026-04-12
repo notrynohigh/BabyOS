@@ -228,7 +228,10 @@ static sfud_err _bSPIFlashSPI_WR(const sfud_spi *spi, const uint8_t *write_buf, 
         }
         if (read_buf && read_size)
         {
-            bHalSpiReceive(&_if->_if._spi, (uint8_t *)read_buf, read_size);
+            if (bHalSpiReceive(&_if->_if._spi, (uint8_t *)read_buf, read_size) != 0)
+            {
+                result = SFUD_ERR_READ;
+            }
         }
         bHalGpioWritePin(_if->_if._spi.cs.port, _if->_if._spi.cs.pin, 1);
     }
@@ -318,6 +321,13 @@ static int _bSPIFLASH_Close(bDriverInterface_t *pdrv)
 static int _bSPIFLASH_ReadBuf(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
     sfud_flash *flash = &((bSpiFlashPrivate_t *)(pdrv->_private._p))->sflash;
+    // 边界检查：防止越界读取
+    if (addr >= flash->chip.capacity || (addr + len) > flash->chip.capacity)
+    {
+        b_log_e("SPIFlash read out of bounds: addr=0x%x, len=%d, cap=0x%x\r\n",
+                addr, len, flash->chip.capacity);
+        return -1;
+    }
     sfud_read(flash, addr, len, pbuf);
     return len;
 }
@@ -325,6 +335,13 @@ static int _bSPIFLASH_ReadBuf(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *
 static int _bSPIFLASH_WriteBuf(bDriverInterface_t *pdrv, uint32_t addr, uint8_t *pbuf, uint32_t len)
 {
     sfud_flash *flash = &((bSpiFlashPrivate_t *)(pdrv->_private._p))->sflash;
+    // 边界检查：防止越界写入
+    if (addr >= flash->chip.capacity || (addr + len) > flash->chip.capacity)
+    {
+        b_log_e("SPIFlash write out of bounds: addr=0x%x, len=%d, cap=0x%x\r\n",
+                addr, len, flash->chip.capacity);
+        return -1;
+    }
     sfud_write(flash, addr, len, pbuf);
     return len;
 }
@@ -340,8 +357,23 @@ static int _bSPIFLASH_Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             if (param)
             {
                 bFlashErase_t *perase_param = (bFlashErase_t *)param;
-                sfud_erase(flash, perase_param->addr, perase_param->num * flash->chip.erase_gran);
-                retval = 0;
+                uint32_t erase_size = perase_param->num * flash->chip.erase_gran;
+                
+                // 边界检查：防止溢出和越界擦除
+                if (perase_param->addr >= flash->chip.capacity ||
+                    perase_param->num == 0 ||
+                    erase_size > flash->chip.capacity ||
+                    (perase_param->addr + erase_size) > flash->chip.capacity)
+                {
+                    b_log_e("SPIFlash erase param error: addr=0x%x, num=%d, cap=0x%x\r\n",
+                            perase_param->addr, perase_param->num, flash->chip.capacity);
+                    retval = -1;
+                }
+                else
+                {
+                    sfud_erase(flash, perase_param->addr, erase_size);
+                    retval = 0;
+                }
             }
         }
         break;
@@ -360,6 +392,19 @@ static int _bSPIFLASH_Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             {
                 ((uint32_t *)param)[0] = flash->chip.capacity / flash->chip.erase_gran;
                 retval                 = 0;
+            }
+        }
+        break;
+        case bCMD_GET_ID:
+        {
+            if (param)
+            {
+				// Unique ID 指令序列: 0x4B + 4 bytes Dummy
+                uint8_t cmd_buf[5] = {0x4B, 0x00, 0x00, 0x00, 0x00};
+                if (flash->spi.wr(&flash->spi, cmd_buf, 5, (uint8_t *)param, 8) == SFUD_SUCCESS)
+                {
+                    retval = 0;
+                }
             }
         }
         break;

@@ -59,7 +59,7 @@ typedef enum
     B_DEVICE_REG(dev_n, bDriverNumber_t, "description")
  */
 
-B_DEVICE_REG(bTESTFLASH, B_DRIVER_TESTFLASH, "testflash")
+B_DEVICE_REG(bTESTMAC, B_DRIVER_TESTMAC, "testmac")
 
 #undef B_DEVICE_REG
 

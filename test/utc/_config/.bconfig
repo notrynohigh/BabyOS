@@ -6,7 +6,7 @@ FW_NAME="BabyOS"
 # Hal Configuration
 #
 TICK_FRQ_HZ=1000
-# USER_TICK_ENABLE is not set
+USER_TICK_ENABLE=y
 # _HALIF_VARIABLE_ENABLE is not set
 # _WDT_ENABLE is not set
 # end of Hal Configuration
@@ -21,6 +21,8 @@ VENDOR_UBUNTU=y
 # VENDOR_ARTERY is not set
 # VENDOR_HK is not set
 # VENDOR_ESPRESSIF is not set
+# VENDOR_PY is not set
+# VENDOR_CW is not set
 
 #
 # Algorithm Configuration
@@ -34,8 +36,10 @@ VENDOR_UBUNTU=y
 PCF8574_DEFAULT_OUTPUT=0
 MATRIX_KEYS_ROWS=4
 MATRIX_KEYS_COLUMNS=4
-ESP12F_CMD_BUF_LEN=128
+ESP12F_CMD_TX_BUF_LEN=128
+ESP12F_CMD_RX_BUF_LEN=1024
 ESP12F_CMD_TIMEOUT=5000
+ESP12F_LISTEN_PCB_NUMBER=2
 RS485_RX_BUF_LEN=128
 RS485_RX_IDLE_MS=50
 _485_USE_CALLBACK=y
@@ -64,7 +68,7 @@ _BOS_MODULES_ENABLE=y
 # _WIFI_ENABLE is not set
 # _SELECT_ENABLE is not set
 # _GUI_ENABLE is not set
-# _NETIF_ENABLE is not set
+# _TCPIP_ENABLE is not set
 # _USB_ENABLE is not set
 # _SSL_ENABLE is not set
 # end of Modules Configuration
@@ -103,6 +107,7 @@ _LOG_VIA_UART=y
 LOG_UART=0
 # _MEMP_ENABLE is not set
 # _AT_ENABLE is not set
+# _AT_DYNAMIC_ENABLE is not set
 # end of Utils Configuration
 
 #

@@ -6,7 +6,9 @@ FW_NAME="BabyOS"
 # Hal Configuration
 #
 TICK_FRQ_HZ=1000
+USER_TICK_ENABLE=y
 # _HALIF_VARIABLE_ENABLE is not set
+# _WDT_ENABLE is not set
 # end of Hal Configuration
 
 VENDOR_UBUNTU=y
@@ -17,6 +19,10 @@ VENDOR_UBUNTU=y
 # VENDOR_WCH is not set
 # VENDOR_HOLTEK is not set
 # VENDOR_ARTERY is not set
+# VENDOR_HK is not set
+# VENDOR_ESPRESSIF is not set
+# VENDOR_PY is not set
+# VENDOR_CW is not set
 
 #
 # Algorithm Configuration
@@ -51,11 +57,16 @@ _ALGO_CRC_ENABLE=y
 PCF8574_DEFAULT_OUTPUT=0
 MATRIX_KEYS_ROWS=4
 MATRIX_KEYS_COLUMNS=4
-ESP12F_UART_RX_BUF_LEN=1024
+ESP12F_CMD_TX_BUF_LEN=128
+ESP12F_CMD_RX_BUF_LEN=1024
+ESP12F_CMD_TIMEOUT=5000
+ESP12F_LISTEN_PCB_NUMBER=2
 RS485_RX_BUF_LEN=128
 RS485_RX_IDLE_MS=50
 _485_USE_CALLBACK=y
 # _485_USE_SELECT is not set
+RS485_SWITCH_DELAY_US=1000
+DISPLAY_CACHE_BUF_SIZE=8
 # end of Drivers Configuration
 
 #
@@ -64,6 +75,7 @@ _485_USE_CALLBACK=y
 _BOS_MODULES_ENABLE=y
 # _ADCHUB_ENABLE is not set
 # _ERROR_MANAGE_ENABLE is not set
+# _FS_ENABLE is not set
 # _MODBUS_ENABLE is not set
 # _PROTO_ENABLE is not set
 # _KV_ENABLE is not set
@@ -77,6 +89,9 @@ _BOS_MODULES_ENABLE=y
 # _WIFI_ENABLE is not set
 # _SELECT_ENABLE is not set
 # _GUI_ENABLE is not set
+# _TCPIP_ENABLE is not set
+# _USB_ENABLE is not set
+# _SSL_ENABLE is not set
 # end of Modules Configuration
 
 #
@@ -86,28 +101,37 @@ _BOS_MODULES_ENABLE=y
 # _NR_MICRO_SHELL_ENABLE is not set
 # _FLEXIBLEBUTTON_ENABLE is not set
 # _UGUI_ENABLE is not set
-# _FS_ENABLE is not set
 # _CJSON_ENABLE is not set
 # _COREMARK_ENABLE is not set
 # _UNITY_ENABLE is not set
 # _ARM_2D_ENABLE is not set
 _QRCODE_ENABLE=y
+# _HTTP_PARSER_ENABLE is not set
+# _TINYUSB_ENABLE is not set
+# _MBEDTLS_ENABLE is not set
+# _LVGL_ENABLE is not set
+# _LUA_ENABLE is not set
 # end of Thirdparty Configuration
 
 #
 # Utils Configuration
 #
 _DEBUG_ENABLE=y
-LOG_LEVEL_INFO=y
+LOG_LEVEL_ALL=y
+# LOG_LEVEL_INFO is not set
 # LOG_LEVEL_WARNING is not set
 # LOG_LEVEL_ERROR is not set
+# LOG_LEVEL_CUSTOMIZE is not set
 LOG_BUF_SIZE=256
 _LOG_VIA_UART=y
 # _LOG_VIA_USER_SPECIFIED is not set
 LOG_UART=0
 _MEMP_ENABLE=y
 MEMP_MAX_SIZE=10240
+# _MEMP_WATERLINE_ENABLE is not set
 # _MEMP_MONITOR_ENABLE is not set
+# _AT_ENABLE is not set
+# _AT_DYNAMIC_ENABLE is not set
 # end of Utils Configuration
 
 #
@@ -115,4 +139,8 @@ MEMP_MAX_SIZE=10240
 #
 _BOS_SERVICES_ENABLE=y
 # _PROTOCOL_SERVICE_ENABLE is not set
+# _TCPIP_SERVICE_ENABLE is not set
+# _OTA_SERVICE_ENABLE is not set
+# _MQTT_SERVICE_ENABLE is not set
+# _TRANSFILE_SERVICE_ENABLE is not set
 # end of Services Configuration

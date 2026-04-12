@@ -126,43 +126,34 @@ static int _bXmodem128Parse(void *attr, uint8_t *in, uint16_t i_len, uint8_t *ou
         i_len >= sizeof(bXmodem128Struct_t) &&
         _bXmodem128CalCheck(in, sizeof(bXmodem128Struct_t) - 1) == phead->check)
     {
-        ret = 0;
+        param.seq     = phead->number;
+        param.dat     = phead->dat;
+        param.dat_len = 128;
+        B_SAFE_INVOKE(pattr->callback, B_XYMODEM_DATA, &param, pattr->arg);
+        ret = 1;
     }
     else if (phead->soh == XMODEM128_EOT)
     {
-        ret = 1;
-    }
-
-    if (ret != -1)
-    {
-        param.seq     = (ret == 0) ? phead->number : 0;
-        param.dat     = (ret == 0) ? phead->dat : NULL;
-        param.dat_len = (ret == 0) ? 128 : 0;
+        param.seq     = 0;
+        param.dat     = NULL;
+        param.dat_len = 0;
         B_SAFE_INVOKE(pattr->callback, B_XYMODEM_DATA, &param, pattr->arg);
+        ret = 1;
     }
 
     if (out && o_len > 0)
     {
-        if (ret == 0)
-        {
-            out[0] = XMODEM128_ACK;
-            ret    = 1;
-        }
-        else if (ret == -1)
+        if (ret == -1)
         {
             out[0] = XMODEM128_NAK;
             ret    = 1;
         }
         else
         {
-            ret = 0;
+            out[0] = XMODEM128_ACK;
+            ret    = 1;
         }
     }
-    else
-    {
-        ret = 0;
-    }
-
     return ret;
 }
 

@@ -71,7 +71,7 @@ Linux下需要安装python、python-pip以及make 用于配置和编译代码
 
 [https://gitee.com/notrynohigh/BabyOS_Example](https://gitee.com/notrynohigh/BabyOS_Example)
 
-BabyOS私有协议上位机Demo：
+BabyOS私有协议上位机Demo（已移入BabyOS主仓库tool目录）：
 
 [https://gitee.com/notrynohigh/BabyOS_Protocol](https://gitee.com/notrynohigh/BabyOS_Protocol)
 

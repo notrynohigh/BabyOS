@@ -82,6 +82,11 @@ config _MEMP_MONITOR_ENABLE
 config _AT_ENABLE
     bool "AT Enable/Disable"
     default n
-    select _MEMP_ENABLE
+
+config _AT_DYNAMIC_ENABLE
+    bool "AT Dynamically Apply For Response Data Enable/Disable"
+    default n
+    select _MEMP_ENABLE if _AT_DYNAMIC_ENABLE
+
 
 endmenu

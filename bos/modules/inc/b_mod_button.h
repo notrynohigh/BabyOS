@@ -88,6 +88,7 @@ typedef struct bButtonInstance
 #define BTN_EVENT_LONG_UP (0x080)
 #define BTN_EVENT_LONGLONG (0x100)
 #define BTN_EVENT_LONGLONG_UP (0x200)
+#define BTN_EVENT_UP (0x400)
 
 #define bBUTTON_ADD_KEY(dev, e, e_handler)           \
     static flex_button_t     CONCAT_2(button_, dev); \

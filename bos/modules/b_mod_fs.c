@@ -328,7 +328,11 @@ int bFSPartitionRead(uint8_t index, uint32_t offset, uint8_t *pbuf, uint32_t len
     {
         return -2;
     }
-    bLseek(fd, partition->base_addr + offset);
+    if (bLseek(fd, partition->base_addr + offset) < 0)
+    {
+        bClose(fd);
+        return -2;
+    }
     int ret = bRead(fd, pbuf, rlen);
     bClose(fd);
     return ret;
@@ -354,7 +358,11 @@ int bFSPartitionWrite(uint8_t index, uint32_t offset, uint8_t *pbuf, uint32_t le
     {
         return -2;
     }
-    bLseek(fd, partition->base_addr + offset);
+    if (bLseek(fd, partition->base_addr + offset) < 0)
+    {
+        bClose(fd);
+        return -2;
+    }
     int ret = bWrite(fd, pbuf, wlen);
     bClose(fd);
     return ret;
@@ -380,6 +388,11 @@ int bFSPartitionErase(uint8_t index, uint32_t offset, uint32_t len)
         return -2;
     }
     cmd_erase.addr = partition->base_addr + offset;
+    if (partition->sector_size == 0)
+    {
+        bClose(fd);
+        return -2;
+    }
     cmd_erase.num  = len / partition->sector_size;
     int ret        = bCtl(fd, bCMD_ERASE_SECTOR, &cmd_erase);
     bClose(fd);
@@ -416,7 +429,7 @@ int bFSMount(uint8_t index, uint8_t mkfs)
     fs->partition = partition;
     fs->used      = 1;
     memset(&(fs->prefix[0]), 0, sizeof(fs->prefix));
-    sprintf(&(fs->prefix[0]), "%d:", partition->index);
+    snprintf(fs->prefix, sizeof(fs->prefix), "%d:", partition->index);
 #if defined(FS_FATFS)
     FRESULT result = FR_OK;
 
@@ -445,6 +458,10 @@ int bFSMount(uint8_t index, uint8_t mkfs)
     fs->cfg.read_size        = 1;
     fs->cfg.prog_size        = 8;
     fs->cfg.block_size       = partition->sector_size;
+    if (partition->sector_size == 0)
+    {
+        return -1;
+    }
     fs->cfg.block_count      = partition->total_size / partition->sector_size;
     fs->cfg.block_cycles     = 500;
     fs->cfg.cache_size       = LFS_CACHE_SIZE;
