@@ -49,6 +49,10 @@ extern "C" {
 #include "algo_sort.h"
 #include "algo_utf8_unicode.h"
 #include "algo_knn.h"
+#include "algo_linear_regression.h"
+#include "algo_kmeans.h"
+#include "algo_decision_tree.h"
+#include "algo_kalman_filter.h"
 
 /**
  * \}

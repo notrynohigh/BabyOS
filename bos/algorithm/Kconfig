@@ -122,4 +122,36 @@ config _ALGO_KNN_ENABLE
       Supports Euclidean, Manhattan, and Minkowski distances.
       Works with int16, int32 (fixed-point), and float data types.
 
+config _ALGO_LINEAR_REGRESSION_ENABLE
+    bool "Algorithm Linear Regression Enable/Disable"
+    default n
+    depends on _BOS_ALGO_ENABLE
+    help
+      Enable Linear Regression using Ordinary Least Squares.
+      Suitable for curve fitting and prediction tasks.
+
+config _ALGO_KMEANS_ENABLE
+    bool "Algorithm K-Means Clustering Enable/Disable"
+    default n
+    depends on _BOS_ALGO_ENABLE
+    help
+      Enable K-Means clustering algorithm.
+      Useful for anomaly detection and data segmentation.
+
+config _ALGO_DECISION_TREE_ENABLE
+    bool "Algorithm Decision Tree Inference Enable/Disable"
+    default n
+    depends on _BOS_ALGO_ENABLE
+    help
+      Enable Decision Tree inference for classification.
+      Pre-trained tree can be loaded for fast inference.
+
+config _ALGO_KALMAN_FILTER_ENABLE
+    bool "Algorithm Kalman Filter Enable/Disable"
+    default n
+    depends on _BOS_ALGO_ENABLE
+    help
+      Enable Kalman Filter for sensor fusion and state estimation.
+      Supports 1D and 2D state estimation.
+
 endmenu
