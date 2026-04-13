@@ -48,6 +48,7 @@ extern "C" {
 #include "algo_md5.h"
 #include "algo_sort.h"
 #include "algo_utf8_unicode.h"
+#include "algo_knn.h"
 
 /**
  * \}

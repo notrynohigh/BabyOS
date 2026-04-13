@@ -113,4 +113,13 @@ config _ALGO_CRC32_MPEG2_ENABLE
     default n
     depends on _ALGO_CRC_ENABLE
 
+config _ALGO_KNN_ENABLE
+    bool "Algorithm KNN (K-Nearest Neighbors) Enable/Disable"
+    default n
+    depends on _BOS_ALGO_ENABLE
+    help
+      Enable KNN algorithm for embedded classification tasks.
+      Supports Euclidean, Manhattan, and Minkowski distances.
+      Works with int16, int32 (fixed-point), and float data types.
+
 endmenu
