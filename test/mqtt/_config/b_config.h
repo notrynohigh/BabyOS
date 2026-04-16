@@ -1,6 +1,5 @@
-#ifndef __B_CONFIG_H__ 
-#define __B_CONFIG_H__ 
-
+#ifndef __B_CONFIG_H__
+#define __B_CONFIG_H__
 
 #define HW_VERSION 211212
 #define FW_VERSION 80106
@@ -26,9 +25,14 @@
 #define REMOTE_ADDR_LEN_MAX 128
 #define CONNECT_RECVBUF_MAX 10240
 #define SERVER_MAX_CONNECTIONS 2
+#define _SSL_ENABLE 1
+#define _SSL_DEFAULT_CERT_ENABLE 1
 #define _CJSON_ENABLE 1
 #define CJSON_MEM_USE_BMALLOC 1
 #define _HTTP_PARSER_ENABLE 1
+#define _MBEDTLS_ENABLE 1
+#define MBEDTLS_CONFIG_FILE "b_mbedtls_config.h"
+#define MBEDTLS_DEBUG_LEVEL 1
 #define _DEBUG_ENABLE 1
 #define LOG_LEVEL_ALL 1
 #define LOG_BUF_SIZE 100000
@@ -41,15 +45,13 @@
 #define _MQTT_SERVICE_ENABLE 1
 #define BABYOS_MQTT_BROKER 1
 #define MQTT_CLIENT_ID "babyos"
-#define MQTT_BROKER_URL "mqtt://babyos.cn:1883"
+#define MQTT_BROKER_URL "mqtts://ra35e116.ala.cn-hangzhou.emqxsl.cn"
 #define MQTT_USER_NAME "babyos"
 #define MQTT_USER_PASSWD "babyos"
 #define MQTT_SUB_TOPIC_DEFAULT "ogugO0zq_Qi7O3HxQn9G4X2rhHZU"
 #define MQTT_QOS_DEFAULT 0
 #define MQTT_KEEP_ALIVE 60
 
+#include "b_type.h"
 
-#include "b_type.h" 
-
-#endif 
-
+#endif

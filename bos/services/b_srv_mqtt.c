@@ -1,7 +1,7 @@
 /**
  *!
  * \file        b_srv_mqtt.c
- * \version     v0.0.1
+ * \version     v0.0.2
  * \date        2023/08/27
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************
@@ -41,6 +41,10 @@
 #include "utils/inc/b_util_log.h"
 #include "utils/inc/b_util_memp.h"
 
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+#include "modules/inc/b_mod_ssl.h"
+#endif
+
 /**
  * \addtogroup BABYOS
  * \{
@@ -78,6 +82,9 @@ typedef struct
     int              sock_fd;
     uint32_t         last_recv;
     uint16_t         packet_id;
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+    bSSLHandle_t     ssl_handle;
+#endif
 } bMqttSrvInstance_t;
 
 typedef struct
@@ -108,6 +115,8 @@ typedef struct
  */
 #define B_MQTT_STA_INIT (0)
 #define B_MQTT_STA_TCP_CONNECTED (1)
+#define B_MQTT_STA_SSL_HANDSHAKING (2)
+#define B_MQTT_STA_SSL_CONNECTED (3)
 
 #define MQTT_STEP_CONN (0x1)
 #define MQTT_STEP_SUB (0x2)
@@ -287,7 +296,8 @@ static int _bMqttCalBuffSize(MQTTPacket_connectData *data)
 
 static void _bMqttTransCb(bTransEvent_t event, void *param, void *arg)
 {
-    if ((event == B_TRANS_DISCONNECT) && (pbMqttInstance->stat == B_MQTT_STA_TCP_CONNECTED))
+    if ((event == B_TRANS_DISCONNECT) && (pbMqttInstance->stat == B_MQTT_STA_TCP_CONNECTED ||
+                                           pbMqttInstance->stat == B_MQTT_STA_SSL_CONNECTED))
     {
         pbMqttInstance->stat = B_MQTT_STA_INIT;
     }
@@ -297,17 +307,23 @@ static int _bMqttRead(bMqttSrvInstance_t *pinstance, uint8_t *pbuf, uint16_t len
 {
     uint16_t rlen = 0;
     int      ret  = 0;
-    if (pinstance->is_mqtts == 0)
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+    if (pinstance->is_mqtts && pinstance->ssl_handle != NULL)
     {
-        ret = bRecv(pinstance->sock_fd, pbuf, len, &rlen);
+        ret = bSSLRecv(pinstance->ssl_handle, pbuf, len, &rlen);
         if (ret < 0)
         {
             return ret;
         }
     }
     else
+#endif
     {
-        return -1;
+        ret = bRecv(pinstance->sock_fd, pbuf, len, &rlen);
+        if (ret < 0)
+        {
+            return ret;
+        }
     }
     return rlen;
 }
@@ -316,17 +332,23 @@ static int _bMqttWrite(bMqttSrvInstance_t *pinstance, uint8_t *pbuf, uint16_t le
 {
     uint16_t rlen = 0;
     int      ret  = 0;
-    if (pinstance->is_mqtts == 0)
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+    if (pinstance->is_mqtts && pinstance->ssl_handle != NULL)
     {
-        ret = bSend(pinstance->sock_fd, pbuf, len, &rlen);
+        ret = bSSLSend(pinstance->ssl_handle, pbuf, len, &rlen);
         if (ret < 0)
         {
             return ret;
         }
     }
     else
+#endif
     {
-        return -1;
+        ret = bSend(pinstance->sock_fd, pbuf, len, &rlen);
+        if (ret < 0)
+        {
+            return ret;
+        }
     }
     return rlen;
 }
@@ -430,7 +452,7 @@ static int _bMqttSubscribe(bMqttSrvInstance_t *pinstance)
             b_log("sub:%d\r\n", pnode->pack_id);
             if (pnode->pack != NULL)
             {
-                if (bSend(pinstance->sock_fd, (uint8_t *)pnode->pack, pnode->pack_len, NULL) > 0)
+                if (_bMqttWrite(pinstance, (uint8_t *)pnode->pack, pnode->pack_len) > 0)
                 {
                     break;
                 }
@@ -582,10 +604,10 @@ exit:
 static void _bMqttTimerCb(void *arg)
 {
     bMqttSrvInstance_t *pinstance = (bMqttSrvInstance_t *)arg;
-    uint8_t             buf[4];
+    uint8_t             buf[4] = {0};
     if (pinstance->stat != B_MQTT_STA_INIT)
     {
-        int len = MQTTSerialize_pingreq(buf, sizeof(buf));
+        // Check if pingresp timeout occurred (connection is considered dead)
         if ((TICK_DIFF_BIT32(pinstance->last_recv, bHalGetSysTick())) >
             MS2TICKS(pinstance->keep_alive * 1000))
         {
@@ -593,7 +615,9 @@ static void _bMqttTimerCb(void *arg)
         }
         else
         {
-            bSend(pinstance->sock_fd, buf, len, NULL);
+            // Send ping request periodically to keep connection alive
+            int len = MQTTSerialize_pingreq(buf, sizeof(buf));
+            _bMqttWrite(pinstance, buf, len);
         }
     }
 }
@@ -645,14 +669,61 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
             pinstance->stat    = B_MQTT_STA_TCP_CONNECTED;
             pinstance->sock_fd = sock_fd;
             mqtt_step_f        = 0;
+
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+            if (pinstance->is_mqtts)
+            {
+                b_log("mqtts enabled, initializing SSL...\r\n");
+                pinstance->ssl_handle = bSSLInit(pinstance->host, NULL);
+                if (SSLHANDLE_IS_INVALID(pinstance->ssl_handle))
+                {
+                    b_log_e("SSL init failed\r\n");
+                    SOCKET_SHUTDOWN(pt, sock_fd);
+                    bTaskRestart(pt);
+                }
+                pinstance->stat = B_MQTT_STA_SSL_HANDSHAKING;
+            }
+#endif
             b_log("tcp connected success!\r\n");
         }
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+        else if (pinstance->stat == B_MQTT_STA_SSL_HANDSHAKING)
+        {
+            if (pinstance->ssl_handle == NULL)
+            {
+                pinstance->stat = B_MQTT_STA_INIT;
+                bTaskRestart(pt);
+            }
+            int ret = bSSLHandshake(pinstance->ssl_handle, sock_fd);
+            if (ret < 0)
+            {
+                b_log_e("SSL handshake failed: %d\r\n", ret);
+                bSSLDeinit(pinstance->ssl_handle);
+                pinstance->ssl_handle = NULL;
+                SOCKET_SHUTDOWN(pt, sock_fd);
+                bTaskRestart(pt);
+            }
+            else if (ret == 1)
+            {
+                // SSL handshake still in progress, wait
+                PT_WAIT_UNTIL(pt, 0, 50);
+            }
+            else
+            {
+                b_log("SSL handshake success!\r\n");
+                pinstance->stat = B_MQTT_STA_SSL_CONNECTED;
+            }
+        }
+#endif
         else
         {
             PT_WAIT_UNTIL(
-                pt, (bSockIsReadable(sock_fd) || (pinstance->stat != B_MQTT_STA_TCP_CONNECTED)),
+                pt, (bSockIsReadable(sock_fd) || 
+                     (pinstance->stat != B_MQTT_STA_TCP_CONNECTED &&
+                      pinstance->stat != B_MQTT_STA_SSL_CONNECTED)),
                 1000);
-            if (pinstance->stat != B_MQTT_STA_TCP_CONNECTED)
+            if (pinstance->stat != B_MQTT_STA_TCP_CONNECTED &&
+                pinstance->stat != B_MQTT_STA_SSL_CONNECTED)
             {
                 b_log("tcp disconnect...\r\n");
                 bTimerStop(pinstance->timer_id);
@@ -766,6 +837,9 @@ int bMqttSrvStartWithCfg(pbMqttCallback_t cb, void *arg)
     pinstance->client_id   = bStrDup(MQTT_CLIENT_ID);
     pinstance->user_name   = bStrDup(MQTT_USER_NAME);
     pinstance->user_passwd = bStrDup(MQTT_USER_PASSWD);
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+    pinstance->ssl_handle  = NULL;
+#endif
     if (IS_NULL(pinstance->pbroker) || IS_NULL(pinstance->user_name) ||
         IS_NULL(pinstance->user_passwd) || IS_NULL(pinstance->client_id))
     {
@@ -834,6 +908,13 @@ void bMqttSrvDestroy()
         return;
     }
     pbMqttInstance = NULL;
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+    if (pinstance->ssl_handle != NULL)
+    {
+        bSSLDeinit(pinstance->ssl_handle);
+        pinstance->ssl_handle = NULL;
+    }
+#endif
     if (pinstance->task_id > 0)
     {
         bTaskRemove(pinstance->task_id);

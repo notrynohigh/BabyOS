@@ -79,7 +79,8 @@ REMOTE_ADDR_LEN_MAX=128
 CONNECT_RECVBUF_MAX=10240
 SERVER_MAX_CONNECTIONS=2
 # _USB_ENABLE is not set
-# _SSL_ENABLE is not set
+_SSL_ENABLE=y
+_SSL_DEFAULT_CERT_ENABLE=y
 # end of Modules Configuration
 
 #
@@ -97,7 +98,9 @@ CJSON_MEM_USE_BMALLOC=y
 # _QRCODE_ENABLE is not set
 _HTTP_PARSER_ENABLE=y
 # _TINYUSB_ENABLE is not set
-# _MBEDTLS_ENABLE is not set
+_MBEDTLS_ENABLE=y
+MBEDTLS_CONFIG_FILE="b_mbedtls_config.h"
+MBEDTLS_DEBUG_LEVEL=1
 # _LVGL_ENABLE is not set
 # _LUA_ENABLE is not set
 # end of Thirdparty Configuration
@@ -136,7 +139,7 @@ _MQTT_SERVICE_ENABLE=y
 BABYOS_MQTT_BROKER=y
 # RESERVED_BROKER is not set
 MQTT_CLIENT_ID="babyos"
-MQTT_BROKER_URL="mqtt://babyos.cn:1883"
+MQTT_BROKER_URL="mqtts//ra35e116.ala.cn-hangzhou.emqxsl.cn"
 MQTT_USER_NAME="babyos"
 MQTT_USER_PASSWD="babyos"
 MQTT_SUB_TOPIC_DEFAULT="ogugO0zq_Qi7O3HxQn9G4X2rhHZU"

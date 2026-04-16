@@ -33,6 +33,7 @@
 #include "drivers/inc/b_drv_testmac.h"
 
 #include <arpa/inet.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -276,6 +277,26 @@ static int _bTestMacRecv(void *sockfd, uint8_t *pbuf, uint16_t len)
     }
     int sock   = (int)sockfd;
     int retval = recv(sock, pbuf, len, 0);
+    if (retval > 0)
+    {
+        ;
+    }
+    else if (retval == 0)
+    {
+        retval = -1;
+    }
+    else
+    {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        {
+            retval = 0;
+        }
+        else
+        {
+            retval = -1;
+        }
+    }
+
     return retval;
 }
 
