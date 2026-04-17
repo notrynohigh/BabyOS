@@ -1,13 +1,13 @@
 /**
  *!
- * \file        b_srv_tcpip.h
+ * \file        b_srv_config_web.h
  * \version     v0.0.1
- * \date        2023/08/27
- * \author      Bean(notrynohigh@outlook.com)
+ * \date        2026/05/31
+ * \author      aiclaw
  *******************************************************************************
  * @attention
  *
- * Copyright (c) 2023 Bean
+ * Copyright (c) 2026
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,12 @@
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *******************************************************************************
  */
-#ifndef __B_SRV_TCPIP_H__
-#define __B_SRV_TCPIP_H__
+#ifndef __B_SRV_CONFIG_WEB_H__
+#define __B_SRV_CONFIG_WEB_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,9 +40,7 @@ extern "C" {
 
 #include "b_config.h"
 
-#if (defined(_TCPIP_SERVICE_ENABLE) && (_TCPIP_SERVICE_ENABLE == 1))
-
-#include "modules/inc/b_mod_tcpip.h"
+#if (defined(_CONFIG_WEB_SERVICE_ENABLE) && (_CONFIG_WEB_SERVICE_ENABLE == 1))
 
 /**
  * \addtogroup BABYOS
@@ -55,22 +53,65 @@ extern "C" {
  */
 
 /**
- * \addtogroup TCPIP
+ * \addtogroup CONFIG_WEB
  * \{
  */
 
 /**
- * \defgroup TCPIP_Exported_Functions
+ * \defgroup CONFIG_WEB_Exported_TypesDefinitions
  * \{
  */
 
 /**
- * @brief 初始化TCP/IP服务
- * @param pnetcard 网卡信息数组
- * @param number 网卡数量
+ * @brief 配置类型
+ */
+typedef enum
+{
+    B_CONFIG_TYPE_WIFI = 0,
+    B_CONFIG_TYPE_ETH,
+} bConfigType_t;
+
+/**
+ * @brief 配置结果回调
+ * @param type 配置类型
+ * @param result 配置结果，0成功，负值失败
+ * @param user_data 用户数据
+ */
+typedef void (*pbConfigResultCb_t)(bConfigType_t type, int result, void *user_data);
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup CONFIG_WEB_Exported_Defines
+ * \{
+ */
+
+#define CONFIG_WEB_PORT 80
+
+/**
+ * \}
+ */
+
+/**
+ * \defgroup CONFIG_WEB_Exported_Functions
+ * \{
+ */
+
+/**
+ * @brief 启动配网Web服务
+ * @param port 监听端口
+ * @param cb 配置结果回调（type区分WiFi/以太网）
+ * @param user_data 用户数据
  * @return 0成功，负值失败
  */
-int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number);
+int bConfigWebServiceStart(uint16_t port, pbConfigResultCb_t cb, void *user_data);
+
+/**
+ * @brief 停止配网Web服务
+ */
+void bConfigWebDeinit(void);
 
 /**
  * \}
@@ -96,4 +137,4 @@ int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number);
 
 #endif
 
-/************************ Copyright (c) 2023 Bean *****END OF FILE****/
+/************************ Copyright (c) 2026 aiclaw *****END OF FILE****/

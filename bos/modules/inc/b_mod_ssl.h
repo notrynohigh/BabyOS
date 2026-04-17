@@ -49,7 +49,7 @@ extern "C" {
 #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/rsa.h"
 #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ssl.h"
 #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/x509.h"
-
+#include "thirdparty/mbedtls/bos_mbedtls/mbedtls/net_sockets.h"
 /**
  * \addtogroup BABYOS
  * \{

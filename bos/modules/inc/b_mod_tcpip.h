@@ -81,6 +81,21 @@ typedef struct
     } assigned_ip;
 } bNetCardInfo_t;
 
+typedef struct
+{
+    uint32_t dev_no;            // 设备号
+    uint8_t  priority;          // 优先级
+    uint8_t  is_linked : 1;     // 是否已连接
+    uint8_t  is_ignore_ip : 1;  // 是否使用DHCP
+    uint8_t  is_dhcp : 1;       // 是否使用DHCP
+    uint8_t  is_ethnet : 1;     // 是否为以太网卡
+    uint8_t  is_wifi : 1;       // 是否为wifi网卡
+    uint8_t  reserved : 3;      // 保留位
+    uint32_t ipaddr;            // IP地址
+    uint32_t netmask;           // 子网掩码
+    uint32_t gateway;           // 网关
+} bNetcardStaInfo_t;
+
 typedef enum
 {
     B_TRANS_CONN_TCP,
@@ -126,11 +141,13 @@ typedef intptr_t bSocketFd_t;
  */
 
 #define SOCKFD_IS_INVALID(sockfd) ((sockfd) <= 0)
-#define SOCKET_SHUTDOWN(pt, sockfd) \
-    do { \
-        if (!SOCKFD_IS_INVALID((sockfd))) { \
+#define SOCKET_SHUTDOWN(pt, sockfd)                                \
+    do                                                             \
+    {                                                              \
+        if (!SOCKFD_IS_INVALID((sockfd)))                          \
+        {                                                          \
             PT_WAIT_UNTIL_FOREVER((pt), bShutdown((sockfd)) >= 0); \
-        } \
+        }                                                          \
     } while (0)
 
 /**
@@ -144,14 +161,24 @@ typedef intptr_t bSocketFd_t;
 
 int      bTcpIpInit(const bNetCardInfo_t *pnetcard, uint8_t number);
 int      bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway);
+int      bTcpIpSetIpByDevNo(uint32_t dev_no, const char *ip_addr, const char *netmask,
+                            const char *gateway);
 int      bTcpIpGetIp(char *ipaddr, char *netmask, char *gateway);
 int      bTcpIpSetMac(const uint8_t mac[6]);
 int      bTcpIpGetMac(uint8_t mac[6]);
 uint8_t  bTcpIpPhyIsLinked(void);
 uint32_t bTcpIpGetCurrentDevNo(void);
 
+// 网卡查询接口
+uint8_t bTcpIpGetNetcardCount(void);
+int     bTcpIpGetNetcardInfo(uint8_t index, bNetcardStaInfo_t *info);
+int     bTcpIpSetActiveNetcard(uint32_t dev_no);
+
 bSocketFd_t bSocket(bTransType_t type, pbTransCb_t cb, void *user_data);
 bSocketFd_t bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data);
+// CRIT-HEADER-1 fix: 之前 .c 已实现但 .h 无声明, NTP 等 caller 只能 extern 声明,
+// 隐式声明会让编译器假定返回 int (与实际不匹配). 补 public 头文件声明.
+int bSocketRegCallback(bSocketFd_t sockfd, pbTransCb_t cb, void *user_data);
 int         bConnect(bSocketFd_t sockfd, char *remote, uint16_t port);
 int         bBind(bSocketFd_t sockfd, uint16_t port);
 int         bListen(bSocketFd_t sockfd, int backlog);

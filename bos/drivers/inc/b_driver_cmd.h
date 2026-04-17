@@ -281,9 +281,20 @@ typedef struct
 #define bCMD_REG_BUF_LIST (5 + bCMD_TCPIP_GENERAL_BASE_VALUE)       // bHalBufList_t
 #define bCMD_GET_STACK_IF (6 + bCMD_TCPIP_GENERAL_BASE_VALUE)       // bTcpIpStackIf_t
 
+/*
+   网卡信息结构，用于外部查询网卡列表
+*/
+typedef enum
+{
+    B_NETCARD_TYPE_UNKNOWN = 0,
+    B_NETCARD_TYPE_WIFI    = 1,
+    B_NETCARD_TYPE_ETH     = 2,
+} bNetcardType_t;
+
 typedef struct
 {
     void *private;
+    bNetcardType_t type;
 } bDriverNetif_t;
 
 typedef struct
@@ -335,6 +346,7 @@ typedef struct
     uint8_t  is_linked;
     uint8_t  mac[6];
     void *private;
+    bNetcardType_t type;
 } bTcpIpNetif_t;
 
 typedef struct

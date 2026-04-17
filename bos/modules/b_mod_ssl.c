@@ -24,8 +24,8 @@
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  *******************************************************************************
  */
 
@@ -68,6 +68,11 @@ typedef struct
     mbedtls_ssl_config  ssl_conf;
     mbedtls_x509_crt    ca;
     int                 sockfd;
+    // mbedtls_ssl_conf_sig_algs() 仅存指针，不复制数据;
+    // 列表必须在 SSL 句柄生命周期内保持有效, 因此放在堆上的 bSSL_t 里.
+    // 末尾哨兵 MBEDTLS_TLS1_3_SIG_NONE (0x0) 表示列表结束.
+    // 数组大小 6: 2 个 SHA256 (RSA/ECDSA) + 可选 2 个 SHA384 (RSA/ECDSA) + 哨兵.
+    uint16_t sig_algs[6];
 } bSSL_t;
 
 /**
@@ -129,12 +134,14 @@ static int _bSSLEntropySource(void *data, uint8_t *output, uint32_t len, uint32_
     return 0;
 }
 
+#if defined(MBEDTLS_DEBUG_C)
 static void _bSSLPrint(void *ctx, int level, const char *file, int line, const char *str)
 {
-    ((void)level);  // 忽略未使用的参数
-    ((void)ctx);    // 忽略未使用的参数
+    ((void)level);
+    ((void)ctx);
     b_log("%s:%04d: %s", file, line, str);
 }
+#endif
 
 static int _bSSLDRBGInit(bSSLRandom_t *prandom)
 {
@@ -169,7 +176,7 @@ static int _bSSLSend(void *ctx, const unsigned char *buf, size_t len)
     int      ret   = bSend(p_ssl->sockfd, (uint8_t *)buf, len, &wlen);
     if (ret < 0)
     {
-        return 0;
+        return MBEDTLS_ERR_NET_SEND_FAILED;
     }
     if (wlen == 0)
     {
@@ -185,13 +192,32 @@ static int _bSSLRecv(void *ctx, unsigned char *buf, size_t len)
     int      ret   = bRecv(p_ssl->sockfd, buf, len, &rlen);
     if (ret < 0)
     {
-        return 0;
+        return MBEDTLS_ERR_NET_RECV_FAILED;
     }
     if (rlen == 0)
     {
         return MBEDTLS_ERR_SSL_WANT_READ;
     }
     return rlen;
+}
+
+// SSL 证书验证回调: 始终注册, 实际是否调用由 mbedtls_ssl_conf_authmode() 决定.
+// _SSL_SKIP_HOSTNAME_VERIFY = 1 时仅对服务器证书 (depth=0) 跳过 CN/SAN 检查,
+//   便于 IP 直连测试; 设为 0 则严格校验 CN/SAN.
+static int _bSSLVerifyCb(void *ctx, mbedtls_x509_crt *crt, int depth, uint32_t *flags)
+{
+    (void)ctx;
+    (void)crt;
+    (void)depth;
+#if (defined(_SSL_SKIP_HOSTNAME_VERIFY) && (_SSL_SKIP_HOSTNAME_VERIFY == 1))
+    if (depth == 0 && (*flags & MBEDTLS_X509_BADCERT_CN_MISMATCH))
+    {
+        *flags &= ~MBEDTLS_X509_BADCERT_CN_MISMATCH;
+    }
+#else
+    (void)flags;
+#endif
+    return 0;
 }
 
 /**
@@ -217,7 +243,6 @@ bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
     bSSL_t *p_ssl = bCalloc(1, sizeof(bSSL_t));
     if (p_ssl == NULL)
     {
-        b_log_e("mem error..\r\n");
         return NULL;
     }
     if (_bSSLDRBGInit(&p_ssl->random) < 0)
@@ -228,19 +253,43 @@ bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
     mbedtls_ssl_init(&p_ssl->ssl_ctx);
     mbedtls_ssl_config_init(&p_ssl->ssl_conf);
     mbedtls_x509_crt_init(&p_ssl->ca);
+#if defined(MBEDTLS_DEBUG_C)
     mbedtls_ssl_conf_dbg(&p_ssl->ssl_conf, _bSSLPrint, NULL);
     mbedtls_debug_set_threshold(MBEDTLS_DEBUG_LEVEL);
+#endif
     mbedtls_ssl_config_defaults(&p_ssl->ssl_conf, MBEDTLS_SSL_IS_CLIENT,
                                 MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);
     mbedtls_ssl_conf_rng(&p_ssl->ssl_conf, mbedtls_ctr_drbg_random, &p_ssl->random.ctr_drbg);
     mbedtls_ssl_set_hostname(&p_ssl->ssl_ctx, hostname);
-    const int *ciphersuites = mbedtls_ssl_list_ciphersuites();
-    printf("Supported ciphersuites:\n");
-    while (*ciphersuites != 0)
+
+    // 注册验证回调（始终注册）
+    // 回调内部根据 _SSL_SKIP_HOSTNAME_VERIFY 宏决定是否跳过 CN/SAN 检查
+    mbedtls_ssl_conf_verify(&p_ssl->ssl_conf, _bSSLVerifyCb, p_ssl);
+
+#if defined(MBEDTLS_SSL_MAX_FRAGMENT_LENGTH)
+    // 通知服务器最大分片大小，避免服务器发送超过客户端缓冲区的record
+    // MFL等级根据 MBEDTLS_SSL_IN_CONTENT_LEN 自动选择
+    mbedtls_ssl_conf_max_frag_len(&p_ssl->ssl_conf, B_SSL_MAX_FRAG_LEN);
+#endif
+
+    // 限制 sig_algs: 只提供 PKCS#1 v1.5 + ECDSA, 不提供 RSA-PSS.
+    //   Windows 上 OpenSSL 3.x 一些版本会优先选 PSS (rsa_pss_rsae_sha256),
+    //   触发 mbedTLS 3.6 验签的兼容性问题. 不把 PSS 写进 offer 后, 按
+    //   RFC 5246 §7.4.1.4.1 server SKE sig_alg 必须在 client offer 列表里,
+    //   因此强制选 0x0401 (rsa_pkcs1_sha256), 完全避开 PSS 路径.
+    // 列表必须存放在 SSL 句柄生命周期内有效内存, 因为 mbedtls_ssl_conf_sig_algs() 只存指针.
     {
-        b_log("%s\n", mbedtls_ssl_get_ciphersuite_name(*ciphersuites));
-        ciphersuites++;
+        int idx                = 0;
+        p_ssl->sig_algs[idx++] = MBEDTLS_TLS1_3_SIG_RSA_PKCS1_SHA256;
+        p_ssl->sig_algs[idx++] = MBEDTLS_TLS1_3_SIG_ECDSA_SECP256R1_SHA256;
+#if (defined(_MBEDTLS_SHA384_ENABLE) && (_MBEDTLS_SHA384_ENABLE == 1))
+        p_ssl->sig_algs[idx++] = MBEDTLS_TLS1_3_SIG_RSA_PKCS1_SHA384;
+        p_ssl->sig_algs[idx++] = MBEDTLS_TLS1_3_SIG_ECDSA_SECP384R1_SHA384;
+#endif
+        p_ssl->sig_algs[idx++] = MBEDTLS_TLS1_3_SIG_NONE;  // 哨兵 = 0
+        mbedtls_ssl_conf_sig_algs(&p_ssl->ssl_conf, p_ssl->sig_algs);
     }
+
     p_ssl->sockfd = -1;
     mbedtls_ssl_set_bio(&p_ssl->ssl_ctx, p_ssl, _bSSLSend, _bSSLRecv, NULL);
 
@@ -252,7 +301,7 @@ bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
     else
     {
 #if defined(MBEDTLS_SSL_DEFAULT_CERT)
-        root_cert.pbuf = MBEDTLS_SSL_DEFAULT_CERT;
+        root_cert.pbuf = (const uint8_t *)MBEDTLS_SSL_DEFAULT_CERT;
         root_cert.len  = sizeof(MBEDTLS_SSL_DEFAULT_CERT);
 #endif
     }
@@ -263,17 +312,21 @@ bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
         if (ret == 0)
         {
             mbedtls_ssl_conf_ca_chain(&p_ssl->ssl_conf, &p_ssl->ca, NULL);
+#if (defined(_SSL_VERIFY_ENABLE) && (_SSL_VERIFY_ENABLE == 1))
             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
+#else
+            mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
+#endif
         }
         else
         {
-            b_log_e("cert parse error..-0x%x\r\n", 0 - ret);
+            b_log_e("[SSL] cert parse failed: -0x%x\r\n", -ret);
             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
         }
     }
     else
     {
-        b_log_w("no valid cert ....\r\n");
+        b_log_w("[SSL] no cert configured, verify disabled\r\n");
         mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
     }
     mbedtls_ssl_setup(&p_ssl->ssl_ctx, &p_ssl->ssl_conf);
@@ -319,7 +372,10 @@ int bSSLHandshake(bSSLHandle_t ssl, int sockfd)
     {
         return 1;
     }
-    b_log_e("fail -0x%x\r\n", -ret);
+    if (ret < 0)
+    {
+        b_log_e("[SSL] handshake fail -0x%x\r\n", -ret);
+    }
     return ret;
 }
 

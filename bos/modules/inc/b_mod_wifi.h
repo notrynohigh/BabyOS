@@ -122,6 +122,7 @@ int bWifiSetMode(bWifiMode_t mode);
 int bWifiDeinit(void);
 int bWifiApConfig(const char *ssid, const char *passwd);
 int bWifiJoinAp(const char *ssid, const char *passwd);
+uint8_t bWifiIsConnected(void);
 
 /**
  * \}

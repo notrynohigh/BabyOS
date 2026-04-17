@@ -64,6 +64,8 @@
 
 #define DRIVER_PRIVATE_TYPE bEsp12fPrivate_t
 
+#define DRIVER_ESP12F_DEBUG_ENABLE 0
+
 #ifndef ESP12F_CMD_TIMEOUT
 #define WIFIMODULE_CMD_TIMEOUT (5000)
 #else
@@ -404,10 +406,11 @@ static void _bEsp12fDataParse(bDriverInterface_t *pdrv, char *pdata, uint16_t le
                 if (_priv->pcb_ctx[conn_index].state >= WIFI_PCB_STATE_CONNECTED &&
                     _priv->pcb_ctx[conn_index].state < WIFI_PCB_STATE_WAIT_DISCONNECT)
                 {
+#if DRIVER_ESP12F_DEBUG_ENABLE
                     b_log("recv:%d bytes\r\n    %s\r\n", recv_len, pstr);
                     b_log_hex(pstr, recv_len);
                     b_log("\r\n");
-
+#endif
                     bTcpIpNewDataArg_t new_data;
                     new_data.pcb     = _priv->pcb_ctx[conn_index].pcb;
                     new_data.pbuf    = (uint8_t *)pstr;
@@ -1330,7 +1333,6 @@ static int _bESP12FCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     bMacAddress_t *pmac = NULL;
     bDRIVER_GET_PRIVATE(_priv, DRIVER_PRIVATE_TYPE, pdrv);
-    b_log("ctl:%d\r\n", cmd);
     switch (cmd)
     {
         case bCMD_GET_DRIVER_NETIF:
@@ -1340,6 +1342,7 @@ static int _bESP12FCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
                 return -1;
             }
             ((bDriverNetif_t *)param)->private = _priv;
+            ((bDriverNetif_t *)param)->type    = B_NETCARD_TYPE_WIFI;
         }
         break;
         case bCMD_WIFI_REG_CALLBACK:

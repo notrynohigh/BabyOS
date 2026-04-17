@@ -1,68 +1,80 @@
-#模块配置
+# Modules Configuration
 menu "Modules Configuration"
 
 config _BOS_MODULES_ENABLE
     bool "Modules Enable/Disable"
     default y
 
+#======================================== ADC Hub ========================================
 config _ADCHUB_ENABLE
-    bool "Adchub Enable/Disable"
+    bool "ADC Hub"
     default n
     depends on _BOS_MODULES_ENABLE
+
+if _ADCHUB_ENABLE
 
 config FILTER_BUF_SIZE
-    int "Filter Buffer Size"
+    int "ADC filter buffer size"
     default 10
-    depends on _ADCHUB_ENABLE
 
+endif
+
+#======================================== Error Management ========================================
 config _ERROR_MANAGE_ENABLE
-    bool "Error Manage Enable/Disable"
+    bool "Error Management"
     default n
     depends on _BOS_MODULES_ENABLE
 
+if _ERROR_MANAGE_ENABLE
+
+config ERROR_Q_LENGTH
+    int "Error queue length"
+    default 10
+
+endif
+
+#======================================== File System ========================================
 config _FS_ENABLE
-    bool "FS Enable/Disable"
+    bool "File System"
     default n
     depends on _BOS_MODULES_ENABLE
+
+if _FS_ENABLE
 
 config FS_FATFS
-    bool "FatFS Enable/Disable"
+    bool "FatFS"
     default y
-    depends on _FS_ENABLE
 
 config FS_LITTLEFS
-    bool "LittleFS Enable/Disable"
+    bool "LittleFS"
     default n
-    depends on _FS_ENABLE
+
+if FS_LITTLEFS
+
+config LFS_CONFIG
+    string "LittleFS config header file"
+    default "b_lfs_config.h"
+
+endif
 
 config FS_MOUNT_NUMBER
     int "Maximum number of mounts"
     default 1
-    depends on _FS_ENABLE
     range 1 10
 
 config FS_BLOCK_SIZE
-    int "Block Size (Number of minimum erasure units, default 1)"
+    int "Block size (minimum erasure units)"
     default 1
-    depends on _FS_ENABLE
 
 config _FS_MKFS_ENABLE
-    bool "Create a file system Enable/Disable"
+    bool "Enable filesystem creation (mkfs)"
     default n
-    depends on _FS_ENABLE
 
-config LFS_CONFIG
-    string "LFS_CONFIG as a header file to include"
-    default b_lfs_config.h
-    depends on FS_LITTLEFS
+endif
 
-config ERROR_Q_LENGTH
-    int "Error Queue Length"
-    default 10
-    depends on _ERROR_MANAGE_ENABLE
-
+#======================================== Modbus ========================================
 config _MODBUS_ENABLE
-    bool "Modbus Enable/Disable"
+    bool "Modbus"
     default n
     depends on _BOS_MODULES_ENABLE
     select _BOS_ALGO_ENABLE
@@ -71,435 +83,498 @@ config _MODBUS_ENABLE
     select _BOS_SERVICES_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
 
+if _MODBUS_ENABLE
+
 config MY_DEVICE_MODBUS_REG_NUM
-    int "The value of the maximum register"
+    int "Maximum register number"
     default 36
-    depends on _MODBUS_ENABLE
 
 config SLAVE_ADDR
-    int "Slave address (modbus slave mode)"
+    int "Slave address (for slave mode)"
     default 1
-    depends on _MODBUS_ENABLE
 
+endif
+
+#======================================== Protocol ========================================
 config _PROTO_ENABLE
-    bool "Protocol Enable/Disable"
+    bool "Protocol"
     default n
     depends on _BOS_MODULES_ENABLE
     select _BOS_SERVICES_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
 
+if _PROTO_ENABLE
+
 choice
-    prompt "Protocol Role"
+    prompt "Protocol role"
     default PROTO_ROLE_MCU
-    depends on _PROTO_ENABLE
-    help
-        Select the role of the protocol user.
-        Choose 'MCU' if the protocol is used by the microcontroller.
-        Choose 'Host' if the protocol is used by the upper-level system.
-
 config PROTO_ROLE_MCU
-    bool "MCU"
+    bool "MCU (device)"
     help
-        Select this option if the protocol is used by the microcontroller.
-
+        Select if protocol is used by the microcontroller.
 config PROTO_ROLE_HOST
     bool "Host"
     help
-        Select this option if the protocol is used by the upper-level system.
-
+        Select if protocol is used by the upper-level system.
 endchoice
-    
 
 config PROTO_FID_SIZE
-    int "Size of The Device ID Field 2 or 4 Bytes"
+    int "Device ID field size (bytes)"
     default 4
-    depends on _PROTO_ENABLE
-    range 1 4
+    range 2 4
 
 config PROTO_FLEN_SIZE
-    int "Size of The Len Field 1 or 2 Bytes"
+    int "Length field size (bytes)"
     default 2
-    depends on _PROTO_ENABLE
     range 1 2
 
 config _PROTO_ENCRYPT_ENABLE
-    bool "Encrypt Enable/Disable"
+    bool "Encryption"
     default n
-    depends on _PROTO_ENABLE
+
+if _PROTO_ENCRYPT_ENABLE
 
 config SECRET_KEY1
-    int "Secret Key 1"
+    int "Secret key 1"
     default 1
-    depends on _PROTO_ENCRYPT_ENABLE
 
 config SECRET_KEY2
-    int "Secret Key 2"
+    int "Secret key 2"
     default 22
-    depends on _PROTO_ENCRYPT_ENABLE
 
 config SECRET_KEY3
-    int "Secret Key 3"
+    int "Secret key 3"
     default 333
-    depends on _PROTO_ENCRYPT_ENABLE
 
 config SECRET_KEY4
-    int "Secret Key 4"
+    int "Secret key 4"
     default 4444
-    depends on _PROTO_ENCRYPT_ENABLE    
 
+endif
 
+endif
+
+#======================================== KV Storage ========================================
 config _KV_ENABLE
-    bool "KV Enable/Disable"
+    bool "KV Storage"
     default n
     depends on _BOS_MODULES_ENABLE
     select _BOS_ALGO_ENABLE
     select _ALGO_CRC_ENABLE
     select _ALGO_CRC32_ENABLE
 
+if _KV_ENABLE
+
 config _KV_MD5_ENABLE
-    bool "KV MD5 Enable/Disable"
+    bool "MD5 verification"
     default n
-    depends on _KV_ENABLE
     select _ALGO_MD5_ENABLE
 
 config _KV_ENCRYPT_ENABLE
-    bool "KV Data Encryption"
+    bool "Data encryption"
     default n
-    depends on _KV_ENABLE
+
+if _KV_ENCRYPT_ENABLE
 
 config _KV_ENCRYPT_KEY
-    int "Key 0~255"
+    int "Encryption key (0-255)"
     default 111
-    depends on _KV_ENCRYPT_ENABLE
 
+endif
+
+endif
+
+#======================================== File Transfer ========================================
 config _XMODEM128_ENABLE
-    bool "XMODEM128 Enable/Disable"
+    bool "XMODEM-128"
     default n
     depends on _BOS_MODULES_ENABLE
     select _BOS_SERVICES_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
 
 config _YMODEM_ENABLE
-    bool "YMODEM Enable/Disable"
+    bool "YMODEM"
     default n
     depends on _BOS_MODULES_ENABLE
     select _BOS_SERVICES_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
 
+#======================================== Menu ========================================
 config _MENU_ENABLE
-    bool "Menu Enable/Disable"
+    bool "Menu"
     default n
     depends on _BOS_MODULES_ENABLE
+
+if _MENU_ENABLE
 
 config MENU_ITEM_NUMBER
-    int "Menu Item Number"
+    int "Menu item number"
     default 10
-    depends on _MENU_ENABLE
 
+endif
+
+#======================================== PWM ========================================
 config _PWM_ENABLE
-    bool "Soft-pwm Enable/Disable"
+    bool "Software PWM"
     default n
     depends on _BOS_MODULES_ENABLE
 
+#======================================== Tuning Parameters ========================================
 config _PARAM_ENABLE
-    bool "Tuning Parameters Enable/Disable"
+    bool "Tuning Parameters"
     default n
     depends on _BOS_MODULES_ENABLE
     select _NR_MICRO_SHELL_ENABLE
 
+#======================================== State Machine ========================================
 config _STATE_ENABLE
-    bool "State Machine Enable/Disable"
+    bool "State Machine"
     default n
     depends on _BOS_MODULES_ENABLE
 
+#======================================== IAP / OTA ========================================
 config _IAP_ENABLE
-    bool "IAP Enable/Disable"
+    bool "IAP (In-Application Programming)"
     default n
     depends on _BOS_MODULES_ENABLE
     select _BOS_ALGO_ENABLE
     select _ALGO_CRC_ENABLE
     select _ALGO_CRC32_ENABLE
 
+if _IAP_ENABLE
+
 config MCUFLASH_BASE_ADDR
-    hex "McuFlash Base Address"
+    hex "MCU Flash base address"
     default 0x8000000
-    depends on _IAP_ENABLE
 
 config BOOT_START_ADDR
-    hex "Bootloader Start Address"
+    hex "Bootloader start address"
     default 0x8000000
-    depends on _IAP_ENABLE
 
 config IAP_FLAG_ADDR
-    hex "IAP Flag Address"
+    hex "IAP flag address"
     default 0x8014000
-    depends on _IAP_ENABLE
 
 config APP_START_ADDR
-    hex "App Start Address"
+    hex "Application start address"
     default 0x8014800
-    depends on _IAP_ENABLE
 
 config RECEIVE_FIRMWARE_MODE
-    int "Receive New Firmware 0(boot) 1(app)"
+    int "Receive firmware mode (0: boot, 1: app)"
     default 1
-    depends on _IAP_ENABLE
     range 0 1
 
 config IAP_FILE_CACHE
-    int "File Cache 0(none) 1(on-chip flash) 2(spiflash)"
+    int "File cache (0: none, 1: flash, 2: spiflash)"
     default 2
-    depends on _IAP_ENABLE
     range 0 2
 
 config IAP_FW_SAVE_ADDR
-    hex "Firmware Save Address"
+    hex "Firmware save address"
     default 0x0
-    depends on _IAP_ENABLE
 
 config _BACKUP_ENABLE
-    bool "Backup Enable/Disable"
+    bool "Backup support"
     default n
-    depends on _IAP_ENABLE
+
+if _BACKUP_ENABLE
 
 config IAP_BACKUP_LOCATION
-    int "Backup Location 0(on-chip flash) 1(spiflash)"
+    int "Backup location (0: flash, 1: spiflash)"
     default 1
-    depends on _BACKUP_ENABLE
     range 0 1
 
 config IAP_BACKUP_ADDR
-    hex "Backup Address"
+    hex "Backup address"
     default 0x32000
-    depends on _BACKUP_ENABLE
 
 config IAP_BACKUP_SIZE
-    hex "Backup Area Size"
+    hex "Backup area size"
     default 0x14000
-    depends on _BACKUP_ENABLE  
 
+endif
+
+endif
+
+#======================================== WiFi ========================================
 config _WIFI_ENABLE
-    bool "WiFi Enable/Disable"
+    bool "WiFi"
     default n
-    depends on _BOS_MODULES_ENABLE  
+    depends on _BOS_MODULES_ENABLE
     select _CJSON_ENABLE
     select _MEMP_ENABLE
 
+#======================================== Select/I/O Multiplexing ========================================
 config _SELECT_ENABLE
-    bool "Select Enable/Disable"
+    bool "Select (I/O Multiplexing)"
     default n
     depends on _BOS_MODULES_ENABLE
+
+if _SELECT_ENABLE
 
 config SELECT_FDS_NUMBER
-    int "Select-fds Max-Number"
+    int "Maximum fd number"
     default 32
-    depends on _SELECT_ENABLE
 
+endif
+
+#======================================== GUI ========================================
 config _GUI_ENABLE
-    bool "GUI Enable/Disable"
+    bool "GUI"
     default n
     depends on _BOS_MODULES_ENABLE
 
+if _GUI_ENABLE
+
 config GUI_REFR_PERIOD
-    int "GUI Refresh Period x ms"
+    int "GUI refresh period (ms)"
     default 33
-    select _UGUI_ENABLE
-    depends on _GUI_ENABLE
 
 choice
-    prompt "Color RGBXXX"
-    depends on _GUI_ENABLE
+    prompt "Color format"
     default _GUI_RGB_565
 config _GUI_RGB_888
-    bool "rgb888"
+    bool "RGB888"
 config _GUI_RGB_565
-    bool "rgb565"
+    bool "RGB565"
 config _GUI_RGB_8BIT
-    bool "rgb_8bit"    
+    bool "RGB 8-bit"
 endchoice
 
+# uGUI
 config _USE_UGUI
-    bool "Use Thirdparty/uGUI"
+    bool "Use uGUI"
     default y
-    depends on _GUI_ENABLE
     select _UGUI_ENABLE
 
+# LVGL
 config _USE_LVGL
-    bool "Use thirdparty/lvgl"
+    bool "Use LVGL"
     default n
-    depends on _GUI_ENABLE
     select _LVGL_ENABLE
 
+if _USE_LVGL
+
 config LVGL_DISP_BUF_NUM
-    int "The number of buffers used for partial rendering"
+    int "LVGL display buffer count"
     default 1
     range 1 2
-    depends on _USE_LVGL
 
+endif
+
+# ARM-2D
 config _USE_ARM_2D
-    bool "Use thirdparty/arm-2d"
+    bool "Use ARM-2D"
     default n
-    depends on _GUI_ENABLE
     select _ARM_2D_ENABLE
+
+if _USE_ARM_2D
 
 config PFB_WIDTH
     int "PFB block width"
     default 16
-    depends on _USE_ARM_2D
 
 config PFB_HEIGHT
     int "PFB block height"
     default 16
-    depends on _USE_ARM_2D    
 
 config __ARM_2D_HAS_ASYNC__
-    bool "Enable Asynchronous Programmers' model support"
+    bool "Enable async programming model"
     default n
-    depends on _USE_ARM_2D
 
 config __ARM_2D_HAS_ANTI_ALIAS_TRANSFORM__
-    bool "Enable anti-alias support for all tranform operations."
+    bool "Enable anti-alias transform"
     default y
-    depends on _USE_ARM_2D
 
 config __ARM_2D_CFG_SUPPORT_COLOUR_CHANNEL_ACCESS__
-    bool "Enable support for accessing individual colour channels"
+    bool "Enable color channel access"
     default y
-    depends on _USE_ARM_2D
 
 config __ARM_2D_CFG_OPTIMIZE_FOR_POINTER_LIKE_SHAPES_IN_TRANSFORM__
-    bool "Optimize the scaler version of transform operations for pointer-like resources"
+    bool "Optimize for pointer-like shapes"
     default y
-    depends on _USE_ARM_2D
 
 config __LCD_PRINT_ENABLE
-    bool "__RTE_ACCELERATION_ARM_2D_EXTRA_LCD_PRINTF__"
+    bool "Enable LCD printf"
     default n
-    depends on _USE_ARM_2D
 
 config __LCD_PRINTF_CFG_TEXT_BUFFER_SIZE__
-    int "The size of the LCD printf text buffer <16-65535>"
+    int "LCD printf text buffer size"
     default 16
-    range 16 65525
-    depends on _USE_ARM_2D  
+    range 16 65535
 
 config __GLCD_CFG_SCEEN_WIDTH__
-    int "Width of the screen <8-32767>"
+    int "Screen width"
     default 240
     range 8 32767
-    depends on _USE_ARM_2D  
 
 config __GLCD_CFG_SCEEN_HEIGHT__
-    int "Height of the screen <8-32767>"
+    int "Screen height"
     default 320
     range 8 32767
-    depends on _USE_ARM_2D  
 
+endif
+
+endif
+
+#======================================== TCP/IP ========================================
 config _TCPIP_ENABLE
-    bool "TCPIP Enable/Disable"
+    bool "TCP/IP Stack"
     default n
     depends on _BOS_MODULES_ENABLE
 
+if _TCPIP_ENABLE
+
 config _TCPIP_RECV_BUF_ENABLE
-    bool "TCPIP Receive Buffer Enable/Disable"
+    bool "Receive buffer"
     default n
-    depends on _TCPIP_ENABLE
+
+if _TCPIP_RECV_BUF_ENABLE
 
 config TCPIP_RECV_BUF_LEN_MAX
-    int "TCPIP Receive Buffer Length Limit"
-    default 4096
-    depends on _TCPIP_RECV_BUF_ENABLE    
+    int "Receive buffer max length"
+    default 2048
+
+endif
 
 config _TCPIP_SEND_BUF_ENABLE
-    bool "TCPIP Send Buffer Enable/Disable"
+    bool "Send buffer"
     default n
-    depends on _TCPIP_ENABLE
+
+if _TCPIP_SEND_BUF_ENABLE
 
 config TCPIP_SEND_BUF_LEN_MAX
-    int "TCPIP Send Buffer Length Limit"
-    default 4096
-    depends on _TCPIP_SEND_BUF_ENABLE      
+    int "Send buffer max length"
+    default 2048
+
+endif
 
 config TCPIP_DNS_CACHE_NUM
-    int "DNS Cache Entries Count"
+    int "DNS cache entries"
     default 5
-    depends on _TCPIP_ENABLE
-
-config _TCPIP_STACK_LWIP_ENABLE
-    bool "LWIP TCP/IP Enable"
-    default y
-    depends on _TCPIP_ENABLE
-
-config _TCPIP_DNS_DEBUG_ENABLE
-    bool "TCPIP DNS Debug Enable"
-    default n
-    depends on _TCPIP_ENABLE
-
-config _TCPIP_DHCP_DEBUG_ENABLE
-    bool "TCPIP DHCP Debug Enable"
-    default n
-    depends on _TCPIP_ENABLE
-
-config TCPIP_CHECKSUM_BY_HARDWARE
-    bool "HECKSUM_BY_HARDWARE enabled"
-    default n
-    depends on _TCPIP_STACK_LWIP_ENABLE
-
-config MEM_SIZE_FOR_LWIP
-    int "Size of The Heap Memory"
-    default 10240
-    depends on _TCPIP_STACK_LWIP_ENABLE
-
-config _LWIP_DEBUG_ENABLE
-    bool "LwIP Debug Enable"
-    default n
-    depends on _TCPIP_STACK_LWIP_ENABLE    
 
 config REMOTE_ADDR_LEN_MAX
-    int "Maximum length of remote address"
+    int "Remote address max length"
     default 128
-    depends on _TCPIP_ENABLE
 
 config CONNECT_RECVBUF_MAX
-    int "Recv Buffer Max Length (B)"
-    default 4096
-    depends on _TCPIP_ENABLE
+    int "Connection receive buffer max length"
+    default 2048
 
 config SERVER_MAX_CONNECTIONS
-    int "The maximum number of connections that can be saved on the server"
+    int "Server max connections"
     default 2
-    depends on _TCPIP_ENABLE
 
+# LWIP
+config _TCPIP_STACK_LWIP_ENABLE
+    bool "LWIP TCP/IP stack"
+    default y
+
+if _TCPIP_STACK_LWIP_ENABLE
+
+config TCPIP_CHECKSUM_BY_HARDWARE
+    bool "Hardware checksum offload"
+    default n
+
+config MEM_SIZE_FOR_LWIP
+    int "LWIP heap memory size"
+    default 10240
+
+config _LWIP_DEBUG_ENABLE
+    bool "LWIP debug"
+    default n
+
+endif
+
+config _TCPIP_DNS_DEBUG_ENABLE
+    bool "DNS debug"
+    default n
+
+config _TCPIP_DHCP_DEBUG_ENABLE
+    bool "DHCP debug"
+    default n
+
+endif
+
+#======================================== USB ========================================
 config _USB_ENABLE
-    bool "USB Enable/Disable"
+    bool "USB"
     default n
     depends on _BOS_MODULES_ENABLE
     select _TINYUSB_ENABLE
 
+if _USB_ENABLE
+
 config USB_MANUFACTURER
     string "Manufacturer"
     default "BabyOS"
-    depends on _USB_ENABLE
 
 config USB_PRODUCT
     string "Product"
     default "BabyOS-USB"
-    depends on _USB_ENABLE
 
 config USB_SERIAL_NUMBER
-    string "Serials"
+    string "Serial number"
     default "BabyOS-USB0"
-    depends on _USB_ENABLE
 
+endif
+
+#======================================== SSL/TLS ========================================
 config _SSL_ENABLE
-    bool "SSL Enable/Disable"
+    bool "SSL/TLS"
     default n
     depends on _BOS_MODULES_ENABLE
     select _MBEDTLS_ENABLE
 
+if _SSL_ENABLE
+
 config _SSL_DEFAULT_CERT_ENABLE
-    bool "The default certificate in the configuration file (MBEDTLS_SSL_DEFAULT_CERT) Enable/Disable"
+    bool "Use default certificate"
+    default y
+    help
+      Embed default root CA certificates (_config/b_mbedtls_config.h).
+      Required to verify HTTPS server certificates.
+      Always enable for HTTP client functionality.
+
+config _SSL_SKIP_HOSTNAME_VERIFY
+    bool "Skip TLS hostname verification (test only)"
     default n
-    depends on _SSL_ENABLE
+    help
+      WARNING: Only enable for development/testing!
+      Skips CN/SAN check between URL host and certificate subject.
+      Certificate chain validation (signature, expiry, etc.) still runs.
+      Disable in production to prevent MITM attacks.
+
+config _SSL_VERIFY_ENABLE
+    bool "Enable server certificate verification"
+    default n
+    help
+      Enable CA chain + expiry validation for server certificates.
+      Disable for self-signed certs or development/testing.
+      Hostname verification is controlled separately by _SSL_SKIP_HOSTNAME_VERIFY.
+
+# mbedTLS细粒度配置（用于优化Flash占用）
+config _MBEDTLS_DEBUG_ENABLE
+    bool "mbedTLS debug output"
+    default n
+    help
+      Enable mbedTLS debug log output. Disable in production to save ~5-10KB Flash.
+
+config _MBEDTLS_SHA384_ENABLE
+    bool "SHA-384 support"
+    default n
+    help
+      Required for AES-256-GCM-SHA384 cipher suite.
+      Enable if you need AES-256 strength; otherwise SHA-256 is sufficient.
+
+config _MBEDTLS_PEM_PARSE_ENABLE
+    bool "PEM certificate parsing"
+    default y
+    help
+      Required for parsing PEM-formatted certificates (most common).
+      Disable only if you use DER-formatted certificates exclusively.
+      Saves ~3-4KB Flash when disabled.
+
+endif
 
 endmenu
