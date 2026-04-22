@@ -43,6 +43,7 @@
 #define _BOS_SERVICES_ENABLE 1
 #define _TCPIP_SERVICE_ENABLE 1
 #define _MQTT_SERVICE_ENABLE 1
+#define _WEBSOCKET_SERVICE_ENABLE 1
 #define BABYOS_MQTT_BROKER 1
 #define MQTT_CLIENT_ID "babyos"
 #define MQTT_BROKER_URL "mqtts://ra35e116.ala.cn-hangzhou.emqxsl.cn"

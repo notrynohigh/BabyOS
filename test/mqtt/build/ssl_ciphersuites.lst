@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc9u94PT.s 			page 1
+GAS LISTING /tmp/ccNdLdOt.s 			page 1
 
 
    1              		.file	"ssl_ciphersuites.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS1_3_AES_128_GCM_SHA256,
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS1_3_AES_128_CCM_SHA256,
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS1_3_AES_128_CCM_8_SHA256,
-GAS LISTING /tmp/cc9u94PT.s 			page 2
+GAS LISTING /tmp/ccNdLdOt.s 			page 2
 
 
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_SSL_PROTO_TLS1_3 */
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  103:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     /* All CAMELLIA-128 ephemeral suites */
  104:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_ECDHE_ECDSA_WITH_CAMELLIA_128_GCM_SHA256,
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_ECDHE_RSA_WITH_CAMELLIA_128_GCM_SHA256,
-GAS LISTING /tmp/cc9u94PT.s 			page 3
+GAS LISTING /tmp/ccNdLdOt.s 			page 3
 
 
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_DHE_RSA_WITH_CAMELLIA_128_GCM_SHA256,
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  160:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384,
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_ECDH_RSA_WITH_AES_256_CBC_SHA,
  162:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384,
-GAS LISTING /tmp/cc9u94PT.s 			page 4
+GAS LISTING /tmp/ccNdLdOt.s 			page 4
 
 
  163:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384,
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  217:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_RSA_PSK_WITH_AES_256_CBC_SHA384,
  218:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_RSA_PSK_WITH_AES_256_CBC_SHA,
  219:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_RSA_PSK_WITH_CAMELLIA_256_GCM_SHA384,
-GAS LISTING /tmp/cc9u94PT.s 			page 5
+GAS LISTING /tmp/ccNdLdOt.s 			page 5
 
 
  220:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_RSA_PSK_WITH_CAMELLIA_256_CBC_SHA384,
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  274:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     MBEDTLS_TLS_PSK_WITH_NULL_SHA,
  275:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
  276:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_SSL_CIPHERSUITES */
-GAS LISTING /tmp/cc9u94PT.s 			page 6
+GAS LISTING /tmp/ccNdLdOt.s 			page 6
 
 
  277:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     0
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  331:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
  332:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
  333:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif
-GAS LISTING /tmp/cc9u94PT.s 			page 7
+GAS LISTING /tmp/ccNdLdOt.s 			page 7
 
 
  334:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED)
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  388:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_SSL_HAVE_CBC)
  389:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, "TLS-ECDHE-ECDSA-WITH-AES-128-CBC-SHA",
  390:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_AES_128_CBC, MBEDTLS_MD_SHA1, MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA,
-GAS LISTING /tmp/cc9u94PT.s 			page 8
+GAS LISTING /tmp/ccNdLdOt.s 			page 8
 
 
  391:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  445:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_SSL_HAVE_AES */
  446:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
  447:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_SSL_HAVE_CAMELLIA)
-GAS LISTING /tmp/cc9u94PT.s 			page 9
+GAS LISTING /tmp/ccNdLdOt.s 			page 9
 
 
  448:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_SSL_HAVE_CBC)
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  502:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_AES_256_CBC, MBEDTLS_MD_SHA1, MBEDTLS_KEY_EXCHANGE_ECDHE_RSA,
  503:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
  504:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
-GAS LISTING /tmp/cc9u94PT.s 			page 10
+GAS LISTING /tmp/ccNdLdOt.s 			page 10
 
 
  505:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_SSL_HAVE_CBC */
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  559:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_CAMELLIA_128_GCM, MBEDTLS_MD_SHA256, MBEDTLS_KEY_EXCHANGE_ECDHE_RSA,
  560:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
  561:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
-GAS LISTING /tmp/cc9u94PT.s 			page 11
+GAS LISTING /tmp/ccNdLdOt.s 			page 11
 
 
  562:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_MD_CAN_SHA256 */
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  616:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_DHE_RSA_WITH_AES_128_CBC_SHA, "TLS-DHE-RSA-WITH-AES-128-CBC-SHA",
  617:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_AES_128_CBC, MBEDTLS_MD_SHA1, MBEDTLS_KEY_EXCHANGE_DHE_RSA,
  618:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
-GAS LISTING /tmp/cc9u94PT.s 			page 12
+GAS LISTING /tmp/ccNdLdOt.s 			page 12
 
 
  619:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  673:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_SSL_HAVE_GCM)
  674:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_MD_CAN_SHA256)
  675:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_DHE_RSA_WITH_CAMELLIA_128_GCM_SHA256, "TLS-DHE-RSA-WITH-CAMELLIA-128-GCM-SHA256",
-GAS LISTING /tmp/cc9u94PT.s 			page 13
+GAS LISTING /tmp/ccNdLdOt.s 			page 13
 
 
  676:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_CAMELLIA_128_GCM, MBEDTLS_MD_SHA256, MBEDTLS_KEY_EXCHANGE_DHE_RSA,
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  730:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_RSA_WITH_AES_256_CBC_SHA, "TLS-RSA-WITH-AES-256-CBC-SHA",
  731:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_AES_256_CBC, MBEDTLS_MD_SHA1, MBEDTLS_KEY_EXCHANGE_RSA,
  732:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
-GAS LISTING /tmp/cc9u94PT.s 			page 14
+GAS LISTING /tmp/ccNdLdOt.s 			page 14
 
 
  733:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  787:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
  788:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
  789:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_MD_CAN_SHA256 */
-GAS LISTING /tmp/cc9u94PT.s 			page 15
+GAS LISTING /tmp/ccNdLdOt.s 			page 15
 
 
  790:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  844:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_SSL_HAVE_AES */
  845:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
  846:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_SSL_HAVE_CAMELLIA)
-GAS LISTING /tmp/cc9u94PT.s 			page 16
+GAS LISTING /tmp/ccNdLdOt.s 			page 16
 
 
  847:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_SSL_HAVE_CBC)
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  901:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_AES_256_CBC, MBEDTLS_MD_SHA1, MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA,
  902:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
  903:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
-GAS LISTING /tmp/cc9u94PT.s 			page 17
+GAS LISTING /tmp/ccNdLdOt.s 			page 17
 
 
  904:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_SSL_HAVE_CBC */
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  958:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_CAMELLIA_128_GCM, MBEDTLS_MD_SHA256, MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA,
  959:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
  960:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
-GAS LISTING /tmp/cc9u94PT.s 			page 18
+GAS LISTING /tmp/ccNdLdOt.s 			page 18
 
 
  961:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_MD_CAN_SHA256 */
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1015:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_MD_CAN_SHA1)
 1016:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_PSK_WITH_AES_128_CBC_SHA, "TLS-PSK-WITH-AES-128-CBC-SHA",
 1017:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_AES_128_CBC, MBEDTLS_MD_SHA1, MBEDTLS_KEY_EXCHANGE_PSK,
-GAS LISTING /tmp/cc9u94PT.s 			page 19
+GAS LISTING /tmp/ccNdLdOt.s 			page 19
 
 
 1018:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1072:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_MD_CAN_SHA384)
 1073:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_PSK_WITH_CAMELLIA_256_GCM_SHA384, "TLS-PSK-WITH-CAMELLIA-256-GCM-SHA384",
 1074:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_CAMELLIA_256_GCM, MBEDTLS_MD_SHA384, MBEDTLS_KEY_EXCHANGE_PSK,
-GAS LISTING /tmp/cc9u94PT.s 			page 20
+GAS LISTING /tmp/ccNdLdOt.s 			page 20
 
 
 1075:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1129:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_DHE_PSK_WITH_AES_256_CCM, "TLS-DHE-PSK-WITH-AES-256-CCM",
 1130:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_AES_256_CCM, MBEDTLS_MD_SHA256, MBEDTLS_KEY_EXCHANGE_DHE_PSK,
 1131:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
-GAS LISTING /tmp/cc9u94PT.s 			page 21
+GAS LISTING /tmp/ccNdLdOt.s 			page 21
 
 
 1132:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1186:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
 1187:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_SSL_HAVE_CBC)
 1188:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_MD_CAN_SHA256)
-GAS LISTING /tmp/cc9u94PT.s 			page 22
+GAS LISTING /tmp/ccNdLdOt.s 			page 22
 
 
 1189:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256, "TLS-ECDHE-PSK-WITH-AES-128-CBC-SHA256",
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1243:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_AES_128_GCM, MBEDTLS_MD_SHA256, MBEDTLS_KEY_EXCHANGE_RSA_PSK,
 1244:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
 1245:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
-GAS LISTING /tmp/cc9u94PT.s 			page 23
+GAS LISTING /tmp/ccNdLdOt.s 			page 23
 
 
 1246:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_MD_CAN_SHA256 */
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1300:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_SSL_HAVE_CBC */
 1301:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
 1302:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_SSL_HAVE_GCM)
-GAS LISTING /tmp/cc9u94PT.s 			page 24
+GAS LISTING /tmp/ccNdLdOt.s 			page 24
 
 
 1303:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_MD_CAN_SHA256)
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1357:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_MD_CAN_SHA1)
 1358:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_PSK_WITH_NULL_SHA, "TLS-PSK-WITH-NULL-SHA",
 1359:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_NULL, MBEDTLS_MD_SHA1, MBEDTLS_KEY_EXCHANGE_PSK,
-GAS LISTING /tmp/cc9u94PT.s 			page 25
+GAS LISTING /tmp/ccNdLdOt.s 			page 25
 
 
 1360:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHERSUITE_WEAK,
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1414:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
 1415:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif
 1416:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
-GAS LISTING /tmp/cc9u94PT.s 			page 26
+GAS LISTING /tmp/ccNdLdOt.s 			page 26
 
 
 1417:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if defined(MBEDTLS_MD_CAN_SHA384)
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1471:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_ARIA_128_GCM, MBEDTLS_MD_SHA256, MBEDTLS_KEY_EXCHANGE_RSA,
 1472:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
 1473:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
-GAS LISTING /tmp/cc9u94PT.s 			page 27
+GAS LISTING /tmp/ccNdLdOt.s 			page 27
 
 
 1474:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1528:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
 1529:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif
 1530:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if (defined(MBEDTLS_SSL_HAVE_CBC) && \
-GAS LISTING /tmp/cc9u94PT.s 			page 28
+GAS LISTING /tmp/ccNdLdOt.s 			page 28
 
 
 1531:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     defined(MBEDTLS_MD_CAN_SHA384))
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1585:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
 1586:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
 1587:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif
-GAS LISTING /tmp/cc9u94PT.s 			page 29
+GAS LISTING /tmp/ccNdLdOt.s 			page 29
 
 
 1588:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1642:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
 1643:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif
 1644:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
-GAS LISTING /tmp/cc9u94PT.s 			page 30
+GAS LISTING /tmp/ccNdLdOt.s 			page 30
 
 
 1645:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #endif /* MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED */
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1699:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** #if (defined(MBEDTLS_SSL_HAVE_GCM) && defined(MBEDTLS_MD_CAN_SHA256))
 1700:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     { MBEDTLS_TLS_ECDH_ECDSA_WITH_ARIA_128_GCM_SHA256,
 1701:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       "TLS-ECDH-ECDSA-WITH-ARIA-128-GCM-SHA256",
-GAS LISTING /tmp/cc9u94PT.s 			page 31
+GAS LISTING /tmp/ccNdLdOt.s 			page 31
 
 
 1702:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_ARIA_128_GCM, MBEDTLS_MD_SHA256, MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA,
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1756:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       "TLS-DHE-PSK-WITH-ARIA-256-GCM-SHA384",
 1757:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_CIPHER_ARIA_256_GCM, MBEDTLS_MD_SHA384, MBEDTLS_KEY_EXCHANGE_DHE_PSK,
 1758:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       0,
-GAS LISTING /tmp/cc9u94PT.s 			page 32
+GAS LISTING /tmp/ccNdLdOt.s 			page 32
 
 
 1759:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****       MBEDTLS_SSL_VERSION_TLS1_2, MBEDTLS_SSL_VERSION_TLS1_2 },
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
   24              		.globl	mbedtls_ssl_ciphersuite_from_string
   26              	mbedtls_ssl_ciphersuite_from_string:
   27              	.LVL0:
-GAS LISTING /tmp/cc9u94PT.s 			page 33
+GAS LISTING /tmp/ccNdLdOt.s 			page 33
 
 
   28              	.LFB159:
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1847:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     if (NULL == ciphersuite_name) {
   35              		.loc 1 1847 5 view .LVU7
 1844:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     const mbedtls_ssl_ciphersuite_t *cur = ciphersuite_definitions;
-GAS LISTING /tmp/cc9u94PT.s 			page 34
+GAS LISTING /tmp/ccNdLdOt.s 			page 34
 
 
   36              		.loc 1 1844 1 is_stmt 0 view .LVU8
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
   74 002b 488B7B08 		movq	8(%rbx), %rdi
   75 002f 4889EE   		movq	%rbp, %rsi
   76 0032 E8000000 		call	strcmp@PLT
-GAS LISTING /tmp/cc9u94PT.s 			page 35
+GAS LISTING /tmp/ccNdLdOt.s 			page 35
 
 
   76      00
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  125              		.globl	mbedtls_ssl_ciphersuite_from_id
  127              	mbedtls_ssl_ciphersuite_from_id:
  128              	.LVL9:
-GAS LISTING /tmp/cc9u94PT.s 			page 36
+GAS LISTING /tmp/ccNdLdOt.s 			page 36
 
 
  129              	.LFB160:
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1874:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     return NULL;
 1875:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** }
  162              		.loc 1 1875 1 view .LVU36
-GAS LISTING /tmp/cc9u94PT.s 			page 37
+GAS LISTING /tmp/ccNdLdOt.s 			page 37
 
 
  163 0027 C3       		ret
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  202      00
  203 0010 EB11     		jmp	.L21
  204              	.LVL17:
-GAS LISTING /tmp/cc9u94PT.s 			page 38
+GAS LISTING /tmp/ccNdLdOt.s 			page 38
 
 
  205              		.p2align 4,,10
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  241              		.loc 1 1884 16 view .LVU61
  242 0037 C3       		ret
  243              		.cfi_endproc
-GAS LISTING /tmp/cc9u94PT.s 			page 39
+GAS LISTING /tmp/ccNdLdOt.s 			page 39
 
 
  244              	.LFE161:
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  287              	.LBE21:
  288              	.LBE20:
  289              	.LBE24:
-GAS LISTING /tmp/cc9u94PT.s 			page 40
+GAS LISTING /tmp/ccNdLdOt.s 			page 40
 
 
  290              	.LBE26:
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1897:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****         return 0;
 1898:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     }
 1899:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
-GAS LISTING /tmp/cc9u94PT.s 			page 41
+GAS LISTING /tmp/ccNdLdOt.s 			page 41
 
 
 1900:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     return cur->id;
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1914:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
 1915:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     if (status != PSA_SUCCESS) {
 1916:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****         return 0;
-GAS LISTING /tmp/cc9u94PT.s 			page 42
+GAS LISTING /tmp/ccNdLdOt.s 			page 42
 
 
 1917:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****     }
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
   28:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** #if defined(MBEDTLS_CIPHER_MODE_CBC)
   29:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** #define MBEDTLS_CIPHER_MODE_WITH_PADDING
   30:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** #endif
-GAS LISTING /tmp/cc9u94PT.s 			page 43
+GAS LISTING /tmp/ccNdLdOt.s 			page 43
 
 
   31:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** 
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
   85:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_CIPHER_NONE = 0,             /**< Placeholder to mark the end of cipher-pair lists. */
   86:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_CIPHER_NULL,                 /**< The identity stream cipher. */
   87:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_CIPHER_AES_128_ECB,          /**< AES cipher with 128-bit ECB mode. */
-GAS LISTING /tmp/cc9u94PT.s 			page 44
+GAS LISTING /tmp/ccNdLdOt.s 			page 44
 
 
   88:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_CIPHER_AES_192_ECB,          /**< AES cipher with 192-bit ECB mode. */
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  142:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_CIPHER_ARIA_192_CFB128,      /**< Aria cipher with 192-bit key and CFB-128 mode. */
  143:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_CIPHER_ARIA_256_CFB128,      /**< Aria cipher with 256-bit key and CFB-128 mode. */
  144:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_CIPHER_ARIA_128_CTR,         /**< Aria cipher with 128-bit key and CTR mode. */
-GAS LISTING /tmp/cc9u94PT.s 			page 45
+GAS LISTING /tmp/ccNdLdOt.s 			page 45
 
 
  145:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_CIPHER_ARIA_192_CTR,         /**< Aria cipher with 192-bit key and CTR mode. */
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  199:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** typedef enum {
  200:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_OPERATION_NONE = -1,
  201:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_DECRYPT = 0,
-GAS LISTING /tmp/cc9u94PT.s 			page 46
+GAS LISTING /tmp/ccNdLdOt.s 			page 46
 
 
  202:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****     MBEDTLS_ENCRYPT,
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  256:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  *              only built-in structures returned by the functions
  257:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  *              mbedtls_cipher_info_from_string(),
  258:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  *              mbedtls_cipher_info_from_type(),
-GAS LISTING /tmp/cc9u94PT.s 			page 47
+GAS LISTING /tmp/ccNdLdOt.s 			page 47
 
 
  259:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  *              mbedtls_cipher_info_from_values(),
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  313:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** /**
  314:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  * Generic cipher context.
  315:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  */
-GAS LISTING /tmp/cc9u94PT.s 			page 48
+GAS LISTING /tmp/ccNdLdOt.s 			page 48
 
 
  316:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** typedef struct mbedtls_cipher_context_t {
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  370:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** /**
  371:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  * \brief This function retrieves the list of ciphers supported
  372:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  *        by the generic cipher module.
-GAS LISTING /tmp/cc9u94PT.s 			page 49
+GAS LISTING /tmp/ccNdLdOt.s 			page 49
 
 
  373:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  *
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  427:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** 
  428:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h **** /**
  429:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  * \brief               Retrieve the identifier for a cipher info structure.
-GAS LISTING /tmp/cc9u94PT.s 			page 50
+GAS LISTING /tmp/ccNdLdOt.s 			page 50
 
 
  430:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h ****  *
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  392 0014 31C0     		xorl	%eax, %eax
  393              	.LVL39:
  394              		.loc 2 480 8 is_stmt 0 view .LVU97
-GAS LISTING /tmp/cc9u94PT.s 			page 51
+GAS LISTING /tmp/ccNdLdOt.s 			page 51
 
 
  395 0016 4885D2   		testq	%rdx, %rdx
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  441              	.L45:
  442 0020 83E809   		subl	$9, %eax
  443 0023 3C01     		cmpb	$1, %al
-GAS LISTING /tmp/cc9u94PT.s 			page 52
+GAS LISTING /tmp/ccNdLdOt.s 			page 52
 
 
  444 0025 0F96C0   		setbe	%al
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 1958:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****         case MBEDTLS_KEY_EXCHANGE_ECDHE_RSA:
 1959:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****             return PSA_ALG_RSA_PKCS1V15_SIGN(
 1960:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****                 mbedtls_md_psa_alg_from_type((mbedtls_md_type_t) info->mac));
-GAS LISTING /tmp/cc9u94PT.s 			page 53
+GAS LISTING /tmp/ccNdLdOt.s 			page 53
 
 
 1961:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
 2001:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
 2002:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****         case MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA:
 2003:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****             return MBEDTLS_PK_ECDSA;
-GAS LISTING /tmp/cc9u94PT.s 			page 54
+GAS LISTING /tmp/ccNdLdOt.s 			page 54
 
 
 2004:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c **** 
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  526 0020 0FB6C0   		movzbl	%al, %eax
 2018:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****         case MBEDTLS_KEY_EXCHANGE_ECDHE_RSA:
 2019:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****         case MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA:
-GAS LISTING /tmp/cc9u94PT.s 			page 55
+GAS LISTING /tmp/ccNdLdOt.s 			page 55
 
 
 2020:../../bos/thirdparty/mbedtls/bos_mbedtls/ssl_ciphersuites.c ****         case MBEDTLS_KEY_EXCHANGE_ECDHE_PSK:
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  557 0011 09       		.byte	9
  558 0012 04       		.byte	4
  559 0013 00       		.byte	0
-GAS LISTING /tmp/cc9u94PT.s 			page 56
+GAS LISTING /tmp/ccNdLdOt.s 			page 56
 
 
  562 0018 2CC00000 		.long	49196
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  3332              	0:
  3333 000c 474E5500 		.string	"GNU"
  3334              	1:
-GAS LISTING /tmp/cc9u94PT.s 			page 57
+GAS LISTING /tmp/ccNdLdOt.s 			page 57
 
 
  3335              		.align 8
@@ -3369,23 +3369,23 @@ GAS LISTING /tmp/cc9u94PT.s 			page 1
  3340              	3:
  3341 001c 00000000 		.align 8
  3342              	4:
-GAS LISTING /tmp/cc9u94PT.s 			page 58
+GAS LISTING /tmp/ccNdLdOt.s 			page 58
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 ssl_ciphersuites.c
-     /tmp/cc9u94PT.s:9      .text.mbedtls_ssl_list_ciphersuites:0000000000000000 mbedtls_ssl_list_ciphersuites
-     /tmp/cc9u94PT.s:602    .rodata.ciphersuite_preference:0000000000000000 ciphersuite_preference
-     /tmp/cc9u94PT.s:26     .text.mbedtls_ssl_ciphersuite_from_string:0000000000000000 mbedtls_ssl_ciphersuite_from_string
-     /tmp/cc9u94PT.s:552    .data.rel.ro.local.ciphersuite_definitions:0000000000000000 ciphersuite_definitions
-     /tmp/cc9u94PT.s:127    .text.mbedtls_ssl_ciphersuite_from_id:0000000000000000 mbedtls_ssl_ciphersuite_from_id
-     /tmp/cc9u94PT.s:182    .text.mbedtls_ssl_get_ciphersuite_name:0000000000000000 mbedtls_ssl_get_ciphersuite_name
-     /tmp/cc9u94PT.s:250    .text.mbedtls_ssl_get_ciphersuite_id:0000000000000000 mbedtls_ssl_get_ciphersuite_id
-     /tmp/cc9u94PT.s:365    .text.mbedtls_ssl_ciphersuite_get_cipher_key_bitlen:0000000000000000 mbedtls_ssl_ciphersuite_get_cipher_key_bitlen
-     /tmp/cc9u94PT.s:418    .text.mbedtls_ssl_get_ciphersuite_sig_pk_alg:0000000000000000 mbedtls_ssl_get_ciphersuite_sig_pk_alg
-     /tmp/cc9u94PT.s:469    .text.mbedtls_ssl_get_ciphersuite_sig_alg:0000000000000000 mbedtls_ssl_get_ciphersuite_sig_alg
-     /tmp/cc9u94PT.s:503    .text.mbedtls_ssl_ciphersuite_uses_ec:0000000000000000 mbedtls_ssl_ciphersuite_uses_ec
-     /tmp/cc9u94PT.s:176    .rodata.mbedtls_ssl_get_ciphersuite_name.str1.1:0000000000000000 .LC0
+     /tmp/ccNdLdOt.s:9      .text.mbedtls_ssl_list_ciphersuites:0000000000000000 mbedtls_ssl_list_ciphersuites
+     /tmp/ccNdLdOt.s:602    .rodata.ciphersuite_preference:0000000000000000 ciphersuite_preference
+     /tmp/ccNdLdOt.s:26     .text.mbedtls_ssl_ciphersuite_from_string:0000000000000000 mbedtls_ssl_ciphersuite_from_string
+     /tmp/ccNdLdOt.s:552    .data.rel.ro.local.ciphersuite_definitions:0000000000000000 ciphersuite_definitions
+     /tmp/ccNdLdOt.s:127    .text.mbedtls_ssl_ciphersuite_from_id:0000000000000000 mbedtls_ssl_ciphersuite_from_id
+     /tmp/ccNdLdOt.s:182    .text.mbedtls_ssl_get_ciphersuite_name:0000000000000000 mbedtls_ssl_get_ciphersuite_name
+     /tmp/ccNdLdOt.s:250    .text.mbedtls_ssl_get_ciphersuite_id:0000000000000000 mbedtls_ssl_get_ciphersuite_id
+     /tmp/ccNdLdOt.s:365    .text.mbedtls_ssl_ciphersuite_get_cipher_key_bitlen:0000000000000000 mbedtls_ssl_ciphersuite_get_cipher_key_bitlen
+     /tmp/ccNdLdOt.s:418    .text.mbedtls_ssl_get_ciphersuite_sig_pk_alg:0000000000000000 mbedtls_ssl_get_ciphersuite_sig_pk_alg
+     /tmp/ccNdLdOt.s:469    .text.mbedtls_ssl_get_ciphersuite_sig_alg:0000000000000000 mbedtls_ssl_get_ciphersuite_sig_alg
+     /tmp/ccNdLdOt.s:503    .text.mbedtls_ssl_ciphersuite_uses_ec:0000000000000000 mbedtls_ssl_ciphersuite_uses_ec
+     /tmp/ccNdLdOt.s:176    .rodata.mbedtls_ssl_get_ciphersuite_name.str1.1:0000000000000000 .LC0
 
 UNDEFINED SYMBOLS
 strcmp

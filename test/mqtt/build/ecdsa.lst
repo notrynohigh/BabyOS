@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cczmVpcT.s 			page 1
+GAS LISTING /tmp/ccyphZ7e.s 			page 1
 
 
    1              		.file	"ecdsa.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** /*
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****  * Init verify restart sub-context
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****  */
-GAS LISTING /tmp/cczmVpcT.s 			page 2
+GAS LISTING /tmp/ccyphZ7e.s 			page 2
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** static void ecdsa_restart_ver_init(mbedtls_ecdsa_restart_ver_ctx *ctx)
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  102:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     if (ctx == NULL) {
  103:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         return;
  104:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
-GAS LISTING /tmp/cczmVpcT.s 			page 3
+GAS LISTING /tmp/ccyphZ7e.s 			page 3
 
 
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  159:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         if (mbedtls_ecp_restart_is_enabled() &&                          \
  160:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****             rs_ctx != NULL && rs_ctx->SUB == NULL)                      \
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         {                                                                \
-GAS LISTING /tmp/cczmVpcT.s 			page 4
+GAS LISTING /tmp/ccyphZ7e.s 			page 4
 
 
  162:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****             rs_ctx->SUB = mbedtls_calloc(1, sizeof(*rs_ctx->SUB));   \
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  216:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     if (mbedtls_mpi_cmp_mpi(x, &grp->N) >= 0) {
  217:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(x, x, &grp->N));
  218:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
-GAS LISTING /tmp/cczmVpcT.s 			page 5
+GAS LISTING /tmp/ccyphZ7e.s 			page 5
 
 
  219:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
   35 0004 4157     		pushq	%r15
   36              	.LCFI0:
   37              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/cczmVpcT.s 			page 6
+GAS LISTING /tmp/ccyphZ7e.s 			page 6
 
 
   38              		.cfi_offset 15, -16
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
   77 006d 31C0     		xorl	%eax, %eax
  251:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     int ret, key_tries, sign_tries;
   78              		.loc 1 251 5 is_stmt 1 view .LVU8
-GAS LISTING /tmp/cczmVpcT.s 			page 7
+GAS LISTING /tmp/ccyphZ7e.s 			page 7
 
 
  252:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     int *p_sign_tries = &sign_tries, *p_key_tries = &key_tries;
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  264:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         return MBEDTLS_ERR_ECP_INVALID_KEY;
  265:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
  266:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
-GAS LISTING /tmp/cczmVpcT.s 			page 8
+GAS LISTING /tmp/ccyphZ7e.s 			page 8
 
 
  267:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     mbedtls_ecp_point_init(&R);
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  284:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         if (rs_ctx->sig->state == ecdsa_sig_modn) {
  285:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****             goto modn;
  286:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         }
-GAS LISTING /tmp/cczmVpcT.s 			page 9
+GAS LISTING /tmp/ccyphZ7e.s 			page 9
 
 
  287:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  154 010f EB70     		jmp	.L9
  155              	.LVL13:
  156              		.p2align 4,,10
-GAS LISTING /tmp/cczmVpcT.s 			page 10
+GAS LISTING /tmp/ccyphZ7e.s 			page 10
 
 
  157 0111 0F1F8000 		.p2align 3
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  319:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                                         p_rng_blind,
  320:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                                         ECDSA_RS_ECP));
  321:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(pr, &R.X, &grp->N));
-GAS LISTING /tmp/cczmVpcT.s 			page 11
+GAS LISTING /tmp/ccyphZ7e.s 			page 11
 
 
  197              		.loc 1 321 13 view .LVU45
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  337:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         /*
  338:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****          * Step 5: derive MPI from hashed message
  339:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****          */
-GAS LISTING /tmp/cczmVpcT.s 			page 12
+GAS LISTING /tmp/ccyphZ7e.s 			page 12
 
 
  340:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         MBEDTLS_MPI_CHK(derive_mpi(grp, &e, buf, blen));
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  246      00
  247              	.LVL24:
  371:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
-GAS LISTING /tmp/cczmVpcT.s 			page 13
+GAS LISTING /tmp/ccyphZ7e.s 			page 13
 
 
  372:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     ECDSA_RS_LEAVE(sig);
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  293 01e4 0F1F4000 		.p2align 3
  294              	.L44:
  335:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
-GAS LISTING /tmp/cczmVpcT.s 			page 14
+GAS LISTING /tmp/ccyphZ7e.s 			page 14
 
 
  295              		.loc 1 335 46 is_stmt 1 view .LVU66
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  328      00
  329              	.LVL31:
  210:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     if (use_size * 8 > grp->nbits) {
-GAS LISTING /tmp/cczmVpcT.s 			page 15
+GAS LISTING /tmp/ccyphZ7e.s 			page 15
 
 
  330              		.loc 1 210 5 is_stmt 0 view .LVU83
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  365              		.loc 1 216 5 view .LVU96
  216:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(x, x, &grp->N));
  366              		.loc 1 216 9 is_stmt 0 view .LVU97
-GAS LISTING /tmp/cczmVpcT.s 			page 16
+GAS LISTING /tmp/ccyphZ7e.s 			page 16
 
 
  367 024d 488B7C24 		movq	40(%rsp), %rdi
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  402 0293 E8000000 		call	mbedtls_mpi_mul_mpi@PLT
  402      00
  403              	.LVL41:
-GAS LISTING /tmp/cczmVpcT.s 			page 17
+GAS LISTING /tmp/ccyphZ7e.s 			page 17
 
 
  352:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_add_mpi(&e, &e, s));
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  354:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(pk, pk, &t));
  438              		.loc 1 354 9 is_stmt 1 discriminator 2 view .LVU119
  355:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(pk, pk, &grp->N));
-GAS LISTING /tmp/cczmVpcT.s 			page 18
+GAS LISTING /tmp/ccyphZ7e.s 			page 18
 
 
  439              		.loc 1 355 9 view .LVU120
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  475 0318 89C2     		movl	%eax, %edx
  476              	.LVL52:
  357:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(s, s, &e));
-GAS LISTING /tmp/cczmVpcT.s 			page 19
+GAS LISTING /tmp/ccyphZ7e.s 			page 19
 
 
  477              		.loc 1 357 9 discriminator 1 view .LVU133
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  360:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
  513              		.loc 1 360 40 view .LVU146
  360:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
-GAS LISTING /tmp/cczmVpcT.s 			page 20
+GAS LISTING /tmp/ccyphZ7e.s 			page 20
 
 
  514              		.loc 1 360 14 is_stmt 0 view .LVU147
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  552      FF
  553              	.LVL62:
  554              	.L17:
-GAS LISTING /tmp/cczmVpcT.s 			page 21
+GAS LISTING /tmp/ccyphZ7e.s 			page 21
 
 
  259:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  592              	.LCFI21:
  593              		.cfi_def_cfa_offset 40
  594 0016 50       		pushq	%rax
-GAS LISTING /tmp/cczmVpcT.s 			page 22
+GAS LISTING /tmp/ccyphZ7e.s 			page 22
 
 
  595              	.LCFI22:
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  416:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
  417:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     mbedtls_mpi_init(&h);
  418:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     mbedtls_hmac_drbg_init(&rng_ctx);
-GAS LISTING /tmp/cczmVpcT.s 			page 23
+GAS LISTING /tmp/ccyphZ7e.s 			page 23
 
 
  419:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  473:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                mbedtls_md_type_t md_alg,
  474:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                int (*f_rng_blind)(void *, unsigned char *,
  475:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                                   size_t),
-GAS LISTING /tmp/cczmVpcT.s 			page 24
+GAS LISTING /tmp/ccyphZ7e.s 			page 24
 
 
  476:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                void *p_rng_blind)
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  653      10
  495:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  496:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     mbedtls_mpi e, s_inv, u1, u2;
-GAS LISTING /tmp/cczmVpcT.s 			page 25
+GAS LISTING /tmp/ccyphZ7e.s 			page 25
 
 
  497:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     mbedtls_ecp_point R;
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  682              		.loc 1 500 5 view .LVU180
  683 005f E8000000 		call	mbedtls_ecp_point_init@PLT
  683      00
-GAS LISTING /tmp/cczmVpcT.s 			page 26
+GAS LISTING /tmp/ccyphZ7e.s 			page 26
 
 
  684              	.LVL71:
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  527:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     if (mbedtls_mpi_cmp_int(r, 1) < 0 || mbedtls_mpi_cmp_mpi(r, &grp->N) >= 0 ||
  706              		.loc 1 527 5 view .LVU188
  707              		.loc 1 527 9 is_stmt 0 view .LVU189
-GAS LISTING /tmp/cczmVpcT.s 			page 27
+GAS LISTING /tmp/ccyphZ7e.s 			page 27
 
 
  708 008f 488B3C24 		movq	(%rsp), %rdi
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  552:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     if (rs_ctx != NULL && rs_ctx->ver != NULL) {
  553:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         rs_ctx->ver->state = ecdsa_ver_muladd;
  554:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
-GAS LISTING /tmp/cczmVpcT.s 			page 28
+GAS LISTING /tmp/ccyphZ7e.s 			page 28
 
 
  555:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  751              	.LVL83:
  752              		.loc 1 586 28 discriminator 1 view .LVU202
  753 00e2 4C89F7   		movq	%r14, %rdi
-GAS LISTING /tmp/cczmVpcT.s 			page 29
+GAS LISTING /tmp/ccyphZ7e.s 			page 29
 
 
  754 00e5 E8000000 		call	mbedtls_mpi_free@PLT
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  796      84000000 
  796      0000
  797              		.p2align 3
-GAS LISTING /tmp/cczmVpcT.s 			page 30
+GAS LISTING /tmp/ccyphZ7e.s 			page 30
 
 
  798              	.L64:
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  210:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     if (use_size * 8 > grp->nbits) {
  831              		.loc 1 210 5 view .LVU222
  832 0156 4889EF   		movq	%rbp, %rdi
-GAS LISTING /tmp/cczmVpcT.s 			page 31
+GAS LISTING /tmp/ccyphZ7e.s 			page 31
 
 
  833 0159 488B7424 		movq	16(%rsp), %rsi
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  866              		.loc 1 212 9 is_stmt 1 view .LVU236
  212:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
  867              		.loc 1 212 9 view .LVU237
-GAS LISTING /tmp/cczmVpcT.s 			page 32
+GAS LISTING /tmp/ccyphZ7e.s 			page 32
 
 
  868 019b 4829D0   		subq	%rdx, %rax
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  904      08
  905 01d0 4C89E7   		movq	%r12, %rdi
  906 01d3 E8000000 		call	mbedtls_mpi_inv_mod@PLT
-GAS LISTING /tmp/cczmVpcT.s 			page 33
+GAS LISTING /tmp/ccyphZ7e.s 			page 33
 
 
  906      00
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  548:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(pu2, pu2, &grp->N));
  941              		.loc 1 548 5 is_stmt 0 discriminator 1 view .LVU261
  942 021d 85C0     		testl	%eax, %eax
-GAS LISTING /tmp/cczmVpcT.s 			page 34
+GAS LISTING /tmp/ccyphZ7e.s 			page 34
 
 
  943 021f 0F859AFE 		jne	.L54
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  982 025e 0F855BFE 		jne	.L54
  982      FFFF
  561:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                                    &R, pu1, &grp->G, pu2, Q, ECDSA_RS_ECP));
-GAS LISTING /tmp/cczmVpcT.s 			page 35
+GAS LISTING /tmp/ccyphZ7e.s 			page 35
 
 
  983              		.loc 1 561 5 is_stmt 1 discriminator 2 view .LVU271
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1019              	.LBB33:
  1020              	.LBB32:
  217:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
-GAS LISTING /tmp/cczmVpcT.s 			page 36
+GAS LISTING /tmp/ccyphZ7e.s 			page 36
 
 
  1021              		.loc 1 217 9 is_stmt 1 view .LVU282
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  601:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** {
  1057              		.loc 1 601 1 is_stmt 1 view -0
  1058              		.cfi_startproc
-GAS LISTING /tmp/cczmVpcT.s 			page 37
+GAS LISTING /tmp/ccyphZ7e.s 			page 37
 
 
  1059              		.loc 1 601 1 is_stmt 0 view .LVU289
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  628:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
  629:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
  630:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     memcpy(sig, p, len);
-GAS LISTING /tmp/cczmVpcT.s 			page 38
+GAS LISTING /tmp/ccyphZ7e.s 			page 38
 
 
  631:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     *slen = len;
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1122      08
  1123 0022 48894C24 		movq	%rcx, 16(%rsp)
  1123      10
-GAS LISTING /tmp/cczmVpcT.s 			page 39
+GAS LISTING /tmp/ccyphZ7e.s 			page 39
 
 
  1124 0027 4C8BBC24 		movq	248(%rsp), %r15
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1154      00
  1155              	.LVL124:
  655:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
-GAS LISTING /tmp/cczmVpcT.s 			page 40
+GAS LISTING /tmp/ccyphZ7e.s 			page 40
 
 
  656:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** #if defined(MBEDTLS_ECDSA_DETERMINISTIC)
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1191              	.LVL126:
  1192              		.loc 1 670 5 discriminator 1 view .LVU313
  1193 00b8 85C0     		testl	%eax, %eax
-GAS LISTING /tmp/cczmVpcT.s 			page 41
+GAS LISTING /tmp/ccyphZ7e.s 			page 41
 
 
  1194 00ba 7444     		je	.L81
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1228              		.cfi_def_cfa_offset 24
  1229 00f2 415E     		popq	%r14
  1230              	.LCFI67:
-GAS LISTING /tmp/cczmVpcT.s 			page 42
+GAS LISTING /tmp/ccyphZ7e.s 			page 42
 
 
  1231              		.cfi_def_cfa_offset 16
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1267 011f 48C78424 		movq	$0, 160(%rsp)
  1267      A0000000 
  1267      00000000 
-GAS LISTING /tmp/cczmVpcT.s 			page 43
+GAS LISTING /tmp/ccyphZ7e.s 			page 43
 
 
  615:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     size_t len = 0;
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1300              		.loc 1 619 5 is_stmt 0 discriminator 1 view .LVU345
  1301 016b 85C0     		testl	%eax, %eax
  1302 016d 0F887D00 		js	.L78
-GAS LISTING /tmp/cczmVpcT.s 			page 44
+GAS LISTING /tmp/ccyphZ7e.s 			page 44
 
 
  1302      0000
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1337              	.LVL142:
  622:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                                      MBEDTLS_ASN1_CONSTRUCTED |
  1338              		.loc 1 622 5 is_stmt 0 discriminator 1 view .LVU361
-GAS LISTING /tmp/cczmVpcT.s 			page 45
+GAS LISTING /tmp/ccyphZ7e.s 			page 45
 
 
  1339 01a6 85C0     		testl	%eax, %eax
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
   22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
   23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
   24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
-GAS LISTING /tmp/cczmVpcT.s 			page 46
+GAS LISTING /tmp/ccyphZ7e.s 			page 46
 
 
   25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1395              	.LVL149:
  622:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                                      MBEDTLS_ASN1_CONSTRUCTED |
  1396              		.loc 1 622 5 discriminator 1 view .LVU382
-GAS LISTING /tmp/cczmVpcT.s 			page 47
+GAS LISTING /tmp/ccyphZ7e.s 			page 47
 
 
  1397 01f2 E9C5FEFF 		jmp	.L71
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  693:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                   void *p_rng)
  694:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** {
  1433              		.loc 1 694 1 is_stmt 1 view -0
-GAS LISTING /tmp/cczmVpcT.s 			page 48
+GAS LISTING /tmp/ccyphZ7e.s 			page 48
 
 
  1434              		.cfi_startproc
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1478              	.LVL157:
  695:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     return mbedtls_ecdsa_write_signature_restartable(
  1479              		.loc 1 695 5 is_stmt 1 view .LVU393
-GAS LISTING /tmp/cczmVpcT.s 			page 49
+GAS LISTING /tmp/ccyphZ7e.s 			page 49
 
 
  1480              	.LBB52:
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1515              	.LCFI78:
  1516              		.cfi_def_cfa_offset 240
  1517 0088 498D8EC0 		leaq	192(%r14), %rcx
-GAS LISTING /tmp/cczmVpcT.s 			page 50
+GAS LISTING /tmp/ccyphZ7e.s 			page 50
 
 
  1517      000000
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1559              	.LBE53:
  1560              	.LBE52:
  696:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         ctx, md_alg, hash, hlen, sig, sig_size, slen,
-GAS LISTING /tmp/cczmVpcT.s 			page 51
+GAS LISTING /tmp/ccyphZ7e.s 			page 51
 
 
  697:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         f_rng, p_rng, NULL);
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1603              	.LBB55:
  613:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     unsigned char buf[MBEDTLS_ECDSA_MAX_LEN] = { 0 };
  1604              		.loc 1 613 5 view .LVU421
-GAS LISTING /tmp/cczmVpcT.s 			page 52
+GAS LISTING /tmp/ccyphZ7e.s 			page 52
 
 
  614:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     unsigned char *p = buf + sizeof(buf);
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1635      80000000 
  618:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     MBEDTLS_ASN1_CHK_ADD(len, mbedtls_asn1_write_mpi(&p, buf, r));
  1636              		.loc 1 618 5 view .LVU436
-GAS LISTING /tmp/cczmVpcT.s 			page 53
+GAS LISTING /tmp/ccyphZ7e.s 			page 53
 
 
  1637 0137 E8000000 		call	mbedtls_asn1_write_mpi@PLT
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1674 016a E8000000 		call	mbedtls_asn1_write_len@PLT
  1674      00
  1675              	.LVL176:
-GAS LISTING /tmp/cczmVpcT.s 			page 54
+GAS LISTING /tmp/ccyphZ7e.s 			page 54
 
 
  621:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     MBEDTLS_ASN1_CHK_ADD(len, mbedtls_asn1_write_tag(&p, buf,
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1711 019e 7241     		jb	.L93
  630:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     *slen = len;
  1712              		.loc 1 630 5 is_stmt 1 view .LVU468
-GAS LISTING /tmp/cczmVpcT.s 			page 55
+GAS LISTING /tmp/ccyphZ7e.s 			page 55
 
 
  1713              	.LVL181:
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  622:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****                                                      MBEDTLS_ASN1_CONSTRUCTED |
  1751              		.loc 1 622 5 discriminator 1 view .LVU480
  1752 01d2 E9D8FEFF 		jmp	.L85
-GAS LISTING /tmp/cczmVpcT.s 			page 56
+GAS LISTING /tmp/ccyphZ7e.s 			page 56
 
 
  1752      FF
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1795              	mbedtls_ecdsa_read_signature:
  1796              	.LVL193:
  1797              	.LFB52:
-GAS LISTING /tmp/cczmVpcT.s 			page 57
+GAS LISTING /tmp/ccyphZ7e.s 			page 57
 
 
  699:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  721:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     const unsigned char *end = sig + slen;
  1830              		.loc 1 721 26 view .LVU492
  1831 0014 4A8D1C01 		leaq	(%rcx,%r8), %rbx
-GAS LISTING /tmp/cczmVpcT.s 			page 58
+GAS LISTING /tmp/ccyphZ7e.s 			page 58
 
 
  1832              	.LBE67:
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  720:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     const unsigned char *end = sig + slen;
  1865              		.loc 1 720 20 is_stmt 0 view .LVU504
  1866 0043 48894C24 		movq	%rcx, 16(%rsp)
-GAS LISTING /tmp/cczmVpcT.s 			page 59
+GAS LISTING /tmp/ccyphZ7e.s 			page 59
 
 
  1866      10
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  737:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
  738:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
  739:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     if ((ret = mbedtls_asn1_get_mpi(&p, end, &r)) != 0 ||
-GAS LISTING /tmp/cczmVpcT.s 			page 60
+GAS LISTING /tmp/ccyphZ7e.s 			page 60
 
 
  1898              		.loc 1 739 5 is_stmt 1 view .LVU517
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1921 00a5 E8000000 		call	mbedtls_mpi_free@PLT
  1921      00
  1922              	.LVL204:
-GAS LISTING /tmp/cczmVpcT.s 			page 61
+GAS LISTING /tmp/ccyphZ7e.s 			page 61
 
 
  768:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  1969 00d9 E8000000 		call	mbedtls_asn1_get_mpi@PLT
  1969      00
  1970              	.LVL207:
-GAS LISTING /tmp/cczmVpcT.s 			page 62
+GAS LISTING /tmp/ccyphZ7e.s 			page 62
 
 
  739:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         (ret = mbedtls_asn1_get_mpi(&p, end, &s)) != 0) {
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2010 0119 440F45E8 		cmovne	%eax, %r13d
  2011              	.LVL211:
  762:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
-GAS LISTING /tmp/cczmVpcT.s 			page 63
+GAS LISTING /tmp/ccyphZ7e.s 			page 63
 
 
  2012              		.loc 1 762 13 view .LVU540
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2057              		.cfi_offset 13, -32
  2058 000d 4989FD   		movq	%rdi, %r13
  2059 0010 4154     		pushq	%r12
-GAS LISTING /tmp/cczmVpcT.s 			page 64
+GAS LISTING /tmp/ccyphZ7e.s 			page 64
 
 
  2060              	.LCFI114:
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2096              		.loc 1 720 5 view .LVU557
  720:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     const unsigned char *end = sig + slen;
  2097              		.loc 1 720 20 is_stmt 0 view .LVU558
-GAS LISTING /tmp/cczmVpcT.s 			page 65
+GAS LISTING /tmp/ccyphZ7e.s 			page 65
 
 
  2098 0047 48894C24 		movq	%rcx, 16(%rsp)
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2130              		.loc 1 739 5 is_stmt 1 view .LVU571
  739:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****         (ret = mbedtls_asn1_get_mpi(&p, end, &s)) != 0) {
  2131              		.loc 1 739 16 is_stmt 0 view .LVU572
-GAS LISTING /tmp/cczmVpcT.s 			page 66
+GAS LISTING /tmp/ccyphZ7e.s 			page 66
 
 
  2132 0085 4889EA   		movq	%rbp, %rdx
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2172              		.cfi_def_cfa_offset 40
  2173 00c7 415C     		popq	%r12
  2174              	.LCFI121:
-GAS LISTING /tmp/cczmVpcT.s 			page 67
+GAS LISTING /tmp/ccyphZ7e.s 			page 67
 
 
  2175              		.cfi_def_cfa_offset 32
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2220 00fd 488B7424 		movq	16(%rsp), %rsi
  2220      10
  2221 0102 E8000000 		call	mbedtls_ecdsa_verify_restartable
-GAS LISTING /tmp/cczmVpcT.s 			page 68
+GAS LISTING /tmp/ccyphZ7e.s 			page 68
 
 
  2221      00
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2262              		.section	.text.mbedtls_ecdsa_genkey,"ax",@progbits
  2263              		.p2align 4
  2264              		.globl	mbedtls_ecdsa_genkey
-GAS LISTING /tmp/cczmVpcT.s 			page 69
+GAS LISTING /tmp/ccyphZ7e.s 			page 69
 
 
  2266              	mbedtls_ecdsa_genkey:
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2300              		.loc 1 787 1 view .LVU608
  2301 001a 5B       		popq	%rbx
  2302              	.LCFI133:
-GAS LISTING /tmp/cczmVpcT.s 			page 70
+GAS LISTING /tmp/ccyphZ7e.s 			page 70
 
 
  2303              		.cfi_remember_state
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2350              		.cfi_endproc
  2351              	.LFE54:
  2353              		.section	.text.mbedtls_ecdsa_from_keypair,"ax",@progbits
-GAS LISTING /tmp/cczmVpcT.s 			page 71
+GAS LISTING /tmp/ccyphZ7e.s 			page 71
 
 
  2354              		.p2align 4
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2395              	.LBI74:
  800:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     }
  801:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
-GAS LISTING /tmp/cczmVpcT.s 			page 72
+GAS LISTING /tmp/ccyphZ7e.s 			page 72
 
 
  802:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     return ret;
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  2425              		.cfi_def_cfa_offset 8
  2426              	.LVL260:
  803:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** 
-GAS LISTING /tmp/cczmVpcT.s 			page 73
+GAS LISTING /tmp/ccyphZ7e.s 			page 73
 
 
  2427              		.loc 1 803 1 view .LVU636
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  809:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c ****     mbedtls_ecp_keypair_init(ctx);
  2470              		.loc 1 809 1 is_stmt 0 view .LVU644
  2471 0000 F30F1EFA 		endbr64
-GAS LISTING /tmp/cczmVpcT.s 			page 74
+GAS LISTING /tmp/ccyphZ7e.s 			page 74
 
 
  810:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdsa.c **** }
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  13749              		.align 8
  13750 0000 04000000 		.long	1f - 0f
  13751 0004 10000000 		.long	4f - 1f
-GAS LISTING /tmp/cczmVpcT.s 			page 75
+GAS LISTING /tmp/ccyphZ7e.s 			page 75
 
 
  13752 0008 05000000 		.long	5
@@ -4453,24 +4453,24 @@ GAS LISTING /tmp/cczmVpcT.s 			page 1
  13761              	3:
  13762 001c 00000000 		.align 8
  13763              	4:
-GAS LISTING /tmp/cczmVpcT.s 			page 76
+GAS LISTING /tmp/ccyphZ7e.s 			page 76
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 ecdsa.c
-     /tmp/cczmVpcT.s:9      .text.mbedtls_ecdsa_can_do:0000000000000000 mbedtls_ecdsa_can_do
-     /tmp/cczmVpcT.s:28     .text.mbedtls_ecdsa_sign_restartable:0000000000000000 mbedtls_ecdsa_sign_restartable
-     /tmp/cczmVpcT.s:572    .text.mbedtls_ecdsa_sign:0000000000000000 mbedtls_ecdsa_sign
-     /tmp/cczmVpcT.s:617    .text.mbedtls_ecdsa_verify_restartable:0000000000000000 mbedtls_ecdsa_verify_restartable
-     /tmp/cczmVpcT.s:1054   .text.mbedtls_ecdsa_verify:0000000000000000 mbedtls_ecdsa_verify
-     /tmp/cczmVpcT.s:1084   .text.mbedtls_ecdsa_write_signature_restartable:0000000000000000 mbedtls_ecdsa_write_signature_restartable
-     /tmp/cczmVpcT.s:1430   .text.mbedtls_ecdsa_write_signature:0000000000000000 mbedtls_ecdsa_write_signature
-     /tmp/cczmVpcT.s:1795   .text.mbedtls_ecdsa_read_signature:0000000000000000 mbedtls_ecdsa_read_signature
-     /tmp/cczmVpcT.s:2038   .text.mbedtls_ecdsa_read_signature_restartable:0000000000000000 mbedtls_ecdsa_read_signature_restartable
-     /tmp/cczmVpcT.s:2266   .text.mbedtls_ecdsa_genkey:0000000000000000 mbedtls_ecdsa_genkey
-     /tmp/cczmVpcT.s:2357   .text.mbedtls_ecdsa_from_keypair:0000000000000000 mbedtls_ecdsa_from_keypair
-     /tmp/cczmVpcT.s:2465   .text.mbedtls_ecdsa_init:0000000000000000 mbedtls_ecdsa_init
-     /tmp/cczmVpcT.s:2483   .text.mbedtls_ecdsa_free:0000000000000000 mbedtls_ecdsa_free
+     /tmp/ccyphZ7e.s:9      .text.mbedtls_ecdsa_can_do:0000000000000000 mbedtls_ecdsa_can_do
+     /tmp/ccyphZ7e.s:28     .text.mbedtls_ecdsa_sign_restartable:0000000000000000 mbedtls_ecdsa_sign_restartable
+     /tmp/ccyphZ7e.s:572    .text.mbedtls_ecdsa_sign:0000000000000000 mbedtls_ecdsa_sign
+     /tmp/ccyphZ7e.s:617    .text.mbedtls_ecdsa_verify_restartable:0000000000000000 mbedtls_ecdsa_verify_restartable
+     /tmp/ccyphZ7e.s:1054   .text.mbedtls_ecdsa_verify:0000000000000000 mbedtls_ecdsa_verify
+     /tmp/ccyphZ7e.s:1084   .text.mbedtls_ecdsa_write_signature_restartable:0000000000000000 mbedtls_ecdsa_write_signature_restartable
+     /tmp/ccyphZ7e.s:1430   .text.mbedtls_ecdsa_write_signature:0000000000000000 mbedtls_ecdsa_write_signature
+     /tmp/ccyphZ7e.s:1795   .text.mbedtls_ecdsa_read_signature:0000000000000000 mbedtls_ecdsa_read_signature
+     /tmp/ccyphZ7e.s:2038   .text.mbedtls_ecdsa_read_signature_restartable:0000000000000000 mbedtls_ecdsa_read_signature_restartable
+     /tmp/ccyphZ7e.s:2266   .text.mbedtls_ecdsa_genkey:0000000000000000 mbedtls_ecdsa_genkey
+     /tmp/ccyphZ7e.s:2357   .text.mbedtls_ecdsa_from_keypair:0000000000000000 mbedtls_ecdsa_from_keypair
+     /tmp/ccyphZ7e.s:2465   .text.mbedtls_ecdsa_init:0000000000000000 mbedtls_ecdsa_init
+     /tmp/ccyphZ7e.s:2483   .text.mbedtls_ecdsa_free:0000000000000000 mbedtls_ecdsa_free
 
 UNDEFINED SYMBOLS
 mbedtls_mpi_cmp_int

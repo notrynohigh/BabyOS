@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
+GAS LISTING /tmp/cc4UrIgo.s 			page 1
 
 
    1              		.file	"MQTTConnectClient.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
   22              		.loc 1 28 1 view .LVU6
   23 0008 4154     		pushq	%r12
   24              	.LCFI0:
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 2
+GAS LISTING /tmp/cc4UrIgo.s 			page 2
 
 
   25              		.cfi_def_cfa_offset 16
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
   38:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->willFlag)
   65              		.loc 1 38 6 discriminator 1 view .LVU14
   66 004a 8D6C0502 		leal	2(%rbp,%rax), %ebp
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 3
+GAS LISTING /tmp/cc4UrIgo.s 			page 3
 
 
   67              	.LVL4:
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  107 0097 0F111424 		movups	%xmm2, (%rsp)
  108 009b 488B8398 		movq	152(%rbx), %rax
  108      000000
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 4
+GAS LISTING /tmp/cc4UrIgo.s 			page 4
 
 
  109 00a2 48894424 		movq	%rax, 16(%rsp)
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  151 00d4 0F1F4000 		.p2align 3
  152              	.L18:
   43:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->password)+2;
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 5
+GAS LISTING /tmp/cc4UrIgo.s 			page 5
 
 
  153              		.loc 1 43 32 discriminator 1 view .LVU37
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  196 0117 488B4360 		movq	96(%rbx), %rax
  197 011b 48894424 		movq	%rax, 16(%rsp)
  197      10
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 6
+GAS LISTING /tmp/cc4UrIgo.s 			page 6
 
 
  198 0120 E8000000 		call	MQTTstrlen@PLT
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  234 0006 4156     		pushq	%r14
  235              	.LCFI20:
  236              		.cfi_def_cfa_offset 24
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 7
+GAS LISTING /tmp/cc4UrIgo.s 			page 7
 
 
  237              		.cfi_offset 14, -24
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  279              	.LVL21:
  280              		.loc 1 67 6 discriminator 1 view .LVU63
  281 0037 89C7     		movl	%eax, %edi
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 8
+GAS LISTING /tmp/cc4UrIgo.s 			page 8
 
 
  282              		.loc 1 67 27 view .LVU64
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  317 0072 0F843001 		je	.L40
  317      0000
   80:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 9
+GAS LISTING /tmp/cc4UrIgo.s 			page 9
 
 
   81:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeCString(&ptr, "MQTT");
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
   96:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.willRetain = options->will.retained;
   97:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
   98:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 10
+GAS LISTING /tmp/cc4UrIgo.s 			page 10
 
 
   99:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  388 00fe 4C89E7   		movq	%r12, %rdi
  389 0101 0F110424 		movups	%xmm0, (%rsp)
  390 0105 488B4320 		movq	32(%rbx), %rax
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 11
+GAS LISTING /tmp/cc4UrIgo.s 			page 11
 
 
  391 0109 48894424 		movq	%rax, 16(%rsp)
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  421 014e 4883C418 		addq	$24, %rsp
  422              	.LCFI28:
  423              		.cfi_remember_state
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 12
+GAS LISTING /tmp/cc4UrIgo.s 			page 12
 
 
  424              		.cfi_def_cfa_offset 56
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  471              		.loc 1 99 5 is_stmt 0 view .LVU121
  472 0185 48837B70 		cmpq	$0, 112(%rbx)
  472      00
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 13
+GAS LISTING /tmp/cc4UrIgo.s 			page 13
 
 
  473 018a 0F8532FF 		jne	.L24
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  508 01f4 4883C420 		addq	$32, %rsp
  509              	.LCFI37:
  510              		.cfi_def_cfa_offset 80
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 14
+GAS LISTING /tmp/cc4UrIgo.s 			page 14
 
 
  511 01f8 E937FFFF 		jmp	.L30
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  550 025c 48894424 		movq	%rax, 16(%rsp)
  550      10
  551 0261 E8000000 		call	writeMQTTString@PLT
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 15
+GAS LISTING /tmp/cc4UrIgo.s 			page 15
 
 
  551      00
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  125:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * Deserializes the supplied (wire) buffer into connack data - return code
  126:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param sessionPresent the session present flag returned (only for MQTT 3.1.1)
  127:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param connack_rc returned integer value of the connack return code
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 16
+GAS LISTING /tmp/cc4UrIgo.s 			page 16
 
 
  128:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  136:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char* enddata = NULL;
  624              		.loc 1 136 2 is_stmt 1 view .LVU144
  625              	.LVL51:
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 17
+GAS LISTING /tmp/cc4UrIgo.s 			page 17
 
 
  137:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int mylen;
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  654              		.cfi_remember_state
  655              		.cfi_def_cfa_offset 32
  656 0051 89D0     		movl	%edx, %eax
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 18
+GAS LISTING /tmp/cc4UrIgo.s 			page 18
 
 
  657 0053 5B       		popq	%rbx
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  151:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	*sessionPresent = flags.bits.sessionpresent;
  697              		.loc 1 151 14 is_stmt 0 view .LVU167
  698 007f 4C89E7   		movq	%r12, %rdi
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 19
+GAS LISTING /tmp/cc4UrIgo.s 			page 19
 
 
  699 0082 E8000000 		call	readChar@PLT
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  168:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   */
  169:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** int MQTTSerialize_zero(unsigned char* buf, int buflen, unsigned char packettype)
  170:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 20
+GAS LISTING /tmp/cc4UrIgo.s 			page 20
 
 
  734              		.loc 1 170 1 is_stmt 1 view -0
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  770              		.loc 1 182 19 view .LVU193
  771 002b C1E204   		sall	$4, %edx
  772              		.loc 1 183 2 is_stmt 1 view .LVU194
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 21
+GAS LISTING /tmp/cc4UrIgo.s 			page 21
 
 
  773 002e 0FBEF2   		movsbl	%dl, %esi
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  178:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
  812              		.loc 1 178 6 is_stmt 0 view .LVU204
  813 0060 B8FEFFFF 		movl	$-2, %eax
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 22
+GAS LISTING /tmp/cc4UrIgo.s 			page 22
 
 
  813      FF
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  171:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int rc = -1;
  852              		.loc 1 171 2 view .LVU212
  172:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char *ptr = buf;
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 23
+GAS LISTING /tmp/cc4UrIgo.s 			page 23
 
 
  853              		.loc 1 172 2 view .LVU213
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  888              	.LBE5:
  889              	.LBE4:
  202:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 24
+GAS LISTING /tmp/cc4UrIgo.s 			page 24
 
 
  890              		.loc 1 202 1 view .LVU230
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  205:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** /**
  206:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * Serializes a disconnect packet into the supplied buffer, ready for writing to a socket
  207:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buf the buffer into which the packet will be serialized
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 25
+GAS LISTING /tmp/cc4UrIgo.s 			page 25
 
 
  208:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buflen the length in bytes of the supplied buffer, to avoid overruns
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  968              		.loc 1 183 2 view .LVU250
  969 0025 BEC0FFFF 		movl	$-64, %esi
  969      FF
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 26
+GAS LISTING /tmp/cc4UrIgo.s 			page 26
 
 
  970              	.LVL91:
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  1009              	.LCFI65:
  1010              		.cfi_restore_state
  1011              	.L68:
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 27
+GAS LISTING /tmp/cc4UrIgo.s 			page 27
 
 
  1012              	.LBB13:
@@ -1604,19 +1604,19 @@ GAS LISTING /tmp/ccb9Q2Ih.s 			page 1
  4814              	3:
  4815 001c 00000000 		.align 8
  4816              	4:
-GAS LISTING /tmp/ccb9Q2Ih.s 			page 28
+GAS LISTING /tmp/cc4UrIgo.s 			page 28
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 MQTTConnectClient.c
-     /tmp/ccb9Q2Ih.s:9      .text.MQTTSerialize_connectLength:0000000000000000 MQTTSerialize_connectLength
-     /tmp/ccb9Q2Ih.s:223    .text.MQTTSerialize_connect:0000000000000000 MQTTSerialize_connect
-     /tmp/ccb9Q2Ih.s:588    .text.MQTTDeserialize_connack:0000000000000000 MQTTDeserialize_connack
-     /tmp/ccb9Q2Ih.s:731    .text.MQTTSerialize_zero:0000000000000000 MQTTSerialize_zero
-     /tmp/ccb9Q2Ih.s:828    .text.MQTTSerialize_disconnect:0000000000000000 MQTTSerialize_disconnect
-     /tmp/ccb9Q2Ih.s:931    .text.MQTTSerialize_pingreq:0000000000000000 MQTTSerialize_pingreq
-     /tmp/ccb9Q2Ih.s:217    .rodata.MQTTSerialize_connect.str1.1:0000000000000005 .LC1
-     /tmp/ccb9Q2Ih.s:215    .rodata.MQTTSerialize_connect.str1.1:0000000000000000 .LC0
+     /tmp/cc4UrIgo.s:9      .text.MQTTSerialize_connectLength:0000000000000000 MQTTSerialize_connectLength
+     /tmp/cc4UrIgo.s:223    .text.MQTTSerialize_connect:0000000000000000 MQTTSerialize_connect
+     /tmp/cc4UrIgo.s:588    .text.MQTTDeserialize_connack:0000000000000000 MQTTDeserialize_connack
+     /tmp/cc4UrIgo.s:731    .text.MQTTSerialize_zero:0000000000000000 MQTTSerialize_zero
+     /tmp/cc4UrIgo.s:828    .text.MQTTSerialize_disconnect:0000000000000000 MQTTSerialize_disconnect
+     /tmp/cc4UrIgo.s:931    .text.MQTTSerialize_pingreq:0000000000000000 MQTTSerialize_pingreq
+     /tmp/cc4UrIgo.s:217    .rodata.MQTTSerialize_connect.str1.1:0000000000000005 .LC1
+     /tmp/cc4UrIgo.s:215    .rodata.MQTTSerialize_connect.str1.1:0000000000000000 .LC0
 
 UNDEFINED SYMBOLS
 MQTTstrlen

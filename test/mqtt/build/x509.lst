@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccFAPs6O.s 			page 1
+GAS LISTING /tmp/ccfDDSBu.s 			page 1
 
 
    1              		.file	"x509.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** #define CHECK(code)                                     \
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     do {                                                \
-GAS LISTING /tmp/ccFAPs6O.s 			page 2
+GAS LISTING /tmp/ccfDDSBu.s 			page 2
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         if ((ret = (code)) != 0) {                      \
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   69:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_SERIAL,
   70:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                  MBEDTLS_ERR_ASN1_OUT_OF_DATA);
   71:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
-GAS LISTING /tmp/ccFAPs6O.s 			page 3
+GAS LISTING /tmp/ccfDDSBu.s 			page 3
 
 
   72:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   78              		.loc 1 88 5 is_stmt 1 view .LVU27
   79              	.LVL4:
   80              	.L1:
-GAS LISTING /tmp/ccFAPs6O.s 			page 4
+GAS LISTING /tmp/ccfDDSBu.s 			page 4
 
 
   89:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** }
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   28:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
   29:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 1 bit  - Unused (sign bit)
   30:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 3 bits - High level module ID
-GAS LISTING /tmp/ccFAPs6O.s 			page 5
+GAS LISTING /tmp/ccfDDSBu.s 			page 5
 
 
   31:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 5 bits - Module-dependent error code
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   85:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CIPHER    6   8 (Started from 0x6080)
   86:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SSL       6   22 (Started from top, plus 0x6000)
   87:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SSL       7   20 (Started from 0x7000, gaps at
-GAS LISTING /tmp/ccFAPs6O.s 			page 6
+GAS LISTING /tmp/ccfDDSBu.s 			page 6
 
 
   88:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *                   0x7380, 0x7900-0x7980, 0x7A80-0x7E80)
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  142:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** static inline int mbedtls_error_add(int high, int low,
  105              		.loc 2 142 19 view .LVU31
  106              	.LBB287:
-GAS LISTING /tmp/ccFAPs6O.s 			page 7
+GAS LISTING /tmp/ccfDDSBu.s 			page 7
 
 
  143:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****                                     const char *file, int line)
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   69:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                  MBEDTLS_ERR_ASN1_OUT_OF_DATA);
  147              		.loc 1 69 16 view .LVU42
  148 0077 B820DDFF 		movl	$-8928, %eax
-GAS LISTING /tmp/ccFAPs6O.s 			page 8
+GAS LISTING /tmp/ccfDDSBu.s 			page 8
 
 
  148      FF
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  107:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** }
  184              		.loc 1 107 1 view .LVU51
  185 0018 4883C408 		addq	$8, %rsp
-GAS LISTING /tmp/ccFAPs6O.s 			page 9
+GAS LISTING /tmp/ccfDDSBu.s 			page 9
 
 
  186              	.LCFI12:
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  224 0018 4883C408 		addq	$8, %rsp
  225              	.LCFI14:
  226              		.cfi_def_cfa_offset 8
-GAS LISTING /tmp/ccFAPs6O.s 			page 10
+GAS LISTING /tmp/ccfDDSBu.s 			page 10
 
 
  227 001c C3       		ret
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  168:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  169:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** #if defined(MBEDTLS_X509_RSASSA_PSS_SUPPORT)
  170:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** /*
-GAS LISTING /tmp/ccFAPs6O.s 			page 11
+GAS LISTING /tmp/ccfDDSBu.s 			page 11
 
 
  171:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****  * HashAlgorithm ::= AlgorithmIdentifier
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  225:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     if (p != end) {
  226:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_ALG,
  227:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                  MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
-GAS LISTING /tmp/ccFAPs6O.s 			page 12
+GAS LISTING /tmp/ccfDDSBu.s 			page 12
 
 
  228:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  282:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         if ((ret = mbedtls_x509_get_alg_null(&p, end2, &alg_id)) != 0) {
  283:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             return ret;
  284:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         }
-GAS LISTING /tmp/ccFAPs6O.s 			page 13
+GAS LISTING /tmp/ccfDDSBu.s 			page 13
 
 
  285:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  339:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****      * salt_len
  340:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****      */
  341:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     if ((ret = mbedtls_asn1_get_tag(&p, end, &len,
-GAS LISTING /tmp/ccFAPs6O.s 			page 14
+GAS LISTING /tmp/ccfDDSBu.s 			page 14
 
 
  342:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                     MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED |
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  396:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  397:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** /*
  398:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****  *  AttributeTypeAndValue ::= SEQUENCE {
-GAS LISTING /tmp/ccFAPs6O.s 			page 15
+GAS LISTING /tmp/ccfDDSBu.s 			page 15
 
 
  399:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****  *    type     AttributeType,
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  453:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     if ((ret = mbedtls_asn1_get_len(p, end, &val->len)) != 0) {
  454:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_NAME, ret);
  455:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
-GAS LISTING /tmp/ccFAPs6O.s 			page 16
+GAS LISTING /tmp/ccfDDSBu.s 			page 16
 
 
  456:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  246      5810
  247 000c 4156     		pushq	%r14
  248              	.LCFI16:
-GAS LISTING /tmp/ccFAPs6O.s 			page 17
+GAS LISTING /tmp/ccfDDSBu.s 			page 17
 
 
  249              		.cfi_def_cfa_offset 24
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  507:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     while (1) {
  289              		.loc 1 507 5 is_stmt 1 view .LVU69
  508:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         /*
-GAS LISTING /tmp/ccFAPs6O.s 			page 18
+GAS LISTING /tmp/ccfDDSBu.s 			page 18
 
 
  509:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****          * parse SET
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  322              	.LVL26:
  422:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_NAME,
  323              		.loc 1 422 5 is_stmt 1 view .LVU80
-GAS LISTING /tmp/ccFAPs6O.s 			page 19
+GAS LISTING /tmp/ccfDDSBu.s 			page 19
 
 
  422:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_NAME,
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  358 00bd 4829C2   		subq	%rax, %rdx
  435:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  359              		.loc 1 435 8 view .LVU97
-GAS LISTING /tmp/ccFAPs6O.s 			page 20
+GAS LISTING /tmp/ccfDDSBu.s 			page 20
 
 
  360 00c0 488903   		movq	%rax, (%rbx)
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  396 0104 E8000000 		call	mbedtls_asn1_get_len@PLT
  396      00
  397              	.LVL31:
-GAS LISTING /tmp/ccFAPs6O.s 			page 21
+GAS LISTING /tmp/ccfDDSBu.s 			page 21
 
 
  453:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_NAME, ret);
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  527:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  528:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             /* Mark this item as being no the only one in a set */
  529:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             cur->next_merged = 1;
-GAS LISTING /tmp/ccFAPs6O.s 			page 22
+GAS LISTING /tmp/ccfDDSBu.s 			page 22
 
 
  429              		.loc 1 529 13 is_stmt 1 view .LVU127
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  460      00
  461 0156 4C89EA   		movq	%r13, %rdx
  462 0159 4C89E6   		movq	%r12, %rsi
-GAS LISTING /tmp/ccFAPs6O.s 			page 23
+GAS LISTING /tmp/ccfDDSBu.s 			page 23
 
 
  463 015c 4889DF   		movq	%rbx, %rdi
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  499              		.loc 1 544 12 is_stmt 0 view .LVU157
  500 017e 4C396424 		cmpq	%r12, 8(%rsp)
  500      08
-GAS LISTING /tmp/ccFAPs6O.s 			page 24
+GAS LISTING /tmp/ccfDDSBu.s 			page 24
 
 
  501 0183 0F848400 		je	.L39
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  530              		.loc 1 560 5 is_stmt 0 view .LVU167
  531 01ba 488B7B30 		movq	48(%rbx), %rdi
  532 01be E8000000 		call	mbedtls_asn1_free_named_data_list_shallow@PLT
-GAS LISTING /tmp/ccFAPs6O.s 			page 25
+GAS LISTING /tmp/ccfDDSBu.s 			page 25
 
 
  532      00
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  577 01f0 BD20DCFF 		movl	$-9184, %ebp
  577      FF
  578 01f5 EBBE     		jmp	.L21
-GAS LISTING /tmp/ccFAPs6O.s 			page 26
+GAS LISTING /tmp/ccfDDSBu.s 			page 26
 
 
  579              	.LVL50:
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  622              		.globl	mbedtls_x509_get_time
  624              	mbedtls_x509_get_time:
  625              	.LVL57:
-GAS LISTING /tmp/ccFAPs6O.s 			page 27
+GAS LISTING /tmp/ccfDDSBu.s 			page 27
 
 
  626              	.LFB75:
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  618:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     tm->year = x509_parse2_int(p);
  619:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     if (tm->year < 0) {
  620:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERR_X509_INVALID_DATE;
-GAS LISTING /tmp/ccFAPs6O.s 			page 28
+GAS LISTING /tmp/ccfDDSBu.s 			page 28
 
 
  621:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  650              		.cfi_offset 3, -48
  651 000c 4889D3   		movq	%rdx, %rbx
  652:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-GAS LISTING /tmp/ccFAPs6O.s 			page 29
+GAS LISTING /tmp/ccfDDSBu.s 			page 29
 
 
  653:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     size_t len, year_len;
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  683              		.loc 1 666 18 view .LVU199
  684 0057 41BC0400 		movl	$4, %r12d
  684      0000
-GAS LISTING /tmp/ccFAPs6O.s 			page 30
+GAS LISTING /tmp/ccfDDSBu.s 			page 30
 
 
  685              	.L60:
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  719              		.loc 1 681 36 view .LVU214
  720 0090 488B4500 		movq	0(%rbp), %rax
  721              	.LVL66:
-GAS LISTING /tmp/ccFAPs6O.s 			page 31
+GAS LISTING /tmp/ccfDDSBu.s 			page 31
 
 
  722              		.loc 1 681 9 view .LVU215
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  757 00b7 0F876302 		ja	.L70
  757      0000
  758 00bd 83FE09   		cmpl	$9, %esi
-GAS LISTING /tmp/ccFAPs6O.s 			page 32
+GAS LISTING /tmp/ccfDDSBu.s 			page 32
 
 
  759 00c0 0F875A02 		ja	.L70
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  601:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     uint32_t d2 = p[1] - '0';
  796              		.loc 1 601 5 view .LVU245
  601:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     uint32_t d2 = p[1] - '0';
-GAS LISTING /tmp/ccFAPs6O.s 			page 33
+GAS LISTING /tmp/ccfDDSBu.s 			page 33
 
 
  797              		.loc 1 601 20 is_stmt 0 view .LVU246
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  602:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     return (d1 < 10 && d2 < 10) ? (int) (d1 * 10 + d2) : -1;
  835              		.loc 1 602 20 view .LVU261
  836 0117 440FB640 		movzbl	5(%rax), %r8d
-GAS LISTING /tmp/ccFAPs6O.s 			page 34
+GAS LISTING /tmp/ccfDDSBu.s 			page 34
 
 
  836      05
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  601:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     uint32_t d2 = p[1] - '0';
  873              		.loc 1 601 24 view .LVU276
  874 014a 83EF30   		subl	$48, %edi
-GAS LISTING /tmp/ccFAPs6O.s 			page 35
+GAS LISTING /tmp/ccfDDSBu.s 			page 35
 
 
  875              	.LVL85:
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  911              		.loc 1 601 24 view .LVU291
  912 017a 83EF30   		subl	$48, %edi
  913              	.LVL90:
-GAS LISTING /tmp/ccFAPs6O.s 			page 36
+GAS LISTING /tmp/ccfDDSBu.s 			page 36
 
 
  602:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     return (d1 < 10 && d2 < 10) ? (int) (d1 * 10 + d2) : -1;
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  951              		.loc 1 601 24 view .LVU306
  952 01a9 83EF30   		subl	$48, %edi
  953              	.LVL97:
-GAS LISTING /tmp/ccFAPs6O.s 			page 37
+GAS LISTING /tmp/ccfDDSBu.s 			page 37
 
 
  602:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     return (d1 < 10 && d2 < 10) ? (int) (d1 * 10 + d2) : -1;
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  991 01d9 A9AA1500 		testl	$5546, %eax
  991      00
  992 01de 0F85EC00 		jne	.L89
-GAS LISTING /tmp/ccFAPs6O.s 			page 38
+GAS LISTING /tmp/ccfDDSBu.s 			page 38
 
 
  992      0000
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1026              		.loc 1 589 39 view .LVU332
  1027 0229 4183FA17 		cmpl	$23, %r10d
  1028 022d 7711     		ja	.L65
-GAS LISTING /tmp/ccFAPs6O.s 			page 39
+GAS LISTING /tmp/ccfDDSBu.s 			page 39
 
 
  590:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         (unsigned int) t->min  > 59 ||           /* (0 - 59) */
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  626:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         if (tm->year < 0) {
  1069              		.loc 1 626 9 is_stmt 1 view .LVU343
  1070              	.LBB358:
-GAS LISTING /tmp/ccFAPs6O.s 			page 40
+GAS LISTING /tmp/ccfDDSBu.s 			page 40
 
 
  1071              	.LBI355:
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1108              	.LBE366:
  1109              	.LBE370:
  676:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
-GAS LISTING /tmp/ccFAPs6O.s 			page 41
+GAS LISTING /tmp/ccfDDSBu.s 			page 41
 
 
  1110              		.loc 1 676 9 is_stmt 1 view .LVU358
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1154      000000
  1155              	.L81:
  1156              	.LCFI42:
-GAS LISTING /tmp/ccFAPs6O.s 			page 42
+GAS LISTING /tmp/ccfDDSBu.s 			page 42
 
 
  1157              		.cfi_restore_state
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1194      FF
  1195              	.LVL121:
  1196 02f9 0F1F8000 		.p2align 4,,10
-GAS LISTING /tmp/ccFAPs6O.s 			page 43
+GAS LISTING /tmp/ccfDDSBu.s 			page 43
 
 
  1196      000000
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1233      FF
  1234              	.LVL125:
  1235 033a 660F1F44 		.p2align 4,,10
-GAS LISTING /tmp/ccFAPs6O.s 			page 44
+GAS LISTING /tmp/ccfDDSBu.s 			page 44
 
 
  1235      0000
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1274              		.loc 1 603 56 discriminator 2 view .LVU388
  1275 036a E95AFEFF 		jmp	.L76
  1275      FF
-GAS LISTING /tmp/ccFAPs6O.s 			page 45
+GAS LISTING /tmp/ccfDDSBu.s 			page 45
 
 
  1276              	.LVL132:
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1315      FF
  1316              	.LVL138:
  1317              	.L138:
-GAS LISTING /tmp/ccFAPs6O.s 			page 46
+GAS LISTING /tmp/ccfDDSBu.s 			page 46
 
 
  1318              		.loc 1 687 1 view .LVU396
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1361              		.loc 1 695 8 view .LVU403
  1362 0026 4885D2   		testq	%rdx, %rdx
  1363 0029 7E55     		jle	.L143
-GAS LISTING /tmp/ccFAPs6O.s 			page 47
+GAS LISTING /tmp/ccfDDSBu.s 			page 47
 
 
  696:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_SIGNATURE,
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1397 0054 4801CA   		addq	%rcx, %rdx
  1398 0057 488913   		movq	%rdx, (%rbx)
  711:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
-GAS LISTING /tmp/ccFAPs6O.s 			page 48
+GAS LISTING /tmp/ccfDDSBu.s 			page 48
 
 
  712:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     return 0;
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  703:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
  1442              		.loc 1 703 16 view .LVU431
  1443 007d EBDB     		jmp	.L139
-GAS LISTING /tmp/ccFAPs6O.s 			page 49
+GAS LISTING /tmp/ccfDDSBu.s 			page 49
 
 
  1444              	.LVL150:
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1484              		.loc 1 721 1 view .LVU440
  1485 0011 4889CA   		movq	%rcx, %rdx
  1486              	.LVL156:
-GAS LISTING /tmp/ccFAPs6O.s 			page 50
+GAS LISTING /tmp/ccfDDSBu.s 			page 50
 
 
  725:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERR_X509_BAD_INPUT_DATA;
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1505      FF
  758:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         }
  759:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
-GAS LISTING /tmp/ccFAPs6O.s 			page 51
+GAS LISTING /tmp/ccfDDSBu.s 			page 51
 
 
  760:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  757:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         }
  1549              		.loc 1 757 20 view .LVU460
  1550 0047 B800DDFF 		movl	$-8960, %eax
-GAS LISTING /tmp/ccFAPs6O.s 			page 52
+GAS LISTING /tmp/ccfDDSBu.s 			page 52
 
 
  1550      FF
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  770:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  1589              		.loc 1 770 1 view .LVU468
  1590 0009 55       		pushq	%rbp
-GAS LISTING /tmp/ccFAPs6O.s 			page 53
+GAS LISTING /tmp/ccfDDSBu.s 			page 53
 
 
  1591              	.LCFI59:
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  787:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     /*
  788:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****      * Extensions  ::=  SEQUENCE SIZE (1..MAX) OF Extension
  789:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****      */
-GAS LISTING /tmp/ccFAPs6O.s 			page 54
+GAS LISTING /tmp/ccfDDSBu.s 			page 54
 
 
  790:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     if ((ret = mbedtls_asn1_get_tag(p, end, &len,
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1662              	.LVL175:
  1663              		.p2align 4,,10
  1664 0053 0F1F4400 		.p2align 3
-GAS LISTING /tmp/ccFAPs6O.s 			page 55
+GAS LISTING /tmp/ccfDDSBu.s 			page 55
 
 
  1664      00
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1700              		.loc 1 796 16 view .LVU504
  1701 0089 4839D3   		cmpq	%rdx, %rbx
  1702 008c BA9ADAFF 		movl	$-9574, %edx
-GAS LISTING /tmp/ccFAPs6O.s 			page 56
+GAS LISTING /tmp/ccfDDSBu.s 			page 56
 
 
  1702      FF
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1742 0000 F30F1EFA 		endbr64
  1743 0004 4157     		pushq	%r15
  1744              	.LCFI67:
-GAS LISTING /tmp/ccFAPs6O.s 			page 57
+GAS LISTING /tmp/ccfDDSBu.s 			page 57
 
 
  1745              		.cfi_def_cfa_offset 16
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
   51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
   52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
-GAS LISTING /tmp/ccFAPs6O.s 			page 58
+GAS LISTING /tmp/ccfDDSBu.s 			page 58
 
 
   53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  818:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     unsigned char *asn1_len_p;
  1788              		.loc 1 818 5 view .LVU515
  819:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     unsigned char c, merge = 0;
-GAS LISTING /tmp/ccFAPs6O.s 			page 59
+GAS LISTING /tmp/ccfDDSBu.s 			page 59
 
 
  1789              		.loc 1 819 5 view .LVU516
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1825      0000
  1826 0050 4889D6   		movq	%rdx, %rsi
  1827              	.LVL187:
-GAS LISTING /tmp/ccFAPs6O.s 			page 60
+GAS LISTING /tmp/ccfDDSBu.s 			page 60
 
 
  819:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     const mbedtls_x509_name *name;
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
    8:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    version 2.1 of the License, or (at your option) any later version.
    9:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
   10:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is distributed in the hope that it will be useful,
-GAS LISTING /tmp/ccFAPs6O.s 			page 61
+GAS LISTING /tmp/ccfDDSBu.s 			page 61
 
 
   11:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1865              	.LVL191:
  1866              		.loc 4 54 10 discriminator 1 view .LVU548
  1867 009a 488B7C24 		movq	8(%rsp), %rdi
-GAS LISTING /tmp/ccFAPs6O.s 			page 62
+GAS LISTING /tmp/ccfDDSBu.s 			page 62
 
 
  1867      08
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1908 00ed 83E301   		andl	$1, %ebx
  1909              	.L181:
  845:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                           (name->val.tag != MBEDTLS_ASN1_IA5_STRING);
-GAS LISTING /tmp/ccFAPs6O.s 			page 63
+GAS LISTING /tmp/ccfDDSBu.s 			page 63
 
 
  846:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  861:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         MBEDTLS_X509_SAFE_SNPRINTF;
  1939              		.loc 1 861 9 is_stmt 1 view .LVU571
  1940              		.loc 1 861 9 view .LVU572
-GAS LISTING /tmp/ccFAPs6O.s 			page 64
+GAS LISTING /tmp/ccfDDSBu.s 			page 64
 
 
  1941 012b 85C0     		testl	%eax, %eax
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  1956 0147 4D8B6F20 		movq	32(%r15), %r13
  863:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             s[0] = '#';
  1957              		.loc 1 863 12 view .LVU580
-GAS LISTING /tmp/ccFAPs6O.s 			page 65
+GAS LISTING /tmp/ccfDDSBu.s 			page 65
 
 
  1958 014b 85DB     		testl	%ebx, %ebx
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  909:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                         ((i == name->val.len-1) && (c == ' '))) {
  910:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                         if (j + 1 >= sizeof(s) - 1) {
  1994              		.loc 1 910 25 is_stmt 1 view .LVU592
-GAS LISTING /tmp/ccFAPs6O.s 			page 66
+GAS LISTING /tmp/ccfDDSBu.s 			page 66
 
 
  1995              		.loc 1 910 31 is_stmt 0 view .LVU593
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2027 01d4 83E60F   		andl	$15, %esi
  2028              	.LVL207:
  2029              		.loc 1 922 21 view .LVU608
-GAS LISTING /tmp/ccFAPs6O.s 			page 67
+GAS LISTING /tmp/ccfDDSBu.s 			page 67
 
 
  923:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                     s[j++] = nibble_to_hex_digit(highbits);
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2072              		.loc 1 924 26 discriminator 1 view .LVU622
  2073 01f8 884C0452 		movb	%cl, 82(%rsp,%rax)
  2074              	.LVL213:
-GAS LISTING /tmp/ccFAPs6O.s 			page 68
+GAS LISTING /tmp/ccfDDSBu.s 			page 68
 
 
  897:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 if (j >= sizeof(s) - 1) {
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2109 022f 4901C5   		addq	%rax, %r13
  2110              	.LVL216:
  2111              		.loc 1 930 9 is_stmt 1 view .LVU634
-GAS LISTING /tmp/ccFAPs6O.s 			page 69
+GAS LISTING /tmp/ccfDDSBu.s 			page 69
 
 
  931:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         ret = mbedtls_snprintf(p, n, "%s", s);
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2154              	.LVL221:
  832:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         if (!name->oid.p) {
  2155              		.loc 1 832 17 is_stmt 1 view .LVU652
-GAS LISTING /tmp/ccFAPs6O.s 			page 70
+GAS LISTING /tmp/ccfDDSBu.s 			page 70
 
 
  2156 0262 4D85FF   		testq	%r15, %r15
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2192 02a0 4983C601 		addq	$1, %r14
  2193              	.LVL225:
  897:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 if (j >= sizeof(s) - 1) {
-GAS LISTING /tmp/ccFAPs6O.s 			page 71
+GAS LISTING /tmp/ccfDDSBu.s 			page 71
 
 
  2194              		.loc 1 897 57 discriminator 2 view .LVU666
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2233              	.LCFI79:
  2234              		.cfi_def_cfa_offset 16
  2235 02ed 415F     		popq	%r15
-GAS LISTING /tmp/ccFAPs6O.s 			page 72
+GAS LISTING /tmp/ccfDDSBu.s 			page 72
 
 
  2236              	.LCFI80:
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2275 0334 488B6C24 		movq	8(%rsp), %rbp
  2275      08
  2276 0339 4C89FA   		movq	%r15, %rdx
-GAS LISTING /tmp/ccFAPs6O.s 			page 73
+GAS LISTING /tmp/ccfDDSBu.s 			page 73
 
 
  2277 033c 4C89F6   		movq	%r14, %rsi
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  854:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             } else if (ret == MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
  2317              		.loc 1 854 33 view .LVU694
  2318 0375 BB010000 		movl	$1, %ebx
-GAS LISTING /tmp/ccFAPs6O.s 			page 74
+GAS LISTING /tmp/ccfDDSBu.s 			page 74
 
 
  2318      00
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  864:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  2359              		.loc 1 864 13 is_stmt 1 view .LVU709
  866:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             if ((ret = mbedtls_asn1_write_len(&asn1_len_p, asn1_tag_len_buf, name->val.len)) < 0) {
-GAS LISTING /tmp/ccFAPs6O.s 			page 75
+GAS LISTING /tmp/ccfDDSBu.s 			page 75
 
 
  2360              		.loc 1 866 24 is_stmt 0 view .LVU710
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2393 03dd E8000000 		call	mbedtls_asn1_write_tag@PLT
  2393      00
  2394              	.LVL245:
-GAS LISTING /tmp/ccFAPs6O.s 			page 76
+GAS LISTING /tmp/ccfDDSBu.s 			page 76
 
 
  871:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 return MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2429              		.loc 1 882 17 is_stmt 1 view .LVU739
  883:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 s[j++] = nibble_to_hex_digit(lowbits);
  2430              		.loc 1 883 17 view .LVU740
-GAS LISTING /tmp/ccFAPs6O.s 			page 77
+GAS LISTING /tmp/ccfDDSBu.s 			page 77
 
 
  2431              	.LBB410:
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2471              		.loc 1 876 68 is_stmt 1 discriminator 2 view .LVU753
  2472              	.LVL257:
  876:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 if (j + 1 >= sizeof(s) - 1) {
-GAS LISTING /tmp/ccFAPs6O.s 			page 78
+GAS LISTING /tmp/ccfDDSBu.s 			page 78
 
 
  2473              		.loc 1 876 34 discriminator 1 view .LVU754
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2511              	.LVL263:
  805:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** }
  2512              		.loc 1 805 43 discriminator 2 view .LVU768
-GAS LISTING /tmp/ccFAPs6O.s 			page 79
+GAS LISTING /tmp/ccfDDSBu.s 			page 79
 
 
  2513 045c 8D7137   		leal	55(%rcx), %esi
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  882:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 s[j++] = nibble_to_hex_digit(highbits);
  2549              		.loc 1 882 26 is_stmt 0 view .LVU783
  2550 0487 C0EA04   		shrb	$4, %dl
-GAS LISTING /tmp/ccFAPs6O.s 			page 80
+GAS LISTING /tmp/ccfDDSBu.s 			page 80
 
 
  2551              	.LVL269:
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2590              		.loc 1 805 5 is_stmt 0 view .LVU797
  2591              	.LBE425:
  2592              	.LBE438:
-GAS LISTING /tmp/ccFAPs6O.s 			page 81
+GAS LISTING /tmp/ccfDDSBu.s 			page 81
 
 
  884:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             }
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  805:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** }
  2629              		.loc 1 805 43 discriminator 2 view .LVU813
  2630              	.LBE414:
-GAS LISTING /tmp/ccFAPs6O.s 			page 82
+GAS LISTING /tmp/ccfDDSBu.s 			page 82
 
 
  2631              	.LBE439:
@@ -4918,7 +4918,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2668      4A
  2669              	.LVL285:
  881:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 highbits = c >> 4;
-GAS LISTING /tmp/ccFAPs6O.s 			page 83
+GAS LISTING /tmp/ccfDDSBu.s 			page 83
 
 
  2670              		.loc 1 881 17 is_stmt 1 view .LVU828
@@ -4978,7 +4978,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  884:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             }
  2712              		.loc 1 884 17 is_stmt 1 view .LVU841
  2713              	.LVL292:
-GAS LISTING /tmp/ccFAPs6O.s 			page 84
+GAS LISTING /tmp/ccfDDSBu.s 			page 84
 
 
  2714              	.LBB445:
@@ -5038,7 +5038,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2751              		.loc 1 805 26 discriminator 1 view .LVU856
  2752 0546 83E10F   		andl	$15, %ecx
  2753              	.LVL299:
-GAS LISTING /tmp/ccFAPs6O.s 			page 85
+GAS LISTING /tmp/ccfDDSBu.s 			page 85
 
 
  805:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** }
@@ -5098,7 +5098,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  805:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** }
  2794              		.loc 1 805 26 discriminator 1 view .LVU871
  2795              	.LBE431:
-GAS LISTING /tmp/ccFAPs6O.s 			page 86
+GAS LISTING /tmp/ccfDDSBu.s 			page 86
 
 
  2796              	.LBE449:
@@ -5158,7 +5158,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2832              		.loc 1 890 19 is_stmt 0 view .LVU882
  2833 05a4 498B4728 		movq	40(%r15), %rax
  894:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             }
-GAS LISTING /tmp/ccFAPs6O.s 			page 87
+GAS LISTING /tmp/ccfDDSBu.s 			page 87
 
 
  2834              		.loc 1 894 20 view .LVU883
@@ -5218,7 +5218,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  805:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** }
  2876              		.loc 1 805 26 discriminator 1 view .LVU896
  2877              	.LBE455:
-GAS LISTING /tmp/ccFAPs6O.s 			page 88
+GAS LISTING /tmp/ccfDDSBu.s 			page 88
 
 
  2878              	.LBE454:
@@ -5278,7 +5278,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  2916      00
  2917              	.LVL322:
  876:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 if (j + 1 >= sizeof(s) - 1) {
-GAS LISTING /tmp/ccFAPs6O.s 			page 89
+GAS LISTING /tmp/ccfDDSBu.s 			page 89
 
 
  2918              		.loc 1 876 27 view .LVU909
@@ -5338,7 +5338,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  947:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  2958              		.loc 1 947 5 is_stmt 1 view .LVU915
  2959              	.LVL328:
-GAS LISTING /tmp/ccFAPs6O.s 			page 90
+GAS LISTING /tmp/ccfDDSBu.s 			page 90
 
 
  948:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     size_t i, n, nr;
@@ -5398,7 +5398,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3003              		.loc 1 957 19 discriminator 1 view .LVU925
  3004 0025 4D85F6   		testq	%r14, %r14
  3005 0028 0F840601 		je	.L296
-GAS LISTING /tmp/ccFAPs6O.s 			page 91
+GAS LISTING /tmp/ccfDDSBu.s 			page 91
 
 
  3005      0000
@@ -5458,7 +5458,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3047              		.loc 1 962 9 view .LVU937
  963:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                serial->p[i], (i < nr - 1) ? ":" : "");
  3048              		.loc 1 963 54 is_stmt 0 view .LVU938
-GAS LISTING /tmp/ccFAPs6O.s 			page 92
+GAS LISTING /tmp/ccfDDSBu.s 			page 92
 
 
  3049 0074 498D56FF 		leaq	-1(%r14), %rdx
@@ -5518,7 +5518,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3092              	.LCFI91:
  3093              		.cfi_def_cfa_offset 72
  3094 00af 59       		popq	%rcx
-GAS LISTING /tmp/ccFAPs6O.s 			page 93
+GAS LISTING /tmp/ccfDDSBu.s 			page 93
 
 
  3095              	.LCFI92:
@@ -5578,7 +5578,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3139              		.loc 4 54 10 discriminator 1 view .LVU966
  3140              	.LBE463:
  3141              	.LBE462:
-GAS LISTING /tmp/ccFAPs6O.s 			page 94
+GAS LISTING /tmp/ccfDDSBu.s 			page 94
 
 
  969:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         MBEDTLS_X509_SAFE_SNPRINTF;
@@ -5638,7 +5638,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3189              		.cfi_def_cfa_offset 16
  3190 0104 415F     		popq	%r15
  3191              	.LCFI99:
-GAS LISTING /tmp/ccFAPs6O.s 			page 95
+GAS LISTING /tmp/ccfDDSBu.s 			page 95
 
 
  3192              		.cfi_def_cfa_offset 8
@@ -5698,7 +5698,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3238              		.cfi_def_cfa_offset 8
  3239              	.LVL352:
  3240              		.loc 1 973 1 view .LVU990
-GAS LISTING /tmp/ccFAPs6O.s 			page 96
+GAS LISTING /tmp/ccfDDSBu.s 			page 96
 
 
  3241 0133 C3       		ret
@@ -5758,7 +5758,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3284      08
  3285 0021 31C0     		xorl	%eax, %eax
  983:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-GAS LISTING /tmp/ccFAPs6O.s 			page 97
+GAS LISTING /tmp/ccfDDSBu.s 			page 97
 
 
  3286              		.loc 1 983 5 is_stmt 1 view .LVU996
@@ -5818,7 +5818,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  994:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     MBEDTLS_X509_SAFE_SNPRINTF;
  3324              		.loc 1 994 5 is_stmt 1 view .LVU1012
  3325              		.loc 1 994 5 view .LVU1013
-GAS LISTING /tmp/ccFAPs6O.s 			page 98
+GAS LISTING /tmp/ccfDDSBu.s 			page 98
 
 
  3326 004b 85C0     		testl	%eax, %eax
@@ -5878,7 +5878,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3352              	.LVL364:
  3353              		.loc 1 1018 1 view .LVU1018
  3354 0073 C3       		ret
-GAS LISTING /tmp/ccFAPs6O.s 			page 99
+GAS LISTING /tmp/ccfDDSBu.s 			page 99
 
 
  3355              	.LVL365:
@@ -5938,7 +5938,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3400              		.globl	mbedtls_x509_key_size_helper
  3402              	mbedtls_x509_key_size_helper:
  3403              	.LVL370:
-GAS LISTING /tmp/ccFAPs6O.s 			page 100
+GAS LISTING /tmp/ccfDDSBu.s 			page 100
 
 
  3404              	.LFB83:
@@ -5998,7 +5998,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3439              		.loc 4 54 3 view .LVU1041
  3440              		.loc 4 54 10 is_stmt 0 discriminator 1 view .LVU1042
  3441 0020 E8000000 		call	__snprintf_chk@PLT
-GAS LISTING /tmp/ccFAPs6O.s 			page 101
+GAS LISTING /tmp/ccfDDSBu.s 			page 101
 
 
  3441      00
@@ -6058,7 +6058,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3487              		.globl	mbedtls_x509_time_cmp
  3489              	mbedtls_x509_time_cmp:
  3490              	.LVL380:
-GAS LISTING /tmp/ccFAPs6O.s 			page 102
+GAS LISTING /tmp/ccfDDSBu.s 			page 102
 
 
  3491              	.LFB84:
@@ -6118,7 +6118,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1046:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
 1047:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     x = (((t1->hour << 12) | (t1->min << 6) | (t1->sec)) -
  3532              		.loc 1 1047 5 is_stmt 1 view .LVU1075
-GAS LISTING /tmp/ccFAPs6O.s 			page 103
+GAS LISTING /tmp/ccfDDSBu.s 			page 103
 
 
  3533              		.loc 1 1047 21 is_stmt 0 view .LVU1076
@@ -6178,7 +6178,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1055:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     struct tm tm;
 1056:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
 1057:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     if (mbedtls_platform_gmtime_r(&tt, &tm) == NULL) {
-GAS LISTING /tmp/ccFAPs6O.s 			page 104
+GAS LISTING /tmp/ccfDDSBu.s 			page 104
 
 
 1058:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return -1;
@@ -6238,7 +6238,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3585 0006 C3       		ret
  3586              		.cfi_endproc
  3587              	.LFE85:
-GAS LISTING /tmp/ccFAPs6O.s 			page 105
+GAS LISTING /tmp/ccfDDSBu.s 			page 105
 
 
  3589              		.section	.text.mbedtls_x509_time_is_future,"ax",@progbits
@@ -6298,7 +6298,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1140:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****          */
 1141:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERR_X509_BAD_INPUT_DATA;
 1142:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
-GAS LISTING /tmp/ccFAPs6O.s 			page 106
+GAS LISTING /tmp/ccfDDSBu.s 			page 106
 
 
 1143:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -6358,7 +6358,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1197:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     other_name->value.hardware_module_name.val.tag = MBEDTLS_ASN1_OCTET_STRING;
 1198:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     other_name->value.hardware_module_name.val.p = p;
 1199:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     other_name->value.hardware_module_name.val.len = len;
-GAS LISTING /tmp/ccFAPs6O.s 			page 107
+GAS LISTING /tmp/ccfDDSBu.s 			page 107
 
 
 1200:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     p += len;
@@ -6418,7 +6418,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1254:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             return ret;
 1255:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         }
 1256:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
-GAS LISTING /tmp/ccFAPs6O.s 			page 108
+GAS LISTING /tmp/ccfDDSBu.s 			page 108
 
 
 1257:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         mbedtls_x509_free_subject_alt_name(&tmp_san_name);
@@ -6478,7 +6478,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1311:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****  *      partyName               [1]     DirectoryString }
 1312:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****  *
 1313:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****  * We list all types, but use the following GeneralName types from RFC 5280:
-GAS LISTING /tmp/ccFAPs6O.s 			page 109
+GAS LISTING /tmp/ccfDDSBu.s 			page 109
 
 
 1314:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****  * "dnsName", "uniformResourceIdentifier" and "hardware_module_name"
@@ -6538,7 +6538,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3629              		.loc 1 1345 16 is_stmt 0 view .LVU1102
  3630 001c 4889E2   		movq	%rsp, %rdx
  3631              	.LVL391:
-GAS LISTING /tmp/ccFAPs6O.s 			page 110
+GAS LISTING /tmp/ccfDDSBu.s 			page 110
 
 
 1343:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     mbedtls_x509_bitstring bs = { 0, 0, NULL };
@@ -6598,7 +6598,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3661              	.L320:
 1364:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** }
  3662              		.loc 1 1364 1 is_stmt 0 view .LVU1116
-GAS LISTING /tmp/ccFAPs6O.s 			page 111
+GAS LISTING /tmp/ccfDDSBu.s 			page 111
 
 
  3663 0057 488B5424 		movq	24(%rsp), %rdx
@@ -6658,7 +6658,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3705              	.LBE472:
 1346:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
  3706              		.loc 1 1346 16 view .LVU1129
-GAS LISTING /tmp/ccFAPs6O.s 			page 112
+GAS LISTING /tmp/ccfDDSBu.s 			page 112
 
 
  3707 007d EBD8     		jmp	.L320
@@ -6718,7 +6718,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3748              		.loc 1 1372 5 view .LVU1138
 1373:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
 1374:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     if ((ret = mbedtls_asn1_get_bitstring(p, end, &bs)) != 0) {
-GAS LISTING /tmp/ccFAPs6O.s 			page 113
+GAS LISTING /tmp/ccfDDSBu.s 			page 113
 
 
  3749              		.loc 1 1374 16 is_stmt 0 view .LVU1139
@@ -6778,7 +6778,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3780              		.loc 1 1388 20 view .LVU1154
  3781 0055 8933     		movl	%esi, (%rbx)
 1387:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     for (i = 0; i < bs.len && i < sizeof(unsigned int); i++) {
-GAS LISTING /tmp/ccFAPs6O.s 			page 114
+GAS LISTING /tmp/ccfDDSBu.s 			page 114
 
 
  3782              		.loc 1 1387 58 is_stmt 1 discriminator 4 view .LVU1155
@@ -6838,7 +6838,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3826              		.loc 1 1387 28 discriminator 1 view .LVU1177
  3827 008a 660F1F44 		.p2align 4,,10
  3827      0000
-GAS LISTING /tmp/ccFAPs6O.s 			page 115
+GAS LISTING /tmp/ccfDDSBu.s 			page 115
 
 
  3828              		.p2align 3
@@ -6898,7 +6898,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3867              	.L349:
  3868              		.loc 1 1392 1 view .LVU1188
  3869 00b7 E8000000 		call	__stack_chk_fail@PLT
-GAS LISTING /tmp/ccFAPs6O.s 			page 116
+GAS LISTING /tmp/ccfDDSBu.s 			page 116
 
 
  3869      00
@@ -6958,7 +6958,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3914 0032 4889F9   		movq	%rdi, %rcx
  3915 0035 4889F3   		movq	%rsi, %rbx
  3916 0038 48630482 		movslq	(%rdx,%rax,4), %rax
-GAS LISTING /tmp/ccFAPs6O.s 			page 117
+GAS LISTING /tmp/ccfDDSBu.s 			page 117
 
 
  3917 003c 4801D0   		addq	%rdx, %rax
@@ -7018,7 +7018,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1427:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
 1428:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             memcpy(&san->san.unstructured_name,
 1429:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                    san_buf, sizeof(*san_buf));
-GAS LISTING /tmp/ccFAPs6O.s 			page 118
+GAS LISTING /tmp/ccfDDSBu.s 			page 118
 
 
 1430:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -7078,7 +7078,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1484:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             if (ret != 0) {
 1485:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 return ret;
 1486:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             }
-GAS LISTING /tmp/ccFAPs6O.s 			page 119
+GAS LISTING /tmp/ccfDDSBu.s 			page 119
 
 
 1487:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -7138,7 +7138,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  3973              		.loc 1 1126 12 view .LVU1197
  3974              	.LBB514:
 1129:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     size_t len;
-GAS LISTING /tmp/ccFAPs6O.s 			page 120
+GAS LISTING /tmp/ccfDDSBu.s 			page 120
 
 
  3975              		.loc 1 1129 5 view .LVU1198
@@ -7198,7 +7198,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4008              		.loc 1 1150 5 view .LVU1214
 1156:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERR_X509_FEATURE_UNAVAILABLE;
  4009              		.loc 1 1156 9 is_stmt 0 view .LVU1215
-GAS LISTING /tmp/ccFAPs6O.s 			page 121
+GAS LISTING /tmp/ccfDDSBu.s 			page 121
 
 
  4010 00a0 48833C24 		cmpq	$8, (%rsp)
@@ -7258,7 +7258,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1162:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                     MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC)) !=
  4041              		.loc 1 1162 5 is_stmt 1 view .LVU1229
 1162:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                     MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC)) !=
-GAS LISTING /tmp/ccFAPs6O.s 			page 122
+GAS LISTING /tmp/ccfDDSBu.s 			page 122
 
 
  4042              		.loc 1 1162 16 is_stmt 0 view .LVU1230
@@ -7318,7 +7318,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4076 012e 0F858000 		jne	.L366
  4076      0000
 1183:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
-GAS LISTING /tmp/ccFAPs6O.s 			page 123
+GAS LISTING /tmp/ccfDDSBu.s 			page 123
 
 
  4077              		.loc 1 1183 5 is_stmt 1 view .LVU1243
@@ -7378,7 +7378,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4109              		.loc 1 1192 16 is_stmt 0 view .LVU1257
  4110 0178 4C89EA   		movq	%r13, %rdx
 1191:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     if ((ret = mbedtls_asn1_get_tag(&p, end, &len,
-GAS LISTING /tmp/ccFAPs6O.s 			page 124
+GAS LISTING /tmp/ccfDDSBu.s 			page 124
 
 
  4111              		.loc 1 1191 7 view .LVU1258
@@ -7438,7 +7438,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4142              	.L366:
 1201:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS,
  4143              		.loc 1 1201 8 view .LVU1274
-GAS LISTING /tmp/ccFAPs6O.s 			page 125
+GAS LISTING /tmp/ccfDDSBu.s 			page 125
 
 
  4144              	.LBE514:
@@ -7498,7 +7498,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4187              	.LBI541:
   26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
  4188              		.loc 3 26 1 view .LVU1287
-GAS LISTING /tmp/ccFAPs6O.s 			page 126
+GAS LISTING /tmp/ccfDDSBu.s 			page 126
 
 
  4189              	.LBB542:
@@ -7558,7 +7558,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4232              		.loc 1 1439 13 is_stmt 1 view .LVU1300
 1441:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                    san_buf, sizeof(*san_buf));
  4233              		.loc 1 1441 13 view .LVU1301
-GAS LISTING /tmp/ccFAPs6O.s 			page 127
+GAS LISTING /tmp/ccfDDSBu.s 			page 127
 
 
  4234              	.LBB547:
@@ -7618,7 +7618,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4274              	.LBE552:
  4275              	.LBE554:
 1481:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                        MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-GAS LISTING /tmp/ccFAPs6O.s 			page 128
+GAS LISTING /tmp/ccfDDSBu.s 			page 128
 
 
  4276              		.loc 1 1481 19 view .LVU1315
@@ -7678,7 +7678,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4313              		.loc 1 1488 52 is_stmt 0 view .LVU1330
  4314 027a 488B7424 		movq	8(%rsp), %rsi
  4314      08
-GAS LISTING /tmp/ccFAPs6O.s 			page 129
+GAS LISTING /tmp/ccfDDSBu.s 			page 129
 
 
 1488:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                              &san->san.directory_name)) != 0) {
@@ -7738,7 +7738,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4355 02ba 0F114640 		movups	%xmm0, 64(%rsi)
  4356              	.LVL449:
  4357              		.loc 3 59 10 discriminator 1 view .LVU1343
-GAS LISTING /tmp/ccFAPs6O.s 			page 130
+GAS LISTING /tmp/ccfDDSBu.s 			page 130
 
 
  4358              	.LBE558:
@@ -7798,7 +7798,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4399 02e2 0F114634 		movups	%xmm0, 52(%rsi)
  4400 02e6 0F114604 		movups	%xmm0, 4(%rsi)
  4401 02ea 0F114614 		movups	%xmm0, 20(%rsi)
-GAS LISTING /tmp/ccFAPs6O.s 			page 131
+GAS LISTING /tmp/ccfDDSBu.s 			page 131
 
 
  4402 02ee 0F114624 		movups	%xmm0, 36(%rsi)
@@ -7858,7 +7858,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4444              	.LBB518:
 1194:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
  4445              		.loc 1 1194 9 is_stmt 1 view .LVU1370
-GAS LISTING /tmp/ccFAPs6O.s 			page 132
+GAS LISTING /tmp/ccfDDSBu.s 			page 132
 
 
  4446              	.LBB515:
@@ -7918,7 +7918,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  4489              		.loc 3 29 10 discriminator 1 view .LVU1384
  4490 0337 488B5424 		movq	80(%rsp), %rdx
-GAS LISTING /tmp/ccFAPs6O.s 			page 133
+GAS LISTING /tmp/ccfDDSBu.s 			page 133
 
 
  4490      50
@@ -7978,7 +7978,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  4532              		.loc 3 29 10 is_stmt 0 discriminator 1 view .LVU1396
  4533 035b 0F117318 		movups	%xmm6, 24(%rbx)
-GAS LISTING /tmp/ccFAPs6O.s 			page 134
+GAS LISTING /tmp/ccfDDSBu.s 			page 134
 
 
  4534 035f 0F117B28 		movups	%xmm7, 40(%rbx)
@@ -8038,7 +8038,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4582 000f 55       		pushq	%rbp
  4583              	.LCFI145:
  4584              		.cfi_def_cfa_offset 48
-GAS LISTING /tmp/ccFAPs6O.s 			page 135
+GAS LISTING /tmp/ccfDDSBu.s 			page 135
 
 
  4585              		.cfi_offset 6, -48
@@ -8098,7 +8098,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4620              		.loc 1 1264 13 is_stmt 1 view .LVU1409
 1264:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  4621              		.loc 1 1264 25 is_stmt 0 view .LVU1410
-GAS LISTING /tmp/ccFAPs6O.s 			page 136
+GAS LISTING /tmp/ccfDDSBu.s 			page 136
 
 
  4622 0062 BE200000 		movl	$32, %esi
@@ -8158,7 +8158,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4656              		.loc 1 1223 9 view .LVU1422
 1224:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  4657              		.loc 1 1224 9 view .LVU1423
-GAS LISTING /tmp/ccFAPs6O.s 			page 137
+GAS LISTING /tmp/ccfDDSBu.s 			page 137
 
 
  4658              	.LBB581:
@@ -8218,7 +8218,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1229:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
  4697              		.loc 1 1229 12 discriminator 1 view .LVU1438
  4698 00e0 85C0     		testl	%eax, %eax
-GAS LISTING /tmp/ccFAPs6O.s 			page 138
+GAS LISTING /tmp/ccfDDSBu.s 			page 138
 
 
  4699 00e2 0F85A000 		jne	.L407
@@ -8278,7 +8278,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4730              		.loc 1 1257 9 is_stmt 1 view .LVU1451
  4731              	.LVL472:
  4732              	.LBB585:
-GAS LISTING /tmp/ccFAPs6O.s 			page 139
+GAS LISTING /tmp/ccfDDSBu.s 			page 139
 
 
  4733              	.LBI585:
@@ -8338,7 +8338,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1279:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  4770              		.loc 1 1279 15 view .LVU1462
  4771 0155 48C74318 		movq	$0, 24(%rbx)
-GAS LISTING /tmp/ccFAPs6O.s 			page 140
+GAS LISTING /tmp/ccfDDSBu.s 			page 140
 
 
  4771      00000000 
@@ -8398,7 +8398,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1230:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         }
  4816              		.loc 1 1230 13 is_stmt 1 view .LVU1468
  4817              	.LBB589:
-GAS LISTING /tmp/ccFAPs6O.s 			page 141
+GAS LISTING /tmp/ccfDDSBu.s 			page 141
 
 
  4818              	.LBI589:
@@ -8458,7 +8458,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4855 01b9 EBA5     		jmp	.L384
  4856              	.LVL484:
  4857 01bb 0F1F4400 		.p2align 4,,10
-GAS LISTING /tmp/ccFAPs6O.s 			page 142
+GAS LISTING /tmp/ccfDDSBu.s 			page 142
 
 
  4857      00
@@ -8518,7 +8518,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4899              	.LCFI157:
  4900              		.cfi_def_cfa_offset 24
  4901              		.cfi_offset 6, -24
-GAS LISTING /tmp/ccFAPs6O.s 			page 143
+GAS LISTING /tmp/ccfDDSBu.s 			page 143
 
 
  4902 000f 4889F5   		movq	%rsi, %rbp
@@ -8578,7 +8578,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4939 0042 4C89E2   		movq	%r12, %rdx
  4940 0045 4889EE   		movq	%rbp, %rsi
  4941 0048 4889DF   		movq	%rbx, %rdi
-GAS LISTING /tmp/ccFAPs6O.s 			page 144
+GAS LISTING /tmp/ccfDDSBu.s 			page 144
 
 
  4942 004b E8000000 		call	mbedtls_x509_get_subject_alt_name_ext
@@ -8638,7 +8638,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  4983              		.loc 2 153 17 is_stmt 0 view .LVU1513
  4984 0070 2D002500 		subl	$9472, %eax
  4984      00
-GAS LISTING /tmp/ccFAPs6O.s 			page 145
+GAS LISTING /tmp/ccfDDSBu.s 			page 145
 
 
  4985              	.LVL497:
@@ -8698,7 +8698,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1503:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** {
  5027              		.loc 1 1503 6 is_stmt 1 view .LVU1523
  5028              	.LVL501:
-GAS LISTING /tmp/ccFAPs6O.s 			page 146
+GAS LISTING /tmp/ccfDDSBu.s 			page 146
 
 
  5029              	.LBB598:
@@ -8758,7 +8758,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5058      20202068 
  5058      61726477 
  5059 0051 00000000 		.align 8
-GAS LISTING /tmp/ccFAPs6O.s 			page 147
+GAS LISTING /tmp/ccfDDSBu.s 			page 147
 
 
  5059      000000
@@ -8818,7 +8818,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5089              	.LFB94:
 1509:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
 1510:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** #if !defined(MBEDTLS_X509_REMOVE_INFO)
-GAS LISTING /tmp/ccFAPs6O.s 			page 148
+GAS LISTING /tmp/ccfDDSBu.s 			page 148
 
 
 1511:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** int mbedtls_x509_info_subject_alt_name(char **buf, size_t *size,
@@ -8878,7 +8878,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5129              		.loc 1 1516 5 is_stmt 1 view .LVU1531
  5130              	.LVL505:
 1517:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     size_t n = *size;
-GAS LISTING /tmp/ccFAPs6O.s 			page 149
+GAS LISTING /tmp/ccfDDSBu.s 			page 149
 
 
  5131              		.loc 1 1517 5 view .LVU1532
@@ -8938,7 +8938,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1561:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                     MBEDTLS_X509_SAFE_SNPRINTF;
 1562:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
 1563:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                     ret =
-GAS LISTING /tmp/ccFAPs6O.s 			page 150
+GAS LISTING /tmp/ccfDDSBu.s 			page 150
 
 
 1564:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                         mbedtls_snprintf(p, n, "\n%s            hardware serial number : ", prefix)
@@ -8998,7 +8998,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5149              		.loc 1 1539 9 view .LVU1541
  5150 0049 4C8D2500 		leaq	.L430(%rip), %r12
  5150      000000
-GAS LISTING /tmp/ccFAPs6O.s 			page 151
+GAS LISTING /tmp/ccfDDSBu.s 			page 151
 
 
  5151 0050 EB5D     		jmp	.L450
@@ -9058,7 +9058,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5192              		.loc 1 1533 17 view .LVU1553
  5193 0089 85C0     		testl	%eax, %eax
  5194 008b 0F88A804 		js	.L441
-GAS LISTING /tmp/ccFAPs6O.s 			page 152
+GAS LISTING /tmp/ccfDDSBu.s 			page 152
 
 
  5194      0000
@@ -9118,7 +9118,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1639:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 unsigned char *ip = san.san.unstructured_name.p;
 1640:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 // Only IPv6 (16 bytes) and IPv4 (4 bytes) types are supported
 1641:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 if (san.san.unstructured_name.len == 4) {
-GAS LISTING /tmp/ccFAPs6O.s 			page 153
+GAS LISTING /tmp/ccfDDSBu.s 			page 153
 
 
 1642:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                     ret = mbedtls_snprintf(p, n, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
@@ -9178,7 +9178,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1696:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         cur = cur->next;
  5209              		.loc 1 1696 9 view .LVU1560
  5210              		.loc 1 1696 13 is_stmt 0 view .LVU1561
-GAS LISTING /tmp/ccFAPs6O.s 			page 154
+GAS LISTING /tmp/ccfDDSBu.s 			page 154
 
 
  5211 00a2 4D8B7618 		movq	24(%r14), %r14
@@ -9238,7 +9238,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5253 00d6 8B542420 		movl	32(%rsp), %edx
 1539:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             /*
  5254              		.loc 1 1539 9 view .LVU1576
-GAS LISTING /tmp/ccFAPs6O.s 			page 155
+GAS LISTING /tmp/ccfDDSBu.s 			page 155
 
 
  5255 00da 83FA07   		cmpl	$7, %edx
@@ -9298,7 +9298,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5300 010a BA020000 		movl	$2, %edx
  5300      00
  5301              	.LBE651:
-GAS LISTING /tmp/ccFAPs6O.s 			page 156
+GAS LISTING /tmp/ccfDDSBu.s 			page 156
 
 
  5302              	.LBE653:
@@ -9358,7 +9358,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5344      0000
 1583:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 if (san.san.unstructured_name.len >= n) {
  5345              		.loc 1 1583 17 is_stmt 1 discriminator 4 view .LVU1595
-GAS LISTING /tmp/ccFAPs6O.s 			page 157
+GAS LISTING /tmp/ccfDDSBu.s 			page 157
 
 
 1584:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                     if (n > 0) {
@@ -9418,7 +9418,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1621:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             }
  5381              		.loc 1 1621 17 is_stmt 1 view .LVU1610
 1621:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****             }
-GAS LISTING /tmp/ccFAPs6O.s 			page 158
+GAS LISTING /tmp/ccfDDSBu.s 			page 158
 
 
  5382              		.loc 1 1621 19 is_stmt 0 view .LVU1611
@@ -9478,7 +9478,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5421              	.L478:
 1524:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         memset(&san, 0, sizeof(san));
  5422              		.loc 1 1524 16 is_stmt 0 view .LVU1624
-GAS LISTING /tmp/ccFAPs6O.s 			page 159
+GAS LISTING /tmp/ccfDDSBu.s 			page 159
 
 
  5423 0190 488B7C24 		movq	8(%rsp), %rdi
@@ -9538,7 +9538,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5457              		.cfi_def_cfa_offset 32
  5458 01c6 415D     		popq	%r13
  5459              	.LCFI180:
-GAS LISTING /tmp/ccFAPs6O.s 			page 160
+GAS LISTING /tmp/ccfDDSBu.s 			page 160
 
 
  5460              		.cfi_def_cfa_offset 24
@@ -9598,7 +9598,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1548:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  5503              		.loc 1 1548 17 discriminator 2 view .LVU1644
  5504 01fd 4C39F8   		cmpq	%r15, %rax
-GAS LISTING /tmp/ccFAPs6O.s 			page 161
+GAS LISTING /tmp/ccfDDSBu.s 			page 161
 
 
  5505 0200 0F833303 		jnb	.L441
@@ -9658,7 +9658,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5539      00
  5540              	.LVL540:
  5541              		.loc 4 54 10 discriminator 1 view .LVU1656
-GAS LISTING /tmp/ccFAPs6O.s 			page 162
+GAS LISTING /tmp/ccfDDSBu.s 			page 162
 
 
  5542              	.LBE675:
@@ -9718,7 +9718,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1556:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
  5581              		.loc 1 1556 21 is_stmt 1 view .LVU1670
 1556:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
-GAS LISTING /tmp/ccFAPs6O.s 			page 163
+GAS LISTING /tmp/ccfDDSBu.s 			page 163
 
 
  5582              		.loc 1 1556 21 view .LVU1671
@@ -9778,7 +9778,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5617 02ce 4901C5   		addq	%rax, %r13
  5618              	.LVL549:
 1561:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
-GAS LISTING /tmp/ccFAPs6O.s 			page 164
+GAS LISTING /tmp/ccfDDSBu.s 			page 164
 
 
  5619              		.loc 1 1561 21 discriminator 4 view .LVU1685
@@ -9838,7 +9838,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5657              		.loc 1 1567 21 view .LVU1699
 1567:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                         ret = mbedtls_snprintf(p,
  5658              		.loc 1 1567 35 discriminator 1 view .LVU1700
-GAS LISTING /tmp/ccFAPs6O.s 			page 165
+GAS LISTING /tmp/ccfDDSBu.s 			page 165
 
 
  5659 030d 48837C24 		cmpq	$0, 96(%rsp)
@@ -9898,7 +9898,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5697              		.loc 1 1572 25 view .LVU1710
  5698 035a 85C0     		testl	%eax, %eax
  5699 035c 0F88D701 		js	.L441
-GAS LISTING /tmp/ccFAPs6O.s 			page 166
+GAS LISTING /tmp/ccfDDSBu.s 			page 166
 
 
  5699      0000
@@ -9958,7 +9958,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5736              		.loc 4 54 3 view .LVU1723
  5737              		.loc 4 54 10 is_stmt 0 discriminator 1 view .LVU1724
  5738 0390 31C0     		xorl	%eax, %eax
-GAS LISTING /tmp/ccFAPs6O.s 			page 167
+GAS LISTING /tmp/ccfDDSBu.s 			page 167
 
 
  5739 0392 4989D9   		movq	%rbx, %r9
@@ -10018,7 +10018,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5776              	.LBI687:
   51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
  5777              		.loc 4 51 1 view .LVU1735
-GAS LISTING /tmp/ccFAPs6O.s 			page 168
+GAS LISTING /tmp/ccfDDSBu.s 			page 168
 
 
  5778              	.LBB688:
@@ -10078,7 +10078,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1631:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 if (san.san.unstructured_name.len >= n) {
  5818              		.loc 1 1631 17 discriminator 4 view .LVU1745
  5819 0421 4929C7   		subq	%rax, %r15
-GAS LISTING /tmp/ccFAPs6O.s 			page 169
+GAS LISTING /tmp/ccfDDSBu.s 			page 169
 
 
  5820              	.LVL567:
@@ -10138,7 +10138,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5857              		.cfi_def_cfa_offset 200
  5858              	.LBE691:
  5859              	.LBE707:
-GAS LISTING /tmp/ccFAPs6O.s 			page 170
+GAS LISTING /tmp/ccfDDSBu.s 			page 170
 
 
 1645:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                                            "%X%X:%X%X:%X%X:%X%X:%X%X:%X%X:%X%X:%X%X",
@@ -10198,7 +10198,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5907              	.LBB696:
  5908              		.loc 4 54 10 discriminator 1 view .LVU1770
  5909 047d 52       		pushq	%rdx
-GAS LISTING /tmp/ccFAPs6O.s 			page 171
+GAS LISTING /tmp/ccfDDSBu.s 			page 171
 
 
  5910              	.LCFI193:
@@ -10258,7 +10258,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  5959 0496 52       		pushq	%rdx
  5960              	.LCFI198:
  5961              		.cfi_def_cfa_offset 280
-GAS LISTING /tmp/ccFAPs6O.s 			page 172
+GAS LISTING /tmp/ccfDDSBu.s 			page 172
 
 
  5962              	.LBE701:
@@ -10318,7 +10318,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6010      00
  6011 04b4 50       		pushq	%rax
  6012              	.LCFI203:
-GAS LISTING /tmp/ccFAPs6O.s 			page 173
+GAS LISTING /tmp/ccfDDSBu.s 			page 173
 
 
  6013              		.cfi_def_cfa_offset 320
@@ -10378,7 +10378,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1583:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 if (san.san.unstructured_name.len >= n) {
  6054              		.loc 1 1583 17 view .LVU1801
  6055 04f3 85C0     		testl	%eax, %eax
-GAS LISTING /tmp/ccFAPs6O.s 			page 174
+GAS LISTING /tmp/ccfDDSBu.s 			page 174
 
 
  6056 04f5 0F893CFC 		jns	.L477
@@ -10438,7 +10438,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1505:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         mbedtls_asn1_free_named_data_list_shallow(san->san.directory_name.next);
  6097              		.loc 1 1505 5 view .LVU1813
 1505:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         mbedtls_asn1_free_named_data_list_shallow(san->san.directory_name.next);
-GAS LISTING /tmp/ccFAPs6O.s 			page 175
+GAS LISTING /tmp/ccfDDSBu.s 			page 175
 
 
  6098              		.loc 1 1505 8 is_stmt 0 view .LVU1814
@@ -10498,7 +10498,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1680:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                 n -= ret;
  6134              		.loc 1 1680 19 view .LVU1826
  6135 0564 4901C5   		addq	%rax, %r13
-GAS LISTING /tmp/ccFAPs6O.s 			page 176
+GAS LISTING /tmp/ccfDDSBu.s 			page 176
 
 
  6136              	.LVL583:
@@ -10558,7 +10558,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1642:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****                     MBEDTLS_X509_SAFE_SNPRINTF;
  6180              		.loc 1 1642 27 view .LVU1837
  6181 0591 0FB65002 		movzbl	2(%rax), %edx
-GAS LISTING /tmp/ccFAPs6O.s 			page 177
+GAS LISTING /tmp/ccfDDSBu.s 			page 177
 
 
  6182              	.LBB731:
@@ -10618,7 +10618,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6227 05b8 488B7C24 		movq	88(%rsp), %rdi
  6227      58
  6228 05bd E8000000 		call	mbedtls_asn1_free_named_data_list_shallow@PLT
-GAS LISTING /tmp/ccFAPs6O.s 			page 178
+GAS LISTING /tmp/ccfDDSBu.s 			page 178
 
 
  6228      00
@@ -10678,7 +10678,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6265 05d9 7417     		je	.L485
  6266              	.LVL594:
  6267              	.L448:
-GAS LISTING /tmp/ccFAPs6O.s 			page 179
+GAS LISTING /tmp/ccfDDSBu.s 			page 179
 
 
 1505:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****         mbedtls_asn1_free_named_data_list_shallow(san->san.directory_name.next);
@@ -10738,7 +10738,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1506:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     }
  6303              		.loc 1 1506 9 view .LVU1874
  6304              	.LBE747:
-GAS LISTING /tmp/ccFAPs6O.s 			page 180
+GAS LISTING /tmp/ccfDDSBu.s 			page 180
 
 
  6305              	.LBI746:
@@ -10798,7 +10798,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6340              	.LC34:
  6341 003e 25735353 		.string	"%sSSL CA"
  6341      4C204341 
-GAS LISTING /tmp/ccFAPs6O.s 			page 181
+GAS LISTING /tmp/ccfDDSBu.s 			page 181
 
 
  6341      00
@@ -10858,7 +10858,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6366      000000
 1723:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  6367              		.loc 1 1723 1 view .LVU1887
-GAS LISTING /tmp/ccFAPs6O.s 			page 182
+GAS LISTING /tmp/ccfDDSBu.s 			page 182
 
 
  6368 000d 4989F6   		movq	%rsi, %r14
@@ -10918,7 +10918,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6413              	.L492:
  6414              		.loc 1 1731 5 discriminator 7 view .LVU1902
  6415              		.loc 1 1731 5 discriminator 7 view .LVU1903
-GAS LISTING /tmp/ccFAPs6O.s 			page 183
+GAS LISTING /tmp/ccfDDSBu.s 			page 183
 
 
 1732:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_OBJECT_SIGNING,     "Object Signing");
@@ -10978,7 +10978,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6457              		.loc 1 1739 5 is_stmt 1 view .LVU1927
 1740:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
 1741:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     return 0;
-GAS LISTING /tmp/ccFAPs6O.s 			page 184
+GAS LISTING /tmp/ccfDDSBu.s 			page 184
 
 
  6458              		.loc 1 1741 12 is_stmt 0 view .LVU1928
@@ -11038,7 +11038,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6506 0089 4889DE   		movq	%rbx, %rsi
  6507 008c 4C89E7   		movq	%r12, %rdi
  6508 008f 48C7C1FF 		movq	$-1, %rcx
-GAS LISTING /tmp/ccFAPs6O.s 			page 185
+GAS LISTING /tmp/ccfDDSBu.s 			page 185
 
 
  6508      FFFFFF
@@ -11098,7 +11098,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1731:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_OBJECT_SIGNING,     "Object Signing");
  6543              		.loc 1 1731 5 discriminator 1 view .LVU1955
 1731:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_OBJECT_SIGNING,     "Object Signing");
-GAS LISTING /tmp/ccFAPs6O.s 			page 186
+GAS LISTING /tmp/ccfDDSBu.s 			page 186
 
 
  6544              		.loc 1 1731 5 discriminator 1 view .LVU1956
@@ -11158,7 +11158,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6581              	.LVL623:
 1731:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_OBJECT_SIGNING,     "Object Signing");
  6582              		.loc 1 1731 5 is_stmt 1 discriminator 7 view .LVU1970
-GAS LISTING /tmp/ccFAPs6O.s 			page 187
+GAS LISTING /tmp/ccfDDSBu.s 			page 187
 
 
 1731:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_OBJECT_SIGNING,     "Object Signing");
@@ -11218,7 +11218,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6619 0147 4829C3   		subq	%rax, %rbx
  6620              	.LVL626:
 1732:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_RESERVED,           "Reserved");
-GAS LISTING /tmp/ccFAPs6O.s 			page 188
+GAS LISTING /tmp/ccfDDSBu.s 			page 188
 
 
  6621              		.loc 1 1732 5 discriminator 6 view .LVU1985
@@ -11278,7 +11278,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6657              		.loc 1 1733 5 discriminator 1 view .LVU2000
  6658 017e 85C0     		testl	%eax, %eax
  6659 0180 0F883201 		js	.L490
-GAS LISTING /tmp/ccFAPs6O.s 			page 189
+GAS LISTING /tmp/ccfDDSBu.s 			page 189
 
 
  6659      0000
@@ -11338,7 +11338,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6695 01b4 4C89E7   		movq	%r12, %rdi
  6696 01b7 48C7C1FF 		movq	$-1, %rcx
  6696      FFFFFF
-GAS LISTING /tmp/ccFAPs6O.s 			page 190
+GAS LISTING /tmp/ccfDDSBu.s 			page 190
 
 
  6697 01be BA020000 		movl	$2, %edx
@@ -11398,7 +11398,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6731              		.loc 1 1735 5 discriminator 1 view .LVU2031
 1735:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_OBJECT_SIGNING_CA,  "Object Signing CA");
  6732              		.loc 1 1735 5 discriminator 1 view .LVU2032
-GAS LISTING /tmp/ccFAPs6O.s 			page 191
+GAS LISTING /tmp/ccfDDSBu.s 			page 191
 
 
  6733              	.LBB764:
@@ -11458,7 +11458,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1735:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_OBJECT_SIGNING_CA,  "Object Signing CA");
  6770              		.loc 1 1735 5 is_stmt 1 discriminator 7 view .LVU2046
 1735:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_OBJECT_SIGNING_CA,  "Object Signing CA");
-GAS LISTING /tmp/ccFAPs6O.s 			page 192
+GAS LISTING /tmp/ccfDDSBu.s 			page 192
 
 
  6771              		.loc 1 1735 5 discriminator 7 view .LVU2047
@@ -11518,7 +11518,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6809              		.loc 1 1736 5 discriminator 6 view .LVU2061
  6810 0269 4901C4   		addq	%rax, %r12
  6811              	.LVL647:
-GAS LISTING /tmp/ccFAPs6O.s 			page 193
+GAS LISTING /tmp/ccfDDSBu.s 			page 193
 
 
 1736:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
@@ -11578,7 +11578,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1729:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     CERT_TYPE(MBEDTLS_X509_NS_CERT_TYPE_SSL_SERVER,         "SSL Server");
  6851              		.loc 1 1729 5 discriminator 4 view .LVU2077
  6852 029e 4839D8   		cmpq	%rbx, %rax
-GAS LISTING /tmp/ccFAPs6O.s 			page 194
+GAS LISTING /tmp/ccfDDSBu.s 			page 194
 
 
  6853 02a1 7315     		jnb	.L490
@@ -11638,7 +11638,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6883      6865726D 
  6883      656E7400 
  6884              	.LC41:
-GAS LISTING /tmp/ccFAPs6O.s 			page 195
+GAS LISTING /tmp/ccfDDSBu.s 			page 195
 
 
  6885 004d 25734B65 		.string	"%sKey Agreement"
@@ -11698,7 +11698,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6912              		.cfi_offset 14, -16
 1756:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     char *p = *buf;
 1757:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     const char *sep = "";
-GAS LISTING /tmp/ccFAPs6O.s 			page 196
+GAS LISTING /tmp/ccfDDSBu.s 			page 196
 
 
  6913              		.loc 1 1757 17 view .LVU2089
@@ -11758,7 +11758,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  6956 002d 0F85A700 		jne	.L570
  6956      0000
  6957              	.LVL662:
-GAS LISTING /tmp/ccFAPs6O.s 			page 197
+GAS LISTING /tmp/ccfDDSBu.s 			page 197
 
 
  6958              	.L534:
@@ -11818,7 +11818,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7000              	.L540:
  7001              		.loc 1 1766 5 discriminator 7 view .LVU2127
  7002              		.loc 1 1766 5 discriminator 7 view .LVU2128
-GAS LISTING /tmp/ccFAPs6O.s 			page 198
+GAS LISTING /tmp/ccfDDSBu.s 			page 198
 
 
 1767:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_DECIPHER_ONLY,        "Decipher Only");
@@ -11878,7 +11878,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7047              		.loc 1 1773 1 view .LVU2144
  7048 008c C3       		ret
  7049              	.LVL669:
-GAS LISTING /tmp/ccFAPs6O.s 			page 199
+GAS LISTING /tmp/ccfDDSBu.s 			page 199
 
 
  7050 008d 0F1F00   		.p2align 4,,10
@@ -11938,7 +11938,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1759:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_NON_REPUDIATION,      "Non Repudiation");
  7090              		.loc 1 1759 5 discriminator 6 view .LVU2158
  7091 00c6 4901C4   		addq	%rax, %r12
-GAS LISTING /tmp/ccFAPs6O.s 			page 200
+GAS LISTING /tmp/ccfDDSBu.s 			page 200
 
 
  7092              	.LVL674:
@@ -11998,7 +11998,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7128 00fc 0F880E02 		js	.L533
  7128      0000
 1760:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_KEY_ENCIPHERMENT,     "Key Encipherment");
-GAS LISTING /tmp/ccFAPs6O.s 			page 201
+GAS LISTING /tmp/ccfDDSBu.s 			page 201
 
 
  7129              		.loc 1 1760 5 is_stmt 0 discriminator 4 view .LVU2174
@@ -12058,7 +12058,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7165      FFFFFF
  7166 013a BA020000 		movl	$2, %edx
  7166      00
-GAS LISTING /tmp/ccFAPs6O.s 			page 202
+GAS LISTING /tmp/ccfDDSBu.s 			page 202
 
 
  7167 013f E8000000 		call	__snprintf_chk@PLT
@@ -12118,7 +12118,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7201              		.loc 1 1762 5 discriminator 1 view .LVU2205
  7202              	.LBB776:
  7203              	.LBI776:
-GAS LISTING /tmp/ccFAPs6O.s 			page 203
+GAS LISTING /tmp/ccfDDSBu.s 			page 203
 
 
   51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
@@ -12178,7 +12178,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1762:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_KEY_AGREEMENT,        "Key Agreement");
  7240              		.loc 1 1762 5 discriminator 7 view .LVU2220
 1763:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_KEY_CERT_SIGN,        "Key Cert Sign");
-GAS LISTING /tmp/ccFAPs6O.s 			page 204
+GAS LISTING /tmp/ccfDDSBu.s 			page 204
 
 
  7241              		.loc 1 1763 5 view .LVU2221
@@ -12238,7 +12238,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7278              		.loc 1 1763 5 discriminator 6 view .LVU2234
  7279 01ee 4901C4   		addq	%rax, %r12
  7280              	.LVL694:
-GAS LISTING /tmp/ccFAPs6O.s 			page 205
+GAS LISTING /tmp/ccfDDSBu.s 			page 205
 
 
 1763:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_KEY_CERT_SIGN,        "Key Cert Sign");
@@ -12298,7 +12298,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7316      0000
 1764:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_CRL_SIGN,             "CRL Sign");
  7317              		.loc 1 1764 5 is_stmt 0 discriminator 4 view .LVU2250
-GAS LISTING /tmp/ccFAPs6O.s 			page 206
+GAS LISTING /tmp/ccfDDSBu.s 			page 206
 
 
  7318 022a 4898     		cltq
@@ -12358,7 +12358,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7354 0262 BA020000 		movl	$2, %edx
  7354      00
  7355 0267 E8000000 		call	__snprintf_chk@PLT
-GAS LISTING /tmp/ccFAPs6O.s 			page 207
+GAS LISTING /tmp/ccfDDSBu.s 			page 207
 
 
  7355      00
@@ -12418,7 +12418,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7390              	.LBB784:
  7391              	.LBI784:
   51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
-GAS LISTING /tmp/ccFAPs6O.s 			page 208
+GAS LISTING /tmp/ccfDDSBu.s 			page 208
 
 
  7392              		.loc 4 51 1 view .LVU2282
@@ -12478,7 +12478,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
 1766:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_DECIPHER_ONLY,        "Decipher Only");
  7430              		.loc 1 1766 5 is_stmt 1 discriminator 7 view .LVU2296
 1766:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c ****     KEY_USAGE(MBEDTLS_X509_KU_DECIPHER_ONLY,        "Decipher Only");
-GAS LISTING /tmp/ccFAPs6O.s 			page 209
+GAS LISTING /tmp/ccfDDSBu.s 			page 209
 
 
  7431              		.loc 1 1766 5 discriminator 7 view .LVU2297
@@ -12538,7 +12538,7 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  7469 0308 4901C4   		addq	%rax, %r12
  7470              	.LVL715:
 1767:../../bos/thirdparty/mbedtls/bos_mbedtls/x509.c **** 
-GAS LISTING /tmp/ccFAPs6O.s 			page 210
+GAS LISTING /tmp/ccfDDSBu.s 			page 210
 
 
  7471              		.loc 1 1767 5 discriminator 6 view .LVU2312
@@ -12590,84 +12590,84 @@ GAS LISTING /tmp/ccFAPs6O.s 			page 1
  27769              	3:
  27770 001c 00000000 		.align 8
  27771              	4:
-GAS LISTING /tmp/ccFAPs6O.s 			page 211
+GAS LISTING /tmp/ccfDDSBu.s 			page 211
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 x509.c
-     /tmp/ccFAPs6O.s:9      .text.mbedtls_x509_get_serial:0000000000000000 mbedtls_x509_get_serial
-     /tmp/ccFAPs6O.s:157    .text.mbedtls_x509_get_alg_null:0000000000000000 mbedtls_x509_get_alg_null
-     /tmp/ccFAPs6O.s:196    .text.mbedtls_x509_get_alg:0000000000000000 mbedtls_x509_get_alg
-     /tmp/ccFAPs6O.s:235    .text.mbedtls_x509_get_name:0000000000000000 mbedtls_x509_get_name
-     /tmp/ccFAPs6O.s:624    .text.mbedtls_x509_get_time:0000000000000000 mbedtls_x509_get_time
-     /tmp/ccFAPs6O.s:1328   .text.mbedtls_x509_get_sig:0000000000000000 mbedtls_x509_get_sig
-     /tmp/ccFAPs6O.s:1463   .text.mbedtls_x509_get_sig_alg:0000000000000000 mbedtls_x509_get_sig_alg
-     /tmp/ccFAPs6O.s:1575   .text.mbedtls_x509_get_ext:0000000000000000 mbedtls_x509_get_ext
-     /tmp/ccFAPs6O.s:1736   .text.mbedtls_x509_dn_gets:0000000000000000 mbedtls_x509_dn_gets
-     /tmp/ccFAPs6O.s:2951   .text.mbedtls_x509_serial_gets:0000000000000000 mbedtls_x509_serial_gets
-     /tmp/ccFAPs6O.s:3259   .text.mbedtls_x509_sig_alg_gets:0000000000000000 mbedtls_x509_sig_alg_gets
-     /tmp/ccFAPs6O.s:3402   .text.mbedtls_x509_key_size_helper:0000000000000000 mbedtls_x509_key_size_helper
-     /tmp/ccFAPs6O.s:3489   .text.mbedtls_x509_time_cmp:0000000000000000 mbedtls_x509_time_cmp
-     /tmp/ccFAPs6O.s:3574   .text.mbedtls_x509_time_is_past:0000000000000000 mbedtls_x509_time_is_past
-     /tmp/ccFAPs6O.s:3593   .text.mbedtls_x509_time_is_future:0000000000000000 mbedtls_x509_time_is_future
-     /tmp/ccFAPs6O.s:3607   .text.mbedtls_x509_get_ns_cert_type:0000000000000000 mbedtls_x509_get_ns_cert_type
-     /tmp/ccFAPs6O.s:3726   .text.mbedtls_x509_get_key_usage:0000000000000000 mbedtls_x509_get_key_usage
-     /tmp/ccFAPs6O.s:3878   .text.mbedtls_x509_parse_subject_alt_name:0000000000000000 mbedtls_x509_parse_subject_alt_name
-     /tmp/ccFAPs6O.s:4558   .text.mbedtls_x509_get_subject_alt_name_ext:0000000000000000 mbedtls_x509_get_subject_alt_name_ext
-     /tmp/ccFAPs6O.s:4883   .text.mbedtls_x509_get_subject_alt_name:0000000000000000 mbedtls_x509_get_subject_alt_name
-     /tmp/ccFAPs6O.s:5009   .text.mbedtls_x509_free_subject_alt_name:0000000000000000 mbedtls_x509_free_subject_alt_name
-     /tmp/ccFAPs6O.s:5087   .text.mbedtls_x509_info_subject_alt_name:0000000000000000 mbedtls_x509_info_subject_alt_name
-     /tmp/ccFAPs6O.s:6350   .text.mbedtls_x509_info_cert_type:0000000000000000 mbedtls_x509_info_cert_type
-     /tmp/ccFAPs6O.s:6898   .text.mbedtls_x509_info_key_usage:0000000000000000 mbedtls_x509_info_key_usage
-     /tmp/ccFAPs6O.s:1716   .rodata.mbedtls_x509_dn_gets.str1.1:0000000000000000 .LC0
-     /tmp/ccFAPs6O.s:1718   .rodata.mbedtls_x509_dn_gets.str1.1:0000000000000004 .LC1
-     /tmp/ccFAPs6O.s:1720   .rodata.mbedtls_x509_dn_gets.str1.1:0000000000000007 .LC2
-     /tmp/ccFAPs6O.s:1726   .rodata.mbedtls_x509_dn_gets.str1.1:0000000000000011 .LC5
-     /tmp/ccFAPs6O.s:1730   .rodata.mbedtls_x509_dn_gets.str1.1:000000000000001d .LC7
-     /tmp/ccFAPs6O.s:1728   .rodata.mbedtls_x509_dn_gets.str1.1:000000000000001a .LC6
-     /tmp/ccFAPs6O.s:1724   .rodata.mbedtls_x509_dn_gets.str1.1:000000000000000d .LC4
-     /tmp/ccFAPs6O.s:1722   .rodata.mbedtls_x509_dn_gets.str1.1:000000000000000b .LC3
-     /tmp/ccFAPs6O.s:2939   .rodata.mbedtls_x509_serial_gets.str1.1:0000000000000000 .LC8
-     /tmp/ccFAPs6O.s:2941   .rodata.mbedtls_x509_serial_gets.str1.1:0000000000000002 .LC9
-     /tmp/ccFAPs6O.s:2943   .rodata.mbedtls_x509_serial_gets.str1.1:0000000000000003 .LC10
-     /tmp/ccFAPs6O.s:2945   .rodata.mbedtls_x509_serial_gets.str1.1:000000000000000a .LC11
-     /tmp/ccFAPs6O.s:3253   .rodata.mbedtls_x509_sig_alg_gets.str1.1:0000000000000000 .LC12
-     /tmp/ccFAPs6O.s:3396   .rodata.mbedtls_x509_key_size_helper.str1.1:0000000000000000 .LC13
-     /tmp/ccFAPs6O.s:5046   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000013 .LC16
-     /tmp/ccFAPs6O.s:5048   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000028 .LC17
-     /tmp/ccFAPs6O.s:5044   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000008 .LC15
-     /tmp/ccFAPs6O.s:5042   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000000 .LC14
-     /tmp/ccFAPs6O.s:5070   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000053 .LC24
-     /tmp/ccFAPs6O.s:5050   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:000000000000003b .LC18
-     /tmp/ccFAPs6O.s:5054   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:0000000000000000 .LC19
-     /tmp/ccFAPs6O.s:5057   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:0000000000000028 .LC20
-     /tmp/ccFAPs6O.s:5060   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:0000000000000058 .LC21
-     /tmp/ccFAPs6O.s:5063   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:000000000000004e .LC22
-     /tmp/ccFAPs6O.s:5072   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000060 .LC25
-     /tmp/ccFAPs6O.s:5078   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:00000000000000b0 .LC27
-     /tmp/ccFAPs6O.s:5067   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:0000000000000088 .LC23
-     /tmp/ccFAPs6O.s:5081   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000076 .LC28
-     /tmp/ccFAPs6O.s:5074   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:000000000000006a .LC26
-     /tmp/ccFAPs6O.s:6332   .rodata.mbedtls_x509_info_cert_type.str1.1:000000000000000d .LC30
-     /tmp/ccFAPs6O.s:6334   .rodata.mbedtls_x509_info_cert_type.str1.1:000000000000001a .LC31
-GAS LISTING /tmp/ccFAPs6O.s 			page 212
+     /tmp/ccfDDSBu.s:9      .text.mbedtls_x509_get_serial:0000000000000000 mbedtls_x509_get_serial
+     /tmp/ccfDDSBu.s:157    .text.mbedtls_x509_get_alg_null:0000000000000000 mbedtls_x509_get_alg_null
+     /tmp/ccfDDSBu.s:196    .text.mbedtls_x509_get_alg:0000000000000000 mbedtls_x509_get_alg
+     /tmp/ccfDDSBu.s:235    .text.mbedtls_x509_get_name:0000000000000000 mbedtls_x509_get_name
+     /tmp/ccfDDSBu.s:624    .text.mbedtls_x509_get_time:0000000000000000 mbedtls_x509_get_time
+     /tmp/ccfDDSBu.s:1328   .text.mbedtls_x509_get_sig:0000000000000000 mbedtls_x509_get_sig
+     /tmp/ccfDDSBu.s:1463   .text.mbedtls_x509_get_sig_alg:0000000000000000 mbedtls_x509_get_sig_alg
+     /tmp/ccfDDSBu.s:1575   .text.mbedtls_x509_get_ext:0000000000000000 mbedtls_x509_get_ext
+     /tmp/ccfDDSBu.s:1736   .text.mbedtls_x509_dn_gets:0000000000000000 mbedtls_x509_dn_gets
+     /tmp/ccfDDSBu.s:2951   .text.mbedtls_x509_serial_gets:0000000000000000 mbedtls_x509_serial_gets
+     /tmp/ccfDDSBu.s:3259   .text.mbedtls_x509_sig_alg_gets:0000000000000000 mbedtls_x509_sig_alg_gets
+     /tmp/ccfDDSBu.s:3402   .text.mbedtls_x509_key_size_helper:0000000000000000 mbedtls_x509_key_size_helper
+     /tmp/ccfDDSBu.s:3489   .text.mbedtls_x509_time_cmp:0000000000000000 mbedtls_x509_time_cmp
+     /tmp/ccfDDSBu.s:3574   .text.mbedtls_x509_time_is_past:0000000000000000 mbedtls_x509_time_is_past
+     /tmp/ccfDDSBu.s:3593   .text.mbedtls_x509_time_is_future:0000000000000000 mbedtls_x509_time_is_future
+     /tmp/ccfDDSBu.s:3607   .text.mbedtls_x509_get_ns_cert_type:0000000000000000 mbedtls_x509_get_ns_cert_type
+     /tmp/ccfDDSBu.s:3726   .text.mbedtls_x509_get_key_usage:0000000000000000 mbedtls_x509_get_key_usage
+     /tmp/ccfDDSBu.s:3878   .text.mbedtls_x509_parse_subject_alt_name:0000000000000000 mbedtls_x509_parse_subject_alt_name
+     /tmp/ccfDDSBu.s:4558   .text.mbedtls_x509_get_subject_alt_name_ext:0000000000000000 mbedtls_x509_get_subject_alt_name_ext
+     /tmp/ccfDDSBu.s:4883   .text.mbedtls_x509_get_subject_alt_name:0000000000000000 mbedtls_x509_get_subject_alt_name
+     /tmp/ccfDDSBu.s:5009   .text.mbedtls_x509_free_subject_alt_name:0000000000000000 mbedtls_x509_free_subject_alt_name
+     /tmp/ccfDDSBu.s:5087   .text.mbedtls_x509_info_subject_alt_name:0000000000000000 mbedtls_x509_info_subject_alt_name
+     /tmp/ccfDDSBu.s:6350   .text.mbedtls_x509_info_cert_type:0000000000000000 mbedtls_x509_info_cert_type
+     /tmp/ccfDDSBu.s:6898   .text.mbedtls_x509_info_key_usage:0000000000000000 mbedtls_x509_info_key_usage
+     /tmp/ccfDDSBu.s:1716   .rodata.mbedtls_x509_dn_gets.str1.1:0000000000000000 .LC0
+     /tmp/ccfDDSBu.s:1718   .rodata.mbedtls_x509_dn_gets.str1.1:0000000000000004 .LC1
+     /tmp/ccfDDSBu.s:1720   .rodata.mbedtls_x509_dn_gets.str1.1:0000000000000007 .LC2
+     /tmp/ccfDDSBu.s:1726   .rodata.mbedtls_x509_dn_gets.str1.1:0000000000000011 .LC5
+     /tmp/ccfDDSBu.s:1730   .rodata.mbedtls_x509_dn_gets.str1.1:000000000000001d .LC7
+     /tmp/ccfDDSBu.s:1728   .rodata.mbedtls_x509_dn_gets.str1.1:000000000000001a .LC6
+     /tmp/ccfDDSBu.s:1724   .rodata.mbedtls_x509_dn_gets.str1.1:000000000000000d .LC4
+     /tmp/ccfDDSBu.s:1722   .rodata.mbedtls_x509_dn_gets.str1.1:000000000000000b .LC3
+     /tmp/ccfDDSBu.s:2939   .rodata.mbedtls_x509_serial_gets.str1.1:0000000000000000 .LC8
+     /tmp/ccfDDSBu.s:2941   .rodata.mbedtls_x509_serial_gets.str1.1:0000000000000002 .LC9
+     /tmp/ccfDDSBu.s:2943   .rodata.mbedtls_x509_serial_gets.str1.1:0000000000000003 .LC10
+     /tmp/ccfDDSBu.s:2945   .rodata.mbedtls_x509_serial_gets.str1.1:000000000000000a .LC11
+     /tmp/ccfDDSBu.s:3253   .rodata.mbedtls_x509_sig_alg_gets.str1.1:0000000000000000 .LC12
+     /tmp/ccfDDSBu.s:3396   .rodata.mbedtls_x509_key_size_helper.str1.1:0000000000000000 .LC13
+     /tmp/ccfDDSBu.s:5046   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000013 .LC16
+     /tmp/ccfDDSBu.s:5048   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000028 .LC17
+     /tmp/ccfDDSBu.s:5044   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000008 .LC15
+     /tmp/ccfDDSBu.s:5042   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000000 .LC14
+     /tmp/ccfDDSBu.s:5070   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000053 .LC24
+     /tmp/ccfDDSBu.s:5050   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:000000000000003b .LC18
+     /tmp/ccfDDSBu.s:5054   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:0000000000000000 .LC19
+     /tmp/ccfDDSBu.s:5057   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:0000000000000028 .LC20
+     /tmp/ccfDDSBu.s:5060   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:0000000000000058 .LC21
+     /tmp/ccfDDSBu.s:5063   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:000000000000004e .LC22
+     /tmp/ccfDDSBu.s:5072   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000060 .LC25
+     /tmp/ccfDDSBu.s:5078   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:00000000000000b0 .LC27
+     /tmp/ccfDDSBu.s:5067   .rodata.mbedtls_x509_info_subject_alt_name.str1.8:0000000000000088 .LC23
+     /tmp/ccfDDSBu.s:5081   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:0000000000000076 .LC28
+     /tmp/ccfDDSBu.s:5074   .rodata.mbedtls_x509_info_subject_alt_name.str1.1:000000000000006a .LC26
+     /tmp/ccfDDSBu.s:6332   .rodata.mbedtls_x509_info_cert_type.str1.1:000000000000000d .LC30
+     /tmp/ccfDDSBu.s:6334   .rodata.mbedtls_x509_info_cert_type.str1.1:000000000000001a .LC31
+GAS LISTING /tmp/ccfDDSBu.s 			page 212
 
 
-     /tmp/ccFAPs6O.s:6336   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000022 .LC32
-     /tmp/ccFAPs6O.s:6338   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000033 .LC33
-     /tmp/ccFAPs6O.s:6340   .rodata.mbedtls_x509_info_cert_type.str1.1:000000000000003e .LC34
-     /tmp/ccFAPs6O.s:6342   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000047 .LC35
-     /tmp/ccFAPs6O.s:6344   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000052 .LC36
-     /tmp/ccFAPs6O.s:6330   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000000 .LC29
-     /tmp/ccFAPs6O.s:6876   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000000 .LC37
-     /tmp/ccFAPs6O.s:6878   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000014 .LC38
-     /tmp/ccFAPs6O.s:6880   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000026 .LC39
-     /tmp/ccFAPs6O.s:6882   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000039 .LC40
-     /tmp/ccFAPs6O.s:6884   .rodata.mbedtls_x509_info_key_usage.str1.1:000000000000004d .LC41
-     /tmp/ccFAPs6O.s:6886   .rodata.mbedtls_x509_info_key_usage.str1.1:000000000000005d .LC42
-     /tmp/ccFAPs6O.s:6888   .rodata.mbedtls_x509_info_key_usage.str1.1:000000000000006d .LC43
-     /tmp/ccFAPs6O.s:6890   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000078 .LC44
-     /tmp/ccFAPs6O.s:6892   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000088 .LC45
+     /tmp/ccfDDSBu.s:6336   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000022 .LC32
+     /tmp/ccfDDSBu.s:6338   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000033 .LC33
+     /tmp/ccfDDSBu.s:6340   .rodata.mbedtls_x509_info_cert_type.str1.1:000000000000003e .LC34
+     /tmp/ccfDDSBu.s:6342   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000047 .LC35
+     /tmp/ccfDDSBu.s:6344   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000052 .LC36
+     /tmp/ccfDDSBu.s:6330   .rodata.mbedtls_x509_info_cert_type.str1.1:0000000000000000 .LC29
+     /tmp/ccfDDSBu.s:6876   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000000 .LC37
+     /tmp/ccfDDSBu.s:6878   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000014 .LC38
+     /tmp/ccfDDSBu.s:6880   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000026 .LC39
+     /tmp/ccfDDSBu.s:6882   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000039 .LC40
+     /tmp/ccfDDSBu.s:6884   .rodata.mbedtls_x509_info_key_usage.str1.1:000000000000004d .LC41
+     /tmp/ccfDDSBu.s:6886   .rodata.mbedtls_x509_info_key_usage.str1.1:000000000000005d .LC42
+     /tmp/ccfDDSBu.s:6888   .rodata.mbedtls_x509_info_key_usage.str1.1:000000000000006d .LC43
+     /tmp/ccfDDSBu.s:6890   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000078 .LC44
+     /tmp/ccfDDSBu.s:6892   .rodata.mbedtls_x509_info_key_usage.str1.1:0000000000000088 .LC45
 
 UNDEFINED SYMBOLS
 mbedtls_asn1_get_len

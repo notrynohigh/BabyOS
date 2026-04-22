@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccUQvDpy.s 			page 1
+GAS LISTING /tmp/ccAonSN5.s 			page 1
 
 
    1              		.file	"b_core.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
   47:../../bos/core/b_core.c ****  * \{
   48:../../bos/core/b_core.c ****  */
   49:../../bos/core/b_core.c **** 
-GAS LISTING /tmp/ccUQvDpy.s 			page 2
+GAS LISTING /tmp/ccAonSN5.s 			page 2
 
 
   50:../../bos/core/b_core.c **** /**
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  104:../../bos/core/b_core.c **** #ifdef BSECTION_NEED_PRAGMA
  105:../../bos/core/b_core.c **** #pragma section
  106:../../bos/core/b_core.c **** #endif
-GAS LISTING /tmp/ccUQvDpy.s 			page 3
+GAS LISTING /tmp/ccAonSN5.s 			page 3
 
 
  107:../../bos/core/b_core.c **** 
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  148:../../bos/core/b_core.c **** 
  149:../../bos/core/b_core.c ****     for (i = 0; i < B_REG_DEV_NUMBER; i++)
  150:../../bos/core/b_core.c ****     {
-GAS LISTING /tmp/ccUQvDpy.s 			page 4
+GAS LISTING /tmp/ccAonSN5.s 			page 4
 
 
  151:../../bos/core/b_core.c ****         if (bCoreFdTable[i].status == BCORE_STA_NULL)
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
   29              		.loc 1 200 5 is_stmt 1 view .LVU4
   30              	.LVL1:
  201:../../bos/core/b_core.c ****     int retval = 0;
-GAS LISTING /tmp/ccUQvDpy.s 			page 5
+GAS LISTING /tmp/ccAonSN5.s 			page 5
 
 
   31              		.loc 1 201 5 view .LVU5
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
   66              		.loc 1 140 12 view .LVU20
   67 0020 80FA01   		cmpb	$1, %dl
   68 0023 754B     		jne	.L8
-GAS LISTING /tmp/ccUQvDpy.s 			page 6
+GAS LISTING /tmp/ccAonSN5.s 			page 6
 
 
  142:../../bos/core/b_core.c ****             {
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  216:../../bos/core/b_core.c ****     _bCoreDeleteFd(fd);
  217:../../bos/core/b_core.c ****     return -1;
  218:../../bos/core/b_core.c **** }
-GAS LISTING /tmp/ccUQvDpy.s 			page 7
+GAS LISTING /tmp/ccAonSN5.s 			page 7
 
 
   98              		.loc 1 218 1 view .LVU34
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  136      000001
  138:../../bos/core/b_core.c ****     {
  137              		.loc 1 138 5 is_stmt 1 view .LVU47
-GAS LISTING /tmp/ccUQvDpy.s 			page 8
+GAS LISTING /tmp/ccAonSN5.s 			page 8
 
 
  138              	.LVL9:
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  169 0081 74B9     		je	.L5
  170 0083 84D2     		testb	%dl, %dl
  171 0085 75B5     		jne	.L5
-GAS LISTING /tmp/ccUQvDpy.s 			page 9
+GAS LISTING /tmp/ccAonSN5.s 			page 9
 
 
  149:../../bos/core/b_core.c ****     {
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  209              		.loc 1 155 13 is_stmt 1 view .LVU80
  155:../../bos/core/b_core.c ****             bCoreFdTable[i].lseek  = 0;
  210              		.loc 1 155 36 is_stmt 0 view .LVU81
-GAS LISTING /tmp/ccUQvDpy.s 			page 10
+GAS LISTING /tmp/ccAonSN5.s 			page 10
 
 
  211 00c0 C6430101 		movb	$1, 1(%rbx)
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  243              		.loc 1 174 5 is_stmt 1 view .LVU97
  174:../../bos/core/b_core.c ****     return 0;
  244              		.loc 1 174 29 is_stmt 0 view .LVU98
-GAS LISTING /tmp/ccUQvDpy.s 			page 11
+GAS LISTING /tmp/ccAonSN5.s 			page 11
 
 
  245 00ed C6430100 		movb	$0, 1(%rbx)
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  280 0018 55       		pushq	%rbp
  281              	.LCFI7:
  282              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/ccUQvDpy.s 			page 12
+GAS LISTING /tmp/ccAonSN5.s 			page 12
 
 
  283              		.cfi_offset 6, -16
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  241:../../bos/core/b_core.c ****         retval = 0;
  242:../../bos/core/b_core.c ****     }
  243:../../bos/core/b_core.c ****     if (retval >= 0)
-GAS LISTING /tmp/ccUQvDpy.s 			page 13
+GAS LISTING /tmp/ccAonSN5.s 			page 13
 
 
  324              		.loc 1 243 5 is_stmt 1 view .LVU124
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  368              	.LCFI14:
  369              		.cfi_def_cfa_offset 8
  370              		.cfi_restore 3
-GAS LISTING /tmp/ccUQvDpy.s 			page 14
+GAS LISTING /tmp/ccAonSN5.s 			page 14
 
 
  371              		.cfi_restore 6
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  256:../../bos/core/b_core.c ****     }
  257:../../bos/core/b_core.c **** 
  258:../../bos/core/b_core.c ****     if (len == 0)
-GAS LISTING /tmp/ccUQvDpy.s 			page 15
+GAS LISTING /tmp/ccAonSN5.s 			page 15
 
 
  415              		.loc 1 258 5 is_stmt 1 view .LVU141
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  453              		.loc 1 268 5 is_stmt 1 view .LVU154
  454              		.loc 1 268 14 is_stmt 0 view .LVU155
  455 0044 448B4008 		movl	8(%rax), %r8d
-GAS LISTING /tmp/ccUQvDpy.s 			page 16
+GAS LISTING /tmp/ccAonSN5.s 			page 16
 
 
  456 0048 8B7804   		movl	4(%rax), %edi
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  497              		.p2align 4,,10
  498 0072 660F1F44 		.p2align 3
  498      0000
-GAS LISTING /tmp/ccUQvDpy.s 			page 17
+GAS LISTING /tmp/ccAonSN5.s 			page 17
 
 
  499              	.L44:
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  548              	bLseek:
  549              	.LVL40:
  550              	.LFB34:
-GAS LISTING /tmp/ccUQvDpy.s 			page 18
+GAS LISTING /tmp/ccAonSN5.s 			page 18
 
 
  279:../../bos/core/b_core.c **** 
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  585              	.LFE34:
  587              		.section	.text.bCtl,"ax",@progbits
  588              		.p2align 4
-GAS LISTING /tmp/ccUQvDpy.s 			page 19
+GAS LISTING /tmp/ccAonSN5.s 			page 19
 
 
  589              		.globl	bCtl
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  306:../../bos/core/b_core.c ****     }
  307:../../bos/core/b_core.c ****     return retval;
  308:../../bos/core/b_core.c **** }
-GAS LISTING /tmp/ccUQvDpy.s 			page 20
+GAS LISTING /tmp/ccAonSN5.s 			page 20
 
 
  628              		.loc 1 308 1 view .LVU201
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  669              		.loc 1 317 25 view .LVU212
  670 0014 488D147F 		leaq	(%rdi,%rdi,2), %rdx
  671 0018 488D1C90 		leaq	(%rax,%rdx,4), %rbx
-GAS LISTING /tmp/ccUQvDpy.s 			page 21
+GAS LISTING /tmp/ccAonSN5.s 			page 21
 
 
  672              		.loc 1 317 8 view .LVU213
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  709              	.L65:
  710              	.LCFI31:
  711              		.cfi_restore_state
-GAS LISTING /tmp/ccUQvDpy.s 			page 22
+GAS LISTING /tmp/ccAonSN5.s 			page 22
 
 
  314:../../bos/core/b_core.c ****     }
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  754 0019 F7D8     		negl	%eax
  755 001b C3       		ret
  756              	.LVL55:
-GAS LISTING /tmp/ccUQvDpy.s 			page 23
+GAS LISTING /tmp/ccAonSN5.s 			page 23
 
 
  757 001c 0F1F4000 		.p2align 4,,10
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  783      2D5F5F2D 
  783      2D2D2F5F 
  784 00d9 00000000 		.align 8
-GAS LISTING /tmp/ccUQvDpy.s 			page 24
+GAS LISTING /tmp/ccAonSN5.s 			page 24
 
 
  784      000000
@@ -1422,8 +1422,8 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  798      642E2564 
  799              		.section	.rodata.bInit.str1.1
  800              	.LC10:
- 801 0018 31303A31 		.string	"10:18:20"
- 801      383A3230 
+ 801 0018 31303A35 		.string	"10:53:41"
+ 801      333A3431 
  801      00
  802              	.LC11:
  803 0021 41707220 		.string	"Apr 22 2026"
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  806              		.section	.text.bInit,"ax",@progbits
  807              		.p2align 4
  808              		.globl	bInit
-GAS LISTING /tmp/ccUQvDpy.s 			page 25
+GAS LISTING /tmp/ccAonSN5.s 			page 25
 
 
  810              	bInit:
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  843 0034 31C0     		xorl	%eax, %eax
  844 0036 E8000000 		call	bLogOut@PLT
  844      00
-GAS LISTING /tmp/ccUQvDpy.s 			page 26
+GAS LISTING /tmp/ccAonSN5.s 			page 26
 
 
  845              	.LVL57:
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  880 00ae E8000000 		call	bLogOut@PLT
  880      00
  881              	.LVL61:
-GAS LISTING /tmp/ccUQvDpy.s 			page 27
+GAS LISTING /tmp/ccAonSN5.s 			page 27
 
 
  352:../../bos/core/b_core.c ****     b_log("_/____/___(___(_(___/_(___/_(____/___(____/___\r\n");
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  917      00
  918 0127 488D0500 		leaq	.LC10(%rip), %rax
  918      000000
-GAS LISTING /tmp/ccUQvDpy.s 			page 28
+GAS LISTING /tmp/ccAonSN5.s 			page 28
 
 
  919 012e 4C8D0500 		leaq	.LC9(%rip), %r8
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  960 0177 4883C408 		addq	$8, %rsp
  961              	.LCFI45:
  962              		.cfi_def_cfa_offset 24
-GAS LISTING /tmp/ccUQvDpy.s 			page 29
+GAS LISTING /tmp/ccAonSN5.s 			page 29
 
 
  963 017b 5B       		popq	%rbx
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  1003              		.loc 1 375 5 view .LVU270
  1004              	.LBB18:
  1005              		.loc 1 375 5 view .LVU271
-GAS LISTING /tmp/ccUQvDpy.s 			page 30
+GAS LISTING /tmp/ccAonSN5.s 			page 30
 
 
  1006              	.LVL70:
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  1051              	.L77:
  375:../../bos/core/b_core.c ****     {
  1052              		.loc 1 375 5 is_stmt 0 discriminator 1 view .LVU283
-GAS LISTING /tmp/ccUQvDpy.s 			page 31
+GAS LISTING /tmp/ccAonSN5.s 			page 31
 
 
  1053              	.LBE21:
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  1090 000c 4889CA   		movq	%rcx, %rdx
  1091              	.LVL77:
  1092              		.loc 1 393 14 view .LVU293
-GAS LISTING /tmp/ccUQvDpy.s 			page 32
+GAS LISTING /tmp/ccAonSN5.s 			page 32
 
 
  1093 000f 418D0C31 		leal	(%r9,%rsi), %ecx
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  1138              		.loc 1 402 8 is_stmt 0 view .LVU305
  1139 0004 83FF01   		cmpl	$1, %edi
  1140 0007 7607     		jbe	.L87
-GAS LISTING /tmp/ccUQvDpy.s 			page 33
+GAS LISTING /tmp/ccAonSN5.s 			page 33
 
 
  403:../../bos/core/b_core.c ****     {
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  1177 0009 31C0     		xorl	%eax, %eax
  1178 000b C3       		ret
  1179 000c 0F1F4000 		.p2align 4,,10
-GAS LISTING /tmp/ccUQvDpy.s 			page 34
+GAS LISTING /tmp/ccAonSN5.s 			page 34
 
 
  1180              		.p2align 3
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  1218              		.loc 1 424 12 is_stmt 0 view .LVU326
  1219 0010 4863FF   		movslq	%edi, %rdi
  424:../../bos/core/b_core.c **** }
-GAS LISTING /tmp/ccUQvDpy.s 			page 35
+GAS LISTING /tmp/ccAonSN5.s 			page 35
 
 
  1220              		.loc 1 424 12 view .LVU327
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  1260 0026 8B4004   		movl	4(%rax), %eax
  1261 0029 8906     		movl	%eax, (%rsi)
  438:../../bos/core/b_core.c ****     return 0;
-GAS LISTING /tmp/ccUQvDpy.s 			page 36
+GAS LISTING /tmp/ccAonSN5.s 			page 36
 
 
  1262              		.loc 1 438 5 is_stmt 1 view .LVU339
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  5284              	1:
  5285              		.align 8
  5286 0010 020000C0 		.long	0xc0000002
-GAS LISTING /tmp/ccUQvDpy.s 			page 37
+GAS LISTING /tmp/ccAonSN5.s 			page 37
 
 
  5287 0014 04000000 		.long	3f - 2f
@@ -2167,44 +2167,44 @@ GAS LISTING /tmp/ccUQvDpy.s 			page 1
  5290              	3:
  5291 001c 00000000 		.align 8
  5292              	4:
-GAS LISTING /tmp/ccUQvDpy.s 			page 38
+GAS LISTING /tmp/ccAonSN5.s 			page 38
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_core.c
-     /tmp/ccUQvDpy.s:8      .text._bCoreMonitor:0000000000000000 _bCoreMonitor
-     /tmp/ccUQvDpy.s:22     .text.bOpen:0000000000000000 bOpen
-     /tmp/ccUQvDpy.s:1285   .bss.init.1:0000000000000000 init.1
-     /tmp/ccUQvDpy.s:1298   .bss.bCoreFdTable:0000000000000000 bCoreFdTable
-     /tmp/ccUQvDpy.s:258    .text.bRead:0000000000000000 bRead
-     /tmp/ccUQvDpy.s:400    .text.bWrite:0000000000000000 bWrite
-     /tmp/ccUQvDpy.s:548    .text.bLseek:0000000000000000 bLseek
-     /tmp/ccUQvDpy.s:591    .text.bCtl:0000000000000000 bCtl
-     /tmp/ccUQvDpy.s:648    .text.bClose:0000000000000000 bClose
-     /tmp/ccUQvDpy.s:733    .text.bCoreIsIdle:0000000000000000 bCoreIsIdle
-     /tmp/ccUQvDpy.s:810    .text.bInit:0000000000000000 bInit
-     /tmp/ccUQvDpy.s:1280   .rodata.__func__.0:0000000000000000 __func__.0
-     /tmp/ccUQvDpy.s:979    .text.bReinit:0000000000000000 bReinit
-     /tmp/ccUQvDpy.s:998    .text.bExec:0000000000000000 bExec
-     /tmp/ccUQvDpy.s:1074   .text.bModifyHalIf:0000000000000000 bModifyHalIf
-     /tmp/ccUQvDpy.s:1130   .text.bFdIsReadable:0000000000000000 bFdIsReadable
-     /tmp/ccUQvDpy.s:1165   .text.bFdIsWritable:0000000000000000 bFdIsWritable
-     /tmp/ccUQvDpy.s:1200   .text.bFdIsAbnormal:0000000000000000 bFdIsAbnormal
-     /tmp/ccUQvDpy.s:1235   .text.bGetDevNumber:0000000000000000 bGetDevNumber
-     /tmp/ccUQvDpy.s:1292   .bos_polling:0000000000000000 polling_bCoreMonitor
-     /tmp/ccUQvDpy.s:772    .rodata.bInit.str1.1:0000000000000000 .LC1
-     /tmp/ccUQvDpy.s:769    .rodata.bInit.str1.8:0000000000000000 .LC0
-     /tmp/ccUQvDpy.s:776    .rodata.bInit.str1.8:0000000000000038 .LC2
-     /tmp/ccUQvDpy.s:779    .rodata.bInit.str1.8:0000000000000070 .LC3
-     /tmp/ccUQvDpy.s:782    .rodata.bInit.str1.8:00000000000000a8 .LC4
-     /tmp/ccUQvDpy.s:785    .rodata.bInit.str1.8:00000000000000e0 .LC5
-     /tmp/ccUQvDpy.s:788    .rodata.bInit.str1.8:0000000000000118 .LC6
-     /tmp/ccUQvDpy.s:791    .rodata.bInit.str1.8:0000000000000150 .LC7
-     /tmp/ccUQvDpy.s:794    .rodata.bInit.str1.8:0000000000000188 .LC8
-     /tmp/ccUQvDpy.s:800    .rodata.bInit.str1.1:0000000000000018 .LC10
-     /tmp/ccUQvDpy.s:797    .rodata.bInit.str1.8:00000000000001c0 .LC9
-     /tmp/ccUQvDpy.s:802    .rodata.bInit.str1.1:0000000000000021 .LC11
-     /tmp/ccUQvDpy.s:804    .rodata.bInit.str1.1:000000000000002d .LC12
+     /tmp/ccAonSN5.s:8      .text._bCoreMonitor:0000000000000000 _bCoreMonitor
+     /tmp/ccAonSN5.s:22     .text.bOpen:0000000000000000 bOpen
+     /tmp/ccAonSN5.s:1285   .bss.init.1:0000000000000000 init.1
+     /tmp/ccAonSN5.s:1298   .bss.bCoreFdTable:0000000000000000 bCoreFdTable
+     /tmp/ccAonSN5.s:258    .text.bRead:0000000000000000 bRead
+     /tmp/ccAonSN5.s:400    .text.bWrite:0000000000000000 bWrite
+     /tmp/ccAonSN5.s:548    .text.bLseek:0000000000000000 bLseek
+     /tmp/ccAonSN5.s:591    .text.bCtl:0000000000000000 bCtl
+     /tmp/ccAonSN5.s:648    .text.bClose:0000000000000000 bClose
+     /tmp/ccAonSN5.s:733    .text.bCoreIsIdle:0000000000000000 bCoreIsIdle
+     /tmp/ccAonSN5.s:810    .text.bInit:0000000000000000 bInit
+     /tmp/ccAonSN5.s:1280   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccAonSN5.s:979    .text.bReinit:0000000000000000 bReinit
+     /tmp/ccAonSN5.s:998    .text.bExec:0000000000000000 bExec
+     /tmp/ccAonSN5.s:1074   .text.bModifyHalIf:0000000000000000 bModifyHalIf
+     /tmp/ccAonSN5.s:1130   .text.bFdIsReadable:0000000000000000 bFdIsReadable
+     /tmp/ccAonSN5.s:1165   .text.bFdIsWritable:0000000000000000 bFdIsWritable
+     /tmp/ccAonSN5.s:1200   .text.bFdIsAbnormal:0000000000000000 bFdIsAbnormal
+     /tmp/ccAonSN5.s:1235   .text.bGetDevNumber:0000000000000000 bGetDevNumber
+     /tmp/ccAonSN5.s:1292   .bos_polling:0000000000000000 polling_bCoreMonitor
+     /tmp/ccAonSN5.s:772    .rodata.bInit.str1.1:0000000000000000 .LC1
+     /tmp/ccAonSN5.s:769    .rodata.bInit.str1.8:0000000000000000 .LC0
+     /tmp/ccAonSN5.s:776    .rodata.bInit.str1.8:0000000000000038 .LC2
+     /tmp/ccAonSN5.s:779    .rodata.bInit.str1.8:0000000000000070 .LC3
+     /tmp/ccAonSN5.s:782    .rodata.bInit.str1.8:00000000000000a8 .LC4
+     /tmp/ccAonSN5.s:785    .rodata.bInit.str1.8:00000000000000e0 .LC5
+     /tmp/ccAonSN5.s:788    .rodata.bInit.str1.8:0000000000000118 .LC6
+     /tmp/ccAonSN5.s:791    .rodata.bInit.str1.8:0000000000000150 .LC7
+     /tmp/ccAonSN5.s:794    .rodata.bInit.str1.8:0000000000000188 .LC8
+     /tmp/ccAonSN5.s:800    .rodata.bInit.str1.1:0000000000000018 .LC10
+     /tmp/ccAonSN5.s:797    .rodata.bInit.str1.8:00000000000001c0 .LC9
+     /tmp/ccAonSN5.s:802    .rodata.bInit.str1.1:0000000000000021 .LC11
+     /tmp/ccAonSN5.s:804    .rodata.bInit.str1.1:000000000000002d .LC12
 
 UNDEFINED SYMBOLS
 bDeviceOpen

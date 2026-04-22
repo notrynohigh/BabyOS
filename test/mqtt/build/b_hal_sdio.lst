@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cccgoA8b.s 			page 1
+GAS LISTING /tmp/cc4lieKB.s 			page 1
 
 
    1              		.file	"b_hal_sdio.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cccgoA8b.s 			page 1
   45:../../bos/hal/b_hal_sdio.c ****  * \{
   46:../../bos/hal/b_hal_sdio.c ****  */
   47:../../bos/hal/b_hal_sdio.c **** #if defined(__WEAKDEF)
-GAS LISTING /tmp/cccgoA8b.s 			page 2
+GAS LISTING /tmp/cc4lieKB.s 			page 2
 
 
   48:../../bos/hal/b_hal_sdio.c **** __WEAKDEF int bMcuSDIOReadBlocks(const bHalSDIONumber_t sd, uint8_t *pdata, uint32_t addr,
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cccgoA8b.s 			page 1
   52              		.loc 1 65 45 discriminator 1 view .LVU9
   53 000a 85C9     		testl	%ecx, %ecx
   54 000c 410F94C0 		sete	%r8b
-GAS LISTING /tmp/cccgoA8b.s 			page 3
+GAS LISTING /tmp/cc4lieKB.s 			page 3
 
 
   55 0010 4408C0   		orb	%r8b, %al
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cccgoA8b.s 			page 1
   96 0019 E9000000 		jmp	bMcuSDIOWriteBlocks
   96      00
   97              	.LVL4:
-GAS LISTING /tmp/cccgoA8b.s 			page 4
+GAS LISTING /tmp/cc4lieKB.s 			page 4
 
 
   98 001e 6690     		.p2align 4,,10
@@ -212,14 +212,14 @@ GAS LISTING /tmp/cccgoA8b.s 			page 1
  1066              	3:
  1067 001c 00000000 		.align 8
  1068              	4:
-GAS LISTING /tmp/cccgoA8b.s 			page 5
+GAS LISTING /tmp/cc4lieKB.s 			page 5
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_hal_sdio.c
-     /tmp/cccgoA8b.s:9      .text.bMcuSDIOReadBlocks:0000000000000000 bMcuSDIOReadBlocks
-     /tmp/cccgoA8b.s:27     .text.bMcuSDIOWriteBlocks:0000000000000000 bMcuSDIOWriteBlocks
-     /tmp/cccgoA8b.s:41     .text.bHalSDIOReadBlocks:0000000000000000 bHalSDIOReadBlocks
-     /tmp/cccgoA8b.s:76     .text.bHalSDIOWriteBlocks:0000000000000000 bHalSDIOWriteBlocks
+     /tmp/cc4lieKB.s:9      .text.bMcuSDIOReadBlocks:0000000000000000 bMcuSDIOReadBlocks
+     /tmp/cc4lieKB.s:27     .text.bMcuSDIOWriteBlocks:0000000000000000 bMcuSDIOWriteBlocks
+     /tmp/cc4lieKB.s:41     .text.bHalSDIOReadBlocks:0000000000000000 bHalSDIOReadBlocks
+     /tmp/cc4lieKB.s:76     .text.bHalSDIOWriteBlocks:0000000000000000 bHalSDIOWriteBlocks
 
 NO UNDEFINED SYMBOLS

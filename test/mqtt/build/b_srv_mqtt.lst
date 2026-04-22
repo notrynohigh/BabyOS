@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccsEtjz0.s 			page 1
+GAS LISTING /tmp/ccJVFYvV.s 			page 1
 
 
    1              		.file	"b_srv_mqtt.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   46:../../bos/services/b_srv_mqtt.c **** #endif
   47:../../bos/services/b_srv_mqtt.c **** 
   48:../../bos/services/b_srv_mqtt.c **** /**
-GAS LISTING /tmp/ccsEtjz0.s 			page 2
+GAS LISTING /tmp/ccJVFYvV.s 			page 2
 
 
   49:../../bos/services/b_srv_mqtt.c ****  * \addtogroup BABYOS
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  103:../../bos/services/b_srv_mqtt.c ****     char            *pack;
  104:../../bos/services/b_srv_mqtt.c ****     uint32_t         pack_len;
  105:../../bos/services/b_srv_mqtt.c ****     struct list_head node;
-GAS LISTING /tmp/ccsEtjz0.s 			page 3
+GAS LISTING /tmp/ccJVFYvV.s 			page 3
 
 
  106:../../bos/services/b_srv_mqtt.c **** } bMqttSubscribeNode_t;
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  160:../../bos/services/b_srv_mqtt.c **** 
  161:../../bos/services/b_srv_mqtt.c **** B_TASK_CREATE_ATTR(bMqttTaskAttr);
  162:../../bos/services/b_srv_mqtt.c **** B_TIMER_CREATE_ATTR(bMqttTimerAttr);
-GAS LISTING /tmp/ccsEtjz0.s 			page 4
+GAS LISTING /tmp/ccJVFYvV.s 			page 4
 
 
  163:../../bos/services/b_srv_mqtt.c **** /**
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  201:../../bos/services/b_srv_mqtt.c ****         tmp_is_mqtts   = 0;
  202:../../bos/services/b_srv_mqtt.c ****         hostname_start = url + strlen(prefix_mqtt);
  203:../../bos/services/b_srv_mqtt.c ****     }
-GAS LISTING /tmp/ccsEtjz0.s 			page 5
+GAS LISTING /tmp/ccJVFYvV.s 			page 5
 
 
  204:../../bos/services/b_srv_mqtt.c ****     else if (strncmp(url, prefix_mqtts, strlen(prefix_mqtts)) == 0)
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  258:../../bos/services/b_srv_mqtt.c ****         else
  259:../../bos/services/b_srv_mqtt.c ****         {
  260:../../bos/services/b_srv_mqtt.c ****             port_len = strlen(port_start);
-GAS LISTING /tmp/ccsEtjz0.s 			page 6
+GAS LISTING /tmp/ccJVFYvV.s 			page 6
 
 
  261:../../bos/services/b_srv_mqtt.c ****         }
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   28              		.loc 1 314 1 is_stmt 1 view -0
   29              		.cfi_startproc
   30              		.loc 1 314 1 is_stmt 0 view .LVU5
-GAS LISTING /tmp/ccsEtjz0.s 			page 7
+GAS LISTING /tmp/ccJVFYvV.s 			page 7
 
 
   31 0000 F30F1EFA 		endbr64
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   72              	_bMqttTimerCb:
   73              	.LVL7:
   74              	.LFB143:
-GAS LISTING /tmp/ccsEtjz0.s 			page 8
+GAS LISTING /tmp/ccJVFYvV.s 			page 8
 
 
  321:../../bos/services/b_srv_mqtt.c **** 
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  375:../../bos/services/b_srv_mqtt.c ****     int           multiplier                       = 1;
  376:../../bos/services/b_srv_mqtt.c ****     int           len                              = 0;
  377:../../bos/services/b_srv_mqtt.c ****     const int     MAX_NO_OF_REMAINING_LENGTH_BYTES = 4;
-GAS LISTING /tmp/ccsEtjz0.s 			page 9
+GAS LISTING /tmp/ccJVFYvV.s 			page 9
 
 
  378:../../bos/services/b_srv_mqtt.c **** 
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  432:../../bos/services/b_srv_mqtt.c ****     {
  433:../../bos/services/b_srv_mqtt.c ****         _bMqttFree(pbuf);
  434:../../bos/services/b_srv_mqtt.c ****         return -1;
-GAS LISTING /tmp/ccsEtjz0.s 			page 10
+GAS LISTING /tmp/ccJVFYvV.s 			page 10
 
 
  435:../../bos/services/b_srv_mqtt.c ****     }
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  489:../../bos/services/b_srv_mqtt.c ****     }
  490:../../bos/services/b_srv_mqtt.c **** 
  491:../../bos/services/b_srv_mqtt.c ****     if (_bMqttWrite(pinstance, pbuf, len) < 0)
-GAS LISTING /tmp/ccsEtjz0.s 			page 11
+GAS LISTING /tmp/ccJVFYvV.s 			page 11
 
 
  492:../../bos/services/b_srv_mqtt.c ****     {
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  546:../../bos/services/b_srv_mqtt.c ****     }
  547:../../bos/services/b_srv_mqtt.c **** 
  548:../../bos/services/b_srv_mqtt.c ****     if (_bMqttWrite(pinstance, pbuf, len) < 0)
-GAS LISTING /tmp/ccsEtjz0.s 			page 12
+GAS LISTING /tmp/ccJVFYvV.s 			page 12
 
 
  549:../../bos/services/b_srv_mqtt.c ****     {
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  603:../../bos/services/b_srv_mqtt.c ****         }
  604:../../bos/services/b_srv_mqtt.c ****     }
  605:../../bos/services/b_srv_mqtt.c ****     return 0;
-GAS LISTING /tmp/ccsEtjz0.s 			page 13
+GAS LISTING /tmp/ccJVFYvV.s 			page 13
 
 
  606:../../bos/services/b_srv_mqtt.c **** }
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  660:../../bos/services/b_srv_mqtt.c ****     uint8_t *pack = _bMqttMalloc(len);
  661:../../bos/services/b_srv_mqtt.c ****     if (pack == NULL)
  662:../../bos/services/b_srv_mqtt.c ****     {
-GAS LISTING /tmp/ccsEtjz0.s 			page 14
+GAS LISTING /tmp/ccJVFYvV.s 			page 14
 
 
  663:../../bos/services/b_srv_mqtt.c ****         _bMqttFree(topic_str);
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  717:../../bos/services/b_srv_mqtt.c ****     bMqttPendingPub_t *pnode = NULL;
  718:../../bos/services/b_srv_mqtt.c ****     struct list_head   *pos   = NULL;
  719:../../bos/services/b_srv_mqtt.c ****     struct list_head   *n     = NULL;
-GAS LISTING /tmp/ccsEtjz0.s 			page 15
+GAS LISTING /tmp/ccJVFYvV.s 			page 15
 
 
  720:../../bos/services/b_srv_mqtt.c **** 
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  774:../../bos/services/b_srv_mqtt.c **** static int _bMqttReadPacket(bMqttSrvInstance_t *pinstance, bMqttPack_t *pack)
  775:../../bos/services/b_srv_mqtt.c **** {
  776:../../bos/services/b_srv_mqtt.c ****     MQTTHeader header     = {0};
-GAS LISTING /tmp/ccsEtjz0.s 			page 16
+GAS LISTING /tmp/ccJVFYvV.s 			page 16
 
 
  777:../../bos/services/b_srv_mqtt.c ****     int        len        = 0;
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   76              		.cfi_startproc
   77              		.loc 1 829 1 is_stmt 0 view .LVU18
   78 0000 F30F1EFA 		endbr64
-GAS LISTING /tmp/ccsEtjz0.s 			page 17
+GAS LISTING /tmp/ccJVFYvV.s 			page 17
 
 
   79 0004 55       		pushq	%rbp
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  108      25280000 
  108      00
  109 0035 0F858D00 		jne	.L17
-GAS LISTING /tmp/ccsEtjz0.s 			page 18
+GAS LISTING /tmp/ccJVFYvV.s 			page 18
 
 
  109      0000
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  150              		.loc 1 838 13 view .LVU36
  838:../../bos/services/b_srv_mqtt.c ****         }
  151              		.loc 1 838 34 is_stmt 0 view .LVU37
-GAS LISTING /tmp/ccsEtjz0.s 			page 19
+GAS LISTING /tmp/ccJVFYvV.s 			page 19
 
 
  152 0066 488B0500 		movq	pbMqttInstance(%rip), %rax
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  187              		.loc 1 354 15 is_stmt 0 view .LVU50
  188 009a 0FB7D0   		movzwl	%ax, %edx
  352:../../bos/services/b_srv_mqtt.c ****     {
-GAS LISTING /tmp/ccsEtjz0.s 			page 20
+GAS LISTING /tmp/ccJVFYvV.s 			page 20
 
 
  189              		.loc 1 352 8 view .LVU51
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  230 0000 6E756C6C 		.string	"null"
  230      00
  231              	.LC1:
-GAS LISTING /tmp/ccsEtjz0.s 			page 21
+GAS LISTING /tmp/ccJVFYvV.s 			page 21
 
 
  232 0005 636F6E6E 		.string	"connect:%s:%d\r\n"
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  254      64697363 
  254      6F6E6E65 
  254      63742E2E 
-GAS LISTING /tmp/ccsEtjz0.s 			page 22
+GAS LISTING /tmp/ccJVFYvV.s 			page 22
 
 
  254      2E0D0A00 
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  276      0A00
  277              	.LC18:
  278 010e 716F7331 		.string	"qos1 puback received: id=%d\r\n"
-GAS LISTING /tmp/ccsEtjz0.s 			page 23
+GAS LISTING /tmp/ccJVFYvV.s 			page 23
 
 
  278      20707562 
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  304              		.globl	_bMqttTaskFunc
  306              	_bMqttTaskFunc:
  307              	.LVL22:
-GAS LISTING /tmp/ccsEtjz0.s 			page 24
+GAS LISTING /tmp/ccJVFYvV.s 			page 24
 
 
  308              	.LFB144:
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  855:../../bos/services/b_srv_mqtt.c ****     uint32_t            buf_len     = 0;
  351              		.loc 1 855 5 view .LVU70
  856:../../bos/services/b_srv_mqtt.c ****     bMqttSrvInstance_t *pinstance   = (bMqttSrvInstance_t *)arg;
-GAS LISTING /tmp/ccsEtjz0.s 			page 25
+GAS LISTING /tmp/ccJVFYvV.s 			page 25
 
 
  352              		.loc 1 856 5 view .LVU71
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  875:../../bos/services/b_srv_mqtt.c ****             sock_fd = bSocket(B_TRANS_CONN_TCP, _bMqttTransCb, pinstance);
  876:../../bos/services/b_srv_mqtt.c ****             if (SOCKFD_IS_INVALID(sock_fd))
  877:../../bos/services/b_srv_mqtt.c ****             {
-GAS LISTING /tmp/ccsEtjz0.s 			page 26
+GAS LISTING /tmp/ccJVFYvV.s 			page 26
 
 
  878:../../bos/services/b_srv_mqtt.c ****                 bTaskRestart(pt);
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  932:../../bos/services/b_srv_mqtt.c ****                 // SSL handshake still in progress, wait
  933:../../bos/services/b_srv_mqtt.c ****                 PT_WAIT_UNTIL(pt, 0, 50);
  384              		.loc 1 933 17 discriminator 4 view .LVU83
-GAS LISTING /tmp/ccsEtjz0.s 			page 27
+GAS LISTING /tmp/ccJVFYvV.s 			page 27
 
 
  385              		.loc 1 933 17 discriminator 4 view .LVU84
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  944:../../bos/services/b_srv_mqtt.c ****             PT_WAIT_UNTIL(
  945:../../bos/services/b_srv_mqtt.c ****                 pt, (bSockIsReadable(sock_fd) || 
  946:../../bos/services/b_srv_mqtt.c ****                      (pinstance->stat != B_MQTT_STA_TCP_CONNECTED &&
-GAS LISTING /tmp/ccsEtjz0.s 			page 28
+GAS LISTING /tmp/ccJVFYvV.s 			page 28
 
 
  947:../../bos/services/b_srv_mqtt.c ****                       pinstance->stat != B_MQTT_STA_SSL_CONNECTED)),
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
 1001:../../bos/services/b_srv_mqtt.c ****                         case PUBREC:
 1002:../../bos/services/b_srv_mqtt.c ****                         case PUBREL:
 1003:../../bos/services/b_srv_mqtt.c ****                         {
-GAS LISTING /tmp/ccsEtjz0.s 			page 29
+GAS LISTING /tmp/ccJVFYvV.s 			page 29
 
 
 1004:../../bos/services/b_srv_mqtt.c ****                             // todo qos = 2
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  434              		.loc 1 1039 5 view .LVU102
  435              		.loc 1 1039 5 view .LVU103
  436              		.loc 1 1039 5 view .LVU104
-GAS LISTING /tmp/ccsEtjz0.s 			page 30
+GAS LISTING /tmp/ccJVFYvV.s 			page 30
 
 
  437              		.loc 1 1039 5 view .LVU105
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  481 0100 663DBB03 		cmpw	$955, %ax
  482 0104 75A7     		jne	.L26
  483              	.L20:
-GAS LISTING /tmp/ccsEtjz0.s 			page 31
+GAS LISTING /tmp/ccJVFYvV.s 			page 31
 
 
  883:../../bos/services/b_srv_mqtt.c ****                 bTaskRestart(pt);
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  919:../../bos/services/b_srv_mqtt.c ****             }
  518              		.loc 1 919 17 view .LVU126
  919:../../bos/services/b_srv_mqtt.c ****             }
-GAS LISTING /tmp/ccsEtjz0.s 			page 32
+GAS LISTING /tmp/ccJVFYvV.s 			page 32
 
 
  519              		.loc 1 919 17 view .LVU127
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  554 0162 74B5     		je	.L214
  555              	.L53:
  873:../../bos/services/b_srv_mqtt.c ****         {
-GAS LISTING /tmp/ccsEtjz0.s 			page 33
+GAS LISTING /tmp/ccJVFYvV.s 			page 33
 
 
  556              		.loc 1 873 22 view .LVU142
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  588      0000
  937:../../bos/services/b_srv_mqtt.c ****                 pinstance->stat = B_MQTT_STA_SSL_CONNECTED;
  589              		.loc 1 937 17 is_stmt 1 view .LVU159
-GAS LISTING /tmp/ccsEtjz0.s 			page 34
+GAS LISTING /tmp/ccJVFYvV.s 			page 34
 
 
  590 019d 4C8D0500 		leaq	.LC8(%rip), %r8
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  944:../../bos/services/b_srv_mqtt.c ****                 pt, (bSockIsReadable(sock_fd) || 
  623              		.loc 1 944 13 discriminator 4 view .LVU172
  944:../../bos/services/b_srv_mqtt.c ****                 pt, (bSockIsReadable(sock_fd) || 
-GAS LISTING /tmp/ccsEtjz0.s 			page 35
+GAS LISTING /tmp/ccJVFYvV.s 			page 35
 
 
  624              		.loc 1 944 13 discriminator 4 view .LVU173
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  660 0224 3C01     		cmpb	$1, %al
  661 0226 0F84EC01 		je	.L66
  661      0000
-GAS LISTING /tmp/ccsEtjz0.s 			page 36
+GAS LISTING /tmp/ccJVFYvV.s 			page 36
 
 
  952:../../bos/services/b_srv_mqtt.c ****                 bTimerStop(pinstance->timer_id);
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  697              		.p2align 3
  698              	.L67:
  580:../../bos/services/b_srv_mqtt.c ****         pnode->state = 0;
-GAS LISTING /tmp/ccsEtjz0.s 			page 37
+GAS LISTING /tmp/ccJVFYvV.s 			page 37
 
 
  699              		.loc 1 580 9 view .LVU196
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  733      FFFF
  734 02b0 E9F8FDFF 		jmp	.L26
  734      FF
-GAS LISTING /tmp/ccsEtjz0.s 			page 38
+GAS LISTING /tmp/ccJVFYvV.s 			page 38
 
 
  735              	.LVL52:
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  881:../../bos/services/b_srv_mqtt.c ****             {
  771              		.loc 1 881 17 is_stmt 0 view .LVU217
  772 030a 0FB7551A 		movzwl	26(%rbp), %edx
-GAS LISTING /tmp/ccsEtjz0.s 			page 39
+GAS LISTING /tmp/ccJVFYvV.s 			page 39
 
 
  773 030e 488B7510 		movq	16(%rbp), %rsi
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  886:../../bos/services/b_srv_mqtt.c ****             if (PT_WAIT_IS_TIMEOUT(pt))
  809              		.loc 1 886 13 discriminator 7 view .LVU227
  810 0354 E8000000 		call	bHalGetSysTick@PLT
-GAS LISTING /tmp/ccsEtjz0.s 			page 40
+GAS LISTING /tmp/ccJVFYvV.s 			page 40
 
 
  810      00
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  898:../../bos/services/b_srv_mqtt.c ****             {
  842              		.loc 1 898 16 view .LVU243
  843 0390 807D1800 		cmpb	$0, 24(%rbp)
-GAS LISTING /tmp/ccsEtjz0.s 			page 41
+GAS LISTING /tmp/ccJVFYvV.s 			page 41
 
 
  893:../../bos/services/b_srv_mqtt.c ****             pinstance->sock_fd = sock_fd;
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  876 03e3 4885C0   		testq	%rax, %rax
  877 03e6 0F84C80A 		je	.L232
  877      0000
-GAS LISTING /tmp/ccsEtjz0.s 			page 42
+GAS LISTING /tmp/ccJVFYvV.s 			page 42
 
 
  906:../../bos/services/b_srv_mqtt.c ****                 }
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  715:../../bos/services/b_srv_mqtt.c **** {
  911              		.loc 1 715 13 view .LVU269
  912              	.LBB292:
-GAS LISTING /tmp/ccsEtjz0.s 			page 43
+GAS LISTING /tmp/ccJVFYvV.s 			page 43
 
 
  717:../../bos/services/b_srv_mqtt.c ****     struct list_head   *pos   = NULL;
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  737:../../bos/services/b_srv_mqtt.c ****                   pnode->pack_id, pnode->retry_count, pnode->topic ? pnode->topic : "null");
  948              		.loc 1 737 13 discriminator 2 view .LVU281
  949 0463 4885D2   		testq	%rdx, %rdx
-GAS LISTING /tmp/ccsEtjz0.s 			page 44
+GAS LISTING /tmp/ccJVFYvV.s 			page 44
 
 
  737:../../bos/services/b_srv_mqtt.c ****                   pnode->pack_id, pnode->retry_count, pnode->topic ? pnode->topic : "null");
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  985              	.LBB298:
  986              	.LBI298:
  186:../../bos/services/b_srv_mqtt.c **** {
-GAS LISTING /tmp/ccsEtjz0.s 			page 45
+GAS LISTING /tmp/ccJVFYvV.s 			page 45
 
 
  987              		.loc 1 186 14 view .LVU293
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1027 04da 4531C0   		xorl	%r8d, %r8d
  750:../../bos/services/b_srv_mqtt.c ****             topic_str.cstring     = pnode->topic;
  1028              		.loc 1 750 24 view .LVU305
-GAS LISTING /tmp/ccsEtjz0.s 			page 46
+GAS LISTING /tmp/ccJVFYvV.s 			page 46
 
 
  1029 04dd C7442460 		movl	$0, 96(%rsp)
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1063 052e 7E30     		jle	.L121
  761:../../bos/services/b_srv_mqtt.c ****             {
  1064              		.loc 1 761 13 is_stmt 1 view .LVU315
-GAS LISTING /tmp/ccsEtjz0.s 			page 47
+GAS LISTING /tmp/ccJVFYvV.s 			page 47
 
 
  1065              	.LVL76:
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1099              		.loc 1 763 17 is_stmt 1 view .LVU330
  1100              	.LBB303:
  1101              	.LBI303:
-GAS LISTING /tmp/ccsEtjz0.s 			page 48
+GAS LISTING /tmp/ccJVFYvV.s 			page 48
 
 
  181:../../bos/services/b_srv_mqtt.c **** {
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1138              		.loc 1 725 9 view .LVU345
  725:../../bos/services/b_srv_mqtt.c ****         {
  1139              		.loc 1 725 14 is_stmt 0 view .LVU346
-GAS LISTING /tmp/ccsEtjz0.s 			page 49
+GAS LISTING /tmp/ccJVFYvV.s 			page 49
 
 
  1140 0584 E8000000 		call	bHalGetSysTick@PLT
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1173 05cb 31C0     		xorl	%eax, %eax
  1174 05cd 488D3500 		leaq	.LC2(%rip), %rsi
  1174      000000
-GAS LISTING /tmp/ccsEtjz0.s 			page 50
+GAS LISTING /tmp/ccJVFYvV.s 			page 50
 
 
  1175 05d4 52       		pushq	%rdx
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   42:../../bos/utils/inc/b_util_list.h ****  * \{
   43:../../bos/utils/inc/b_util_list.h ****  */
   44:../../bos/utils/inc/b_util_list.h **** 
-GAS LISTING /tmp/ccsEtjz0.s 			page 51
+GAS LISTING /tmp/ccJVFYvV.s 			page 51
 
 
   45:../../bos/utils/inc/b_util_list.h **** /**
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   99:../../bos/utils/inc/b_util_list.h **** /**
  100:../../bos/utils/inc/b_util_list.h ****  * list_add - add a new entry
  101:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
-GAS LISTING /tmp/ccsEtjz0.s 			page 52
+GAS LISTING /tmp/ccJVFYvV.s 			page 52
 
 
  102:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it after
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1198              	.LBE306:
  1199              	.LBE305:
  1200              	.LBE317:
-GAS LISTING /tmp/ccsEtjz0.s 			page 53
+GAS LISTING /tmp/ccJVFYvV.s 			page 53
 
 
  723:../../bos/services/b_srv_mqtt.c ****         // Check if timeout occurred
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1243              	.LBE318:
  1244              	.LBE292:
  1245              	.LBE291:
-GAS LISTING /tmp/ccsEtjz0.s 			page 54
+GAS LISTING /tmp/ccJVFYvV.s 			page 54
 
 
  886:../../bos/services/b_srv_mqtt.c ****             if (PT_WAIT_IS_TIMEOUT(pt))
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1276 064d E9BAFAFF 		jmp	.L32
  1276      FF
  1277              		.p2align 4,,10
-GAS LISTING /tmp/ccsEtjz0.s 			page 55
+GAS LISTING /tmp/ccJVFYvV.s 			page 55
 
 
  1278 0652 660F1F44 		.p2align 3
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
   36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
   37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccsEtjz0.s 			page 56
+GAS LISTING /tmp/ccJVFYvV.s 			page 56
 
 
   38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1316              	.LBE332:
  1317              	.LBB333:
  1318              	.LBB329:
-GAS LISTING /tmp/ccsEtjz0.s 			page 57
+GAS LISTING /tmp/ccJVFYvV.s 			page 57
 
 
  324:../../bos/services/b_srv_mqtt.c ****     int      ret  = 0;
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1353      00
  1354 069e E8000000 		call	bSSLRecv@PLT
  1354      00
-GAS LISTING /tmp/ccsEtjz0.s 			page 58
+GAS LISTING /tmp/ccJVFYvV.s 			page 58
 
 
  1355              	.LVL97:
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1393 06cb 48890424 		movq	%rax, (%rsp)
  1394 06cf 4889E8   		movq	%rbp, %rax
  1395 06d2 4489F5   		movl	%r14d, %ebp
-GAS LISTING /tmp/ccsEtjz0.s 			page 59
+GAS LISTING /tmp/ccJVFYvV.s 			page 59
 
 
  1396              	.LVL99:
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1430              		.loc 1 327 41 discriminator 1 view .LVU440
  1431 06f4 498B7E70 		movq	112(%r14), %rdi
  327:../../bos/services/b_srv_mqtt.c ****     {
-GAS LISTING /tmp/ccsEtjz0.s 			page 60
+GAS LISTING /tmp/ccJVFYvV.s 			page 60
 
 
  1432              		.loc 1 327 29 discriminator 1 view .LVU441
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  397:../../bos/services/b_srv_mqtt.c ****         multiplier *= 128;
  1467              		.loc 1 397 16 view .LVU454
  1468 0736 4101C4   		addl	%eax, %r12d
-GAS LISTING /tmp/ccsEtjz0.s 			page 61
+GAS LISTING /tmp/ccJVFYvV.s 			page 61
 
 
  1469              	.LVL107:
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1503              		.loc 1 797 39 view .LVU467
  1504 0777 448D7001 		leal	1(%rax), %r14d
  1505              	.LVL111:
-GAS LISTING /tmp/ccsEtjz0.s 			page 62
+GAS LISTING /tmp/ccJVFYvV.s 			page 62
 
 
  797:../../bos/services/b_srv_mqtt.c ****     b_log("pack length:%d\r\n", pack->pack_len);
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1541 07b9 4989C6   		movq	%rax, %r14
  1542              	.LVL114:
  188:../../bos/services/b_srv_mqtt.c **** }
-GAS LISTING /tmp/ccsEtjz0.s 			page 63
+GAS LISTING /tmp/ccJVFYvV.s 			page 63
 
 
  1543              		.loc 1 188 12 view .LVU480
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1579              		.loc 3 26 1 is_stmt 1 view .LVU493
  1580              	.LBB362:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccsEtjz0.s 			page 64
+GAS LISTING /tmp/ccJVFYvV.s 			page 64
 
 
  1581              		.loc 3 29 3 view .LVU494
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  817:../../bos/services/b_srv_mqtt.c **** exit:
  1617              		.loc 1 817 5 is_stmt 1 view .LVU509
  1618              	.LVL120:
-GAS LISTING /tmp/ccsEtjz0.s 			page 65
+GAS LISTING /tmp/ccJVFYvV.s 			page 65
 
 
  817:../../bos/services/b_srv_mqtt.c **** exit:
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1653 0876 488D9424 		leaq	145(%rsp), %rdx
  1653      91000000 
  1654 087e 488DB424 		leaq	148(%rsp), %rsi
-GAS LISTING /tmp/ccsEtjz0.s 			page 66
+GAS LISTING /tmp/ccJVFYvV.s 			page 66
 
 
  1654      94000000 
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1693              		.loc 1 866 5 view .LVU526
  868:../../bos/services/b_srv_mqtt.c ****         {
  1694              		.loc 1 868 9 view .LVU527
-GAS LISTING /tmp/ccsEtjz0.s 			page 67
+GAS LISTING /tmp/ccJVFYvV.s 			page 67
 
 
  1695 08d1 E98EF8FF 		jmp	.L53
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  339:../../bos/services/b_srv_mqtt.c ****         {
  1734              		.loc 1 339 12 view .LVU536
  1735 0915 4C89F5   		movq	%r14, %rbp
-GAS LISTING /tmp/ccsEtjz0.s 			page 68
+GAS LISTING /tmp/ccJVFYvV.s 			page 68
 
 
  1736              	.LVL130:
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1770      00
  1771 0961 31C0     		xorl	%eax, %eax
  1772 0963 E8000000 		call	bLogOut@PLT
-GAS LISTING /tmp/ccsEtjz0.s 			page 69
+GAS LISTING /tmp/ccJVFYvV.s 			page 69
 
 
  1772      00
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1808 09a0 8B7D60   		movl	96(%rbp), %edi
  1809 09a3 488B4C24 		movq	8(%rsp), %rcx
  1809      08
-GAS LISTING /tmp/ccsEtjz0.s 			page 70
+GAS LISTING /tmp/ccJVFYvV.s 			page 70
 
 
  1810 09a8 4889DE   		movq	%rbx, %rsi
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1847 09d4 660FEFC0 		pxor	%xmm0, %xmm0
  1848 09d8 6689BC24 		movw	%di, 296(%rsp)
  1848      28010000 
-GAS LISTING /tmp/ccsEtjz0.s 			page 71
+GAS LISTING /tmp/ccJVFYvV.s 			page 71
 
 
  409:../../bos/services/b_srv_mqtt.c ****     options.username.cstring = pinstance->user_name;
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  409:../../bos/services/b_srv_mqtt.c ****     options.username.cstring = pinstance->user_name;
  1870              		.loc 1 409 30 is_stmt 0 view .LVU572
  1871 0a8c 4889BC24 		movq	%rdi, 208(%rsp)
-GAS LISTING /tmp/ccsEtjz0.s 			page 72
+GAS LISTING /tmp/ccJVFYvV.s 			page 72
 
 
  1871      D0000000 
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  302:../../bos/services/b_srv_mqtt.c ****     {
  1904              		.loc 1 302 8 is_stmt 0 view .LVU590
  1905 0ab4 4D85F6   		testq	%r14, %r14
-GAS LISTING /tmp/ccsEtjz0.s 			page 73
+GAS LISTING /tmp/ccJVFYvV.s 			page 73
 
 
  1906 0ab7 0F845004 		je	.L241
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  186:../../bos/services/b_srv_mqtt.c **** {
  1941              		.loc 1 186 14 view .LVU604
  1942              	.LBB396:
-GAS LISTING /tmp/ccsEtjz0.s 			page 74
+GAS LISTING /tmp/ccJVFYvV.s 			page 74
 
 
  188:../../bos/services/b_srv_mqtt.c **** }
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  1979 0b16 488D4C24 		leaq	80(%rsp), %rcx
  1979      50
  1980 0b1b 0FB7D0   		movzwl	%ax, %edx
-GAS LISTING /tmp/ccsEtjz0.s 			page 75
+GAS LISTING /tmp/ccJVFYvV.s 			page 75
 
 
  349:../../bos/services/b_srv_mqtt.c ****     int      ret  = 0;
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2015              		.loc 1 434 9 is_stmt 1 view .LVU633
  434:../../bos/services/b_srv_mqtt.c ****     }
  2016              		.loc 1 434 9 is_stmt 0 view .LVU634
-GAS LISTING /tmp/ccsEtjz0.s 			page 76
+GAS LISTING /tmp/ccJVFYvV.s 			page 76
 
 
  2017              	.LBE389:
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2055              	.LBB350:
  387:../../bos/services/b_srv_mqtt.c ****             goto exit;
  2056              		.loc 1 387 13 view .LVU645
-GAS LISTING /tmp/ccsEtjz0.s 			page 77
+GAS LISTING /tmp/ccJVFYvV.s 			page 77
 
 
  2057 0b70 4C89F5   		movq	%r14, %rbp
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2093      00
  2094 0bac 31C0     		xorl	%eax, %eax
  2095 0bae BF020000 		movl	$2, %edi
-GAS LISTING /tmp/ccsEtjz0.s 			page 78
+GAS LISTING /tmp/ccJVFYvV.s 			page 78
 
 
  2095      00
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  925:../../bos/services/b_srv_mqtt.c ****                 pinstance->ssl_handle = NULL;
  2130              		.loc 1 925 17 is_stmt 1 view .LVU662
  2131 0c09 488B7D70 		movq	112(%rbp), %rdi
-GAS LISTING /tmp/ccsEtjz0.s 			page 79
+GAS LISTING /tmp/ccJVFYvV.s 			page 79
 
 
  2132 0c0d E8000000 		call	bSSLDeinit@PLT
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2163      FF
  2164              	.LVL174:
  2165 0c59 0F1F8000 		.p2align 4,,10
-GAS LISTING /tmp/ccsEtjz0.s 			page 80
+GAS LISTING /tmp/ccJVFYvV.s 			page 80
 
 
  2165      000000
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2200      0000
  2201              		.p2align 3
  2202              	.L136:
-GAS LISTING /tmp/ccsEtjz0.s 			page 81
+GAS LISTING /tmp/ccJVFYvV.s 			page 81
 
 
  590:../../bos/services/b_srv_mqtt.c ****     {
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2238 0ce1 807D1800 		cmpb	$0, 24(%rbp)
  2239 0ce5 410FB754 		movzwl	-8(%r12), %edx
  2239      24F8
-GAS LISTING /tmp/ccsEtjz0.s 			page 82
+GAS LISTING /tmp/ccJVFYvV.s 			page 82
 
 
  2240              	.LVL180:
@@ -4918,7 +4918,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2275 0d09 66837C24 		cmpw	$0, 80(%rsp)
  2275      5000
  2276 0d0f 748F     		je	.L136
-GAS LISTING /tmp/ccsEtjz0.s 			page 83
+GAS LISTING /tmp/ccJVFYvV.s 			page 83
 
 
  2277              	.LVL184:
@@ -4978,7 +4978,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2318              	.LBE369:
  2319              	.LBE368:
  810:../../bos/services/b_srv_mqtt.c ****     {
-GAS LISTING /tmp/ccsEtjz0.s 			page 84
+GAS LISTING /tmp/ccJVFYvV.s 			page 84
 
 
  2320              		.loc 1 810 15 view .LVU722
@@ -5038,7 +5038,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2354              	.LVL191:
  344:../../bos/services/b_srv_mqtt.c **** }
  2355              		.loc 1 344 12 view .LVU737
-GAS LISTING /tmp/ccsEtjz0.s 			page 85
+GAS LISTING /tmp/ccJVFYvV.s 			page 85
 
 
  2356              	.LBE370:
@@ -5098,7 +5098,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  183:../../bos/services/b_srv_mqtt.c **** }
  2395              		.loc 1 183 5 view .LVU746
  2396 0db1 E8000000 		call	bFree@PLT
-GAS LISTING /tmp/ccsEtjz0.s 			page 86
+GAS LISTING /tmp/ccJVFYvV.s 			page 86
 
 
  2396      00
@@ -5158,7 +5158,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2436      00
  2437              	.LVL198:
  364:../../bos/services/b_srv_mqtt.c ****         {
-GAS LISTING /tmp/ccsEtjz0.s 			page 87
+GAS LISTING /tmp/ccJVFYvV.s 			page 87
 
 
  2438              		.loc 1 364 9 is_stmt 1 view .LVU757
@@ -5218,7 +5218,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2476              	.L103:
  613:../../bos/services/b_srv_mqtt.c ****     {
  2477              		.loc 1 613 35 is_stmt 0 view .LVU768
-GAS LISTING /tmp/ccsEtjz0.s 			page 88
+GAS LISTING /tmp/ccJVFYvV.s 			page 88
 
 
  2478 0e10 89C2     		movl	%eax, %edx
@@ -5278,7 +5278,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2513 0e47 31C0     		xorl	%eax, %eax
  2514              	.LVL208:
  626:../../bos/services/b_srv_mqtt.c **** 
-GAS LISTING /tmp/ccsEtjz0.s 			page 89
+GAS LISTING /tmp/ccJVFYvV.s 			page 89
 
 
  2515              		.loc 1 626 5 view .LVU783
@@ -5338,7 +5338,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2551              	.L107:
  632:../../bos/services/b_srv_mqtt.c ****         if (pnode->pack_id == pack_id)
  2552              		.loc 1 632 9 view .LVU795
-GAS LISTING /tmp/ccsEtjz0.s 			page 90
+GAS LISTING /tmp/ccJVFYvV.s 			page 90
 
 
  633:../../bos/services/b_srv_mqtt.c ****         {
@@ -5398,7 +5398,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  904:../../bos/services/b_srv_mqtt.c ****                     SOCKET_SHUTDOWN(pt, sock_fd);
  2590              		.loc 1 904 21 is_stmt 1 view .LVU808
  2591 0eb4 BF020000 		movl	$2, %edi
-GAS LISTING /tmp/ccsEtjz0.s 			page 91
+GAS LISTING /tmp/ccJVFYvV.s 			page 91
 
 
  2591      00
@@ -5458,7 +5458,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2624      0E
  2625 0f08 E93DFDFF 		jmp	.L59
  2625      FF
-GAS LISTING /tmp/ccsEtjz0.s 			page 92
+GAS LISTING /tmp/ccJVFYvV.s 			page 92
 
 
  2626              	.LVL222:
@@ -5518,7 +5518,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2662      0B0000
  2663 0f3d 894304   		movl	%eax, 4(%rbx)
  886:../../bos/services/b_srv_mqtt.c ****             if (PT_WAIT_IS_TIMEOUT(pt))
-GAS LISTING /tmp/ccsEtjz0.s 			page 93
+GAS LISTING /tmp/ccJVFYvV.s 			page 93
 
 
  2664              		.loc 1 886 13 discriminator 1 view .LVU831
@@ -5578,7 +5578,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2697              		.loc 1 970 33 is_stmt 0 view .LVU846
  2698 0f7e 31FF     		xorl	%edi, %edi
  2699              	.LVL229:
-GAS LISTING /tmp/ccsEtjz0.s 			page 94
+GAS LISTING /tmp/ccJVFYvV.s 			page 94
 
 
  2700              	.L98:
@@ -5638,7 +5638,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2737              		.loc 1 694 12 view .LVU854
  2738              	.LBB441:
  696:../../bos/services/b_srv_mqtt.c ****     struct list_head  *pos   = NULL;
-GAS LISTING /tmp/ccsEtjz0.s 			page 95
+GAS LISTING /tmp/ccJVFYvV.s 			page 95
 
 
  2739              		.loc 1 696 5 view .LVU855
@@ -5698,7 +5698,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2775      24D8
  2776 0ffc 75EA     		jne	.L100
  704:../../bos/services/b_srv_mqtt.c ****             list_del(&pnode->node);
-GAS LISTING /tmp/ccsEtjz0.s 			page 96
+GAS LISTING /tmp/ccJVFYvV.s 			page 96
 
 
  2777              		.loc 1 704 13 is_stmt 1 view .LVU870
@@ -5758,7 +5758,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2816              		.loc 2 135 5 is_stmt 1 view .LVU879
  2817 1036 488910   		movq	%rdx, (%rax)
  2818              	.LVL244:
-GAS LISTING /tmp/ccsEtjz0.s 			page 97
+GAS LISTING /tmp/ccJVFYvV.s 			page 97
 
 
  135:../../bos/utils/inc/b_util_list.h **** }
@@ -5818,7 +5818,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  711:../../bos/services/b_srv_mqtt.c **** }
  2855              		.loc 1 711 12 view .LVU890
  2856              	.LBE441:
-GAS LISTING /tmp/ccsEtjz0.s 			page 98
+GAS LISTING /tmp/ccJVFYvV.s 			page 98
 
 
  2857              	.LBE442:
@@ -5878,7 +5878,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2891              		.loc 1 802 9 is_stmt 0 view .LVU902
  2892              	.LBE384:
  2893              	.LBE443:
-GAS LISTING /tmp/ccsEtjz0.s 			page 99
+GAS LISTING /tmp/ccJVFYvV.s 			page 99
 
 
  2894              	.LBB444:
@@ -5938,7 +5938,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2928      4F334878 
  2928      516E3947 
  2929              	.LC32:
-GAS LISTING /tmp/ccsEtjz0.s 			page 100
+GAS LISTING /tmp/ccJVFYvV.s 			page 100
 
 
  2930 003a 73756220 		.string	"sub malloc len:%d\r\n"
@@ -5998,7 +5998,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  2966              		.cfi_def_cfa_offset 56
  2967              		.cfi_offset 3, -56
  2968 000e 4883EC38 		subq	$56, %rsp
-GAS LISTING /tmp/ccsEtjz0.s 			page 101
+GAS LISTING /tmp/ccJVFYvV.s 			page 101
 
 
  2969              	.LCFI54:
@@ -6058,7 +6058,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
 1063:../../bos/services/b_srv_mqtt.c ****     pinstance->user_data   = arg;
 1064:../../bos/services/b_srv_mqtt.c ****     pinstance->packet_id   = 1;
  3002              		.loc 1 1064 28 is_stmt 0 view .LVU919
-GAS LISTING /tmp/ccsEtjz0.s 			page 102
+GAS LISTING /tmp/ccJVFYvV.s 			page 102
 
 
  3003 005a 41B80100 		movl	$1, %r8d
@@ -6118,7 +6118,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3035 0097 4889EF   		movq	%rbp, %rdi
 1067:../../bos/services/b_srv_mqtt.c ****     pinstance->user_name   = bStrDup(MQTT_USER_NAME);
  3036              		.loc 1 1067 28 discriminator 1 view .LVU937
-GAS LISTING /tmp/ccsEtjz0.s 			page 103
+GAS LISTING /tmp/ccJVFYvV.s 			page 103
 
 
  3037 009a 48894320 		movq	%rax, 32(%rbx)
@@ -6178,7 +6178,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
 1078:../../bos/services/b_srv_mqtt.c ****     int ret = _bMqttParseUrl(pinstance->pbroker, &pinstance->host, &pinstance->port,
  3069              		.loc 1 1078 5 is_stmt 1 view .LVU952
  3070              	.LVL265:
-GAS LISTING /tmp/ccsEtjz0.s 			page 104
+GAS LISTING /tmp/ccJVFYvV.s 			page 104
 
 
  3071              	.LBB516:
@@ -6238,7 +6238,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  206:../../bos/services/b_srv_mqtt.c ****         hostname_start = url + strlen(prefix_mqtts);
  3103              		.loc 1 206 24 is_stmt 0 view .LVU967
  3104 011f C644240F 		movb	$1, 15(%rsp)
-GAS LISTING /tmp/ccsEtjz0.s 			page 105
+GAS LISTING /tmp/ccJVFYvV.s 			page 105
 
 
  3104      01
@@ -6298,7 +6298,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3138              		.loc 1 222 9 is_stmt 1 view .LVU981
  222:../../bos/services/b_srv_mqtt.c ****     }
  3139              		.loc 1 222 22 is_stmt 0 view .LVU982
-GAS LISTING /tmp/ccsEtjz0.s 			page 106
+GAS LISTING /tmp/ccJVFYvV.s 			page 106
 
 
  3140 0159 4489EF   		movl	%r13d, %edi
@@ -6358,7 +6358,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3178              	.LVL280:
  3179              	.LBB522:
  3180              	.LBI522:
-GAS LISTING /tmp/ccsEtjz0.s 			page 107
+GAS LISTING /tmp/ccJVFYvV.s 			page 107
 
 
   60:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
@@ -6418,7 +6418,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3195      00
  248:../../bos/services/b_srv_mqtt.c ****     {
  3196              		.loc 1 248 5 is_stmt 1 view .LVU1002
-GAS LISTING /tmp/ccsEtjz0.s 			page 108
+GAS LISTING /tmp/ccJVFYvV.s 			page 108
 
 
  248:../../bos/services/b_srv_mqtt.c ****     {
@@ -6478,7 +6478,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3231              	.LBB526:
  3232              		.loc 3 95 3 view .LVU1018
  3233              	.LBE526:
-GAS LISTING /tmp/ccsEtjz0.s 			page 109
+GAS LISTING /tmp/ccJVFYvV.s 			page 109
 
 
  3234              	.LBE525:
@@ -6538,7 +6538,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   33:/usr/include/stdlib.h **** 
   34:/usr/include/stdlib.h **** __BEGIN_DECLS
   35:/usr/include/stdlib.h **** 
-GAS LISTING /tmp/ccsEtjz0.s 			page 110
+GAS LISTING /tmp/ccJVFYvV.s 			page 110
 
 
   36:/usr/include/stdlib.h **** #define	_STDLIB_H	1
@@ -6598,7 +6598,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
   90:/usr/include/stdlib.h **** /* We define these the same for all machines.
   91:/usr/include/stdlib.h ****    Changes from this to the outside world should be done in `_exit'.  */
   92:/usr/include/stdlib.h **** #define	EXIT_FAILURE	1	/* Failing exit status.  */
-GAS LISTING /tmp/ccsEtjz0.s 			page 111
+GAS LISTING /tmp/ccJVFYvV.s 			page 111
 
 
   93:/usr/include/stdlib.h **** #define	EXIT_SUCCESS	0	/* Successful exit status.  */
@@ -6658,7 +6658,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  147:/usr/include/stdlib.h **** extern _Float64 strtof64 (const char *__restrict __nptr,
  148:/usr/include/stdlib.h **** 			  char **__restrict __endptr)
  149:/usr/include/stdlib.h ****      __THROW __nonnull ((1));
-GAS LISTING /tmp/ccsEtjz0.s 			page 112
+GAS LISTING /tmp/ccJVFYvV.s 			page 112
 
 
  150:/usr/include/stdlib.h **** #endif
@@ -6718,7 +6718,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  204:/usr/include/stdlib.h **** /* Convert a string to an unsigned quadword integer.  */
  205:/usr/include/stdlib.h **** __extension__
  206:/usr/include/stdlib.h **** extern unsigned long long int strtoull (const char *__restrict __nptr,
-GAS LISTING /tmp/ccsEtjz0.s 			page 113
+GAS LISTING /tmp/ccJVFYvV.s 			page 113
 
 
  207:/usr/include/stdlib.h **** 					char **__restrict __endptr, int __base)
@@ -6778,7 +6778,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  261:/usr/include/stdlib.h **** extern unsigned long long int __isoc23_strtoull (const char *__restrict __nptr,
  262:/usr/include/stdlib.h **** 						 char **__restrict __endptr,
  263:/usr/include/stdlib.h **** 						 int __base)
-GAS LISTING /tmp/ccsEtjz0.s 			page 114
+GAS LISTING /tmp/ccJVFYvV.s 			page 114
 
 
  264:/usr/include/stdlib.h ****      __THROW __nonnull ((1));
@@ -6838,7 +6838,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  318:/usr/include/stdlib.h ****      __THROW __nonnull ((3));
  319:/usr/include/stdlib.h **** #endif
  320:/usr/include/stdlib.h **** 
-GAS LISTING /tmp/ccsEtjz0.s 			page 115
+GAS LISTING /tmp/ccJVFYvV.s 			page 115
 
 
  321:/usr/include/stdlib.h **** #if __HAVE_FLOAT64X && __GLIBC_USE (IEC_60559_TYPES_EXT)
@@ -6898,7 +6898,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  375:/usr/include/stdlib.h ****      __nonnull ((1, 4));
  376:/usr/include/stdlib.h **** __extension__
  377:/usr/include/stdlib.h **** extern long long int __REDIRECT_NTH (strtoll_l, (const char *__restrict __nptr,
-GAS LISTING /tmp/ccsEtjz0.s 			page 116
+GAS LISTING /tmp/ccJVFYvV.s 			page 116
 
 
  378:/usr/include/stdlib.h **** 						 char **__restrict __endptr,
@@ -6958,7 +6958,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  432:/usr/include/stdlib.h ****      __THROW __nonnull ((1, 3));
  433:/usr/include/stdlib.h **** # endif
  434:/usr/include/stdlib.h **** 
-GAS LISTING /tmp/ccsEtjz0.s 			page 117
+GAS LISTING /tmp/ccJVFYvV.s 			page 117
 
 
  435:/usr/include/stdlib.h **** # if __HAVE_FLOAT32
@@ -7018,7 +7018,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3257              	.LBE530:
  3258              	.LBB533:
  3259              	.LBB528:
-GAS LISTING /tmp/ccsEtjz0.s 			page 118
+GAS LISTING /tmp/ccJVFYvV.s 			page 118
 
 
  3260              		.loc 3 95 10 discriminator 1 view .LVU1024
@@ -7078,7 +7078,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  279:../../bos/services/b_srv_mqtt.c ****     *port     = (uint16_t)(tmp_port & 0xffff);
  3297              		.loc 1 279 15 view .LVU1037
  3298 01fe 4C897310 		movq	%r14, 16(%rbx)
-GAS LISTING /tmp/ccsEtjz0.s 			page 119
+GAS LISTING /tmp/ccJVFYvV.s 			page 119
 
 
  280:../../bos/services/b_srv_mqtt.c ****     *is_mqtts = tmp_is_mqtts;
@@ -7138,7 +7138,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3334              	.LBB546:
  3335              	.LBB547:
  3336              	.LBB548:
-GAS LISTING /tmp/ccsEtjz0.s 			page 120
+GAS LISTING /tmp/ccJVFYvV.s 			page 120
 
 
  3337              	.LBB549:
@@ -7198,7 +7198,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3372              	.LBE551:
  649:../../bos/services/b_srv_mqtt.c ****     {
  3373              		.loc 1 649 5 is_stmt 1 view .LVU1067
-GAS LISTING /tmp/ccsEtjz0.s 			page 121
+GAS LISTING /tmp/ccJVFYvV.s 			page 121
 
 
  649:../../bos/services/b_srv_mqtt.c ****     {
@@ -7258,7 +7258,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3406              	.LBB553:
  188:../../bos/services/b_srv_mqtt.c **** }
  3407              		.loc 1 188 5 view .LVU1081
-GAS LISTING /tmp/ccsEtjz0.s 			page 122
+GAS LISTING /tmp/ccJVFYvV.s 			page 122
 
 
  188:../../bos/services/b_srv_mqtt.c **** }
@@ -7318,7 +7318,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3444              	.LBB558:
  3445              	.LBB556:
  443:../../bos/services/b_srv_mqtt.c ****                (pinstance->packet_id == MAX_PACKET_ID) ? 1 : pinstance->packet_id + 1;
-GAS LISTING /tmp/ccsEtjz0.s 			page 123
+GAS LISTING /tmp/ccJVFYvV.s 			page 123
 
 
  3446              		.loc 1 443 33 discriminator 4 view .LVU1094
@@ -7378,7 +7378,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  181:../../bos/services/b_srv_mqtt.c **** {
  3485              		.loc 1 181 13 view .LVU1104
  3486              	.LBB560:
-GAS LISTING /tmp/ccsEtjz0.s 			page 124
+GAS LISTING /tmp/ccJVFYvV.s 			page 124
 
 
  183:../../bos/services/b_srv_mqtt.c **** }
@@ -7438,7 +7438,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3521 0321 488B0D00 		movq	bMqttSubscribeListHead(%rip), %rcx
  3521      000000
  3522              	.LBE564:
-GAS LISTING /tmp/ccsEtjz0.s 			page 125
+GAS LISTING /tmp/ccJVFYvV.s 			page 125
 
 
  3523              	.LBE563:
@@ -7498,7 +7498,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3557              	.LVL313:
   95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
  3558              		.loc 2 95 19 view .LVU1138
-GAS LISTING /tmp/ccsEtjz0.s 			page 126
+GAS LISTING /tmp/ccJVFYvV.s 			page 126
 
 
  3559 034c 48894820 		movq	%rcx, 32(%rax)
@@ -7558,7 +7558,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3595              	.LVL316:
  3596              	.L243:
 1101:../../bos/services/b_srv_mqtt.c **** fail:
-GAS LISTING /tmp/ccsEtjz0.s 			page 127
+GAS LISTING /tmp/ccJVFYvV.s 			page 127
 
 
 1102:../../bos/services/b_srv_mqtt.c ****     if (pinstance->task_id > 0)
@@ -7618,7 +7618,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3617 0381 415E     		popq	%r14
  3618              	.LCFI64:
  3619              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/ccsEtjz0.s 			page 128
+GAS LISTING /tmp/ccJVFYvV.s 			page 128
 
 
  3620 0383 415F     		popq	%r15
@@ -7678,7 +7678,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3660              	.LBB584:
  3661              	.LBB573:
  3662              	.LBB557:
-GAS LISTING /tmp/ccsEtjz0.s 			page 129
+GAS LISTING /tmp/ccJVFYvV.s 			page 129
 
 
  3663 03b8 B9010000 		movl	$1, %ecx
@@ -7738,7 +7738,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3701              	.L316:
  260:../../bos/services/b_srv_mqtt.c ****         }
  3702              		.loc 1 260 22 discriminator 1 view .LVU1167
-GAS LISTING /tmp/ccsEtjz0.s 			page 130
+GAS LISTING /tmp/ccJVFYvV.s 			page 130
 
 
  3703              	.LBE537:
@@ -7798,7 +7798,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  183:../../bos/services/b_srv_mqtt.c **** }
  3741              		.loc 1 183 5 is_stmt 0 view .LVU1177
  3742              	.LBE577:
-GAS LISTING /tmp/ccsEtjz0.s 			page 131
+GAS LISTING /tmp/ccJVFYvV.s 			page 131
 
 
  3743              	.LBE576:
@@ -7858,7 +7858,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3780              	.LBB594:
  183:../../bos/services/b_srv_mqtt.c **** }
  3781              		.loc 1 183 5 view .LVU1193
-GAS LISTING /tmp/ccsEtjz0.s 			page 132
+GAS LISTING /tmp/ccJVFYvV.s 			page 132
 
 
  3782 0452 E8000000 		call	bFree@PLT
@@ -7918,7 +7918,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3820 046e E8000000 		call	bFree@PLT
  3820      00
  3821              	.LVL337:
-GAS LISTING /tmp/ccsEtjz0.s 			page 133
+GAS LISTING /tmp/ccJVFYvV.s 			page 133
 
 
  3822              	.L271:
@@ -7978,7 +7978,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3860              	.L246:
  183:../../bos/services/b_srv_mqtt.c **** }
  3861              		.loc 1 183 5 is_stmt 0 view .LVU1222
-GAS LISTING /tmp/ccsEtjz0.s 			page 134
+GAS LISTING /tmp/ccJVFYvV.s 			page 134
 
 
  3862              	.LBE602:
@@ -8038,7 +8038,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3902 04a6 E8000000 		call	bFree@PLT
  3902      00
  3903              	.LVL345:
-GAS LISTING /tmp/ccsEtjz0.s 			page 135
+GAS LISTING /tmp/ccJVFYvV.s 			page 135
 
 
  183:../../bos/services/b_srv_mqtt.c **** }
@@ -8098,7 +8098,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3944              		.loc 1 1134 1 is_stmt 1 view -0
  3945              		.cfi_startproc
  3946 0000 F30F1EFA 		endbr64
-GAS LISTING /tmp/ccsEtjz0.s 			page 136
+GAS LISTING /tmp/ccJVFYvV.s 			page 136
 
 
 1135:../../bos/services/b_srv_mqtt.c ****     bMqttSrvInstance_t *pinstance = pbMqttInstance;
@@ -8158,7 +8158,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  3985      00
  3986              	.LVL351:
 1145:../../bos/services/b_srv_mqtt.c ****         pinstance->ssl_handle = NULL;
-GAS LISTING /tmp/ccsEtjz0.s 			page 137
+GAS LISTING /tmp/ccJVFYvV.s 			page 137
 
 
  3987              		.loc 1 1145 9 view .LVU1257
@@ -8218,7 +8218,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4023              		.loc 1 183 5 view .LVU1272
  4024 0064 E8000000 		call	bFree@PLT
  4024      00
-GAS LISTING /tmp/ccsEtjz0.s 			page 138
+GAS LISTING /tmp/ccJVFYvV.s 			page 138
 
 
  4025              	.LVL355:
@@ -8278,7 +8278,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4063              	.LVL359:
  4064              	.L326:
  183:../../bos/services/b_srv_mqtt.c **** }
-GAS LISTING /tmp/ccsEtjz0.s 			page 139
+GAS LISTING /tmp/ccJVFYvV.s 			page 139
 
 
  4065              		.loc 1 183 5 is_stmt 0 view .LVU1287
@@ -8338,7 +8338,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4103              		.loc 1 183 5 is_stmt 0 view .LVU1301
  4104              	.LBE614:
  4105              	.LBE613:
-GAS LISTING /tmp/ccsEtjz0.s 			page 140
+GAS LISTING /tmp/ccJVFYvV.s 			page 140
 
 
 1175:../../bos/services/b_srv_mqtt.c ****     }
@@ -8398,7 +8398,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4141 00d0 488D7BE8 		leaq	-24(%rbx), %rdi
  4142              	.LVL368:
 1183:../../bos/services/b_srv_mqtt.c ****         pnode->pack = NULL;
-GAS LISTING /tmp/ccsEtjz0.s 			page 141
+GAS LISTING /tmp/ccJVFYvV.s 			page 141
 
 
  4143              		.loc 1 1183 21 view .LVU1316
@@ -8458,7 +8458,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
 1187:../../bos/services/b_srv_mqtt.c ****     pnode = NULL;
  4182              		.loc 1 1187 5 view .LVU1330
 1188:../../bos/services/b_srv_mqtt.c ****     
-GAS LISTING /tmp/ccsEtjz0.s 			page 142
+GAS LISTING /tmp/ccJVFYvV.s 			page 142
 
 
 1189:../../bos/services/b_srv_mqtt.c ****     // Clean up pending publish list (QoS 1)
@@ -8518,7 +8518,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4224              	.LBB625:
  134:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
  4225              		.loc 2 134 16 view .LVU1343
-GAS LISTING /tmp/ccsEtjz0.s 			page 143
+GAS LISTING /tmp/ccJVFYvV.s 			page 143
 
 
  4226 0118 48894308 		movq	%rax, 8(%rbx)
@@ -8578,7 +8578,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4264              		.loc 1 1199 1 is_stmt 0 view .LVU1356
  4265 012f 4883C408 		addq	$8, %rsp
  4266              	.LCFI72:
-GAS LISTING /tmp/ccsEtjz0.s 			page 144
+GAS LISTING /tmp/ccJVFYvV.s 			page 144
 
 
  4267              		.cfi_remember_state
@@ -8638,7 +8638,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4315              	.LCFI80:
  4316              		.cfi_def_cfa_offset 24
  4317              	.LVL389:
-GAS LISTING /tmp/ccsEtjz0.s 			page 145
+GAS LISTING /tmp/ccJVFYvV.s 			page 145
 
 
  4318              		.loc 1 1199 1 view .LVU1365
@@ -8698,7 +8698,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4349      206D616C 
  4350 00a9 00000000 		.align 8
  4350      000000
-GAS LISTING /tmp/ccsEtjz0.s 			page 146
+GAS LISTING /tmp/ccJVFYvV.s 			page 146
 
 
  4351              	.LC40:
@@ -8758,7 +8758,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
 1203:../../bos/services/b_srv_mqtt.c ****     if (pbMqttInstance == NULL || topic == NULL || payload == NULL)
  4394              		.loc 1 1203 24 view .LVU1368
  4395 0012 4C8B3500 		movq	pbMqttInstance(%rip), %r14
-GAS LISTING /tmp/ccsEtjz0.s 			page 147
+GAS LISTING /tmp/ccJVFYvV.s 			page 147
 
 
  4395      000000
@@ -8818,7 +8818,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
 1212:../../bos/services/b_srv_mqtt.c ****     }
 1213:../../bos/services/b_srv_mqtt.c ****     return _bMqttPublish(pbMqttInstance, topic, payload, payload_len, qos);
  4430              		.loc 1 1213 5 is_stmt 1 view .LVU1377
-GAS LISTING /tmp/ccsEtjz0.s 			page 148
+GAS LISTING /tmp/ccJVFYvV.s 			page 148
 
 
  4431              	.LVL391:
@@ -8878,7 +8878,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4466 0089 488B0500 		movq	bMqttPendingPubListHead(%rip), %rax
  4466      000000
  4467              	.LVL394:
-GAS LISTING /tmp/ccsEtjz0.s 			page 149
+GAS LISTING /tmp/ccJVFYvV.s 			page 149
 
 
  460:../../bos/services/b_srv_mqtt.c ****         {
@@ -8938,7 +8938,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4505 00b6 4889DF   		movq	%rbx, %rdi
  4506              	.LVL400:
  473:../../bos/services/b_srv_mqtt.c ****     pbuf = _bMqttMalloc(buf_size);
-GAS LISTING /tmp/ccsEtjz0.s 			page 150
+GAS LISTING /tmp/ccJVFYvV.s 			page 150
 
 
  4507              		.loc 1 473 29 view .LVU1408
@@ -8998,7 +8998,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4543      2416
  4544 00e4 410FB6C4 		movzbl	%r12b, %eax
  4545              	.LVL405:
-GAS LISTING /tmp/ccsEtjz0.s 			page 151
+GAS LISTING /tmp/ccJVFYvV.s 			page 151
 
 
  483:../../bos/services/b_srv_mqtt.c ****     if (len <= 0)
@@ -9058,7 +9058,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  484:../../bos/services/b_srv_mqtt.c ****     {
  4582              		.loc 1 484 5 is_stmt 1 view .LVU1431
  484:../../bos/services/b_srv_mqtt.c ****     {
-GAS LISTING /tmp/ccsEtjz0.s 			page 152
+GAS LISTING /tmp/ccJVFYvV.s 			page 152
 
 
  4583              		.loc 1 484 8 is_stmt 0 view .LVU1432
@@ -9118,7 +9118,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4617 016a 4889EE   		movq	%rbp, %rsi
  4618 016d E8000000 		call	bSSLSend@PLT
  4618      00
-GAS LISTING /tmp/ccsEtjz0.s 			page 153
+GAS LISTING /tmp/ccJVFYvV.s 			page 153
 
 
  4619              	.LVL410:
@@ -9178,7 +9178,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4656 019d 4989D9   		movq	%rbx, %r9
  4657 01a0 B9090200 		movl	$521, %ecx
  4657      00
-GAS LISTING /tmp/ccsEtjz0.s 			page 154
+GAS LISTING /tmp/ccJVFYvV.s 			page 154
 
 
  4658 01a5 4C89E2   		movq	%r12, %rdx
@@ -9238,7 +9238,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4701 01ea 415C     		popq	%r12
  4702              	.LCFI103:
  4703              		.cfi_def_cfa_offset 32
-GAS LISTING /tmp/ccsEtjz0.s 			page 155
+GAS LISTING /tmp/ccJVFYvV.s 			page 155
 
 
  4704 01ec 415D     		popq	%r13
@@ -9298,7 +9298,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4745 0226 488D3500 		leaq	.LC2(%rip), %rsi
  4745      000000
  4746 022d E8000000 		call	bLogOut@PLT
-GAS LISTING /tmp/ccsEtjz0.s 			page 156
+GAS LISTING /tmp/ccJVFYvV.s 			page 156
 
 
  4746      00
@@ -9358,7 +9358,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4784              	.LVL424:
  188:../../bos/services/b_srv_mqtt.c **** }
  4785              		.loc 1 188 12 view .LVU1480
-GAS LISTING /tmp/ccsEtjz0.s 			page 157
+GAS LISTING /tmp/ccJVFYvV.s 			page 157
 
 
  4786              	.LBE682:
@@ -9418,7 +9418,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  515:../../bos/services/b_srv_mqtt.c ****         list_add(&pnode->node, &bMqttPendingPubListHead);
  4818              		.loc 1 515 33 is_stmt 0 view .LVU1499
  4819 0287 E8000000 		call	bHalGetSysTick@PLT
-GAS LISTING /tmp/ccsEtjz0.s 			page 158
+GAS LISTING /tmp/ccJVFYvV.s 			page 158
 
 
  4819      00
@@ -9478,7 +9478,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4860              	.LBE692:
  4861              	.LBE698:
  4862              	.LBE704:
-GAS LISTING /tmp/ccsEtjz0.s 			page 159
+GAS LISTING /tmp/ccJVFYvV.s 			page 159
 
 
  517:../../bos/services/b_srv_mqtt.c ****               pack_id, topic, qos, pending_count + 1);
@@ -9538,7 +9538,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4904      000000
  4905              	.LVL429:
  517:../../bos/services/b_srv_mqtt.c ****               pack_id, topic, qos, pending_count + 1);
-GAS LISTING /tmp/ccsEtjz0.s 			page 160
+GAS LISTING /tmp/ccJVFYvV.s 			page 160
 
 
  4906              		.loc 1 517 9 view .LVU1521
@@ -9598,7 +9598,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  4947              	.L381:
  517:../../bos/services/b_srv_mqtt.c ****               pack_id, topic, qos, pending_count + 1);
  4948              		.loc 1 517 9 view .LVU1528
-GAS LISTING /tmp/ccsEtjz0.s 			page 161
+GAS LISTING /tmp/ccJVFYvV.s 			page 161
 
 
  4949              	.LBE680:
@@ -9658,7 +9658,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  486:../../bos/services/b_srv_mqtt.c ****         _bMqttFree(pbuf);
  4985              		.loc 1 486 9 is_stmt 0 view .LVU1538
  4986 033f B9E60100 		movl	$486, %ecx
-GAS LISTING /tmp/ccsEtjz0.s 			page 162
+GAS LISTING /tmp/ccJVFYvV.s 			page 162
 
 
  4986      00
@@ -9718,7 +9718,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5020              	.LVL445:
  478:../../bos/services/b_srv_mqtt.c ****     }
  5021              		.loc 1 478 9 is_stmt 1 view .LVU1547
-GAS LISTING /tmp/ccsEtjz0.s 			page 163
+GAS LISTING /tmp/ccJVFYvV.s 			page 163
 
 
  478:../../bos/services/b_srv_mqtt.c ****     }
@@ -9778,7 +9778,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  506:../../bos/services/b_srv_mqtt.c ****             return -1;
  5057              		.loc 1 506 13 is_stmt 0 view .LVU1557
  5058              	.LBE712:
-GAS LISTING /tmp/ccsEtjz0.s 			page 164
+GAS LISTING /tmp/ccJVFYvV.s 			page 164
 
 
  5059              	.LBE715:
@@ -9838,7 +9838,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5108 0019 64488B04 		movq	%fs:40, %rax
  5108      25280000 
  5108      00
-GAS LISTING /tmp/ccsEtjz0.s 			page 165
+GAS LISTING /tmp/ccJVFYvV.s 			page 165
 
 
  5109 0022 48894424 		movq	%rax, 8(%rsp)
@@ -9898,7 +9898,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5146              		.loc 1 647 5 view .LVU1576
  648:../../bos/services/b_srv_mqtt.c ****     if (topic_str == NULL)
  5147              		.loc 1 648 5 view .LVU1577
-GAS LISTING /tmp/ccsEtjz0.s 			page 166
+GAS LISTING /tmp/ccJVFYvV.s 			page 166
 
 
  5148              	.LBB770:
@@ -9958,7 +9958,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5182 0078 B9930200 		movl	$659, %ecx
  5182      00
  657:../../bos/services/b_srv_mqtt.c ****     }
-GAS LISTING /tmp/ccsEtjz0.s 			page 167
+GAS LISTING /tmp/ccJVFYvV.s 			page 167
 
 
  5183              		.loc 1 657 13 discriminator 1 view .LVU1593
@@ -10018,7 +10018,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  443:../../bos/services/b_srv_mqtt.c ****                (pinstance->packet_id == MAX_PACKET_ID) ? 1 : pinstance->packet_id + 1;
  5220              		.loc 1 443 5 view .LVU1606
  444:../../bos/services/b_srv_mqtt.c **** }
-GAS LISTING /tmp/ccsEtjz0.s 			page 168
+GAS LISTING /tmp/ccJVFYvV.s 			page 168
 
 
  5221              		.loc 1 444 26 is_stmt 0 view .LVU1607
@@ -10078,7 +10078,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5260              		.loc 1 668 8 view .LVU1616
  5261 00e5 59       		popq	%rcx
  5262              	.LCFI122:
-GAS LISTING /tmp/ccsEtjz0.s 			page 169
+GAS LISTING /tmp/ccJVFYvV.s 			page 169
 
 
  5263              		.cfi_def_cfa_offset 88
@@ -10138,7 +10138,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5300              	.LBE780:
  679:../../bos/services/b_srv_mqtt.c ****     {
  5301              		.loc 1 679 5 is_stmt 1 view .LVU1630
-GAS LISTING /tmp/ccsEtjz0.s 			page 170
+GAS LISTING /tmp/ccJVFYvV.s 			page 170
 
 
  679:../../bos/services/b_srv_mqtt.c ****     {
@@ -10198,7 +10198,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5338              	.LBE788:
  5339              	.LBE790:
  5340              	.LBE792:
-GAS LISTING /tmp/ccsEtjz0.s 			page 171
+GAS LISTING /tmp/ccJVFYvV.s 			page 171
 
 
  687:../../bos/services/b_srv_mqtt.c ****     pnode->pack_len = len;
@@ -10258,7 +10258,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  690:../../bos/services/b_srv_mqtt.c **** }
  5378              		.loc 1 690 12 view .LVU1661
  5379              	.LBE803:
-GAS LISTING /tmp/ccsEtjz0.s 			page 172
+GAS LISTING /tmp/ccJVFYvV.s 			page 172
 
 
  5380              	.LBE806:
@@ -10318,7 +10318,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  443:../../bos/services/b_srv_mqtt.c ****                (pinstance->packet_id == MAX_PACKET_ID) ? 1 : pinstance->packet_id + 1;
  5425              		.loc 1 443 33 discriminator 2 view .LVU1665
  5426              	.LBE776:
-GAS LISTING /tmp/ccsEtjz0.s 			page 173
+GAS LISTING /tmp/ccJVFYvV.s 			page 173
 
 
  5427              	.LBE794:
@@ -10378,7 +10378,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  673:../../bos/services/b_srv_mqtt.c ****     }
  5464              		.loc 1 673 9 is_stmt 1 view .LVU1676
  5465              	.L404:
-GAS LISTING /tmp/ccsEtjz0.s 			page 174
+GAS LISTING /tmp/ccJVFYvV.s 			page 174
 
 
  673:../../bos/services/b_srv_mqtt.c ****     }
@@ -10438,7 +10438,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  664:../../bos/services/b_srv_mqtt.c ****     }
  5505              		.loc 1 664 9 is_stmt 1 view .LVU1689
  664:../../bos/services/b_srv_mqtt.c ****     }
-GAS LISTING /tmp/ccsEtjz0.s 			page 175
+GAS LISTING /tmp/ccJVFYvV.s 			page 175
 
 
  5506              		.loc 1 664 16 is_stmt 0 view .LVU1690
@@ -10498,7 +10498,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5553 000d 53       		pushq	%rbx
  5554              	.LCFI137:
  5555              		.cfi_def_cfa_offset 56
-GAS LISTING /tmp/ccsEtjz0.s 			page 176
+GAS LISTING /tmp/ccJVFYvV.s 			page 176
 
 
  5556              		.cfi_offset 3, -56
@@ -10558,7 +10558,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5590              	.LBE833:
  531:../../bos/services/b_srv_mqtt.c **** 
  5591              		.loc 1 531 26 view .LVU1707
-GAS LISTING /tmp/ccsEtjz0.s 			page 177
+GAS LISTING /tmp/ccJVFYvV.s 			page 177
 
 
  5592 0044 48897C24 		movq	%rdi, 16(%rsp)
@@ -10618,7 +10618,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5626 007b E8000000 		call	bMalloc@PLT
  5626      00
  5627              	.LVL495:
-GAS LISTING /tmp/ccsEtjz0.s 			page 178
+GAS LISTING /tmp/ccJVFYvV.s 			page 178
 
 
  5628 0080 4989C5   		movq	%rax, %r13
@@ -10678,7 +10678,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5663 00b7 488D4C24 		leaq	14(%rsp), %rcx
  5663      0E
  349:../../bos/services/b_srv_mqtt.c ****     int      ret  = 0;
-GAS LISTING /tmp/ccsEtjz0.s 			page 179
+GAS LISTING /tmp/ccJVFYvV.s 			page 179
 
 
  5664              		.loc 1 349 14 view .LVU1734
@@ -10738,7 +10738,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5696      000000
  5697              	.LVL502:
  558:../../bos/services/b_srv_mqtt.c ****     {
-GAS LISTING /tmp/ccsEtjz0.s 			page 180
+GAS LISTING /tmp/ccJVFYvV.s 			page 180
 
 
  5698              		.loc 1 558 5 is_stmt 0 view .LVU1750
@@ -10798,7 +10798,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5739              	.LVL509:
  5740              	.LBB844:
  5741              	.LBI844:
-GAS LISTING /tmp/ccsEtjz0.s 			page 181
+GAS LISTING /tmp/ccJVFYvV.s 			page 181
 
 
  132:../../bos/utils/inc/b_util_list.h **** {
@@ -10858,7 +10858,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5783              		.loc 1 181 13 view .LVU1774
  5784              	.LBB855:
  183:../../bos/services/b_srv_mqtt.c **** }
-GAS LISTING /tmp/ccsEtjz0.s 			page 182
+GAS LISTING /tmp/ccJVFYvV.s 			page 182
 
 
  5785              		.loc 1 183 5 view .LVU1775
@@ -10918,7 +10918,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5823              	.LBB858:
  5824              	.LBI858:
  181:../../bos/services/b_srv_mqtt.c **** {
-GAS LISTING /tmp/ccsEtjz0.s 			page 183
+GAS LISTING /tmp/ccJVFYvV.s 			page 183
 
 
  5825              		.loc 1 181 13 view .LVU1785
@@ -10978,7 +10978,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5869              	.LVL520:
  5870              		.p2align 4,,10
  5871 0195 0F1F00   		.p2align 3
-GAS LISTING /tmp/ccsEtjz0.s 			page 184
+GAS LISTING /tmp/ccJVFYvV.s 			page 184
 
 
  5872              	.L424:
@@ -11038,7 +11038,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
 1231:../../bos/services/b_srv_mqtt.c ****     }
  5911              		.loc 1 1231 16 view .LVU1803
  5912 01b5 B8FFFFFF 		movl	$-1, %eax
-GAS LISTING /tmp/ccsEtjz0.s 			page 185
+GAS LISTING /tmp/ccJVFYvV.s 			page 185
 
 
  5912      FF
@@ -11098,7 +11098,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  5954              		.section	.rodata.__func__.1,"a"
  5955              		.align 8
  5958              	__func__.1:
-GAS LISTING /tmp/ccsEtjz0.s 			page 186
+GAS LISTING /tmp/ccJVFYvV.s 			page 186
 
 
  5959 0000 5F624D71 		.string	"_bMqttPublish"
@@ -11158,7 +11158,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  6001      74744465 
  6001      636F6465 
  6001      5061636B 
-GAS LISTING /tmp/ccsEtjz0.s 			page 187
+GAS LISTING /tmp/ccJVFYvV.s 			page 187
 
 
  6001      657400
@@ -11218,7 +11218,7 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  6052              		.align 8
  6055              	pbMqttInstance:
  6056 0000 00000000 		.zero	8
-GAS LISTING /tmp/ccsEtjz0.s 			page 188
+GAS LISTING /tmp/ccJVFYvV.s 			page 188
 
 
  6056      00000000 
@@ -11261,85 +11261,85 @@ GAS LISTING /tmp/ccsEtjz0.s 			page 1
  24807              	3:
  24808 001c 00000000 		.align 8
  24809              	4:
-GAS LISTING /tmp/ccsEtjz0.s 			page 189
+GAS LISTING /tmp/ccJVFYvV.s 			page 189
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_srv_mqtt.c
-     /tmp/ccsEtjz0.s:8      .text._bMqttFree:0000000000000000 _bMqttFree
-     /tmp/ccsEtjz0.s:25     .text._bMqttTransCb:0000000000000000 _bMqttTransCb
-     /tmp/ccsEtjz0.s:6055   .bss.pbMqttInstance:0000000000000000 pbMqttInstance
-     /tmp/ccsEtjz0.s:72     .text._bMqttTimerCb:0000000000000000 _bMqttTimerCb
-     /tmp/ccsEtjz0.s:306    .text._bMqttTaskFunc:0000000000000000 _bMqttTaskFunc
-     /tmp/ccsEtjz0.s:6023   .data.sock_fd.12:0000000000000000 sock_fd.12
-     /tmp/ccsEtjz0.s:6017   .rodata.__func__.11:0000000000000000 __func__.11
-     /tmp/ccsEtjz0.s:6048   .data.rel.local.bMqttSubscribeListHead:0000000000000000 bMqttSubscribeListHead
-     /tmp/ccsEtjz0.s:6011   .bss.mqtt_step_f.10:0000000000000000 mqtt_step_f.10
-     /tmp/ccsEtjz0.s:6041   .data.rel.local.bMqttPendingPubListHead:0000000000000000 bMqttPendingPubListHead
-     /tmp/ccsEtjz0.s:5982   .rodata.__func__.5:0000000000000000 __func__.5
-     /tmp/ccsEtjz0.s:6006   .rodata.__func__.9:0000000000000000 __func__.9
-     /tmp/ccsEtjz0.s:6000   .rodata.__func__.8:0000000000000000 __func__.8
-     /tmp/ccsEtjz0.s:5976   .rodata.__func__.4:0000000000000000 __func__.4
-     /tmp/ccsEtjz0.s:5988   .rodata.__func__.6:0000000000000000 __func__.6
-     /tmp/ccsEtjz0.s:5994   .rodata.__func__.7:0000000000000000 __func__.7
-     /tmp/ccsEtjz0.s:2937   .text.bMqttSrvStartWithCfg:0000000000000000 bMqttSrvStartWithCfg
-     /tmp/ccsEtjz0.s:6035   .bss.bMqttTaskAttr:0000000000000000 bMqttTaskAttr
-     /tmp/ccsEtjz0.s:6029   .bss.bMqttTimerAttr:0000000000000000 bMqttTimerAttr
-     /tmp/ccsEtjz0.s:5970   .rodata.__func__.3:0000000000000000 __func__.3
-     /tmp/ccsEtjz0.s:3942   .text.bMqttSrvDestroy:0000000000000000 bMqttSrvDestroy
-     /tmp/ccsEtjz0.s:4360   .text.bMqttSrvPublish:0000000000000000 bMqttSrvPublish
-     /tmp/ccsEtjz0.s:5958   .rodata.__func__.1:0000000000000000 __func__.1
-     /tmp/ccsEtjz0.s:5964   .rodata.__func__.2:0000000000000000 __func__.2
-     /tmp/ccsEtjz0.s:5071   .text.bMqttSrvSubscribe:0000000000000000 bMqttSrvSubscribe
-     /tmp/ccsEtjz0.s:5526   .text.bMqttSrvUnsubscribe:0000000000000000 bMqttSrvUnsubscribe
-     /tmp/ccsEtjz0.s:5952   .rodata.__func__.0:0000000000000000 __func__.0
-     /tmp/ccsEtjz0.s:5925   .text.bMqttSrvGetStatus:0000000000000000 bMqttSrvGetStatus
-     /tmp/ccsEtjz0.s:251    .rodata._bMqttTaskFunc.str1.1:000000000000006d .LC8
-     /tmp/ccsEtjz0.s:235    .rodata._bMqttTaskFunc.str1.8:0000000000000000 .LC2
-     /tmp/ccsEtjz0.s:253    .rodata._bMqttTaskFunc.str1.1:0000000000000086 .LC9
-     /tmp/ccsEtjz0.s:231    .rodata._bMqttTaskFunc.str1.1:0000000000000005 .LC1
-     /tmp/ccsEtjz0.s:242    .rodata._bMqttTaskFunc.str1.8:0000000000000020 .LC4
-     /tmp/ccsEtjz0.s:247    .rodata._bMqttTaskFunc.str1.1:0000000000000039 .LC6
-     /tmp/ccsEtjz0.s:229    .rodata._bMqttTaskFunc.str1.1:0000000000000000 .LC0
-     /tmp/ccsEtjz0.s:297    .rodata._bMqttTaskFunc.str1.8:0000000000000160 .LC24
-     /tmp/ccsEtjz0.s:294    .rodata._bMqttTaskFunc.str1.8:0000000000000128 .LC23
-     /tmp/ccsEtjz0.s:238    .rodata._bMqttTaskFunc.str1.1:0000000000000015 .LC3
-     /tmp/ccsEtjz0.s:264    .rodata._bMqttTaskFunc.str1.1:00000000000000c5 .LC13
-     /tmp/ccsEtjz0.s:275    .rodata._bMqttTaskFunc.str1.1:00000000000000fc .LC17
-     /tmp/ccsEtjz0.s:262    .rodata._bMqttTaskFunc.str1.1:00000000000000b2 .LC12
-     /tmp/ccsEtjz0.s:266    .rodata._bMqttTaskFunc.str1.1:00000000000000d6 .LC14
-     /tmp/ccsEtjz0.s:259    .rodata._bMqttTaskFunc.str1.8:0000000000000048 .LC11
-     /tmp/ccsEtjz0.s:255    .rodata._bMqttTaskFunc.str1.1:000000000000009a .LC10
-     /tmp/ccsEtjz0.s:249    .rodata._bMqttTaskFunc.str1.1:0000000000000052 .LC7
-     /tmp/ccsEtjz0.s:300    .rodata._bMqttTaskFunc.str1.1:0000000000000138 .LC25
-     /tmp/ccsEtjz0.s:272    .rodata._bMqttTaskFunc.str1.8:0000000000000070 .LC16
-     /tmp/ccsEtjz0.s:290    .rodata._bMqttTaskFunc.str1.1:000000000000012c .LC22
-     /tmp/ccsEtjz0.s:245    .rodata._bMqttTaskFunc.str1.1:0000000000000027 .LC5
-     /tmp/ccsEtjz0.s:277    .rodata._bMqttTaskFunc.str1.1:000000000000010e .LC18
-     /tmp/ccsEtjz0.s:281    .rodata._bMqttTaskFunc.str1.8:00000000000000a0 .LC19
-     /tmp/ccsEtjz0.s:284    .rodata._bMqttTaskFunc.str1.8:00000000000000d0 .LC20
-     /tmp/ccsEtjz0.s:268    .rodata._bMqttTaskFunc.str1.1:00000000000000ed .LC15
-     /tmp/ccsEtjz0.s:287    .rodata._bMqttTaskFunc.str1.8:0000000000000108 .LC21
-     /tmp/ccsEtjz0.s:2916   .rodata.bMqttSrvStartWithCfg.str1.8:0000000000000000 .LC26
-GAS LISTING /tmp/ccsEtjz0.s 			page 190
+     /tmp/ccJVFYvV.s:8      .text._bMqttFree:0000000000000000 _bMqttFree
+     /tmp/ccJVFYvV.s:25     .text._bMqttTransCb:0000000000000000 _bMqttTransCb
+     /tmp/ccJVFYvV.s:6055   .bss.pbMqttInstance:0000000000000000 pbMqttInstance
+     /tmp/ccJVFYvV.s:72     .text._bMqttTimerCb:0000000000000000 _bMqttTimerCb
+     /tmp/ccJVFYvV.s:306    .text._bMqttTaskFunc:0000000000000000 _bMqttTaskFunc
+     /tmp/ccJVFYvV.s:6023   .data.sock_fd.12:0000000000000000 sock_fd.12
+     /tmp/ccJVFYvV.s:6017   .rodata.__func__.11:0000000000000000 __func__.11
+     /tmp/ccJVFYvV.s:6048   .data.rel.local.bMqttSubscribeListHead:0000000000000000 bMqttSubscribeListHead
+     /tmp/ccJVFYvV.s:6011   .bss.mqtt_step_f.10:0000000000000000 mqtt_step_f.10
+     /tmp/ccJVFYvV.s:6041   .data.rel.local.bMqttPendingPubListHead:0000000000000000 bMqttPendingPubListHead
+     /tmp/ccJVFYvV.s:5982   .rodata.__func__.5:0000000000000000 __func__.5
+     /tmp/ccJVFYvV.s:6006   .rodata.__func__.9:0000000000000000 __func__.9
+     /tmp/ccJVFYvV.s:6000   .rodata.__func__.8:0000000000000000 __func__.8
+     /tmp/ccJVFYvV.s:5976   .rodata.__func__.4:0000000000000000 __func__.4
+     /tmp/ccJVFYvV.s:5988   .rodata.__func__.6:0000000000000000 __func__.6
+     /tmp/ccJVFYvV.s:5994   .rodata.__func__.7:0000000000000000 __func__.7
+     /tmp/ccJVFYvV.s:2937   .text.bMqttSrvStartWithCfg:0000000000000000 bMqttSrvStartWithCfg
+     /tmp/ccJVFYvV.s:6035   .bss.bMqttTaskAttr:0000000000000000 bMqttTaskAttr
+     /tmp/ccJVFYvV.s:6029   .bss.bMqttTimerAttr:0000000000000000 bMqttTimerAttr
+     /tmp/ccJVFYvV.s:5970   .rodata.__func__.3:0000000000000000 __func__.3
+     /tmp/ccJVFYvV.s:3942   .text.bMqttSrvDestroy:0000000000000000 bMqttSrvDestroy
+     /tmp/ccJVFYvV.s:4360   .text.bMqttSrvPublish:0000000000000000 bMqttSrvPublish
+     /tmp/ccJVFYvV.s:5958   .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/ccJVFYvV.s:5964   .rodata.__func__.2:0000000000000000 __func__.2
+     /tmp/ccJVFYvV.s:5071   .text.bMqttSrvSubscribe:0000000000000000 bMqttSrvSubscribe
+     /tmp/ccJVFYvV.s:5526   .text.bMqttSrvUnsubscribe:0000000000000000 bMqttSrvUnsubscribe
+     /tmp/ccJVFYvV.s:5952   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccJVFYvV.s:5925   .text.bMqttSrvGetStatus:0000000000000000 bMqttSrvGetStatus
+     /tmp/ccJVFYvV.s:251    .rodata._bMqttTaskFunc.str1.1:000000000000006d .LC8
+     /tmp/ccJVFYvV.s:235    .rodata._bMqttTaskFunc.str1.8:0000000000000000 .LC2
+     /tmp/ccJVFYvV.s:253    .rodata._bMqttTaskFunc.str1.1:0000000000000086 .LC9
+     /tmp/ccJVFYvV.s:231    .rodata._bMqttTaskFunc.str1.1:0000000000000005 .LC1
+     /tmp/ccJVFYvV.s:242    .rodata._bMqttTaskFunc.str1.8:0000000000000020 .LC4
+     /tmp/ccJVFYvV.s:247    .rodata._bMqttTaskFunc.str1.1:0000000000000039 .LC6
+     /tmp/ccJVFYvV.s:229    .rodata._bMqttTaskFunc.str1.1:0000000000000000 .LC0
+     /tmp/ccJVFYvV.s:297    .rodata._bMqttTaskFunc.str1.8:0000000000000160 .LC24
+     /tmp/ccJVFYvV.s:294    .rodata._bMqttTaskFunc.str1.8:0000000000000128 .LC23
+     /tmp/ccJVFYvV.s:238    .rodata._bMqttTaskFunc.str1.1:0000000000000015 .LC3
+     /tmp/ccJVFYvV.s:264    .rodata._bMqttTaskFunc.str1.1:00000000000000c5 .LC13
+     /tmp/ccJVFYvV.s:275    .rodata._bMqttTaskFunc.str1.1:00000000000000fc .LC17
+     /tmp/ccJVFYvV.s:262    .rodata._bMqttTaskFunc.str1.1:00000000000000b2 .LC12
+     /tmp/ccJVFYvV.s:266    .rodata._bMqttTaskFunc.str1.1:00000000000000d6 .LC14
+     /tmp/ccJVFYvV.s:259    .rodata._bMqttTaskFunc.str1.8:0000000000000048 .LC11
+     /tmp/ccJVFYvV.s:255    .rodata._bMqttTaskFunc.str1.1:000000000000009a .LC10
+     /tmp/ccJVFYvV.s:249    .rodata._bMqttTaskFunc.str1.1:0000000000000052 .LC7
+     /tmp/ccJVFYvV.s:300    .rodata._bMqttTaskFunc.str1.1:0000000000000138 .LC25
+     /tmp/ccJVFYvV.s:272    .rodata._bMqttTaskFunc.str1.8:0000000000000070 .LC16
+     /tmp/ccJVFYvV.s:290    .rodata._bMqttTaskFunc.str1.1:000000000000012c .LC22
+     /tmp/ccJVFYvV.s:245    .rodata._bMqttTaskFunc.str1.1:0000000000000027 .LC5
+     /tmp/ccJVFYvV.s:277    .rodata._bMqttTaskFunc.str1.1:000000000000010e .LC18
+     /tmp/ccJVFYvV.s:281    .rodata._bMqttTaskFunc.str1.8:00000000000000a0 .LC19
+     /tmp/ccJVFYvV.s:284    .rodata._bMqttTaskFunc.str1.8:00000000000000d0 .LC20
+     /tmp/ccJVFYvV.s:268    .rodata._bMqttTaskFunc.str1.1:00000000000000ed .LC15
+     /tmp/ccJVFYvV.s:287    .rodata._bMqttTaskFunc.str1.8:0000000000000108 .LC21
+     /tmp/ccJVFYvV.s:2916   .rodata.bMqttSrvStartWithCfg.str1.8:0000000000000000 .LC26
+GAS LISTING /tmp/ccJVFYvV.s 			page 190
 
 
-     /tmp/ccsEtjz0.s:2919   .rodata.bMqttSrvStartWithCfg.str1.1:0000000000000000 .LC27
-     /tmp/ccsEtjz0.s:2921   .rodata.bMqttSrvStartWithCfg.str1.1:0000000000000007 .LC28
-     /tmp/ccsEtjz0.s:2923   .rodata.bMqttSrvStartWithCfg.str1.1:000000000000000f .LC29
-     /tmp/ccsEtjz0.s:2925   .rodata.bMqttSrvStartWithCfg.str1.1:0000000000000018 .LC30
-     /tmp/ccsEtjz0.s:2927   .rodata.bMqttSrvStartWithCfg.str1.1:000000000000001d .LC31
-     /tmp/ccsEtjz0.s:2929   .rodata.bMqttSrvStartWithCfg.str1.1:000000000000003a .LC32
-     /tmp/ccsEtjz0.s:2931   .rodata.bMqttSrvStartWithCfg.str1.1:000000000000004e .LC33
-     /tmp/ccsEtjz0.s:4354   .rodata.bMqttSrvPublish.str1.8:00000000000000f0 .LC41
-     /tmp/ccsEtjz0.s:4344   .rodata.bMqttSrvPublish.str1.1:000000000000001d .LC38
-     /tmp/ccsEtjz0.s:4351   .rodata.bMqttSrvPublish.str1.8:00000000000000b0 .LC40
-     /tmp/ccsEtjz0.s:4331   .rodata.bMqttSrvPublish.str1.8:0000000000000000 .LC34
-     /tmp/ccsEtjz0.s:4341   .rodata.bMqttSrvPublish.str1.8:0000000000000060 .LC37
-     /tmp/ccsEtjz0.s:4337   .rodata.bMqttSrvPublish.str1.1:0000000000000000 .LC36
-     /tmp/ccsEtjz0.s:4334   .rodata.bMqttSrvPublish.str1.8:0000000000000028 .LC35
-     /tmp/ccsEtjz0.s:4348   .rodata.bMqttSrvPublish.str1.8:0000000000000088 .LC39
-     /tmp/ccsEtjz0.s:5520   .rodata.bMqttSrvUnsubscribe.str1.1:0000000000000000 .LC42
+     /tmp/ccJVFYvV.s:2919   .rodata.bMqttSrvStartWithCfg.str1.1:0000000000000000 .LC27
+     /tmp/ccJVFYvV.s:2921   .rodata.bMqttSrvStartWithCfg.str1.1:0000000000000007 .LC28
+     /tmp/ccJVFYvV.s:2923   .rodata.bMqttSrvStartWithCfg.str1.1:000000000000000f .LC29
+     /tmp/ccJVFYvV.s:2925   .rodata.bMqttSrvStartWithCfg.str1.1:0000000000000018 .LC30
+     /tmp/ccJVFYvV.s:2927   .rodata.bMqttSrvStartWithCfg.str1.1:000000000000001d .LC31
+     /tmp/ccJVFYvV.s:2929   .rodata.bMqttSrvStartWithCfg.str1.1:000000000000003a .LC32
+     /tmp/ccJVFYvV.s:2931   .rodata.bMqttSrvStartWithCfg.str1.1:000000000000004e .LC33
+     /tmp/ccJVFYvV.s:4354   .rodata.bMqttSrvPublish.str1.8:00000000000000f0 .LC41
+     /tmp/ccJVFYvV.s:4344   .rodata.bMqttSrvPublish.str1.1:000000000000001d .LC38
+     /tmp/ccJVFYvV.s:4351   .rodata.bMqttSrvPublish.str1.8:00000000000000b0 .LC40
+     /tmp/ccJVFYvV.s:4331   .rodata.bMqttSrvPublish.str1.8:0000000000000000 .LC34
+     /tmp/ccJVFYvV.s:4341   .rodata.bMqttSrvPublish.str1.8:0000000000000060 .LC37
+     /tmp/ccJVFYvV.s:4337   .rodata.bMqttSrvPublish.str1.1:0000000000000000 .LC36
+     /tmp/ccJVFYvV.s:4334   .rodata.bMqttSrvPublish.str1.8:0000000000000028 .LC35
+     /tmp/ccJVFYvV.s:4348   .rodata.bMqttSrvPublish.str1.8:0000000000000088 .LC39
+     /tmp/ccJVFYvV.s:5520   .rodata.bMqttSrvUnsubscribe.str1.1:0000000000000000 .LC42
 
 UNDEFINED SYMBOLS
 bFree
@@ -11381,6 +11381,6 @@ bTaskRemove
 bTimerDelete
 MQTTSerialize_unsubscribe
 strstr
-GAS LISTING /tmp/ccsEtjz0.s 			page 191
+GAS LISTING /tmp/ccJVFYvV.s 			page 191
 
 

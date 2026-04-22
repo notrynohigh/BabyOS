@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccblAVom.s 			page 1
+GAS LISTING /tmp/ccI4wO0t.s 			page 1
 
 
    1              		.file	"asn1parse.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = 0;
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         while (n--) {
-GAS LISTING /tmp/ccblAVom.s 			page 2
+GAS LISTING /tmp/ccI4wO0t.s 			page 2
 
 
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  103:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****                                int tag, int *val)
  104:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** {
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-GAS LISTING /tmp/ccblAVom.s 			page 3
+GAS LISTING /tmp/ccI4wO0t.s 			page 3
 
 
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     size_t len;
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  160:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** }
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** 
  162:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** #if defined(MBEDTLS_BIGNUM_C)
-GAS LISTING /tmp/ccblAVom.s 			page 4
+GAS LISTING /tmp/ccI4wO0t.s 			page 4
 
 
  163:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** int mbedtls_asn1_get_mpi(unsigned char **p,
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  217:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****  * Traverse an ASN.1 "SEQUENCE OF <tag>"
  218:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****  * and call a callback for each entry found.
  219:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****  */
-GAS LISTING /tmp/ccblAVom.s 			page 5
+GAS LISTING /tmp/ccI4wO0t.s 			page 5
 
 
  220:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** int mbedtls_asn1_traverse_sequence_of(
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  274:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  275:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** 
  276:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     if ((ret = mbedtls_asn1_get_tag(p, end, len, MBEDTLS_ASN1_BIT_STRING)) != 0) {
-GAS LISTING /tmp/ccblAVom.s 			page 6
+GAS LISTING /tmp/ccI4wO0t.s 			page 6
 
 
  277:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return ret;
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   26              		.cfi_offset 13, -24
   27 0008 4989D5   		movq	%rdx, %r13
   28 000b 4154     		pushq	%r12
-GAS LISTING /tmp/ccblAVom.s 			page 7
+GAS LISTING /tmp/ccI4wO0t.s 			page 7
 
 
   29              	.LCFI2:
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  323:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         }
  324:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** 
  325:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         cur = cur->next;
-GAS LISTING /tmp/ccblAVom.s 			page 8
+GAS LISTING /tmp/ccI4wO0t.s 			page 8
 
 
  326:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     }
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  114 0053 0F1F4400 		.p2align 3
  114      00
  115              	.L4:
-GAS LISTING /tmp/ccblAVom.s 			page 9
+GAS LISTING /tmp/ccI4wO0t.s 			page 9
 
 
  116              	.LCFI10:
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = *(*p)++;
  158              		.loc 1 36 8 view .LVU43
  159 001f 84D2     		testb	%dl, %dl
-GAS LISTING /tmp/ccblAVom.s 			page 10
+GAS LISTING /tmp/ccI4wO0t.s 			page 10
 
 
  160 0021 781D     		js	.L12
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  198 0051 4C39D9   		cmpq	%r11, %rcx
  199 0054 7E42     		jle	.L14
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
-GAS LISTING /tmp/ccblAVom.s 			page 11
+GAS LISTING /tmp/ccI4wO0t.s 			page 11
 
 
  200              		.loc 1 46 9 is_stmt 1 view .LVU59
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
  236              		.loc 1 48 16 is_stmt 1 view .LVU76
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
-GAS LISTING /tmp/ccblAVom.s 			page 12
+GAS LISTING /tmp/ccI4wO0t.s 			page 12
 
 
  237              		.loc 1 48 16 is_stmt 0 view .LVU77
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  280              	.LVL26:
   65:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  281              		.loc 1 65 14 view .LVU89
-GAS LISTING /tmp/ccblAVom.s 			page 13
+GAS LISTING /tmp/ccI4wO0t.s 			page 13
 
 
  282 000d 4829C2   		subq	%rax, %rdx
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  318 003a 0FB65001 		movzbl	1(%rax), %edx
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = *(*p)++;
  319              		.loc 1 36 8 view .LVU105
-GAS LISTING /tmp/ccblAVom.s 			page 14
+GAS LISTING /tmp/ccI4wO0t.s 			page 14
 
 
  320 003e 84D2     		testb	%dl, %dl
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  358              		.loc 1 43 12 view .LVU120
  359 0071 4C39D9   		cmpq	%r11, %rcx
  360 0074 7E50     		jle	.L21
-GAS LISTING /tmp/ccblAVom.s 			page 15
+GAS LISTING /tmp/ccI4wO0t.s 			page 15
 
 
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  396 00aa 488917   		movq	%rdx, (%rdi)
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
  397              		.loc 1 48 16 is_stmt 1 view .LVU138
-GAS LISTING /tmp/ccblAVom.s 			page 16
+GAS LISTING /tmp/ccI4wO0t.s 			page 16
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   83:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  443              		.loc 1 83 1 is_stmt 1 view -0
  444              		.cfi_startproc
-GAS LISTING /tmp/ccblAVom.s 			page 17
+GAS LISTING /tmp/ccI4wO0t.s 			page 17
 
 
   83:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  481              		.loc 1 32 14 view .LVU162
  482 0026 4889F1   		movq	%rsi, %rcx
  483 0029 4829D1   		subq	%rdx, %rcx
-GAS LISTING /tmp/ccblAVom.s 			page 18
+GAS LISTING /tmp/ccI4wO0t.s 			page 18
 
 
  484              	.LBE45:
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  522              	.LBE51:
  523              	.LBE54:
  524              	.LBE57:
-GAS LISTING /tmp/ccblAVom.s 			page 19
+GAS LISTING /tmp/ccI4wO0t.s 			page 19
 
 
   91:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_INVALID_LENGTH;
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   43:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  564              		.loc 1 43 9 is_stmt 1 view .LVU193
   43:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
-GAS LISTING /tmp/ccblAVom.s 			page 20
+GAS LISTING /tmp/ccI4wO0t.s 			page 20
 
 
  565              		.loc 1 43 24 is_stmt 0 view .LVU194
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
  604              		.loc 1 48 16 view .LVU210
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
-GAS LISTING /tmp/ccblAVom.s 			page 21
+GAS LISTING /tmp/ccI4wO0t.s 			page 21
 
 
  605              		.loc 1 48 16 is_stmt 0 view .LVU211
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  651              		.globl	mbedtls_asn1_get_int
  653              	mbedtls_asn1_get_int:
  654              	.LVL56:
-GAS LISTING /tmp/ccblAVom.s 			page 22
+GAS LISTING /tmp/ccI4wO0t.s 			page 22
 
 
  655              	.LFB45:
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   65:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  695              		.loc 1 65 8 view .LVU232
  696 0016 4885C0   		testq	%rax, %rax
-GAS LISTING /tmp/ccblAVom.s 			page 23
+GAS LISTING /tmp/ccI4wO0t.s 			page 23
 
 
  697 0019 0F8E7101 		jle	.L42
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   37:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     } else {
  732              		.loc 1 37 21 is_stmt 0 view .LVU248
  733 0047 488D7202 		leaq	2(%rdx), %rsi
-GAS LISTING /tmp/ccblAVom.s 			page 24
+GAS LISTING /tmp/ccI4wO0t.s 			page 24
 
 
  734 004b 488937   		movq	%rsi, (%rdi)
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  771              		.loc 1 125 20 view .LVU261
  772 007f 4883E801 		subq	$1, %rax
  773              	.LVL66:
-GAS LISTING /tmp/ccblAVom.s 			page 25
+GAS LISTING /tmp/ccI4wO0t.s 			page 25
 
 
  125:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         ++(*p);
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  806              		.loc 1 141 14 view .LVU278
  807 00b9 418910   		movl	%edx, (%r8)
  142:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     }
-GAS LISTING /tmp/ccblAVom.s 			page 26
+GAS LISTING /tmp/ccI4wO0t.s 			page 26
 
 
  808              		.loc 1 142 9 is_stmt 1 view .LVU279
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  843              		.loc 1 141 9 is_stmt 1 view .LVU296
  141:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
  844              		.loc 1 141 30 is_stmt 0 view .LVU297
-GAS LISTING /tmp/ccblAVom.s 			page 27
+GAS LISTING /tmp/ccI4wO0t.s 			page 27
 
 
  845 00e6 0FB63F   		movzbl	(%rdi), %edi
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  880              		.loc 1 141 9 is_stmt 1 view .LVU316
  141:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
  881              		.loc 1 141 30 is_stmt 0 view .LVU317
-GAS LISTING /tmp/ccblAVom.s 			page 28
+GAS LISTING /tmp/ccI4wO0t.s 			page 28
 
 
  882 0116 0FB64603 		movzbl	3(%rsi), %eax
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  921              		.loc 1 43 12 view .LVU332
  922 0140 4C39DE   		cmpq	%r11, %rsi
  923 0143 7E4B     		jle	.L42
-GAS LISTING /tmp/ccblAVom.s 			page 29
+GAS LISTING /tmp/ccI4wO0t.s 			page 29
 
 
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  961 0174 75EA     		jne	.L46
  962 0176 4B8D341A 		leaq	(%r10,%r11), %rsi
  963 017a E9D3FEFF 		jmp	.L44
-GAS LISTING /tmp/ccblAVom.s 			page 30
+GAS LISTING /tmp/ccI4wO0t.s 			page 30
 
 
  963      FF
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1004              		.loc 1 66 16 view .LVU359
  1005 0190 B8A0FFFF 		movl	$-96, %eax
  1005      FF
-GAS LISTING /tmp/ccblAVom.s 			page 31
+GAS LISTING /tmp/ccI4wO0t.s 			page 31
 
 
  1006 0195 C3       		ret
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1051              	.LBB103:
   65:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  1052              		.loc 1 65 5 view .LVU370
-GAS LISTING /tmp/ccblAVom.s 			page 32
+GAS LISTING /tmp/ccI4wO0t.s 			page 32
 
 
   65:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1092              	.LVL93:
  1093              	.LBB111:
  1094              	.LBI104:
-GAS LISTING /tmp/ccblAVom.s 			page 33
+GAS LISTING /tmp/ccI4wO0t.s 			page 33
 
 
   28:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****                          const unsigned char *end,
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1131 0061 0F842F01 		je	.L74
  1131      0000
  120:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_INVALID_LENGTH;
-GAS LISTING /tmp/ccblAVom.s 			page 34
+GAS LISTING /tmp/ccI4wO0t.s 			page 34
 
 
  1132              		.loc 1 120 5 is_stmt 1 view .LVU399
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1168      0000
  139:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     while (len-- > 0) {
  1169              		.loc 1 139 5 is_stmt 1 view .LVU413
-GAS LISTING /tmp/ccblAVom.s 			page 35
+GAS LISTING /tmp/ccI4wO0t.s 			page 35
 
 
  139:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     while (len-- > 0) {
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1202 00cf 0FB616   		movzbl	(%rsi), %edx
  142:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     }
  1203              		.loc 1 142 13 view .LVU432
-GAS LISTING /tmp/ccblAVom.s 			page 36
+GAS LISTING /tmp/ccI4wO0t.s 			page 36
 
 
  1204 00d2 488D7E01 		leaq	1(%rsi), %rdi
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1240 00fd 0FB67E02 		movzbl	2(%rsi), %edi
  141:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
  1241              		.loc 1 141 22 view .LVU451
-GAS LISTING /tmp/ccblAVom.s 			page 37
+GAS LISTING /tmp/ccI4wO0t.s 			page 37
 
 
  1242 0101 C1E208   		sall	$8, %edx
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1279              	.L70:
  1280              	.LBB119:
  1281              	.LBB115:
-GAS LISTING /tmp/ccblAVom.s 			page 38
+GAS LISTING /tmp/ccI4wO0t.s 			page 38
 
 
  1282              	.LBB112:
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1320              	.L73:
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             (*p)++;
  1321              		.loc 1 49 13 is_stmt 1 view .LVU484
-GAS LISTING /tmp/ccblAVom.s 			page 39
+GAS LISTING /tmp/ccI4wO0t.s 			page 39
 
 
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             (*p)++;
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1360              	.LVL116:
  1361              	.L82:
  1362              	.LBB120:
-GAS LISTING /tmp/ccblAVom.s 			page 40
+GAS LISTING /tmp/ccI4wO0t.s 			page 40
 
 
  1363              	.LBB116:
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  166:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  1410              		.loc 1 166 1 is_stmt 0 view .LVU505
  1411 0000 F30F1EFA 		endbr64
-GAS LISTING /tmp/ccblAVom.s 			page 41
+GAS LISTING /tmp/ccI4wO0t.s 			page 41
 
 
  167:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     size_t len;
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1450              		.loc 1 73 9 view .LVU519
  1451 0023 488D5001 		leaq	1(%rax), %rdx
  1452 0027 4889F1   		movq	%rsi, %rcx
-GAS LISTING /tmp/ccblAVom.s 			page 42
+GAS LISTING /tmp/ccI4wO0t.s 			page 42
 
 
   73:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** 
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1494 0041 0FB65001 		movzbl	1(%rax), %edx
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = *(*p)++;
  1495              		.loc 1 36 8 view .LVU532
-GAS LISTING /tmp/ccblAVom.s 			page 43
+GAS LISTING /tmp/ccI4wO0t.s 			page 43
 
 
  1496 0045 84D2     		testb	%dl, %dl
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1536 006f 5B       		popq	%rbx
  1537              	.LCFI15:
  1538              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/ccblAVom.s 			page 44
+GAS LISTING /tmp/ccI4wO0t.s 			page 44
 
 
  1539 0070 5D       		popq	%rbp
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         while (n--) {
  1580              		.loc 1 47 13 view .LVU558
  1581 0096 48897500 		movq	%rsi, 0(%rbp)
-GAS LISTING /tmp/ccblAVom.s 			page 45
+GAS LISTING /tmp/ccI4wO0t.s 			page 45
 
 
  1582              	.LVL135:
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1622              	.LBE135:
  1623              	.LBE138:
  1624              	.LBE141:
-GAS LISTING /tmp/ccblAVom.s 			page 46
+GAS LISTING /tmp/ccI4wO0t.s 			page 46
 
 
   70:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     }
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1670              	mbedtls_asn1_get_bitstring:
  1671              	.LVL144:
  1672              	.LFB48:
-GAS LISTING /tmp/ccblAVom.s 			page 47
+GAS LISTING /tmp/ccI4wO0t.s 			page 47
 
 
  184:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1709              		.loc 1 73 9 is_stmt 0 view .LVU594
  1710 0025 488D5001 		leaq	1(%rax), %rdx
  1711              	.LBB160:
-GAS LISTING /tmp/ccblAVom.s 			page 48
+GAS LISTING /tmp/ccI4wO0t.s 			page 48
 
 
  1712              	.LBB161:
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1749              		.loc 1 54 8 view .LVU610
  1750 0057 4839C1   		cmpq	%rax, %rcx
  1751 005a 0F82B000 		jb	.L112
-GAS LISTING /tmp/ccblAVom.s 			page 49
+GAS LISTING /tmp/ccI4wO0t.s 			page 49
 
 
  1751      0000
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** 
  1786              		.loc 1 207 5 is_stmt 1 view .LVU627
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** 
-GAS LISTING /tmp/ccblAVom.s 			page 50
+GAS LISTING /tmp/ccI4wO0t.s 			page 50
 
 
  1787              		.loc 1 207 8 is_stmt 0 view .LVU628
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         while (n--) {
  1826              		.loc 1 47 13 is_stmt 0 view .LVU642
  1827 00c4 4C8907   		movq	%r8, (%rdi)
-GAS LISTING /tmp/ccblAVom.s 			page 51
+GAS LISTING /tmp/ccI4wO0t.s 			page 51
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1864              		.loc 1 48 16 view .LVU657
  1865              	.LBE162:
  1866              	.LBE165:
-GAS LISTING /tmp/ccblAVom.s 			page 52
+GAS LISTING /tmp/ccI4wO0t.s 			page 52
 
 
  1867              	.LBE168:
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1910              		.loc 1 230 5 view .LVU665
  233:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****                                     MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) != 0) {
  1911              		.loc 1 233 5 view .LVU666
-GAS LISTING /tmp/ccblAVom.s 			page 53
+GAS LISTING /tmp/ccI4wO0t.s 			page 53
 
 
  1912              	.LVL157:
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1960              	.LVL158:
   65:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  1961              		.loc 1 65 16 view .LVU673
-GAS LISTING /tmp/ccblAVom.s 			page 54
+GAS LISTING /tmp/ccI4wO0t.s 			page 54
 
 
  1962              	.LBE201:
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  1999              		.loc 1 32 8 is_stmt 0 view .LVU687
  2000 0045 4885F6   		testq	%rsi, %rsi
  2001 0048 0F8EB301 		jle	.L128
-GAS LISTING /tmp/ccblAVom.s 			page 55
+GAS LISTING /tmp/ccI4wO0t.s 			page 55
 
 
  2001      0000
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2039              	.LVL164:
  2040 0087 660F1F84 		.p2align 4,,10
  2040      00000000 
-GAS LISTING /tmp/ccblAVom.s 			page 56
+GAS LISTING /tmp/ccI4wO0t.s 			page 56
 
 
  2040      00
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  262:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     }
  2079              		.loc 1 262 12 is_stmt 0 view .LVU714
  2080 00be 488D041A 		leaq	(%rdx,%rbx), %rax
-GAS LISTING /tmp/ccblAVom.s 			page 57
+GAS LISTING /tmp/ccI4wO0t.s 			page 57
 
 
  2081 00c2 48894500 		movq	%rax, 0(%rbp)
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = *(*p)++;
  2118              		.loc 1 36 10 is_stmt 0 view .LVU729
  2119 00f7 0FB65001 		movzbl	1(%rax), %edx
-GAS LISTING /tmp/ccblAVom.s 			page 58
+GAS LISTING /tmp/ccI4wO0t.s 			page 58
 
 
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = *(*p)++;
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2155              		.loc 1 47 13 view .LVU746
  2156 012d 4889F8   		movq	%rdi, %rax
  2157              	.LVL174:
-GAS LISTING /tmp/ccblAVom.s 			page 59
+GAS LISTING /tmp/ccI4wO0t.s 			page 59
 
 
  2158              		.p2align 4,,10
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  256:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****                     return ret;
  2196              		.loc 1 256 17 is_stmt 1 view .LVU758
  256:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****                     return ret;
-GAS LISTING /tmp/ccblAVom.s 			page 60
+GAS LISTING /tmp/ccI4wO0t.s 			page 60
 
 
  2197              		.loc 1 256 20 is_stmt 0 view .LVU759
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2242              	.LVL181:
  2243 0199 0F1F8000 		.p2align 4,,10
  2243      000000
-GAS LISTING /tmp/ccblAVom.s 			page 61
+GAS LISTING /tmp/ccI4wO0t.s 			page 61
 
 
  2244              		.p2align 3
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2284 01c6 4889C1   		movq	%rax, %rcx
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
  2285              		.loc 1 46 14 view .LVU779
-GAS LISTING /tmp/ccblAVom.s 			page 62
+GAS LISTING /tmp/ccI4wO0t.s 			page 62
 
 
  2286 01c9 31D2     		xorl	%edx, %edx
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2326 01f6 5B       		popq	%rbx
  2327              	.LCFI37:
  2328              		.cfi_def_cfa_offset 48
-GAS LISTING /tmp/ccblAVom.s 			page 63
+GAS LISTING /tmp/ccI4wO0t.s 			page 63
 
 
  2329 01f7 5D       		popq	%rbp
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2374 020b 5D       		popq	%rbp
  2375              	.LCFI46:
  2376              		.cfi_def_cfa_offset 40
-GAS LISTING /tmp/ccblAVom.s 			page 64
+GAS LISTING /tmp/ccI4wO0t.s 			page 64
 
 
  2377 020c 415C     		popq	%r12
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2424              	mbedtls_asn1_get_bitstring_null:
  2425              	.LVL200:
  2426              	.LFB50:
-GAS LISTING /tmp/ccblAVom.s 			page 65
+GAS LISTING /tmp/ccI4wO0t.s 			page 65
 
 
  273:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2464              	.LBB229:
   32:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  2465              		.loc 1 32 14 view .LVU820
-GAS LISTING /tmp/ccblAVom.s 			page 66
+GAS LISTING /tmp/ccI4wO0t.s 			page 66
 
 
  2466 0026 4889F1   		movq	%rsi, %rcx
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2503      0000
  2504              	.LVL206:
   54:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
-GAS LISTING /tmp/ccblAVom.s 			page 67
+GAS LISTING /tmp/ccI4wO0t.s 			page 67
 
 
  2505              		.loc 1 54 8 view .LVU836
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2544 0083 448D42FF 		leal	-1(%rdx), %r8d
   40:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             return MBEDTLS_ERR_ASN1_INVALID_LENGTH;
  2545              		.loc 1 40 12 view .LVU850
-GAS LISTING /tmp/ccblAVom.s 			page 68
+GAS LISTING /tmp/ccI4wO0t.s 			page 68
 
 
  2546 0087 4180F803 		cmpb	$3, %r8b
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2582 00c0 4883C201 		addq	$1, %rdx
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             (*p)++;
  2583              		.loc 1 49 32 view .LVU867
-GAS LISTING /tmp/ccblAVom.s 			page 69
+GAS LISTING /tmp/ccI4wO0t.s 			page 69
 
 
  2584 00c4 4C09C8   		orq	%r9, %rax
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2623              	.LBB240:
  2624              	.LBB237:
  2625              	.LBB234:
-GAS LISTING /tmp/ccblAVom.s 			page 70
+GAS LISTING /tmp/ccI4wO0t.s 			page 70
 
 
  2626              	.LBB231:
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2671              	.LVL218:
  297:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         seq = next;
  2672              		.loc 1 297 9 is_stmt 1 view .LVU888
-GAS LISTING /tmp/ccblAVom.s 			page 71
+GAS LISTING /tmp/ccI4wO0t.s 			page 71
 
 
  2673 0017 E8000000 		call	mbedtls_free@PLT
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  345:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     memset(cur, 0, sizeof(mbedtls_asn1_sequence));
  2711              		.loc 1 345 5 view .LVU898
  2712              	.LBB260:
-GAS LISTING /tmp/ccblAVom.s 			page 72
+GAS LISTING /tmp/ccI4wO0t.s 			page 72
 
 
  2713              	.LBI260:
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
   54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
   55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
-GAS LISTING /tmp/ccblAVom.s 			page 73
+GAS LISTING /tmp/ccI4wO0t.s 			page 73
 
 
   56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2763              	.LBE263:
  2764              	.LBE265:
  346:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     return mbedtls_asn1_traverse_sequence_of(
-GAS LISTING /tmp/ccblAVom.s 			page 74
+GAS LISTING /tmp/ccI4wO0t.s 			page 74
 
 
  2765              		.loc 1 346 5 is_stmt 1 view .LVU906
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2801              		.loc 1 32 14 view .LVU922
  2802 0045 4889FD   		movq	%rdi, %rbp
  2803 0048 4829D1   		subq	%rdx, %rcx
-GAS LISTING /tmp/ccblAVom.s 			page 75
+GAS LISTING /tmp/ccI4wO0t.s 			page 75
 
 
  2804              	.LBE271:
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   54:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  2841              		.loc 1 54 8 view .LVU937
  2842              	.LBE274:
-GAS LISTING /tmp/ccblAVom.s 			page 76
+GAS LISTING /tmp/ccI4wO0t.s 			page 76
 
 
  2843              	.LBE277:
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2882              		.loc 1 255 17 view .LVU950
  2883              	.LBB288:
  2884              	.LBB289:
-GAS LISTING /tmp/ccblAVom.s 			page 77
+GAS LISTING /tmp/ccI4wO0t.s 			page 77
 
 
  317:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         cur->next =
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2919 00da 4989C5   		movq	%rax, %r13
  2920              	.LVL237:
  2921              	.L195:
-GAS LISTING /tmp/ccblAVom.s 			page 78
+GAS LISTING /tmp/ccI4wO0t.s 			page 78
 
 
  328:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     cur->buf.len = len;
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2958 00fa 488D4301 		leaq	1(%rbx), %rax
  2959 00fe 48894500 		movq	%rax, 0(%rbp)
  243:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** 
-GAS LISTING /tmp/ccblAVom.s 			page 79
+GAS LISTING /tmp/ccI4wO0t.s 			page 79
 
 
  2960              		.loc 1 243 29 view .LVU983
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  2996      0000
   43:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  2997              		.loc 1 43 9 is_stmt 1 view .LVU998
-GAS LISTING /tmp/ccblAVom.s 			page 80
+GAS LISTING /tmp/ccI4wO0t.s 			page 80
 
 
   43:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3035              	.LVL249:
   50:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         }
  3036              		.loc 1 50 13 is_stmt 1 view .LVU1014
-GAS LISTING /tmp/ccblAVom.s 			page 81
+GAS LISTING /tmp/ccI4wO0t.s 			page 81
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3077              		.loc 1 47 13 is_stmt 0 view .LVU1027
  3078 0194 488D5802 		leaq	2(%rax), %rbx
  3079 0198 83C202   		addl	$2, %edx
-GAS LISTING /tmp/ccblAVom.s 			page 82
+GAS LISTING /tmp/ccI4wO0t.s 			page 82
 
 
  3080 019b 48895D00 		movq	%rbx, 0(%rbp)
@@ -4918,7 +4918,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3118              	.LBE275:
  3119              	.LBE278:
   70:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     }
-GAS LISTING /tmp/ccblAVom.s 			page 83
+GAS LISTING /tmp/ccI4wO0t.s 			page 83
 
 
  3120              		.loc 1 70 16 view .LVU1042
@@ -4978,7 +4978,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3168              	.LBE300:
  3169              	.LBE303:
  3170              		.loc 1 349 1 view .LVU1048
-GAS LISTING /tmp/ccblAVom.s 			page 84
+GAS LISTING /tmp/ccI4wO0t.s 			page 84
 
 
  3171 01e9 5B       		popq	%rbx
@@ -5038,7 +5038,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3223              	.LCFI80:
  3224              		.cfi_def_cfa_offset 32
  3225 0201 415D     		popq	%r13
-GAS LISTING /tmp/ccblAVom.s 			page 85
+GAS LISTING /tmp/ccI4wO0t.s 			page 85
 
 
  3226              	.LCFI81:
@@ -5098,7 +5098,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  346:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         p, end, 0xFF, tag, 0, 0,
  3272              		.loc 1 346 12 view .LVU1061
  3273 021b EBB7     		jmp	.L180
-GAS LISTING /tmp/ccblAVom.s 			page 86
+GAS LISTING /tmp/ccI4wO0t.s 			page 86
 
 
  3274              		.cfi_endproc
@@ -5158,7 +5158,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   65:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  3314              		.loc 1 65 8 view .LVU1074
  3315 0013 4885D2   		testq	%rdx, %rdx
-GAS LISTING /tmp/ccblAVom.s 			page 87
+GAS LISTING /tmp/ccI4wO0t.s 			page 87
 
 
  3316 0016 0F8E8102 		jle	.L234
@@ -5218,7 +5218,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3354              		.cfi_def_cfa_offset 16
  3355              		.cfi_offset 3, -16
  3356              	.LBB345:
-GAS LISTING /tmp/ccblAVom.s 			page 88
+GAS LISTING /tmp/ccI4wO0t.s 			page 88
 
 
  3357              	.LBB338:
@@ -5278,7 +5278,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3390              		.loc 1 367 5 is_stmt 1 view .LVU1099
  3391              		.loc 1 367 16 is_stmt 0 view .LVU1100
  3392 006b 0FB60A   		movzbl	(%rdx), %ecx
-GAS LISTING /tmp/ccblAVom.s 			page 89
+GAS LISTING /tmp/ccI4wO0t.s 			page 89
 
 
  368:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     end = *p + len;
@@ -5338,7 +5338,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = *(*p)++;
  3428              		.loc 1 36 5 is_stmt 1 view .LVU1117
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = *(*p)++;
-GAS LISTING /tmp/ccblAVom.s 			page 90
+GAS LISTING /tmp/ccI4wO0t.s 			page 90
 
 
  3429              		.loc 1 36 10 is_stmt 0 view .LVU1118
@@ -5398,7 +5398,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  377:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     if (*p == end) {
  3465              		.loc 1 377 5 is_stmt 1 view .LVU1133
  3466              		.loc 1 377 8 is_stmt 0 view .LVU1134
-GAS LISTING /tmp/ccblAVom.s 			page 91
+GAS LISTING /tmp/ccI4wO0t.s 			page 91
 
 
  3467 00cb 4C39D0   		cmpq	%r10, %rax
@@ -5458,7 +5458,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *len = *(*p)++;
  3504              		.loc 1 36 8 view .LVU1149
  3505 00f4 84D2     		testb	%dl, %dl
-GAS LISTING /tmp/ccblAVom.s 			page 92
+GAS LISTING /tmp/ccI4wO0t.s 			page 92
 
 
  3506 00f6 0F880401 		js	.L223
@@ -5518,7 +5518,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3541              	.LVL290:
  3542              	.L207:
  393:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_LENGTH_MISMATCH;
-GAS LISTING /tmp/ccblAVom.s 			page 93
+GAS LISTING /tmp/ccI4wO0t.s 			page 93
 
 
  394:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     }
@@ -5578,7 +5578,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3579      00000000 
  3580              	.LVL293:
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         while (n--) {
-GAS LISTING /tmp/ccblAVom.s 			page 94
+GAS LISTING /tmp/ccI4wO0t.s 			page 94
 
 
  3581              		.loc 1 47 9 is_stmt 1 view .LVU1176
@@ -5638,7 +5638,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3618 0197 E916FFFF 		jmp	.L218
  3618      FF
  3619              	.LVL296:
-GAS LISTING /tmp/ccblAVom.s 			page 95
+GAS LISTING /tmp/ccI4wO0t.s 			page 95
 
 
  3620 019c 0F1F4000 		.p2align 4,,10
@@ -5698,7 +5698,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
  3659              		.loc 1 48 16 is_stmt 0 view .LVU1206
  3660 01c8 0FB6CA   		movzbl	%dl, %ecx
-GAS LISTING /tmp/ccblAVom.s 			page 96
+GAS LISTING /tmp/ccI4wO0t.s 			page 96
 
 
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         while (n--) {
@@ -5758,7 +5758,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3701              	.LBB356:
   39:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         if (n == 0 || n > 4) {
  3702              		.loc 1 39 9 is_stmt 1 view .LVU1218
-GAS LISTING /tmp/ccblAVom.s 			page 97
+GAS LISTING /tmp/ccI4wO0t.s 			page 97
 
 
  3703 0200 83E27F   		andl	$127, %edx
@@ -5818,7 +5818,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3738              		.p2align 3
  3739              	.L225:
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             (*p)++;
-GAS LISTING /tmp/ccblAVom.s 			page 98
+GAS LISTING /tmp/ccI4wO0t.s 			page 98
 
 
  3740              		.loc 1 49 13 is_stmt 1 view .LVU1234
@@ -5878,7 +5878,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3777              		.loc 1 379 9 is_stmt 1 view .LVU1248
  379:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     }
  3778              		.loc 1 379 16 is_stmt 0 view .LVU1249
-GAS LISTING /tmp/ccblAVom.s 			page 99
+GAS LISTING /tmp/ccI4wO0t.s 			page 99
 
 
  3779 0275 31C0     		xorl	%eax, %eax
@@ -5938,7 +5938,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3824              	.LCFI92:
  3825              		.cfi_remember_state
  3826              		.cfi_def_cfa_offset 8
-GAS LISTING /tmp/ccblAVom.s 			page 100
+GAS LISTING /tmp/ccI4wO0t.s 			page 100
 
 
  3827 0295 C3       		ret
@@ -5998,7 +5998,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  400:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****                               const unsigned char *end,
  401:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****                               mbedtls_asn1_buf *alg)
  402:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** {
-GAS LISTING /tmp/ccblAVom.s 			page 101
+GAS LISTING /tmp/ccI4wO0t.s 			page 101
 
 
  3875              		.loc 1 402 1 is_stmt 1 view -0
@@ -6058,7 +6058,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3918              	.LBE400:
  3919              	.LBE405:
  3920              	.LBE426:
-GAS LISTING /tmp/ccblAVom.s 			page 102
+GAS LISTING /tmp/ccI4wO0t.s 			page 102
 
 
  3921              	.LBE435:
@@ -6118,7 +6118,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  3962      0000
   69:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_UNEXPECTED_TAG;
  3963              		.loc 1 69 5 is_stmt 1 view .LVU1286
-GAS LISTING /tmp/ccblAVom.s 			page 103
+GAS LISTING /tmp/ccI4wO0t.s 			page 103
 
 
   69:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_UNEXPECTED_TAG;
@@ -6178,7 +6178,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4000 006c 488D5002 		leaq	2(%rax), %rdx
  4001 0070 488911   		movq	%rdx, (%rcx)
   37:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     } else {
-GAS LISTING /tmp/ccblAVom.s 			page 104
+GAS LISTING /tmp/ccI4wO0t.s 			page 104
 
 
  4002              		.loc 1 37 16 view .LVU1302
@@ -6238,7 +6238,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4039 0096 4885C0   		testq	%rax, %rax
  4040 0099 0F8E3102 		jle	.L245
  4040      0000
-GAS LISTING /tmp/ccblAVom.s 			page 105
+GAS LISTING /tmp/ccI4wO0t.s 			page 105
 
 
   69:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_UNEXPECTED_TAG;
@@ -6298,7 +6298,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4076              	.L252:
   54:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  4077              		.loc 1 54 5 is_stmt 1 view .LVU1334
-GAS LISTING /tmp/ccblAVom.s 			page 106
+GAS LISTING /tmp/ccI4wO0t.s 			page 106
 
 
   54:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
@@ -6358,7 +6358,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4115 0105 488911   		movq	%rdx, (%rcx)
  382:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****     (*p)++;
  4116              		.loc 1 382 17 view .LVU1350
-GAS LISTING /tmp/ccblAVom.s 			page 107
+GAS LISTING /tmp/ccI4wO0t.s 			page 107
 
 
  4117 0108 44891424 		movl	%r10d, (%rsp)
@@ -6418,7 +6418,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4152              	.LVL337:
   54:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
  4153              		.loc 1 54 8 view .LVU1366
-GAS LISTING /tmp/ccblAVom.s 			page 108
+GAS LISTING /tmp/ccI4wO0t.s 			page 108
 
 
  4154              	.LBE419:
@@ -6478,7 +6478,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4186      0000
  4187 017f 4883C428 		addq	$40, %rsp
  4188              	.LCFI96:
-GAS LISTING /tmp/ccblAVom.s 			page 109
+GAS LISTING /tmp/ccI4wO0t.s 			page 109
 
 
  4189              		.cfi_remember_state
@@ -6538,7 +6538,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4228              		.loc 1 47 13 is_stmt 0 view .LVU1388
  4229 01b4 31C0     		xorl	%eax, %eax
  4230              	.LVL342:
-GAS LISTING /tmp/ccblAVom.s 			page 110
+GAS LISTING /tmp/ccI4wO0t.s 			page 110
 
 
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         while (n--) {
@@ -6598,7 +6598,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             *len = (*len << 8) | **p;
  4268              		.loc 1 48 16 view .LVU1404
  4269              	.LBE412:
-GAS LISTING /tmp/ccblAVom.s 			page 111
+GAS LISTING /tmp/ccI4wO0t.s 			page 111
 
 
  4270              	.LBE413:
@@ -6658,7 +6658,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4308 021e 4801C6   		addq	%rax, %rsi
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         (*p)++;
  4309              		.loc 1 46 14 view .LVU1419
-GAS LISTING /tmp/ccblAVom.s 			page 112
+GAS LISTING /tmp/ccI4wO0t.s 			page 112
 
 
  4310 0221 31C0     		xorl	%eax, %eax
@@ -6718,7 +6718,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4350              		.loc 1 40 9 view .LVU1430
   40:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             return MBEDTLS_ERR_ASN1_INVALID_LENGTH;
  4351              		.loc 1 40 15 is_stmt 0 view .LVU1431
-GAS LISTING /tmp/ccblAVom.s 			page 113
+GAS LISTING /tmp/ccI4wO0t.s 			page 113
 
 
  4352 0253 8D7AFF   		leal	-1(%rdx), %edi
@@ -6778,7 +6778,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4389              		.loc 1 49 32 view .LVU1447
  4390 028f 4C09C2   		orq	%r8, %rdx
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             (*p)++;
-GAS LISTING /tmp/ccblAVom.s 			page 114
+GAS LISTING /tmp/ccI4wO0t.s 			page 114
 
 
  4391              		.loc 1 49 18 view .LVU1448
@@ -6838,7 +6838,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4428      FF
  4429              	.LVL359:
  4430 02ca 660F1F44 		.p2align 4,,10
-GAS LISTING /tmp/ccblAVom.s 			page 115
+GAS LISTING /tmp/ccI4wO0t.s 			page 115
 
 
  4430      0000
@@ -6898,7 +6898,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4470              		.cfi_endproc
  4471              	.LFE55:
  4473              		.section	.text.mbedtls_asn1_free_named_data,"ax",@progbits
-GAS LISTING /tmp/ccblAVom.s 			page 116
+GAS LISTING /tmp/ccI4wO0t.s 			page 116
 
 
  4474              		.p2align 4
@@ -6958,7 +6958,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4512              	.LVL368:
  429:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c **** }
  4513              		.loc 1 429 5 view .LVU1475
-GAS LISTING /tmp/ccblAVom.s 			page 117
+GAS LISTING /tmp/ccI4wO0t.s 			page 117
 
 
  4514 0028 E9000000 		jmp	mbedtls_platform_zeroize@PLT
@@ -7018,7 +7018,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4560              	.L285:
  438:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         *head = cur->next;
  4561              		.loc 1 438 9 is_stmt 1 view .LVU1485
-GAS LISTING /tmp/ccblAVom.s 			page 118
+GAS LISTING /tmp/ccI4wO0t.s 			page 118
 
 
  4562              		.loc 1 438 20 is_stmt 0 view .LVU1486
@@ -7078,7 +7078,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4605              		.p2align 4
  4606              		.globl	mbedtls_asn1_free_named_data_list_shallow
  4608              	mbedtls_asn1_free_named_data_list_shallow:
-GAS LISTING /tmp/ccblAVom.s 			page 119
+GAS LISTING /tmp/ccI4wO0t.s 			page 119
 
 
  4609              	.LVL379:
@@ -7138,7 +7138,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4651              		.loc 1 451 1 view .LVU1509
  4652 0022 C3       		ret
  4653              	.LVL384:
-GAS LISTING /tmp/ccblAVom.s 			page 120
+GAS LISTING /tmp/ccI4wO0t.s 			page 120
 
 
  4654              		.p2align 4,,10
@@ -7198,7 +7198,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  457:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         if (list->oid.len == len &&
  458:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             memcmp(list->oid.p, oid, len) == 0) {
  459:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****             break;
-GAS LISTING /tmp/ccblAVom.s 			page 121
+GAS LISTING /tmp/ccI4wO0t.s 			page 121
 
 
  460:../../bos/thirdparty/mbedtls/bos_mbedtls/asn1parse.c ****         }
@@ -7258,7 +7258,7 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  4743              	.Letext0:
  4744              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
  4745              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
-GAS LISTING /tmp/ccblAVom.s 			page 122
+GAS LISTING /tmp/ccI4wO0t.s 			page 122
 
 
  4746              		.file 5 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
@@ -7284,29 +7284,29 @@ GAS LISTING /tmp/ccblAVom.s 			page 1
  16447              	3:
  16448 001c 00000000 		.align 8
  16449              	4:
-GAS LISTING /tmp/ccblAVom.s 			page 123
+GAS LISTING /tmp/ccI4wO0t.s 			page 123
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 asn1parse.c
-     /tmp/ccblAVom.s:8      .text.asn1_get_sequence_of_cb:0000000000000000 asn1_get_sequence_of_cb
-     /tmp/ccblAVom.s:133    .text.mbedtls_asn1_get_len:0000000000000000 mbedtls_asn1_get_len
-     /tmp/ccblAVom.s:266    .text.mbedtls_asn1_get_tag:0000000000000000 mbedtls_asn1_get_tag
-     /tmp/ccblAVom.s:440    .text.mbedtls_asn1_get_bool:0000000000000000 mbedtls_asn1_get_bool
-     /tmp/ccblAVom.s:653    .text.mbedtls_asn1_get_int:0000000000000000 mbedtls_asn1_get_int
-     /tmp/ccblAVom.s:1029   .text.mbedtls_asn1_get_enum:0000000000000000 mbedtls_asn1_get_enum
-     /tmp/ccblAVom.s:1405   .text.mbedtls_asn1_get_mpi:0000000000000000 mbedtls_asn1_get_mpi
-     /tmp/ccblAVom.s:1670   .text.mbedtls_asn1_get_bitstring:0000000000000000 mbedtls_asn1_get_bitstring
-     /tmp/ccblAVom.s:1902   .text.mbedtls_asn1_traverse_sequence_of:0000000000000000 mbedtls_asn1_traverse_sequence_of
-     /tmp/ccblAVom.s:2424   .text.mbedtls_asn1_get_bitstring_null:0000000000000000 mbedtls_asn1_get_bitstring_null
-     /tmp/ccblAVom.s:2645   .text.mbedtls_asn1_sequence_free:0000000000000000 mbedtls_asn1_sequence_free
-     /tmp/ccblAVom.s:2702   .text.mbedtls_asn1_get_sequence_of:0000000000000000 mbedtls_asn1_get_sequence_of
-     /tmp/ccblAVom.s:3281   .text.mbedtls_asn1_get_alg:0000000000000000 mbedtls_asn1_get_alg
-     /tmp/ccblAVom.s:3872   .text.mbedtls_asn1_get_alg_null:0000000000000000 mbedtls_asn1_get_alg_null
-     /tmp/ccblAVom.s:4477   .text.mbedtls_asn1_free_named_data:0000000000000000 mbedtls_asn1_free_named_data
-     /tmp/ccblAVom.s:4528   .text.mbedtls_asn1_free_named_data_list:0000000000000000 mbedtls_asn1_free_named_data_list
-     /tmp/ccblAVom.s:4608   .text.mbedtls_asn1_free_named_data_list_shallow:0000000000000000 mbedtls_asn1_free_named_data_list_shallow
-     /tmp/ccblAVom.s:4667   .text.mbedtls_asn1_find_named_data:0000000000000000 mbedtls_asn1_find_named_data
+     /tmp/ccI4wO0t.s:8      .text.asn1_get_sequence_of_cb:0000000000000000 asn1_get_sequence_of_cb
+     /tmp/ccI4wO0t.s:133    .text.mbedtls_asn1_get_len:0000000000000000 mbedtls_asn1_get_len
+     /tmp/ccI4wO0t.s:266    .text.mbedtls_asn1_get_tag:0000000000000000 mbedtls_asn1_get_tag
+     /tmp/ccI4wO0t.s:440    .text.mbedtls_asn1_get_bool:0000000000000000 mbedtls_asn1_get_bool
+     /tmp/ccI4wO0t.s:653    .text.mbedtls_asn1_get_int:0000000000000000 mbedtls_asn1_get_int
+     /tmp/ccI4wO0t.s:1029   .text.mbedtls_asn1_get_enum:0000000000000000 mbedtls_asn1_get_enum
+     /tmp/ccI4wO0t.s:1405   .text.mbedtls_asn1_get_mpi:0000000000000000 mbedtls_asn1_get_mpi
+     /tmp/ccI4wO0t.s:1670   .text.mbedtls_asn1_get_bitstring:0000000000000000 mbedtls_asn1_get_bitstring
+     /tmp/ccI4wO0t.s:1902   .text.mbedtls_asn1_traverse_sequence_of:0000000000000000 mbedtls_asn1_traverse_sequence_of
+     /tmp/ccI4wO0t.s:2424   .text.mbedtls_asn1_get_bitstring_null:0000000000000000 mbedtls_asn1_get_bitstring_null
+     /tmp/ccI4wO0t.s:2645   .text.mbedtls_asn1_sequence_free:0000000000000000 mbedtls_asn1_sequence_free
+     /tmp/ccI4wO0t.s:2702   .text.mbedtls_asn1_get_sequence_of:0000000000000000 mbedtls_asn1_get_sequence_of
+     /tmp/ccI4wO0t.s:3281   .text.mbedtls_asn1_get_alg:0000000000000000 mbedtls_asn1_get_alg
+     /tmp/ccI4wO0t.s:3872   .text.mbedtls_asn1_get_alg_null:0000000000000000 mbedtls_asn1_get_alg_null
+     /tmp/ccI4wO0t.s:4477   .text.mbedtls_asn1_free_named_data:0000000000000000 mbedtls_asn1_free_named_data
+     /tmp/ccI4wO0t.s:4528   .text.mbedtls_asn1_free_named_data_list:0000000000000000 mbedtls_asn1_free_named_data_list
+     /tmp/ccI4wO0t.s:4608   .text.mbedtls_asn1_free_named_data_list_shallow:0000000000000000 mbedtls_asn1_free_named_data_list_shallow
+     /tmp/ccI4wO0t.s:4667   .text.mbedtls_asn1_find_named_data:0000000000000000 mbedtls_asn1_find_named_data
 
 UNDEFINED SYMBOLS
 mbedtls_calloc

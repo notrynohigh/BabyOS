@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc5rPN6l.s 			page 1
+GAS LISTING /tmp/ccbaEuC6.s 			page 1
 
 
    1              		.file	"pk.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** void mbedtls_pk_init(mbedtls_pk_context *ctx)
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** {
   12              		.loc 1 46 1 view -0
-GAS LISTING /tmp/cc5rPN6l.s 			page 2
+GAS LISTING /tmp/ccbaEuC6.s 			page 2
 
 
   13              		.cfi_startproc
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
   68:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
   69:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     if ((ctx->pk_info != NULL) && (ctx->pk_info->ctx_free_func != NULL)) {
   46              		.loc 1 69 13 view .LVU11
-GAS LISTING /tmp/cc5rPN6l.s 			page 3
+GAS LISTING /tmp/ccbaEuC6.s 			page 3
 
 
   47 000a 488B07   		movq	(%rdi), %rax
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
   83              	.LFE38:
   85              		.section	.text.mbedtls_pk_info_from_type,"ax",@progbits
   86              		.p2align 4
-GAS LISTING /tmp/cc5rPN6l.s 			page 4
+GAS LISTING /tmp/ccbaEuC6.s 			page 4
 
 
   87              		.globl	mbedtls_pk_info_from_type
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
   98      000000
  116:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     switch (pk_type) {
   99              		.loc 1 116 5 view .LVU26
-GAS LISTING /tmp/cc5rPN6l.s 			page 5
+GAS LISTING /tmp/ccbaEuC6.s 			page 5
 
 
  100 000b 83FF03   		cmpl	$3, %edi
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  140:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** int mbedtls_pk_setup(mbedtls_pk_context *ctx, const mbedtls_pk_info_t *info)
  141:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** {
  134              		.loc 1 141 1 is_stmt 1 view -0
-GAS LISTING /tmp/cc5rPN6l.s 			page 6
+GAS LISTING /tmp/ccbaEuC6.s 			page 6
 
 
  135              		.cfi_startproc
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  152:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
  153:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     return 0;
  177              		.loc 1 153 5 is_stmt 1 view .LVU45
-GAS LISTING /tmp/cc5rPN6l.s 			page 7
+GAS LISTING /tmp/ccbaEuC6.s 			page 7
 
 
  178              		.loc 1 153 12 is_stmt 0 view .LVU46
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  226              		.section	.text.mbedtls_pk_can_do,"ax",@progbits
  227              		.p2align 4
  228              		.globl	mbedtls_pk_can_do
-GAS LISTING /tmp/cc5rPN6l.s 			page 8
+GAS LISTING /tmp/ccbaEuC6.s 			page 8
 
 
  230              	mbedtls_pk_can_do:
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  206:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     if (ctx->pk_info != NULL) {
  208:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
-GAS LISTING /tmp/cc5rPN6l.s 			page 9
+GAS LISTING /tmp/ccbaEuC6.s 			page 9
 
 
  209:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  254              	.LVL16:
  255 0019 0F1F8000 		.p2align 4,,10
  255      000000
-GAS LISTING /tmp/cc5rPN6l.s 			page 10
+GAS LISTING /tmp/ccbaEuC6.s 			page 10
 
 
  256              		.p2align 3
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  282:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     if (mbedtls_pk_get_type(ctx) != MBEDTLS_PK_OPAQUE) {
  283:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         mbedtls_pk_type_t type;
  284:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
-GAS LISTING /tmp/cc5rPN6l.s 			page 11
+GAS LISTING /tmp/ccbaEuC6.s 			page 11
 
 
  285:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         if (PSA_ALG_IS_ECDSA(alg) || PSA_ALG_IS_ECDH(alg)) {
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  339:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return 0;
  340:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
  341:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
-GAS LISTING /tmp/cc5rPN6l.s 			page 12
+GAS LISTING /tmp/ccbaEuC6.s 			page 12
 
 
  342:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     /*
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  396:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             return PSA_ALG_RSA_PKCS1V15_CRYPT;
  397:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         } else {
  398:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             return PSA_ALG_RSA_PKCS1V15_SIGN(PSA_ALG_ANY_HASH);
-GAS LISTING /tmp/cc5rPN6l.s 			page 13
+GAS LISTING /tmp/ccbaEuC6.s 			page 13
 
 
  399:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         }
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  453:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             psa_set_key_bits(attributes, mbedtls_pk_get_bitlen(pk));
  454:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             psa_set_key_algorithm(attributes,
  455:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                   psa_algorithm_for_rsa(rsa, want_crypt));
-GAS LISTING /tmp/cc5rPN6l.s 			page 14
+GAS LISTING /tmp/ccbaEuC6.s 			page 14
 
 
  456:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             break;
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  510:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                           PSA_KEY_TYPE_ECC_PUBLIC_KEY(family)));
  511:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             psa_set_key_bits(attributes, bits);
  512:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             psa_set_key_algorithm(attributes, alg);
-GAS LISTING /tmp/cc5rPN6l.s 			page 15
+GAS LISTING /tmp/ccbaEuC6.s 			page 15
 
 
  513:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             break;
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  567:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             psa_set_key_type(attributes, new_type);
  568:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             psa_set_key_bits(attributes, psa_get_key_bits(&old_attributes));
  569:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             psa_set_key_algorithm(attributes, psa_get_key_algorithm(&old_attributes));
-GAS LISTING /tmp/cc5rPN6l.s 			page 16
+GAS LISTING /tmp/ccbaEuC6.s 			page 16
 
 
  570:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             break;
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  624:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****          *   based on a detailed understanding of PSA policies, we are a bit
  625:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****          *   more liberal than psa_copy_key() here.
  626:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****          */
-GAS LISTING /tmp/cc5rPN6l.s 			page 17
+GAS LISTING /tmp/ccbaEuC6.s 			page 17
 
 
  627:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         /* Here we need to check that the types match, otherwise we risk
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  681:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****              * We don't check the bit-size: it's optional in attributes,
  682:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****              * and if it's specified, psa_import_key() will know from the key
  683:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****              * data length and will check that the bit-size matches. */
-GAS LISTING /tmp/cc5rPN6l.s 			page 18
+GAS LISTING /tmp/ccbaEuC6.s 			page 18
 
 
  684:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             psa_key_type_t to_type = psa_get_key_type(attributes);
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  738:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
  739:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** static int import_public_into_psa(const mbedtls_pk_context *pk,
  740:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                   const psa_key_attributes_t *attributes,
-GAS LISTING /tmp/cc5rPN6l.s 			page 19
+GAS LISTING /tmp/ccbaEuC6.s 			page 19
 
 
  741:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                   mbedtls_svc_key_id_t *key_id)
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  795:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             }
  796:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             int ret = mbedtls_ecp_write_public_key(
  797:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                 ec, MBEDTLS_ECP_PF_UNCOMPRESSED,
-GAS LISTING /tmp/cc5rPN6l.s 			page 20
+GAS LISTING /tmp/ccbaEuC6.s 			page 20
 
 
  798:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                 &key_length, key_buffer, sizeof(key_buffer));
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  852:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_FEATURE_UNAVAILABLE;
  853:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
  854:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** #endif /* MBEDTLS_PK_RSA_ALT_SUPPORT */
-GAS LISTING /tmp/cc5rPN6l.s 			page 21
+GAS LISTING /tmp/ccbaEuC6.s 			page 21
 
 
  855:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  909:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         if (ret != 0) {
  910:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             goto exit;
  911:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         }
-GAS LISTING /tmp/cc5rPN6l.s 			page 22
+GAS LISTING /tmp/ccbaEuC6.s 			page 22
 
 
  912:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  966:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             goto exit;
  967:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         }
  968:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     } else
-GAS LISTING /tmp/cc5rPN6l.s 			page 23
+GAS LISTING /tmp/ccbaEuC6.s 			page 23
 
 
  969:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** #endif /* MBEDTLS_PK_HAVE_ECC_KEYS */
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1023:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
 1024:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     /* Should never happen when we're called */
 1025:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     if (info->rs_alloc_func == NULL || info->rs_free_func == NULL) {
-GAS LISTING /tmp/cc5rPN6l.s 			page 24
+GAS LISTING /tmp/ccbaEuC6.s 			page 24
 
 
 1026:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1050:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
 1051:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
 1052:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     if (ctx->pk_info == NULL ||
-GAS LISTING /tmp/cc5rPN6l.s 			page 25
+GAS LISTING /tmp/ccbaEuC6.s 			page 25
 
 
  300              		.loc 1 1052 5 is_stmt 1 view .LVU68
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  * in order to enable an efficient implementation of conversion functions.
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  * This is tested by md_to_from_psa() in test_suite_md. */
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h **** typedef enum {
-GAS LISTING /tmp/cc5rPN6l.s 			page 26
+GAS LISTING /tmp/ccbaEuC6.s 			page 26
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****     MBEDTLS_MD_NONE=0,    /**< None. */
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  102:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  *
  103:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  * Fields can be accessed with #mbedtls_md_get_size,
  104:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  * #mbedtls_md_get_type and #mbedtls_md_get_name.
-GAS LISTING /tmp/cc5rPN6l.s 			page 27
+GAS LISTING /tmp/ccbaEuC6.s 			page 27
 
 
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  */
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  159:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h **** void mbedtls_md_init(mbedtls_md_context_t *ctx);
  160:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h **** 
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h **** /**
-GAS LISTING /tmp/cc5rPN6l.s 			page 28
+GAS LISTING /tmp/ccbaEuC6.s 			page 28
 
 
  162:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  * \brief           This function clears the internal structure of \p ctx and
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  216:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  * \return          #MBEDTLS_ERR_MD_BAD_INPUT_DATA on parameter-verification failure.
  217:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  * \return          #MBEDTLS_ERR_MD_FEATURE_UNAVAILABLE if both contexts are
  218:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  *                  not using the same engine. This can be avoided by moving
-GAS LISTING /tmp/cc5rPN6l.s 			page 29
+GAS LISTING /tmp/ccbaEuC6.s 			page 29
 
 
  219:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h ****  *                  the call to psa_crypto_init() before the first call to
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  330              		.loc 2 248 12 discriminator 1 view .LVU77
  331 0036 E8000000 		call	mbedtls_md_get_size@PLT
  331      00
-GAS LISTING /tmp/cc5rPN6l.s 			page 30
+GAS LISTING /tmp/ccbaEuC6.s 			page 30
 
 
  332              	.LVL21:
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1078:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
  352              		.loc 1 1078 5 is_stmt 1 view .LVU84
  353              		.loc 1 1081 5 view .LVU85
-GAS LISTING /tmp/cc5rPN6l.s 			page 31
+GAS LISTING /tmp/ccbaEuC6.s 			page 31
 
 
  354              		.loc 1 1081 21 is_stmt 0 view .LVU86
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  396              		.loc 1 1052 12 is_stmt 0 view .LVU97
  397 0075 488B4500 		movq	0(%rbp), %rax
 1052:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         pk_hashlen_helper(md_alg, &hash_len) != 0) {
-GAS LISTING /tmp/cc5rPN6l.s 			page 32
+GAS LISTING /tmp/ccbaEuC6.s 			page 32
 
 
  398              		.loc 1 1052 8 view .LVU98
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  446              		.cfi_restore_state
 1082:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
  447              		.loc 1 1082 16 view .LVU108
-GAS LISTING /tmp/cc5rPN6l.s 			page 33
+GAS LISTING /tmp/ccbaEuC6.s 			page 33
 
 
  448 0096 B800C1FF 		movl	$-16128, %eax
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  490 000e 89F3     		movl	%esi, %ebx
  491 0010 4883EC10 		subq	$16, %rsp
  492              	.LCFI28:
-GAS LISTING /tmp/cc5rPN6l.s 			page 34
+GAS LISTING /tmp/ccbaEuC6.s 			page 34
 
 
  493              		.cfi_def_cfa_offset 48
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  538              	.LVL42:
 1005:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return -1;
  539              		.loc 1 1005 5 is_stmt 1 view .LVU129
-GAS LISTING /tmp/cc5rPN6l.s 			page 35
+GAS LISTING /tmp/ccbaEuC6.s 			page 35
 
 
 1005:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return -1;
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  582              	.LCFI31:
  583              		.cfi_def_cfa_offset 16
  584              	.LVL45:
-GAS LISTING /tmp/cc5rPN6l.s 			page 36
+GAS LISTING /tmp/ccbaEuC6.s 			page 36
 
 
  585              		.loc 1 1098 1 view .LVU142
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  627      FF
  628              	.LVL50:
  629              	.L58:
-GAS LISTING /tmp/cc5rPN6l.s 			page 37
+GAS LISTING /tmp/ccbaEuC6.s 			page 37
 
 
 1049:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1102:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****  */
 1103:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** int mbedtls_pk_verify_ext(mbedtls_pk_type_t type, const void *options,
 1104:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                           mbedtls_pk_context *ctx, mbedtls_md_type_t md_alg,
-GAS LISTING /tmp/cc5rPN6l.s 			page 38
+GAS LISTING /tmp/ccbaEuC6.s 			page 38
 
 
 1105:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                           const unsigned char *hash, size_t hash_len,
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  724              		.loc 1 1107 1 view .LVU169
  725 002f 48894424 		movq	%rax, 24(%rsp)
  725      18
-GAS LISTING /tmp/cc5rPN6l.s 			page 39
+GAS LISTING /tmp/ccbaEuC6.s 			page 39
 
 
  726 0034 488B4424 		movq	104(%rsp), %rax
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  762      0000
 1117:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_TYPE_MISMATCH;
 1118:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
-GAS LISTING /tmp/cc5rPN6l.s 			page 40
+GAS LISTING /tmp/ccbaEuC6.s 			page 40
 
 
 1119:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  797              	.LBI105:
  246:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h **** {
  798              		.loc 2 246 29 view .LVU197
-GAS LISTING /tmp/cc5rPN6l.s 			page 41
+GAS LISTING /tmp/ccbaEuC6.s 			page 41
 
 
  799              	.LBB106:
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  837 00cd 4889EA   		movq	%rbp, %rdx
  838              	.LBE102:
  839              	.LBE101:
-GAS LISTING /tmp/cc5rPN6l.s 			page 42
+GAS LISTING /tmp/ccbaEuC6.s 			page 42
 
 
  840              	.LBE100:
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1180:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****             return PSA_PK_TO_MBEDTLS_ERR(status);
 1181:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         }
 1182:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
-GAS LISTING /tmp/cc5rPN6l.s 			page 43
+GAS LISTING /tmp/ccbaEuC6.s 			page 43
 
 
 1183:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         /* This function requires returning MBEDTLS_ERR_PK_SIG_LEN_MISMATCH
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1085:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                      sig, sig_len);
  849              		.loc 1 1085 12 view .LVU213
  850 00d4 4489F6   		movl	%r14d, %esi
-GAS LISTING /tmp/cc5rPN6l.s 			page 44
+GAS LISTING /tmp/ccbaEuC6.s 			page 44
 
 
  851 00d7 4C89FF   		movq	%r15, %rdi
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  997:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** {
  899              		.loc 1 997 19 is_stmt 1 view .LVU221
  900              	.LBB107:
-GAS LISTING /tmp/cc5rPN6l.s 			page 45
+GAS LISTING /tmp/ccbaEuC6.s 			page 45
 
 
  999:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return 0;
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1261:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                          sig, sig_size, sig_len,
 1262:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                          f_rng, p_rng, rs_ctx->rs_ctx);
 1263:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
-GAS LISTING /tmp/cc5rPN6l.s 			page 46
+GAS LISTING /tmp/ccbaEuC6.s 			page 46
 
 
 1264:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         if (ret != MBEDTLS_ERR_ECP_IN_PROGRESS) {
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1318:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                sig, sig_size, sig_len, f_rng, p_rng);
 1319:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
 1320:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
-GAS LISTING /tmp/cc5rPN6l.s 			page 47
+GAS LISTING /tmp/ccbaEuC6.s 			page 47
 
 
 1321:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** #if defined(MBEDTLS_RSA_C) && defined(MBEDTLS_PKCS1_V21)
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1375:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     if (sig_size < mbedtls_pk_get_len(ctx)) {
 1376:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_BUFFER_TOO_SMALL;
 1377:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
-GAS LISTING /tmp/cc5rPN6l.s 			page 48
+GAS LISTING /tmp/ccbaEuC6.s 			page 48
 
 
 1378:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1432:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_TYPE_MISMATCH;
 1433:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
 1434:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
-GAS LISTING /tmp/cc5rPN6l.s 			page 49
+GAS LISTING /tmp/ccbaEuC6.s 			page 49
 
 
 1435:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     return ctx->pk_info->encrypt_func(ctx, input, ilen,
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1489:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
 1490:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** /*
 1491:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****  * Export debug information
-GAS LISTING /tmp/cc5rPN6l.s 			page 50
+GAS LISTING /tmp/ccbaEuC6.s 			page 50
 
 
 1492:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****  */
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  934 010f 0F85BB00 		jne	.L88
  934      0000
 1136:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     const mbedtls_pk_rsassa_pss_options *pss_opts;
-GAS LISTING /tmp/cc5rPN6l.s 			page 51
+GAS LISTING /tmp/ccbaEuC6.s 			page 51
 
 
  935              		.loc 1 1136 5 is_stmt 1 view .LVU233
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
   18:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** 
   19:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #if defined(MBEDTLS_RSA_C)
   20:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/rsa.h"
-GAS LISTING /tmp/cc5rPN6l.s 			page 52
+GAS LISTING /tmp/ccbaEuC6.s 			page 52
 
 
   21:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #endif
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
   75:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****     MBEDTLS_PK_RSA,
   76:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****     MBEDTLS_PK_ECKEY,
   77:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****     MBEDTLS_PK_ECKEY_DH,
-GAS LISTING /tmp/cc5rPN6l.s 			page 53
+GAS LISTING /tmp/ccbaEuC6.s 			page 53
 
 
   78:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****     MBEDTLS_PK_ECDSA,
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  132:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #endif
  133:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** 
  134:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #if defined(MBEDTLS_ECDSA_C) &&                                 \
-GAS LISTING /tmp/cc5rPN6l.s 			page 54
+GAS LISTING /tmp/ccbaEuC6.s 			page 54
 
 
  135:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****     MBEDTLS_ECDSA_MAX_LEN > MBEDTLS_PK_SIGNATURE_MAX_SIZE
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  189:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****     MBEDTLS_PK_DEBUG_MPI,
  190:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****     MBEDTLS_PK_DEBUG_ECP,
  191:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****     MBEDTLS_PK_DEBUG_PSA_EC,
-GAS LISTING /tmp/cc5rPN6l.s 			page 55
+GAS LISTING /tmp/ccbaEuC6.s 			page 55
 
 
  192:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** } mbedtls_pk_debug_type;
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  246:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****      *   inside the ecp_keypair structure
  247:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****      * - the following fields are used for all public key operations: signature
  248:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****      *   verify, key pair check and key write.
-GAS LISTING /tmp/cc5rPN6l.s 			page 56
+GAS LISTING /tmp/ccbaEuC6.s 			page 56
 
 
  249:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****      * - For a key pair, priv_id contains the private key. For a public key,
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  303:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** 
  304:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** /**
  305:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \brief           Initialize a #mbedtls_pk_context (as NONE).
-GAS LISTING /tmp/cc5rPN6l.s 			page 57
+GAS LISTING /tmp/ccbaEuC6.s 			page 57
 
 
  306:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  360:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
  361:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** /**
  362:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \brief           Initialize a PK context to wrap a PSA key.
-GAS LISTING /tmp/cc5rPN6l.s 			page 58
+GAS LISTING /tmp/ccbaEuC6.s 			page 58
 
 
  363:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  417:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *
  418:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \param ctx       The context to query. It must have been initialized.
  419:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *
-GAS LISTING /tmp/cc5rPN6l.s 			page 59
+GAS LISTING /tmp/ccbaEuC6.s 			page 59
 
 
  420:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \return          Key size in bits, or 0 on error
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  989      04
 1210:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                                 md_alg, (unsigned int) hash_len, hash,
  990              		.loc 1 1210 15 view .LVU256
-GAS LISTING /tmp/cc5rPN6l.s 			page 60
+GAS LISTING /tmp/ccbaEuC6.s 			page 60
 
 
  991 0157 89DA     		movl	%ebx, %edx
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  480:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
  481:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** 
  482:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #if defined(MBEDTLS_PSA_CRYPTO_CLIENT)
-GAS LISTING /tmp/cc5rPN6l.s 			page 61
+GAS LISTING /tmp/ccbaEuC6.s 			page 61
 
 
  483:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** /**
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  537:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                    key. Call psa_set_key_identifier() before or after this
  538:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                    function if you wish to create a persistent key. Call
  539:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                    psa_set_key_lifetime() before or after this function if
-GAS LISTING /tmp/cc5rPN6l.s 			page 62
+GAS LISTING /tmp/ccbaEuC6.s 			page 62
 
 
  540:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                    you wish to import the key in a secure element.
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  594:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****                                   psa_key_attributes_t *attributes);
  595:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** 
  596:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** /**
-GAS LISTING /tmp/cc5rPN6l.s 			page 63
+GAS LISTING /tmp/ccbaEuC6.s 			page 63
 
 
  597:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \brief           Import a key into the PSA key store.
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  651:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                  - #MBEDTLS_PK_ECKEY for EC keys.
  652:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *
  653:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                  Once this functions returns the PK object will be completely
-GAS LISTING /tmp/cc5rPN6l.s 			page 64
+GAS LISTING /tmp/ccbaEuC6.s 			page 64
 
 
  654:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                  independent from the original PSA key that it was generated
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  708:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                  parameters are not correct.
  709:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  */
  710:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** int mbedtls_pk_copy_public_from_psa(mbedtls_svc_key_id_t key_id, mbedtls_pk_context *pk);
-GAS LISTING /tmp/cc5rPN6l.s 			page 65
+GAS LISTING /tmp/ccbaEuC6.s 			page 65
 
 
  711:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** #endif /* MBEDTLS_PSA_CRYPTO_CLIENT */
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  765:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                  operations was reached: see \c mbedtls_ecp_set_max_ops().
  766:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  */
  767:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** int mbedtls_pk_verify_restartable(mbedtls_pk_context *ctx,
-GAS LISTING /tmp/cc5rPN6l.s 			page 66
+GAS LISTING /tmp/ccbaEuC6.s 			page 66
 
 
  768:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****                                   mbedtls_md_type_t md_alg,
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  822:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \param sig_size  The size of the \p sig buffer in bytes.
  823:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \param sig_len   On successful return,
  824:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *                  the number of bytes written to \p sig.
-GAS LISTING /tmp/cc5rPN6l.s 			page 67
+GAS LISTING /tmp/ccbaEuC6.s 			page 67
 
 
  825:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \param f_rng     RNG function, must not be \c NULL.
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  879:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****                         unsigned char *sig, size_t sig_size, size_t *sig_len,
  880:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****                         int (*f_rng)(void *, unsigned char *, size_t),
  881:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****                         void *p_rng);
-GAS LISTING /tmp/cc5rPN6l.s 			page 68
+GAS LISTING /tmp/ccbaEuC6.s 			page 68
 
 
  882:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** 
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  936:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *
  937:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \return          0 on success, or a specific error code.
  938:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  */
-GAS LISTING /tmp/cc5rPN6l.s 			page 69
+GAS LISTING /tmp/ccbaEuC6.s 			page 69
 
 
  939:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** int mbedtls_pk_decrypt(mbedtls_pk_context *ctx,
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  993:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \param items     Place to write debug items
  994:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  *
  995:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  * \return          0 on success or MBEDTLS_ERR_PK_BAD_INPUT_DATA
-GAS LISTING /tmp/cc5rPN6l.s 			page 70
+GAS LISTING /tmp/ccbaEuC6.s 			page 70
 
 
  996:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****  */
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1013              	.LBE123:
 1032:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****         case MBEDTLS_PK_RSA:
 1033:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****             return (mbedtls_rsa_context *) (pk).MBEDTLS_PRIVATE(pk_ctx);
-GAS LISTING /tmp/cc5rPN6l.s 			page 71
+GAS LISTING /tmp/ccbaEuC6.s 			page 71
 
 
 1034:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h ****         default:
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1057              	.LBB128:
  1058              	.LBI128:
 1479:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** {
-GAS LISTING /tmp/cc5rPN6l.s 			page 72
+GAS LISTING /tmp/ccbaEuC6.s 			page 72
 
 
  1059              		.loc 1 1479 8 view .LVU275
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1101              		.cfi_def_cfa_offset 40
  1102              	.LVL88:
 1228:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
-GAS LISTING /tmp/cc5rPN6l.s 			page 73
+GAS LISTING /tmp/ccbaEuC6.s 			page 73
 
 
  1103              		.loc 1 1228 1 view .LVU286
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1147              		.loc 3 1035 20 view .LVU293
  1148 01e0 31FF     		xorl	%edi, %edi
  1149              	.LVL96:
-GAS LISTING /tmp/cc5rPN6l.s 			page 74
+GAS LISTING /tmp/ccbaEuC6.s 			page 74
 
 
  1150              		.loc 3 1035 20 view .LVU294
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1198              		.loc 1 1240 5 is_stmt 1 view .LVU302
 1239:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     if ((md_alg != MBEDTLS_MD_NONE || hash_len != 0) && hash == NULL) {
  1199              		.loc 1 1239 1 is_stmt 0 view .LVU303
-GAS LISTING /tmp/cc5rPN6l.s 			page 75
+GAS LISTING /tmp/ccbaEuC6.s 			page 75
 
 
  1200 0004 4157     		pushq	%r15
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1247              	.LBB142:
  1248              		.loc 2 248 12 view .LVU308
  1249 0038 89DF     		movl	%ebx, %edi
-GAS LISTING /tmp/cc5rPN6l.s 			page 76
+GAS LISTING /tmp/ccbaEuC6.s 			page 76
 
 
  1250              	.LVL102:
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1291              		.loc 1 1274 5 view .LVU323
 1274:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_TYPE_MISMATCH;
  1292              		.loc 1 1274 21 is_stmt 0 view .LVU324
-GAS LISTING /tmp/cc5rPN6l.s 			page 77
+GAS LISTING /tmp/ccbaEuC6.s 			page 77
 
 
  1293 0065 488B4028 		movq	40(%rax), %rax
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1335              		.cfi_def_cfa_offset 16
  1336 0091 415F     		popq	%r15
  1337              	.LCFI79:
-GAS LISTING /tmp/cc5rPN6l.s 			page 78
+GAS LISTING /tmp/ccbaEuC6.s 			page 78
 
 
  1338              		.cfi_def_cfa_offset 8
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1380              		.cfi_remember_state
  1381              		.cfi_def_cfa_offset 56
  1382 00b9 5B       		popq	%rbx
-GAS LISTING /tmp/cc5rPN6l.s 			page 79
+GAS LISTING /tmp/ccbaEuC6.s 			page 79
 
 
  1383              	.LCFI82:
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1430              		.loc 1 1291 1 is_stmt 0 view .LVU352
  1431 0004 4157     		pushq	%r15
  1432              	.LCFI89:
-GAS LISTING /tmp/cc5rPN6l.s 			page 80
+GAS LISTING /tmp/ccbaEuC6.s 			page 80
 
 
  1433              		.cfi_def_cfa_offset 16
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1477              		.loc 1 1240 8 is_stmt 0 view .LVU359
  1478 0029 85F6     		testl	%esi, %esi
  1479 002b 756B     		jne	.L134
-GAS LISTING /tmp/cc5rPN6l.s 			page 81
+GAS LISTING /tmp/ccbaEuC6.s 			page 81
 
 
  1480 002d 4885C9   		testq	%rcx, %rcx
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1005:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return -1;
  1524              		.loc 1 1005 8 view .LVU374
  1525              	.LBE156:
-GAS LISTING /tmp/cc5rPN6l.s 			page 82
+GAS LISTING /tmp/ccbaEuC6.s 			page 82
 
 
  1526              	.LBE155:
@@ -4918,7 +4918,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1295:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
  1565              		.loc 1 1295 1 view .LVU386
  1566 008a 5D       		popq	%rbp
-GAS LISTING /tmp/cc5rPN6l.s 			page 83
+GAS LISTING /tmp/ccbaEuC6.s 			page 83
 
 
  1567              	.LCFI98:
@@ -4978,7 +4978,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  997:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** {
  1612              		.loc 1 997 19 is_stmt 1 view .LVU396
  1613              	.LBB161:
-GAS LISTING /tmp/cc5rPN6l.s 			page 84
+GAS LISTING /tmp/ccbaEuC6.s 			page 84
 
 
  999:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return 0;
@@ -5038,7 +5038,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1658              		.cfi_def_cfa_offset 16
  1659 00c1 415F     		popq	%r15
  1660              	.LCFI110:
-GAS LISTING /tmp/cc5rPN6l.s 			page 85
+GAS LISTING /tmp/ccbaEuC6.s 			page 85
 
 
  1661              		.cfi_def_cfa_offset 8
@@ -5098,7 +5098,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1709 000c 55       		pushq	%rbp
  1710              	.LCFI116:
  1711              		.cfi_def_cfa_offset 48
-GAS LISTING /tmp/cc5rPN6l.s 			page 86
+GAS LISTING /tmp/ccbaEuC6.s 			page 86
 
 
  1712              		.cfi_offset 6, -48
@@ -5158,7 +5158,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  240:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** }
  1751              		.loc 1 240 5 view .LVU420
  240:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** }
-GAS LISTING /tmp/cc5rPN6l.s 			page 87
+GAS LISTING /tmp/ccbaEuC6.s 			page 87
 
 
  1752              		.loc 1 240 12 is_stmt 0 view .LVU421
@@ -5218,7 +5218,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1790              	.LBE195:
  433:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h **** }
  1791              		.loc 3 433 40 discriminator 1 view .LVU436
-GAS LISTING /tmp/cc5rPN6l.s 			page 88
+GAS LISTING /tmp/ccbaEuC6.s 			page 88
 
 
  1792 0078 4883C007 		addq	$7, %rax
@@ -5278,7 +5278,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1831              		.loc 1 1528 5 is_stmt 1 view .LVU450
  1832              	.LVL160:
  1833              		.loc 1 1528 5 is_stmt 0 view .LVU451
-GAS LISTING /tmp/cc5rPN6l.s 			page 89
+GAS LISTING /tmp/ccbaEuC6.s 			page 89
 
 
  1834              	.LBE205:
@@ -5338,7 +5338,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1875              		.loc 1 1388 27 is_stmt 0 view .LVU460
  1876 00cf 4C8B1C24 		movq	(%rsp), %r11
 1388:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
-GAS LISTING /tmp/cc5rPN6l.s 			page 90
+GAS LISTING /tmp/ccbaEuC6.s 			page 90
 
 
  1877              		.loc 1 1388 18 view .LVU461
@@ -5398,7 +5398,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1923 00f3 75B1     		jne	.L162
  1924              		.p2align 4,,10
  1925 00f5 0F1F00   		.p2align 3
-GAS LISTING /tmp/cc5rPN6l.s 			page 91
+GAS LISTING /tmp/ccbaEuC6.s 			page 91
 
 
  1926              	.L165:
@@ -5458,7 +5458,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  1968              	.LVL173:
  1969              		.loc 3 1035 20 view .LVU481
  1970 0123 E97EFFFF 		jmp	.L162
-GAS LISTING /tmp/cc5rPN6l.s 			page 92
+GAS LISTING /tmp/ccbaEuC6.s 			page 92
 
 
  1970      FF
@@ -5518,7 +5518,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2012              		.loc 2 248 12 discriminator 1 view .LVU495
  2013 0149 E8000000 		call	mbedtls_md_get_size@PLT
  2013      00
-GAS LISTING /tmp/cc5rPN6l.s 			page 93
+GAS LISTING /tmp/ccbaEuC6.s 			page 93
 
 
  2014              	.LVL177:
@@ -5578,7 +5578,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2052 0183 488B7424 		movq	24(%rsp), %rsi
  2052      18
  2053 0188 48897424 		movq	%rsi, 96(%rsp)
-GAS LISTING /tmp/cc5rPN6l.s 			page 94
+GAS LISTING /tmp/ccbaEuC6.s 			page 94
 
 
  2053      60
@@ -5638,7 +5638,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2099              	.LVL187:
  2100              	.LBB223:
  2101              	.LBB221:
-GAS LISTING /tmp/cc5rPN6l.s 			page 95
+GAS LISTING /tmp/ccbaEuC6.s 			page 95
 
 
  2102              	.LBB219:
@@ -5698,7 +5698,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1376:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****     }
  2143              		.loc 1 1376 16 view .LVU527
  2144 01c5 E915FFFF 		jmp	.L150
-GAS LISTING /tmp/cc5rPN6l.s 			page 96
+GAS LISTING /tmp/ccbaEuC6.s 			page 96
 
 
  2144      FF
@@ -5758,7 +5758,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2183 001f 4C895C24 		movq	%r11, 16(%rsp)
  2183      10
  2184              	.LVL194:
-GAS LISTING /tmp/cc5rPN6l.s 			page 97
+GAS LISTING /tmp/ccbaEuC6.s 			page 97
 
 
 1415:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****                                       output, olen, osize, f_rng, p_rng);
@@ -5818,7 +5818,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
 1431:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_TYPE_MISMATCH;
  2224              		.loc 1 1431 21 is_stmt 0 view .LVU552
  2225 0016 488B4038 		movq	56(%rax), %rax
-GAS LISTING /tmp/cc5rPN6l.s 			page 98
+GAS LISTING /tmp/ccbaEuC6.s 			page 98
 
 
 1431:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_TYPE_MISMATCH;
@@ -5878,7 +5878,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2265              		.loc 1 1447 8 view .LVU565
  2266 0007 4D85C0   		testq	%r8, %r8
  2267 000a 7444     		je	.L202
-GAS LISTING /tmp/cc5rPN6l.s 			page 99
+GAS LISTING /tmp/ccbaEuC6.s 			page 99
 
 
 1448:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
@@ -5938,7 +5938,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2306              	.L205:
 1462:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c ****         }
  2307              		.loc 1 1462 20 view .LVU581
-GAS LISTING /tmp/cc5rPN6l.s 			page 100
+GAS LISTING /tmp/ccbaEuC6.s 			page 100
 
 
  2308 0046 B800C1FF 		movl	$-16128, %eax
@@ -5998,7 +5998,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2350              	.L210:
 1488:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
  2351              		.loc 1 1488 1 view .LVU593
-GAS LISTING /tmp/cc5rPN6l.s 			page 101
+GAS LISTING /tmp/ccbaEuC6.s 			page 101
 
 
  2352 0018 31C0     		xorl	%eax, %eax
@@ -6058,7 +6058,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2394              		.cfi_def_cfa_offset 8
  2395 0021 C3       		ret
  2396              	.LVL207:
-GAS LISTING /tmp/cc5rPN6l.s 			page 102
+GAS LISTING /tmp/ccbaEuC6.s 			page 102
 
 
  2397              	.L218:
@@ -6118,7 +6118,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  2436 0018 488B4208 		movq	8(%rdx), %rax
  2437              	.L224:
 1517:../../bos/thirdparty/mbedtls/bos_mbedtls/pk.c **** 
-GAS LISTING /tmp/cc5rPN6l.s 			page 103
+GAS LISTING /tmp/ccbaEuC6.s 			page 103
 
 
  2438              		.loc 1 1517 1 view .LVU620
@@ -6178,7 +6178,7 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  12824              		.section	.note.gnu.property,"a"
  12825              		.align 8
  12826 0000 04000000 		.long	1f - 0f
-GAS LISTING /tmp/cc5rPN6l.s 			page 104
+GAS LISTING /tmp/ccbaEuC6.s 			page 104
 
 
  12827 0004 10000000 		.long	4f - 1f
@@ -6194,30 +6194,30 @@ GAS LISTING /tmp/cc5rPN6l.s 			page 1
  12837              	3:
  12838 001c 00000000 		.align 8
  12839              	4:
-GAS LISTING /tmp/cc5rPN6l.s 			page 105
+GAS LISTING /tmp/ccbaEuC6.s 			page 105
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 pk.c
-     /tmp/cc5rPN6l.s:9      .text.mbedtls_pk_init:0000000000000000 mbedtls_pk_init
-     /tmp/cc5rPN6l.s:30     .text.mbedtls_pk_free:0000000000000000 mbedtls_pk_free
-     /tmp/cc5rPN6l.s:89     .text.mbedtls_pk_info_from_type:0000000000000000 mbedtls_pk_info_from_type
-     /tmp/cc5rPN6l.s:131    .text.mbedtls_pk_setup:0000000000000000 mbedtls_pk_setup
-     /tmp/cc5rPN6l.s:230    .text.mbedtls_pk_can_do:0000000000000000 mbedtls_pk_can_do
-     /tmp/cc5rPN6l.s:268    .text.mbedtls_pk_verify_restartable:0000000000000000 mbedtls_pk_verify_restartable
-     /tmp/cc5rPN6l.s:457    .text.mbedtls_pk_verify:0000000000000000 mbedtls_pk_verify
-     /tmp/cc5rPN6l.s:675    .text.mbedtls_pk_verify_ext:0000000000000000 mbedtls_pk_verify_ext
-     /tmp/cc5rPN6l.s:1191   .text.mbedtls_pk_sign_restartable:0000000000000000 mbedtls_pk_sign_restartable
-     /tmp/cc5rPN6l.s:1421   .text.mbedtls_pk_sign:0000000000000000 mbedtls_pk_sign
-     /tmp/cc5rPN6l.s:1684   .text.mbedtls_pk_sign_ext:0000000000000000 mbedtls_pk_sign_ext
-     /tmp/cc5rPN6l.s:2159   .text.mbedtls_pk_decrypt:0000000000000000 mbedtls_pk_decrypt
-     /tmp/cc5rPN6l.s:2207   .text.mbedtls_pk_encrypt:0000000000000000 mbedtls_pk_encrypt
-     /tmp/cc5rPN6l.s:2255   .text.mbedtls_pk_check_pair:0000000000000000 mbedtls_pk_check_pair
-     /tmp/cc5rPN6l.s:2328   .text.mbedtls_pk_get_bitlen:0000000000000000 mbedtls_pk_get_bitlen
-     /tmp/cc5rPN6l.s:2361   .text.mbedtls_pk_debug:0000000000000000 mbedtls_pk_debug
-     /tmp/cc5rPN6l.s:2416   .text.mbedtls_pk_get_name:0000000000000000 mbedtls_pk_get_name
-     /tmp/cc5rPN6l.s:2447   .text.mbedtls_pk_get_type:0000000000000000 mbedtls_pk_get_type
-     /tmp/cc5rPN6l.s:2410   .rodata.mbedtls_pk_get_name.str1.1:0000000000000000 .LC0
+     /tmp/ccbaEuC6.s:9      .text.mbedtls_pk_init:0000000000000000 mbedtls_pk_init
+     /tmp/ccbaEuC6.s:30     .text.mbedtls_pk_free:0000000000000000 mbedtls_pk_free
+     /tmp/ccbaEuC6.s:89     .text.mbedtls_pk_info_from_type:0000000000000000 mbedtls_pk_info_from_type
+     /tmp/ccbaEuC6.s:131    .text.mbedtls_pk_setup:0000000000000000 mbedtls_pk_setup
+     /tmp/ccbaEuC6.s:230    .text.mbedtls_pk_can_do:0000000000000000 mbedtls_pk_can_do
+     /tmp/ccbaEuC6.s:268    .text.mbedtls_pk_verify_restartable:0000000000000000 mbedtls_pk_verify_restartable
+     /tmp/ccbaEuC6.s:457    .text.mbedtls_pk_verify:0000000000000000 mbedtls_pk_verify
+     /tmp/ccbaEuC6.s:675    .text.mbedtls_pk_verify_ext:0000000000000000 mbedtls_pk_verify_ext
+     /tmp/ccbaEuC6.s:1191   .text.mbedtls_pk_sign_restartable:0000000000000000 mbedtls_pk_sign_restartable
+     /tmp/ccbaEuC6.s:1421   .text.mbedtls_pk_sign:0000000000000000 mbedtls_pk_sign
+     /tmp/ccbaEuC6.s:1684   .text.mbedtls_pk_sign_ext:0000000000000000 mbedtls_pk_sign_ext
+     /tmp/ccbaEuC6.s:2159   .text.mbedtls_pk_decrypt:0000000000000000 mbedtls_pk_decrypt
+     /tmp/ccbaEuC6.s:2207   .text.mbedtls_pk_encrypt:0000000000000000 mbedtls_pk_encrypt
+     /tmp/ccbaEuC6.s:2255   .text.mbedtls_pk_check_pair:0000000000000000 mbedtls_pk_check_pair
+     /tmp/ccbaEuC6.s:2328   .text.mbedtls_pk_get_bitlen:0000000000000000 mbedtls_pk_get_bitlen
+     /tmp/ccbaEuC6.s:2361   .text.mbedtls_pk_debug:0000000000000000 mbedtls_pk_debug
+     /tmp/ccbaEuC6.s:2416   .text.mbedtls_pk_get_name:0000000000000000 mbedtls_pk_get_name
+     /tmp/ccbaEuC6.s:2447   .text.mbedtls_pk_get_type:0000000000000000 mbedtls_pk_get_type
+     /tmp/ccbaEuC6.s:2410   .rodata.mbedtls_pk_get_name.str1.1:0000000000000000 .LC0
 
 UNDEFINED SYMBOLS
 mbedtls_platform_zeroize

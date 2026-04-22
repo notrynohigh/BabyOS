@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccyGwj5g.s 			page 1
+GAS LISTING /tmp/ccQxUXSd.s 			page 1
 
 
    1              		.file	"platform.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static void (*mbedtls_free_func)(void *) = MBEDTLS_PLATFORM_STD_FREE;
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** void *mbedtls_calloc(size_t nmemb, size_t size)
-GAS LISTING /tmp/ccyGwj5g.s 			page 2
+GAS LISTING /tmp/ccQxUXSd.s 			page 2
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
   55              		.loc 1 60 25 is_stmt 0 view .LVU13
   56 0004 48893D00 		movq	%rdi, mbedtls_calloc_func(%rip)
   56      000000
-GAS LISTING /tmp/ccyGwj5g.s 			page 3
+GAS LISTING /tmp/ccQxUXSd.s 			page 3
 
 
   61:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_free_func = free_func;
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
   96:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
   97:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_SNPRINTF    platform_snprintf_uninit
   98:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_SNPRINTF */
-GAS LISTING /tmp/ccyGwj5g.s 			page 4
+GAS LISTING /tmp/ccQxUXSd.s 			page 4
 
 
   99:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
  153:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_VSNPRINTF    platform_vsnprintf_uninit
  154:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_VSNPRINTF */
  155:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
-GAS LISTING /tmp/ccyGwj5g.s 			page 5
+GAS LISTING /tmp/ccQxUXSd.s 			page 5
 
 
  156:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int (*mbedtls_vsnprintf)(char *s, size_t n,
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
  210:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_fprintf(int (*fprintf_func)(FILE *, const char *, ...))
  211:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
  212:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_fprintf = fprintf_func;
-GAS LISTING /tmp/ccyGwj5g.s 			page 6
+GAS LISTING /tmp/ccQxUXSd.s 			page 6
 
 
  213:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
  267:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
  268:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static mbedtls_time_t platform_time_uninit(mbedtls_time_t *timer)
  269:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
-GAS LISTING /tmp/ccyGwj5g.s 			page 7
+GAS LISTING /tmp/ccQxUXSd.s 			page 7
 
 
  270:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) timer);
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
  324:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
  325:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_setbuf(file, NULL);
  326:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
-GAS LISTING /tmp/ccyGwj5g.s 			page 8
+GAS LISTING /tmp/ccQxUXSd.s 			page 8
 
 
  327:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     if ((n = fwrite(buf, 1, buf_len, file)) != buf_len) {
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
  381:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
  382:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT)
  383:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
-GAS LISTING /tmp/ccyGwj5g.s 			page 9
+GAS LISTING /tmp/ccQxUXSd.s 			page 9
 
 
  384:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Placeholder platform setup that does nothing by default
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
  118              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
  119              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
  120              		.file 4 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
-GAS LISTING /tmp/ccyGwj5g.s 			page 10
+GAS LISTING /tmp/ccQxUXSd.s 			page 10
 
 
  121              		.file 5 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
@@ -559,18 +559,18 @@ GAS LISTING /tmp/ccyGwj5g.s 			page 1
  1067              	3:
  1068 001c 00000000 		.align 8
  1069              	4:
-GAS LISTING /tmp/ccyGwj5g.s 			page 11
+GAS LISTING /tmp/ccQxUXSd.s 			page 11
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 platform.c
-     /tmp/ccyGwj5g.s:9      .text.mbedtls_calloc:0000000000000000 mbedtls_calloc
-     /tmp/ccyGwj5g.s:114    .data.rel.mbedtls_calloc_func:0000000000000000 mbedtls_calloc_func
-     /tmp/ccyGwj5g.s:28     .text.mbedtls_free:0000000000000000 mbedtls_free
-     /tmp/ccyGwj5g.s:108    .data.rel.mbedtls_free_func:0000000000000000 mbedtls_free_func
-     /tmp/ccyGwj5g.s:47     .text.mbedtls_platform_set_calloc_free:0000000000000000 mbedtls_platform_set_calloc_free
-     /tmp/ccyGwj5g.s:72     .text.mbedtls_platform_setup:0000000000000000 mbedtls_platform_setup
-     /tmp/ccyGwj5g.s:91     .text.mbedtls_platform_teardown:0000000000000000 mbedtls_platform_teardown
+     /tmp/ccQxUXSd.s:9      .text.mbedtls_calloc:0000000000000000 mbedtls_calloc
+     /tmp/ccQxUXSd.s:114    .data.rel.mbedtls_calloc_func:0000000000000000 mbedtls_calloc_func
+     /tmp/ccQxUXSd.s:28     .text.mbedtls_free:0000000000000000 mbedtls_free
+     /tmp/ccQxUXSd.s:108    .data.rel.mbedtls_free_func:0000000000000000 mbedtls_free_func
+     /tmp/ccQxUXSd.s:47     .text.mbedtls_platform_set_calloc_free:0000000000000000 mbedtls_platform_set_calloc_free
+     /tmp/ccQxUXSd.s:72     .text.mbedtls_platform_setup:0000000000000000 mbedtls_platform_setup
+     /tmp/ccQxUXSd.s:91     .text.mbedtls_platform_teardown:0000000000000000 mbedtls_platform_teardown
 
 UNDEFINED SYMBOLS
 bFree

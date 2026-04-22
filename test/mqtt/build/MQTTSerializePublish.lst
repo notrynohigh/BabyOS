@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc2W9vLU.s 			page 1
+GAS LISTING /tmp/ccBUQ2JM.s 			page 1
 
 
    1              		.file	"MQTTSerializePublish.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
   20 0004 55       		pushq	%rbp
   21              	.LCFI0:
   22              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/cc2W9vLU.s 			page 2
+GAS LISTING /tmp/ccBUQ2JM.s 			page 2
 
 
   23              		.cfi_offset 6, -16
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
   68              		.section	.text.MQTTSerialize_publish,"ax",@progbits
   69              		.p2align 4
   70              		.globl	MQTTSerialize_publish
-GAS LISTING /tmp/cc2W9vLU.s 			page 3
+GAS LISTING /tmp/ccBUQ2JM.s 			page 3
 
 
   72              	MQTTSerialize_publish:
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  108 001c 4883EC68 		subq	$104, %rsp
  109              	.LCFI12:
  110              		.cfi_def_cfa_offset 160
-GAS LISTING /tmp/cc2W9vLU.s 			page 4
+GAS LISTING /tmp/ccBUQ2JM.s 			page 4
 
 
  111              		.loc 1 57 1 view .LVU15
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  144              		.loc 1 33 2 view .LVU27
   35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
  145              		.loc 1 35 2 view .LVU28
-GAS LISTING /tmp/cc2W9vLU.s 			page 5
+GAS LISTING /tmp/ccBUQ2JM.s 			page 5
 
 
   35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
   71:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.dup = dup;
  179              		.loc 1 71 2 view .LVU41
   72:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.qos = qos;
-GAS LISTING /tmp/cc2W9vLU.s 			page 6
+GAS LISTING /tmp/ccBUQ2JM.s 			page 6
 
 
  180              		.loc 1 72 2 view .LVU42
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  220              		.loc 1 78 2 view .LVU57
  221 00d6 4883EC20 		subq	$32, %rsp
  222              	.LCFI14:
-GAS LISTING /tmp/cc2W9vLU.s 			page 7
+GAS LISTING /tmp/ccBUQ2JM.s 			page 7
 
 
  223              		.cfi_def_cfa_offset 160
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
   16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
   17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
   18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
-GAS LISTING /tmp/cc2W9vLU.s 			page 8
+GAS LISTING /tmp/ccBUQ2JM.s 			page 8
 
 
   19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  277              		.cfi_def_cfa_offset 56
  278 0147 5B       		popq	%rbx
  279              	.LCFI17:
-GAS LISTING /tmp/cc2W9vLU.s 			page 9
+GAS LISTING /tmp/ccBUQ2JM.s 			page 9
 
 
  280              		.cfi_def_cfa_offset 48
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  328              		.globl	MQTTSerialize_ack
  330              	MQTTSerialize_ack:
  331              	.LVL30:
-GAS LISTING /tmp/cc2W9vLU.s 			page 10
+GAS LISTING /tmp/ccBUQ2JM.s 			page 10
 
 
  332              	.LFB22:
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  364              		.loc 1 110 12 is_stmt 1 view .LVU87
  111:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (buflen < 4)
  365              		.loc 1 111 2 view .LVU88
-GAS LISTING /tmp/cc2W9vLU.s 			page 11
+GAS LISTING /tmp/ccBUQ2JM.s 			page 11
 
 
  366              		.loc 1 111 5 is_stmt 0 view .LVU89
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  403      00
  404              	.LVL36:
  120:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
-GAS LISTING /tmp/cc2W9vLU.s 			page 12
+GAS LISTING /tmp/ccBUQ2JM.s 			page 12
 
 
  121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	ptr += MQTTPacket_encode(ptr, 2); /* write remaining length */
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  444              	.LCFI31:
  445              		.cfi_def_cfa_offset 8
  446 0092 C3       		ret
-GAS LISTING /tmp/cc2W9vLU.s 			page 13
+GAS LISTING /tmp/ccBUQ2JM.s 			page 13
 
 
  447              	.LVL41:
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  485              		.cfi_def_cfa_offset 24
  486              		.cfi_offset 6, -24
  487 0007 53       		pushq	%rbx
-GAS LISTING /tmp/cc2W9vLU.s 			page 14
+GAS LISTING /tmp/ccBUQ2JM.s 			page 14
 
 
  488              	.LCFI35:
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
  524              		.loc 1 119 2 view .LVU138
  525 0033 4889EF   		movq	%rbp, %rdi
-GAS LISTING /tmp/cc2W9vLU.s 			page 15
+GAS LISTING /tmp/ccBUQ2JM.s 			page 15
 
 
  526              	.LVL47:
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  562              		.cfi_def_cfa_offset 32
  563 0074 5B       		popq	%rbx
  564              	.LCFI38:
-GAS LISTING /tmp/cc2W9vLU.s 			page 16
+GAS LISTING /tmp/ccBUQ2JM.s 			page 16
 
 
  565              		.cfi_def_cfa_offset 24
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  150:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   */
  151:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** int MQTTSerialize_pubrel(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid
  152:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
-GAS LISTING /tmp/cc2W9vLU.s 			page 17
+GAS LISTING /tmp/ccBUQ2JM.s 			page 17
 
 
  605              		.loc 1 152 1 is_stmt 1 view -0
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  646 0027 8D34D500 		leal	0(,%rdx,8), %esi
  646      000000
  647              	.LVL57:
-GAS LISTING /tmp/cc2W9vLU.s 			page 18
+GAS LISTING /tmp/ccBUQ2JM.s 			page 18
 
 
  119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
  683              		.loc 1 123 5 is_stmt 0 view .LVU183
  684 0061 8B0424   		movl	(%rsp), %eax
-GAS LISTING /tmp/cc2W9vLU.s 			page 19
+GAS LISTING /tmp/ccBUQ2JM.s 			page 19
 
 
  685 0064 29E8     		subl	%ebp, %eax
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  729              	.L30:
  730              		.loc 1 154 1 view .LVU191
  731 0087 E8000000 		call	__stack_chk_fail@PLT
-GAS LISTING /tmp/cc2W9vLU.s 			page 20
+GAS LISTING /tmp/ccBUQ2JM.s 			page 20
 
 
  731      00
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  771              	.LBB31:
  106:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int rc = 0;
  772              		.loc 1 106 2 view .LVU197
-GAS LISTING /tmp/cc2W9vLU.s 			page 21
+GAS LISTING /tmp/ccBUQ2JM.s 			page 21
 
 
  107:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	unsigned char *ptr = buf;
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
  807              		.loc 1 121 9 discriminator 1 view .LVU214
  808 0050 4898     		cltq
-GAS LISTING /tmp/cc2W9vLU.s 			page 22
+GAS LISTING /tmp/ccBUQ2JM.s 			page 22
 
 
  121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  126:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
  851              		.loc 1 126 2 view .LVU222
  113:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		goto exit;
-GAS LISTING /tmp/cc2W9vLU.s 			page 23
+GAS LISTING /tmp/ccBUQ2JM.s 			page 23
 
 
  852              		.loc 1 113 6 is_stmt 0 view .LVU223
@@ -1358,17 +1358,17 @@ GAS LISTING /tmp/cc2W9vLU.s 			page 1
  4816              	3:
  4817 001c 00000000 		.align 8
  4818              	4:
-GAS LISTING /tmp/cc2W9vLU.s 			page 24
+GAS LISTING /tmp/ccBUQ2JM.s 			page 24
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 MQTTSerializePublish.c
-     /tmp/cc2W9vLU.s:9      .text.MQTTSerialize_publishLength:0000000000000000 MQTTSerialize_publishLength
-     /tmp/cc2W9vLU.s:72     .text.MQTTSerialize_publish:0000000000000000 MQTTSerialize_publish
-     /tmp/cc2W9vLU.s:330    .text.MQTTSerialize_ack:0000000000000000 MQTTSerialize_ack
-     /tmp/cc2W9vLU.s:472    .text.MQTTSerialize_puback:0000000000000000 MQTTSerialize_puback
-     /tmp/cc2W9vLU.s:602    .text.MQTTSerialize_pubrel:0000000000000000 MQTTSerialize_pubrel
-     /tmp/cc2W9vLU.s:740    .text.MQTTSerialize_pubcomp:0000000000000000 MQTTSerialize_pubcomp
+     /tmp/ccBUQ2JM.s:9      .text.MQTTSerialize_publishLength:0000000000000000 MQTTSerialize_publishLength
+     /tmp/ccBUQ2JM.s:72     .text.MQTTSerialize_publish:0000000000000000 MQTTSerialize_publish
+     /tmp/ccBUQ2JM.s:330    .text.MQTTSerialize_ack:0000000000000000 MQTTSerialize_ack
+     /tmp/ccBUQ2JM.s:472    .text.MQTTSerialize_puback:0000000000000000 MQTTSerialize_puback
+     /tmp/ccBUQ2JM.s:602    .text.MQTTSerialize_pubrel:0000000000000000 MQTTSerialize_pubrel
+     /tmp/ccBUQ2JM.s:740    .text.MQTTSerialize_pubcomp:0000000000000000 MQTTSerialize_pubcomp
 
 UNDEFINED SYMBOLS
 MQTTstrlen

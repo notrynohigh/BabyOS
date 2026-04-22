@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc2r7Y8g.s 			page 1
+GAS LISTING /tmp/ccfWPnmg.s 			page 1
 
 
    1              		.file	"MQTTSubscribeClient.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
   22 0004 4154     		pushq	%r12
   23              	.LCFI0:
   24              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/cc2r7Y8g.s 			page 2
+GAS LISTING /tmp/ccfWPnmg.s 			page 2
 
 
   25              		.cfi_offset 12, -16
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
   33:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** 		len += 2 + MQTTstrlen(topicFilters[i]) + 1; /* length + topic + req_qos */
   71              		.loc 1 33 16 discriminator 1 view .LVU17
   72 0046 4C39E3   		cmpq	%r12, %rbx
-GAS LISTING /tmp/cc2r7Y8g.s 			page 3
+GAS LISTING /tmp/ccfWPnmg.s 			page 3
 
 
   73 0049 75D5     		jne	.L3
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
   40:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c ****   * Serializes the supplied subscribe data into the supplied buffer, ready for sending
   41:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c ****   * @param buf the buffer into which the packet will be serialized
   42:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c ****   * @param buflen the length in bytes of the supplied bufferr
-GAS LISTING /tmp/cc2r7Y8g.s 			page 4
+GAS LISTING /tmp/ccfWPnmg.s 			page 4
 
 
   43:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c ****   * @param dup integer - the MQTT dup flag
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  159 0020 48897C24 		movq	%rdi, 8(%rsp)
  159      08
  160 0025 89742404 		movl	%esi, 4(%rsp)
-GAS LISTING /tmp/cc2r7Y8g.s 			page 5
+GAS LISTING /tmp/ccfWPnmg.s 			page 5
 
 
  161 0029 89542410 		movl	%edx, 16(%rsp)
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  194 0067 660F1F84 		.p2align 4,,10
  194      00000000 
  194      00
-GAS LISTING /tmp/cc2r7Y8g.s 			page 6
+GAS LISTING /tmp/ccfWPnmg.s 			page 6
 
 
  195              		.p2align 3
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  235 00a7 39C8     		cmpl	%ecx, %eax
  236 00a9 0F8FCB00 		jg	.L16
  236      0000
-GAS LISTING /tmp/cc2r7Y8g.s 			page 7
+GAS LISTING /tmp/ccfWPnmg.s 			page 7
 
 
   61:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** 	{
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  268 00e6 4898     		cltq
   72:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** 
  269              		.loc 1 72 6 discriminator 1 view .LVU69
-GAS LISTING /tmp/cc2r7Y8g.s 			page 8
+GAS LISTING /tmp/ccfWPnmg.s 			page 8
 
 
  270 00e8 48014424 		addq	%rax, 32(%rsp)
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  309      00
  310              	.LVL24:
   76:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** 	{
-GAS LISTING /tmp/cc2r7Y8g.s 			page 9
+GAS LISTING /tmp/ccfWPnmg.s 			page 9
 
 
  311              		.loc 1 76 25 discriminator 3 view .LVU79
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  353              	.L15:
  354              	.LCFI30:
  355              		.cfi_restore_state
-GAS LISTING /tmp/cc2r7Y8g.s 			page 10
+GAS LISTING /tmp/ccfWPnmg.s 			page 10
 
 
  356              	.LBB7:
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  101:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** {
  388              		.loc 1 101 1 is_stmt 1 view -0
  389              		.cfi_startproc
-GAS LISTING /tmp/cc2r7Y8g.s 			page 11
+GAS LISTING /tmp/ccfWPnmg.s 			page 11
 
 
  390              		.loc 1 101 1 is_stmt 0 view .LVU92
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  103:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** 	unsigned char* curdata = buf;
  432              		.loc 1 103 17 view .LVU97
  433 0032 4C894424 		movq	%r8, 16(%rsp)
-GAS LISTING /tmp/cc2r7Y8g.s 			page 12
+GAS LISTING /tmp/ccfWPnmg.s 			page 12
 
 
  433      10
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  134:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** 	return rc;
  135:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** }
  457              		.loc 1 135 1 view .LVU109
-GAS LISTING /tmp/cc2r7Y8g.s 			page 13
+GAS LISTING /tmp/ccfWPnmg.s 			page 13
 
 
  458 0048 488B4424 		movq	24(%rsp), %rax
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  503      00
  504              	.LVL42:
  505 007f 4C63F0   		movslq	%eax, %r14
-GAS LISTING /tmp/cc2r7Y8g.s 			page 14
+GAS LISTING /tmp/ccfWPnmg.s 			page 14
 
 
  114:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** 	if (enddata - curdata < 2)
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  121:../../bos/thirdparty/mqtt-pack/MQTTSubscribeClient.c **** 	{
  539              		.loc 1 121 17 view .LVU132
  540 00b0 4C397424 		cmpq	%r14, 16(%rsp)
-GAS LISTING /tmp/cc2r7Y8g.s 			page 15
+GAS LISTING /tmp/ccfWPnmg.s 			page 15
 
 
  540      10
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  576      FF
  577              	.LVL50:
  578 00ee 6690     		.p2align 4,,10
-GAS LISTING /tmp/cc2r7Y8g.s 			page 16
+GAS LISTING /tmp/ccfWPnmg.s 			page 16
 
 
  579              		.p2align 3
@@ -936,14 +936,14 @@ GAS LISTING /tmp/cc2r7Y8g.s 			page 1
  3397              	3:
  3398 001c 00000000 		.align 8
  3399              	4:
-GAS LISTING /tmp/cc2r7Y8g.s 			page 17
+GAS LISTING /tmp/ccfWPnmg.s 			page 17
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 MQTTSubscribeClient.c
-     /tmp/cc2r7Y8g.s:9      .text.MQTTSerialize_subscribeLength:0000000000000000 MQTTSerialize_subscribeLength
-     /tmp/cc2r7Y8g.s:117    .text.MQTTSerialize_subscribe:0000000000000000 MQTTSerialize_subscribe
-     /tmp/cc2r7Y8g.s:385    .text.MQTTDeserialize_suback:0000000000000000 MQTTDeserialize_suback
+     /tmp/ccfWPnmg.s:9      .text.MQTTSerialize_subscribeLength:0000000000000000 MQTTSerialize_subscribeLength
+     /tmp/ccfWPnmg.s:117    .text.MQTTSerialize_subscribe:0000000000000000 MQTTSerialize_subscribe
+     /tmp/ccfWPnmg.s:385    .text.MQTTDeserialize_suback:0000000000000000 MQTTDeserialize_suback
 
 UNDEFINED SYMBOLS
 MQTTstrlen

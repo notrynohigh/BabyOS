@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccT2oxu6.s 			page 1
+GAS LISTING /tmp/ccyire8Q.s 			page 1
 
 
    1              		.file	"b_mod_ssl.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
   35:../../bos/modules/b_mod_ssl.c **** #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
   36:../../bos/modules/b_mod_ssl.c **** #include "hal/inc/b_hal.h"
   37:../../bos/modules/b_mod_ssl.c **** #include "modules/inc/b_mod_tcpip.h"
-GAS LISTING /tmp/ccT2oxu6.s 			page 2
+GAS LISTING /tmp/ccyire8Q.s 			page 2
 
 
   38:../../bos/modules/b_mod_ssl.c **** 
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
   92:../../bos/modules/b_mod_ssl.c ****  * \}
   93:../../bos/modules/b_mod_ssl.c ****  */
   94:../../bos/modules/b_mod_ssl.c **** 
-GAS LISTING /tmp/ccT2oxu6.s 			page 3
+GAS LISTING /tmp/ccyire8Q.s 			page 3
 
 
   95:../../bos/modules/b_mod_ssl.c **** /**
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  133:../../bos/modules/b_mod_ssl.c ****     ((void)level);  // 忽略未使用的参数
   27              		.loc 1 133 1 view .LVU6
   28 0008 4989D1   		movq	%rdx, %r9
-GAS LISTING /tmp/ccT2oxu6.s 			page 4
+GAS LISTING /tmp/ccyire8Q.s 			page 4
 
 
   29              		.loc 1 136 5 view .LVU7
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  148:../../bos/modules/b_mod_ssl.c ****                                MBEDTLS_ENTROPY_MAX_GATHER, MBEDTLS_ENTROPY_SOURCE_STRONG);
  149:../../bos/modules/b_mod_ssl.c ****     mbedtls_ctr_drbg_seed(&prandom->ctr_drbg, mbedtls_entropy_func, &prandom->entropy,
  150:../../bos/modules/b_mod_ssl.c ****                           (const uint8_t *)"babyos", strlen("babyos"));
-GAS LISTING /tmp/ccT2oxu6.s 			page 5
+GAS LISTING /tmp/ccyire8Q.s 			page 5
 
 
  151:../../bos/modules/b_mod_ssl.c ****     return 0;
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
   83 001a 48894424 		movq	%rax, 8(%rsp)
   83      08
   84 001f 31C0     		xorl	%eax, %eax
-GAS LISTING /tmp/ccT2oxu6.s 			page 6
+GAS LISTING /tmp/ccyire8Q.s 			page 6
 
 
  183:../../bos/modules/b_mod_ssl.c ****     bSSL_t  *p_ssl = (bSSL_t *)ctx;
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  118 0052 750C     		jne	.L11
  119 0054 4883C418 		addq	$24, %rsp
  120              	.LCFI5:
-GAS LISTING /tmp/ccT2oxu6.s 			page 7
+GAS LISTING /tmp/ccyire8Q.s 			page 7
 
 
  121              		.cfi_remember_state
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  163              		.loc 1 168 5 view .LVU42
  169:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
  164              		.loc 1 169 22 is_stmt 0 view .LVU43
-GAS LISTING /tmp/ccT2oxu6.s 			page 8
+GAS LISTING /tmp/ccyire8Q.s 			page 8
 
 
  165 0021 488D4C24 		leaq	6(%rsp), %rcx
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  200 0058 C3       		ret
  201              	.LVL24:
  202              	.L18:
-GAS LISTING /tmp/ccT2oxu6.s 			page 9
+GAS LISTING /tmp/ccyire8Q.s 			page 9
 
 
  203              	.LCFI9:
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  248              		.loc 1 120 5 is_stmt 1 view .LVU61
  121:../../bos/modules/b_mod_ssl.c ****     seed = bHalRNGRead();
  249              		.loc 1 121 5 view .LVU62
-GAS LISTING /tmp/ccT2oxu6.s 			page 10
+GAS LISTING /tmp/ccyire8Q.s 			page 10
 
 
  122:../../bos/modules/b_mod_ssl.c ****     if (len > sizeof(seed))
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
   28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
  269              		.loc 2 29 3 view .LVU70
-GAS LISTING /tmp/ccT2oxu6.s 			page 11
+GAS LISTING /tmp/ccyire8Q.s 			page 11
 
 
  270              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU71
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  313 0072 415C     		popq	%r12
  314              	.LCFI17:
  315              		.cfi_def_cfa_offset 8
-GAS LISTING /tmp/ccT2oxu6.s 			page 12
+GAS LISTING /tmp/ccyire8Q.s 			page 12
 
 
  316              	.LVL34:
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  339      3052705A 
  340 019e 6B69470A 		.ascii	"kiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuzfNNNx7a8myaJCtSnX/RrohCgi"
  340      39773042 
-GAS LISTING /tmp/ccT2oxu6.s 			page 13
+GAS LISTING /tmp/ccyire8Q.s 			page 13
 
 
  340      41514546 
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  351      4A737731 
  351      484B6A32 
  351      5A4C3774 
-GAS LISTING /tmp/ccT2oxu6.s 			page 14
+GAS LISTING /tmp/ccyire8Q.s 			page 14
 
 
  351      63753758 
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  377              	.LVL38:
  209:../../bos/modules/b_mod_ssl.c ****     bSSLCert_t root_cert = {
  378              		.loc 1 209 5 view .LVU87
-GAS LISTING /tmp/ccT2oxu6.s 			page 15
+GAS LISTING /tmp/ccyire8Q.s 			page 15
 
 
  210:../../bos/modules/b_mod_ssl.c ****         .pbuf = NULL,
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  419      00
  420              	.LVL40:
  421              		.loc 1 217 21 view .LVU95
-GAS LISTING /tmp/ccT2oxu6.s 			page 16
+GAS LISTING /tmp/ccyire8Q.s 			page 16
 
 
  422 002d E8000000 		call	bCalloc@PLT
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  229:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_config_init(&p_ssl->ssl_conf);
  454              		.loc 1 229 5 is_stmt 0 view .LVU106
  455 0057 4C8DB320 		leaq	1568(%rbx), %r14
-GAS LISTING /tmp/ccT2oxu6.s 			page 17
+GAS LISTING /tmp/ccyire8Q.s 			page 17
 
 
  455      060000
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  490 00bc E8000000 		call	mbedtls_ssl_config_init@PLT
  490      00
  491              	.LVL49:
-GAS LISTING /tmp/ccT2oxu6.s 			page 18
+GAS LISTING /tmp/ccyire8Q.s 			page 18
 
 
  230:../../bos/modules/b_mod_ssl.c ****     mbedtls_x509_crt_init(&p_ssl->ca);
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  524              		.loc 1 241 9 is_stmt 0 discriminator 1 view .LVU120
  525 0116 488D2D00 		leaq	.LC6(%rip), %rbp
  525      000000
-GAS LISTING /tmp/ccT2oxu6.s 			page 19
+GAS LISTING /tmp/ccyire8Q.s 			page 19
 
 
  526              	.LVL55:
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
   39:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
   40:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
   41:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (vsprintf (char *__restrict __s, const char *__restrict __fmt,
-GAS LISTING /tmp/ccT2oxu6.s 			page 20
+GAS LISTING /tmp/ccyire8Q.s 			page 20
 
 
   42:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 __gnuc_va_list __ap))
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  543 0133 4989C7   		movq	%rax, %r15
  544              	.LVL58:
  238:../../bos/modules/b_mod_ssl.c ****     while (*ciphersuites != 0)
-GAS LISTING /tmp/ccT2oxu6.s 			page 21
+GAS LISTING /tmp/ccyire8Q.s 			page 21
 
 
  545              		.loc 1 238 5 is_stmt 1 view .LVU126
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  586 0169 E8000000 		call	bLogOut@PLT
  586      00
  587              	.LVL63:
-GAS LISTING /tmp/ccT2oxu6.s 			page 22
+GAS LISTING /tmp/ccyire8Q.s 			page 22
 
 
  588              		.loc 1 242 9 is_stmt 1 view .LVU141
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  615              		.loc 1 249 9 is_stmt 1 view .LVU152
  249:../../bos/modules/b_mod_ssl.c ****         root_cert.len  = cert->len;
  616              		.loc 1 249 30 is_stmt 0 view .LVU153
-GAS LISTING /tmp/ccT2oxu6.s 			page 23
+GAS LISTING /tmp/ccyire8Q.s 			page 23
 
 
  617 01b1 488B4424 		movq	8(%rsp), %rax
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  642 01e6 E8000000 		call	bLogOut@PLT
  642      00
  643              	.LVL69:
-GAS LISTING /tmp/ccT2oxu6.s 			page 24
+GAS LISTING /tmp/ccyire8Q.s 			page 24
 
 
  277:../../bos/modules/b_mod_ssl.c ****         mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  689 0216 662E0F1F 		.p2align 4,,10
  689      84000000 
  689      0000
-GAS LISTING /tmp/ccT2oxu6.s 			page 25
+GAS LISTING /tmp/ccyire8Q.s 			page 25
 
 
  690              		.p2align 3
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  727 0263 4189C1   		movl	%eax, %r9d
  728 0266 488D1500 		leaq	__func__.2(%rip), %rdx
  728      000000
-GAS LISTING /tmp/ccT2oxu6.s 			page 26
+GAS LISTING /tmp/ccyire8Q.s 			page 26
 
 
  729 026d 488D3500 		leaq	.LC1(%rip), %rsi
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  766              		.globl	bSSLDeinit
  768              	bSSLDeinit:
  769              	.LVL86:
-GAS LISTING /tmp/ccT2oxu6.s 			page 27
+GAS LISTING /tmp/ccyire8Q.s 			page 27
 
 
  770              	.LFB131:
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  802      00
  803              	.LVL91:
  294:../../bos/modules/b_mod_ssl.c ****     _bSSLDRBGDeinit(&p_ssl->random);
-GAS LISTING /tmp/ccT2oxu6.s 			page 28
+GAS LISTING /tmp/ccyire8Q.s 			page 28
 
 
  804              		.loc 1 294 5 view .LVU193
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  843              		.cfi_endproc
  844              	.LFE131:
  846              		.section	.rodata.bSSLHandshake.str1.1,"aMS",@progbits,1
-GAS LISTING /tmp/ccT2oxu6.s 			page 29
+GAS LISTING /tmp/ccyire8Q.s 			page 29
 
 
  847              	.LC9:
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  879              		.loc 1 315 9 is_stmt 1 view .LVU216
  880              		.loc 1 315 23 is_stmt 0 view .LVU217
  881 0016 89B7D009 		movl	%esi, 2512(%rdi)
-GAS LISTING /tmp/ccT2oxu6.s 			page 30
+GAS LISTING /tmp/ccyire8Q.s 			page 30
 
 
  881      0000
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  920      00
  921 004a BF020000 		movl	$2, %edi
  921      00
-GAS LISTING /tmp/ccT2oxu6.s 			page 31
+GAS LISTING /tmp/ccyire8Q.s 			page 31
 
 
  922 004f 41F7D9   		negl	%r9d
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  966 0007 745E     		je	.L76
  327:../../bos/modules/b_mod_ssl.c ****     int ret = 0;
  967              		.loc 1 327 1 view .LVU237
-GAS LISTING /tmp/ccT2oxu6.s 			page 32
+GAS LISTING /tmp/ccyire8Q.s 			page 32
 
 
  968 0009 53       		pushq	%rbx
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  340:../../bos/modules/b_mod_ssl.c ****     {
  341:../../bos/modules/b_mod_ssl.c ****         *rlen = ret;
  1009              		.loc 1 341 9 is_stmt 1 view .LVU250
-GAS LISTING /tmp/ccT2oxu6.s 			page 33
+GAS LISTING /tmp/ccyire8Q.s 			page 33
 
 
  1010              		.loc 1 341 15 is_stmt 0 view .LVU251
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  1052              	.LFE133:
  1054              		.section	.text.bSSLSend,"ax",@progbits
  1055              		.p2align 4
-GAS LISTING /tmp/ccT2oxu6.s 			page 34
+GAS LISTING /tmp/ccyire8Q.s 			page 34
 
 
  1056              		.globl	bSSLSend
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  1097 0028 80E27F   		andb	$127, %dl
  1098              		.loc 1 355 8 view .LVU275
  1099 002b 81FA0097 		cmpl	$-26880, %edx
-GAS LISTING /tmp/ccT2oxu6.s 			page 35
+GAS LISTING /tmp/ccyire8Q.s 			page 35
 
 
  1099      FFFF
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  1139      000000
  1140              		.p2align 3
  1141              	.L99:
-GAS LISTING /tmp/ccT2oxu6.s 			page 36
+GAS LISTING /tmp/ccyire8Q.s 			page 36
 
 
  351:../../bos/modules/b_mod_ssl.c ****     }
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  1192              		.file 18 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ssl.h"
  1193              		.file 19 "../../bos/modules/inc/b_mod_ssl.h"
  1194              		.file 20 "/usr/include/x86_64-linux-gnu/bits/stdio2-decl.h"
-GAS LISTING /tmp/ccT2oxu6.s 			page 37
+GAS LISTING /tmp/ccyire8Q.s 			page 37
 
 
  1195              		.file 21 "../../bos/modules/inc/b_mod_tcpip.h"
@@ -2183,33 +2183,33 @@ GAS LISTING /tmp/ccT2oxu6.s 			page 1
  9628              	3:
  9629 001c 00000000 		.align 8
  9630              	4:
-GAS LISTING /tmp/ccT2oxu6.s 			page 38
+GAS LISTING /tmp/ccyire8Q.s 			page 38
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_mod_ssl.c
-     /tmp/ccT2oxu6.s:13     .text._bSSLPrint:0000000000000000 _bSSLPrint
-     /tmp/ccT2oxu6.s:1168   .rodata.__func__.1:0000000000000000 __func__.1
-     /tmp/ccT2oxu6.s:65     .text._bSSLRecv:0000000000000000 _bSSLRecv
-     /tmp/ccT2oxu6.s:142    .text._bSSLSend:0000000000000000 _bSSLSend
-     /tmp/ccT2oxu6.s:219    .text._bSSLEntropySource:0000000000000000 _bSSLEntropySource
-     /tmp/ccT2oxu6.s:369    .text.bSSLInit:0000000000000000 bSSLInit
-     /tmp/ccT2oxu6.s:1174   .rodata.__func__.2:0000000000000000 __func__.2
-     /tmp/ccT2oxu6.s:768    .text.bSSLDeinit:0000000000000000 bSSLDeinit
-     /tmp/ccT2oxu6.s:853    .text.bSSLHandshake:0000000000000000 bSSLHandshake
-     /tmp/ccT2oxu6.s:1162   .rodata.__func__.0:0000000000000000 __func__.0
-     /tmp/ccT2oxu6.s:954    .text.bSSLRecv:0000000000000000 bSSLRecv
-     /tmp/ccT2oxu6.s:1058   .text.bSSLSend:0000000000000000 bSSLSend
-     /tmp/ccT2oxu6.s:8      .rodata._bSSLPrint.str1.1:000000000000000c .LC1
-     /tmp/ccT2oxu6.s:6      .rodata._bSSLPrint.str1.1:0000000000000000 .LC0
-     /tmp/ccT2oxu6.s:355    .rodata.bSSLInit.str1.1:000000000000000e .LC4
-     /tmp/ccT2oxu6.s:359    .rodata.bSSLInit.str1.1:000000000000002e .LC6
-     /tmp/ccT2oxu6.s:357    .rodata.bSSLInit.str1.1:0000000000000015 .LC5
-     /tmp/ccT2oxu6.s:332    .rodata.bSSLInit.str1.8:0000000000000000 .LC2
-     /tmp/ccT2oxu6.s:363    .rodata.bSSLInit.str1.1:000000000000004c .LC8
-     /tmp/ccT2oxu6.s:361    .rodata.bSSLInit.str1.1:0000000000000032 .LC7
-     /tmp/ccT2oxu6.s:353    .rodata.bSSLInit.str1.1:0000000000000000 .LC3
-     /tmp/ccT2oxu6.s:847    .rodata.bSSLHandshake.str1.1:0000000000000000 .LC9
+     /tmp/ccyire8Q.s:13     .text._bSSLPrint:0000000000000000 _bSSLPrint
+     /tmp/ccyire8Q.s:1168   .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/ccyire8Q.s:65     .text._bSSLRecv:0000000000000000 _bSSLRecv
+     /tmp/ccyire8Q.s:142    .text._bSSLSend:0000000000000000 _bSSLSend
+     /tmp/ccyire8Q.s:219    .text._bSSLEntropySource:0000000000000000 _bSSLEntropySource
+     /tmp/ccyire8Q.s:369    .text.bSSLInit:0000000000000000 bSSLInit
+     /tmp/ccyire8Q.s:1174   .rodata.__func__.2:0000000000000000 __func__.2
+     /tmp/ccyire8Q.s:768    .text.bSSLDeinit:0000000000000000 bSSLDeinit
+     /tmp/ccyire8Q.s:853    .text.bSSLHandshake:0000000000000000 bSSLHandshake
+     /tmp/ccyire8Q.s:1162   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccyire8Q.s:954    .text.bSSLRecv:0000000000000000 bSSLRecv
+     /tmp/ccyire8Q.s:1058   .text.bSSLSend:0000000000000000 bSSLSend
+     /tmp/ccyire8Q.s:8      .rodata._bSSLPrint.str1.1:000000000000000c .LC1
+     /tmp/ccyire8Q.s:6      .rodata._bSSLPrint.str1.1:0000000000000000 .LC0
+     /tmp/ccyire8Q.s:355    .rodata.bSSLInit.str1.1:000000000000000e .LC4
+     /tmp/ccyire8Q.s:359    .rodata.bSSLInit.str1.1:000000000000002e .LC6
+     /tmp/ccyire8Q.s:357    .rodata.bSSLInit.str1.1:0000000000000015 .LC5
+     /tmp/ccyire8Q.s:332    .rodata.bSSLInit.str1.8:0000000000000000 .LC2
+     /tmp/ccyire8Q.s:363    .rodata.bSSLInit.str1.1:000000000000004c .LC8
+     /tmp/ccyire8Q.s:361    .rodata.bSSLInit.str1.1:0000000000000032 .LC7
+     /tmp/ccyire8Q.s:353    .rodata.bSSLInit.str1.1:0000000000000000 .LC3
+     /tmp/ccyire8Q.s:847    .rodata.bSSLHandshake.str1.1:0000000000000000 .LC9
 
 UNDEFINED SYMBOLS
 bLogOut
@@ -2243,7 +2243,7 @@ mbedtls_x509_crt_parse
 mbedtls_ssl_conf_ca_chain
 mbedtls_x509_crt_free
 mbedtls_ssl_config_free
-GAS LISTING /tmp/ccT2oxu6.s 			page 39
+GAS LISTING /tmp/ccyire8Q.s 			page 39
 
 
 mbedtls_ssl_free

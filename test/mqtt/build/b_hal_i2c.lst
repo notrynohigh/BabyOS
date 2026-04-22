@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc1ABnRg.s 			page 1
+GAS LISTING /tmp/ccHOkO68.s 			page 1
 
 
    1              		.file	"b_hal_i2c.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   46:../../bos/hal/b_hal_i2c.c **** typedef struct
   47:../../bos/hal/b_hal_i2c.c **** {
   48:../../bos/hal/b_hal_i2c.c ****     bHalGPIOInstance_t clk;
-GAS LISTING /tmp/cc1ABnRg.s 			page 2
+GAS LISTING /tmp/ccHOkO68.s 			page 2
 
 
   49:../../bos/hal/b_hal_i2c.c ****     bHalGPIOInstance_t sda;
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  103:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
  104:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
  105:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
-GAS LISTING /tmp/cc1ABnRg.s 			page 3
+GAS LISTING /tmp/ccHOkO68.s 			page 3
 
 
  106:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  160:../../bos/hal/b_hal_i2c.c **** static void _HalI2CIOWriteByte(bHalI2CIO_t i2c, uint8_t dat)
  161:../../bos/hal/b_hal_i2c.c **** {
   11              		.loc 1 161 1 view -0
-GAS LISTING /tmp/cc1ABnRg.s 			page 4
+GAS LISTING /tmp/ccHOkO68.s 			page 4
 
 
   12              		.cfi_startproc
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   61:../../bos/hal/b_hal_i2c.c **** {
   60              		.loc 1 61 17 is_stmt 1 view .LVU7
   61              	.LBB17:
-GAS LISTING /tmp/cc1ABnRg.s 			page 5
+GAS LISTING /tmp/ccHOkO68.s 			page 5
 
 
   63:../../bos/hal/b_hal_i2c.c ****     {
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   96              	.LVL7:
   97              	.L4:
  173:../../bos/hal/b_hal_i2c.c ****         }
-GAS LISTING /tmp/cc1ABnRg.s 			page 6
+GAS LISTING /tmp/ccHOkO68.s 			page 6
 
 
  174:../../bos/hal/b_hal_i2c.c ****         bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  134              	.L6:
  166:../../bos/hal/b_hal_i2c.c ****         {
  135              		.loc 1 166 9 view .LVU31
-GAS LISTING /tmp/cc1ABnRg.s 			page 7
+GAS LISTING /tmp/ccHOkO68.s 			page 7
 
 
  166:../../bos/hal/b_hal_i2c.c ****         {
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  179              		.cfi_def_cfa_offset 24
  180              	.LVL19:
  181              		.loc 1 184 1 view .LVU42
-GAS LISTING /tmp/cc1ABnRg.s 			page 8
+GAS LISTING /tmp/ccHOkO68.s 			page 8
 
 
  182 00ce 415E     		popq	%r14
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  230              		.loc 1 102 19 view .LVU48
  231 0016 448B7424 		movl	52(%rsp), %r14d
  231      34
-GAS LISTING /tmp/cc1ABnRg.s 			page 9
+GAS LISTING /tmp/ccHOkO68.s 			page 9
 
 
  232              	.LVL24:
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  269              		.loc 1 105 5 view .LVU60
  270 004c 4489E6   		movl	%r12d, %esi
  271 004f 31D2     		xorl	%edx, %edx
-GAS LISTING /tmp/cc1ABnRg.s 			page 10
+GAS LISTING /tmp/ccHOkO68.s 			page 10
 
 
  272 0051 89EF     		movl	%ebp, %edi
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  311              	.LVL37:
  111:../../bos/hal/b_hal_i2c.c **** 
  312              		.loc 1 111 1 view .LVU69
-GAS LISTING /tmp/cc1ABnRg.s 			page 11
+GAS LISTING /tmp/ccHOkO68.s 			page 11
 
 
  313 008b 415D     		popq	%r13
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  363              		.cfi_def_cfa_offset 64
  116:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
  364              		.loc 1 116 23 is_stmt 0 view .LVU74
-GAS LISTING /tmp/cc1ABnRg.s 			page 12
+GAS LISTING /tmp/ccHOkO68.s 			page 12
 
 
  365 0013 8B442450 		movl	80(%rsp), %eax
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  401 0045 BA010000 		movl	$1, %edx
  401      00
  402 004a E8000000 		call	bHalGpioWritePin@PLT
-GAS LISTING /tmp/cc1ABnRg.s 			page 13
+GAS LISTING /tmp/ccHOkO68.s 			page 13
 
 
  402      00
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  440              	.LVL53:
  131:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
  441              		.loc 1 131 5 view .LVU96
-GAS LISTING /tmp/cc1ABnRg.s 			page 14
+GAS LISTING /tmp/ccHOkO68.s 			page 14
 
 
  442 0096 31C9     		xorl	%ecx, %ecx
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  484              		.loc 1 135 1 view .LVU105
  485 00c0 415F     		popq	%r15
  486              	.LCFI37:
-GAS LISTING /tmp/cc1ABnRg.s 			page 15
+GAS LISTING /tmp/ccHOkO68.s 			page 15
 
 
  487              		.cfi_def_cfa_offset 8
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  536      54
  537              	.LVL64:
  538              		.loc 1 187 1 view .LVU110
-GAS LISTING /tmp/cc1ABnRg.s 			page 16
+GAS LISTING /tmp/ccHOkO68.s 			page 16
 
 
  539 0026 448B7C24 		movl	92(%rsp), %r15d
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  578              		.loc 1 188 21 view .LVU124
  579 005e 31DB     		xorl	%ebx, %ebx
  190:../../bos/hal/b_hal_i2c.c ****     bHalGpioConfig(i2c.sda.port, i2c.sda.pin, B_HAL_GPIO_INPUT, B_HAL_GPIO_NOPULL);
-GAS LISTING /tmp/cc1ABnRg.s 			page 17
+GAS LISTING /tmp/ccHOkO68.s 			page 17
 
 
  580              		.loc 1 190 5 view .LVU125
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  616              		.loc 1 199 16 view .LVU137
  617 009c 3C01     		cmpb	$1, %al
  618 009e 80DBFF   		sbbb	$-1, %bl
-GAS LISTING /tmp/cc1ABnRg.s 			page 18
+GAS LISTING /tmp/ccHOkO68.s 			page 18
 
 
  619              	.LVL76:
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  658              	.LBB48:
  659              	.LBB46:
  660              	.LBB44:
-GAS LISTING /tmp/cc1ABnRg.s 			page 19
+GAS LISTING /tmp/ccHOkO68.s 			page 19
 
 
   63:../../bos/hal/b_hal_i2c.c ****     {
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  700              	.LVL83:
  153:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
  701              		.loc 1 153 5 view .LVU160
-GAS LISTING /tmp/cc1ABnRg.s 			page 20
+GAS LISTING /tmp/ccHOkO68.s 			page 20
 
 
  702 0107 89EF     		movl	%ebp, %edi
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  740 0140 5D       		popq	%rbp
  741              	.LCFI47:
  742              		.cfi_def_cfa_offset 40
-GAS LISTING /tmp/cc1ABnRg.s 			page 21
+GAS LISTING /tmp/ccHOkO68.s 			page 21
 
 
  743 0141 415C     		popq	%r12
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  786 015e 400F92C5 		setb	%bpl
  787 0162 83C501   		addl	$1, %ebp
  788              	.L32:
-GAS LISTING /tmp/cc1ABnRg.s 			page 22
+GAS LISTING /tmp/ccHOkO68.s 			page 22
 
 
  789              	.LVL94:
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  826              		.loc 1 146 5 view .LVU187
  827 01a9 BA010000 		movl	$1, %edx
  827      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 23
+GAS LISTING /tmp/ccHOkO68.s 			page 23
 
 
  828 01ae 4489FE   		movl	%r15d, %esi
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  877 0018 448B6C24 		movl	80(%rsp), %r13d
  877      50
  878              	.LVL103:
-GAS LISTING /tmp/cc1ABnRg.s 			page 24
+GAS LISTING /tmp/ccHOkO68.s 			page 24
 
 
  186:../../bos/hal/b_hal_i2c.c **** {
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  916 0050 31D2     		xorl	%edx, %edx
  917 0052 4489FE   		movl	%r15d, %esi
  191:../../bos/hal/b_hal_i2c.c ****     for (i = 0; i < 8; i++)
-GAS LISTING /tmp/cc1ABnRg.s 			page 25
+GAS LISTING /tmp/ccHOkO68.s 			page 25
 
 
  918              		.loc 1 191 5 is_stmt 0 view .LVU205
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  953 0091 E8000000 		call	bHalGpioReadPin@PLT
  953      00
  954              	.LVL114:
-GAS LISTING /tmp/cc1ABnRg.s 			page 26
+GAS LISTING /tmp/ccHOkO68.s 			page 26
 
 
  201:../../bos/hal/b_hal_i2c.c ****         bHalDelayUs(us);
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  994 00d1 E8000000 		call	bHalDelayUs@PLT
  994      00
  995              	.LVL119:
-GAS LISTING /tmp/cc1ABnRg.s 			page 27
+GAS LISTING /tmp/ccHOkO68.s 			page 27
 
 
  206:../../bos/hal/b_hal_i2c.c ****         _HalI2CIOmNACK(i2c);
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1033 0101 89EF     		movl	%ebp, %edi
  1034 0103 E8000000 		call	bHalDelayUs@PLT
  1034      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 28
+GAS LISTING /tmp/ccHOkO68.s 			page 28
 
 
  1035              	.LVL123:
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1075              		.loc 1 212 1 view .LVU249
  1076 014a 5D       		popq	%rbp
  1077              	.LCFI62:
-GAS LISTING /tmp/cc1ABnRg.s 			page 29
+GAS LISTING /tmp/ccHOkO68.s 			page 29
 
 
  1078              		.cfi_def_cfa_offset 40
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  237:../../bos/hal/b_hal_i2c.c **** }
  238:../../bos/hal/b_hal_i2c.c **** 
  239:../../bos/hal/b_hal_i2c.c **** static int _HalI2CIOReadData(bHalI2CIO_t i2c, uint8_t dev, uint8_t *pdat, uint16_t len)
-GAS LISTING /tmp/cc1ABnRg.s 			page 30
+GAS LISTING /tmp/ccHOkO68.s 			page 30
 
 
  240:../../bos/hal/b_hal_i2c.c **** {
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  294:../../bos/hal/b_hal_i2c.c ****     }
  295:../../bos/hal/b_hal_i2c.c ****     while (len-- > 1)
  296:../../bos/hal/b_hal_i2c.c ****     {
-GAS LISTING /tmp/cc1ABnRg.s 			page 31
+GAS LISTING /tmp/ccHOkO68.s 			page 31
 
 
  297:../../bos/hal/b_hal_i2c.c ****         *pdat++ = _HalI2CIOReadByte(i2c, 1);
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  351:../../bos/hal/b_hal_i2c.c ****  * \addtogroup I2C_Exported_Functions
  352:../../bos/hal/b_hal_i2c.c ****  * \{
  353:../../bos/hal/b_hal_i2c.c ****  */
-GAS LISTING /tmp/cc1ABnRg.s 			page 32
+GAS LISTING /tmp/ccHOkO68.s 			page 32
 
 
  354:../../bos/hal/b_hal_i2c.c **** #if defined(__WEAKDEF)
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1149 0009 C3       		ret
  1150              		.cfi_endproc
  1151              	.LFE42:
-GAS LISTING /tmp/cc1ABnRg.s 			page 33
+GAS LISTING /tmp/ccHOkO68.s 			page 33
 
 
  1153              		.section	.text.bMcuI2CMemRead,"ax",@progbits
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1192              	.LCFI68:
  1193              		.cfi_def_cfa_offset 24
  1194              		.cfi_offset 14, -24
-GAS LISTING /tmp/cc1ABnRg.s 			page 34
+GAS LISTING /tmp/ccHOkO68.s 			page 34
 
 
  1195 0014 4155     		pushq	%r13
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1231              		.loc 1 397 18 view .LVU276
  1232 0039 4C89E6   		movq	%r12, %rsi
  1233              	.LVL138:
-GAS LISTING /tmp/cc1ABnRg.s 			page 35
+GAS LISTING /tmp/ccHOkO68.s 			page 35
 
 
  397:../../bos/hal/b_hal_i2c.c ****     }
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1281 0067 895C2420 		movl	%ebx, 32(%rsp)
  1282 006b 660F7E44 		movd	%xmm0, 8(%rsp)
  1282      2408
-GAS LISTING /tmp/cc1ABnRg.s 			page 36
+GAS LISTING /tmp/ccHOkO68.s 			page 36
 
 
  1283              	.LVL142:
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   91:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
  1317              		.loc 1 91 5 view .LVU298
  1318 0093 4489FE   		movl	%r15d, %esi
-GAS LISTING /tmp/cc1ABnRg.s 			page 37
+GAS LISTING /tmp/ccHOkO68.s 			page 37
 
 
  1319              	.LVL145:
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1355      00
  1356              	.LVL153:
   96:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
-GAS LISTING /tmp/cc1ABnRg.s 			page 38
+GAS LISTING /tmp/ccHOkO68.s 			page 38
 
 
  1357              		.loc 1 96 5 view .LVU308
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1396              	.LVL158:
  1397              	.L75:
  250:../../bos/hal/b_hal_i2c.c ****     {
-GAS LISTING /tmp/cc1ABnRg.s 			page 39
+GAS LISTING /tmp/ccHOkO68.s 			page 39
 
 
  1398              		.loc 1 250 19 is_stmt 1 discriminator 1 view .LVU315
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1437 0174 4939EC   		cmpq	%rbp, %r12
  1438 0177 75D7     		jne	.L72
  1439              	.L70:
-GAS LISTING /tmp/cc1ABnRg.s 			page 40
+GAS LISTING /tmp/ccHOkO68.s 			page 40
 
 
  256:../../bos/hal/b_hal_i2c.c ****     _HalI2CIOStop(i2c);
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1480 019e 81FBA086 		cmpl	$100000, %ebx
  1480      0100
  1481 01a4 760F     		jbe	.L73
-GAS LISTING /tmp/cc1ABnRg.s 			page 41
+GAS LISTING /tmp/ccHOkO68.s 			page 41
 
 
   68:../../bos/hal/b_hal_i2c.c ****     {
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1520      00
  1521              	.LVL173:
  108:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
-GAS LISTING /tmp/cc1ABnRg.s 			page 42
+GAS LISTING /tmp/ccHOkO68.s 			page 42
 
 
  1522              		.loc 1 108 5 view .LVU347
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1566              		.cfi_def_cfa_offset 16
  1567 021b 415F     		popq	%r15
  1568              	.LCFI94:
-GAS LISTING /tmp/cc1ABnRg.s 			page 43
+GAS LISTING /tmp/ccHOkO68.s 			page 43
 
 
  1569              		.cfi_def_cfa_offset 8
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   93:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
  1610              		.loc 1 93 5 is_stmt 1 view .LVU363
  1611 0249 BF020000 		movl	$2, %edi
-GAS LISTING /tmp/cc1ABnRg.s 			page 44
+GAS LISTING /tmp/ccHOkO68.s 			page 44
 
 
  1611      00
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  244:../../bos/hal/b_hal_i2c.c ****     {
  1649              		.loc 1 244 9 is_stmt 0 view .LVU371
  1650 02a1 660F6F74 		movdqa	48(%rsp), %xmm6
-GAS LISTING /tmp/cc1ABnRg.s 			page 45
+GAS LISTING /tmp/ccHOkO68.s 			page 45
 
 
  1650      2430
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  106:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
  1691              		.loc 1 106 5 view .LVU378
  1692 02f2 89DF     		movl	%ebx, %edi
-GAS LISTING /tmp/cc1ABnRg.s 			page 46
+GAS LISTING /tmp/ccHOkO68.s 			page 46
 
 
  1693 02f4 E8000000 		call	bHalDelayUs@PLT
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   91:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
  1730              		.loc 1 91 5 view .LVU386
  1731 0335 4489FE   		movl	%r15d, %esi
-GAS LISTING /tmp/cc1ABnRg.s 			page 47
+GAS LISTING /tmp/ccHOkO68.s 			page 47
 
 
  1732              	.LVL204:
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1768      00
  1769              	.LVL212:
   96:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
-GAS LISTING /tmp/cc1ABnRg.s 			page 48
+GAS LISTING /tmp/ccHOkO68.s 			page 48
 
 
  1770              		.loc 1 96 5 view .LVU396
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1809              	.LBB124:
  1810              	.LBB120:
  1811              	.LBB118:
-GAS LISTING /tmp/cc1ABnRg.s 			page 49
+GAS LISTING /tmp/ccHOkO68.s 			page 49
 
 
  1812              	.LBB116:
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1854              		.cfi_offset 12, -40
  1855              		.cfi_offset 13, -32
  1856              		.cfi_offset 14, -24
-GAS LISTING /tmp/cc1ABnRg.s 			page 50
+GAS LISTING /tmp/ccHOkO68.s 			page 50
 
 
  1857              		.cfi_offset 15, -16
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1901 000f 4189D7   		movl	%edx, %r15d
  1902 0012 4156     		pushq	%r14
  1903              	.LCFI103:
-GAS LISTING /tmp/cc1ABnRg.s 			page 51
+GAS LISTING /tmp/ccHOkO68.s 			page 51
 
 
  1904              		.cfi_def_cfa_offset 24
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1941              		.cfi_def_cfa_offset 56
  419:../../bos/hal/b_hal_i2c.c ****     }
  1942              		.loc 1 419 18 view .LVU424
-GAS LISTING /tmp/cc1ABnRg.s 			page 52
+GAS LISTING /tmp/ccHOkO68.s 			page 52
 
 
  1943 0039 410FB7D7 		movzwl	%r15w, %edx
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  1990 005b 448B7710 		movl	16(%rdi), %r14d
  1991 005f 448B6F0C 		movl	12(%rdi), %r13d
  1992 0063 448B6708 		movl	8(%rdi), %r12d
-GAS LISTING /tmp/cc1ABnRg.s 			page 53
+GAS LISTING /tmp/ccHOkO68.s 			page 53
 
 
  1993 0067 896C2420 		movl	%ebp, 32(%rsp)
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2027              	.LBE153:
  2028              	.LBE152:
   91:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
-GAS LISTING /tmp/cc1ABnRg.s 			page 54
+GAS LISTING /tmp/ccHOkO68.s 			page 54
 
 
  2029              		.loc 1 91 5 is_stmt 1 view .LVU446
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2065              		.loc 1 97 5 view .LVU454
  2066 00e2 BF010000 		movl	$1, %edi
  2066      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 55
+GAS LISTING /tmp/ccHOkO68.s 			page 55
 
 
  2067 00e7 E8000000 		call	bHalDelayUs@PLT
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  225:../../bos/hal/b_hal_i2c.c ****     {
  2106              		.loc 1 225 19 discriminator 1 view .LVU462
  2107 013d 4901DF   		addq	%rbx, %r15
-GAS LISTING /tmp/cc1ABnRg.s 			page 56
+GAS LISTING /tmp/ccHOkO68.s 			page 56
 
 
  2108              	.LVL247:
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2148 0190 79B6     		jns	.L108
  230:../../bos/hal/b_hal_i2c.c ****             return -1;
  2149              		.loc 1 230 13 is_stmt 1 view .LVU471
-GAS LISTING /tmp/cc1ABnRg.s 			page 57
+GAS LISTING /tmp/ccHOkO68.s 			page 57
 
 
  2150              	.LVL253:
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2187      00
  2188              	.LVL257:
  105:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
-GAS LISTING /tmp/cc1ABnRg.s 			page 58
+GAS LISTING /tmp/ccHOkO68.s 			page 58
 
 
  2189              		.loc 1 105 5 view .LVU483
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2228              	.LCFI121:
  2229              		.cfi_remember_state
  2230              		.cfi_def_cfa_offset 56
-GAS LISTING /tmp/cc1ABnRg.s 			page 59
+GAS LISTING /tmp/ccHOkO68.s 			page 59
 
 
  408:../../bos/hal/b_hal_i2c.c ****     }
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2276      00
  2277 0239 4489E6   		movl	%r12d, %esi
  2278 023c E8000000 		call	bHalGpioWritePin@PLT
-GAS LISTING /tmp/cc1ABnRg.s 			page 60
+GAS LISTING /tmp/ccHOkO68.s 			page 60
 
 
  2278      00
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2315 0291 89442410 		movl	%eax, 16(%rsp)
  2316 0295 E8000000 		call	_HalI2CIOWriteByte
  2316      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 61
+GAS LISTING /tmp/ccHOkO68.s 			page 61
 
 
  2317              	.LVL275:
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2354              	.LVL279:
   75:../../bos/hal/b_hal_i2c.c ****     }
  2355              		.loc 1 75 16 view .LVU513
-GAS LISTING /tmp/cc1ABnRg.s 			page 62
+GAS LISTING /tmp/ccHOkO68.s 			page 62
 
 
  2356              	.LBE164:
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2393      00
  2394              	.LVL286:
  110:../../bos/hal/b_hal_i2c.c **** }
-GAS LISTING /tmp/cc1ABnRg.s 			page 63
+GAS LISTING /tmp/ccHOkO68.s 			page 63
 
 
  2395              		.loc 1 110 5 view .LVU521
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2445              		.cfi_def_cfa_offset 8
  2446 034d C3       		ret
  2447              	.LVL294:
-GAS LISTING /tmp/cc1ABnRg.s 			page 64
+GAS LISTING /tmp/ccHOkO68.s 			page 64
 
 
  2448 034e 6690     		.p2align 4,,10
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2486      00
  2487              	.LVL297:
   91:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
-GAS LISTING /tmp/cc1ABnRg.s 			page 65
+GAS LISTING /tmp/ccHOkO68.s 			page 65
 
 
  2488              		.loc 1 91 5 is_stmt 0 view .LVU541
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2524              	.LVL305:
   97:../../bos/hal/b_hal_i2c.c **** }
  2525              		.loc 1 97 5 is_stmt 0 view .LVU549
-GAS LISTING /tmp/cc1ABnRg.s 			page 66
+GAS LISTING /tmp/ccHOkO68.s 			page 66
 
 
  2526              	.LBE155:
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  225:../../bos/hal/b_hal_i2c.c ****     {
  2568              		.loc 1 225 19 is_stmt 0 discriminator 1 view .LVU555
  2569              	.LBE176:
-GAS LISTING /tmp/cc1ABnRg.s 			page 67
+GAS LISTING /tmp/ccHOkO68.s 			page 67
 
 
  2570              	.LBE180:
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  103:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
  2611              		.loc 1 103 5 is_stmt 1 view .LVU564
  2612 0437 E971FDFF 		jmp	.L109
-GAS LISTING /tmp/cc1ABnRg.s 			page 68
+GAS LISTING /tmp/ccHOkO68.s 			page 68
 
 
  2612      FF
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2659              		.cfi_def_cfa_offset 48
  2660              		.cfi_offset 6, -48
  2661 001c 89F5     		movl	%esi, %ebp
-GAS LISTING /tmp/cc1ABnRg.s 			page 69
+GAS LISTING /tmp/ccHOkO68.s 			page 69
 
 
  2662 001e 53       		pushq	%rbx
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2695 0047 5B       		popq	%rbx
  2696              	.LCFI151:
  2697              		.cfi_restore 3
-GAS LISTING /tmp/cc1ABnRg.s 			page 70
+GAS LISTING /tmp/ccHOkO68.s 			page 70
 
 
  2698              		.cfi_def_cfa_offset 48
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2743              	.LVL324:
  436:../../bos/hal/b_hal_i2c.c ****         simulating_iic.frq = i2c_if->_if.simulating_i2c.frq;
  2744              		.loc 1 436 9 is_stmt 1 view .LVU587
-GAS LISTING /tmp/cc1ABnRg.s 			page 71
+GAS LISTING /tmp/ccHOkO68.s 			page 71
 
 
  437:../../bos/hal/b_hal_i2c.c ****         retval = _HalI2CIOWriteBuff(simulating_iic, i2c_if->dev_addr, mem_addr, mem_addr_size, pbuf
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2779              	.LVL327:
   91:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
  2780              		.loc 1 91 5 view .LVU602
-GAS LISTING /tmp/cc1ABnRg.s 			page 72
+GAS LISTING /tmp/ccHOkO68.s 			page 72
 
 
  2781 00aa 4489EF   		movl	%r13d, %edi
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2816              		.loc 1 97 5 view .LVU610
  2817 00fc BF010000 		movl	$1, %edi
  2817      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 73
+GAS LISTING /tmp/ccHOkO68.s 			page 73
 
 
  2818 0101 E8000000 		call	bHalDelayUs@PLT
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2856 0159 48894C24 		movq	%rcx, 8(%rsp)
  2856      08
  2857              	.LVL340:
-GAS LISTING /tmp/cc1ABnRg.s 			page 74
+GAS LISTING /tmp/ccHOkO68.s 			page 74
 
 
  319:../../bos/hal/b_hal_i2c.c ****         if (_HalI2CIOACK(i2c) < 0)
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2897      00
  2898              	.LVL343:
  327:../../bos/hal/b_hal_i2c.c ****     {
-GAS LISTING /tmp/cc1ABnRg.s 			page 75
+GAS LISTING /tmp/ccHOkO68.s 			page 75
 
 
  2899              		.loc 1 327 5 view .LVU624
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2938              	.L160:
  335:../../bos/hal/b_hal_i2c.c ****         if (_HalI2CIOACK(i2c) < 0)
  2939              		.loc 1 335 9 is_stmt 1 view .LVU633
-GAS LISTING /tmp/cc1ABnRg.s 			page 76
+GAS LISTING /tmp/ccHOkO68.s 			page 76
 
 
  2940 021d 895C2430 		movl	%ebx, 48(%rsp)
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  2978              		.loc 1 63 8 view .LVU643
  2979 0261 81FBA086 		cmpl	$100000, %ebx
  2979      0100
-GAS LISTING /tmp/cc1ABnRg.s 			page 77
+GAS LISTING /tmp/ccHOkO68.s 			page 77
 
 
  2980 0267 760F     		jbe	.L159
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3019 02ad E8000000 		call	bHalGpioWritePin@PLT
  3019      00
  3020              	.LVL359:
-GAS LISTING /tmp/cc1ABnRg.s 			page 78
+GAS LISTING /tmp/ccHOkO68.s 			page 78
 
 
  108:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 1);
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3064              	.LCFI171:
  3065              		.cfi_def_cfa_offset 16
  3066 02e1 415F     		popq	%r15
-GAS LISTING /tmp/cc1ABnRg.s 			page 79
+GAS LISTING /tmp/ccHOkO68.s 			page 79
 
 
  3067              	.LCFI172:
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   94:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
  3106              		.loc 1 94 5 view .LVU668
  3107 031d 31D2     		xorl	%edx, %edx
-GAS LISTING /tmp/cc1ABnRg.s 			page 80
+GAS LISTING /tmp/ccHOkO68.s 			page 80
 
 
  3108 031f 4489FE   		movl	%r15d, %esi
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3145 037a 89442410 		movl	%eax, 16(%rsp)
  3146 037e E8000000 		call	_HalI2CIOACK
  3146      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 81
+GAS LISTING /tmp/ccHOkO68.s 			page 81
 
 
  3147              	.LVL377:
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3185              		.loc 1 66 16 is_stmt 0 view .LVU685
  3186 03a8 BD050000 		movl	$5, %ebp
  3186      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 82
+GAS LISTING /tmp/ccHOkO68.s 			page 82
 
 
   63:../../bos/hal/b_hal_i2c.c ****     {
@@ -4918,7 +4918,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3225 03ef 4489F6   		movl	%r14d, %esi
  3226 03f2 BA010000 		movl	$1, %edx
  3226      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 83
+GAS LISTING /tmp/ccHOkO68.s 			page 83
 
 
  3227 03f7 89DF     		movl	%ebx, %edi
@@ -4978,7 +4978,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3269              		.cfi_def_cfa_offset 40
  3270              	.LVL391:
  3271              		.loc 1 446 1 view .LVU705
-GAS LISTING /tmp/cc1ABnRg.s 			page 84
+GAS LISTING /tmp/ccHOkO68.s 			page 84
 
 
  3272 0424 415C     		popq	%r12
@@ -5038,7 +5038,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   92:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
  3317              		.loc 1 92 5 view .LVU714
  3318 044a 8B7C2410 		movl	16(%rsp), %edi
-GAS LISTING /tmp/cc1ABnRg.s 			page 85
+GAS LISTING /tmp/ccHOkO68.s 			page 85
 
 
  3319 044e BA010000 		movl	$1, %edx
@@ -5098,7 +5098,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3355 049d 660F6F6C 		movdqa	64(%rsp), %xmm5
  3355      2440
  3356 04a3 8B442450 		movl	80(%rsp), %eax
-GAS LISTING /tmp/cc1ABnRg.s 			page 86
+GAS LISTING /tmp/ccHOkO68.s 			page 86
 
 
  3357 04a7 0F112C24 		movups	%xmm5, (%rsp)
@@ -5158,7 +5158,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3396              	.LVL411:
  104:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.sda.port, i2c.sda.pin, 0);
  3397              		.loc 1 104 5 is_stmt 1 view .LVU729
-GAS LISTING /tmp/cc1ABnRg.s 			page 87
+GAS LISTING /tmp/ccHOkO68.s 			page 87
 
 
  3398 04f6 89DF     		movl	%ebx, %edi
@@ -5218,7 +5218,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3435 053e E98DFDFF 		jmp	.L165
  3435      FF
  3436              	.LVL419:
-GAS LISTING /tmp/cc1ABnRg.s 			page 88
+GAS LISTING /tmp/ccHOkO68.s 			page 88
 
 
  3437              	.L164:
@@ -5278,7 +5278,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3480 054e 81FBA086 		cmpl	$100000, %ebx
  3480      0100
  3481 0554 0F861EFD 		jbe	.L159
-GAS LISTING /tmp/cc1ABnRg.s 			page 89
+GAS LISTING /tmp/ccHOkO68.s 			page 89
 
 
  3481      FFFF
@@ -5338,7 +5338,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3522              		.cfi_def_cfa_offset 160
  3523 057a 660F6F5C 		movdqa	64(%rsp), %xmm3
  3523      2440
-GAS LISTING /tmp/cc1ABnRg.s 			page 90
+GAS LISTING /tmp/ccHOkO68.s 			page 90
 
 
  3524 0580 8B442450 		movl	80(%rsp), %eax
@@ -5398,7 +5398,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3567              		.cfi_offset 14, -24
  3568 0014 4155     		pushq	%r13
  3569              	.LCFI192:
-GAS LISTING /tmp/cc1ABnRg.s 			page 91
+GAS LISTING /tmp/ccHOkO68.s 			page 91
 
 
  3570              		.cfi_def_cfa_offset 32
@@ -5458,7 +5458,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  467:../../bos/hal/b_hal_i2c.c ****     }
  3606              		.loc 1 467 18 view .LVU771
  3607 003f 0FB7F5   		movzwl	%bp, %esi
-GAS LISTING /tmp/cc1ABnRg.s 			page 92
+GAS LISTING /tmp/ccHOkO68.s 			page 92
 
 
  3608              	.LVL429:
@@ -5518,7 +5518,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3657              		.cfi_restore_state
  459:../../bos/hal/b_hal_i2c.c ****         simulating_iic.sda = i2c_if->_if.simulating_i2c.sda;
  3658              		.loc 1 459 9 is_stmt 1 view .LVU781
-GAS LISTING /tmp/cc1ABnRg.s 			page 93
+GAS LISTING /tmp/ccHOkO68.s 			page 93
 
 
  3659 0060 F30F6F47 		movdqu	4(%rdi), %xmm0
@@ -5578,7 +5578,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3694      0000
   68:../../bos/hal/b_hal_i2c.c ****     {
  3695              		.loc 1 68 10 is_stmt 1 view .LVU794
-GAS LISTING /tmp/cc1ABnRg.s 			page 94
+GAS LISTING /tmp/ccHOkO68.s 			page 94
 
 
   68:../../bos/hal/b_hal_i2c.c ****     {
@@ -5638,7 +5638,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3731              	.LVL446:
   95:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 0);
  3732              		.loc 1 95 5 view .LVU804
-GAS LISTING /tmp/cc1ABnRg.s 			page 95
+GAS LISTING /tmp/ccHOkO68.s 			page 95
 
 
  3733 00e6 BF010000 		movl	$1, %edi
@@ -5698,7 +5698,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3770              	.LCFI206:
  3771              		.cfi_def_cfa_offset 112
  3772 0143 448B5424 		movl	12(%rsp), %r10d
-GAS LISTING /tmp/cc1ABnRg.s 			page 96
+GAS LISTING /tmp/ccHOkO68.s 			page 96
 
 
  3772      0C
@@ -5758,7 +5758,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3813 01a1 660F6F5C 		movdqa	48(%rsp), %xmm3
  3813      2430
  3814 01a7 8B442440 		movl	64(%rsp), %eax
-GAS LISTING /tmp/cc1ABnRg.s 			page 97
+GAS LISTING /tmp/ccHOkO68.s 			page 97
 
 
  3815 01ab 0F111C24 		movups	%xmm3, (%rsp)
@@ -5818,7 +5818,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3851 01ed 0F86AD02 		jbe	.L240
  3851      0000
  3852              	.LVL458:
-GAS LISTING /tmp/cc1ABnRg.s 			page 98
+GAS LISTING /tmp/ccHOkO68.s 			page 98
 
 
   68:../../bos/hal/b_hal_i2c.c ****     {
@@ -5878,7 +5878,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3889      00
  3890              	.LVL465:
   97:../../bos/hal/b_hal_i2c.c **** }
-GAS LISTING /tmp/cc1ABnRg.s 			page 99
+GAS LISTING /tmp/ccHOkO68.s 			page 99
 
 
  3891              		.loc 1 97 5 view .LVU838
@@ -5938,7 +5938,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3930 029b 0FB7ED   		movzwl	%bp, %ebp
  3931 029e 4C01E5   		addq	%r12, %rbp
  3932 02a1 664183FD 		cmpw	$1, %r13w
-GAS LISTING /tmp/cc1ABnRg.s 			page 100
+GAS LISTING /tmp/ccHOkO68.s 			page 100
 
 
  3932      01
@@ -5998,7 +5998,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  3971 02e5 895C2410 		movl	%ebx, 16(%rsp)
  3972 02e9 0F112C24 		movups	%xmm5, (%rsp)
  3973 02ed E8000000 		call	_HalI2CIOReadByte
-GAS LISTING /tmp/cc1ABnRg.s 			page 101
+GAS LISTING /tmp/ccHOkO68.s 			page 101
 
 
  3973      00
@@ -6058,7 +6058,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4013              	.L207:
  4014              	.LVL477:
   70:../../bos/hal/b_hal_i2c.c ****     }
-GAS LISTING /tmp/cc1ABnRg.s 			page 102
+GAS LISTING /tmp/ccHOkO68.s 			page 102
 
 
  4015              		.loc 1 70 16 view .LVU867
@@ -6118,7 +6118,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4053              	.LVL485:
  109:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
  4054              		.loc 1 109 5 view .LVU876
-GAS LISTING /tmp/cc1ABnRg.s 			page 103
+GAS LISTING /tmp/ccHOkO68.s 			page 103
 
 
  4055 035b BA010000 		movl	$1, %edx
@@ -6178,7 +6178,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4101 0382 660F1F44 		.p2align 3
  4101      0000
  4102              	.L237:
-GAS LISTING /tmp/cc1ABnRg.s 			page 104
+GAS LISTING /tmp/ccHOkO68.s 			page 104
 
 
  4103              	.LCFI224:
@@ -6238,7 +6238,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4141 03c6 BF020000 		movl	$2, %edi
  4141      00
  4142 03cb E8000000 		call	bHalDelayUs@PLT
-GAS LISTING /tmp/cc1ABnRg.s 			page 105
+GAS LISTING /tmp/ccHOkO68.s 			page 105
 
 
  4142      00
@@ -6298,7 +6298,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4180      0C
  4181 0428 85C0     		testl	%eax, %eax
  4182 042a 0F8920FD 		jns	.L211
-GAS LISTING /tmp/cc1ABnRg.s 			page 106
+GAS LISTING /tmp/ccHOkO68.s 			page 106
 
 
  4182      FFFF
@@ -6358,7 +6358,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4221      00
  4222 0469 4489F6   		movl	%r14d, %esi
  4223 046c 4489EF   		movl	%r13d, %edi
-GAS LISTING /tmp/cc1ABnRg.s 			page 107
+GAS LISTING /tmp/ccHOkO68.s 			page 107
 
 
  4224 046f E8000000 		call	bHalGpioWritePin@PLT
@@ -6418,7 +6418,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4262 04a3 BA010000 		movl	$1, %edx
  4262      00
  4263 04a8 4489FF   		movl	%r15d, %edi
-GAS LISTING /tmp/cc1ABnRg.s 			page 108
+GAS LISTING /tmp/ccHOkO68.s 			page 108
 
 
  4264 04ab E8000000 		call	bHalGpioWritePin@PLT
@@ -6478,7 +6478,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4299              		.loc 1 97 5 is_stmt 0 view .LVU922
  4300              	.LBE286:
  4301              	.LBE304:
-GAS LISTING /tmp/cc1ABnRg.s 			page 109
+GAS LISTING /tmp/ccHOkO68.s 			page 109
 
 
  289:../../bos/hal/b_hal_i2c.c ****     if (_HalI2CIOACK(i2c) < 0)
@@ -6538,7 +6538,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4341              	.LVL528:
   91:../../bos/hal/b_hal_i2c.c ****     bHalGpioWritePin(i2c.clk.port, i2c.clk.pin, 1);
  4342              		.loc 1 91 5 view .LVU929
-GAS LISTING /tmp/cc1ABnRg.s 			page 110
+GAS LISTING /tmp/ccHOkO68.s 			page 110
 
 
  4343 0559 4489FF   		movl	%r15d, %edi
@@ -6598,7 +6598,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4378      00
  4379 05ab E8000000 		call	bHalDelayUs@PLT
  4379      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 111
+GAS LISTING /tmp/ccHOkO68.s 			page 111
 
 
  4380              	.LVL537:
@@ -6658,7 +6658,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4419              		.loc 1 66 16 view .LVU944
  4420              	.LBE309:
  4421              	.LBE308:
-GAS LISTING /tmp/cc1ABnRg.s 			page 112
+GAS LISTING /tmp/ccHOkO68.s 			page 112
 
 
  103:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
@@ -6718,7 +6718,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4459 0642 BF050000 		movl	$5, %edi
  4459      00
  4460 0647 E8000000 		call	bHalDelayUs@PLT
-GAS LISTING /tmp/cc1ABnRg.s 			page 113
+GAS LISTING /tmp/ccHOkO68.s 			page 113
 
 
  4460      00
@@ -6778,7 +6778,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4499              		.cfi_def_cfa_offset 112
  4500 06a4 85C0     		testl	%eax, %eax
  4501 06a6 0F89EBFB 		jns	.L209
-GAS LISTING /tmp/cc1ABnRg.s 			page 114
+GAS LISTING /tmp/ccHOkO68.s 			page 114
 
 
  4501      FFFF
@@ -6838,7 +6838,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4545              	.LBB313:
  4546              	.LBI313:
   61:../../bos/hal/b_hal_i2c.c **** {
-GAS LISTING /tmp/cc1ABnRg.s 			page 115
+GAS LISTING /tmp/ccHOkO68.s 			page 115
 
 
  4547              		.loc 1 61 17 view .LVU967
@@ -6898,7 +6898,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4584 06fe 31D2     		xorl	%edx, %edx
  4585 0700 4489FF   		movl	%r15d, %edi
  4586 0703 89DE     		movl	%ebx, %esi
-GAS LISTING /tmp/cc1ABnRg.s 			page 116
+GAS LISTING /tmp/ccHOkO68.s 			page 116
 
 
  4587 0705 E8000000 		call	bHalGpioWritePin@PLT
@@ -6958,7 +6958,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4624              	.LBB301:
   75:../../bos/hal/b_hal_i2c.c ****     }
  4625              		.loc 1 75 16 view .LVU987
-GAS LISTING /tmp/cc1ABnRg.s 			page 117
+GAS LISTING /tmp/ccHOkO68.s 			page 117
 
 
  4626 0743 BB010000 		movl	$1, %ebx
@@ -7018,7 +7018,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4668 0000 F30F1EFA 		endbr64
  475:../../bos/hal/b_hal_i2c.c ****     int         retval = 0;
  4669              		.loc 1 475 5 is_stmt 1 view .LVU995
-GAS LISTING /tmp/cc1ABnRg.s 			page 118
+GAS LISTING /tmp/ccHOkO68.s 			page 118
 
 
  4670              	.LVL573:
@@ -7078,7 +7078,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4702              		.cfi_def_cfa_offset 40
  4703              		.cfi_offset 6, -40
  4704 0017 53       		pushq	%rbx
-GAS LISTING /tmp/cc1ABnRg.s 			page 119
+GAS LISTING /tmp/ccHOkO68.s 			page 119
 
 
  4705              	.LCFI241:
@@ -7138,7 +7138,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4744              		.loc 1 63 8 is_stmt 0 view .LVU1018
  4745 003f 3DA08601 		cmpl	$100000, %eax
  4745      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 120
+GAS LISTING /tmp/ccHOkO68.s 			page 120
 
 
  4746 0044 0F86BE01 		jbe	.L244
@@ -7198,7 +7198,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4780      00
  4781 008e E8000000 		call	bHalDelayUs@PLT
  4781      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 121
+GAS LISTING /tmp/ccHOkO68.s 			page 121
 
 
  4782              	.LVL583:
@@ -7258,7 +7258,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4821              	.LBB344:
  4822              	.LBB345:
  4823              	.LBB346:
-GAS LISTING /tmp/cc1ABnRg.s 			page 122
+GAS LISTING /tmp/ccHOkO68.s 			page 122
 
 
  4824              	.LBB347:
@@ -7318,7 +7318,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  109:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
  4862              		.loc 1 109 5 view .LVU1043
  4863 0130 BA010000 		movl	$1, %edx
-GAS LISTING /tmp/cc1ABnRg.s 			page 123
+GAS LISTING /tmp/ccHOkO68.s 			page 123
 
 
  4863      00
@@ -7378,7 +7378,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4910      84000000 
  4910      0000
  4911              		.p2align 3
-GAS LISTING /tmp/cc1ABnRg.s 			page 124
+GAS LISTING /tmp/ccHOkO68.s 			page 124
 
 
  4912              	.L257:
@@ -7438,7 +7438,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4950 01a3 89EF     		movl	%ebp, %edi
  4951 01a5 E8000000 		call	bHalGpioWritePin@PLT
  4951      00
-GAS LISTING /tmp/cc1ABnRg.s 			page 125
+GAS LISTING /tmp/ccHOkO68.s 			page 125
 
 
  4952              	.LVL608:
@@ -7498,7 +7498,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  4991 01fc E9F0FEFF 		jmp	.L249
  4991      FF
  4992              	.LVL612:
-GAS LISTING /tmp/cc1ABnRg.s 			page 126
+GAS LISTING /tmp/ccHOkO68.s 			page 126
 
 
  4993              		.p2align 4,,10
@@ -7558,7 +7558,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  5030              	.LVL618:
   96:../../bos/hal/b_hal_i2c.c ****     bHalDelayUs(us);
  5031              		.loc 1 96 5 view .LVU1073
-GAS LISTING /tmp/cc1ABnRg.s 			page 127
+GAS LISTING /tmp/ccHOkO68.s 			page 127
 
 
  5032 0246 31D2     		xorl	%edx, %edx
@@ -7618,7 +7618,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
   66:../../bos/hal/b_hal_i2c.c ****     }
  5073              		.loc 1 66 16 view .LVU1080
  5074 029a 41BE0500 		movl	$5, %r14d
-GAS LISTING /tmp/cc1ABnRg.s 			page 128
+GAS LISTING /tmp/ccHOkO68.s 			page 128
 
 
  5074      0000
@@ -7678,7 +7678,7 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  24306              	1:
  24307              		.align 8
  24308 0010 020000C0 		.long	0xc0000002
-GAS LISTING /tmp/cc1ABnRg.s 			page 129
+GAS LISTING /tmp/ccHOkO68.s 			page 129
 
 
  24309 0014 04000000 		.long	3f - 2f
@@ -7687,25 +7687,25 @@ GAS LISTING /tmp/cc1ABnRg.s 			page 1
  24312              	3:
  24313 001c 00000000 		.align 8
  24314              	4:
-GAS LISTING /tmp/cc1ABnRg.s 			page 130
+GAS LISTING /tmp/ccHOkO68.s 			page 130
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_hal_i2c.c
-     /tmp/cc1ABnRg.s:8      .text._HalI2CIOWriteByte:0000000000000000 _HalI2CIOWriteByte
-     /tmp/cc1ABnRg.s:201    .text._HalI2CIOStop:0000000000000000 _HalI2CIOStop
-     /tmp/cc1ABnRg.s:332    .text._HalI2CIOACK:0000000000000000 _HalI2CIOACK
-     /tmp/cc1ABnRg.s:497    .text._HalI2CIOReadByte:0000000000000000 _HalI2CIOReadByte
-     /tmp/cc1ABnRg.s:844    .text._HalI2CIOReadByte.constprop.0:0000000000000000 _HalI2CIOReadByte.constprop.0
-     /tmp/cc1ABnRg.s:1107   .text.bMcuI2CReadByte:0000000000000000 bMcuI2CReadByte
-     /tmp/cc1ABnRg.s:1125   .text.bMcuI2CWriteByte:0000000000000000 bMcuI2CWriteByte
-     /tmp/cc1ABnRg.s:1139   .text.bMcuI2CMemWrite:0000000000000000 bMcuI2CMemWrite
-     /tmp/cc1ABnRg.s:1157   .text.bMcuI2CMemRead:0000000000000000 bMcuI2CMemRead
-     /tmp/cc1ABnRg.s:1171   .text.bHalI2CReadByte:0000000000000000 bHalI2CReadByte
-     /tmp/cc1ABnRg.s:1882   .text.bHalI2CWriteByte:0000000000000000 bHalI2CWriteByte
-     /tmp/cc1ABnRg.s:2624   .text.bHalI2CMemWrite:0000000000000000 bHalI2CMemWrite
-     /tmp/cc1ABnRg.s:3544   .text.bHalI2CMemRead:0000000000000000 bHalI2CMemRead
-     /tmp/cc1ABnRg.s:4662   .text.bHalI2CAddressCheck:0000000000000000 bHalI2CAddressCheck
+     /tmp/ccHOkO68.s:8      .text._HalI2CIOWriteByte:0000000000000000 _HalI2CIOWriteByte
+     /tmp/ccHOkO68.s:201    .text._HalI2CIOStop:0000000000000000 _HalI2CIOStop
+     /tmp/ccHOkO68.s:332    .text._HalI2CIOACK:0000000000000000 _HalI2CIOACK
+     /tmp/ccHOkO68.s:497    .text._HalI2CIOReadByte:0000000000000000 _HalI2CIOReadByte
+     /tmp/ccHOkO68.s:844    .text._HalI2CIOReadByte.constprop.0:0000000000000000 _HalI2CIOReadByte.constprop.0
+     /tmp/ccHOkO68.s:1107   .text.bMcuI2CReadByte:0000000000000000 bMcuI2CReadByte
+     /tmp/ccHOkO68.s:1125   .text.bMcuI2CWriteByte:0000000000000000 bMcuI2CWriteByte
+     /tmp/ccHOkO68.s:1139   .text.bMcuI2CMemWrite:0000000000000000 bMcuI2CMemWrite
+     /tmp/ccHOkO68.s:1157   .text.bMcuI2CMemRead:0000000000000000 bMcuI2CMemRead
+     /tmp/ccHOkO68.s:1171   .text.bHalI2CReadByte:0000000000000000 bHalI2CReadByte
+     /tmp/ccHOkO68.s:1882   .text.bHalI2CWriteByte:0000000000000000 bHalI2CWriteByte
+     /tmp/ccHOkO68.s:2624   .text.bHalI2CMemWrite:0000000000000000 bHalI2CMemWrite
+     /tmp/ccHOkO68.s:3544   .text.bHalI2CMemRead:0000000000000000 bHalI2CMemRead
+     /tmp/ccHOkO68.s:4662   .text.bHalI2CAddressCheck:0000000000000000 bHalI2CAddressCheck
 
 UNDEFINED SYMBOLS
 bHalGpioWritePin

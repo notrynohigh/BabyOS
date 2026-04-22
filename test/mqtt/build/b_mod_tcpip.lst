@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccVQfiUO.s 			page 1
+GAS LISTING /tmp/ccJnc7OG.s 			page 1
 
 
    1              		.file	"b_mod_tcpip.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
   46:../../bos/modules/b_mod_tcpip.c **** 
   47:../../bos/modules/b_mod_tcpip.c **** #if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
   48:../../bos/modules/b_mod_tcpip.c **** #include "thirdparty/lwip/bos_lwip/include/lwip/inet_chksum.h"
-GAS LISTING /tmp/ccVQfiUO.s 			page 2
+GAS LISTING /tmp/ccJnc7OG.s 			page 2
 
 
   49:../../bos/modules/b_mod_tcpip.c **** #include "thirdparty/lwip/bos_lwip/include/lwip/init.h"
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  103:../../bos/modules/b_mod_tcpip.c ****     uint16_t len;
  104:../../bos/modules/b_mod_tcpip.c ****     void (*release)(void *);
  105:../../bos/modules/b_mod_tcpip.c ****     struct list_head node;
-GAS LISTING /tmp/ccVQfiUO.s 			page 3
+GAS LISTING /tmp/ccJnc7OG.s 			page 3
 
 
  106:../../bos/modules/b_mod_tcpip.c **** } bTransData_t;
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  160:../../bos/modules/b_mod_tcpip.c ****     uint16_t ancount; /* Answer count */
  161:../../bos/modules/b_mod_tcpip.c ****     uint16_t nscount; /* Authority (name server) count */
  162:../../bos/modules/b_mod_tcpip.c ****     uint16_t arcount; /* Additional record count */
-GAS LISTING /tmp/ccVQfiUO.s 			page 4
+GAS LISTING /tmp/ccJnc7OG.s 			page 4
 
 
  163:../../bos/modules/b_mod_tcpip.c **** };
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  217:../../bos/modules/b_mod_tcpip.c **** 
  218:../../bos/modules/b_mod_tcpip.c **** #define DNS_STATE_IDLE (0)
  219:../../bos/modules/b_mod_tcpip.c **** #define DNS_STATE_REQUEST (1)
-GAS LISTING /tmp/ccVQfiUO.s 			page 5
+GAS LISTING /tmp/ccJnc7OG.s 			page 5
 
 
  220:../../bos/modules/b_mod_tcpip.c **** #define DNS_STATE_WAIT_RESPONSE (2)
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  274:../../bos/modules/b_mod_tcpip.c **** /* UDP port numbers for DHCP */
  275:../../bos/modules/b_mod_tcpip.c **** #define DHCP_SERVER_PORT 67  ///< DHCP server port number
  276:../../bos/modules/b_mod_tcpip.c **** #define DHCP_CLIENT_PORT 68  ///< DHCP client port number
-GAS LISTING /tmp/ccVQfiUO.s 			page 6
+GAS LISTING /tmp/ccJnc7OG.s 			page 6
 
 
  277:../../bos/modules/b_mod_tcpip.c **** 
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  331:../../bos/modules/b_mod_tcpip.c ****     int          sockfd;
  332:../../bos/modules/b_mod_tcpip.c ****     uint8_t      state;
  333:../../bos/modules/b_mod_tcpip.c ****     uint8_t      retry_times;
-GAS LISTING /tmp/ccVQfiUO.s 			page 7
+GAS LISTING /tmp/ccJnc7OG.s 			page 7
 
 
  334:../../bos/modules/b_mod_tcpip.c ****     uint64_t     next_tick;
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  388:../../bos/modules/b_mod_tcpip.c ****     pathMTUagingTimeout    = 24,
  389:../../bos/modules/b_mod_tcpip.c ****     pathMTUplateauTable    = 25,
  390:../../bos/modules/b_mod_tcpip.c ****     ifMTU                  = 26,
-GAS LISTING /tmp/ccVQfiUO.s 			page 8
+GAS LISTING /tmp/ccJnc7OG.s 			page 8
 
 
  391:../../bos/modules/b_mod_tcpip.c ****     allSubnetsLocal        = 27,
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  445:../../bos/modules/b_mod_tcpip.c ****     bDhcpCtx_t      dhcp_ctx;
  446:../../bos/modules/b_mod_tcpip.c ****     struct
  447:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 9
+GAS LISTING /tmp/ccJnc7OG.s 			page 9
 
 
  448:../../bos/modules/b_mod_tcpip.c ****         uint8_t  ignore_ip;
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  502:../../bos/modules/b_mod_tcpip.c ****                 return 0;
  503:../../bos/modules/b_mod_tcpip.c ****             }
  504:../../bos/modules/b_mod_tcpip.c ****             result <<= 8;
-GAS LISTING /tmp/ccVQfiUO.s 			page 10
+GAS LISTING /tmp/ccJnc7OG.s 			page 10
 
 
  505:../../bos/modules/b_mod_tcpip.c ****             result |= value;
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  559:../../bos/modules/b_mod_tcpip.c **** static uint16_t _bTransPcbCalDataLen(struct list_head *phead)
  560:../../bos/modules/b_mod_tcpip.c **** {
  561:../../bos/modules/b_mod_tcpip.c ****     uint16_t      len   = 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 11
+GAS LISTING /tmp/ccJnc7OG.s 			page 11
 
 
  562:../../bos/modules/b_mod_tcpip.c ****     bTransData_t *pdata = NULL;
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  616:../../bos/modules/b_mod_tcpip.c ****         }
  617:../../bos/modules/b_mod_tcpip.c ****         bFree(pdata);
  618:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 12
+GAS LISTING /tmp/ccJnc7OG.s 			page 12
 
 
  619:../../bos/modules/b_mod_tcpip.c **** }
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  673:../../bos/modules/b_mod_tcpip.c **** static uint16_t _bTransPcbReadData(struct list_head *phead, uint8_t *pbuf, uint16_t len)
  674:../../bos/modules/b_mod_tcpip.c **** {
  675:../../bos/modules/b_mod_tcpip.c ****     uint16_t cur_valid_len = _bTransPcbCalDataLen(phead);
-GAS LISTING /tmp/ccVQfiUO.s 			page 13
+GAS LISTING /tmp/ccJnc7OG.s 			page 13
 
 
  676:../../bos/modules/b_mod_tcpip.c ****     uint8_t *pdata         = NULL;
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  730:../../bos/modules/b_mod_tcpip.c ****     }
  731:../../bos/modules/b_mod_tcpip.c ****     for (i = 0; i < bTcpIpCtx.info_number; i++)
  732:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 14
+GAS LISTING /tmp/ccJnc7OG.s 			page 14
 
 
  733:../../bos/modules/b_mod_tcpip.c ****         pinfo = &bTcpIpCtx.pinfo_table[i];
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  787:../../bos/modules/b_mod_tcpip.c **** 
  788:../../bos/modules/b_mod_tcpip.c ****     if (ttl == 0)
  789:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 15
+GAS LISTING /tmp/ccJnc7OG.s 			page 15
 
 
  790:../../bos/modules/b_mod_tcpip.c ****         ttl = 30;
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  844:../../bos/modules/b_mod_tcpip.c ****         bDnsRunCtx.retry++;
  845:../../bos/modules/b_mod_tcpip.c ****         return 0;  // timer over, but no timeout
  846:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 16
+GAS LISTING /tmp/ccJnc7OG.s 			page 16
 
 
  847:../../bos/modules/b_mod_tcpip.c ****     return 1;  // no timer over, no timeout occur
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  901:../../bos/modules/b_mod_tcpip.c ****     {
  902:../../bos/modules/b_mod_tcpip.c ****         /* Look for next dot */
  903:../../bos/modules/b_mod_tcpip.c ****         cp1 = strchr(dname, '.');
-GAS LISTING /tmp/ccVQfiUO.s 			page 17
+GAS LISTING /tmp/ccJnc7OG.s 			page 17
 
 
  904:../../bos/modules/b_mod_tcpip.c **** 
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  958:../../bos/modules/b_mod_tcpip.c ****             break;
  959:../../bos/modules/b_mod_tcpip.c **** 
  960:../../bos/modules/b_mod_tcpip.c ****         len -= slen + 1;
-GAS LISTING /tmp/ccVQfiUO.s 			page 18
+GAS LISTING /tmp/ccJnc7OG.s 			page 18
 
 
  961:../../bos/modules/b_mod_tcpip.c **** 
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1015:../../bos/modules/b_mod_tcpip.c **** 
 1016:../../bos/modules/b_mod_tcpip.c ****     if (len == -1)
 1017:../../bos/modules/b_mod_tcpip.c ****         return 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 19
+GAS LISTING /tmp/ccJnc7OG.s 			page 19
 
 
 1018:../../bos/modules/b_mod_tcpip.c **** 
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1072:../../bos/modules/b_mod_tcpip.c ****             cp += len;
 1073:../../bos/modules/b_mod_tcpip.c **** 
 1074:../../bos/modules/b_mod_tcpip.c ****             /* Get domain name of responsible person */
-GAS LISTING /tmp/ccVQfiUO.s 			page 20
+GAS LISTING /tmp/ccJnc7OG.s 			page 20
 
 
 1075:../../bos/modules/b_mod_tcpip.c ****             len = _bParseName(msg, cp, name, MAXCNAME);
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1129:../../bos/modules/b_mod_tcpip.c ****     pdhdr->qdcount = get16(&msg[4]);
 1130:../../bos/modules/b_mod_tcpip.c ****     pdhdr->ancount = get16(&msg[6]);
 1131:../../bos/modules/b_mod_tcpip.c ****     pdhdr->nscount = get16(&msg[8]);
-GAS LISTING /tmp/ccVQfiUO.s 			page 21
+GAS LISTING /tmp/ccJnc7OG.s 			page 21
 
 
 1132:../../bos/modules/b_mod_tcpip.c ****     pdhdr->arcount = get16(&msg[10]);
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1186:../../bos/modules/b_mod_tcpip.c **** {
 1187:../../bos/modules/b_mod_tcpip.c ****     bDnsInfo_t *pos, *n;
 1188:../../bos/modules/b_mod_tcpip.c ****     list_for_each_entry_safe(pos, n, bDnsInfo_t, &bDnsHead, node)
-GAS LISTING /tmp/ccVQfiUO.s 			page 22
+GAS LISTING /tmp/ccJnc7OG.s 			page 22
 
 
 1189:../../bos/modules/b_mod_tcpip.c ****     {
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
   11              		.loc 1 1242 1 view -0
   12              		.cfi_startproc
   13              		.loc 1 1242 1 is_stmt 0 view .LVU1
-GAS LISTING /tmp/ccVQfiUO.s 			page 23
+GAS LISTING /tmp/ccJnc7OG.s 			page 23
 
 
   14 0000 F30F1EFA 		endbr64
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1287:../../bos/modules/b_mod_tcpip.c ****     }
 1288:../../bos/modules/b_mod_tcpip.c ****     else if (bDnsRunCtx.state == DNS_STATE_REQUEST)
 1289:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 24
+GAS LISTING /tmp/ccJnc7OG.s 			page 24
 
 
 1290:../../bos/modules/b_mod_tcpip.c ****         len = _bDnsMakequery(0, (char *)pinfo->url, bDnsRunCtx.buf, MAX_DNS_BUF_SIZE);
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1344:../../bos/modules/b_mod_tcpip.c ****         {
 1345:../../bos/modules/b_mod_tcpip.c ****             _bDnsListDeletNode(pinfo->url);
 1346:../../bos/modules/b_mod_tcpip.c ****         }
-GAS LISTING /tmp/ccVQfiUO.s 			page 25
+GAS LISTING /tmp/ccJnc7OG.s 			page 25
 
 
 1347:../../bos/modules/b_mod_tcpip.c ****         bDnsRunCtx.state = DNS_STATE_IDLE;
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1401:../../bos/modules/b_mod_tcpip.c **** {
 1402:../../bos/modules/b_mod_tcpip.c ****     uint16_t len;
 1403:../../bos/modules/b_mod_tcpip.c ****     uint8_t *p;
-GAS LISTING /tmp/ccVQfiUO.s 			page 26
+GAS LISTING /tmp/ccJnc7OG.s 			page 26
 
 
 1404:../../bos/modules/b_mod_tcpip.c ****     uint8_t *e;
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1458:../../bos/modules/b_mod_tcpip.c ****                         p = e;  // for break while(p < e)
 1459:../../bos/modules/b_mod_tcpip.c ****                         break;
 1460:../../bos/modules/b_mod_tcpip.c ****                     case padOption:
-GAS LISTING /tmp/ccVQfiUO.s 			page 27
+GAS LISTING /tmp/ccJnc7OG.s 			page 27
 
 
 1461:../../bos/modules/b_mod_tcpip.c ****                         p++;
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1515:../../bos/modules/b_mod_tcpip.c ****                     case dhcpServerIdentifier:
 1516:../../bos/modules/b_mod_tcpip.c ****                         p++;
 1517:../../bos/modules/b_mod_tcpip.c ****                         opt_len                     = *p++;
-GAS LISTING /tmp/ccVQfiUO.s 			page 28
+GAS LISTING /tmp/ccJnc7OG.s 			page 28
 
 
 1518:../../bos/modules/b_mod_tcpip.c ****                         pinfo->dhcp_ctx.sip[0]      = *p++;
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1562:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.yiaddr[0] = 0;
 1563:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.yiaddr[1] = 0;
 1564:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.yiaddr[2] = 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 29
+GAS LISTING /tmp/ccJnc7OG.s 			page 29
 
 
 1565:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.yiaddr[3] = 0;
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
   55              		.loc 1 1577 58 view .LVU19
   56 002e 8B87A9FE 		movl	-343(%rdi), %eax
   56      FFFF
-GAS LISTING /tmp/ccVQfiUO.s 			page 30
+GAS LISTING /tmp/ccJnc7OG.s 			page 30
 
 
 1554:../../bos/modules/b_mod_tcpip.c ****     *(ptmp + 1)                    = (uint8_t)((DHCP_FLAGSBROADCAST & 0x00FF) >> 0);
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1568:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.siaddr[2] = 0;
   86              		.loc 1 1568 5 view .LVU43
 1569:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.siaddr[3] = 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 31
+GAS LISTING /tmp/ccJnc7OG.s 			page 31
 
 
   87              		.loc 1 1569 5 view .LVU44
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  121 008b 31C0     		xorl	%eax, %eax
  122 008d C1E903   		shrl	$3, %ecx
  123 0090 F348AB   		rep stosq
-GAS LISTING /tmp/ccVQfiUO.s 			page 32
+GAS LISTING /tmp/ccJnc7OG.s 			page 32
 
 
 1590:../../bos/modules/b_mod_tcpip.c **** 
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1626:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = dhcpMessageType;
 1627:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = 0x01;
 1628:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = DHCP_DISCOVER;
-GAS LISTING /tmp/ccVQfiUO.s 			page 33
+GAS LISTING /tmp/ccJnc7OG.s 			page 33
 
 
 1629:../../bos/modules/b_mod_tcpip.c **** 
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1683:../../bos/modules/b_mod_tcpip.c ****         0)
 1684:../../bos/modules/b_mod_tcpip.c ****     {
 1685:../../bos/modules/b_mod_tcpip.c ****         return;
-GAS LISTING /tmp/ccVQfiUO.s 			page 34
+GAS LISTING /tmp/ccJnc7OG.s 			page 34
 
 
 1686:../../bos/modules/b_mod_tcpip.c ****     }
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1740:../../bos/modules/b_mod_tcpip.c ****     {
 1741:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = dhcpRequestedIPaddr;
 1742:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = 0x04;
-GAS LISTING /tmp/ccVQfiUO.s 			page 35
+GAS LISTING /tmp/ccJnc7OG.s 			page 35
 
 
 1743:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->dhcp_ctx.allocated_ip[0];
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1797:../../bos/modules/b_mod_tcpip.c ****     {
 1798:../../bos/modules/b_mod_tcpip.c ****         return;
 1799:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 36
+GAS LISTING /tmp/ccJnc7OG.s 			page 36
 
 
 1800:../../bos/modules/b_mod_tcpip.c **** }
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1854:../../bos/modules/b_mod_tcpip.c **** }
 1855:../../bos/modules/b_mod_tcpip.c **** 
 1856:../../bos/modules/b_mod_tcpip.c **** static void _bDhcpSetIp(bTcpIpInfo_t *pinfo)
-GAS LISTING /tmp/ccVQfiUO.s 			page 37
+GAS LISTING /tmp/ccJnc7OG.s 			page 37
 
 
 1857:../../bos/modules/b_mod_tcpip.c **** {
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  159              		.loc 1 1857 1 view .LVU80
  160 0006 4155     		pushq	%r13
  161              	.LCFI1:
-GAS LISTING /tmp/ccVQfiUO.s 			page 38
+GAS LISTING /tmp/ccJnc7OG.s 			page 38
 
 
  162              		.cfi_def_cfa_offset 24
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  200              		.loc 1 1878 5 view .LVU94
 1879:../../bos/modules/b_mod_tcpip.c ****     mask <<= 8;
  201              		.loc 1 1879 5 view .LVU95
-GAS LISTING /tmp/ccVQfiUO.s 			page 39
+GAS LISTING /tmp/ccJnc7OG.s 			page 39
 
 
 1880:../../bos/modules/b_mod_tcpip.c ****     mask |= pinfo->dhcp_ctx.allocated_mask[3];
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1891:../../bos/modules/b_mod_tcpip.c ****     pinfo->ip_info.ipaddr      = ip;
  234              		.loc 1 1891 32 view .LVU113
  235 005c 44893500 		movl	%r14d, 8+bTcpIpDNS(%rip)
-GAS LISTING /tmp/ccVQfiUO.s 			page 40
+GAS LISTING /tmp/ccJnc7OG.s 			page 40
 
 
  235      000000
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  727:../../bos/modules/b_mod_tcpip.c ****     {
  275              		.loc 1 727 5 view .LVU123
  727:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 41
+GAS LISTING /tmp/ccJnc7OG.s 			page 41
 
 
  276              		.loc 1 727 18 is_stmt 0 view .LVU124
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  310 0053 410F94C0 		sete	%r8b
  311              	.LVL16:
  312 0057 660F1F84 		.p2align 4,,10
-GAS LISTING /tmp/ccVQfiUO.s 			page 42
+GAS LISTING /tmp/ccJnc7OG.s 			page 42
 
 
  312      00000000 
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  348              		.loc 1 731 45 is_stmt 1 discriminator 2 view .LVU150
  349              	.LVL20:
  731:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 43
+GAS LISTING /tmp/ccJnc7OG.s 			page 43
 
 
  350              		.loc 1 731 19 discriminator 1 view .LVU151
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  386      000000
  387 00e5 B9F90200 		movl	$761, %ecx
  387      00
-GAS LISTING /tmp/ccVQfiUO.s 			page 44
+GAS LISTING /tmp/ccJnc7OG.s 			page 44
 
 
  388 00ea 488D3500 		leaq	.LC5(%rip), %rsi
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  429              	.L21:
  731:../../bos/modules/b_mod_tcpip.c ****     {
  430              		.loc 1 731 19 discriminator 1 view .LVU167
-GAS LISTING /tmp/ccVQfiUO.s 			page 45
+GAS LISTING /tmp/ccJnc7OG.s 			page 45
 
 
  431 0130 4C89DF   		movq	%r11, %rdi
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  475      0000
  539:../../bos/modules/b_mod_tcpip.c ****         {
  476              		.loc 1 539 14 is_stmt 1 view .LVU177
-GAS LISTING /tmp/ccVQfiUO.s 			page 46
+GAS LISTING /tmp/ccJnc7OG.s 			page 46
 
 
  539:../../bos/modules/b_mod_tcpip.c ****         {
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  511              		.loc 1 532 18 view .LVU195
  512 0043 C1EE10   		shrl	$16, %esi
  513              	.LVL34:
-GAS LISTING /tmp/ccVQfiUO.s 			page 47
+GAS LISTING /tmp/ccJnc7OG.s 			page 47
 
 
  533:../../bos/modules/b_mod_tcpip.c ****         {
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  548              		.loc 1 532 9 view .LVU213
  535:../../bos/modules/b_mod_tcpip.c ****             ip_str[index++] = ch % 100 / 10 + '0';
  549              		.loc 1 535 25 is_stmt 0 view .LVU214
-GAS LISTING /tmp/ccVQfiUO.s 			page 48
+GAS LISTING /tmp/ccJnc7OG.s 			page 48
 
 
  550 0075 450FB6C9 		movzbl	%r9b, %r9d
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  585              		.loc 1 530 19 discriminator 1 view .LVU231
  532:../../bos/modules/b_mod_tcpip.c ****         if (ch >= 100)
  586              		.loc 1 532 9 view .LVU232
-GAS LISTING /tmp/ccVQfiUO.s 			page 49
+GAS LISTING /tmp/ccJnc7OG.s 			page 49
 
 
  533:../../bos/modules/b_mod_tcpip.c ****         {
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  623              		.loc 1 536 45 view .LVU246
  624 00f1 41F6E0   		mulb	%r8b
  537:../../bos/modules/b_mod_tcpip.c ****         }
-GAS LISTING /tmp/ccVQfiUO.s 			page 50
+GAS LISTING /tmp/ccJnc7OG.s 			page 50
 
 
  625              		.loc 1 537 25 view .LVU247
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  663              		.loc 1 542 25 view .LVU261
  664 012d 41B80200 		movl	$2, %r8d
  664      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 51
+GAS LISTING /tmp/ccJnc7OG.s 			page 51
 
 
  541:../../bos/modules/b_mod_tcpip.c ****             ip_str[index++] = ch % 10 + '0';
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  703              		.loc 1 537 25 view .LVU274
  704 0173 41B80300 		movl	$3, %r8d
  704      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 52
+GAS LISTING /tmp/ccJnc7OG.s 			page 52
 
 
  536:../../bos/modules/b_mod_tcpip.c ****             ip_str[index++] = ch % 10 + '0';
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  744              		.loc 1 542 13 is_stmt 1 view .LVU285
  542:../../bos/modules/b_mod_tcpip.c ****         }
  745              		.loc 1 542 25 is_stmt 0 view .LVU286
-GAS LISTING /tmp/ccVQfiUO.s 			page 53
+GAS LISTING /tmp/ccJnc7OG.s 			page 53
 
 
  746 01c8 8D7E03   		leal	3(%rsi), %edi
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  784 0205 89F0     		movl	%esi, %eax
  537:../../bos/modules/b_mod_tcpip.c ****         }
  785              		.loc 1 537 25 view .LVU300
-GAS LISTING /tmp/ccVQfiUO.s 			page 54
+GAS LISTING /tmp/ccJnc7OG.s 			page 54
 
 
  786 0207 8D7704   		leal	4(%rdi), %esi
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  536:../../bos/modules/b_mod_tcpip.c ****             ip_str[index++] = ch % 10 + '0';
  827              		.loc 1 536 45 is_stmt 0 view .LVU311
  828 025a BF640000 		movl	$100, %edi
-GAS LISTING /tmp/ccVQfiUO.s 			page 55
+GAS LISTING /tmp/ccJnc7OG.s 			page 55
 
 
  828      00
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  869 02b0 B8CDFFFF 		movl	$-51, %eax
  869      FF
  870 02b5 40F6E6   		mulb	%sil
-GAS LISTING /tmp/ccVQfiUO.s 			page 56
+GAS LISTING /tmp/ccJnc7OG.s 			page 56
 
 
  871 02b8 66C1E80B 		shrw	$11, %ax
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  910 02fa 4129C0   		subl	%eax, %r8d
  911              	.LVL80:
  542:../../bos/modules/b_mod_tcpip.c ****         }
-GAS LISTING /tmp/ccVQfiUO.s 			page 57
+GAS LISTING /tmp/ccJnc7OG.s 			page 57
 
 
  912              		.loc 1 542 39 view .LVU335
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  766:../../bos/modules/b_mod_tcpip.c ****     if (pinfo == NULL)
  952              		.loc 1 766 5 is_stmt 1 view .LVU347
  953              	.LVL85:
-GAS LISTING /tmp/ccVQfiUO.s 			page 58
+GAS LISTING /tmp/ccJnc7OG.s 			page 58
 
 
  767:../../bos/modules/b_mod_tcpip.c ****     {
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  995              		.loc 1 764 13 is_stmt 1 view .LVU356
  996              	.LBB284:
  771:../../bos/modules/b_mod_tcpip.c ****     pinfo->netif.is_linked = state;
-GAS LISTING /tmp/ccVQfiUO.s 			page 59
+GAS LISTING /tmp/ccJnc7OG.s 			page 59
 
 
  997              		.loc 1 771 5 view .LVU357
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1035 0066 488B4348 		movq	72(%rbx), %rax
  1036 006a 4885C0   		testq	%rax, %rax
  1037 006d 7409     		je	.L51
-GAS LISTING /tmp/ccVQfiUO.s 			page 60
+GAS LISTING /tmp/ccJnc7OG.s 			page 60
 
 
  777:../../bos/modules/b_mod_tcpip.c ****     _bMainNetcardUpdate();
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1082              		.cfi_endproc
  1083              	.LFE44:
  1085              		.section	.text._bDhcpTransCb,"ax",@progbits
-GAS LISTING /tmp/ccVQfiUO.s 			page 61
+GAS LISTING /tmp/ccJnc7OG.s 			page 61
 
 
  1086              		.p2align 4
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1128              		.loc 1 953 18 view .LVU390
  1129 0013 4C8D1D00 		leaq	3+bDnsRunCtx(%rip), %r11
  1129      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 62
+GAS LISTING /tmp/ccJnc7OG.s 			page 62
 
 
  1130              	.LVL95:
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1170      0000
  1171 0037 0F84A702 		je	.L61
  1171      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 63
+GAS LISTING /tmp/ccJnc7OG.s 			page 63
 
 
  1172              	.LVL99:
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1210              		.loc 1 968 20 view .LVU417
  1211 0079 0FB7C9   		movzwl	%cx, %ecx
  968:../../bos/modules/b_mod_tcpip.c ****             *buf++ = (char)*cp++;
-GAS LISTING /tmp/ccVQfiUO.s 			page 64
+GAS LISTING /tmp/ccJnc7OG.s 			page 64
 
 
  1212              		.loc 1 968 20 view .LVU418
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1250      FF
  1251              	.LVL110:
  1252              		.p2align 4,,10
-GAS LISTING /tmp/ccVQfiUO.s 			page 65
+GAS LISTING /tmp/ccJnc7OG.s 			page 65
 
 
  1253              		.p2align 3
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1289 00d9 5D       		popq	%rbp
  1290              	.LCFI35:
  1291              		.cfi_def_cfa_offset 32
-GAS LISTING /tmp/ccVQfiUO.s 			page 66
+GAS LISTING /tmp/ccJnc7OG.s 			page 66
 
 
  1292 00da 415C     		popq	%r12
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  969:../../bos/modules/b_mod_tcpip.c ****         *buf++ = '.';
  1332              		.loc 1 969 20 is_stmt 0 view .LVU456
  1333 011c F30F6F56 		movdqu	32(%rsi), %xmm2
-GAS LISTING /tmp/ccVQfiUO.s 			page 67
+GAS LISTING /tmp/ccJnc7OG.s 			page 67
 
 
  1333      20
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  968:../../bos/modules/b_mod_tcpip.c ****             *buf++ = (char)*cp++;
  1367              		.loc 1 968 23 is_stmt 1 view .LVU469
  1368 0171 6683FF07 		cmpw	$7, %di
-GAS LISTING /tmp/ccVQfiUO.s 			page 68
+GAS LISTING /tmp/ccJnc7OG.s 			page 68
 
 
  1369 0175 0F84A500 		je	.L73
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1402              	.LVL128:
  969:../../bos/modules/b_mod_tcpip.c ****         *buf++ = '.';
  1403              		.loc 1 969 13 view .LVU482
-GAS LISTING /tmp/ccVQfiUO.s 			page 69
+GAS LISTING /tmp/ccJnc7OG.s 			page 69
 
 
  969:../../bos/modules/b_mod_tcpip.c ****         *buf++ = '.';
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1437 0223 4989C5   		movq	%rax, %r13
  1438 0226 4189CC   		movl	%ecx, %r12d
  1439 0229 4181E5F0 		andl	$65520, %r13d
-GAS LISTING /tmp/ccVQfiUO.s 			page 70
+GAS LISTING /tmp/ccJnc7OG.s 			page 70
 
 
  1439      FF0000
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1480 0287 0FB64501 		movzbl	1(%rbp), %eax
  1481 028b 884701   		movb	%al, 1(%rdi)
  968:../../bos/modules/b_mod_tcpip.c ****             *buf++ = (char)*cp++;
-GAS LISTING /tmp/ccVQfiUO.s 			page 71
+GAS LISTING /tmp/ccJnc7OG.s 			page 71
 
 
  1482              		.loc 1 968 23 is_stmt 1 view .LVU505
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1517 02c3 884705   		movb	%al, 5(%rdi)
  968:../../bos/modules/b_mod_tcpip.c ****             *buf++ = (char)*cp++;
  1518              		.loc 1 968 23 is_stmt 1 view .LVU521
-GAS LISTING /tmp/ccVQfiUO.s 			page 72
+GAS LISTING /tmp/ccJnc7OG.s 			page 72
 
 
  968:../../bos/modules/b_mod_tcpip.c ****             *buf++ = (char)*cp++;
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1555      00
  953:../../bos/modules/b_mod_tcpip.c ****             slen = *cp++;
  1556              		.loc 1 953 46 view .LVU536
-GAS LISTING /tmp/ccVQfiUO.s 			page 73
+GAS LISTING /tmp/ccJnc7OG.s 			page 73
 
 
  1557 02f7 01C8     		addl	%ecx, %eax
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1595              	.LCFI41:
  1596              		.cfi_def_cfa_offset 32
  1597 031e 4489C8   		movl	%r9d, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 74
+GAS LISTING /tmp/ccJnc7OG.s 			page 74
 
 
  1598 0321 415C     		popq	%r12
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1905:../../bos/modules/b_mod_tcpip.c ****     if (pinfo->dhcp_ctx.state == STATE_DHCP_STOP)
 1906:../../bos/modules/b_mod_tcpip.c ****         return DHCP_STOPPED;
 1907:../../bos/modules/b_mod_tcpip.c **** 
-GAS LISTING /tmp/ccVQfiUO.s 			page 75
+GAS LISTING /tmp/ccJnc7OG.s 			page 75
 
 
 1908:../../bos/modules/b_mod_tcpip.c ****     if (SOCKFD_IS_INVALID(pinfo->dhcp_ctx.sockfd))
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1962:../../bos/modules/b_mod_tcpip.c ****                 {
 1963:../../bos/modules/b_mod_tcpip.c ****                     // Network info assignment from DHCP
 1964:../../bos/modules/b_mod_tcpip.c ****                     _bDhcpSetIp(pinfo);
-GAS LISTING /tmp/ccVQfiUO.s 			page 76
+GAS LISTING /tmp/ccJnc7OG.s 			page 76
 
 
 1965:../../bos/modules/b_mod_tcpip.c ****                     pinfo->dhcp_ctx.state = STATE_DHCP_LEASED;
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2019:../../bos/modules/b_mod_tcpip.c **** #if DHCP_MODULE_DEBUG_EN
 2020:../../bos/modules/b_mod_tcpip.c ****                     b_log(">IP changed.\r\n");
 2021:../../bos/modules/b_mod_tcpip.c **** #endif
-GAS LISTING /tmp/ccVQfiUO.s 			page 77
+GAS LISTING /tmp/ccJnc7OG.s 			page 77
 
 
 2022:../../bos/modules/b_mod_tcpip.c ****                 }
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2076:../../bos/modules/b_mod_tcpip.c ****     if (state == B_SOCKET_STATE_CONNECTED)
 2077:../../bos/modules/b_mod_tcpip.c ****     {
 2078:../../bos/modules/b_mod_tcpip.c ****         _bTcpIpEvent(trans, B_TRANS_CONNECTED, trans);
-GAS LISTING /tmp/ccVQfiUO.s 			page 78
+GAS LISTING /tmp/ccJnc7OG.s 			page 78
 
 
 2079:../../bos/modules/b_mod_tcpip.c ****     }
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2133:../../bos/modules/b_mod_tcpip.c ****             {
 2134:../../bos/modules/b_mod_tcpip.c ****                 return -2;
 2135:../../bos/modules/b_mod_tcpip.c ****             }
-GAS LISTING /tmp/ccVQfiUO.s 			page 79
+GAS LISTING /tmp/ccJnc7OG.s 			page 79
 
 
 2136:../../bos/modules/b_mod_tcpip.c ****             if (ptrans->type == B_TRANS_CONN_TCP && pstack_if->tcp.send)
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2190:../../bos/modules/b_mod_tcpip.c ****         ptrans    = list_entry(pos, bTrans_t, node);
 2191:../../bos/modules/b_mod_tcpip.c ****         pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
 2192:../../bos/modules/b_mod_tcpip.c ****         if (ptrans->state == B_SOCKET_STATE_DNS)
-GAS LISTING /tmp/ccVQfiUO.s 			page 80
+GAS LISTING /tmp/ccJnc7OG.s 			page 80
 
 
 2193:../../bos/modules/b_mod_tcpip.c ****         {
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2247:../../bos/modules/b_mod_tcpip.c **** 
 2248:../../bos/modules/b_mod_tcpip.c **** uint32_t sys_now(void)
 2249:../../bos/modules/b_mod_tcpip.c **** {
-GAS LISTING /tmp/ccVQfiUO.s 			page 81
+GAS LISTING /tmp/ccJnc7OG.s 			page 81
 
 
 2250:../../bos/modules/b_mod_tcpip.c ****     uint32_t tick = bHalGetSysTick();
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2304:../../bos/modules/b_mod_tcpip.c **** static err_t _bNetifLinkoutput(struct netif *netif, struct pbuf *p)
 2305:../../bos/modules/b_mod_tcpip.c **** {
 2306:../../bos/modules/b_mod_tcpip.c ****     int fd = -1;
-GAS LISTING /tmp/ccVQfiUO.s 			page 82
+GAS LISTING /tmp/ccJnc7OG.s 			page 82
 
 
 2307:../../bos/modules/b_mod_tcpip.c ****     if (netif == NULL || p == NULL)
@@ -4918,7 +4918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2361:../../bos/modules/b_mod_tcpip.c ****     if (fd < 0)
 2362:../../bos/modules/b_mod_tcpip.c ****     {
 2363:../../bos/modules/b_mod_tcpip.c ****         return ERR_IF;
-GAS LISTING /tmp/ccVQfiUO.s 			page 83
+GAS LISTING /tmp/ccJnc7OG.s 			page 83
 
 
 2364:../../bos/modules/b_mod_tcpip.c ****     }
@@ -4978,7 +4978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2418:../../bos/modules/b_mod_tcpip.c **** static int _bLwipTcpBind(void *pcb, uint16_t port)
 2419:../../bos/modules/b_mod_tcpip.c **** {
 2420:../../bos/modules/b_mod_tcpip.c ****     return tcp_bind(pcb, IP4_ADDR_ANY, port);
-GAS LISTING /tmp/ccVQfiUO.s 			page 84
+GAS LISTING /tmp/ccJnc7OG.s 			page 84
 
 
 2421:../../bos/modules/b_mod_tcpip.c **** }
@@ -5038,7 +5038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2475:../../bos/modules/b_mod_tcpip.c ****     ip_addr_t ipaddr;
 2476:../../bos/modules/b_mod_tcpip.c ****     if (pcb == NULL)
 2477:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 85
+GAS LISTING /tmp/ccJnc7OG.s 			page 85
 
 
 2478:../../bos/modules/b_mod_tcpip.c ****         return -1;
@@ -5098,7 +5098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2532:../../bos/modules/b_mod_tcpip.c ****     {
 2533:../../bos/modules/b_mod_tcpip.c ****         newdata.pcb     = arg;
 2534:../../bos/modules/b_mod_tcpip.c ****         newdata.pbuf    = (uint8_t *)p;
-GAS LISTING /tmp/ccVQfiUO.s 			page 86
+GAS LISTING /tmp/ccJnc7OG.s 			page 86
 
 
 2535:../../bos/modules/b_mod_tcpip.c ****         newdata.len     = p->tot_len;
@@ -5158,7 +5158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2589:../../bos/modules/b_mod_tcpip.c ****         else
 2590:../../bos/modules/b_mod_tcpip.c ****         {
 2591:../../bos/modules/b_mod_tcpip.c ****             err = udp_send(pcb, p);
-GAS LISTING /tmp/ccVQfiUO.s 			page 87
+GAS LISTING /tmp/ccJnc7OG.s 			page 87
 
 
 2592:../../bos/modules/b_mod_tcpip.c ****         }
@@ -5218,7 +5218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2646:../../bos/modules/b_mod_tcpip.c **** 
 2647:../../bos/modules/b_mod_tcpip.c **** void *_bLwipUdpNew(bTcpIpNetif_t *pnetif)
 2648:../../bos/modules/b_mod_tcpip.c **** {
-GAS LISTING /tmp/ccVQfiUO.s 			page 88
+GAS LISTING /tmp/ccJnc7OG.s 			page 88
 
 
 2649:../../bos/modules/b_mod_tcpip.c ****     B_UNUSED(pnetif);
@@ -5278,7 +5278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2703:../../bos/modules/b_mod_tcpip.c ****             {
 2704:../../bos/modules/b_mod_tcpip.c ****                 err = netif_input(p, preal_netif);
 2705:../../bos/modules/b_mod_tcpip.c ****             }
-GAS LISTING /tmp/ccVQfiUO.s 			page 89
+GAS LISTING /tmp/ccJnc7OG.s 			page 89
 
 
 2706:../../bos/modules/b_mod_tcpip.c ****             if (err != ERR_OK)
@@ -5338,7 +5338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2760:../../bos/modules/b_mod_tcpip.c ****         return -1;
 2761:../../bos/modules/b_mod_tcpip.c ****     }
 2762:../../bos/modules/b_mod_tcpip.c ****     uint16_t writeable_len = tcp_sndbuf((struct tcp_pcb *)pcb);
-GAS LISTING /tmp/ccVQfiUO.s 			page 90
+GAS LISTING /tmp/ccJnc7OG.s 			page 90
 
 
 2763:../../bos/modules/b_mod_tcpip.c ****     return (writeable_len > 0);
@@ -5398,7 +5398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2817:../../bos/modules/b_mod_tcpip.c ****         return;
 2818:../../bos/modules/b_mod_tcpip.c ****     }
 2819:../../bos/modules/b_mod_tcpip.c ****     b_log("tcpip callback: %d\r\n", event);
-GAS LISTING /tmp/ccVQfiUO.s 			page 91
+GAS LISTING /tmp/ccJnc7OG.s 			page 91
 
 
 2820:../../bos/modules/b_mod_tcpip.c ****     if (event == B_TCPIP_E_ACCEPT)
@@ -5458,7 +5458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2874:../../bos/modules/b_mod_tcpip.c ****                     tcp_recved(pinfo->pcb, pinfo->len);
 2875:../../bos/modules/b_mod_tcpip.c ****                 }
 2876:../../bos/modules/b_mod_tcpip.c ****                 pbuf_free((struct pbuf *)(pinfo->pbuf));
-GAS LISTING /tmp/ccVQfiUO.s 			page 92
+GAS LISTING /tmp/ccJnc7OG.s 			page 92
 
 
 2877:../../bos/modules/b_mod_tcpip.c ****             }
@@ -5518,7 +5518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2931:../../bos/modules/b_mod_tcpip.c ****     }
 2932:../../bos/modules/b_mod_tcpip.c **** }
 2933:../../bos/modules/b_mod_tcpip.c **** 
-GAS LISTING /tmp/ccVQfiUO.s 			page 93
+GAS LISTING /tmp/ccJnc7OG.s 			page 93
 
 
 2934:../../bos/modules/b_mod_tcpip.c **** static void _bNetCardHandler()
@@ -5578,7 +5578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2988:../../bos/modules/b_mod_tcpip.c ****                 continue;
 2989:../../bos/modules/b_mod_tcpip.c ****             }
 2990:../../bos/modules/b_mod_tcpip.c ****             if (bCtl(fd, bCMD_GET_STACK_IF, &pinfo->stack_if) != 0)
-GAS LISTING /tmp/ccVQfiUO.s 			page 94
+GAS LISTING /tmp/ccJnc7OG.s 			page 94
 
 
 2991:../../bos/modules/b_mod_tcpip.c ****             {
@@ -5638,7 +5638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3045:../../bos/modules/b_mod_tcpip.c ****                 if (pinfo->stack_if.is_readable == NULL || pinfo->stack_if.is_writeable == NULL)
 3046:../../bos/modules/b_mod_tcpip.c ****                 {
 3047:../../bos/modules/b_mod_tcpip.c ****                     TCPIP_STACK_OPT_SET_NO_BUFFER(pinfo->stack_opt);
-GAS LISTING /tmp/ccVQfiUO.s 			page 95
+GAS LISTING /tmp/ccJnc7OG.s 			page 95
 
 
 3048:../../bos/modules/b_mod_tcpip.c ****                 }
@@ -5698,7 +5698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1652              	.LCFI48:
  1653              		.cfi_def_cfa_offset 32
  1654              		.cfi_offset 13, -32
-GAS LISTING /tmp/ccVQfiUO.s 			page 96
+GAS LISTING /tmp/ccJnc7OG.s 			page 96
 
 
  1655 0006 4989D5   		movq	%rdx, %r13
@@ -5758,7 +5758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1700 0047 0F846A01 		je	.L159
  1700      0000
 3093:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 97
+GAS LISTING /tmp/ccJnc7OG.s 			page 97
 
 
 3094:../../bos/modules/b_mod_tcpip.c ****         return -2;
@@ -5818,7 +5818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
   47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
   48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
   49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
-GAS LISTING /tmp/ccVQfiUO.s 			page 98
+GAS LISTING /tmp/ccJnc7OG.s 			page 98
 
 
   50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
@@ -5878,7 +5878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1740      0000
 3100:../../bos/modules/b_mod_tcpip.c ****     }
 3101:../../bos/modules/b_mod_tcpip.c ****     else
-GAS LISTING /tmp/ccVQfiUO.s 			page 99
+GAS LISTING /tmp/ccJnc7OG.s 			page 99
 
 
 3102:../../bos/modules/b_mod_tcpip.c ****     {
@@ -5938,7 +5938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1777              	.LVL164:
 3111:../../bos/modules/b_mod_tcpip.c ****           pinfo->netif.is_linked, type == B_TRANS_CONN_TCP ? "tcp" : "udp");
 3112:../../bos/modules/b_mod_tcpip.c ****     ptrans->type      = type;
-GAS LISTING /tmp/ccVQfiUO.s 			page 100
+GAS LISTING /tmp/ccJnc7OG.s 			page 100
 
 
  1778              		.loc 1 3112 5 is_stmt 1 view .LVU583
@@ -5998,7 +5998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1808              		.loc 1 3124 5 view .LVU598
  1809              	.LVL165:
  1810              	.LBB310:
-GAS LISTING /tmp/ccVQfiUO.s 			page 101
+GAS LISTING /tmp/ccJnc7OG.s 			page 101
 
 
  1811              	.LBI307:
@@ -6058,7 +6058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2076:../../bos/modules/b_mod_tcpip.c ****     {
  1849              		.loc 1 2076 5 is_stmt 0 view .LVU607
  1850              	.LBE309:
-GAS LISTING /tmp/ccVQfiUO.s 			page 102
+GAS LISTING /tmp/ccJnc7OG.s 			page 102
 
 
  1851              	.LBE310:
@@ -6118,7 +6118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
   49:../../bos/utils/inc/b_util_list.h **** 
   50:../../bos/utils/inc/b_util_list.h **** struct list_head
   51:../../bos/utils/inc/b_util_list.h **** {
-GAS LISTING /tmp/ccVQfiUO.s 			page 103
+GAS LISTING /tmp/ccJnc7OG.s 			page 103
 
 
   52:../../bos/utils/inc/b_util_list.h ****     struct list_head *next, *prev;
@@ -6178,7 +6178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  106:../../bos/utils/inc/b_util_list.h ****  */
  107:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add(struct list_head *newItem, struct list_head *head)
  108:../../bos/utils/inc/b_util_list.h **** {
-GAS LISTING /tmp/ccVQfiUO.s 			page 104
+GAS LISTING /tmp/ccJnc7OG.s 			page 104
 
 
  109:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head, head->next);
@@ -6238,7 +6238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
   95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
  1882              		.loc 3 95 5 is_stmt 1 view .LVU620
   96:../../bos/utils/inc/b_util_list.h **** }
-GAS LISTING /tmp/ccVQfiUO.s 			page 105
+GAS LISTING /tmp/ccJnc7OG.s 			page 105
 
 
  1883              		.loc 3 96 5 view .LVU621
@@ -6298,7 +6298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3099:../../bos/modules/b_mod_tcpip.c ****     }
  1932              		.loc 1 3099 21 discriminator 1 view .LVU629
  1933 0193 488903   		movq	%rax, (%rbx)
-GAS LISTING /tmp/ccVQfiUO.s 			page 106
+GAS LISTING /tmp/ccJnc7OG.s 			page 106
 
 
 3105:../../bos/modules/b_mod_tcpip.c ****     {
@@ -6358,7 +6358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  1969      25782025 
  1969      64202564 
  1970              	.LC12:
-GAS LISTING /tmp/ccVQfiUO.s 			page 107
+GAS LISTING /tmp/ccJnc7OG.s 			page 107
 
 
  1971 0017 646E7320 		.string	"dns add %s\r\n"
@@ -6418,7 +6418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2016      00
  2017              	.LVL179:
 1200:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 108
+GAS LISTING /tmp/ccJnc7OG.s 			page 108
 
 
  2018              		.loc 1 1200 24 discriminator 1 view .LVU644
@@ -6478,7 +6478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2054 0054 4189C7   		movl	%eax, %r15d
  2055              	.LVL183:
  822:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 109
+GAS LISTING /tmp/ccJnc7OG.s 			page 109
 
 
  2056              		.loc 1 822 5 is_stmt 1 view .LVU657
@@ -6538,7 +6538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2090              	.L226:
  822:../../bos/modules/b_mod_tcpip.c ****     {
  2091              		.loc 1 822 49 is_stmt 1 discriminator 2 view .LVU671
-GAS LISTING /tmp/ccVQfiUO.s 			page 110
+GAS LISTING /tmp/ccJnc7OG.s 			page 110
 
 
  2092              	.LVL187:
@@ -6598,7 +6598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2125      0000
  2126              	.L228:
  822:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 111
+GAS LISTING /tmp/ccJnc7OG.s 			page 111
 
 
  2127              		.loc 1 822 49 is_stmt 1 discriminator 2 view .LVU685
@@ -6658,7 +6658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1188:../../bos/modules/b_mod_tcpip.c ****     {
  2162              		.loc 1 1188 5 is_stmt 0 view .LVU699
  2163 010d 488B30   		movq	(%rax), %rsi
-GAS LISTING /tmp/ccVQfiUO.s 			page 112
+GAS LISTING /tmp/ccJnc7OG.s 			page 112
 
 
  2164 0110 488DB878 		leaq	-136(%rax), %rdi
@@ -6718,7 +6718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1190:../../bos/modules/b_mod_tcpip.c ****         {
  2199              		.loc 1 1190 12 discriminator 1 view .LVU710
  2200 015b 85C0     		testl	%eax, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 113
+GAS LISTING /tmp/ccJnc7OG.s 			page 113
 
 
  2201 015d 75D1     		jne	.L321
@@ -6778,7 +6778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2246              		.loc 1 515 19 is_stmt 0 view .LVU717
  2247 0178 0FBED0   		movsbl	%al, %edx
  2248 017b 83EA30   		subl	$48, %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 114
+GAS LISTING /tmp/ccJnc7OG.s 			page 114
 
 
  2249 017e 3C2E     		cmpb	$46, %al
@@ -6838,7 +6838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2285              	.LBE347:
 1206:../../bos/modules/b_mod_tcpip.c ****     {
  2286              		.loc 1 1206 5 is_stmt 1 view .LVU732
-GAS LISTING /tmp/ccVQfiUO.s 			page 115
+GAS LISTING /tmp/ccJnc7OG.s 			page 115
 
 
 1206:../../bos/modules/b_mod_tcpip.c ****     {
@@ -6898,7 +6898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2333              	.L225:
  826:../../bos/modules/b_mod_tcpip.c ****             b_log("dns get: %s %x %d %d\r\n", domain, *ip, ctick, bDNSCache[i].expire_tick);
  2334              		.loc 1 826 13 is_stmt 1 view .LVU739
-GAS LISTING /tmp/ccVQfiUO.s 			page 116
+GAS LISTING /tmp/ccJnc7OG.s 			page 116
 
 
  826:../../bos/modules/b_mod_tcpip.c ****             b_log("dns get: %s %x %d %d\r\n", domain, *ip, ctick, bDNSCache[i].expire_tick);
@@ -6958,7 +6958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2372              		.loc 1 828 13 is_stmt 0 view .LVU749
  2373              	.LBE341:
  2374              	.LBE343:
-GAS LISTING /tmp/ccVQfiUO.s 			page 117
+GAS LISTING /tmp/ccJnc7OG.s 			page 117
 
 
  2375              	.LBE348:
@@ -7018,7 +7018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2413 023d 3C2E     		cmpb	$46, %al
  2414 023f 0F855DFF 		jne	.L176
  2414      FFFF
-GAS LISTING /tmp/ccVQfiUO.s 			page 118
+GAS LISTING /tmp/ccJnc7OG.s 			page 118
 
 
  2415              	.L180:
@@ -7078,7 +7078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2450              		.loc 1 494 70 discriminator 1 view .LVU780
  2451 0270 84C0     		testb	%al, %al
  2452 0272 0F85D0FD 		jne	.L173
-GAS LISTING /tmp/ccVQfiUO.s 			page 119
+GAS LISTING /tmp/ccJnc7OG.s 			page 119
 
 
  2452      FFFF
@@ -7138,7 +7138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  498:../../bos/modules/b_mod_tcpip.c ****         {
  2487              		.loc 1 498 9 is_stmt 1 view .LVU796
  498:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 120
+GAS LISTING /tmp/ccJnc7OG.s 			page 120
 
 
  2488              		.loc 1 498 12 is_stmt 0 view .LVU797
@@ -7198,7 +7198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
  2523              		.loc 1 505 20 is_stmt 0 view .LVU814
  2524 02d5 09D5     		orl	%edx, %ebp
-GAS LISTING /tmp/ccVQfiUO.s 			page 121
+GAS LISTING /tmp/ccJnc7OG.s 			page 121
 
 
  2525              	.LVL229:
@@ -7258,7 +7258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2561              	.L190:
  500:../../bos/modules/b_mod_tcpip.c ****             {
  2562              		.loc 1 500 13 is_stmt 1 view .LVU831
-GAS LISTING /tmp/ccVQfiUO.s 			page 122
+GAS LISTING /tmp/ccJnc7OG.s 			page 122
 
 
  500:../../bos/modules/b_mod_tcpip.c ****             {
@@ -7318,7 +7318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2598              		.loc 1 494 9 view .LVU848
  494:../../bos/modules/b_mod_tcpip.c ****         {
  2599              		.loc 1 494 20 is_stmt 0 view .LVU849
-GAS LISTING /tmp/ccVQfiUO.s 			page 123
+GAS LISTING /tmp/ccJnc7OG.s 			page 123
 
 
  2600 0323 0FBE4306 		movsbl	6(%rbx), %eax
@@ -7378,7 +7378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2633 0352 8D48D0   		leal	-48(%rax), %ecx
  494:../../bos/modules/b_mod_tcpip.c ****         {
  2634              		.loc 1 494 12 view .LVU867
-GAS LISTING /tmp/ccVQfiUO.s 			page 124
+GAS LISTING /tmp/ccJnc7OG.s 			page 124
 
 
  2635 0355 80F909   		cmpb	$9, %cl
@@ -7438,7 +7438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2669 0382 80F909   		cmpb	$9, %cl
  2670 0385 0F86A301 		jbe	.L250
  2670      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 125
+GAS LISTING /tmp/ccJnc7OG.s 			page 125
 
 
  2671 038b 0F1F4400 		.p2align 4,,10
@@ -7498,7 +7498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2704      0000
  2705 03bb 0F1F4400 		.p2align 4,,10
  2705      00
-GAS LISTING /tmp/ccVQfiUO.s 			page 126
+GAS LISTING /tmp/ccJnc7OG.s 			page 126
 
 
  2706              		.p2align 3
@@ -7558,7 +7558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2739      00
  2740              		.p2align 3
  2741              	.L326:
-GAS LISTING /tmp/ccVQfiUO.s 			page 127
+GAS LISTING /tmp/ccJnc7OG.s 			page 127
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -7618,7 +7618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2775              	.L327:
  494:../../bos/modules/b_mod_tcpip.c ****         {
  2776              		.loc 1 494 12 view .LVU932
-GAS LISTING /tmp/ccVQfiUO.s 			page 128
+GAS LISTING /tmp/ccJnc7OG.s 			page 128
 
 
  2777 0420 3C2E     		cmpb	$46, %al
@@ -7678,7 +7678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2810              		.loc 1 494 12 view .LVU948
  2811 0450 3C2E     		cmpb	$46, %al
  2812 0452 0F8518FE 		jne	.L182
-GAS LISTING /tmp/ccVQfiUO.s 			page 129
+GAS LISTING /tmp/ccJnc7OG.s 			page 129
 
 
  2812      FFFF
@@ -7738,7 +7738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2846 0482 0F85E8FD 		jne	.L182
  2846      FFFF
  2847              	.L214:
-GAS LISTING /tmp/ccVQfiUO.s 			page 130
+GAS LISTING /tmp/ccJnc7OG.s 			page 130
 
 
  500:../../bos/modules/b_mod_tcpip.c ****             {
@@ -7798,7 +7798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2881              	.L217:
  500:../../bos/modules/b_mod_tcpip.c ****             {
  2882              		.loc 1 500 13 is_stmt 1 view .LVU981
-GAS LISTING /tmp/ccVQfiUO.s 			page 131
+GAS LISTING /tmp/ccJnc7OG.s 			page 131
 
 
  500:../../bos/modules/b_mod_tcpip.c ****             {
@@ -7858,7 +7858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2916              	.LVL265:
  2917 04ed 0F1F00   		.p2align 4,,10
  2918              		.p2align 3
-GAS LISTING /tmp/ccVQfiUO.s 			page 132
+GAS LISTING /tmp/ccJnc7OG.s 			page 132
 
 
  2919              	.L248:
@@ -7918,7 +7918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2952              		.loc 1 515 19 is_stmt 0 view .LVU1014
  2953 051a 8D5450D0 		leal	-48(%rax,%rdx,2), %edx
  2954              	.LVL269:
-GAS LISTING /tmp/ccVQfiUO.s 			page 133
+GAS LISTING /tmp/ccJnc7OG.s 			page 133
 
 
  492:../../bos/modules/b_mod_tcpip.c ****     {
@@ -7978,7 +7978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  2988              	.L251:
  498:../../bos/modules/b_mod_tcpip.c ****         {
  2989              		.loc 1 498 9 is_stmt 1 view .LVU1033
-GAS LISTING /tmp/ccVQfiUO.s 			page 134
+GAS LISTING /tmp/ccJnc7OG.s 			page 134
 
 
  498:../../bos/modules/b_mod_tcpip.c ****         {
@@ -8038,7 +8038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  492:../../bos/modules/b_mod_tcpip.c ****     {
  3024              		.loc 1 492 26 is_stmt 1 discriminator 2 view .LVU1051
  492:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 135
+GAS LISTING /tmp/ccJnc7OG.s 			page 135
 
 
  3025              		.loc 1 492 19 discriminator 1 view .LVU1052
@@ -8098,7 +8098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  498:../../bos/modules/b_mod_tcpip.c ****         {
  3059              		.loc 1 498 12 is_stmt 0 view .LVU1070
  3060 05aa 3C2E     		cmpb	$46, %al
-GAS LISTING /tmp/ccVQfiUO.s 			page 136
+GAS LISTING /tmp/ccJnc7OG.s 			page 136
 
 
  3061 05ac 0F84A6FE 		je	.L211
@@ -8158,7 +8158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3094              		.loc 1 492 19 discriminator 1 view .LVU1088
  494:../../bos/modules/b_mod_tcpip.c ****         {
  3095              		.loc 1 494 9 view .LVU1089
-GAS LISTING /tmp/ccVQfiUO.s 			page 137
+GAS LISTING /tmp/ccJnc7OG.s 			page 137
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -8218,7 +8218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3130 0609 0F85A0FB 		jne	.L222
  3130      FFFF
  3131 060f E964FCFF 		jmp	.L315
-GAS LISTING /tmp/ccVQfiUO.s 			page 138
+GAS LISTING /tmp/ccJnc7OG.s 			page 138
 
 
  3131      FF
@@ -8278,7 +8278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3169              		.loc 2 59 10 discriminator 1 view .LVU1118
  3170 0656 4829F9   		subq	%rdi, %rcx
  3171              	.LVL289:
-GAS LISTING /tmp/ccVQfiUO.s 			page 139
+GAS LISTING /tmp/ccJnc7OG.s 			page 139
 
 
  3172              		.loc 2 59 10 discriminator 1 view .LVU1119
@@ -8338,7 +8338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1237:../../bos/modules/b_mod_tcpip.c ****     return DNS_PARSE_ONGING;
  3213              		.loc 1 1237 5 view .LVU1131
  3214 0682 4989E9   		movq	%rbp, %r9
-GAS LISTING /tmp/ccVQfiUO.s 			page 140
+GAS LISTING /tmp/ccJnc7OG.s 			page 140
 
 
  3215 0685 B9D50400 		movl	$1237, %ecx
@@ -8398,7 +8398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3252              	.LBB369:
  3253              	.LBB366:
  3254              	.LBB363:
-GAS LISTING /tmp/ccVQfiUO.s 			page 141
+GAS LISTING /tmp/ccJnc7OG.s 			page 141
 
 
  3255              	.LBB361:
@@ -8458,7 +8458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3292              		.loc 1 500 13 is_stmt 1 view .LVU1152
  500:../../bos/modules/b_mod_tcpip.c ****             {
  3293              		.loc 1 500 16 is_stmt 0 view .LVU1153
-GAS LISTING /tmp/ccVQfiUO.s 			page 142
+GAS LISTING /tmp/ccJnc7OG.s 			page 142
 
 
  3294 06e8 81FAFF00 		cmpl	$255, %edx
@@ -8518,7 +8518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3329 0719 E9B3FAFF 		jmp	.L225
  3329      FF
  3330              	.LVL305:
-GAS LISTING /tmp/ccVQfiUO.s 			page 143
+GAS LISTING /tmp/ccJnc7OG.s 			page 143
 
 
  3331              	.L320:
@@ -8578,7 +8578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3368              	.LC15:
  3369 0027 41737365 		.string	"Assertion failed: %s\n"
  3369      7274696F 
-GAS LISTING /tmp/ccVQfiUO.s 			page 144
+GAS LISTING /tmp/ccJnc7OG.s 			page 144
 
 
  3369      6E206661 
@@ -8638,7 +8638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3408              	.LBB518:
 2819:../../bos/modules/b_mod_tcpip.c ****     if (event == B_TCPIP_E_ACCEPT)
  3409              		.loc 1 2819 5 view .LVU1180
-GAS LISTING /tmp/ccVQfiUO.s 			page 145
+GAS LISTING /tmp/ccJnc7OG.s 			page 145
 
 
  3410 0019 B9030B00 		movl	$2819, %ecx
@@ -8698,7 +8698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2819:../../bos/modules/b_mod_tcpip.c ****     if (event == B_TCPIP_E_ACCEPT)
  3450              		.loc 1 2819 5 is_stmt 0 view .LVU1190
  3451              	.LBE521:
-GAS LISTING /tmp/ccVQfiUO.s 			page 146
+GAS LISTING /tmp/ccJnc7OG.s 			page 146
 
 
  3452              	.LBE527:
@@ -8758,7 +8758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  143:../../bos/utils/inc/b_util_list.h **** /**
  144:../../bos/utils/inc/b_util_list.h ****  * list_is_first -- tests whether @list is the first entry in list @head
  145:../../bos/utils/inc/b_util_list.h ****  * @list: the entry to test
-GAS LISTING /tmp/ccVQfiUO.s 			page 147
+GAS LISTING /tmp/ccJnc7OG.s 			page 147
 
 
  146:../../bos/utils/inc/b_util_list.h ****  * @head: the head of the list
@@ -8818,7 +8818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3492              	.LBB442:
  3493              	.LBI442:
 2094:../../bos/modules/b_mod_tcpip.c **** {
-GAS LISTING /tmp/ccVQfiUO.s 			page 148
+GAS LISTING /tmp/ccJnc7OG.s 			page 148
 
 
  3494              		.loc 1 2094 18 view .LVU1201
@@ -8878,7 +8878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3534 0093 4889D0   		movq	%rdx, %rax
  3535              	.LVL322:
  3536              	.L351:
-GAS LISTING /tmp/ccVQfiUO.s 			page 149
+GAS LISTING /tmp/ccJnc7OG.s 			page 149
 
 
 2104:../../bos/modules/b_mod_tcpip.c ****         if (ptrans->pcb == pcb)
@@ -8938,7 +8938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3572              		.cfi_def_cfa_offset 32
  3573 00c5 415C     		popq	%r12
  3574              	.LCFI106:
-GAS LISTING /tmp/ccVQfiUO.s 			page 150
+GAS LISTING /tmp/ccJnc7OG.s 			page 150
 
 
  3575              		.cfi_def_cfa_offset 24
@@ -8998,7 +8998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3620              	.LBB448:
  3621              	.LBB449:
  3622              	.LBB450:
-GAS LISTING /tmp/ccVQfiUO.s 			page 151
+GAS LISTING /tmp/ccJnc7OG.s 			page 151
 
 
  3623              		.loc 3 179 16 is_stmt 0 view .LVU1237
@@ -9058,7 +9058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3667              		.loc 3 179 5 view .LVU1246
  3668              		.loc 3 179 5 is_stmt 0 view .LVU1247
  3669              	.LBE452:
-GAS LISTING /tmp/ccVQfiUO.s 			page 152
+GAS LISTING /tmp/ccJnc7OG.s 			page 152
 
 
  3670              	.LBE454:
@@ -9118,7 +9118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2105:../../bos/modules/b_mod_tcpip.c ****         {
  3709              		.loc 1 2105 9 view .LVU1261
 2105:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 153
+GAS LISTING /tmp/ccJnc7OG.s 			page 153
 
 
  3710              		.loc 1 2105 12 is_stmt 0 view .LVU1262
@@ -9178,7 +9178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3748              	.LBE523:
  3749              	.LBE529:
 2932:../../bos/modules/b_mod_tcpip.c **** 
-GAS LISTING /tmp/ccVQfiUO.s 			page 154
+GAS LISTING /tmp/ccJnc7OG.s 			page 154
 
 
  3750              		.loc 1 2932 1 view .LVU1273
@@ -9238,7 +9238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2069:../../bos/modules/b_mod_tcpip.c ****     {
  3796              		.loc 1 2069 23 discriminator 1 view .LVU1280
  3797 0187 83F804   		cmpl	$4, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 155
+GAS LISTING /tmp/ccJnc7OG.s 			page 155
 
 
  3798 018a 0F8433FF 		je	.L333
@@ -9298,7 +9298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3835              	.LBE468:
  3836              	.LBB470:
 2892:../../bos/modules/b_mod_tcpip.c ****         ptrans                     = _bTransFindNodeByPcb(pinfo->pcb);
-GAS LISTING /tmp/ccVQfiUO.s 			page 156
+GAS LISTING /tmp/ccJnc7OG.s 			page 156
 
 
  3837              		.loc 1 2892 9 is_stmt 1 view .LVU1287
@@ -9358,7 +9358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3876 01f0 488B31   		movq	(%rcx), %rsi
  3877              	.LVL348:
 2102:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 157
+GAS LISTING /tmp/ccJnc7OG.s 			page 157
 
 
  3878              		.loc 1 2102 5 is_stmt 1 discriminator 1 view .LVU1304
@@ -9418,7 +9418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3916              		.loc 1 2060 5 view .LVU1316
 2060:../../bos/modules/b_mod_tcpip.c ****     {
  3917              		.loc 1 2060 23 is_stmt 0 discriminator 1 view .LVU1317
-GAS LISTING /tmp/ccVQfiUO.s 			page 158
+GAS LISTING /tmp/ccJnc7OG.s 			page 158
 
 
  3918 0219 4885C0   		testq	%rax, %rax
@@ -9478,7 +9478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3952              	.LVL356:
 2797:../../bos/modules/b_mod_tcpip.c ****     {
  3953              		.loc 1 2797 18 view .LVU1328
-GAS LISTING /tmp/ccVQfiUO.s 			page 159
+GAS LISTING /tmp/ccJnc7OG.s 			page 159
 
 
  3954              	.LBE473:
@@ -9538,7 +9538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  3989 0299 0F8424FE 		je	.L333
  3989      FFFF
  3990              	.LVL360:
-GAS LISTING /tmp/ccVQfiUO.s 			page 160
+GAS LISTING /tmp/ccJnc7OG.s 			page 160
 
 
  3991              	.L339:
@@ -9598,7 +9598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4022              		.loc 1 2830 30 view .LVU1357
  4023 02d5 0F1103   		movups	%xmm0, (%rbx)
 2834:../../bos/modules/b_mod_tcpip.c ****         pnewtrans->stack_opt = tcpip_info->stack_opt;
-GAS LISTING /tmp/ccVQfiUO.s 			page 161
+GAS LISTING /tmp/ccJnc7OG.s 			page 161
 
 
  4024              		.loc 1 2834 9 is_stmt 1 view .LVU1358
@@ -9658,7 +9658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4059              		.cfi_def_cfa_offset 56
  4060              	.LVL365:
 2073:../../bos/modules/b_mod_tcpip.c ****           bSocketStateStr[state]);
-GAS LISTING /tmp/ccVQfiUO.s 			page 162
+GAS LISTING /tmp/ccJnc7OG.s 			page 162
 
 
  4061              		.loc 1 2073 5 is_stmt 0 view .LVU1371
@@ -9718,7 +9718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4103 0339 0F847101 		je	.L417
  4103      0000
 2064:../../bos/modules/b_mod_tcpip.c **** }
-GAS LISTING /tmp/ccVQfiUO.s 			page 163
+GAS LISTING /tmp/ccJnc7OG.s 			page 163
 
 
  4104              		.loc 1 2064 5 is_stmt 1 view .LVU1381
@@ -9778,7 +9778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4145              	.LBB492:
   93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
  4146              		.loc 3 93 19 view .LVU1391
-GAS LISTING /tmp/ccVQfiUO.s 			page 164
+GAS LISTING /tmp/ccJnc7OG.s 			page 164
 
 
  4147 0366 48891500 		movq	%rdx, 8+bSocketHead(%rip)
@@ -9838,7 +9838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4183              	.LBB504:
  4184              	.LBI504:
 2067:../../bos/modules/b_mod_tcpip.c **** {
-GAS LISTING /tmp/ccVQfiUO.s 			page 165
+GAS LISTING /tmp/ccJnc7OG.s 			page 165
 
 
  4185              		.loc 1 2067 13 view .LVU1404
@@ -9898,7 +9898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4222 03ec C68308FF 		movb	$5, -248(%rbx)
  4222      FFFF05
 2076:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 166
+GAS LISTING /tmp/ccJnc7OG.s 			page 166
 
 
  4223              		.loc 1 2076 5 is_stmt 1 view .LVU1412
@@ -9958,7 +9958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4263              	.LBI514:
 2067:../../bos/modules/b_mod_tcpip.c **** {
  4264              		.loc 1 2067 13 view .LVU1422
-GAS LISTING /tmp/ccVQfiUO.s 			page 167
+GAS LISTING /tmp/ccJnc7OG.s 			page 167
 
 
  4265              	.LBB515:
@@ -10018,7 +10018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4302              	.LBE515:
  4303              	.LBE514:
 2926:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 168
+GAS LISTING /tmp/ccJnc7OG.s 			page 168
 
 
  4304              		.loc 1 2926 9 is_stmt 1 view .LVU1431
@@ -10078,7 +10078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4339              		.loc 1 2824 9 is_stmt 1 discriminator 3 view .LVU1440
 2824:../../bos/modules/b_mod_tcpip.c ****         tcpip_info = _bFindNetcardByPriv(pinfo->netif.private);
  4340              		.loc 1 2824 9 discriminator 3 view .LVU1441
-GAS LISTING /tmp/ccVQfiUO.s 			page 169
+GAS LISTING /tmp/ccJnc7OG.s 			page 169
 
 
 2824:../../bos/modules/b_mod_tcpip.c ****         tcpip_info = _bFindNetcardByPriv(pinfo->netif.private);
@@ -10138,7 +10138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
   95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
  4377              		.loc 3 95 19 is_stmt 0 view .LVU1456
  4378 04cc 48898310 		movq	%rax, 272(%rbx)
-GAS LISTING /tmp/ccVQfiUO.s 			page 170
+GAS LISTING /tmp/ccJnc7OG.s 			page 170
 
 
  4378      010000
@@ -10198,7 +10198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3136:../../bos/modules/b_mod_tcpip.c ****     {
 3137:../../bos/modules/b_mod_tcpip.c ****         return 1;
 3138:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 171
+GAS LISTING /tmp/ccJnc7OG.s 			page 171
 
 
 3139:../../bos/modules/b_mod_tcpip.c ****     bTcpIpNetif_t *pnetif = (bTcpIpNetif_t *)ptrans->netif;
@@ -10258,7 +10258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4434              		.cfi_def_cfa_offset 32
  4435              		.cfi_offset 3, -32
  4436              		.loc 1 3168 8 view .LVU1469
-GAS LISTING /tmp/ccVQfiUO.s 			page 172
+GAS LISTING /tmp/ccJnc7OG.s 			page 172
 
 
  4437 0013 4084F6   		testb	%sil, %sil
@@ -10318,7 +10318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4471              	.LBB531:
  4472              	.LBB532:
  4473              		.loc 2 59 10 discriminator 1 view .LVU1487
-GAS LISTING /tmp/ccVQfiUO.s 			page 173
+GAS LISTING /tmp/ccJnc7OG.s 			page 173
 
 
  4474 005c 31C0     		xorl	%eax, %eax
@@ -10378,7 +10378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4516              		.loc 1 3185 52 view .LVU1502
  4517 00a2 888A4803 		movb	%cl, 840(%rdx)
  4517      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 174
+GAS LISTING /tmp/ccJnc7OG.s 			page 174
 
 
 3186:../../bos/modules/b_mod_tcpip.c ****         bTcpIpCtx.pinfo_table[i].ip_info.ipaddr    = pnetcard[i].assigned_ip.ip;
@@ -10438,7 +10438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4555      000001
 3193:../../bos/modules/b_mod_tcpip.c ****         }
 3194:../../bos/modules/b_mod_tcpip.c ****         bTcpIpCtx.pinfo_table[i].dhcp_ctx.sockfd = -1;
-GAS LISTING /tmp/ccVQfiUO.s 			page 175
+GAS LISTING /tmp/ccJnc7OG.s 			page 175
 
 
  4556              		.loc 1 3194 9 is_stmt 1 view .LVU1522
@@ -10498,7 +10498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4595              	.LBE538:
  4596              		.loc 1 3198 5 is_stmt 1 view .LVU1536
  4597 012b 488D0D00 		leaq	bTcpIpTaskAttr(%rip), %rcx
-GAS LISTING /tmp/ccVQfiUO.s 			page 176
+GAS LISTING /tmp/ccJnc7OG.s 			page 176
 
 
  4597      000000
@@ -10558,7 +10558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4637              		.loc 1 3179 30 discriminator 2 view .LVU1547
  4638              	.LVL400:
 3179:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 177
+GAS LISTING /tmp/ccJnc7OG.s 			page 177
 
 
  4639              		.loc 1 3179 19 discriminator 1 view .LVU1548
@@ -10618,7 +10618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4674 01ac EB92     		jmp	.L418
  4675              	.L431:
  4676              	.LCFI143:
-GAS LISTING /tmp/ccVQfiUO.s 			page 178
+GAS LISTING /tmp/ccJnc7OG.s 			page 178
 
 
  4677              		.cfi_def_cfa_offset 8
@@ -10678,7 +10678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4717              		.loc 1 3213 36 is_stmt 0 view .LVU1570
  4718 002a 0F94C0   		sete	%al
  4719              		.loc 1 3213 44 discriminator 1 view .LVU1571
-GAS LISTING /tmp/ccVQfiUO.s 			page 179
+GAS LISTING /tmp/ccJnc7OG.s 			page 179
 
 
  4720 002d 4885D2   		testq	%rdx, %rdx
@@ -10738,7 +10738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4752 0060 0F84EA00 		je	.L440
  4752      0000
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 180
+GAS LISTING /tmp/ccJnc7OG.s 			page 180
 
 
  4753              		.loc 1 494 70 discriminator 1 view .LVU1586
@@ -10798,7 +10798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4789              		.loc 1 492 5 view .LVU1602
  492:../../bos/modules/b_mod_tcpip.c ****     {
  4790              		.loc 1 492 19 discriminator 1 view .LVU1603
-GAS LISTING /tmp/ccVQfiUO.s 			page 181
+GAS LISTING /tmp/ccJnc7OG.s 			page 181
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -10858,7 +10858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4827 00b5 4189B350 		movl	%esi, 848(%r11)
  4827      030000
 3223:../../bos/modules/b_mod_tcpip.c ****         pinfo->ip_info.gateway = _bIpStr2Uint32(gateway);
-GAS LISTING /tmp/ccVQfiUO.s 			page 182
+GAS LISTING /tmp/ccJnc7OG.s 			page 182
 
 
  4828              		.loc 1 3223 9 is_stmt 1 view .LVU1619
@@ -10918,7 +10918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4863 00e8 4489C0   		movl	%r8d, %eax
  4864 00eb C1E008   		sall	$8, %eax
  4865              	.LVL418:
-GAS LISTING /tmp/ccVQfiUO.s 			page 183
+GAS LISTING /tmp/ccJnc7OG.s 			page 183
 
 
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
@@ -10978,7 +10978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4900 0119 498D4B08 		leaq	8(%r11), %rcx
  4901 011d 4489C2   		movl	%r8d, %edx
 3230:../../bos/modules/b_mod_tcpip.c ****         bTcpIpDNS[2]               = pinfo->ip_info.gateway;
-GAS LISTING /tmp/ccVQfiUO.s 			page 184
+GAS LISTING /tmp/ccJnc7OG.s 			page 184
 
 
  4902              		.loc 1 3230 36 view .LVU1650
@@ -11038,7 +11038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  4939 0153 83EA30   		subl	$48, %edx
  4940 0156 3C2E     		cmpb	$46, %al
  4941 0158 B8000000 		movl	$0, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 185
+GAS LISTING /tmp/ccJnc7OG.s 			page 185
 
 
  4941      00
@@ -11098,7 +11098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  515:../../bos/modules/b_mod_tcpip.c ****         }
  4980              		.loc 1 515 19 is_stmt 0 view .LVU1673
  4981 0190 0FBED0   		movsbl	%al, %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 186
+GAS LISTING /tmp/ccJnc7OG.s 			page 186
 
 
  4982 0193 83EA30   		subl	$48, %edx
@@ -11158,7 +11158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5019              	.LBB567:
  498:../../bos/modules/b_mod_tcpip.c ****         {
  5020              		.loc 1 498 9 is_stmt 1 view .LVU1684
-GAS LISTING /tmp/ccVQfiUO.s 			page 187
+GAS LISTING /tmp/ccJnc7OG.s 			page 187
 
 
  515:../../bos/modules/b_mod_tcpip.c ****         }
@@ -11218,7 +11218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  498:../../bos/modules/b_mod_tcpip.c ****         {
  5058              		.loc 1 498 12 is_stmt 0 view .LVU1695
  5059 0210 3C2E     		cmpb	$46, %al
-GAS LISTING /tmp/ccVQfiUO.s 			page 188
+GAS LISTING /tmp/ccJnc7OG.s 			page 188
 
 
  5060 0212 0F84980B 		je	.L628
@@ -11278,7 +11278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5094              		.loc 1 507 13 view .LVU1712
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
  5095              		.loc 1 506 19 is_stmt 0 view .LVU1713
-GAS LISTING /tmp/ccVQfiUO.s 			page 189
+GAS LISTING /tmp/ccJnc7OG.s 			page 189
 
 
  5096 023b 31D2     		xorl	%edx, %edx
@@ -11338,7 +11338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5131 0277 660F1F84 		.p2align 4,,10
  5131      00000000 
  5131      00
-GAS LISTING /tmp/ccVQfiUO.s 			page 190
+GAS LISTING /tmp/ccJnc7OG.s 			page 190
 
 
  5132              		.p2align 3
@@ -11398,7 +11398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  504:../../bos/modules/b_mod_tcpip.c ****             result |= value;
  5168              		.loc 1 504 20 is_stmt 0 view .LVU1741
  5169 02aa C1E708   		sall	$8, %edi
-GAS LISTING /tmp/ccVQfiUO.s 			page 191
+GAS LISTING /tmp/ccJnc7OG.s 			page 191
 
 
  5170              	.LVL448:
@@ -11458,7 +11458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5204              		.loc 1 500 16 is_stmt 0 view .LVU1756
  5205 02e0 81FAFF00 		cmpl	$255, %edx
  5205      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 192
+GAS LISTING /tmp/ccJnc7OG.s 			page 192
 
 
  5206 02e6 0F868CFD 		jbe	.L442
@@ -11518,7 +11518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5241      02
  494:../../bos/modules/b_mod_tcpip.c ****         {
  5242              		.loc 1 494 50 view .LVU1771
-GAS LISTING /tmp/ccVQfiUO.s 			page 193
+GAS LISTING /tmp/ccJnc7OG.s 			page 193
 
 
  5243 0310 8D42D0   		leal	-48(%rdx), %eax
@@ -11578,7 +11578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5279 0338 80FA09   		cmpb	$9, %dl
  5280 033b 7673     		jbe	.L680
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 194
+GAS LISTING /tmp/ccJnc7OG.s 			page 194
 
 
  5281              		.loc 1 494 12 view .LVU1788
@@ -11638,7 +11638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5316      0000
  5317              		.p2align 3
  5318              	.L651:
-GAS LISTING /tmp/ccVQfiUO.s 			page 195
+GAS LISTING /tmp/ccJnc7OG.s 			page 195
 
 
  515:../../bos/modules/b_mod_tcpip.c ****         }
@@ -11698,7 +11698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  515:../../bos/modules/b_mod_tcpip.c ****         }
  5356              		.loc 1 515 19 is_stmt 0 view .LVU1814
  5357 03a3 8D5450D0 		leal	-48(%rax,%rdx,2), %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 196
+GAS LISTING /tmp/ccJnc7OG.s 			page 196
 
 
  5358              	.LVL470:
@@ -11758,7 +11758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5393              		.loc 1 494 12 view .LVU1829
  5394 03d0 3C2E     		cmpb	$46, %al
  5395 03d2 0F8570FF 		jne	.L549
-GAS LISTING /tmp/ccVQfiUO.s 			page 197
+GAS LISTING /tmp/ccJnc7OG.s 			page 197
 
 
  5395      FFFF
@@ -11818,7 +11818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5430              		.loc 1 498 12 is_stmt 0 view .LVU1843
  5431 0400 3C2E     		cmpb	$46, %al
  5432 0402 0F84180A 		je	.L502
-GAS LISTING /tmp/ccVQfiUO.s 			page 198
+GAS LISTING /tmp/ccJnc7OG.s 			page 198
 
 
  5432      0000
@@ -11878,7 +11878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
  5465              		.loc 1 505 20 is_stmt 0 view .LVU1860
  5466 0437 09D6     		orl	%edx, %esi
-GAS LISTING /tmp/ccVQfiUO.s 			page 199
+GAS LISTING /tmp/ccJnc7OG.s 			page 199
 
 
  5467              	.LVL482:
@@ -11938,7 +11938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5503 0456 4080FE09 		cmpb	$9, %sil
  5504 045a 0F86B000 		jbe	.L653
  5504      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 200
+GAS LISTING /tmp/ccJnc7OG.s 			page 200
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -11998,7 +11998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  514:../../bos/modules/b_mod_tcpip.c ****             value += ip_str[i] - '0';
  5540              		.loc 1 514 19 is_stmt 0 view .LVU1891
  5541 0488 8D1489   		leal	(%rcx,%rcx,4), %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 201
+GAS LISTING /tmp/ccJnc7OG.s 			page 201
 
 
  5542              	.LVL489:
@@ -12058,7 +12058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5575              		.loc 1 505 20 view .LVU1907
  5576 04bc 4189C8   		movl	%ecx, %r8d
  5577              	.LVL493:
-GAS LISTING /tmp/ccVQfiUO.s 			page 202
+GAS LISTING /tmp/ccJnc7OG.s 			page 202
 
 
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
@@ -12118,7 +12118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  494:../../bos/modules/b_mod_tcpip.c ****         {
  5612              		.loc 1 494 50 view .LVU1923
  5613 04e4 8D48D0   		leal	-48(%rax), %ecx
-GAS LISTING /tmp/ccVQfiUO.s 			page 203
+GAS LISTING /tmp/ccJnc7OG.s 			page 203
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -12178,7 +12178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5649 0510 3C2E     		cmpb	$46, %al
  5650 0512 0F8450FF 		je	.L455
  5650      FFFF
-GAS LISTING /tmp/ccVQfiUO.s 			page 204
+GAS LISTING /tmp/ccJnc7OG.s 			page 204
 
 
  514:../../bos/modules/b_mod_tcpip.c ****             value += ip_str[i] - '0';
@@ -12238,7 +12238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5684 0547 09D7     		orl	%edx, %edi
  5685              	.LVL504:
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
-GAS LISTING /tmp/ccVQfiUO.s 			page 205
+GAS LISTING /tmp/ccJnc7OG.s 			page 205
 
 
  5686              		.loc 1 506 13 is_stmt 1 view .LVU1955
@@ -12298,7 +12298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5722 056a 0F86B000 		jbe	.L683
  5722      0000
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 206
+GAS LISTING /tmp/ccJnc7OG.s 			page 206
 
 
  5723              		.loc 1 494 12 view .LVU1971
@@ -12358,7 +12358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  498:../../bos/modules/b_mod_tcpip.c ****         {
  5759              		.loc 1 498 9 is_stmt 1 view .LVU1984
  498:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 207
+GAS LISTING /tmp/ccJnc7OG.s 			page 207
 
 
  5760              		.loc 1 498 12 is_stmt 0 view .LVU1985
@@ -12418,7 +12418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5793              	.LVL515:
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
  5794              		.loc 1 505 13 is_stmt 1 view .LVU2001
-GAS LISTING /tmp/ccVQfiUO.s 			page 208
+GAS LISTING /tmp/ccJnc7OG.s 			page 208
 
 
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
@@ -12478,7 +12478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5831 05f3 8D70D0   		leal	-48(%rax), %esi
  494:../../bos/modules/b_mod_tcpip.c ****         {
  5832              		.loc 1 494 12 view .LVU2018
-GAS LISTING /tmp/ccVQfiUO.s 			page 209
+GAS LISTING /tmp/ccJnc7OG.s 			page 209
 
 
  5833 05f6 4080FE09 		cmpb	$9, %sil
@@ -12538,7 +12538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5868      FFFF
  514:../../bos/modules/b_mod_tcpip.c ****             value += ip_str[i] - '0';
  5869              		.loc 1 514 13 is_stmt 1 view .LVU2032
-GAS LISTING /tmp/ccVQfiUO.s 			page 210
+GAS LISTING /tmp/ccJnc7OG.s 			page 210
 
 
  514:../../bos/modules/b_mod_tcpip.c ****             value += ip_str[i] - '0';
@@ -12598,7 +12598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5903 065a 09C1     		orl	%eax, %ecx
  5904              	.LVL526:
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 211
+GAS LISTING /tmp/ccJnc7OG.s 			page 211
 
 
  5905              		.loc 1 505 20 view .LVU2049
@@ -12658,7 +12658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5940              		.loc 1 494 20 is_stmt 0 view .LVU2064
  5941 067f 410FBE40 		movsbl	7(%r8), %eax
  5941      07
-GAS LISTING /tmp/ccVQfiUO.s 			page 212
+GAS LISTING /tmp/ccJnc7OG.s 			page 212
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -12718,7 +12718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  5977              		.loc 1 498 9 is_stmt 1 view .LVU2078
  498:../../bos/modules/b_mod_tcpip.c ****         {
  5978              		.loc 1 498 12 is_stmt 0 view .LVU2079
-GAS LISTING /tmp/ccVQfiUO.s 			page 213
+GAS LISTING /tmp/ccJnc7OG.s 			page 213
 
 
  5979 06b0 3C2E     		cmpb	$46, %al
@@ -12778,7 +12778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6012              		.loc 1 505 13 is_stmt 1 view .LVU2095
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
  6013              		.loc 1 505 20 is_stmt 0 view .LVU2096
-GAS LISTING /tmp/ccVQfiUO.s 			page 214
+GAS LISTING /tmp/ccJnc7OG.s 			page 214
 
 
  6014 06e7 09D7     		orl	%edx, %edi
@@ -12838,7 +12838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  494:../../bos/modules/b_mod_tcpip.c ****         {
  6050              		.loc 1 494 12 view .LVU2112
  6051 0707 80FA09   		cmpb	$9, %dl
-GAS LISTING /tmp/ccVQfiUO.s 			page 215
+GAS LISTING /tmp/ccJnc7OG.s 			page 215
 
 
  6052 070a 0F86B000 		jbe	.L685
@@ -12898,7 +12898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6086              	.LBE621:
  6087              	.LBB622:
  6088              	.LBB573:
-GAS LISTING /tmp/ccVQfiUO.s 			page 216
+GAS LISTING /tmp/ccJnc7OG.s 			page 216
 
 
  498:../../bos/modules/b_mod_tcpip.c ****         {
@@ -12958,7 +12958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  504:../../bos/modules/b_mod_tcpip.c ****             result |= value;
  6121              		.loc 1 504 20 is_stmt 0 view .LVU2142
  6122 0774 C1E608   		sall	$8, %esi
-GAS LISTING /tmp/ccVQfiUO.s 			page 217
+GAS LISTING /tmp/ccJnc7OG.s 			page 217
 
 
  6123              	.LVL549:
@@ -13018,7 +13018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6159 078f 0FBE4108 		movsbl	8(%rcx), %eax
  494:../../bos/modules/b_mod_tcpip.c ****         {
  6160              		.loc 1 494 50 view .LVU2159
-GAS LISTING /tmp/ccVQfiUO.s 			page 218
+GAS LISTING /tmp/ccJnc7OG.s 			page 218
 
 
  6161 0793 8D70D0   		leal	-48(%rax), %esi
@@ -13078,7 +13078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6196              		.loc 1 498 12 is_stmt 0 view .LVU2173
  6197 07c0 3C2E     		cmpb	$46, %al
  6198 07c2 0F8450FF 		je	.L572
-GAS LISTING /tmp/ccVQfiUO.s 			page 219
+GAS LISTING /tmp/ccJnc7OG.s 			page 219
 
 
  6198      FFFF
@@ -13138,7 +13138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6231              		.loc 1 505 13 is_stmt 1 view .LVU2189
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
  6232              		.loc 1 505 20 is_stmt 0 view .LVU2190
-GAS LISTING /tmp/ccVQfiUO.s 			page 220
+GAS LISTING /tmp/ccJnc7OG.s 			page 220
 
 
  6233 07fa 09C1     		orl	%eax, %ecx
@@ -13198,7 +13198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  494:../../bos/modules/b_mod_tcpip.c ****         {
  6269              		.loc 1 494 9 view .LVU2205
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 221
+GAS LISTING /tmp/ccJnc7OG.s 			page 221
 
 
  6270              		.loc 1 494 20 is_stmt 0 view .LVU2206
@@ -13258,7 +13258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6305              	.LBB626:
  6306              	.LBB555:
  498:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 222
+GAS LISTING /tmp/ccJnc7OG.s 			page 222
 
 
  6307              		.loc 1 498 9 is_stmt 1 view .LVU2220
@@ -13318,7 +13318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6340 0884 C1E708   		sall	$8, %edi
  6341              	.LVL571:
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 223
+GAS LISTING /tmp/ccJnc7OG.s 			page 223
 
 
  6342              		.loc 1 505 13 is_stmt 1 view .LVU2237
@@ -13378,7 +13378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  494:../../bos/modules/b_mod_tcpip.c ****         {
  6378              		.loc 1 494 50 view .LVU2253
  6379 08a4 8D50D0   		leal	-48(%rax), %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 224
+GAS LISTING /tmp/ccJnc7OG.s 			page 224
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -13438,7 +13438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
  6414              		.loc 1 506 19 view .LVU2267
  6415              	.LBE593:
-GAS LISTING /tmp/ccVQfiUO.s 			page 225
+GAS LISTING /tmp/ccJnc7OG.s 			page 225
 
 
  6416              	.LBE627:
@@ -13498,7 +13498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6449      FFFF
  504:../../bos/modules/b_mod_tcpip.c ****             result |= value;
  6450              		.loc 1 504 13 is_stmt 1 view .LVU2283
-GAS LISTING /tmp/ccVQfiUO.s 			page 226
+GAS LISTING /tmp/ccJnc7OG.s 			page 226
 
 
  504:../../bos/modules/b_mod_tcpip.c ****             result |= value;
@@ -13558,7 +13558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6487              		.loc 1 494 9 view .LVU2299
  494:../../bos/modules/b_mod_tcpip.c ****         {
  6488              		.loc 1 494 20 is_stmt 0 view .LVU2300
-GAS LISTING /tmp/ccVQfiUO.s 			page 227
+GAS LISTING /tmp/ccJnc7OG.s 			page 227
 
 
  6489 092f 0FBE410A 		movsbl	10(%rcx), %eax
@@ -13618,7 +13618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  498:../../bos/modules/b_mod_tcpip.c ****         {
  6525              		.loc 1 498 9 is_stmt 1 view .LVU2314
  498:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 228
+GAS LISTING /tmp/ccJnc7OG.s 			page 228
 
 
  6526              		.loc 1 498 12 is_stmt 0 view .LVU2315
@@ -13678,7 +13678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6559 0997 C1E008   		sall	$8, %eax
  6560              	.LVL593:
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 229
+GAS LISTING /tmp/ccJnc7OG.s 			page 229
 
 
  6561              		.loc 1 505 13 is_stmt 1 view .LVU2331
@@ -13738,7 +13738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6597              		.loc 1 492 26 is_stmt 1 discriminator 2 view .LVU2345
  492:../../bos/modules/b_mod_tcpip.c ****     {
  6598              		.loc 1 492 19 discriminator 1 view .LVU2346
-GAS LISTING /tmp/ccVQfiUO.s 			page 230
+GAS LISTING /tmp/ccJnc7OG.s 			page 230
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -13798,7 +13798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6632              		.loc 1 506 19 view .LVU2361
  6633              	.LBE576:
  6634              	.LBE631:
-GAS LISTING /tmp/ccVQfiUO.s 			page 231
+GAS LISTING /tmp/ccJnc7OG.s 			page 231
 
 
  6635              	.LBB632:
@@ -13858,7 +13858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6668              		.loc 1 504 13 is_stmt 1 view .LVU2377
  504:../../bos/modules/b_mod_tcpip.c ****             result |= value;
  6669              		.loc 1 504 20 is_stmt 0 view .LVU2378
-GAS LISTING /tmp/ccVQfiUO.s 			page 232
+GAS LISTING /tmp/ccJnc7OG.s 			page 232
 
 
  6670 0a24 C1E708   		sall	$8, %edi
@@ -13918,7 +13918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6706              		.loc 1 494 20 is_stmt 0 view .LVU2394
  6707 0a3f 410FBE42 		movsbl	12(%r10), %eax
  6707      0C
-GAS LISTING /tmp/ccVQfiUO.s 			page 233
+GAS LISTING /tmp/ccJnc7OG.s 			page 233
 
 
  494:../../bos/modules/b_mod_tcpip.c ****         {
@@ -13978,7 +13978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6741      0000
  6742              		.p2align 3
  6743              	.L674:
-GAS LISTING /tmp/ccVQfiUO.s 			page 234
+GAS LISTING /tmp/ccJnc7OG.s 			page 234
 
 
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
@@ -14038,7 +14038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6778 0aa8 81FAFF00 		cmpl	$255, %edx
  6778      0000
  6779 0aae 0F874CF7 		ja	.L647
-GAS LISTING /tmp/ccVQfiUO.s 			page 235
+GAS LISTING /tmp/ccJnc7OG.s 			page 235
 
 
  6779      FFFF
@@ -14098,7 +14098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  492:../../bos/modules/b_mod_tcpip.c ****     {
  6816              		.loc 1 492 19 discriminator 1 view .LVU2440
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 236
+GAS LISTING /tmp/ccJnc7OG.s 			page 236
 
 
  6817              		.loc 1 494 9 view .LVU2441
@@ -14158,7 +14158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6852              	.LBE635:
  6853              	.LBB636:
  6854              	.LBB596:
-GAS LISTING /tmp/ccVQfiUO.s 			page 237
+GAS LISTING /tmp/ccJnc7OG.s 			page 237
 
 
  498:../../bos/modules/b_mod_tcpip.c ****         {
@@ -14218,7 +14218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  504:../../bos/modules/b_mod_tcpip.c ****             result |= value;
  6887              		.loc 1 504 20 is_stmt 0 view .LVU2472
  6888 0b34 4489C0   		movl	%r8d, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 238
+GAS LISTING /tmp/ccJnc7OG.s 			page 238
 
 
  6889 0b37 C1E008   		sall	$8, %eax
@@ -14278,7 +14278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6925              	.LVL633:
  6926              	.L530:
  492:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 239
+GAS LISTING /tmp/ccJnc7OG.s 			page 239
 
 
  6927              		.loc 1 492 26 is_stmt 1 discriminator 2 view .LVU2487
@@ -14338,7 +14338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6960              		.p2align 3
  6961              	.L661:
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
-GAS LISTING /tmp/ccVQfiUO.s 			page 240
+GAS LISTING /tmp/ccJnc7OG.s 			page 240
 
 
  6962              		.loc 1 506 19 view .LVU2503
@@ -14398,7 +14398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  6997 0bbe 0F87C4F5 		ja	.L648
  6997      FFFF
  504:../../bos/modules/b_mod_tcpip.c ****             result |= value;
-GAS LISTING /tmp/ccVQfiUO.s 			page 241
+GAS LISTING /tmp/ccJnc7OG.s 			page 241
 
 
  6998              		.loc 1 504 13 is_stmt 1 view .LVU2519
@@ -14458,7 +14458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  494:../../bos/modules/b_mod_tcpip.c ****         {
  7035              		.loc 1 494 9 view .LVU2535
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 242
+GAS LISTING /tmp/ccJnc7OG.s 			page 242
 
 
  7036              		.loc 1 494 20 is_stmt 0 view .LVU2536
@@ -14518,7 +14518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  492:../../bos/modules/b_mod_tcpip.c ****     {
  7072              		.loc 1 492 19 discriminator 1 view .LVU2551
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 243
+GAS LISTING /tmp/ccJnc7OG.s 			page 243
 
 
  7073              		.loc 1 494 9 view .LVU2552
@@ -14578,7 +14578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7108      000000
 3224:../../bos/modules/b_mod_tcpip.c ****             pinfo->ip_info.gateway == 0)
  7109              		.loc 1 3224 9 is_stmt 1 view .LVU2565
-GAS LISTING /tmp/ccVQfiUO.s 			page 244
+GAS LISTING /tmp/ccJnc7OG.s 			page 244
 
 
  7110              	.L554:
@@ -14638,7 +14638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7144              		.loc 1 494 50 view .LVU2580
  7145 0c74 8D48D0   		leal	-48(%rax), %ecx
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 245
+GAS LISTING /tmp/ccJnc7OG.s 			page 245
 
 
  7146              		.loc 1 494 12 view .LVU2581
@@ -14698,7 +14698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7179 0ca5 8D48D0   		leal	-48(%rax), %ecx
  494:../../bos/modules/b_mod_tcpip.c ****         {
  7180              		.loc 1 494 12 view .LVU2597
-GAS LISTING /tmp/ccVQfiUO.s 			page 246
+GAS LISTING /tmp/ccJnc7OG.s 			page 246
 
 
  7181 0ca8 80F909   		cmpb	$9, %cl
@@ -14758,7 +14758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  492:../../bos/modules/b_mod_tcpip.c ****     {
  7219              		.loc 1 492 26 is_stmt 1 discriminator 2 view .LVU2609
  492:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 247
+GAS LISTING /tmp/ccJnc7OG.s 			page 247
 
 
  7220              		.loc 1 492 19 discriminator 1 view .LVU2610
@@ -14818,7 +14818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  492:../../bos/modules/b_mod_tcpip.c ****     {
  7254              		.loc 1 492 19 discriminator 1 view .LVU2626
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 248
+GAS LISTING /tmp/ccJnc7OG.s 			page 248
 
 
  7255              		.loc 1 494 9 view .LVU2627
@@ -14878,7 +14878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7292              		.loc 1 514 19 is_stmt 0 view .LVU2639
  7293 0d48 8D1489   		leal	(%rcx,%rcx,4), %edx
  7294              	.LVL669:
-GAS LISTING /tmp/ccVQfiUO.s 			page 249
+GAS LISTING /tmp/ccJnc7OG.s 			page 249
 
 
  515:../../bos/modules/b_mod_tcpip.c ****         }
@@ -14938,7 +14938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7334              		.loc 1 498 12 is_stmt 0 view .LVU2653
  7335 0d68 3C2E     		cmpb	$46, %al
  7336 0d6a 0F8418FF 		je	.L535
-GAS LISTING /tmp/ccVQfiUO.s 			page 250
+GAS LISTING /tmp/ccJnc7OG.s 			page 250
 
 
  7336      FFFF
@@ -14998,7 +14998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7374              		.loc 1 498 12 view .LVU2664
  7375              	.LBE562:
  7376              	.LBE645:
-GAS LISTING /tmp/ccVQfiUO.s 			page 251
+GAS LISTING /tmp/ccJnc7OG.s 			page 251
 
 
  7377              	.LBB646:
@@ -15058,7 +15058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7416              	.LVL684:
  7417 0dc9 0F1F8000 		.p2align 4,,10
  7417      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 252
+GAS LISTING /tmp/ccJnc7OG.s 			page 252
 
 
  7418              		.p2align 3
@@ -15118,7 +15118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
  7455              		.loc 1 506 19 is_stmt 0 view .LVU2688
  7456 0df1 31D2     		xorl	%edx, %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 253
+GAS LISTING /tmp/ccJnc7OG.s 			page 253
 
 
  7457 0df3 E957F6FF 		jmp	.L453
@@ -15178,7 +15178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
  7494              		.loc 1 506 19 view .LVU2701
  7495              	.LBE601:
-GAS LISTING /tmp/ccVQfiUO.s 			page 254
+GAS LISTING /tmp/ccJnc7OG.s 			page 254
 
 
  7496              	.LBE651:
@@ -15238,7 +15238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7535              	.LVL698:
 3241:../../bos/modules/b_mod_tcpip.c ****     if (pinfo == NULL)
  7536              		.loc 1 3241 5 is_stmt 1 view .LVU2715
-GAS LISTING /tmp/ccVQfiUO.s 			page 255
+GAS LISTING /tmp/ccJnc7OG.s 			page 255
 
 
  7537              		.loc 1 3241 8 is_stmt 0 view .LVU2716
@@ -15298,7 +15298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7572 002e E8000000 		call	_bIpInt2Str.part.0
  7572      00
  7573              	.LVL701:
-GAS LISTING /tmp/ccVQfiUO.s 			page 256
+GAS LISTING /tmp/ccJnc7OG.s 			page 256
 
 
  7574              	.L872:
@@ -15358,7 +15358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  523:../../bos/modules/b_mod_tcpip.c ****     uint8_t index = 0;
  7610              		.loc 1 523 5 view .LVU2743
  524:../../bos/modules/b_mod_tcpip.c ****     uint8_t ch    = 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 257
+GAS LISTING /tmp/ccJnc7OG.s 			page 257
 
 
  7611              		.loc 1 524 5 view .LVU2744
@@ -15418,7 +15418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3264:../../bos/modules/b_mod_tcpip.c **** int bTcpIpSetMac(const uint8_t mac[6])
 3265:../../bos/modules/b_mod_tcpip.c **** {
  7656              		.loc 1 3265 1 is_stmt 1 view -0
-GAS LISTING /tmp/ccVQfiUO.s 			page 258
+GAS LISTING /tmp/ccJnc7OG.s 			page 258
 
 
  7657              		.cfi_startproc
@@ -15478,7 +15478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7695 002e 49837C24 		cmpq	$0, 56(%r12)
  7695      3800
  7696 0034 0F848600 		je	.L893
-GAS LISTING /tmp/ccVQfiUO.s 			page 259
+GAS LISTING /tmp/ccJnc7OG.s 			page 259
 
 
  7696      0000
@@ -15538,7 +15538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7735              		.loc 1 3279 8 is_stmt 0 view .LVU2776
  7736 005d 85C0     		testl	%eax, %eax
  7737 005f 785F     		js	.L893
-GAS LISTING /tmp/ccVQfiUO.s 			page 260
+GAS LISTING /tmp/ccJnc7OG.s 			page 260
 
 
 3280:../../bos/modules/b_mod_tcpip.c ****     {
@@ -15598,7 +15598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7772              	.LCFI157:
  7773              		.cfi_def_cfa_offset 24
  7774 009a 415C     		popq	%r12
-GAS LISTING /tmp/ccVQfiUO.s 			page 261
+GAS LISTING /tmp/ccJnc7OG.s 			page 261
 
 
  7775              	.LCFI158:
@@ -15658,7 +15658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7817              		.p2align 4,,10
  7818              		.p2align 3
  7819              	.L893:
-GAS LISTING /tmp/ccVQfiUO.s 			page 262
+GAS LISTING /tmp/ccJnc7OG.s 			page 262
 
 
 3271:../../bos/modules/b_mod_tcpip.c ****     }
@@ -15718,7 +15718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7860 0015 0FB74011 		movzwl	17(%rax), %eax
  7861              	.LVL730:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccVQfiUO.s 			page 263
+GAS LISTING /tmp/ccJnc7OG.s 			page 263
 
 
  7862              		.loc 2 29 10 discriminator 1 view .LVU2806
@@ -15778,7 +15778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7903              		.loc 1 3311 24 view .LVU2819
  7904 0014 C3       		ret
  7905              	.LVL736:
-GAS LISTING /tmp/ccVQfiUO.s 			page 264
+GAS LISTING /tmp/ccJnc7OG.s 			page 264
 
 
  7906              		.p2align 4,,10
@@ -15838,7 +15838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2783:../../bos/modules/b_mod_tcpip.c ****     {
  7946              		.loc 1 2783 30 is_stmt 0 discriminator 1 view .LVU2833
  7947 0012 440FB605 		movzbl	16+bTcpIpCtx(%rip), %r8d
-GAS LISTING /tmp/ccVQfiUO.s 			page 265
+GAS LISTING /tmp/ccJnc7OG.s 			page 265
 
 
  7947      00000000 
@@ -15898,7 +15898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  7985              	.LVL745:
  7986 0058 0F1F8400 		.p2align 4,,10
  7986      00000000 
-GAS LISTING /tmp/ccVQfiUO.s 			page 266
+GAS LISTING /tmp/ccJnc7OG.s 			page 266
 
 
  7987              		.p2align 3
@@ -15958,7 +15958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8030 0023 4889F2   		movq	%rsi, %rdx
  8031 0026 89FE     		movl	%edi, %esi
  8032              	.LVL750:
-GAS LISTING /tmp/ccVQfiUO.s 			page 267
+GAS LISTING /tmp/ccJnc7OG.s 			page 267
 
 
  8033              		.loc 1 3331 12 view .LVU2859
@@ -16018,7 +16018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3342:../../bos/modules/b_mod_tcpip.c ****     ptrans->cb_arg   = user_data;
  8073              		.loc 1 3342 22 is_stmt 0 view .LVU2872
  8074 0011 48895708 		movq	%rdx, 8(%rdi)
-GAS LISTING /tmp/ccVQfiUO.s 			page 268
+GAS LISTING /tmp/ccJnc7OG.s 			page 268
 
 
  8075              		.loc 1 3343 5 is_stmt 1 view .LVU2873
@@ -16078,7 +16078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8115              		.cfi_def_cfa_offset 32
  8116              		.cfi_offset 13, -32
  8117 000a 4154     		pushq	%r12
-GAS LISTING /tmp/ccVQfiUO.s 			page 269
+GAS LISTING /tmp/ccJnc7OG.s 			page 269
 
 
  8118              	.LCFI164:
@@ -16138,7 +16138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8161              	.LBB690:
 3131:../../bos/modules/b_mod_tcpip.c ****     {
  8162              		.loc 1 3131 5 view .LVU2887
-GAS LISTING /tmp/ccVQfiUO.s 			page 270
+GAS LISTING /tmp/ccJnc7OG.s 			page 270
 
 
 3135:../../bos/modules/b_mod_tcpip.c ****     {
@@ -16198,7 +16198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8195      0000
 2783:../../bos/modules/b_mod_tcpip.c ****     {
  8196              		.loc 1 2783 19 is_stmt 1 discriminator 1 view .LVU2903
-GAS LISTING /tmp/ccVQfiUO.s 			page 271
+GAS LISTING /tmp/ccJnc7OG.s 			page 271
 
 
 2783:../../bos/modules/b_mod_tcpip.c ****     {
@@ -16258,7 +16258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8231      030000
 3149:../../bos/modules/b_mod_tcpip.c ****     {
  8232              		.loc 1 3149 8 view .LVU2915
-GAS LISTING /tmp/ccVQfiUO.s 			page 272
+GAS LISTING /tmp/ccJnc7OG.s 			page 272
 
 
  8233 00d5 0F84FD00 		je	.L928
@@ -16318,7 +16318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8262              		.cfi_def_cfa_offset 88
  8263 0111 4C8D2D00 		leaq	.LC5(%rip), %r13
  8263      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 273
+GAS LISTING /tmp/ccJnc7OG.s 			page 273
 
 
  8264 0118 4C89F2   		movq	%r14, %rdx
@@ -16378,7 +16378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3375:../../bos/modules/b_mod_tcpip.c ****     }
 3376:../../bos/modules/b_mod_tcpip.c ****     // b_log("connect %s %x %d ...\r\n", remote, remote_ip_tmp, port);
 3377:../../bos/modules/b_mod_tcpip.c ****     ptrans->remote_ip = remote_ip_tmp;
-GAS LISTING /tmp/ccVQfiUO.s 			page 274
+GAS LISTING /tmp/ccJnc7OG.s 			page 274
 
 
  8297              		.loc 1 3377 5 is_stmt 1 view .LVU2933
@@ -16438,7 +16438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8334              	.LCFI175:
  8335              		.cfi_def_cfa_offset 32
  8336 0197 415D     		popq	%r13
-GAS LISTING /tmp/ccVQfiUO.s 			page 275
+GAS LISTING /tmp/ccJnc7OG.s 			page 275
 
 
  8337              	.LCFI176:
@@ -16498,7 +16498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8378      FFFF
  8379              	.LVL781:
  8380              		.p2align 4,,10
-GAS LISTING /tmp/ccVQfiUO.s 			page 276
+GAS LISTING /tmp/ccJnc7OG.s 			page 276
 
 
  8381 01d3 0F1F4400 		.p2align 3
@@ -16558,7 +16558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8420 021a 48C783E0 		movq	$0, 224(%rbx)
  8420      00000000 
  8420      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 277
+GAS LISTING /tmp/ccJnc7OG.s 			page 277
 
 
  8421 0225 4829F9   		subq	%rdi, %rcx
@@ -16618,7 +16618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2069:../../bos/modules/b_mod_tcpip.c ****     {
  8462              		.loc 1 2069 23 discriminator 1 view .LVU2972
  8463 024b 83F801   		cmpl	$1, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 278
+GAS LISTING /tmp/ccJnc7OG.s 			page 278
 
 
  8464 024e 0F8425FF 		je	.L934
@@ -16678,7 +16678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8501 02a0 31C0     		xorl	%eax, %eax
  8502 02a2 BF020000 		movl	$2, %edi
  8502      00
-GAS LISTING /tmp/ccVQfiUO.s 			page 279
+GAS LISTING /tmp/ccJnc7OG.s 			page 279
 
 
  8503 02a7 488D1500 		leaq	__func__.0(%rip), %rdx
@@ -16738,7 +16738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8541              		.loc 1 3397 5 is_stmt 1 view .LVU2989
  8542              		.loc 1 3397 8 is_stmt 0 view .LVU2990
  8543 0012 4885D2   		testq	%rdx, %rdx
-GAS LISTING /tmp/ccVQfiUO.s 			page 280
+GAS LISTING /tmp/ccJnc7OG.s 			page 280
 
 
  8544 0015 7439     		je	.L966
@@ -16798,7 +16798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8578              	.LCFI186:
  8579              		.cfi_restore_state
 3404:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 281
+GAS LISTING /tmp/ccJnc7OG.s 			page 281
 
 
  8580              		.loc 1 3404 9 is_stmt 1 view .LVU3002
@@ -16858,7 +16858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8624              		.cfi_offset 3, -16
  8625 0009 4863DF   		movslq	%edi, %rbx
  8626              	.LVL806:
-GAS LISTING /tmp/ccVQfiUO.s 			page 282
+GAS LISTING /tmp/ccJnc7OG.s 			page 282
 
 
 3419:../../bos/modules/b_mod_tcpip.c ****     {
@@ -16918,7 +16918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8656              		.loc 1 3440 34 is_stmt 0 view .LVU3028
  8657 0033 488B8300 		movq	256(%rbx), %rax
  8657      010000
-GAS LISTING /tmp/ccVQfiUO.s 			page 283
+GAS LISTING /tmp/ccJnc7OG.s 			page 283
 
 
  8658              	.LVL811:
@@ -16978,7 +16978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8699              		.loc 1 3434 9 is_stmt 1 view .LVU3043
 3434:../../bos/modules/b_mod_tcpip.c ****     }
  8700              		.loc 1 3434 21 is_stmt 0 view .LVU3044
-GAS LISTING /tmp/ccVQfiUO.s 			page 284
+GAS LISTING /tmp/ccJnc7OG.s 			page 284
 
 
  8701 0066 488903   		movq	%rax, (%rbx)
@@ -17038,7 +17038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8747 0010 400F94C6 		sete	%sil
  8748              	.LVL823:
  8749              		.loc 1 3450 51 discriminator 1 view .LVU3059
-GAS LISTING /tmp/ccVQfiUO.s 			page 285
+GAS LISTING /tmp/ccJnc7OG.s 			page 285
 
 
  8750 0014 4008F0   		orb	%sil, %al
@@ -17098,7 +17098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8785              		.loc 1 3140 8 view .LVU3070
  8786 0049 4885C0   		testq	%rax, %rax
  8787 004c 0F849E00 		je	.L989
-GAS LISTING /tmp/ccVQfiUO.s 			page 286
+GAS LISTING /tmp/ccJnc7OG.s 			page 286
 
 
  8787      0000
@@ -17158,7 +17158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8822              		.loc 1 2783 45 is_stmt 1 discriminator 2 view .LVU3083
 2783:../../bos/modules/b_mod_tcpip.c ****     {
  8823              		.loc 1 2783 19 discriminator 1 view .LVU3084
-GAS LISTING /tmp/ccVQfiUO.s 			page 287
+GAS LISTING /tmp/ccJnc7OG.s 			page 287
 
 
  8824 0090 48056803 		addq	$872, %rax
@@ -17218,7 +17218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3456:../../bos/modules/b_mod_tcpip.c ****     if (pstack_if == NULL)
  8860              		.loc 1 3456 5 is_stmt 1 view .LVU3097
  8861              		.loc 1 3456 8 is_stmt 0 view .LVU3098
-GAS LISTING /tmp/ccVQfiUO.s 			page 288
+GAS LISTING /tmp/ccJnc7OG.s 			page 288
 
 
  8862 00c3 4D85D2   		testq	%r10, %r10
@@ -17278,7 +17278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3493:../../bos/modules/b_mod_tcpip.c ****         }
 3494:../../bos/modules/b_mod_tcpip.c ****         else if (ptrans->type == B_TRANS_CONN_TCP)
  8878              		.loc 1 3494 14 is_stmt 1 view .LVU3106
-GAS LISTING /tmp/ccVQfiUO.s 			page 289
+GAS LISTING /tmp/ccJnc7OG.s 			page 289
 
 
  8879              		.loc 1 3494 17 is_stmt 0 view .LVU3107
@@ -17338,7 +17338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  8918              	.LBE716:
 3455:../../bos/modules/b_mod_tcpip.c ****     if (pstack_if == NULL)
  8919              		.loc 1 3455 5 is_stmt 1 view .LVU3116
-GAS LISTING /tmp/ccVQfiUO.s 			page 290
+GAS LISTING /tmp/ccJnc7OG.s 			page 290
 
 
 3455:../../bos/modules/b_mod_tcpip.c ****     if (pstack_if == NULL)
@@ -17398,7 +17398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3496:../../bos/modules/b_mod_tcpip.c ****         }
  8958              		.loc 1 3496 13 is_stmt 1 view .LVU3130
 3496:../../bos/modules/b_mod_tcpip.c ****         }
-GAS LISTING /tmp/ccVQfiUO.s 			page 291
+GAS LISTING /tmp/ccJnc7OG.s 			page 291
 
 
  8959              		.loc 1 3496 20 is_stmt 0 view .LVU3131
@@ -17458,7 +17458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3508:../../bos/modules/b_mod_tcpip.c ****     int       retval = 0;
  9005              		.loc 1 3508 5 is_stmt 1 view .LVU3141
  9006              	.LVL850:
-GAS LISTING /tmp/ccVQfiUO.s 			page 292
+GAS LISTING /tmp/ccJnc7OG.s 			page 292
 
 
 3509:../../bos/modules/b_mod_tcpip.c ****     bTrans_t *ptrans = (bTrans_t *)sockfd;
@@ -17518,7 +17518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3139:../../bos/modules/b_mod_tcpip.c ****     if (pnetif == NULL || pnetif->is_linked == 0)
  9046              		.loc 1 3139 5 is_stmt 1 view .LVU3156
  9047              	.LVL853:
-GAS LISTING /tmp/ccVQfiUO.s 			page 293
+GAS LISTING /tmp/ccJnc7OG.s 			page 293
 
 
 3140:../../bos/modules/b_mod_tcpip.c ****     {
@@ -17578,7 +17578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9081              		.loc 1 2783 19 is_stmt 1 discriminator 1 view .LVU3169
 2783:../../bos/modules/b_mod_tcpip.c ****     {
  9082              		.loc 1 2783 30 is_stmt 0 discriminator 1 view .LVU3170
-GAS LISTING /tmp/ccVQfiUO.s 			page 294
+GAS LISTING /tmp/ccJnc7OG.s 			page 294
 
 
  9083 0070 440FB61D 		movzbl	16+bTcpIpCtx(%rip), %r11d
@@ -17638,7 +17638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9116      030000
  9117              	.LBE727:
  9118              	.LBE730:
-GAS LISTING /tmp/ccVQfiUO.s 			page 295
+GAS LISTING /tmp/ccJnc7OG.s 			page 295
 
 
  9119              		.loc 1 3513 16 view .LVU3181
@@ -17698,7 +17698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9147              		.loc 1 3534 22 is_stmt 0 view .LVU3194
  9148 00e6 4C89C6   		movq	%r8, %rsi
  9149 00e9 488B39   		movq	(%rcx), %rdi
-GAS LISTING /tmp/ccVQfiUO.s 			page 296
+GAS LISTING /tmp/ccJnc7OG.s 			page 296
 
 
  9150 00ec 0FB7D2   		movzwl	%dx, %edx
@@ -17758,7 +17758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9191              	.LBB729:
 3135:../../bos/modules/b_mod_tcpip.c ****     {
  9192              		.loc 1 3135 42 discriminator 1 view .LVU3205
-GAS LISTING /tmp/ccVQfiUO.s 			page 297
+GAS LISTING /tmp/ccJnc7OG.s 			page 297
 
 
  9193 0110 66837960 		cmpw	$68, 96(%rcx)
@@ -17818,7 +17818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9228 0145 31F6     		xorl	%esi, %esi
 3536:../../bos/modules/b_mod_tcpip.c ****         {
  9229              		.loc 1 3536 17 view .LVU3218
-GAS LISTING /tmp/ccVQfiUO.s 			page 298
+GAS LISTING /tmp/ccJnc7OG.s 			page 298
 
 
  9230 0147 4183FA01 		cmpl	$1, %r10d
@@ -17878,7 +17878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9273              		.cfi_restore 3
  9274              		.loc 1 3546 1 view .LVU3230
  9275 0179 B8FFFFFF 		movl	$-1, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 299
+GAS LISTING /tmp/ccJnc7OG.s 			page 299
 
 
  9275      FF
@@ -17938,7 +17938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1612:../../bos/modules/b_mod_tcpip.c **** 
  9323              		.loc 1 1612 5 view .LVU3236
  9324 0011 E8000000 		call	_bDhcpMakeMsg
-GAS LISTING /tmp/ccVQfiUO.s 			page 300
+GAS LISTING /tmp/ccJnc7OG.s 			page 300
 
 
  9324      00
@@ -17998,7 +17998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1632:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = 0x01;
  9352              		.loc 1 1632 5 is_stmt 1 view .LVU3256
  9353              	.LVL884:
-GAS LISTING /tmp/ccVQfiUO.s 			page 301
+GAS LISTING /tmp/ccJnc7OG.s 			page 301
 
 
 1633:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->netif.mac[0];
@@ -18058,7 +18058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9386              		.loc 1 1645 39 view .LVU3274
  9387 006f 8893ED01 		movb	%dl, 493(%rbx)
  9387      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 302
+GAS LISTING /tmp/ccJnc7OG.s 			page 302
 
 
 1646:../../bos/modules/b_mod_tcpip.c ****     {
@@ -18118,7 +18118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1646:../../bos/modules/b_mod_tcpip.c ****     {
  9419              		.loc 1 1646 37 is_stmt 1 discriminator 2 view .LVU3292
  9420              	.LVL891:
-GAS LISTING /tmp/ccVQfiUO.s 			page 303
+GAS LISTING /tmp/ccJnc7OG.s 			page 303
 
 
 1646:../../bos/modules/b_mod_tcpip.c ****     {
@@ -18178,7 +18178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1663:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = subnetMask;
  9459              		.loc 1 1663 35 view .LVU3307
  9460 00fd 8974240C 		movl	%esi, 12(%rsp)
-GAS LISTING /tmp/ccVQfiUO.s 			page 304
+GAS LISTING /tmp/ccJnc7OG.s 			page 304
 
 
 1664:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = routersOnSubnet;
@@ -18238,7 +18238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1654:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = _bNibbleToHex(pinfo->netif.mac[3] & 0x0F);
  9499              		.loc 1 1654 9 view .LVU3324
 1654:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = _bNibbleToHex(pinfo->netif.mac[3] & 0x0F);
-GAS LISTING /tmp/ccVQfiUO.s 			page 305
+GAS LISTING /tmp/ccJnc7OG.s 			page 305
 
 
  9500              		.loc 1 1654 45 is_stmt 0 view .LVU3325
@@ -18298,7 +18298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9541              	.LBE737:
  9542              	.LBE738:
 1655:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = _bNibbleToHex(pinfo->netif.mac[4] >> 4);
-GAS LISTING /tmp/ccVQfiUO.s 			page 306
+GAS LISTING /tmp/ccJnc7OG.s 			page 306
 
 
  9543              		.loc 1 1655 43 discriminator 1 view .LVU3338
@@ -18358,7 +18358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9582 01a3 458D4C24 		leal	55(%r12), %r9d
  9582      37
  9583 01a8 458D4424 		leal	48(%r12), %r8d
-GAS LISTING /tmp/ccVQfiUO.s 			page 307
+GAS LISTING /tmp/ccJnc7OG.s 			page 307
 
 
  9583      30
@@ -18418,7 +18418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1658:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = _bNibbleToHex(pinfo->netif.mac[5] & 0x0F);
  9625              		.loc 1 1658 43 discriminator 1 view .LVU3363
  9626 01dc 4288BC03 		movb	%dil, 476(%rbx,%r8)
-GAS LISTING /tmp/ccVQfiUO.s 			page 308
+GAS LISTING /tmp/ccJnc7OG.s 			page 308
 
 
  9626      DC010000 
@@ -18478,7 +18478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1665:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = dns;
  9659              		.loc 1 1665 5 is_stmt 1 view .LVU3377
 1665:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = dns;
-GAS LISTING /tmp/ccVQfiUO.s 			page 309
+GAS LISTING /tmp/ccJnc7OG.s 			page 309
 
 
  9660              		.loc 1 1665 39 is_stmt 0 view .LVU3378
@@ -18538,7 +18538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9689              		.loc 1 1672 19 discriminator 1 view .LVU3392
 1675:../../bos/modules/b_mod_tcpip.c ****     {
  9690              		.loc 1 1675 9 is_stmt 0 view .LVU3393
-GAS LISTING /tmp/ccVQfiUO.s 			page 310
+GAS LISTING /tmp/ccJnc7OG.s 			page 310
 
 
  9691 0275 BA430000 		movl	$67, %edx
@@ -18598,7 +18598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9726      000000
 1687:../../bos/modules/b_mod_tcpip.c **** 
  9727              		.loc 1 1687 1 view .LVU3403
-GAS LISTING /tmp/ccVQfiUO.s 			page 311
+GAS LISTING /tmp/ccJnc7OG.s 			page 311
 
 
  9728 02d3 5B       		popq	%rbx
@@ -18658,7 +18658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9768              		.loc 1 1650 9 view .LVU3412
 1650:../../bos/modules/b_mod_tcpip.c ****     }
  9769              		.loc 1 1650 43 is_stmt 0 view .LVU3413
-GAS LISTING /tmp/ccVQfiUO.s 			page 312
+GAS LISTING /tmp/ccJnc7OG.s 			page 312
 
 
  9770 02fe 0FB61500 		movzbl	4+HOST_NAME(%rip), %edx
@@ -18718,7 +18718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9802              		.loc 1 1687 1 is_stmt 0 view .LVU3426
  9803 0340 4883C428 		addq	$40, %rsp
  9804              	.LCFI215:
-GAS LISTING /tmp/ccVQfiUO.s 			page 313
+GAS LISTING /tmp/ccJnc7OG.s 			page 313
 
 
  9805              		.cfi_remember_state
@@ -18778,7 +18778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9847 037f C7442414 		movl	$27, 20(%rsp)
  9847      1B000000 
  9848 0387 41B91300 		movl	$19, %r9d
-GAS LISTING /tmp/ccVQfiUO.s 			page 314
+GAS LISTING /tmp/ccJnc7OG.s 			page 314
 
 
  9848      0000
@@ -18838,7 +18838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9880 03e8 0F85D2FC 		jne	.L1065
  9880      FFFF
 1648:../../bos/modules/b_mod_tcpip.c ****             break;
-GAS LISTING /tmp/ccVQfiUO.s 			page 315
+GAS LISTING /tmp/ccJnc7OG.s 			page 315
 
 
  9881              		.loc 1 1648 9 view .LVU3441
@@ -18898,7 +18898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9926 0009 53       		pushq	%rbx
  9927              	.LCFI228:
  9928              		.cfi_def_cfa_offset 56
-GAS LISTING /tmp/ccVQfiUO.s 			page 316
+GAS LISTING /tmp/ccJnc7OG.s 			page 316
 
 
  9929              		.cfi_offset 3, -56
@@ -18958,7 +18958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9961              		.loc 1 1725 5 view .LVU3458
 1726:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = DHCP_REQUEST;
  9962              		.loc 1 1726 5 view .LVU3459
-GAS LISTING /tmp/ccVQfiUO.s 			page 317
+GAS LISTING /tmp/ccJnc7OG.s 			page 317
 
 
 1727:../../bos/modules/b_mod_tcpip.c **** 
@@ -19018,7 +19018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  9993      010000
  9994 0091 89C1     		movl	%eax, %ecx
  9995 0093 66897C24 		movw	%di, 60(%rsp)
-GAS LISTING /tmp/ccVQfiUO.s 			page 318
+GAS LISTING /tmp/ccJnc7OG.s 			page 318
 
 
  9995      3C
@@ -19078,7 +19078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10024 0126 C7442408 		movl	$23, 8(%rsp)
  10024      17000000 
  10025              	.LVL940:
-GAS LISTING /tmp/ccVQfiUO.s 			page 319
+GAS LISTING /tmp/ccJnc7OG.s 			page 319
 
 
  10026              	.L1092:
@@ -19138,7 +19138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10057              		.loc 1 1760 9 view .LVU3496
 1760:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[3] >> 4);
  10058              		.loc 1 1760 43 is_stmt 0 view .LVU3497
-GAS LISTING /tmp/ccVQfiUO.s 			page 320
+GAS LISTING /tmp/ccJnc7OG.s 			page 320
 
 
  10059 0170 83E03F   		andl	$63, %eax
@@ -19198,7 +19198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10091              		.loc 1 1760 43 is_stmt 0 view .LVU3513
  10092 01ae 83E03F   		andl	$63, %eax
  10093              	.LVL951:
-GAS LISTING /tmp/ccVQfiUO.s 			page 321
+GAS LISTING /tmp/ccJnc7OG.s 			page 321
 
 
 1760:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[3] >> 4);
@@ -19258,7 +19258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10126              	.LVL956:
 1760:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[3] >> 4);
  10127              		.loc 1 1760 39 view .LVU3530
-GAS LISTING /tmp/ccVQfiUO.s 			page 322
+GAS LISTING /tmp/ccJnc7OG.s 			page 322
 
 
  10128 01ef 418D7506 		leal	6(%r13), %esi
@@ -19318,7 +19318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10161 022c 448D4007 		leal	7(%rax), %r8d
 1767:../../bos/modules/b_mod_tcpip.c **** 
  10162              		.loc 1 1767 55 view .LVU3547
-GAS LISTING /tmp/ccVQfiUO.s 			page 323
+GAS LISTING /tmp/ccJnc7OG.s 			page 323
 
 
  10163 0230 44887C24 		movb	%r15b, 63(%rsp)
@@ -19378,7 +19378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1762:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[4] >> 4);
  10198              		.loc 1 1762 35 discriminator 1 view .LVU3562
  10199 0283 448D5802 		leal	2(%rax), %r11d
-GAS LISTING /tmp/ccVQfiUO.s 			page 324
+GAS LISTING /tmp/ccJnc7OG.s 			page 324
 
 
 1766:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k - (i + 6 + 1)] = i + 6;  // length of hostname
@@ -19438,7 +19438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10234              		.loc 1 1778 35 view .LVU3578
  10235 02d3 450FB7F8 		movzwl	%r8w, %r15d
  10236 02d7 448D4010 		leal	16(%rax), %r8d
-GAS LISTING /tmp/ccVQfiUO.s 			page 325
+GAS LISTING /tmp/ccJnc7OG.s 			page 325
 
 
 1779:../../bos/modules/b_mod_tcpip.c **** 
@@ -19498,7 +19498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10277              	.LBB759:
  10278              	.LBB760:
 1600:../../bos/modules/b_mod_tcpip.c ****     if (nibble <= 9)
-GAS LISTING /tmp/ccVQfiUO.s 			page 326
+GAS LISTING /tmp/ccJnc7OG.s 			page 326
 
 
  10279              		.loc 1 1600 12 view .LVU3592
@@ -19558,7 +19558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10316              		.loc 1 1602 23 is_stmt 0 view .LVU3607
  10317 0333 4080FD09 		cmpb	$9, %bpl
  10318 0337 8D5530   		leal	48(%rbp), %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 327
+GAS LISTING /tmp/ccJnc7OG.s 			page 327
 
 
  10319 033a 448D6537 		leal	55(%rbp), %r12d
@@ -19618,7 +19618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1765:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++]             = _bNibbleToHex(pinfo->netif.mac[5]);
  10361              		.loc 1 1765 53 view .LVU3619
  10362 0360 440FB65C 		movzbl	60(%rsp), %r11d
-GAS LISTING /tmp/ccVQfiUO.s 			page 328
+GAS LISTING /tmp/ccJnc7OG.s 			page 328
 
 
  10362      243C
@@ -19678,7 +19678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10399              		.loc 1 1602 23 is_stmt 0 view .LVU3634
  10400 0390 80FA09   		cmpb	$9, %dl
  10401 0393 448D4A37 		leal	55(%rdx), %r9d
-GAS LISTING /tmp/ccVQfiUO.s 			page 329
+GAS LISTING /tmp/ccJnc7OG.s 			page 329
 
 
  10402 0397 8D4A30   		leal	48(%rdx), %ecx
@@ -19738,7 +19738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
   10:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is distributed in the hope that it will be useful,
   11:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
   12:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-GAS LISTING /tmp/ccVQfiUO.s 			page 330
+GAS LISTING /tmp/ccJnc7OG.s 			page 330
 
 
   13:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Lesser General Public License for more details.
@@ -19798,7 +19798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1772:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.rip_info.OPT[k++] = dns;
  10452              		.loc 1 1772 39 is_stmt 0 view .LVU3655
  10453 03ee 48635424 		movslq	20(%rsp), %rdx
-GAS LISTING /tmp/ccVQfiUO.s 			page 331
+GAS LISTING /tmp/ccJnc7OG.s 			page 331
 
 
  10453      14
@@ -19858,7 +19858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10482 0447 C68413DC 		movb	$33, 476(%rbx,%rdx)
  10482      01000021 
 1779:../../bos/modules/b_mod_tcpip.c **** 
-GAS LISTING /tmp/ccVQfiUO.s 			page 332
+GAS LISTING /tmp/ccJnc7OG.s 			page 332
 
 
  10483              		.loc 1 1779 5 is_stmt 1 view .LVU3670
@@ -19918,7 +19918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1787:../../bos/modules/b_mod_tcpip.c **** #if DHCP_MODULE_DEBUG_EN
  10521              		.loc 1 1787 5 is_stmt 1 view .LVU3684
  10522              	.LBB784:
-GAS LISTING /tmp/ccVQfiUO.s 			page 333
+GAS LISTING /tmp/ccJnc7OG.s 			page 333
 
 
  10523              	.LBI778:
@@ -19978,7 +19978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10564 04bf 8BBBE000 		movl	224(%rbx), %edi
  10564      0000
 1795:../../bos/modules/b_mod_tcpip.c ****         0)
-GAS LISTING /tmp/ccVQfiUO.s 			page 334
+GAS LISTING /tmp/ccJnc7OG.s 			page 334
 
 
  10565              		.loc 1 1795 50 view .LVU3694
@@ -20038,7 +20038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1699:../../bos/modules/b_mod_tcpip.c ****         *((uint8_t *)(&pinfo->dhcp_ctx.rip_info.flags) + 1) = (DHCP_FLAGSUNICAST & 0x00FF);
  10608              		.loc 1 1699 9 is_stmt 1 view .LVU3698
 1700:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.ciaddr[0]                  = pinfo->dhcp_ctx.allocated_ip[0];
-GAS LISTING /tmp/ccVQfiUO.s 			page 335
+GAS LISTING /tmp/ccJnc7OG.s 			page 335
 
 
  10609              		.loc 1 1700 9 view .LVU3699
@@ -20098,7 +20098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10640      030000
  10641 0541 89442438 		movl	%eax, 56(%rsp)
  10642 0545 E913FBFF 		jmp	.L1091
-GAS LISTING /tmp/ccVQfiUO.s 			page 336
+GAS LISTING /tmp/ccJnc7OG.s 			page 336
 
 
  10642      FF
@@ -20158,7 +20158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10672              	.LVL993:
 1749:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->dhcp_ctx.sip[0];
  10673              		.loc 1 1749 9 view .LVU3730
-GAS LISTING /tmp/ccVQfiUO.s 			page 337
+GAS LISTING /tmp/ccJnc7OG.s 			page 337
 
 
 1750:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = pinfo->dhcp_ctx.sip[1];
@@ -20218,7 +20218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10701      23000000 
  10702 060c E91DFBFF 		jmp	.L1092
  10702      FF
-GAS LISTING /tmp/ccVQfiUO.s 			page 338
+GAS LISTING /tmp/ccJnc7OG.s 			page 338
 
 
  10703              	.LVL995:
@@ -20278,7 +20278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10738              		.loc 1 1760 39 view .LVU3744
  10739 0658 89F0     		movl	%esi, %eax
 1759:../../bos/modules/b_mod_tcpip.c ****         pinfo->dhcp_ctx.rip_info.OPT[k++] = HOST_NAME[i];
-GAS LISTING /tmp/ccVQfiUO.s 			page 339
+GAS LISTING /tmp/ccJnc7OG.s 			page 339
 
 
  10740              		.loc 1 1759 37 discriminator 3 view .LVU3745
@@ -20338,7 +20338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10782      000001
  10783 0010 764E     		jbe	.L1130
 1832:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 340
+GAS LISTING /tmp/ccJnc7OG.s 			page 340
 
 
  10784              		.loc 1 1832 9 is_stmt 1 view .LVU3754
@@ -20398,7 +20398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10819              		.cfi_remember_state
  10820              		.cfi_def_cfa_offset 24
  10821 0049 5B       		popq	%rbx
-GAS LISTING /tmp/ccVQfiUO.s 			page 341
+GAS LISTING /tmp/ccJnc7OG.s 			page 341
 
 
  10822              	.LCFI246:
@@ -20458,7 +20458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1809:../../bos/modules/b_mod_tcpip.c ****             {
  10861              		.loc 1 1809 36 is_stmt 0 view .LVU3778
  10862 0071 0FB683E4 		movzbl	228(%rbx), %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 342
+GAS LISTING /tmp/ccJnc7OG.s 			page 342
 
 
  10862      000000
@@ -20518,7 +20518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10901              		.cfi_restore_state
 1840:../../bos/modules/b_mod_tcpip.c ****                 pinfo->dhcp_ctx.state = STATE_DHCP_DISCOVER;
  10902              		.loc 1 1840 17 is_stmt 1 view .LVU3787
-GAS LISTING /tmp/ccVQfiUO.s 			page 343
+GAS LISTING /tmp/ccJnc7OG.s 			page 343
 
 
  10903 00b0 E8000000 		call	_bDhcpSendDiscover
@@ -20578,7 +20578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3549:../../bos/modules/b_mod_tcpip.c **** {
  10943              		.loc 1 3549 1 view -0
  10944              		.cfi_startproc
-GAS LISTING /tmp/ccVQfiUO.s 			page 344
+GAS LISTING /tmp/ccJnc7OG.s 			page 344
 
 
  10945              		.loc 1 3549 1 is_stmt 0 view .LVU3796
@@ -20638,7 +20638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  10980              	.LVL1024:
  10981              	.LBB809:
  10982              	.LBI809:
-GAS LISTING /tmp/ccVQfiUO.s 			page 345
+GAS LISTING /tmp/ccJnc7OG.s 			page 345
 
 
 2775:../../bos/modules/b_mod_tcpip.c **** {
@@ -20698,7 +20698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11018              		.loc 1 2785 12 is_stmt 0 view .LVU3825
  11019 006b 3B5008   		cmpl	8(%rax), %edx
  11020 006e 75F0     		jne	.L1157
-GAS LISTING /tmp/ccVQfiUO.s 			page 346
+GAS LISTING /tmp/ccJnc7OG.s 			page 346
 
 
  11021              	.LVL1029:
@@ -20758,7 +20758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3572:../../bos/modules/b_mod_tcpip.c ****         bTcpIpStackIf_t *pstack_if = (bTcpIpStackIf_t *)ptrans->stack_if;
  11045              		.loc 1 3572 9 is_stmt 1 view .LVU3835
  11046              		.loc 1 3572 26 is_stmt 0 view .LVU3836
-GAS LISTING /tmp/ccVQfiUO.s 			page 347
+GAS LISTING /tmp/ccJnc7OG.s 			page 347
 
 
  11047 0091 488B87F0 		movq	240(%rdi), %rax
@@ -20818,7 +20818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11082              		.loc 1 3140 8 is_stmt 0 view .LVU3848
  11083 00c6 4885C0   		testq	%rax, %rax
  11084 00c9 0F855DFF 		jne	.L1158
-GAS LISTING /tmp/ccVQfiUO.s 			page 348
+GAS LISTING /tmp/ccJnc7OG.s 			page 348
 
 
  11084      FFFF
@@ -20878,7 +20878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11115              	.LFB83:
 3067:../../bos/modules/b_mod_tcpip.c ****     B_TASK_INIT_BEGIN();
  11116              		.loc 1 3067 1 is_stmt 1 view -0
-GAS LISTING /tmp/ccVQfiUO.s 			page 349
+GAS LISTING /tmp/ccJnc7OG.s 			page 349
 
 
  11117              		.cfi_startproc
@@ -20938,7 +20938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11160              		.loc 1 3074 5 view .LVU3855
 3074:../../bos/modules/b_mod_tcpip.c ****     while (1)
  11161              		.loc 1 3074 5 view .LVU3856
-GAS LISTING /tmp/ccVQfiUO.s 			page 350
+GAS LISTING /tmp/ccJnc7OG.s 			page 350
 
 
  11162 0036 488B0424 		movq	(%rsp), %rax
@@ -20998,7 +20998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3083:../../bos/modules/b_mod_tcpip.c **** 
  11196              		.loc 1 3083 1 view .LVU3873
  11197 0070 488B8424 		movq	296(%rsp), %rax
-GAS LISTING /tmp/ccVQfiUO.s 			page 351
+GAS LISTING /tmp/ccJnc7OG.s 			page 351
 
 
  11197      28010000 
@@ -21058,7 +21058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11243              	.LBE1065:
  11244              	.LBE1064:
  11245              	.LBB1068:
-GAS LISTING /tmp/ccVQfiUO.s 			page 352
+GAS LISTING /tmp/ccJnc7OG.s 			page 352
 
 
  11246              	.LBB1069:
@@ -21118,7 +21118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11284 00d1 0F1F8000 		.p2align 3
  11284      000000
  11285              	.L1243:
-GAS LISTING /tmp/ccVQfiUO.s 			page 353
+GAS LISTING /tmp/ccJnc7OG.s 			page 353
 
 
 2210:../../bos/modules/b_mod_tcpip.c ****             {
@@ -21178,7 +21178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11321 00f0 0F84DA0A 		je	.L1467
  11321      0000
 1265:../../bos/modules/b_mod_tcpip.c ****     if (SOCKFD_IS_INVALID(bDnsRunCtx.socket))
-GAS LISTING /tmp/ccVQfiUO.s 			page 354
+GAS LISTING /tmp/ccJnc7OG.s 			page 354
 
 
  11322              		.loc 1 1265 5 is_stmt 1 view .LVU3909
@@ -21238,7 +21238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  836:../../bos/modules/b_mod_tcpip.c ****     {
  11355              		.loc 1 836 31 discriminator 1 view .LVU3924
  11356 012a 482B0500 		subq	272+bDnsRunCtx(%rip), %rax
-GAS LISTING /tmp/ccVQfiUO.s 			page 355
+GAS LISTING /tmp/ccJnc7OG.s 			page 355
 
 
  11356      000000
@@ -21298,7 +21298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11392              		.loc 1 3080 9 discriminator 8 view .LVU3936
  11393 016c 3B4108   		cmpl	8(%rcx), %eax
  11394 016f 0F82FBFE 		jb	.L1159
-GAS LISTING /tmp/ccVQfiUO.s 			page 356
+GAS LISTING /tmp/ccJnc7OG.s 			page 356
 
 
  11394      FFFF
@@ -21358,7 +21358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11428 0197 4C8B3D00 		movq	bTcpIpCtx(%rip), %r15
  11428      000000
 2940:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 357
+GAS LISTING /tmp/ccJnc7OG.s 			page 357
 
 
  11429              		.loc 1 2940 8 view .LVU3954
@@ -21418,7 +21418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11468              	.LVL1057:
 2948:../../bos/modules/b_mod_tcpip.c ****         {
  11469              		.loc 1 2948 9 is_stmt 1 view .LVU3964
-GAS LISTING /tmp/ccVQfiUO.s 			page 358
+GAS LISTING /tmp/ccJnc7OG.s 			page 358
 
 
 2948:../../bos/modules/b_mod_tcpip.c ****         {
@@ -21478,7 +21478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11503              		.loc 1 1904 5 view .LVU3977
 1905:../../bos/modules/b_mod_tcpip.c ****         return DHCP_STOPPED;
  11504              		.loc 1 1905 5 view .LVU3978
-GAS LISTING /tmp/ccVQfiUO.s 			page 359
+GAS LISTING /tmp/ccJnc7OG.s 			page 359
 
 
 1908:../../bos/modules/b_mod_tcpip.c ****     {
@@ -21538,7 +21538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11539      0000
 3144:../../bos/modules/b_mod_tcpip.c ****     if (pinfo == NULL)
  11540              		.loc 1 3144 5 is_stmt 1 view .LVU3992
-GAS LISTING /tmp/ccVQfiUO.s 			page 360
+GAS LISTING /tmp/ccJnc7OG.s 			page 360
 
 
 3144:../../bos/modules/b_mod_tcpip.c ****     if (pinfo == NULL)
@@ -21598,7 +21598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11575              		.loc 1 2783 19 is_stmt 0 discriminator 1 view .LVU4005
  11576 0286 4839C8   		cmpq	%rcx, %rax
  11577 0289 0F84EA01 		je	.L1209
-GAS LISTING /tmp/ccVQfiUO.s 			page 361
+GAS LISTING /tmp/ccJnc7OG.s 			page 361
 
 
  11577      0000
@@ -21658,7 +21658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11611              	.LVL1069:
 3573:../../bos/modules/b_mod_tcpip.c ****         {
  11612              		.loc 1 3573 9 is_stmt 1 view .LVU4019
-GAS LISTING /tmp/ccVQfiUO.s 			page 362
+GAS LISTING /tmp/ccJnc7OG.s 			page 362
 
 
 3573:../../bos/modules/b_mod_tcpip.c ****         {
@@ -21718,7 +21718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11644              		.loc 1 1418 12 view .LVU4032
  11645 0308 6685C0   		testw	%ax, %ax
  11646 030b 0F846801 		je	.L1209
-GAS LISTING /tmp/ccVQfiUO.s 			page 363
+GAS LISTING /tmp/ccJnc7OG.s 			page 363
 
 
  11646      0000
@@ -21778,7 +21778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11675 036d 39D1     		cmpl	%edx, %ecx
  11676 036f 740D     		je	.L1216
 1438:../../bos/modules/b_mod_tcpip.c ****                     ((pinfo->dhcp_ctx.svr_addr[0] != pinfo->dhcp_ctx.real_sip[0]) ||
-GAS LISTING /tmp/ccVQfiUO.s 			page 364
+GAS LISTING /tmp/ccJnc7OG.s 			page 364
 
 
  11677              		.loc 1 1438 79 view .LVU4044
@@ -21838,7 +21838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11712              		.align 4
  11713              		.align 4
  11714              	.L1221:
-GAS LISTING /tmp/ccVQfiUO.s 			page 365
+GAS LISTING /tmp/ccJnc7OG.s 			page 365
 
 
  11715 0000 00000000 		.long	.L1227-.L1221
@@ -21898,7 +21898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11769 00d8 00000000 		.long	.L1220-.L1221
  11770              		.section	.text._bTcpIpTask
  11771              	.LVL1076:
-GAS LISTING /tmp/ccVQfiUO.s 			page 366
+GAS LISTING /tmp/ccJnc7OG.s 			page 366
 
 
  11772              	.L1493:
@@ -21958,7 +21958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11812              	.LBB1316:
  11813              	.LBI1312:
 2775:../../bos/modules/b_mod_tcpip.c **** {
-GAS LISTING /tmp/ccVQfiUO.s 			page 367
+GAS LISTING /tmp/ccJnc7OG.s 			page 367
 
 
  11814              		.loc 1 2775 22 view .LVU4069
@@ -22018,7 +22018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  11850              		.loc 1 2785 12 view .LVU4080
  11851              	.LBE1314:
  11852              	.LBE1316:
-GAS LISTING /tmp/ccVQfiUO.s 			page 368
+GAS LISTING /tmp/ccJnc7OG.s 			page 368
 
 
 3317:../../bos/modules/b_mod_tcpip.c ****     {
@@ -22078,7 +22078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3397:../../bos/modules/b_mod_tcpip.c ****     {
  11886              		.loc 1 3397 8 is_stmt 0 view .LVU4096
  11887 0441 4885C0   		testq	%rax, %rax
-GAS LISTING /tmp/ccVQfiUO.s 			page 369
+GAS LISTING /tmp/ccJnc7OG.s 			page 369
 
 
  11888 0444 745A     		je	.L1182
@@ -22138,7 +22138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1408:../../bos/modules/b_mod_tcpip.c ****     {
  11920              		.loc 1 1408 5 view .LVU4114
 1408:../../bos/modules/b_mod_tcpip.c ****     {
-GAS LISTING /tmp/ccVQfiUO.s 			page 370
+GAS LISTING /tmp/ccJnc7OG.s 			page 370
 
 
  11921              		.loc 1 1408 9 is_stmt 0 view .LVU4115
@@ -22198,7 +22198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2046:../../bos/modules/b_mod_tcpip.c ****             break;
  11963              		.loc 1 2046 17 view .LVU4124
 2046:../../bos/modules/b_mod_tcpip.c ****             break;
-GAS LISTING /tmp/ccVQfiUO.s 			page 371
+GAS LISTING /tmp/ccJnc7OG.s 			page 371
 
 
  11964              		.loc 1 2046 23 is_stmt 0 view .LVU4125
@@ -22258,7 +22258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12002              	.LVL1095:
 2948:../../bos/modules/b_mod_tcpip.c ****         {
  12003              		.loc 1 2948 9 is_stmt 1 view .LVU4138
-GAS LISTING /tmp/ccVQfiUO.s 			page 372
+GAS LISTING /tmp/ccJnc7OG.s 			page 372
 
 
 2948:../../bos/modules/b_mod_tcpip.c ****         {
@@ -22318,7 +22318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12036 0514 85C0     		testl	%eax, %eax
  12037 0516 7509     		jne	.L1169
 2970:../../bos/modules/b_mod_tcpip.c ****             }
-GAS LISTING /tmp/ccVQfiUO.s 			page 373
+GAS LISTING /tmp/ccJnc7OG.s 			page 373
 
 
  12038              		.loc 1 2970 17 is_stmt 1 view .LVU4151
@@ -22378,7 +22378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12071              		.loc 1 2982 13 is_stmt 1 view .LVU4163
 2983:../../bos/modules/b_mod_tcpip.c ****             link_cb.arg = pinfo;
  12072              		.loc 1 2983 13 view .LVU4164
-GAS LISTING /tmp/ccVQfiUO.s 			page 374
+GAS LISTING /tmp/ccJnc7OG.s 			page 374
 
 
 2983:../../bos/modules/b_mod_tcpip.c ****             link_cb.arg = pinfo;
@@ -22438,7 +22438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12104 059b 0F854607 		jne	.L1484
  12104      0000
  12105              	.LVL1103:
-GAS LISTING /tmp/ccVQfiUO.s 			page 375
+GAS LISTING /tmp/ccJnc7OG.s 			page 375
 
 
 2995:../../bos/modules/b_mod_tcpip.c ****             fd = -1;
@@ -22498,7 +22498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12139              		.loc 1 3051 13 discriminator 1 view .LVU4192
  12140 05e5 498D5708 		leaq	8(%r15), %rdx
  12141 05e9 4C89FE   		movq	%r15, %rsi
-GAS LISTING /tmp/ccVQfiUO.s 			page 376
+GAS LISTING /tmp/ccJnc7OG.s 			page 376
 
 
  12142 05ec 488D3D00 		leaq	_bTcpIpCallback(%rip), %rdi
@@ -22558,7 +22558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12177              	.LBI1074:
  177:../../bos/utils/inc/b_util_list.h **** {
  12178              		.loc 3 177 25 view .LVU4206
-GAS LISTING /tmp/ccVQfiUO.s 			page 377
+GAS LISTING /tmp/ccJnc7OG.s 			page 377
 
 
  12179              	.LBB1075:
@@ -22618,7 +22618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12217              		.loc 1 2215 14 is_stmt 1 view .LVU4220
 2215:../../bos/modules/b_mod_tcpip.c ****         {
  12218              		.loc 1 2215 17 is_stmt 0 view .LVU4221
-GAS LISTING /tmp/ccVQfiUO.s 			page 378
+GAS LISTING /tmp/ccJnc7OG.s 			page 378
 
 
  12219 0648 3C06     		cmpb	$6, %al
@@ -22678,7 +22678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2194:../../bos/modules/b_mod_tcpip.c ****             if (dns_result == DNS_PARSE_FAILED)
  12254              		.loc 1 2194 45 view .LVU4236
  12255 0681 488DBB60 		leaq	-160(%rbx), %rdi
-GAS LISTING /tmp/ccVQfiUO.s 			page 379
+GAS LISTING /tmp/ccJnc7OG.s 			page 379
 
 
  12255      FFFFFF
@@ -22738,7 +22738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12291 06c5 BF030000 		movl	$3, %edi
  12291      00
  12292 06ca 31C0     		xorl	%eax, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 380
+GAS LISTING /tmp/ccJnc7OG.s 			page 380
 
 
  12293 06cc 4C8D0500 		leaq	.LC10(%rip), %r8
@@ -22798,7 +22798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12331 0706 488D1500 		leaq	__func__.10(%rip), %rdx
  12331      000000
  12332 070d 4C8D0500 		leaq	.LC10(%rip), %r8
-GAS LISTING /tmp/ccVQfiUO.s 			page 381
+GAS LISTING /tmp/ccJnc7OG.s 			page 381
 
 
  12332      000000
@@ -22858,7 +22858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12369              		.loc 3 138 26 view .LVU4266
  12370              	.LBB1084:
  140:../../bos/utils/inc/b_util_list.h **** }
-GAS LISTING /tmp/ccVQfiUO.s 			page 382
+GAS LISTING /tmp/ccJnc7OG.s 			page 382
 
 
  12371              		.loc 3 140 5 view .LVU4267
@@ -22918,7 +22918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2064:../../bos/modules/b_mod_tcpip.c **** }
  12410              		.loc 1 2064 5 is_stmt 0 view .LVU4280
  12411              	.LBE1088:
-GAS LISTING /tmp/ccVQfiUO.s 			page 383
+GAS LISTING /tmp/ccJnc7OG.s 			page 383
 
 
  12412              	.LBE1087:
@@ -22978,7 +22978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12448              	.LBB1477:
  12449              	.LBB1455:
  12450              	.LBB1263:
-GAS LISTING /tmp/ccVQfiUO.s 			page 384
+GAS LISTING /tmp/ccJnc7OG.s 			page 384
 
 
 1268:../../bos/modules/b_mod_tcpip.c ****         if (SOCKFD_IS_INVALID(bDnsRunCtx.socket))
@@ -23038,7 +23038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12485              		.loc 1 1269 12 is_stmt 0 view .LVU4302
  12486 07dc 85C0     		testl	%eax, %eax
  12487 07de 0F8E59F9 		jle	.L1318
-GAS LISTING /tmp/ccVQfiUO.s 			page 385
+GAS LISTING /tmp/ccJnc7OG.s 			page 385
 
 
  12487      FFFF
@@ -23098,7 +23098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1279:../../bos/modules/b_mod_tcpip.c ****         if (bConnect(bDnsRunCtx.socket, (char *)dns_str, IPPORT_DOMAIN) < 0)
  12530              		.loc 1 1279 9 is_stmt 1 view .LVU4313
  12531              	.LBB1120:
-GAS LISTING /tmp/ccVQfiUO.s 			page 386
+GAS LISTING /tmp/ccJnc7OG.s 			page 386
 
 
  12532              	.LBI1113:
@@ -23158,7 +23158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12566              	.LBE1263:
  12567              	.LBE1455:
 3080:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 387
+GAS LISTING /tmp/ccJnc7OG.s 			page 387
 
 
  12568              		.loc 1 3080 9 is_stmt 1 discriminator 15 view .LVU4327
@@ -23218,7 +23218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1998:../../bos/modules/b_mod_tcpip.c ****                 pinfo->dhcp_ctx.old_allocated_ip[3] = pinfo->dhcp_ctx.allocated_ip[3];
  12604              		.loc 1 1998 17 view .LVU4338
 1999:../../bos/modules/b_mod_tcpip.c ****                 pinfo->dhcp_ctx.xid++;
-GAS LISTING /tmp/ccVQfiUO.s 			page 388
+GAS LISTING /tmp/ccJnc7OG.s 			page 388
 
 
  12605              		.loc 1 1999 17 view .LVU4339
@@ -23278,7 +23278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12637      0000
  12638 08ba 498987E8 		movq	%rax, 232(%r15)
  12638      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 389
+GAS LISTING /tmp/ccJnc7OG.s 			page 389
 
 
  12639              	.LVL1150:
@@ -23338,7 +23338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3062:../../bos/modules/b_mod_tcpip.c ****     }
  12673              		.loc 1 3062 9 is_stmt 1 view .LVU4366
  12674 08f0 31C0     		xorl	%eax, %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 390
+GAS LISTING /tmp/ccJnc7OG.s 			page 390
 
 
  12675 08f2 E8000000 		call	_bMainNetcardUpdate
@@ -23398,7 +23398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12715 0931 E8000000 		call	bLogOut@PLT
  12715      00
  12716              	.LVL1157:
-GAS LISTING /tmp/ccVQfiUO.s 			page 391
+GAS LISTING /tmp/ccJnc7OG.s 			page 391
 
 
 1445:../../bos/modules/b_mod_tcpip.c ****                 }
@@ -23458,7 +23458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12760              		.p2align 3
  12761              	.L1489:
 2197:../../bos/modules/b_mod_tcpip.c ****                 _bTcpIpEvent(ptrans, B_TRANS_DISCONNECT, ptrans);
-GAS LISTING /tmp/ccVQfiUO.s 			page 392
+GAS LISTING /tmp/ccJnc7OG.s 			page 392
 
 
  12762              		.loc 1 2197 17 view .LVU4376
@@ -23518,7 +23518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12798 09bd 4158     		popq	%r8
  12799              	.LCFI279:
  12800              		.cfi_def_cfa_offset 368
-GAS LISTING /tmp/ccVQfiUO.s 			page 393
+GAS LISTING /tmp/ccJnc7OG.s 			page 393
 
 
  12801              	.L1246:
@@ -23578,7 +23578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12839      00
  12840              	.LVL1166:
  838:../../bos/modules/b_mod_tcpip.c ****         if (bDnsRunCtx.retry >= MAX_DNS_RETRY)
-GAS LISTING /tmp/ccVQfiUO.s 			page 394
+GAS LISTING /tmp/ccJnc7OG.s 			page 394
 
 
  12841              		.loc 1 838 25 discriminator 1 view .LVU4395
@@ -23638,7 +23638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1342:../../bos/modules/b_mod_tcpip.c ****         if (bDnsRunCtx.dns_index == 0)
  12876              		.loc 1 1342 30 view .LVU4409
  12877 0a2b 88050000 		movb	%al, 2+bDnsRunCtx(%rip)
-GAS LISTING /tmp/ccVQfiUO.s 			page 395
+GAS LISTING /tmp/ccJnc7OG.s 			page 395
 
 
  12877      0000
@@ -23698,7 +23698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12913 0a6b E9DBF6FF 		jmp	.L1319
  12913      FF
  12914              	.LVL1171:
-GAS LISTING /tmp/ccVQfiUO.s 			page 396
+GAS LISTING /tmp/ccJnc7OG.s 			page 396
 
 
  12915              		.p2align 4,,10
@@ -23758,7 +23758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12957              	.LBB1387:
  12958              	.LBB1388:
  12959              	.LBB1389:
-GAS LISTING /tmp/ccVQfiUO.s 			page 397
+GAS LISTING /tmp/ccJnc7OG.s 			page 397
 
 
 2779:../../bos/modules/b_mod_tcpip.c ****     {
@@ -23818,7 +23818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  12996      000000
  12997              		.p2align 3
  12998              	.L1492:
-GAS LISTING /tmp/ccVQfiUO.s 			page 398
+GAS LISTING /tmp/ccJnc7OG.s 			page 398
 
 
 2783:../../bos/modules/b_mod_tcpip.c ****     {
@@ -23878,7 +23878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1384:../../bos/modules/b_mod_tcpip.c ****     {
  13033              		.loc 1 1384 5 is_stmt 1 view .LVU4456
  13034              	.LVL1180:
-GAS LISTING /tmp/ccVQfiUO.s 			page 399
+GAS LISTING /tmp/ccJnc7OG.s 			page 399
 
 
  13035              	.LBB1394:
@@ -23938,7 +23938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13067 0b58 FF5140   		call	*64(%rcx)
  13068              	.LVL1184:
  13069              	.L1192:
-GAS LISTING /tmp/ccVQfiUO.s 			page 400
+GAS LISTING /tmp/ccJnc7OG.s 			page 400
 
 
 3408:../../bos/modules/b_mod_tcpip.c ****     }
@@ -23998,7 +23998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13102              		.loc 1 1392 29 view .LVU4489
  13103 0b84 01FA     		addl	%edi, %edx
 1393:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 401
+GAS LISTING /tmp/ccJnc7OG.s 			page 401
 
 
  13104              		.loc 1 1393 75 view .LVU4490
@@ -24058,7 +24058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13139              		.loc 1 1397 27 view .LVU4503
  13140              	.LBE1383:
  13141              	.LBE1382:
-GAS LISTING /tmp/ccVQfiUO.s 			page 402
+GAS LISTING /tmp/ccJnc7OG.s 			page 402
 
 
  13142              	.LBE1418:
@@ -24118,7 +24118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13178              		.loc 1 1260 13 is_stmt 1 view .LVU4515
  13179              	.LVL1191:
  13180              	.LBB1125:
-GAS LISTING /tmp/ccVQfiUO.s 			page 403
+GAS LISTING /tmp/ccJnc7OG.s 			page 403
 
 
  13181              	.LBI1125:
@@ -24178,7 +24178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3633:../../bos/modules/b_mod_tcpip.c **** 
 3634:../../bos/modules/b_mod_tcpip.c **** int bShutdown(int sockfd)
  13182              		.loc 1 3634 5 view .LVU4516
-GAS LISTING /tmp/ccVQfiUO.s 			page 404
+GAS LISTING /tmp/ccJnc7OG.s 			page 404
 
 
  13183              	.LBB1126:
@@ -24238,7 +24238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 2075:../../bos/modules/b_mod_tcpip.c ****     if (state == B_SOCKET_STATE_CONNECTED)
  13217              		.loc 1 2075 5 view .LVU4526
 2075:../../bos/modules/b_mod_tcpip.c ****     if (state == B_SOCKET_STATE_CONNECTED)
-GAS LISTING /tmp/ccVQfiUO.s 			page 405
+GAS LISTING /tmp/ccJnc7OG.s 			page 405
 
 
  13218              		.loc 1 2075 18 is_stmt 0 view .LVU4527
@@ -24298,7 +24298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1905:../../bos/modules/b_mod_tcpip.c ****         return DHCP_STOPPED;
  13257              		.loc 1 1905 8 is_stmt 0 view .LVU4541
  13258 0c35 4180BFE4 		cmpb	$6, 228(%r15)
-GAS LISTING /tmp/ccVQfiUO.s 			page 406
+GAS LISTING /tmp/ccJnc7OG.s 			page 406
 
 
  13258      00000006 
@@ -24358,7 +24358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13297              		.loc 1 1174 5 view .LVU4551
  13298 0c5e 488B0500 		movq	bDnsHead(%rip), %rax
  13298      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 407
+GAS LISTING /tmp/ccJnc7OG.s 			page 407
 
 
 1174:../../bos/modules/b_mod_tcpip.c ****     {
@@ -24418,7 +24418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13332              	.LVL1204:
  13333              	.L1317:
 1176:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 408
+GAS LISTING /tmp/ccJnc7OG.s 			page 408
 
 
  13334              		.loc 1 1176 9 is_stmt 1 view .LVU4562
@@ -24478,7 +24478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13375              	.LBE1137:
  13376              	.LBE1138:
 1179:../../bos/modules/b_mod_tcpip.c ****             return;
-GAS LISTING /tmp/ccVQfiUO.s 			page 409
+GAS LISTING /tmp/ccJnc7OG.s 			page 409
 
 
  13377              		.loc 1 1179 13 is_stmt 1 view .LVU4574
@@ -24538,7 +24538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13416              		.loc 1 1518 53 view .LVU4585
  13417 0cf9 4188871C 		movb	%al, 796(%r15)
  13417      030000
-GAS LISTING /tmp/ccVQfiUO.s 			page 410
+GAS LISTING /tmp/ccJnc7OG.s 			page 410
 
 
  13418              	.LVL1214:
@@ -24598,7 +24598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1465:../../bos/modules/b_mod_tcpip.c ****                         if (opt_len == 1)
  13449              		.loc 1 1465 33 is_stmt 0 view .LVU4603
  13450 0d34 0FB64201 		movzbl	1(%rdx), %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 411
+GAS LISTING /tmp/ccJnc7OG.s 			page 411
 
 
  13451              	.LVL1218:
@@ -24658,7 +24658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13484 0d5d 69FFE803 		imull	$1000, %edi, %edi
  13484      0000
 1511:../../bos/modules/b_mod_tcpip.c ****                         pinfo->dhcp_ctx.dhcp_lease_expire_tick =
-GAS LISTING /tmp/ccVQfiUO.s 			page 412
+GAS LISTING /tmp/ccJnc7OG.s 			page 412
 
 
  13485              		.loc 1 1511 57 view .LVU4620
@@ -24718,7 +24718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13517              		.loc 1 1496 25 is_stmt 1 view .LVU4634
  13518              	.LVL1228:
 1496:../../bos/modules/b_mod_tcpip.c ****                         pinfo->dhcp_ctx.allocated_dns[2] = *p++;
-GAS LISTING /tmp/ccVQfiUO.s 			page 413
+GAS LISTING /tmp/ccJnc7OG.s 			page 413
 
 
  13519              		.loc 1 1496 60 is_stmt 0 view .LVU4635
@@ -24778,7 +24778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13552              		.loc 1 1486 57 is_stmt 0 view .LVU4651
  13553 0dd9 4188BF2C 		movb	%dil, 812(%r15)
  13553      030000
-GAS LISTING /tmp/ccVQfiUO.s 			page 414
+GAS LISTING /tmp/ccJnc7OG.s 			page 414
 
 
 1487:../../bos/modules/b_mod_tcpip.c ****                         pinfo->dhcp_ctx.allocated_gw[2] = *p++;
@@ -24838,7 +24838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1479:../../bos/modules/b_mod_tcpip.c ****                         pinfo->dhcp_ctx.allocated_mask[2] = *p++;
  13587              		.loc 1 1479 61 is_stmt 0 view .LVU4668
  13588 0e15 0FB642FD 		movzbl	-3(%rdx), %eax
-GAS LISTING /tmp/ccVQfiUO.s 			page 415
+GAS LISTING /tmp/ccJnc7OG.s 			page 415
 
 
 1479:../../bos/modules/b_mod_tcpip.c ****                         pinfo->dhcp_ctx.allocated_mask[2] = *p++;
@@ -24898,7 +24898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1912:../../bos/modules/b_mod_tcpip.c ****         {
  13623              		.loc 1 1912 9 is_stmt 1 view .LVU4682
 1910:../../bos/modules/b_mod_tcpip.c ****             bSocket2(pinfo->netif.dev_no, B_TRANS_CONN_UDP, _bDhcpTransCb, NULL);
-GAS LISTING /tmp/ccVQfiUO.s 			page 416
+GAS LISTING /tmp/ccJnc7OG.s 			page 416
 
 
  13624              		.loc 1 1910 32 is_stmt 0 view .LVU4683
@@ -24958,7 +24958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13661              		.loc 1 1455 17 view .LVU4690
  13662 0e98 3CFF     		cmpb	$-1, %al
  13663 0e9a 0F85B0FD 		jne	.L1219
-GAS LISTING /tmp/ccVQfiUO.s 			page 417
+GAS LISTING /tmp/ccJnc7OG.s 			page 417
 
 
  13663      FFFF
@@ -25018,7 +25018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13702              	.L1494:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  13703              		.loc 2 29 10 view .LVU4700
-GAS LISTING /tmp/ccVQfiUO.s 			page 418
+GAS LISTING /tmp/ccJnc7OG.s 			page 418
 
 
  13704              	.LBE1430:
@@ -25078,7 +25078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13744              	.LBB1141:
  13745              	.LBB1142:
   60:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccVQfiUO.s 			page 419
+GAS LISTING /tmp/ccJnc7OG.s 			page 419
 
 
   61:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
@@ -25138,7 +25138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13772              		.loc 1 895 10 view .LVU4719
  13773 0ef9 41BE0901 		movl	$265, %r14d
  13773      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 420
+GAS LISTING /tmp/ccJnc7OG.s 			page 420
 
 
  13774              	.LBB1153:
@@ -25198,7 +25198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13809              		.loc 1 864 5 view .LVU4735
  864:../../bos/modules/b_mod_tcpip.c **** }
  13810              		.loc 1 864 5 is_stmt 0 view .LVU4736
-GAS LISTING /tmp/ccVQfiUO.s 			page 421
+GAS LISTING /tmp/ccJnc7OG.s 			page 421
 
 
  13811              	.LBE1152:
@@ -25258,7 +25258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13847 0f2e 4C89F5   		movq	%r14, %rbp
  13848              	.LVL1263:
  895:../../bos/modules/b_mod_tcpip.c **** 
-GAS LISTING /tmp/ccVQfiUO.s 			page 422
+GAS LISTING /tmp/ccJnc7OG.s 			page 422
 
 
  13849              		.loc 1 895 10 view .LVU4755
@@ -25318,7 +25318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13880              		.loc 2 95 10 discriminator 1 view .LVU4763
  13881              	.LBE1160:
  13882              	.LBE1159:
-GAS LISTING /tmp/ccVQfiUO.s 			page 423
+GAS LISTING /tmp/ccJnc7OG.s 			page 423
 
 
  916:../../bos/modules/b_mod_tcpip.c ****         if (cp1 == NULL)
@@ -25378,7 +25378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  903:../../bos/modules/b_mod_tcpip.c **** 
  13920              		.loc 1 903 15 is_stmt 0 view .LVU4776
  13921 0fa9 E8000000 		call	strchr@PLT
-GAS LISTING /tmp/ccVQfiUO.s 			page 424
+GAS LISTING /tmp/ccJnc7OG.s 			page 424
 
 
  13921      00
@@ -25438,7 +25438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13959              		.loc 1 911 12 view .LVU4789
  13960 0ffb 488B6C24 		movq	16(%rsp), %rbp
  13960      10
-GAS LISTING /tmp/ccVQfiUO.s 			page 425
+GAS LISTING /tmp/ccJnc7OG.s 			page 425
 
 
  13961              	.L1268:
@@ -25498,7 +25498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  13998              		.loc 1 927 5 is_stmt 0 view .LVU4805
  13999              	.LBE1140:
  14000              	.LBE1139:
-GAS LISTING /tmp/ccVQfiUO.s 			page 426
+GAS LISTING /tmp/ccJnc7OG.s 			page 426
 
 
 1291:../../bos/modules/b_mod_tcpip.c ****         {
@@ -25558,7 +25558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14037      00
  14038              	.LVL1282:
 1297:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 427
+GAS LISTING /tmp/ccJnc7OG.s 			page 427
 
 
  14039              		.loc 1 1297 26 discriminator 1 view .LVU4818
@@ -25618,7 +25618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14074              	.LBB1180:
   59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  14075              		.loc 2 59 10 discriminator 1 view .LVU4828
-GAS LISTING /tmp/ccVQfiUO.s 			page 428
+GAS LISTING /tmp/ccJnc7OG.s 			page 428
 
 
  14076 1080 31ED     		xorl	%ebp, %ebp
@@ -25678,7 +25678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14109              	.LVL1289:
   59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  14110              		.loc 2 59 10 discriminator 1 view .LVU4846
-GAS LISTING /tmp/ccVQfiUO.s 			page 429
+GAS LISTING /tmp/ccJnc7OG.s 			page 429
 
 
  14111              	.LBE1181:
@@ -25738,7 +25738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1114:../../bos/modules/b_mod_tcpip.c ****         pdhdr->qr = 1;
  14146              		.loc 1 1114 8 is_stmt 0 view .LVU4864
  14147 10ab 6685C0   		testw	%ax, %ax
-GAS LISTING /tmp/ccVQfiUO.s 			page 430
+GAS LISTING /tmp/ccJnc7OG.s 			page 430
 
 
  14148 10ae 0F88DF03 		js	.L1498
@@ -25798,7 +25798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14182              		.loc 1 1125 5 is_stmt 1 view .LVU4880
 1125:../../bos/modules/b_mod_tcpip.c ****         pdhdr->ra = 1;
  14183              		.loc 1 1125 8 is_stmt 0 view .LVU4881
-GAS LISTING /tmp/ccVQfiUO.s 			page 431
+GAS LISTING /tmp/ccJnc7OG.s 			page 431
 
 
  14184 10df A880     		testb	$-128, %al
@@ -25858,7 +25858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14218              		.loc 1 1130 5 is_stmt 1 view .LVU4892
 1131:../../bos/modules/b_mod_tcpip.c ****     pdhdr->arcount = get16(&msg[10]);
  14219              		.loc 1 1131 5 view .LVU4893
-GAS LISTING /tmp/ccVQfiUO.s 			page 432
+GAS LISTING /tmp/ccJnc7OG.s 			page 432
 
 
 1132:../../bos/modules/b_mod_tcpip.c **** 
@@ -25918,7 +25918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  997:../../bos/modules/b_mod_tcpip.c ****     cp += 2; /* type */
  14253              		.loc 1 997 5 is_stmt 1 view .LVU4909
  14254              	.LVL1298:
-GAS LISTING /tmp/ccVQfiUO.s 			page 433
+GAS LISTING /tmp/ccJnc7OG.s 			page 433
 
 
  998:../../bos/modules/b_mod_tcpip.c ****     cp += 2; /* class */
@@ -25978,7 +25978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1004:../../bos/modules/b_mod_tcpip.c **** {
  14291              		.loc 1 1004 17 view .LVU4924
  14292              	.LBB1192:
-GAS LISTING /tmp/ccVQfiUO.s 			page 434
+GAS LISTING /tmp/ccJnc7OG.s 			page 434
 
 
 1006:../../bos/modules/b_mod_tcpip.c ****     char name[MAXCNAME] = {0};
@@ -26038,7 +26038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14328              		.loc 1 1019 8 is_stmt 0 view .LVU4938
  14329 11b3 4898     		cltq
 1019:../../bos/modules/b_mod_tcpip.c ****     type = get16(cp);
-GAS LISTING /tmp/ccVQfiUO.s 			page 435
+GAS LISTING /tmp/ccJnc7OG.s 			page 435
 
 
  14330              		.loc 1 1019 8 view .LVU4939
@@ -26098,7 +26098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14367              	.LBB1197:
  871:../../bos/modules/b_mod_tcpip.c ****     i = i + ((*s++) << 8);
  14368              		.loc 1 871 5 is_stmt 1 view .LVU4957
-GAS LISTING /tmp/ccVQfiUO.s 			page 436
+GAS LISTING /tmp/ccJnc7OG.s 			page 436
 
 
  872:../../bos/modules/b_mod_tcpip.c ****     i = i + *s;
@@ -26158,7 +26158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14412              		.loc 1 1060 19 is_stmt 0 view .LVU4968
  14413 11e1 4889DE   		movq	%rbx, %rsi
  14414 11e4 4C89F7   		movq	%r14, %rdi
-GAS LISTING /tmp/ccVQfiUO.s 			page 437
+GAS LISTING /tmp/ccJnc7OG.s 			page 437
 
 
  14415 11e7 E8000000 		call	_bParseName.constprop.0
@@ -26218,7 +26218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14449      60
  14450 1213 0F294424 		movaps	%xmm0, 112(%rsp)
  14450      70
-GAS LISTING /tmp/ccVQfiUO.s 			page 438
+GAS LISTING /tmp/ccJnc7OG.s 			page 438
 
 
  14451 1218 0F298424 		movaps	%xmm0, 128(%rsp)
@@ -26278,7 +26278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14487              	.LBB1269:
  14488              	.LBB1258:
  14489              	.LBB1173:
-GAS LISTING /tmp/ccVQfiUO.s 			page 439
+GAS LISTING /tmp/ccJnc7OG.s 			page 439
 
 
  919:../../bos/modules/b_mod_tcpip.c ****             break;
@@ -26338,7 +26338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14528              	.LVL1321:
 1468:../../bos/modules/b_mod_tcpip.c ****                         }
  14529              		.loc 1 1468 38 view .LVU4999
-GAS LISTING /tmp/ccVQfiUO.s 			page 440
+GAS LISTING /tmp/ccJnc7OG.s 			page 440
 
 
  14530 12a3 4883C203 		addq	$3, %rdx
@@ -26398,7 +26398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14569              		.loc 1 1327 17 view .LVU5011
 1328:../../bos/modules/b_mod_tcpip.c **** 
  14570              		.loc 1 1328 17 view .LVU5012
-GAS LISTING /tmp/ccVQfiUO.s 			page 441
+GAS LISTING /tmp/ccJnc7OG.s 			page 441
 
 
 1325:../../bos/modules/b_mod_tcpip.c ****                 pinfo->ip = (pinfo->ip << 8) | parse_ip_buf[1];
@@ -26458,7 +26458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14605 12e9 E8000000 		call	bHalGetSysTick@PLT
  14605      00
  14606              	.LVL1328:
-GAS LISTING /tmp/ccVQfiUO.s 			page 442
+GAS LISTING /tmp/ccJnc7OG.s 			page 442
 
 
  786:../../bos/modules/b_mod_tcpip.c **** 
@@ -26518,7 +26518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14640              		.loc 1 795 12 discriminator 1 view .LVU5043
  14641 1322 85C0     		testl	%eax, %eax
  14642 1324 0F845504 		je	.L1338
-GAS LISTING /tmp/ccVQfiUO.s 			page 443
+GAS LISTING /tmp/ccJnc7OG.s 			page 443
 
 
  14642      0000
@@ -26578,7 +26578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14674      00
  14675              	.LVL1339:
  795:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 444
+GAS LISTING /tmp/ccJnc7OG.s 			page 444
 
 
  14676              		.loc 1 795 12 discriminator 1 view .LVU5058
@@ -26638,7 +26638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  806:../../bos/modules/b_mod_tcpip.c ****         {
  14707              		.loc 1 806 12 is_stmt 0 view .LVU5075
  14708 1396 443B3500 		cmpl	408+bDNSCache(%rip), %r14d
-GAS LISTING /tmp/ccVQfiUO.s 			page 445
+GAS LISTING /tmp/ccJnc7OG.s 			page 445
 
 
  14708      000000
@@ -26698,7 +26698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14743 13db 0F1F4400 		.p2align 4,,10
  14743      00
  14744              		.p2align 3
-GAS LISTING /tmp/ccVQfiUO.s 			page 446
+GAS LISTING /tmp/ccJnc7OG.s 			page 446
 
 
  14745              	.L1308:
@@ -26758,7 +26758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14781      000000
  14782 141e 488B8390 		movq	144(%rbx), %rax
  14782      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 447
+GAS LISTING /tmp/ccJnc7OG.s 			page 447
 
 
  14783              	.LVL1354:
@@ -26818,7 +26818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14823 1439 88050000 		movb	%al, bDnsRunCtx(%rip)
  14823      0000
  14824              	.LVL1358:
-GAS LISTING /tmp/ccVQfiUO.s 			page 448
+GAS LISTING /tmp/ccJnc7OG.s 			page 448
 
 
 1308:../../bos/modules/b_mod_tcpip.c ****                 return;
@@ -26878,7 +26878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14861      00
  14862              	.LVL1364:
 1069:../../bos/modules/b_mod_tcpip.c ****                 return 0;
-GAS LISTING /tmp/ccVQfiUO.s 			page 449
+GAS LISTING /tmp/ccJnc7OG.s 			page 449
 
 
  14863              		.loc 1 1069 13 is_stmt 1 view .LVU5124
@@ -26938,7 +26938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14896              	.LVL1369:
 1086:../../bos/modules/b_mod_tcpip.c ****         case TYPE_TXT:
  14897              		.loc 1 1086 13 is_stmt 1 view .LVU5142
-GAS LISTING /tmp/ccVQfiUO.s 			page 450
+GAS LISTING /tmp/ccJnc7OG.s 			page 450
 
 
 1086:../../bos/modules/b_mod_tcpip.c ****         case TYPE_TXT:
@@ -26998,7 +26998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1444:../../bos/modules/b_mod_tcpip.c ****                     return 0;
  14938              		.loc 1 1444 21 is_stmt 0 view .LVU5150
  14939              	.LBE1301:
-GAS LISTING /tmp/ccVQfiUO.s 			page 451
+GAS LISTING /tmp/ccJnc7OG.s 			page 451
 
 
  14940              	.LBE1308:
@@ -27058,7 +27058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  14980              	.LVL1380:
 1034:../../bos/modules/b_mod_tcpip.c ****             break;
  14981              		.loc 1 1034 13 is_stmt 1 view .LVU5162
-GAS LISTING /tmp/ccVQfiUO.s 			page 452
+GAS LISTING /tmp/ccJnc7OG.s 			page 452
 
 
 1034:../../bos/modules/b_mod_tcpip.c ****             break;
@@ -27118,7 +27118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15019              		.loc 1 1910 9 view .LVU5176
  15020              	.LBB1336:
 3314:../../bos/modules/b_mod_tcpip.c **** {
-GAS LISTING /tmp/ccVQfiUO.s 			page 453
+GAS LISTING /tmp/ccJnc7OG.s 			page 453
 
 
  15021              		.loc 1 3314 5 view .LVU5177
@@ -27178,7 +27178,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15062              		.loc 1 808 38 is_stmt 0 view .LVU5188
  15063 14fc 4869C088 		imulq	$136, %rax, %rax
  15063      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 454
+GAS LISTING /tmp/ccJnc7OG.s 			page 454
 
 
  15064 1503 488D0D00 		leaq	bDNSCache(%rip), %rcx
@@ -27238,7 +27238,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15102              	.LBB1228:
  15103              		.loc 2 95 10 is_stmt 0 discriminator 1 view .LVU5201
  15104 1533 BA800000 		movl	$128, %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 455
+GAS LISTING /tmp/ccJnc7OG.s 			page 455
 
 
  15104      00
@@ -27298,7 +27298,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15148      000000
  15149 1562 488D3500 		leaq	.LC5(%rip), %rsi
  15149      000000
-GAS LISTING /tmp/ccVQfiUO.s 			page 456
+GAS LISTING /tmp/ccJnc7OG.s 			page 456
 
 
  15150 1569 BF030000 		movl	$3, %edi
@@ -27358,7 +27358,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15186 159c 31C0     		xorl	%eax, %eax
  15187 159e 4889DF   		movq	%rbx, %rdi
  15188              	.LBE1204:
-GAS LISTING /tmp/ccVQfiUO.s 			page 457
+GAS LISTING /tmp/ccJnc7OG.s 			page 457
 
 
  15189              	.LBE1211:
@@ -27418,7 +27418,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15230              		.align 4
  15231              		.align 4
  15232              	.L1233:
-GAS LISTING /tmp/ccVQfiUO.s 			page 458
+GAS LISTING /tmp/ccJnc7OG.s 			page 458
 
 
  15233 0144 00000000 		.long	.L1206-.L1233
@@ -27478,7 +27478,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 1368:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.next_tick   = bHalGetSysTickPlus() + MS2TICKS(DHCP_WAIT_TIME * 1000);
  15269              		.loc 1 1368 5 view .LVU5240
 1368:../../bos/modules/b_mod_tcpip.c ****     pinfo->dhcp_ctx.next_tick   = bHalGetSysTickPlus() + MS2TICKS(DHCP_WAIT_TIME * 1000);
-GAS LISTING /tmp/ccVQfiUO.s 			page 459
+GAS LISTING /tmp/ccJnc7OG.s 			page 459
 
 
  15270              		.loc 1 1368 33 is_stmt 0 view .LVU5241
@@ -27538,7 +27538,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15305 1637 41C687E5 		movb	$0, 229(%r15)
  15305      00000000 
 1369:../../bos/modules/b_mod_tcpip.c **** }
-GAS LISTING /tmp/ccVQfiUO.s 			page 460
+GAS LISTING /tmp/ccJnc7OG.s 			page 460
 
 
  15306              		.loc 1 1369 5 is_stmt 1 view .LVU5254
@@ -27598,7 +27598,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15343              		.loc 1 2039 17 is_stmt 1 view .LVU5265
  15344              	.LBB1352:
  15345              	.LBI1352:
-GAS LISTING /tmp/ccVQfiUO.s 			page 461
+GAS LISTING /tmp/ccJnc7OG.s 			page 461
 
 
   57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
@@ -27658,7 +27658,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15379              		.loc 1 2042 17 is_stmt 1 view .LVU5280
 2043:../../bos/modules/b_mod_tcpip.c ****             }
  15380              		.loc 1 2043 17 view .LVU5281
-GAS LISTING /tmp/ccVQfiUO.s 			page 462
+GAS LISTING /tmp/ccJnc7OG.s 			page 462
 
 
 2043:../../bos/modules/b_mod_tcpip.c ****             }
@@ -27718,7 +27718,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15415 16bd 498987E8 		movq	%rax, 232(%r15)
  15415      000000
  15416              	.LVL1412:
-GAS LISTING /tmp/ccVQfiUO.s 			page 463
+GAS LISTING /tmp/ccJnc7OG.s 			page 463
 
 
 1369:../../bos/modules/b_mod_tcpip.c **** }
@@ -27778,7 +27778,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15451 16f1 E9AAEDFF 		jmp	.L1182
  15451      FF
  15452              	.L1235:
-GAS LISTING /tmp/ccVQfiUO.s 			page 464
+GAS LISTING /tmp/ccJnc7OG.s 			page 464
 
 
 1370:../../bos/modules/b_mod_tcpip.c **** 
@@ -27838,7 +27838,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15487              	.LBB1273:
  15488              	.LBB1262:
  15489              	.LBB1257:
-GAS LISTING /tmp/ccVQfiUO.s 			page 465
+GAS LISTING /tmp/ccJnc7OG.s 			page 465
 
 
  15490              	.LBB1242:
@@ -27898,7 +27898,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  799:../../bos/modules/b_mod_tcpip.c ****             return 0;
  15524              		.loc 1 799 13 view .LVU5333
  15525 1763 B91F0300 		movl	$799, %ecx
-GAS LISTING /tmp/ccVQfiUO.s 			page 466
+GAS LISTING /tmp/ccJnc7OG.s 			page 466
 
 
  15525      00
@@ -27958,7 +27958,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15568              	.LBE1475:
  15569              	.LBE1478:
  15570              		.cfi_endproc
-GAS LISTING /tmp/ccVQfiUO.s 			page 467
+GAS LISTING /tmp/ccJnc7OG.s 			page 467
 
 
  15571              	.LFE83:
@@ -28018,7 +28018,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15609              		.loc 1 3140 5 is_stmt 1 view .LVU5354
 3140:../../bos/modules/b_mod_tcpip.c ****     {
  15610              		.loc 1 3140 8 is_stmt 0 view .LVU5355
-GAS LISTING /tmp/ccVQfiUO.s 			page 468
+GAS LISTING /tmp/ccJnc7OG.s 			page 468
 
 
  15611 0025 4885D2   		testq	%rdx, %rdx
@@ -28078,7 +28078,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15644 006d EB0D     		jmp	.L1506
  15645              	.LVL1430:
  15646 006f 90       		.p2align 4,,10
-GAS LISTING /tmp/ccVQfiUO.s 			page 469
+GAS LISTING /tmp/ccJnc7OG.s 			page 469
 
 
  15647              		.p2align 3
@@ -28138,7 +28138,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3589:../../bos/modules/b_mod_tcpip.c ****     {
  15682              		.loc 1 3589 8 is_stmt 0 view .LVU5383
  15683 009b 4885D2   		testq	%rdx, %rdx
-GAS LISTING /tmp/ccVQfiUO.s 			page 470
+GAS LISTING /tmp/ccJnc7OG.s 			page 470
 
 
  15684 009e 7460     		je	.L1512
@@ -28198,7 +28198,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15722 00d0 66837F60 		cmpw	$68, 96(%rdi)
  15722      44
  15723 00d5 0F8543FF 		jne	.L1504
-GAS LISTING /tmp/ccVQfiUO.s 			page 471
+GAS LISTING /tmp/ccJnc7OG.s 			page 471
 
 
  15723      FFFF
@@ -28258,7 +28258,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
 3625:../../bos/modules/b_mod_tcpip.c ****     if (SOCKFD_IS_INVALID(sockfd))
  15766              		.loc 1 3625 1 is_stmt 0 view .LVU5405
  15767 0000 F30F1EFA 		endbr64
-GAS LISTING /tmp/ccVQfiUO.s 			page 472
+GAS LISTING /tmp/ccJnc7OG.s 			page 472
 
 
 3626:../../bos/modules/b_mod_tcpip.c ****     {
@@ -28318,7 +28318,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15810              		.cfi_offset 3, -16
 3640:../../bos/modules/b_mod_tcpip.c ****     _bTcpIpTransState(ptrans, B_SOCKET_STATE_WAIT_DISCONNECT);
  15811              		.loc 1 3640 24 view .LVU5420
-GAS LISTING /tmp/ccVQfiUO.s 			page 473
+GAS LISTING /tmp/ccJnc7OG.s 			page 473
 
 
  15812 0009 4863DF   		movslq	%edi, %rbx
@@ -28378,7 +28378,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15848 0052 58       		popq	%rax
  15849              	.LCFI297:
  15850              		.cfi_def_cfa_offset 24
-GAS LISTING /tmp/ccVQfiUO.s 			page 474
+GAS LISTING /tmp/ccJnc7OG.s 			page 474
 
 
  15851 0053 5A       		popq	%rdx
@@ -28438,7 +28438,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15897              		.loc 1 494 20 is_stmt 0 view .LVU5441
  15898 0009 0FB607   		movzbl	(%rdi), %eax
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 475
+GAS LISTING /tmp/ccJnc7OG.s 			page 475
 
 
  15899              		.loc 1 494 50 view .LVU5442
@@ -28498,7 +28498,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15938              	.LVL1457:
  15939 0028 0F1F8400 		.p2align 4,,10
  15939      00000000 
-GAS LISTING /tmp/ccVQfiUO.s 			page 476
+GAS LISTING /tmp/ccJnc7OG.s 			page 476
 
 
  15940              		.p2align 3
@@ -28558,7 +28558,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  15980              		.loc 1 3652 1 view .LVU5466
  15981 0062 89C8     		movl	%ecx, %eax
  15982 0064 C3       		ret
-GAS LISTING /tmp/ccVQfiUO.s 			page 477
+GAS LISTING /tmp/ccJnc7OG.s 			page 477
 
 
  15983              	.LVL1461:
@@ -28618,7 +28618,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16020              		.loc 1 504 20 view .LVU5482
  16021 008e C1E108   		sall	$8, %ecx
  16022              	.LVL1464:
-GAS LISTING /tmp/ccVQfiUO.s 			page 478
+GAS LISTING /tmp/ccJnc7OG.s 			page 478
 
 
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
@@ -28678,7 +28678,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16058              	.LBE1499:
  16059              	.LBE1504:
 3649:../../bos/modules/b_mod_tcpip.c ****     }
-GAS LISTING /tmp/ccVQfiUO.s 			page 479
+GAS LISTING /tmp/ccJnc7OG.s 			page 479
 
 
  16060              		.loc 1 3649 16 view .LVU5498
@@ -28738,7 +28738,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  514:../../bos/modules/b_mod_tcpip.c ****             value += ip_str[i] - '0';
  16098              		.loc 1 514 13 is_stmt 1 view .LVU5514
  514:../../bos/modules/b_mod_tcpip.c ****             value += ip_str[i] - '0';
-GAS LISTING /tmp/ccVQfiUO.s 			page 480
+GAS LISTING /tmp/ccJnc7OG.s 			page 480
 
 
  16099              		.loc 1 514 19 is_stmt 0 view .LVU5515
@@ -28798,7 +28798,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16134              	.LVL1475:
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
  16135              		.loc 1 506 13 is_stmt 1 view .LVU5532
-GAS LISTING /tmp/ccVQfiUO.s 			page 481
+GAS LISTING /tmp/ccJnc7OG.s 			page 481
 
 
  507:../../bos/modules/b_mod_tcpip.c ****             {
@@ -28858,7 +28858,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16169              		.loc 1 506 13 is_stmt 1 view .LVU5548
  507:../../bos/modules/b_mod_tcpip.c ****             {
  16170              		.loc 1 507 13 view .LVU5549
-GAS LISTING /tmp/ccVQfiUO.s 			page 482
+GAS LISTING /tmp/ccJnc7OG.s 			page 482
 
 
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
@@ -28918,7 +28918,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
  16205              		.loc 1 506 19 is_stmt 0 view .LVU5566
  16206 017d 31D2     		xorl	%edx, %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 483
+GAS LISTING /tmp/ccJnc7OG.s 			page 483
 
 
  16207              	.LVL1482:
@@ -28978,7 +28978,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16241              	.LVL1485:
  492:../../bos/modules/b_mod_tcpip.c ****     {
  16242              		.loc 1 492 26 is_stmt 1 discriminator 2 view .LVU5583
-GAS LISTING /tmp/ccVQfiUO.s 			page 484
+GAS LISTING /tmp/ccJnc7OG.s 			page 484
 
 
  492:../../bos/modules/b_mod_tcpip.c ****     {
@@ -29038,7 +29038,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  492:../../bos/modules/b_mod_tcpip.c ****     {
  16277              		.loc 1 492 19 discriminator 1 view .LVU5600
  494:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 485
+GAS LISTING /tmp/ccJnc7OG.s 			page 485
 
 
  16278              		.loc 1 494 9 view .LVU5601
@@ -29098,7 +29098,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16312              		.loc 1 494 9 view .LVU5617
  494:../../bos/modules/b_mod_tcpip.c ****         {
  16313              		.loc 1 494 50 is_stmt 0 view .LVU5618
-GAS LISTING /tmp/ccVQfiUO.s 			page 486
+GAS LISTING /tmp/ccJnc7OG.s 			page 486
 
 
  16314 020f 8D70D0   		leal	-48(%rax), %esi
@@ -29158,7 +29158,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16348 023f 8D70D0   		leal	-48(%rax), %esi
  494:../../bos/modules/b_mod_tcpip.c ****         {
  16349              		.loc 1 494 12 view .LVU5635
-GAS LISTING /tmp/ccVQfiUO.s 			page 487
+GAS LISTING /tmp/ccJnc7OG.s 			page 487
 
 
  16350 0242 4080FE09 		cmpb	$9, %sil
@@ -29218,7 +29218,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16384 0272 4080FE09 		cmpb	$9, %sil
  16385 0276 0F862401 		jbe	.L1622
  16385      0000
-GAS LISTING /tmp/ccVQfiUO.s 			page 488
+GAS LISTING /tmp/ccJnc7OG.s 			page 488
 
 
  16386 027c 0F1F4000 		.p2align 4,,10
@@ -29278,7 +29278,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16421              	.LVL1501:
  515:../../bos/modules/b_mod_tcpip.c ****         }
  16422              		.loc 1 515 13 is_stmt 1 view .LVU5666
-GAS LISTING /tmp/ccVQfiUO.s 			page 489
+GAS LISTING /tmp/ccJnc7OG.s 			page 489
 
 
  515:../../bos/modules/b_mod_tcpip.c ****         }
@@ -29338,7 +29338,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16456              		.loc 1 494 12 view .LVU5685
  16457 02d6 4080FE09 		cmpb	$9, %sil
  16458 02da 0F8780FE 		ja	.L1686
-GAS LISTING /tmp/ccVQfiUO.s 			page 490
+GAS LISTING /tmp/ccJnc7OG.s 			page 490
 
 
  16458      FFFF
@@ -29398,7 +29398,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  515:../../bos/modules/b_mod_tcpip.c ****         }
  16492              		.loc 1 515 19 is_stmt 0 view .LVU5703
  16493 030b 8D5450D0 		leal	-48(%rax,%rdx,2), %edx
-GAS LISTING /tmp/ccVQfiUO.s 			page 491
+GAS LISTING /tmp/ccJnc7OG.s 			page 491
 
 
  16494              	.LVL1508:
@@ -29458,7 +29458,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16527      FFFF
  16528              	.L1619:
  498:../../bos/modules/b_mod_tcpip.c ****         {
-GAS LISTING /tmp/ccVQfiUO.s 			page 492
+GAS LISTING /tmp/ccJnc7OG.s 			page 492
 
 
  16529              		.loc 1 498 9 is_stmt 1 view .LVU5722
@@ -29518,7 +29518,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16563              	.LVL1514:
  492:../../bos/modules/b_mod_tcpip.c ****     {
  16564              		.loc 1 492 26 is_stmt 1 discriminator 2 view .LVU5740
-GAS LISTING /tmp/ccVQfiUO.s 			page 493
+GAS LISTING /tmp/ccJnc7OG.s 			page 493
 
 
  492:../../bos/modules/b_mod_tcpip.c ****     {
@@ -29578,7 +29578,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16598              		.loc 1 498 9 is_stmt 1 view .LVU5758
  498:../../bos/modules/b_mod_tcpip.c ****         {
  16599              		.loc 1 498 12 is_stmt 0 view .LVU5759
-GAS LISTING /tmp/ccVQfiUO.s 			page 494
+GAS LISTING /tmp/ccJnc7OG.s 			page 494
 
 
  16600 03a0 3C2E     		cmpb	$46, %al
@@ -29638,7 +29638,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  505:../../bos/modules/b_mod_tcpip.c ****             value = 0;
  16634              		.loc 1 505 20 is_stmt 0 view .LVU5776
  16635 03d3 09D1     		orl	%edx, %ecx
-GAS LISTING /tmp/ccVQfiUO.s 			page 495
+GAS LISTING /tmp/ccJnc7OG.s 			page 495
 
 
  16636              	.LVL1520:
@@ -29698,7 +29698,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16672              	.L1585:
  500:../../bos/modules/b_mod_tcpip.c ****             {
  16673              		.loc 1 500 13 is_stmt 1 view .LVU5793
-GAS LISTING /tmp/ccVQfiUO.s 			page 496
+GAS LISTING /tmp/ccJnc7OG.s 			page 496
 
 
  500:../../bos/modules/b_mod_tcpip.c ****             {
@@ -29758,7 +29758,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16709              		.loc 1 494 9 view .LVU5810
  494:../../bos/modules/b_mod_tcpip.c ****         {
  16710              		.loc 1 494 20 is_stmt 0 view .LVU5811
-GAS LISTING /tmp/ccVQfiUO.s 			page 497
+GAS LISTING /tmp/ccJnc7OG.s 			page 497
 
 
  16711 0423 0FB6470F 		movzbl	15(%rdi), %eax
@@ -29818,7 +29818,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16751 0460 89D1     		movl	%edx, %ecx
  506:../../bos/modules/b_mod_tcpip.c ****             if (ip_str[i] == '\0')
  16752              		.loc 1 506 19 view .LVU5822
-GAS LISTING /tmp/ccVQfiUO.s 			page 498
+GAS LISTING /tmp/ccJnc7OG.s 			page 498
 
 
  16753 0462 31D2     		xorl	%edx, %edx
@@ -29878,7 +29878,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16791 0000 F30F1EFA 		endbr64
 3656:../../bos/modules/b_mod_tcpip.c ****     if (bTcpIpCtx.pinfo != NULL)
  16792              		.loc 1 3656 5 view .LVU5834
-GAS LISTING /tmp/ccVQfiUO.s 			page 499
+GAS LISTING /tmp/ccJnc7OG.s 			page 499
 
 
  16793              		.loc 1 3656 18 is_stmt 0 view .LVU5835
@@ -29938,7 +29938,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16838      65476574 
  16838      00
  16839              		.section	.rodata.__func__.5,"a"
-GAS LISTING /tmp/ccVQfiUO.s 			page 500
+GAS LISTING /tmp/ccJnc7OG.s 			page 500
 
 
  16840              		.align 8
@@ -29998,7 +29998,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16886 0000 5F625463 		.string	"_bTcpIpTask"
  16886      70497054 
  16886      61736B00 
-GAS LISTING /tmp/ccVQfiUO.s 			page 501
+GAS LISTING /tmp/ccJnc7OG.s 			page 501
 
 
  16887              		.section	.bss.bTcpIpTaskAttr,"aw",@nobits
@@ -30058,7 +30058,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16934 0004 08080808 		.long	134744072
  16935 0008 00000000 		.zero	4
  16936              		.section	.data.rel.local.bDnsHead,"aw"
-GAS LISTING /tmp/ccVQfiUO.s 			page 502
+GAS LISTING /tmp/ccJnc7OG.s 			page 502
 
 
  16937              		.align 16
@@ -30118,7 +30118,7 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  16972      00000000 
  16973 0038 00000000 		.quad	.LC47
  16973      00000000 
-GAS LISTING /tmp/ccVQfiUO.s 			page 503
+GAS LISTING /tmp/ccJnc7OG.s 			page 503
 
 
  16974              		.section	.rodata.cst16,"aM",@progbits,16
@@ -30173,98 +30173,98 @@ GAS LISTING /tmp/ccVQfiUO.s 			page 1
  56122              	3:
  56123 001c 00000000 		.align 8
  56124              	4:
-GAS LISTING /tmp/ccVQfiUO.s 			page 504
+GAS LISTING /tmp/ccJnc7OG.s 			page 504
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_mod_tcpip.c
-     /tmp/ccVQfiUO.s:8      .text._bDNSTransCb:0000000000000000 _bDNSTransCb
-     /tmp/ccVQfiUO.s:23     .text._bDhcpMakeMsg:0000000000000000 _bDhcpMakeMsg
-     /tmp/ccVQfiUO.s:138    .text._bDhcpSetIp:0000000000000000 _bDhcpSetIp
-     /tmp/ccVQfiUO.s:16932  .data.bTcpIpDNS:0000000000000000 bTcpIpDNS
-     /tmp/ccVQfiUO.s:267    .text._bMainNetcardUpdate:0000000000000000 _bMainNetcardUpdate
-     /tmp/ccVQfiUO.s:16904  .bss.bTcpIpCtx:0000000000000000 bTcpIpCtx
-     /tmp/ccVQfiUO.s:16849  .rodata.__func__.6:0000000000000000 __func__.6
-     /tmp/ccVQfiUO.s:459    .text._bIpInt2Str.part.0:0000000000000000 _bIpInt2Str.part.0
-     /tmp/ccVQfiUO.s:945    .text._bPhyLinkStateCb:0000000000000000 _bPhyLinkStateCb
-     /tmp/ccVQfiUO.s:16867  .rodata.__func__.9:0000000000000000 __func__.9
-     /tmp/ccVQfiUO.s:1088   .text._bDhcpTransCb:0000000000000000 _bDhcpTransCb
-     /tmp/ccVQfiUO.s:1100   .text._bParseName.constprop.0:0000000000000000 _bParseName.constprop.0
-     /tmp/ccVQfiUO.s:16923  .data.bDnsRunCtx:0000000000000000 bDnsRunCtx
-     /tmp/ccVQfiUO.s:1636   .text._bSocket:0000000000000000 _bSocket
-     /tmp/ccVQfiUO.s:16819  .rodata.__func__.1:0000000000000000 __func__.1
-     /tmp/ccVQfiUO.s:16965  .data.rel.local.bSocketStateStr:0000000000000000 bSocketStateStr
-     /tmp/ccVQfiUO.s:16873  .rodata.__func__.10:0000000000000000 __func__.10
-     /tmp/ccVQfiUO.s:16897  .data.rel.local.bSocketHead:0000000000000000 bSocketHead
-     /tmp/ccVQfiUO.s:1975   .text._bDnsParse:0000000000000000 _bDnsParse
-     /tmp/ccVQfiUO.s:16917  .bss.bDNSCache:0000000000000000 bDNSCache
-     /tmp/ccVQfiUO.s:16940  .data.rel.local.bDnsHead:0000000000000000 bDnsHead
-     /tmp/ccVQfiUO.s:16837  .rodata.__func__.4:0000000000000000 __func__.4
-     /tmp/ccVQfiUO.s:16843  .rodata.__func__.5:0000000000000000 __func__.5
-     /tmp/ccVQfiUO.s:3375   .text._bTcpIpCallback:0000000000000000 _bTcpIpCallback
-     /tmp/ccVQfiUO.s:16879  .rodata.__func__.11:0000000000000000 __func__.11
-     /tmp/ccVQfiUO.s:4409   .text.bTcpIpInit:0000000000000000 bTcpIpInit
-     /tmp/ccVQfiUO.s:11113  .text._bTcpIpTask:0000000000000000 _bTcpIpTask
-     /tmp/ccVQfiUO.s:16891  .bss.bTcpIpTaskAttr:0000000000000000 bTcpIpTaskAttr
-     /tmp/ccVQfiUO.s:16825  .rodata.__func__.2:0000000000000000 __func__.2
-     /tmp/ccVQfiUO.s:4691   .text.bTcpIpSetIp:0000000000000000 bTcpIpSetIp
-     /tmp/ccVQfiUO.s:7525   .text.bTcpIpGetIp:0000000000000000 bTcpIpGetIp
-     /tmp/ccVQfiUO.s:7653   .text.bTcpIpSetMac:0000000000000000 bTcpIpSetMac
-     /tmp/ccVQfiUO.s:7835   .text.bTcpIpGetMac:0000000000000000 bTcpIpGetMac
-     /tmp/ccVQfiUO.s:7886   .text.bTcpIpPhyIsLinked:0000000000000000 bTcpIpPhyIsLinked
-     /tmp/ccVQfiUO.s:7921   .text.bSocket2:0000000000000000 bSocket2
-     /tmp/ccVQfiUO.s:8001   .text.bSocket:0000000000000000 bSocket
-     /tmp/ccVQfiUO.s:8052   .text.bSocketRegCallback:0000000000000000 bSocketRegCallback
-     /tmp/ccVQfiUO.s:8098   .text.bConnect:0000000000000000 bConnect
-     /tmp/ccVQfiUO.s:16813  .rodata.__func__.0:0000000000000000 __func__.0
-     /tmp/ccVQfiUO.s:8522   .text.bBind:0000000000000000 bBind
-     /tmp/ccVQfiUO.s:8605   .text.bListen:0000000000000000 bListen
-     /tmp/ccVQfiUO.s:8728   .text.bRecv:0000000000000000 bRecv
-     /tmp/ccVQfiUO.s:8998   .text.bSend:0000000000000000 bSend
-     /tmp/ccVQfiUO.s:9286   .text._bDhcpSendDiscover:0000000000000000 _bDhcpSendDiscover
-     /tmp/ccVQfiUO.s:16910  .data.HOST_NAME:0000000000000000 HOST_NAME
-     /tmp/ccVQfiUO.s:9900   .text.bDhcpSendRequest:0000000000000000 bDhcpSendRequest
-     /tmp/ccVQfiUO.s:10761  .text._bDhcpCheckTimeout.isra.0:0000000000000000 _bDhcpCheckTimeout.isra.0
-     /tmp/ccVQfiUO.s:10940  .text.bSockIsReadable:0000000000000000 bSockIsReadable
-     /tmp/ccVQfiUO.s:16885  .rodata.__func__.12:0000000000000000 __func__.12
-     /tmp/ccVQfiUO.s:16855  .rodata.__func__.7:0000000000000000 __func__.7
-     /tmp/ccVQfiUO.s:16861  .rodata.__func__.8:0000000000000000 __func__.8
-     /tmp/ccVQfiUO.s:16831  .rodata.__func__.3:0000000000000000 __func__.3
-     /tmp/ccVQfiUO.s:15577  .text.bSockIsWriteable:0000000000000000 bSockIsWriteable
-     /tmp/ccVQfiUO.s:15761  .text.bSocketIsConnected:0000000000000000 bSocketIsConnected
-     /tmp/ccVQfiUO.s:15794  .text.bShutdown:0000000000000000 bShutdown
-GAS LISTING /tmp/ccVQfiUO.s 			page 505
+     /tmp/ccJnc7OG.s:8      .text._bDNSTransCb:0000000000000000 _bDNSTransCb
+     /tmp/ccJnc7OG.s:23     .text._bDhcpMakeMsg:0000000000000000 _bDhcpMakeMsg
+     /tmp/ccJnc7OG.s:138    .text._bDhcpSetIp:0000000000000000 _bDhcpSetIp
+     /tmp/ccJnc7OG.s:16932  .data.bTcpIpDNS:0000000000000000 bTcpIpDNS
+     /tmp/ccJnc7OG.s:267    .text._bMainNetcardUpdate:0000000000000000 _bMainNetcardUpdate
+     /tmp/ccJnc7OG.s:16904  .bss.bTcpIpCtx:0000000000000000 bTcpIpCtx
+     /tmp/ccJnc7OG.s:16849  .rodata.__func__.6:0000000000000000 __func__.6
+     /tmp/ccJnc7OG.s:459    .text._bIpInt2Str.part.0:0000000000000000 _bIpInt2Str.part.0
+     /tmp/ccJnc7OG.s:945    .text._bPhyLinkStateCb:0000000000000000 _bPhyLinkStateCb
+     /tmp/ccJnc7OG.s:16867  .rodata.__func__.9:0000000000000000 __func__.9
+     /tmp/ccJnc7OG.s:1088   .text._bDhcpTransCb:0000000000000000 _bDhcpTransCb
+     /tmp/ccJnc7OG.s:1100   .text._bParseName.constprop.0:0000000000000000 _bParseName.constprop.0
+     /tmp/ccJnc7OG.s:16923  .data.bDnsRunCtx:0000000000000000 bDnsRunCtx
+     /tmp/ccJnc7OG.s:1636   .text._bSocket:0000000000000000 _bSocket
+     /tmp/ccJnc7OG.s:16819  .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/ccJnc7OG.s:16965  .data.rel.local.bSocketStateStr:0000000000000000 bSocketStateStr
+     /tmp/ccJnc7OG.s:16873  .rodata.__func__.10:0000000000000000 __func__.10
+     /tmp/ccJnc7OG.s:16897  .data.rel.local.bSocketHead:0000000000000000 bSocketHead
+     /tmp/ccJnc7OG.s:1975   .text._bDnsParse:0000000000000000 _bDnsParse
+     /tmp/ccJnc7OG.s:16917  .bss.bDNSCache:0000000000000000 bDNSCache
+     /tmp/ccJnc7OG.s:16940  .data.rel.local.bDnsHead:0000000000000000 bDnsHead
+     /tmp/ccJnc7OG.s:16837  .rodata.__func__.4:0000000000000000 __func__.4
+     /tmp/ccJnc7OG.s:16843  .rodata.__func__.5:0000000000000000 __func__.5
+     /tmp/ccJnc7OG.s:3375   .text._bTcpIpCallback:0000000000000000 _bTcpIpCallback
+     /tmp/ccJnc7OG.s:16879  .rodata.__func__.11:0000000000000000 __func__.11
+     /tmp/ccJnc7OG.s:4409   .text.bTcpIpInit:0000000000000000 bTcpIpInit
+     /tmp/ccJnc7OG.s:11113  .text._bTcpIpTask:0000000000000000 _bTcpIpTask
+     /tmp/ccJnc7OG.s:16891  .bss.bTcpIpTaskAttr:0000000000000000 bTcpIpTaskAttr
+     /tmp/ccJnc7OG.s:16825  .rodata.__func__.2:0000000000000000 __func__.2
+     /tmp/ccJnc7OG.s:4691   .text.bTcpIpSetIp:0000000000000000 bTcpIpSetIp
+     /tmp/ccJnc7OG.s:7525   .text.bTcpIpGetIp:0000000000000000 bTcpIpGetIp
+     /tmp/ccJnc7OG.s:7653   .text.bTcpIpSetMac:0000000000000000 bTcpIpSetMac
+     /tmp/ccJnc7OG.s:7835   .text.bTcpIpGetMac:0000000000000000 bTcpIpGetMac
+     /tmp/ccJnc7OG.s:7886   .text.bTcpIpPhyIsLinked:0000000000000000 bTcpIpPhyIsLinked
+     /tmp/ccJnc7OG.s:7921   .text.bSocket2:0000000000000000 bSocket2
+     /tmp/ccJnc7OG.s:8001   .text.bSocket:0000000000000000 bSocket
+     /tmp/ccJnc7OG.s:8052   .text.bSocketRegCallback:0000000000000000 bSocketRegCallback
+     /tmp/ccJnc7OG.s:8098   .text.bConnect:0000000000000000 bConnect
+     /tmp/ccJnc7OG.s:16813  .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccJnc7OG.s:8522   .text.bBind:0000000000000000 bBind
+     /tmp/ccJnc7OG.s:8605   .text.bListen:0000000000000000 bListen
+     /tmp/ccJnc7OG.s:8728   .text.bRecv:0000000000000000 bRecv
+     /tmp/ccJnc7OG.s:8998   .text.bSend:0000000000000000 bSend
+     /tmp/ccJnc7OG.s:9286   .text._bDhcpSendDiscover:0000000000000000 _bDhcpSendDiscover
+     /tmp/ccJnc7OG.s:16910  .data.HOST_NAME:0000000000000000 HOST_NAME
+     /tmp/ccJnc7OG.s:9900   .text.bDhcpSendRequest:0000000000000000 bDhcpSendRequest
+     /tmp/ccJnc7OG.s:10761  .text._bDhcpCheckTimeout.isra.0:0000000000000000 _bDhcpCheckTimeout.isra.0
+     /tmp/ccJnc7OG.s:10940  .text.bSockIsReadable:0000000000000000 bSockIsReadable
+     /tmp/ccJnc7OG.s:16885  .rodata.__func__.12:0000000000000000 __func__.12
+     /tmp/ccJnc7OG.s:16855  .rodata.__func__.7:0000000000000000 __func__.7
+     /tmp/ccJnc7OG.s:16861  .rodata.__func__.8:0000000000000000 __func__.8
+     /tmp/ccJnc7OG.s:16831  .rodata.__func__.3:0000000000000000 __func__.3
+     /tmp/ccJnc7OG.s:15577  .text.bSockIsWriteable:0000000000000000 bSockIsWriteable
+     /tmp/ccJnc7OG.s:15761  .text.bSocketIsConnected:0000000000000000 bSocketIsConnected
+     /tmp/ccJnc7OG.s:15794  .text.bShutdown:0000000000000000 bShutdown
+GAS LISTING /tmp/ccJnc7OG.s 			page 505
 
 
-     /tmp/ccVQfiUO.s:15882  .text.bIPStr2Uint32:0000000000000000 bIPStr2Uint32
-     /tmp/ccVQfiUO.s:16787  .text.bTcpIpGetCurrentDevNo:0000000000000000 bTcpIpGetCurrentDevNo
-     /tmp/ccVQfiUO.s:16976  .rodata.cst16:0000000000000000 .LC1
-     /tmp/ccVQfiUO.s:258    .rodata._bMainNetcardUpdate.str1.1:0000000000000000 .LC4
-     /tmp/ccVQfiUO.s:262    .rodata._bMainNetcardUpdate.str1.8:0000000000000000 .LC5
-     /tmp/ccVQfiUO.s:940    .rodata._bPhyLinkStateCb.str1.1:0000000000000000 .LC6
-     /tmp/ccVQfiUO.s:1624   .rodata._bSocket.str1.1:0000000000000004 .LC8
-     /tmp/ccVQfiUO.s:1628   .rodata._bSocket.str1.8:0000000000000000 .LC9
-     /tmp/ccVQfiUO.s:1631   .rodata._bSocket.str1.1:0000000000000008 .LC10
-     /tmp/ccVQfiUO.s:1622   .rodata._bSocket.str1.1:0000000000000000 .LC7
-     /tmp/ccVQfiUO.s:1968   .rodata._bDnsParse.str1.1:0000000000000000 .LC11
-     /tmp/ccVQfiUO.s:1970   .rodata._bDnsParse.str1.1:0000000000000017 .LC12
-     /tmp/ccVQfiUO.s:3364   .rodata._bTcpIpCallback.str1.1:0000000000000000 .LC13
-     /tmp/ccVQfiUO.s:3370   .rodata._bTcpIpCallback.str1.1:000000000000003d .LC16
-     /tmp/ccVQfiUO.s:3366   .rodata._bTcpIpCallback.str1.1:0000000000000015 .LC14
-     /tmp/ccVQfiUO.s:3368   .rodata._bTcpIpCallback.str1.1:0000000000000027 .LC15
-     /tmp/ccVQfiUO.s:4403   .rodata.bTcpIpInit.str1.1:000000000000001e .LC18
-     /tmp/ccVQfiUO.s:4401   .rodata.bTcpIpInit.str1.1:0000000000000000 .LC17
-     /tmp/ccVQfiUO.s:8090   .rodata.bConnect.str1.1:0000000000000012 .LC21
-     /tmp/ccVQfiUO.s:8092   .rodata.bConnect.str1.1:000000000000002a .LC22
-     /tmp/ccVQfiUO.s:8088   .rodata.bConnect.str1.1:0000000000000000 .LC20
-     /tmp/ccVQfiUO.s:9281   .rodata._bDhcpSendDiscover.str1.1:0000000000000000 .LC25
-     /tmp/ccVQfiUO.s:9895   .rodata.bDhcpSendRequest.str1.1:0000000000000000 .LC29
-     /tmp/ccVQfiUO.s:11092  .rodata._bTcpIpTask.str1.1:0000000000000000 .LC30
-     /tmp/ccVQfiUO.s:11099  .rodata._bTcpIpTask.str1.8:0000000000000028 .LC32
-     /tmp/ccVQfiUO.s:11096  .rodata._bTcpIpTask.str1.8:0000000000000000 .LC31
-     /tmp/ccVQfiUO.s:11102  .rodata._bTcpIpTask.str1.8:0000000000000058 .LC33
-     /tmp/ccVQfiUO.s:11107  .rodata._bTcpIpTask.str1.1:000000000000002e .LC38
-     /tmp/ccVQfiUO.s:11105  .rodata._bTcpIpTask.str1.1:0000000000000014 .LC37
+     /tmp/ccJnc7OG.s:15882  .text.bIPStr2Uint32:0000000000000000 bIPStr2Uint32
+     /tmp/ccJnc7OG.s:16787  .text.bTcpIpGetCurrentDevNo:0000000000000000 bTcpIpGetCurrentDevNo
+     /tmp/ccJnc7OG.s:16976  .rodata.cst16:0000000000000000 .LC1
+     /tmp/ccJnc7OG.s:258    .rodata._bMainNetcardUpdate.str1.1:0000000000000000 .LC4
+     /tmp/ccJnc7OG.s:262    .rodata._bMainNetcardUpdate.str1.8:0000000000000000 .LC5
+     /tmp/ccJnc7OG.s:940    .rodata._bPhyLinkStateCb.str1.1:0000000000000000 .LC6
+     /tmp/ccJnc7OG.s:1624   .rodata._bSocket.str1.1:0000000000000004 .LC8
+     /tmp/ccJnc7OG.s:1628   .rodata._bSocket.str1.8:0000000000000000 .LC9
+     /tmp/ccJnc7OG.s:1631   .rodata._bSocket.str1.1:0000000000000008 .LC10
+     /tmp/ccJnc7OG.s:1622   .rodata._bSocket.str1.1:0000000000000000 .LC7
+     /tmp/ccJnc7OG.s:1968   .rodata._bDnsParse.str1.1:0000000000000000 .LC11
+     /tmp/ccJnc7OG.s:1970   .rodata._bDnsParse.str1.1:0000000000000017 .LC12
+     /tmp/ccJnc7OG.s:3364   .rodata._bTcpIpCallback.str1.1:0000000000000000 .LC13
+     /tmp/ccJnc7OG.s:3370   .rodata._bTcpIpCallback.str1.1:000000000000003d .LC16
+     /tmp/ccJnc7OG.s:3366   .rodata._bTcpIpCallback.str1.1:0000000000000015 .LC14
+     /tmp/ccJnc7OG.s:3368   .rodata._bTcpIpCallback.str1.1:0000000000000027 .LC15
+     /tmp/ccJnc7OG.s:4403   .rodata.bTcpIpInit.str1.1:000000000000001e .LC18
+     /tmp/ccJnc7OG.s:4401   .rodata.bTcpIpInit.str1.1:0000000000000000 .LC17
+     /tmp/ccJnc7OG.s:8090   .rodata.bConnect.str1.1:0000000000000012 .LC21
+     /tmp/ccJnc7OG.s:8092   .rodata.bConnect.str1.1:000000000000002a .LC22
+     /tmp/ccJnc7OG.s:8088   .rodata.bConnect.str1.1:0000000000000000 .LC20
+     /tmp/ccJnc7OG.s:9281   .rodata._bDhcpSendDiscover.str1.1:0000000000000000 .LC25
+     /tmp/ccJnc7OG.s:9895   .rodata.bDhcpSendRequest.str1.1:0000000000000000 .LC29
+     /tmp/ccJnc7OG.s:11092  .rodata._bTcpIpTask.str1.1:0000000000000000 .LC30
+     /tmp/ccJnc7OG.s:11099  .rodata._bTcpIpTask.str1.8:0000000000000028 .LC32
+     /tmp/ccJnc7OG.s:11096  .rodata._bTcpIpTask.str1.8:0000000000000000 .LC31
+     /tmp/ccJnc7OG.s:11102  .rodata._bTcpIpTask.str1.8:0000000000000058 .LC33
+     /tmp/ccJnc7OG.s:11107  .rodata._bTcpIpTask.str1.1:000000000000002e .LC38
+     /tmp/ccJnc7OG.s:11105  .rodata._bTcpIpTask.str1.1:0000000000000014 .LC37
 
 UNDEFINED SYMBOLS
 bLogOut

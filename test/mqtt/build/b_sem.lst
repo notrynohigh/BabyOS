@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccZbRYG1.s 			page 1
+GAS LISTING /tmp/ccDqGsmo.s 			page 1
 
 
    1              		.file	"b_sem.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
   45:../../bos/core/b_sem.c ****  * \{
   46:../../bos/core/b_sem.c ****  */
   47:../../bos/core/b_sem.c **** 
-GAS LISTING /tmp/ccZbRYG1.s 			page 2
+GAS LISTING /tmp/ccDqGsmo.s 			page 2
 
 
   48:../../bos/core/b_sem.c **** /**
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
  102:../../bos/core/b_sem.c ****  * \{
  103:../../bos/core/b_sem.c ****  */
  104:../../bos/core/b_sem.c **** 
-GAS LISTING /tmp/ccZbRYG1.s 			page 3
+GAS LISTING /tmp/ccDqGsmo.s 			page 3
 
 
  105:../../bos/core/b_sem.c **** static bSemAttr_t *_bSemFind(bSemId_t id)
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
   29      000000
   30              	.LVL2:
  109:../../bos/core/b_sem.c ****     {
-GAS LISTING /tmp/ccZbRYG1.s 			page 4
+GAS LISTING /tmp/ccDqGsmo.s 			page 4
 
 
   31              		.loc 1 109 5 discriminator 1 view .LVU9
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
   68              		.loc 1 109 5 discriminator 1 view .LVU24
   69 003c 4C39C0   		cmpq	%r8, %rax
   70 003f 75EF     		jne	.L6
-GAS LISTING /tmp/ccZbRYG1.s 			page 5
+GAS LISTING /tmp/ccDqGsmo.s 			page 5
 
 
   71              	.LVL9:
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
   25:../../bos/utils/inc/b_util_list.h ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
   26:../../bos/utils/inc/b_util_list.h ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   27:../../bos/utils/inc/b_util_list.h ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-GAS LISTING /tmp/ccZbRYG1.s 			page 6
+GAS LISTING /tmp/ccDqGsmo.s 			page 6
 
 
   28:../../bos/utils/inc/b_util_list.h ****  * SOFTWARE.
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
   82:../../bos/utils/inc/b_util_list.h **** #define list_next_entry(pos, type, member) list_entry((pos)->member.next, type, member)
   83:../../bos/utils/inc/b_util_list.h **** 
   84:../../bos/utils/inc/b_util_list.h **** /*
-GAS LISTING /tmp/ccZbRYG1.s 			page 7
+GAS LISTING /tmp/ccDqGsmo.s 			page 7
 
 
   85:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry between two known consecutive entries.
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
   96:../../bos/utils/inc/b_util_list.h **** }
  109              		.loc 2 96 5 is_stmt 0 view .LVU44
  110              	.LBE22:
-GAS LISTING /tmp/ccZbRYG1.s 			page 8
+GAS LISTING /tmp/ccDqGsmo.s 			page 8
 
 
  111              	.LBE21:
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
  151              		.loc 1 108 5 view .LVU57
  109:../../bos/core/b_sem.c ****     {
  152              		.loc 1 109 5 view .LVU58
-GAS LISTING /tmp/ccZbRYG1.s 			page 9
+GAS LISTING /tmp/ccDqGsmo.s 			page 9
 
 
  153 0009 488B0500 		movq	bSemListHead(%rip), %rax
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
  157:../../bos/core/b_sem.c ****     }
  158:../../bos/core/b_sem.c ****     attr->value -= 1;
  191              		.loc 1 158 5 is_stmt 1 view .LVU72
-GAS LISTING /tmp/ccZbRYG1.s 			page 10
+GAS LISTING /tmp/ccDqGsmo.s 			page 10
 
 
  192              		.loc 1 158 17 is_stmt 0 view .LVU73
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
  108:../../bos/core/b_sem.c ****     list_for_each(pos, &bSemListHead)
  233              		.loc 1 108 5 view .LVU86
  109:../../bos/core/b_sem.c ****     {
-GAS LISTING /tmp/ccZbRYG1.s 			page 11
+GAS LISTING /tmp/ccDqGsmo.s 			page 11
 
 
  234              		.loc 1 109 5 view .LVU87
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
  270 0031 8B02     		movl	(%rdx), %eax
  271              		.loc 1 174 8 view .LVU101
  272 0033 3B4204   		cmpl	4(%rdx), %eax
-GAS LISTING /tmp/ccZbRYG1.s 			page 12
+GAS LISTING /tmp/ccDqGsmo.s 			page 12
 
 
  273 0036 7305     		jnb	.L23
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
  313              	.LBB27:
  314              	.LBI27:
  105:../../bos/core/b_sem.c **** {
-GAS LISTING /tmp/ccZbRYG1.s 			page 13
+GAS LISTING /tmp/ccDqGsmo.s 			page 13
 
 
  315              		.loc 1 105 20 view .LVU113
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
  189:../../bos/core/b_sem.c ****     if (attr == NULL)
  190:../../bos/core/b_sem.c ****     {
  191:../../bos/core/b_sem.c ****         return 0;
-GAS LISTING /tmp/ccZbRYG1.s 			page 14
+GAS LISTING /tmp/ccDqGsmo.s 			page 14
 
 
  192:../../bos/core/b_sem.c ****     }
@@ -828,15 +828,15 @@ GAS LISTING /tmp/ccZbRYG1.s 			page 1
  1802              	3:
  1803 001c 00000000 		.align 8
  1804              	4:
-GAS LISTING /tmp/ccZbRYG1.s 			page 15
+GAS LISTING /tmp/ccDqGsmo.s 			page 15
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_sem.c
-     /tmp/ccZbRYG1.s:9      .text.bSemCreate:0000000000000000 bSemCreate
-     /tmp/ccZbRYG1.s:373    .data.rel.local.bSemListHead:0000000000000000 bSemListHead
-     /tmp/ccZbRYG1.s:131    .text.bSemAcquireNonblock:0000000000000000 bSemAcquireNonblock
-     /tmp/ccZbRYG1.s:213    .text.bSemRelease:0000000000000000 bSemRelease
-     /tmp/ccZbRYG1.s:298    .text.bSemGetCount:0000000000000000 bSemGetCount
+     /tmp/ccDqGsmo.s:9      .text.bSemCreate:0000000000000000 bSemCreate
+     /tmp/ccDqGsmo.s:373    .data.rel.local.bSemListHead:0000000000000000 bSemListHead
+     /tmp/ccDqGsmo.s:131    .text.bSemAcquireNonblock:0000000000000000 bSemAcquireNonblock
+     /tmp/ccDqGsmo.s:213    .text.bSemRelease:0000000000000000 bSemRelease
+     /tmp/ccDqGsmo.s:298    .text.bSemGetCount:0000000000000000 bSemGetCount
 
 NO UNDEFINED SYMBOLS

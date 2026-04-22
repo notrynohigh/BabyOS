@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccyKd2zN.s 			page 1
+GAS LISTING /tmp/ccmiu4Zo.s 			page 1
 
 
    1              		.file	"entropy.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                MBEDTLS_ENTROPY_SOURCE_STRONG);
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_ENTROPY_HARDWARE_ALT)
-GAS LISTING /tmp/ccyKd2zN.s 			page 2
+GAS LISTING /tmp/ccmiu4Zo.s 			page 2
 
 
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_entropy_add_source(ctx, mbedtls_hardware_poll, NULL,
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  103:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].strong    = strong;
  104:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source_count++;
-GAS LISTING /tmp/ccyKd2zN.s 			page 3
+GAS LISTING /tmp/ccmiu4Zo.s 			page 3
 
 
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  160:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ret = mbedtls_md_update(&ctx->accumulator, p, use_len);
  162:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
-GAS LISTING /tmp/ccyKd2zN.s 			page 4
+GAS LISTING /tmp/ccmiu4Zo.s 			page 4
 
 
  163:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** cleanup:
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
   33              		.cfi_offset 6, -48
   34 0009 53       		pushq	%rbx
   35              	.LCFI5:
-GAS LISTING /tmp/ccyKd2zN.s 			page 5
+GAS LISTING /tmp/ccmiu4Zo.s 			page 5
 
 
   36              		.cfi_def_cfa_offset 56
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
   65              		.loc 1 209 41 is_stmt 1 discriminator 2 view .LVU7
   66 0050 83C301   		addl	$1, %ebx
   67              	.LVL3:
-GAS LISTING /tmp/ccyKd2zN.s 			page 6
+GAS LISTING /tmp/ccmiu4Zo.s 			page 6
 
 
   68              		.loc 1 209 19 discriminator 1 view .LVU8
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  222:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****          */
  223:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (olen > 0) {
   99              		.loc 1 223 9 is_stmt 1 view .LVU19
-GAS LISTING /tmp/ccyKd2zN.s 			page 7
+GAS LISTING /tmp/ccmiu4Zo.s 			page 7
 
 
  100              		.loc 1 223 18 is_stmt 0 view .LVU20
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  134              		.loc 1 146 8 view .LVU36
  135 00c3 8B4518   		movl	24(%rbp), %eax
  138:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     header[1] = use_len & 0xFF;
-GAS LISTING /tmp/ccyKd2zN.s 			page 8
+GAS LISTING /tmp/ccmiu4Zo.s 			page 8
 
 
  136              		.loc 1 138 15 view .LVU37
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  152:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
  169              		.loc 1 152 15 is_stmt 0 view .LVU51
  170 0104 E8000000 		call	mbedtls_md_starts@PLT
-GAS LISTING /tmp/ccyKd2zN.s 			page 9
+GAS LISTING /tmp/ccmiu4Zo.s 			page 9
 
 
  170      00
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  203              		.loc 1 164 5 view .LVU62
  204 0151 488B7C24 		movq	16(%rsp), %rdi
  204      10
-GAS LISTING /tmp/ccyKd2zN.s 			page 10
+GAS LISTING /tmp/ccmiu4Zo.s 			page 10
 
 
  205 0156 BE400000 		movl	$64, %esi
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  239      0000
  240              	.LVL22:
  241              	.L3:
-GAS LISTING /tmp/ccyKd2zN.s 			page 11
+GAS LISTING /tmp/ccmiu4Zo.s 			page 11
 
 
  233:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = MBEDTLS_ERR_ENTROPY_NO_STRONG_SOURCE;
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  274      010000
  275              	.LCFI7:
  276              		.cfi_remember_state
-GAS LISTING /tmp/ccyKd2zN.s 			page 12
+GAS LISTING /tmp/ccmiu4Zo.s 			page 12
 
 
  277              		.cfi_def_cfa_offset 56
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  320 0203 4889C1   		movq	%rax, %rcx
  321 0206 48894424 		movq	%rax, 16(%rsp)
  321      10
-GAS LISTING /tmp/ccyKd2zN.s 			page 13
+GAS LISTING /tmp/ccmiu4Zo.s 			page 13
 
 
  322 020b E8000000 		call	mbedtls_md@PLT
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  356              	.L29:
  166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
  357              		.loc 1 166 5 view .LVU99
-GAS LISTING /tmp/ccyKd2zN.s 			page 14
+GAS LISTING /tmp/ccmiu4Zo.s 			page 14
 
 
  358 0254 4C8DAC24 		leaq	128(%rsp), %r13
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  399              		.loc 1 29 5 is_stmt 1 view .LVU110
   30:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
  400              		.loc 1 30 5 view .LVU111
-GAS LISTING /tmp/ccyKd2zN.s 			page 15
+GAS LISTING /tmp/ccmiu4Zo.s 			page 15
 
 
  401              	.LVL42:
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
   51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
   52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
   53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
-GAS LISTING /tmp/ccyKd2zN.s 			page 16
+GAS LISTING /tmp/ccmiu4Zo.s 			page 16
 
 
   54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  443              		.section	.text.mbedtls_entropy_free,"ax",@progbits
  444              		.p2align 4
  445              		.globl	mbedtls_entropy_free
-GAS LISTING /tmp/ccyKd2zN.s 			page 17
+GAS LISTING /tmp/ccmiu4Zo.s 			page 17
 
 
  447              	mbedtls_entropy_free:
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  482              	.LCFI16:
  483              		.cfi_def_cfa_offset 8
  484              	.LVL49:
-GAS LISTING /tmp/ccyKd2zN.s 			page 18
+GAS LISTING /tmp/ccmiu4Zo.s 			page 18
 
 
   80:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  526              		.loc 1 100 32 view .LVU150
  527 0015 4F8D0C89 		leaq	(%r9,%r9,4), %r9
  528 0019 4E8D0CC8 		leaq	(%rax,%r9,8), %r9
-GAS LISTING /tmp/ccyKd2zN.s 			page 19
+GAS LISTING /tmp/ccmiu4Zo.s 			page 19
 
 
  529 001d 49897120 		movq	%rsi, 32(%r9)
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  569              		.loc 1 171 1 is_stmt 1 view -0
  570              		.cfi_startproc
  171:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-GAS LISTING /tmp/ccyKd2zN.s 			page 20
+GAS LISTING /tmp/ccmiu4Zo.s 			page 20
 
 
  571              		.loc 1 171 1 is_stmt 0 view .LVU165
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  127:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
  614              		.loc 1 127 5 view .LVU174
  129:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = mbedtls_md(mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD),
-GAS LISTING /tmp/ccyKd2zN.s 			page 21
+GAS LISTING /tmp/ccmiu4Zo.s 			page 21
 
 
  615              		.loc 1 129 5 view .LVU175
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  649 0061 89C3     		movl	%eax, %ebx
  650              	.LVL64:
  149:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
-GAS LISTING /tmp/ccyKd2zN.s 			page 22
+GAS LISTING /tmp/ccmiu4Zo.s 			page 22
 
 
  651              		.loc 1 149 9 is_stmt 1 view .LVU190
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  687 0099 4C89F7   		movq	%r14, %rdi
  688 009c E8000000 		call	mbedtls_platform_zeroize@PLT
  688      00
-GAS LISTING /tmp/ccyKd2zN.s 			page 23
+GAS LISTING /tmp/ccmiu4Zo.s 			page 23
 
 
  689              	.LVL70:
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
  733              		.loc 1 161 5 is_stmt 1 view .LVU210
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
-GAS LISTING /tmp/ccyKd2zN.s 			page 24
+GAS LISTING /tmp/ccmiu4Zo.s 			page 24
 
 
  734              		.loc 1 161 11 is_stmt 0 view .LVU211
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  772 00fe B8400000 		movl	$64, %eax
  772      00
  773              	.LVL81:
-GAS LISTING /tmp/ccyKd2zN.s 			page 25
+GAS LISTING /tmp/ccmiu4Zo.s 			page 25
 
 
  134:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         use_len = MBEDTLS_ENTROPY_BLOCK_SIZE;
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  807              	.LBB34:
  808              	.LBI34:
  194:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
-GAS LISTING /tmp/ccyKd2zN.s 			page 26
+GAS LISTING /tmp/ccmiu4Zo.s 			page 26
 
 
  809              		.loc 1 194 12 view .LVU231
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  843              		.loc 1 267 1 is_stmt 1 view -0
  844              		.cfi_startproc
  845              		.loc 1 267 1 is_stmt 0 view .LVU243
-GAS LISTING /tmp/ccyKd2zN.s 			page 27
+GAS LISTING /tmp/ccmiu4Zo.s 			page 27
 
 
  846 0000 F30F1EFA 		endbr64
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  889 0034 4889D5   		movq	%rdx, %rbp
  890 0037 BB020100 		movl	$258, %ebx
  890      00
-GAS LISTING /tmp/ccyKd2zN.s 			page 28
+GAS LISTING /tmp/ccmiu4Zo.s 			page 28
 
 
  274:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  304:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto exit;
  902              		.loc 1 304 9 is_stmt 1 view .LVU255
  903              	.LVL92:
-GAS LISTING /tmp/ccyKd2zN.s 			page 29
+GAS LISTING /tmp/ccmiu4Zo.s 			page 29
 
 
  904              	.LBB36:
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  308:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         strong_size = 0;
  941              		.loc 1 308 28 view .LVU270
  942 007a B9010000 		movl	$1, %ecx
-GAS LISTING /tmp/ccyKd2zN.s 			page 30
+GAS LISTING /tmp/ccmiu4Zo.s 			page 30
 
 
  942      00
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  980              		.loc 1 320 5 is_stmt 1 view .LVU284
  981              	.LVL102:
  982              	.LBB39:
-GAS LISTING /tmp/ccyKd2zN.s 			page 31
+GAS LISTING /tmp/ccmiu4Zo.s 			page 31
 
 
  983              	.LBI39:
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  330:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
  331:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /*
  332:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * Reset accumulator and counters and recycle existing entropy
-GAS LISTING /tmp/ccyKd2zN.s 			page 32
+GAS LISTING /tmp/ccmiu4Zo.s 			page 32
 
 
  333:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      */
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  1057 0128 85C0     		testl	%eax, %eax
  1058 012a 0F859B00 		jne	.L57
  1058      0000
-GAS LISTING /tmp/ccyKd2zN.s 			page 33
+GAS LISTING /tmp/ccmiu4Zo.s 			page 33
 
 
  343:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto exit;
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  357:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
  358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     for (i = 0; i < ctx->source_count; i++) {
  1092              		.loc 1 358 19 is_stmt 1 discriminator 1 view .LVU321
-GAS LISTING /tmp/ccyKd2zN.s 			page 34
+GAS LISTING /tmp/ccmiu4Zo.s 			page 34
 
 
  1093              		.loc 1 358 24 is_stmt 0 discriminator 1 view .LVU322
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  1135              	.L64:
  360:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
  361:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
-GAS LISTING /tmp/ccyKd2zN.s 			page 35
+GAS LISTING /tmp/ccmiu4Zo.s 			page 35
 
 
  362:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     memcpy(output, buf, len);
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  1172      00
  1173 01d0 4889DF   		movq	%rbx, %rdi
  1174 01d3 E8000000 		call	mbedtls_platform_zeroize@PLT
-GAS LISTING /tmp/ccyKd2zN.s 			page 36
+GAS LISTING /tmp/ccmiu4Zo.s 			page 36
 
 
  1174      00
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  1213 0205 EBC4     		jmp	.L57
  1214              	.LVL136:
  1215              	.L66:
-GAS LISTING /tmp/ccyKd2zN.s 			page 37
+GAS LISTING /tmp/ccmiu4Zo.s 			page 37
 
 
  274:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
@@ -2197,18 +2197,18 @@ GAS LISTING /tmp/ccyKd2zN.s 			page 1
  6491              	3:
  6492 001c 00000000 		.align 8
  6493              	4:
-GAS LISTING /tmp/ccyKd2zN.s 			page 38
+GAS LISTING /tmp/ccmiu4Zo.s 			page 38
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 entropy.c
-     /tmp/ccyKd2zN.s:8      .text.entropy_gather_internal.part.0:0000000000000000 entropy_gather_internal.part.0
-     /tmp/ccyKd2zN.s:392    .text.mbedtls_entropy_init:0000000000000000 mbedtls_entropy_init
-     /tmp/ccyKd2zN.s:447    .text.mbedtls_entropy_free:0000000000000000 mbedtls_entropy_free
-     /tmp/ccyKd2zN.s:501    .text.mbedtls_entropy_add_source:0000000000000000 mbedtls_entropy_add_source
-     /tmp/ccyKd2zN.s:566    .text.mbedtls_entropy_update_manual:0000000000000000 mbedtls_entropy_update_manual
-     /tmp/ccyKd2zN.s:797    .text.mbedtls_entropy_gather:0000000000000000 mbedtls_entropy_gather
-     /tmp/ccyKd2zN.s:840    .text.mbedtls_entropy_func:0000000000000000 mbedtls_entropy_func
+     /tmp/ccmiu4Zo.s:8      .text.entropy_gather_internal.part.0:0000000000000000 entropy_gather_internal.part.0
+     /tmp/ccmiu4Zo.s:392    .text.mbedtls_entropy_init:0000000000000000 mbedtls_entropy_init
+     /tmp/ccmiu4Zo.s:447    .text.mbedtls_entropy_free:0000000000000000 mbedtls_entropy_free
+     /tmp/ccmiu4Zo.s:501    .text.mbedtls_entropy_add_source:0000000000000000 mbedtls_entropy_add_source
+     /tmp/ccmiu4Zo.s:566    .text.mbedtls_entropy_update_manual:0000000000000000 mbedtls_entropy_update_manual
+     /tmp/ccmiu4Zo.s:797    .text.mbedtls_entropy_gather:0000000000000000 mbedtls_entropy_gather
+     /tmp/ccmiu4Zo.s:840    .text.mbedtls_entropy_func:0000000000000000 mbedtls_entropy_func
 
 UNDEFINED SYMBOLS
 mbedtls_md_info_from_type

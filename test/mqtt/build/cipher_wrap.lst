@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cckzNMzg.s 			page 1
+GAS LISTING /tmp/cc1f3kw3.s 			page 1
 
 
    1              		.file	"cipher_wrap.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CCM_C)
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ccm.h"
-GAS LISTING /tmp/cckzNMzg.s 			page 2
+GAS LISTING /tmp/cc1f3kw3.s 			page 2
 
 
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  103:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
  104:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_NIST_KW_C)
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_KW_AES,
-GAS LISTING /tmp/cckzNMzg.s 			page 3
+GAS LISTING /tmp/cc1f3kw3.s 			page 3
 
 
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
   31              		.cfi_def_cfa_offset 8
   32              	.LVL2:
  135:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(ctx);
-GAS LISTING /tmp/cckzNMzg.s 			page 4
+GAS LISTING /tmp/cc1f3kw3.s 			page 4
 
 
   33              		.loc 1 135 5 view .LVU8
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
   74              	.LCFI3:
   75              		.cfi_def_cfa_offset 8
   76              	.LVL7:
-GAS LISTING /tmp/cckzNMzg.s 			page 5
+GAS LISTING /tmp/cc1f3kw3.s 			page 5
 
 
  130:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  181:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                  const unsigned char *input, unsigned char *output)
  182:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
  183:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_cfb128((mbedtls_aes_context *) ctx, operation, length, iv_off, iv,
-GAS LISTING /tmp/cckzNMzg.s 			page 6
+GAS LISTING /tmp/cc1f3kw3.s 			page 6
 
 
  184:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                     input, output);
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  238:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
  239:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
  240:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
-GAS LISTING /tmp/cckzNMzg.s 			page 7
+GAS LISTING /tmp/cc1f3kw3.s 			page 7
 
 
  241:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_setkey_enc_wrap(void *ctx, const unsigned char *key,
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  295:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_128_ecb_info = {
  296:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-128-ECB",
  297:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
-GAS LISTING /tmp/cckzNMzg.s 			page 8
+GAS LISTING /tmp/cc1f3kw3.s 			page 8
 
 
  298:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0 >> MBEDTLS_IV_SIZE_SHIFT,
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  352:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
  353:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
  354:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_256_cbc_info = {
-GAS LISTING /tmp/cckzNMzg.s 			page 9
+GAS LISTING /tmp/cc1f3kw3.s 			page 9
 
 
  355:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-256-CBC",
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  409:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     128 >> MBEDTLS_KEY_BITLEN_SHIFT,
  410:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_OFB,
  411:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_128_OFB,
-GAS LISTING /tmp/cckzNMzg.s 			page 10
+GAS LISTING /tmp/cc1f3kw3.s 			page 10
 
 
  412:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  466:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-256-CTR",
  467:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
  468:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
-GAS LISTING /tmp/cckzNMzg.s 			page 11
+GAS LISTING /tmp/cc1f3kw3.s 			page 11
 
 
  469:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     256 >> MBEDTLS_KEY_BITLEN_SHIFT,
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  523:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
  524:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
  525:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_OFB)
-GAS LISTING /tmp/cckzNMzg.s 			page 12
+GAS LISTING /tmp/cc1f3kw3.s 			page 12
 
 
  526:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
   93              		.loc 1 572 1 is_stmt 0 view .LVU23
   94 0004 89D1     		movl	%edx, %ecx
   95              		.loc 1 573 12 view .LVU24
-GAS LISTING /tmp/cckzNMzg.s 			page 13
+GAS LISTING /tmp/cc1f3kw3.s 			page 13
 
 
   96 0006 4889F2   		movq	%rsi, %rdx
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  263:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
  139              		.loc 1 263 5 view .LVU37
  140              		.cfi_endproc
-GAS LISTING /tmp/cckzNMzg.s 			page 14
+GAS LISTING /tmp/cc1f3kw3.s 			page 14
 
 
  141              	.LFE62:
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  183              	.LFE61:
  185              		.section	.text.aes_setkey_dec_wrap,"ax",@progbits
  186              		.p2align 4
-GAS LISTING /tmp/cckzNMzg.s 			page 15
+GAS LISTING /tmp/cc1f3kw3.s 			page 15
 
 
  188              	aes_setkey_dec_wrap:
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  231              		.loc 1 166 5 is_stmt 1 view .LVU60
  166:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
  232              		.loc 1 166 12 is_stmt 0 view .LVU61
-GAS LISTING /tmp/cckzNMzg.s 			page 16
+GAS LISTING /tmp/cc1f3kw3.s 			page 16
 
 
  233 0004 E9000000 		jmp	mbedtls_aes_crypt_ecb@PLT
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  280 0068 00000000 		.quad	0
  280      00000000 
  281              		.section	.rodata.str1.1,"aMS",@progbits,1
-GAS LISTING /tmp/cckzNMzg.s 			page 17
+GAS LISTING /tmp/cc1f3kw3.s 			page 17
 
 
  282              	.LC0:
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  332      00000000 
  333 0020 00000000 		.quad	gcm_ctx_alloc
  333      00000000 
-GAS LISTING /tmp/cckzNMzg.s 			page 18
+GAS LISTING /tmp/cc1f3kw3.s 			page 18
 
 
  334 0028 00000000 		.quad	gcm_ctx_free
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  385 0010 00000000 		.quad	aes_setkey_enc_wrap
  385      00000000 
  386 0018 00000000 		.quad	aes_setkey_dec_wrap
-GAS LISTING /tmp/cckzNMzg.s 			page 19
+GAS LISTING /tmp/cc1f3kw3.s 			page 19
 
 
  386      00000000 
@@ -1112,30 +1112,30 @@ GAS LISTING /tmp/cckzNMzg.s 			page 1
  3857              	3:
  3858 001c 00000000 		.align 8
  3859              	4:
-GAS LISTING /tmp/cckzNMzg.s 			page 20
+GAS LISTING /tmp/cc1f3kw3.s 			page 20
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 cipher_wrap.c
-     /tmp/cckzNMzg.s:8      .text.gcm_ctx_free:0000000000000000 gcm_ctx_free
-     /tmp/cckzNMzg.s:43     .text.gcm_ctx_alloc:0000000000000000 gcm_ctx_alloc
-     /tmp/cckzNMzg.s:85     .text.gcm_aes_setkey_wrap:0000000000000000 gcm_aes_setkey_wrap
-     /tmp/cckzNMzg.s:111    .text.aes_ctx_free:0000000000000000 aes_ctx_free
-     /tmp/cckzNMzg.s:146    .text.aes_ctx_alloc:0000000000000000 aes_ctx_alloc
-     /tmp/cckzNMzg.s:188    .text.aes_setkey_dec_wrap:0000000000000000 aes_setkey_dec_wrap
-     /tmp/cckzNMzg.s:206    .text.aes_setkey_enc_wrap:0000000000000000 aes_setkey_enc_wrap
-     /tmp/cckzNMzg.s:224    .text.aes_crypt_ecb_wrap:0000000000000000 aes_crypt_ecb_wrap
-     /tmp/cckzNMzg.s:244    .data.rel.local.mbedtls_cipher_base_lookup_table:0000000000000000 mbedtls_cipher_base_lookup_table
-     /tmp/cckzNMzg.s:381    .data.rel.ro.local.aes_info:0000000000000000 aes_info
-     /tmp/cckzNMzg.s:327    .data.rel.ro.local.gcm_aes_info:0000000000000000 gcm_aes_info
-     /tmp/cckzNMzg.s:252    .bss.mbedtls_cipher_supported:0000000000000000 mbedtls_cipher_supported
-     /tmp/cckzNMzg.s:259    .data.rel.ro.local.mbedtls_cipher_definitions:0000000000000000 mbedtls_cipher_definitions
-     /tmp/cckzNMzg.s:370    .data.rel.ro.local.aes_128_ecb_info:0000000000000000 aes_128_ecb_info
-     /tmp/cckzNMzg.s:356    .data.rel.ro.local.aes_192_ecb_info:0000000000000000 aes_192_ecb_info
-     /tmp/cckzNMzg.s:342    .data.rel.ro.local.aes_256_ecb_info:0000000000000000 aes_256_ecb_info
-     /tmp/cckzNMzg.s:316    .data.rel.ro.local.aes_128_gcm_info:0000000000000000 aes_128_gcm_info
-     /tmp/cckzNMzg.s:302    .data.rel.ro.local.aes_192_gcm_info:0000000000000000 aes_192_gcm_info
-     /tmp/cckzNMzg.s:288    .data.rel.ro.local.aes_256_gcm_info:0000000000000000 aes_256_gcm_info
+     /tmp/cc1f3kw3.s:8      .text.gcm_ctx_free:0000000000000000 gcm_ctx_free
+     /tmp/cc1f3kw3.s:43     .text.gcm_ctx_alloc:0000000000000000 gcm_ctx_alloc
+     /tmp/cc1f3kw3.s:85     .text.gcm_aes_setkey_wrap:0000000000000000 gcm_aes_setkey_wrap
+     /tmp/cc1f3kw3.s:111    .text.aes_ctx_free:0000000000000000 aes_ctx_free
+     /tmp/cc1f3kw3.s:146    .text.aes_ctx_alloc:0000000000000000 aes_ctx_alloc
+     /tmp/cc1f3kw3.s:188    .text.aes_setkey_dec_wrap:0000000000000000 aes_setkey_dec_wrap
+     /tmp/cc1f3kw3.s:206    .text.aes_setkey_enc_wrap:0000000000000000 aes_setkey_enc_wrap
+     /tmp/cc1f3kw3.s:224    .text.aes_crypt_ecb_wrap:0000000000000000 aes_crypt_ecb_wrap
+     /tmp/cc1f3kw3.s:244    .data.rel.local.mbedtls_cipher_base_lookup_table:0000000000000000 mbedtls_cipher_base_lookup_table
+     /tmp/cc1f3kw3.s:381    .data.rel.ro.local.aes_info:0000000000000000 aes_info
+     /tmp/cc1f3kw3.s:327    .data.rel.ro.local.gcm_aes_info:0000000000000000 gcm_aes_info
+     /tmp/cc1f3kw3.s:252    .bss.mbedtls_cipher_supported:0000000000000000 mbedtls_cipher_supported
+     /tmp/cc1f3kw3.s:259    .data.rel.ro.local.mbedtls_cipher_definitions:0000000000000000 mbedtls_cipher_definitions
+     /tmp/cc1f3kw3.s:370    .data.rel.ro.local.aes_128_ecb_info:0000000000000000 aes_128_ecb_info
+     /tmp/cc1f3kw3.s:356    .data.rel.ro.local.aes_192_ecb_info:0000000000000000 aes_192_ecb_info
+     /tmp/cc1f3kw3.s:342    .data.rel.ro.local.aes_256_ecb_info:0000000000000000 aes_256_ecb_info
+     /tmp/cc1f3kw3.s:316    .data.rel.ro.local.aes_128_gcm_info:0000000000000000 aes_128_gcm_info
+     /tmp/cc1f3kw3.s:302    .data.rel.ro.local.aes_192_gcm_info:0000000000000000 aes_192_gcm_info
+     /tmp/cc1f3kw3.s:288    .data.rel.ro.local.aes_256_gcm_info:0000000000000000 aes_256_gcm_info
 
 UNDEFINED SYMBOLS
 mbedtls_gcm_free

@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccOGxfz2.s 			page 1
+GAS LISTING /tmp/ccvQ3IYE.s 			page 1
 
 
    1              		.file	"pk_wrap.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include <limits.h>
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include <stdint.h>
-GAS LISTING /tmp/ccOGxfz2.s 			page 2
+GAS LISTING /tmp/ccvQ3IYE.s 			page 2
 
 
   49:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include <string.h>
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
   72:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
   73:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
   74:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int key_len;
-GAS LISTING /tmp/ccOGxfz2.s 			page 3
+GAS LISTING /tmp/ccvQ3IYE.s 			page 3
 
 
   75:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char buf[MBEDTLS_PK_RSA_PUB_DER_MAX_BYTES];
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  129:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
  130:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_verify_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
  131:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            const unsigned char *hash, size_t hash_len,
-GAS LISTING /tmp/ccOGxfz2.s 			page 4
+GAS LISTING /tmp/ccvQ3IYE.s 			page 4
 
 
  132:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            const unsigned char *sig, size_t sig_len)
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  186:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     p = buf + MBEDTLS_PK_RSA_PRV_DER_MAX_BYTES;
  187:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
  188:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     *sig_len = mbedtls_rsa_get_len(rsa_ctx);
-GAS LISTING /tmp/ccOGxfz2.s 			page 5
+GAS LISTING /tmp/ccvQ3IYE.s 			page 5
 
 
  189:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_size < *sig_len) {
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  243:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_alg;
  244:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (mbedtls_rsa_get_padding_mode(mbedtls_pk_rsa(*pk)) == MBEDTLS_RSA_PKCS_V21) {
  245:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_alg = PSA_ALG_RSA_PSS(psa_md_alg);
-GAS LISTING /tmp/ccOGxfz2.s 			page 6
+GAS LISTING /tmp/ccvQ3IYE.s 			page 6
 
 
  246:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     } else {
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  300:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
  301:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     key_len = mbedtls_rsa_write_key(rsa, buf, &p);
  302:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (key_len <= 0) {
-GAS LISTING /tmp/ccOGxfz2.s 			page 7
+GAS LISTING /tmp/ccvQ3IYE.s 			page 7
 
 
  303:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  357:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      olen, input, output, osize);
  358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
  359:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
-GAS LISTING /tmp/ccOGxfz2.s 			page 8
+GAS LISTING /tmp/ccvQ3IYE.s 			page 8
 
 
  360:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  414:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
  415:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
  416:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = 0;
-GAS LISTING /tmp/ccOGxfz2.s 			page 9
+GAS LISTING /tmp/ccvQ3IYE.s 			page 9
 
 
  417:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  471:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void rsa_debug(mbedtls_pk_context *pk, mbedtls_pk_debug_item *items)
  472:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
   41              		.loc 1 472 1 is_stmt 1 view -0
-GAS LISTING /tmp/ccOGxfz2.s 			page 10
+GAS LISTING /tmp/ccvQ3IYE.s 			page 10
 
 
   42              		.cfi_startproc
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  487:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->value = &(rsa->E);
   71              		.loc 1 487 17 is_stmt 0 view .LVU24
   72 002c 488D1500 		leaq	.LC1(%rip), %rdx
-GAS LISTING /tmp/ccOGxfz2.s 			page 11
+GAS LISTING /tmp/ccvQ3IYE.s 			page 11
 
 
   72      000000
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
   95              	.LVL6:
   96              		.loc 1 521 40 view .LVU32
   97 0007 31C0     		xorl	%eax, %eax
-GAS LISTING /tmp/ccOGxfz2.s 			page 12
+GAS LISTING /tmp/ccvQ3IYE.s 			page 12
 
 
   98 0009 83FF02   		cmpl	$2, %edi
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  541:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             const unsigned char *sig, size_t sig_len)
  542:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
  543:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-GAS LISTING /tmp/ccOGxfz2.s 			page 13
+GAS LISTING /tmp/ccvQ3IYE.s 			page 13
 
 
  544:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  598:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
  599:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
  600:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
-GAS LISTING /tmp/ccOGxfz2.s 			page 14
+GAS LISTING /tmp/ccvQ3IYE.s 			page 14
 
 
  601:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  655:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t key_len;
  656:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t curve_bits;
  657:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_ecc_family_t curve = mbedtls_ecc_group_to_psa(ctx->grp.id, &curve_bits);
-GAS LISTING /tmp/ccOGxfz2.s 			page 15
+GAS LISTING /tmp/ccvQ3IYE.s 			page 15
 
 
  658:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  712:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_sign_hash(key_id,
  713:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            PSA_ALG_DETERMINISTIC_ECDSA(mbedtls_md_psa_alg_from_type(md_alg)),
  714:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            hash, hash_len, sig, sig_size, sig_len);
-GAS LISTING /tmp/ccOGxfz2.s 			page 16
+GAS LISTING /tmp/ccvQ3IYE.s 			page 16
 
 
  715:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status == PSA_SUCCESS) {
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  769:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_hash = mbedtls_md_psa_alg_from_type(md_alg);
  770:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_sig_md = MBEDTLS_PK_PSA_ALG_ECDSA_MAYBE_DET(psa_hash);
  771:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) f_rng);
-GAS LISTING /tmp/ccOGxfz2.s 			page 17
+GAS LISTING /tmp/ccvQ3IYE.s 			page 17
 
 
  772:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) p_rng);
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  826:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                 const unsigned char *sig, size_t sig_len,
  827:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                 void *rs_ctx);
  828:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
-GAS LISTING /tmp/ccOGxfz2.s 			page 18
+GAS LISTING /tmp/ccvQ3IYE.s 			page 18
 
 
  829:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_sign_rs_wrap(mbedtls_pk_context *ctx, mbedtls_md_type_t md_alg,
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  883:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
  884:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     /* Should never happen */
  885:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (rs == NULL) {
-GAS LISTING /tmp/ccOGxfz2.s 			page 19
+GAS LISTING /tmp/ccvQ3IYE.s 			page 19
 
 
  886:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  940:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_export_public_key(key_id, prv_key_buf, sizeof(prv_key_buf),
  941:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                    &prv_key_len);
  942:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = PSA_PK_TO_MBEDTLS_ERR(status);
-GAS LISTING /tmp/ccOGxfz2.s 			page 20
+GAS LISTING /tmp/ccvQ3IYE.s 			page 20
 
 
  943:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  997:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
  998:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     } else if (destruction_status != PSA_SUCCESS) {
  999:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return PSA_PK_TO_MBEDTLS_ERR(destruction_status);
-GAS LISTING /tmp/ccOGxfz2.s 			page 21
+GAS LISTING /tmp/ccvQ3IYE.s 			page 21
 
 
 1000:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
 1054:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret;
 1055:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) f_rng;
 1056:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) p_rng;
-GAS LISTING /tmp/ccOGxfz2.s 			page 22
+GAS LISTING /tmp/ccvQ3IYE.s 			page 22
 
 
 1057:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  140              		.loc 1 1106 5 is_stmt 1 view .LVU43
  141              		.loc 1 1106 26 is_stmt 0 view .LVU44
  142 0004 488B4708 		movq	8(%rdi), %rax
-GAS LISTING /tmp/ccOGxfz2.s 			page 23
+GAS LISTING /tmp/ccvQ3IYE.s 			page 23
 
 
  143              	.LVL10:
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
 1133:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
 1134:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .decrypt_func = NULL,
 1135:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .encrypt_func = NULL,
-GAS LISTING /tmp/ccOGxfz2.s 			page 24
+GAS LISTING /tmp/ccvQ3IYE.s 			page 24
 
 
 1136:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .check_pair_func = eckey_check_pair_wrap,
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
 1169:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .check_pair_func = eckey_check_pair_wrap,
 1170:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
 1171:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_alloc_func = NULL,
-GAS LISTING /tmp/ccOGxfz2.s 			page 25
+GAS LISTING /tmp/ccvQ3IYE.s 			page 25
 
 
 1172:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_free_func = NULL,
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  227              		.loc 1 468 5 is_stmt 1 view .LVU71
  228 000d 4889DF   		movq	%rbx, %rdi
  469:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
-GAS LISTING /tmp/ccOGxfz2.s 			page 26
+GAS LISTING /tmp/ccvQ3IYE.s 			page 26
 
 
  229              		.loc 1 469 1 is_stmt 0 view .LVU72
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  270              		.loc 1 462 5 view .LVU82
  271              	.L11:
  463:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
-GAS LISTING /tmp/ccOGxfz2.s 			page 27
+GAS LISTING /tmp/ccvQ3IYE.s 			page 27
 
 
  272              		.loc 1 463 1 is_stmt 0 view .LVU83
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  317              		.loc 1 431 1 is_stmt 0 view .LVU95
  318 0000 F30F1EFA 		endbr64
  432:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     *olen = mbedtls_rsa_get_len(rsa);
-GAS LISTING /tmp/ccOGxfz2.s 			page 28
+GAS LISTING /tmp/ccvQ3IYE.s 			page 28
 
 
  319              		.loc 1 432 5 is_stmt 1 view .LVU96
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  433:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
  364              		.loc 1 433 11 discriminator 1 view .LVU102
  365 003a 48894500 		movq	%rax, 0(%rbp)
-GAS LISTING /tmp/ccOGxfz2.s 			page 29
+GAS LISTING /tmp/ccvQ3IYE.s 			page 29
 
 
  435:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_OUTPUT_TOO_LARGE;
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  406              	.LVL33:
  441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
  407              		.loc 1 441 1 view .LVU116
-GAS LISTING /tmp/ccOGxfz2.s 			page 30
+GAS LISTING /tmp/ccvQ3IYE.s 			page 30
 
 
  408 0062 415E     		popq	%r14
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  453 0083 C3       		ret
  454              		.cfi_endproc
  455              	.LFE110:
-GAS LISTING /tmp/ccOGxfz2.s 			page 31
+GAS LISTING /tmp/ccvQ3IYE.s 			page 31
 
 
  457              		.section	.text.rsa_decrypt_wrap,"ax",@progbits
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  505              		.loc 1 349 1 is_stmt 0 view .LVU129
  506 0025 488B5424 		movq	88(%rsp), %rdx
  506      58
-GAS LISTING /tmp/ccOGxfz2.s 			page 32
+GAS LISTING /tmp/ccvQ3IYE.s 			page 32
 
 
  507              	.LVL41:
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  544              	.LCFI35:
  545              		.cfi_def_cfa_offset 40
  546              	.LVL45:
-GAS LISTING /tmp/ccOGxfz2.s 			page 33
+GAS LISTING /tmp/ccvQ3IYE.s 			page 33
 
 
  358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  591              		.cfi_def_cfa_offset 32
  592              	.LVL52:
  358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
-GAS LISTING /tmp/ccOGxfz2.s 			page 34
+GAS LISTING /tmp/ccvQ3IYE.s 			page 34
 
 
  593              		.loc 1 358 1 view .LVU150
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  643              		.cfi_offset 6, -48
  644 0010 4C89CD   		movq	%r9, %rbp
  645 0013 53       		pushq	%rbx
-GAS LISTING /tmp/ccOGxfz2.s 			page 35
+GAS LISTING /tmp/ccvQ3IYE.s 			page 35
 
 
  646              	.LCFI53:
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  682              		.loc 1 272 12 is_stmt 0 view .LVU167
  683 0057 4C8B4424 		movq	24(%rsp), %r8
  683      18
-GAS LISTING /tmp/ccOGxfz2.s 			page 36
+GAS LISTING /tmp/ccvQ3IYE.s 			page 36
 
 
  684 005c 4C8B4C24 		movq	8(%rsp), %r9
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  727              	.L27:
  728              	.LCFI62:
  729              		.cfi_restore_state
-GAS LISTING /tmp/ccOGxfz2.s 			page 37
+GAS LISTING /tmp/ccvQ3IYE.s 			page 37
 
 
  263:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  777              		.p2align 4
  779              	rsa_verify_wrap:
  780              	.LVL68:
-GAS LISTING /tmp/ccOGxfz2.s 			page 38
+GAS LISTING /tmp/ccvQ3IYE.s 			page 38
 
 
  781              	.LFB107:
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  827 0024 48897C24 		movq	%rdi, 8(%rsp)
  827      08
  828 0029 E8000000 		call	mbedtls_rsa_get_len@PLT
-GAS LISTING /tmp/ccOGxfz2.s 			page 39
+GAS LISTING /tmp/ccvQ3IYE.s 			page 39
 
 
  828      00
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
  867              		.loc 1 164 1 view .LVU200
  868 0066 4883C418 		addq	$24, %rsp
-GAS LISTING /tmp/ccOGxfz2.s 			page 40
+GAS LISTING /tmp/ccvQ3IYE.s 			page 40
 
 
  869              	.LCFI78:
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  145:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
  915              		.loc 1 145 16 view .LVU208
  916 0080 B880BCFF 		movl	$-17280, %eax
-GAS LISTING /tmp/ccOGxfz2.s 			page 41
+GAS LISTING /tmp/ccvQ3IYE.s 			page 41
 
 
  916      FF
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  961 0005 4889FB   		movq	%rdi, %rbx
 1094:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(ctx);
  962              		.loc 1 1094 5 view .LVU221
-GAS LISTING /tmp/ccOGxfz2.s 			page 42
+GAS LISTING /tmp/ccvQ3IYE.s 			page 42
 
 
  963 0008 E8000000 		call	mbedtls_ecp_keypair_free@PLT
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
 1086:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
  1004              		.loc 1 1086 9 is_stmt 1 view .LVU232
  1005 001c 4889C7   		movq	%rax, %rdi
-GAS LISTING /tmp/ccOGxfz2.s 			page 43
+GAS LISTING /tmp/ccvQ3IYE.s 			page 43
 
 
  1006 001f E8000000 		call	mbedtls_ecp_keypair_init@PLT
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  1051              		.loc 1 813 1 is_stmt 1 view -0
  1052              		.cfi_startproc
  813:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_ecdsa_write_signature((mbedtls_ecdsa_context *) pk->pk_ctx,
-GAS LISTING /tmp/ccOGxfz2.s 			page 44
+GAS LISTING /tmp/ccvQ3IYE.s 			page 44
 
 
  1053              		.loc 1 813 1 is_stmt 0 view .LVU244
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  1094 0012 4C89C1   		movq	%r8, %rcx
  1095              	.LVL107:
  674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-GAS LISTING /tmp/ccOGxfz2.s 			page 45
+GAS LISTING /tmp/ccvQ3IYE.s 			page 45
 
 
  1096              		.loc 1 674 1 view .LVU259
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  1140 0020 00000000 		.quad	ecdsa_verify_wrap
  1140      00000000 
  1141 0028 00000000 		.quad	ecdsa_sign_wrap
-GAS LISTING /tmp/ccOGxfz2.s 			page 46
+GAS LISTING /tmp/ccvQ3IYE.s 			page 46
 
 
  1141      00000000 
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  1181 0008 00000000 		.quad	.LC5
  1181      00000000 
  1182 0010 00000000 		.quad	eckey_get_bitlen
-GAS LISTING /tmp/ccOGxfz2.s 			page 47
+GAS LISTING /tmp/ccvQ3IYE.s 			page 47
 
 
  1182      00000000 
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  1218              		.file 4 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
  1219              		.file 5 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h"
  1220              		.file 6 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/bignum.h"
-GAS LISTING /tmp/ccOGxfz2.s 			page 48
+GAS LISTING /tmp/ccvQ3IYE.s 			page 48
 
 
  1221              		.file 7 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/rsa.h"
@@ -2843,38 +2843,38 @@ GAS LISTING /tmp/ccOGxfz2.s 			page 1
  7474              	3:
  7475 001c 00000000 		.align 8
  7476              	4:
-GAS LISTING /tmp/ccOGxfz2.s 			page 49
+GAS LISTING /tmp/ccvQ3IYE.s 			page 49
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 pk_wrap.c
-     /tmp/ccOGxfz2.s:8      .text.rsa_can_do:0000000000000000 rsa_can_do
-     /tmp/ccOGxfz2.s:38     .text.rsa_debug:0000000000000000 rsa_debug
-     /tmp/ccOGxfz2.s:85     .text.eckey_can_do:0000000000000000 eckey_can_do
-     /tmp/ccOGxfz2.s:108    .text.eckey_get_bitlen:0000000000000000 eckey_get_bitlen
-     /tmp/ccOGxfz2.s:133    .text.eckey_debug:0000000000000000 eckey_debug
-     /tmp/ccOGxfz2.s:166    .text.eckeydh_can_do:0000000000000000 eckeydh_can_do
-     /tmp/ccOGxfz2.s:189    .text.ecdsa_can_do:0000000000000000 ecdsa_can_do
-     /tmp/ccOGxfz2.s:209    .text.rsa_free_wrap:0000000000000000 rsa_free_wrap
-     /tmp/ccOGxfz2.s:244    .text.rsa_alloc_wrap:0000000000000000 rsa_alloc_wrap
-     /tmp/ccOGxfz2.s:286    .text.rsa_check_pair_wrap:0000000000000000 rsa_check_pair_wrap
-     /tmp/ccOGxfz2.s:312    .text.rsa_encrypt_wrap:0000000000000000 rsa_encrypt_wrap
-     /tmp/ccOGxfz2.s:460    .text.rsa_decrypt_wrap:0000000000000000 rsa_decrypt_wrap
-     /tmp/ccOGxfz2.s:614    .text.rsa_sign_wrap:0000000000000000 rsa_sign_wrap
-     /tmp/ccOGxfz2.s:779    .text.rsa_verify_wrap:0000000000000000 rsa_verify_wrap
-     /tmp/ccOGxfz2.s:924    .text.rsa_get_bitlen:0000000000000000 rsa_get_bitlen
-     /tmp/ccOGxfz2.s:947    .text.eckey_free_wrap:0000000000000000 eckey_free_wrap
-     /tmp/ccOGxfz2.s:982    .text.eckey_alloc_wrap:0000000000000000 eckey_alloc_wrap
-     /tmp/ccOGxfz2.s:1024   .text.eckey_check_pair_wrap:0000000000000000 eckey_check_pair_wrap
-     /tmp/ccOGxfz2.s:1048   .text.ecdsa_sign_wrap:0000000000000000 ecdsa_sign_wrap
-     /tmp/ccOGxfz2.s:1069   .text.ecdsa_verify_wrap:0000000000000000 ecdsa_verify_wrap
-     /tmp/ccOGxfz2.s:1134   .data.rel.ro.local.mbedtls_ecdsa_info:0000000000000000 mbedtls_ecdsa_info
-     /tmp/ccOGxfz2.s:1156   .data.rel.ro.local.mbedtls_eckeydh_info:0000000000000000 mbedtls_eckeydh_info
-     /tmp/ccOGxfz2.s:1178   .data.rel.ro.local.mbedtls_eckey_info:0000000000000000 mbedtls_eckey_info
-     /tmp/ccOGxfz2.s:1200   .data.rel.ro.local.mbedtls_rsa_info:0000000000000000 mbedtls_rsa_info
-     /tmp/ccOGxfz2.s:31     .rodata.rsa_debug.str1.1:0000000000000000 .LC0
-     /tmp/ccOGxfz2.s:33     .rodata.rsa_debug.str1.1:0000000000000006 .LC1
-     /tmp/ccOGxfz2.s:128    .rodata.eckey_debug.str1.1:0000000000000000 .LC2
+     /tmp/ccvQ3IYE.s:8      .text.rsa_can_do:0000000000000000 rsa_can_do
+     /tmp/ccvQ3IYE.s:38     .text.rsa_debug:0000000000000000 rsa_debug
+     /tmp/ccvQ3IYE.s:85     .text.eckey_can_do:0000000000000000 eckey_can_do
+     /tmp/ccvQ3IYE.s:108    .text.eckey_get_bitlen:0000000000000000 eckey_get_bitlen
+     /tmp/ccvQ3IYE.s:133    .text.eckey_debug:0000000000000000 eckey_debug
+     /tmp/ccvQ3IYE.s:166    .text.eckeydh_can_do:0000000000000000 eckeydh_can_do
+     /tmp/ccvQ3IYE.s:189    .text.ecdsa_can_do:0000000000000000 ecdsa_can_do
+     /tmp/ccvQ3IYE.s:209    .text.rsa_free_wrap:0000000000000000 rsa_free_wrap
+     /tmp/ccvQ3IYE.s:244    .text.rsa_alloc_wrap:0000000000000000 rsa_alloc_wrap
+     /tmp/ccvQ3IYE.s:286    .text.rsa_check_pair_wrap:0000000000000000 rsa_check_pair_wrap
+     /tmp/ccvQ3IYE.s:312    .text.rsa_encrypt_wrap:0000000000000000 rsa_encrypt_wrap
+     /tmp/ccvQ3IYE.s:460    .text.rsa_decrypt_wrap:0000000000000000 rsa_decrypt_wrap
+     /tmp/ccvQ3IYE.s:614    .text.rsa_sign_wrap:0000000000000000 rsa_sign_wrap
+     /tmp/ccvQ3IYE.s:779    .text.rsa_verify_wrap:0000000000000000 rsa_verify_wrap
+     /tmp/ccvQ3IYE.s:924    .text.rsa_get_bitlen:0000000000000000 rsa_get_bitlen
+     /tmp/ccvQ3IYE.s:947    .text.eckey_free_wrap:0000000000000000 eckey_free_wrap
+     /tmp/ccvQ3IYE.s:982    .text.eckey_alloc_wrap:0000000000000000 eckey_alloc_wrap
+     /tmp/ccvQ3IYE.s:1024   .text.eckey_check_pair_wrap:0000000000000000 eckey_check_pair_wrap
+     /tmp/ccvQ3IYE.s:1048   .text.ecdsa_sign_wrap:0000000000000000 ecdsa_sign_wrap
+     /tmp/ccvQ3IYE.s:1069   .text.ecdsa_verify_wrap:0000000000000000 ecdsa_verify_wrap
+     /tmp/ccvQ3IYE.s:1134   .data.rel.ro.local.mbedtls_ecdsa_info:0000000000000000 mbedtls_ecdsa_info
+     /tmp/ccvQ3IYE.s:1156   .data.rel.ro.local.mbedtls_eckeydh_info:0000000000000000 mbedtls_eckeydh_info
+     /tmp/ccvQ3IYE.s:1178   .data.rel.ro.local.mbedtls_eckey_info:0000000000000000 mbedtls_eckey_info
+     /tmp/ccvQ3IYE.s:1200   .data.rel.ro.local.mbedtls_rsa_info:0000000000000000 mbedtls_rsa_info
+     /tmp/ccvQ3IYE.s:31     .rodata.rsa_debug.str1.1:0000000000000000 .LC0
+     /tmp/ccvQ3IYE.s:33     .rodata.rsa_debug.str1.1:0000000000000006 .LC1
+     /tmp/ccvQ3IYE.s:128    .rodata.eckey_debug.str1.1:0000000000000000 .LC2
 
 UNDEFINED SYMBOLS
 mbedtls_rsa_free
