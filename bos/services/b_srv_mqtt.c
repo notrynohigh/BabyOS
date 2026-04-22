@@ -105,6 +105,17 @@ typedef struct
     struct list_head node;
 } bMqttSubscribeNode_t;
 
+typedef struct
+{
+    uint16_t         pack_id;
+    uint8_t         *pbuf;       // 序列化的完整 MQTT 报文，持久保存，重试时直接发送
+    uint32_t         buf_len;    // pbuf 长度
+    uint8_t          qos;
+    uint8_t          retry_count;
+    uint32_t         last_send_time;
+    struct list_head node;
+} bMqttPendingPub_t;
+
 /**
  * \}
  */
@@ -122,6 +133,9 @@ typedef struct
 #define MQTT_STEP_SUB (0x2)
 
 #define MAX_PACKET_ID 65535
+#define MQTT_MAX_RETRY_COUNT 3
+#define MQTT_RETRY_TIMEOUT_MS 5000
+#define MQTT_MAX_PENDING_PUB 10  // 最多同时 pending 的 QoS 1 消息数
 /**
  * \}
  */
@@ -141,6 +155,7 @@ typedef struct
  */
 static bMqttSrvInstance_t *pbMqttInstance = NULL;
 static LIST_HEAD(bMqttSubscribeListHead);
+static LIST_HEAD(bMqttPendingPubListHead);
 
 B_TASK_CREATE_ATTR(bMqttTaskAttr);
 B_TIMER_CREATE_ATTR(bMqttTimerAttr);
@@ -424,8 +439,144 @@ static int _bMqttConnect(bMqttSrvInstance_t *pinstance)
 
 static uint16_t _bMqttGetNextPacketId(bMqttSrvInstance_t *pinstance)
 {
-    return pinstance->packet_id =
-               (pinstance->packet_id == MAX_PACKET_ID) ? 1 : pinstance->packet_id + 1;
+    if (pinstance->packet_id == MAX_PACKET_ID)
+    {
+        pinstance->packet_id = 1;
+    }
+    else
+    {
+        pinstance->packet_id++;
+    }
+    return pinstance->packet_id;
+}
+
+static int _bMqttPublish(bMqttSrvInstance_t *pinstance, const char *topic, const uint8_t *payload,
+                         uint32_t payload_len, uint8_t qos)
+{
+    int       len    = 0;
+    uint8_t  *pbuf   = NULL;
+    uint16_t pack_id = _bMqttGetNextPacketId(pinstance);
+    int       pending_count = 0;
+
+    // For QoS 1, check pending list capacity
+    if (qos > 0)
+    {
+        struct list_head *pos = NULL;
+        list_for_each(pos, &bMqttPendingPubListHead)
+        {
+            pending_count++;
+        }
+        if (pending_count >= MQTT_MAX_PENDING_PUB)
+        {
+            b_log_e("mqtt pending list full, cannot publish qos1: count=%d\r\n", pending_count);
+            return -1;
+        }
+    }
+
+    // Calculate needed buffer size
+    // Fixed header (2) + Variable header (topic string) + Payload
+    uint32_t buf_size = 2 + strlen(topic) + 3 + payload_len;
+    pbuf = _bMqttMalloc(buf_size);
+    if (pbuf == NULL)
+    {
+        b_log_e("mqtt publish malloc failed\r\n");
+        return -1;
+    }
+
+    MQTTString topic_str  = MQTTString_initializer;
+    topic_str.cstring     = (char *)topic;
+    len = MQTTSerialize_publish(pbuf, buf_size, 0, qos, 0, pack_id, topic_str, payload, payload_len);
+    if (len <= 0)
+    {
+        b_log_e("mqtt serialize publish failed: %d\r\n", len);
+        _bMqttFree(pbuf);
+        return -1;
+    }
+
+    if (_bMqttWrite(pinstance, pbuf, len) < 0)
+    {
+        b_log_e("mqtt publish write failed\r\n");
+        _bMqttFree(pbuf);
+        return -1;
+    }
+
+    // For QoS 0: buffer no longer needed after sending
+    // For QoS > 0: keep buffer in pending list for retry; freed after PUBACK
+    if (qos > 0)
+    {
+        bMqttPendingPub_t *pnode = _bMqttMalloc(sizeof(bMqttPendingPub_t));
+        if (pnode == NULL)
+        {
+            b_log_e("mqtt pending pub malloc failed\r\n");
+            _bMqttFree(pbuf);
+            return -1;
+        }
+        pnode->pack_id         = pack_id;
+        pnode->pbuf            = pbuf;       // 持久保存整个报文，重试时直接发送
+        pnode->buf_len         = (uint32_t)len;
+        pnode->qos             = qos;
+        pnode->retry_count     = 0;
+        pnode->last_send_time  = bHalGetSysTick();
+        list_add(&pnode->node, &bMqttPendingPubListHead);
+        b_log("mqtt qos%d stored: id=%d, pending=%d\r\n",
+              qos, pack_id, pending_count + 1);
+    }
+    else
+    {
+        _bMqttFree(pbuf);  // QoS 0 无需保留，发送完毕即释放
+    }
+
+    b_log("mqtt publish success: topic=%s, len=%d, qos=%d, id=%d\r\n", topic, payload_len, qos, pack_id);
+    return 0;
+}
+
+static int _bMqttUnsubscribe(bMqttSrvInstance_t *pinstance, const char *topic)
+{
+    int         len      = 0;
+    uint8_t    *pbuf    = NULL;
+    uint16_t    pack_id = _bMqttGetNextPacketId(pinstance);
+    MQTTString  topic_str = MQTTString_initializer;
+    topic_str.cstring    = (char *)topic;
+
+    // Calculate buffer size: fixed header(2) + variable header(topic string) 
+    uint32_t buf_size = 2 + 2 + strlen(topic) + 2;
+    pbuf = _bMqttMalloc(buf_size);
+    if (pbuf == NULL)
+    {
+        return -1;
+    }
+
+    len = MQTTSerialize_unsubscribe(pbuf, buf_size, 0, pack_id, 1, &topic_str);
+    if (len <= 0)
+    {
+        _bMqttFree(pbuf);
+        return -1;
+    }
+
+    if (_bMqttWrite(pinstance, pbuf, len) < 0)
+    {
+        _bMqttFree(pbuf);
+        return -1;
+    }
+
+    // Also remove from subscription list
+    bMqttSubscribeNode_t *pnode = NULL;
+    struct list_head     *pos   = NULL;
+    struct list_head     *n     = NULL;
+    list_for_each_safe(pos, n, &bMqttSubscribeListHead)
+    {
+        pnode = list_entry(pos, bMqttSubscribeNode_t, node);
+        if (pnode->pack != NULL && strstr(pnode->pack, topic) != NULL)
+        {
+            list_del(&pnode->node);
+            _bMqttFree(pnode->pack);
+            _bMqttFree(pnode);
+            b_log("unsubscribed: %s\r\n", topic);
+        }
+    }
+
+    _bMqttFree(pbuf);
+    return 0;
 }
 
 static int _bMqttSubscribeReset()
@@ -464,23 +615,16 @@ static int _bMqttSubscribe(bMqttSrvInstance_t *pinstance)
 
 static int _bMqttSubscribeAckHandle(bMqttPack_t *pack)
 {
-    int      index   = 1;
     uint16_t pack_id = 0;
-    // 跳过所有返回码字节 (QoS 0-2 对应不同的字节数)
-    while (index < pack->pack_len && pack->pack[index] & 0x80)
+    int       granted_count = 0;
+    int       granted_qos = 0;
+
+    if (MQTTDeserialize_suback(&pack_id, 1, &granted_count, &granted_qos, pack->pack, pack->pack_len) != 1)
     {
-        index += 1;
-    }
-    if (index + 1 >= pack->pack_len)
-    {
-        b_log_e("MQTT suback packet too short\r\n");
+        b_log_e("MQTT suback parse failed\r\n");
         return -1;
     }
-    index += 1;  // 跳过第一个返回码
-    pack_id |= pack->pack[index];
-    pack_id <<= 8;
-    pack_id |= pack->pack[index + 1];
-    b_log("suback:%d\r\n", pack_id);
+    b_log("suback:%d, granted_qos:%d\r\n", pack_id, granted_qos);
 
     bMqttSubscribeNode_t *pnode = NULL;
     struct list_head     *pos   = NULL;
@@ -545,6 +689,66 @@ static int _bMqttAddSubscribe(bMqttSrvInstance_t *pinstance, const char **topic,
     pnode->pack_len = len;
     list_add(&pnode->node, &bMqttSubscribeListHead);
     return 0;
+}
+
+// QoS 1: Handle PUBACK - remove from pending list
+static int _bMqttPubAckHandle(uint16_t pack_id)
+{
+    bMqttPendingPub_t *pnode = NULL;
+    struct list_head  *pos   = NULL;
+    struct list_head  *n     = NULL;
+    list_for_each_safe(pos, n, &bMqttPendingPubListHead)
+    {
+        pnode = list_entry(pos, bMqttPendingPub_t, node);
+        if (pnode->pack_id == pack_id)
+        {
+            b_log("qos1 puback received, remove pending: id=%d\r\n", pack_id);
+            list_del(&pnode->node);
+            _bMqttFree(pnode->pbuf);  // 释放存储的完整报文
+            _bMqttFree(pnode);
+            return 0;
+        }
+    }
+    b_log_w("qos1 puback: pack_id %d not found in pending list\r\n", pack_id);
+    return -1;
+}
+
+// QoS > 0: Retry pending publishes that timed out
+static void _bMqttRetryPendingPub(bMqttSrvInstance_t *pinstance)
+{
+    bMqttPendingPub_t *pnode = NULL;
+    struct list_head   *pos   = NULL;
+    struct list_head   *n     = NULL;
+
+    list_for_each_safe(pos, n, &bMqttPendingPubListHead)
+    {
+        pnode = list_entry(pos, bMqttPendingPub_t, node);
+        if ((TICK_DIFF_BIT32(pnode->last_send_time, bHalGetSysTick())) > MS2TICKS(MQTT_RETRY_TIMEOUT_MS))
+        {
+            if (pnode->retry_count >= MQTT_MAX_RETRY_COUNT)
+            {
+                b_log_e("qos%d publish timeout, giving up: id=%d\r\n",
+                        pnode->qos, pnode->pack_id);
+                list_del(&pnode->node);
+                _bMqttFree(pnode->pbuf);
+                _bMqttFree(pnode);
+                continue;
+            }
+            pnode->retry_count++;
+            // 设置 DUP = 1，直接发送已存储的完整报文
+            pnode->pbuf[0] |= 0x08;
+            if (_bMqttWrite(pinstance, pnode->pbuf, pnode->buf_len) < 0)
+            {
+                pnode->pbuf[0] &= ~0x08;  // 恢复 DUP = 0
+                pnode->last_send_time = bHalGetSysTick();
+                continue;
+            }
+            pnode->pbuf[0] &= ~0x08;  // 恢复 DUP = 0
+            pnode->last_send_time = bHalGetSysTick();
+            b_log("qos%d retry: id=%d, retry=%d\r\n",
+                  pnode->qos, pnode->pack_id, pnode->retry_count);
+        }
+    }
 }
 
 static int _bMqttReadPacket(bMqttSrvInstance_t *pinstance, bMqttPack_t *pack)
@@ -634,6 +838,7 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
     bMqttEvent_t        evt = B_MQTT_EVT_INVALID;
     bMqttEvtParam_t     param;
     MQTTString          topic_name;
+    memset(&param, 0, sizeof(param));
     B_TASK_INIT_BEGIN();
     // ...
     B_TASK_INIT_END();
@@ -749,7 +954,10 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
                         break;
                         case PUBACK:
                         {
-                            ;  // todo qos = 1
+                            // QoS 1: Handle PUBACK - extract packet ID and remove from pending
+                            uint16_t pack_id = (pack.pack[2] << 8) | pack.pack[3];
+                            b_log("qos1 puback received: id=%d\r\n", pack_id);
+                            _bMqttPubAckHandle(pack_id);
                         }
                         break;
                         case SUBACK:
@@ -759,14 +967,15 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
                         break;
                         case PUBLISH:
                         {
+                            memset(&param.pub, 0, sizeof(param.pub));
                             if (MQTTDeserialize_publish(
                                     &param.pub.dup, &param.pub.qos, &param.pub.retained,
                                     &param.pub.pack_id, &topic_name,
                                     (unsigned char **)&param.pub.payload,
                                     (int *)&param.pub.payload_len, pack.pack, pack.pack_len) == 1)
                             {
-                                param.pub.topic     = topic_name.lenstring.data;
-                                param.pub.topic_len = topic_name.lenstring.len;
+                                param.pub.topic     = topic_name.cstring ? topic_name.cstring : topic_name.lenstring.data;
+                                param.pub.topic_len = topic_name.cstring ? strlen(topic_name.cstring) : topic_name.lenstring.len;
                                 evt                 = B_MQTT_EVT_PUB;
                             }
                             break;
@@ -795,6 +1004,9 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
             }
             else
             {
+                // Retry pending QoS 1 publishes
+                _bMqttRetryPendingPub(pinstance);
+                
                 if ((mqtt_step_f & MQTT_STEP_CONN) == 0)
                 {
                     _bMqttConnect(pinstance);
@@ -829,6 +1041,7 @@ int bMqttSrvStartWithCfg(pbMqttCallback_t cb, void *arg)
     {
         return -1;
     }
+    pinstance->sock_fd      = -1;
     pinstance->cb          = cb;
     pinstance->user_data   = arg;
     pinstance->packet_id   = 1;
@@ -955,7 +1168,62 @@ void bMqttSrvDestroy()
         _bMqttFree(pnode);
     }
     pnode = NULL;
+    
+    // Clean up pending publish list (QoS 1)
+    bMqttPendingPub_t *ppend = NULL;
+    list_for_each_safe(pos, n, &bMqttPendingPubListHead)
+    {
+        ppend = list_entry(pos, bMqttPendingPub_t, node);
+        list_del(&ppend->node);
+        _bMqttFree(ppend->pbuf);
+        _bMqttFree(ppend);
+    }
+    
     _bMqttFree(pinstance);
+}
+
+int bMqttSrvPublish(const char *topic, const uint8_t *payload, uint32_t payload_len, uint8_t qos)
+{
+    if (pbMqttInstance == NULL || topic == NULL || payload == NULL)
+    {
+        return -1;
+    }
+    if (pbMqttInstance->stat != B_MQTT_STA_TCP_CONNECTED &&
+        pbMqttInstance->stat != B_MQTT_STA_SSL_CONNECTED)
+    {
+        b_log_e("mqtt not connected, cannot publish\r\n");
+        return -1;
+    }
+    return _bMqttPublish(pbMqttInstance, topic, payload, payload_len, qos);
+}
+
+int bMqttSrvSubscribe(const char *topic, uint8_t qos)
+{
+    if (pbMqttInstance == NULL || topic == NULL)
+    {
+        return -1;
+    }
+    const char *topics[1]   = {topic};
+    int         qos_array[1] = {qos};
+    return _bMqttAddSubscribe(pbMqttInstance, topics, qos_array, 1);
+}
+
+int bMqttSrvUnsubscribe(const char *topic)
+{
+    if (pbMqttInstance == NULL || topic == NULL)
+    {
+        return -1;
+    }
+    return _bMqttUnsubscribe(pbMqttInstance, topic);
+}
+
+int bMqttSrvGetStatus(void)
+{
+    if (pbMqttInstance == NULL)
+    {
+        return -1;
+    }
+    return pbMqttInstance->stat;
 }
 
 /**

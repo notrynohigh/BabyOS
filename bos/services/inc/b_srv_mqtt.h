@@ -118,6 +118,11 @@ typedef void (*pbMqttCallback_t)(bMqttEvent_t evt, bMqttEvtParam_t *param, void 
  */
 
 int bMqttSrvStartWithCfg(pbMqttCallback_t cb, void *arg);
+int bMqttSrvPublish(const char *topic, const uint8_t *payload, uint32_t payload_len, uint8_t qos);
+int bMqttSrvSubscribe(const char *topic, uint8_t qos);
+int bMqttSrvUnsubscribe(const char *topic);
+int bMqttSrvGetStatus(void);
+void bMqttSrvDestroy();
 
 /**
  * \}
