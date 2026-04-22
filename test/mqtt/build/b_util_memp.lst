@@ -1,0 +1,3914 @@
+GAS LISTING /tmp/ccYhwHA9.s 			page 1
+
+
+   1              		.file	"b_util_memp.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/utils/b_util_memp.c"
+   5              		.section	.text.bFree,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	bFree
+   9              	bFree:
+  10              	.LVL0:
+  11              	.LFB24:
+   1:../../bos/utils/b_util_memp.c **** /**
+   2:../../bos/utils/b_util_memp.c ****  *!
+   3:../../bos/utils/b_util_memp.c ****  * \file        b_util_memp.c
+   4:../../bos/utils/b_util_memp.c ****  * \version     v0.0.1
+   5:../../bos/utils/b_util_memp.c ****  * \date        2020/04/01
+   6:../../bos/utils/b_util_memp.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/b_util_memp.c ****  *******************************************************************************
+   8:../../bos/utils/b_util_memp.c ****  * @attention
+   9:../../bos/utils/b_util_memp.c ****  *
+  10:../../bos/utils/b_util_memp.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/utils/b_util_memp.c ****  *
+  12:../../bos/utils/b_util_memp.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/b_util_memp.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/b_util_memp.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/b_util_memp.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/b_util_memp.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/b_util_memp.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/b_util_memp.c ****  *
+  19:../../bos/utils/b_util_memp.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/b_util_memp.c ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/b_util_memp.c ****  *
+  22:../../bos/utils/b_util_memp.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/b_util_memp.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/b_util_memp.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/b_util_memp.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/b_util_memp.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/b_util_memp.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/b_util_memp.c ****  * SOFTWARE.
+  29:../../bos/utils/b_util_memp.c ****  *******************************************************************************
+  30:../../bos/utils/b_util_memp.c ****  */
+  31:../../bos/utils/b_util_memp.c **** 
+  32:../../bos/utils/b_util_memp.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/utils/b_util_memp.c **** #include "utils/inc/b_util_memp.h"
+  34:../../bos/utils/b_util_memp.c **** 
+  35:../../bos/utils/b_util_memp.c **** #include "utils/inc/b_util_log.h"
+  36:../../bos/utils/b_util_memp.c **** 
+  37:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_ENABLE) && (_MEMP_ENABLE == 1))
+  38:../../bos/utils/b_util_memp.c **** 
+  39:../../bos/utils/b_util_memp.c **** /**
+  40:../../bos/utils/b_util_memp.c ****  * \addtogroup B_UTILS
+  41:../../bos/utils/b_util_memp.c ****  * \{
+  42:../../bos/utils/b_util_memp.c ****  */
+  43:../../bos/utils/b_util_memp.c **** 
+  44:../../bos/utils/b_util_memp.c **** /**
+  45:../../bos/utils/b_util_memp.c ****  * \addtogroup MEMP
+  46:../../bos/utils/b_util_memp.c ****  * \{
+  47:../../bos/utils/b_util_memp.c ****  */
+GAS LISTING /tmp/ccYhwHA9.s 			page 2
+
+
+  48:../../bos/utils/b_util_memp.c **** 
+  49:../../bos/utils/b_util_memp.c **** /**
+  50:../../bos/utils/b_util_memp.c ****  * \defgroup MEMP_Private_TypesDefinitions
+  51:../../bos/utils/b_util_memp.c ****  * \{
+  52:../../bos/utils/b_util_memp.c ****  */
+  53:../../bos/utils/b_util_memp.c **** #pragma pack(1)
+  54:../../bos/utils/b_util_memp.c **** typedef struct head
+  55:../../bos/utils/b_util_memp.c **** {
+  56:../../bos/utils/b_util_memp.c ****     uint32_t     status : 8;
+  57:../../bos/utils/b_util_memp.c ****     uint32_t     size : 24;
+  58:../../bos/utils/b_util_memp.c ****     struct head *next;
+  59:../../bos/utils/b_util_memp.c **** } bMempUnitHead_t;
+  60:../../bos/utils/b_util_memp.c **** #pragma pack()
+  61:../../bos/utils/b_util_memp.c **** 
+  62:../../bos/utils/b_util_memp.c **** /**
+  63:../../bos/utils/b_util_memp.c ****  * \}
+  64:../../bos/utils/b_util_memp.c ****  */
+  65:../../bos/utils/b_util_memp.c **** 
+  66:../../bos/utils/b_util_memp.c **** /**
+  67:../../bos/utils/b_util_memp.c ****  * \defgroup MEMP_Private_Defines
+  68:../../bos/utils/b_util_memp.c ****  * \{
+  69:../../bos/utils/b_util_memp.c ****  */
+  70:../../bos/utils/b_util_memp.c **** #define MEMP_SIZE (((MEMP_MAX_SIZE) >> 2) << 2)
+  71:../../bos/utils/b_util_memp.c **** 
+  72:../../bos/utils/b_util_memp.c **** #define MEMP_UNIT_USED (0xAA)
+  73:../../bos/utils/b_util_memp.c **** #define MEMP_UNIT_FREE (0x55)
+  74:../../bos/utils/b_util_memp.c **** 
+  75:../../bos/utils/b_util_memp.c **** #if defined(__CC_ARM)
+  76:../../bos/utils/b_util_memp.c **** __attribute__((aligned(4))) static uint8_t bMempBuf[MEMP_SIZE];
+  77:../../bos/utils/b_util_memp.c **** #elif defined(__ICCARM__)
+  78:../../bos/utils/b_util_memp.c **** #pragma data_alignment = 4
+  79:../../bos/utils/b_util_memp.c **** static uint8_t bMempBuf[MEMP_SIZE];
+  80:../../bos/utils/b_util_memp.c **** #elif defined(__GNUC__)
+  81:../../bos/utils/b_util_memp.c **** __attribute__((aligned(4))) static uint8_t bMempBuf[MEMP_SIZE];
+  82:../../bos/utils/b_util_memp.c **** #endif
+  83:../../bos/utils/b_util_memp.c **** 
+  84:../../bos/utils/b_util_memp.c **** /**
+  85:../../bos/utils/b_util_memp.c ****  * \}
+  86:../../bos/utils/b_util_memp.c ****  */
+  87:../../bos/utils/b_util_memp.c **** 
+  88:../../bos/utils/b_util_memp.c **** /**
+  89:../../bos/utils/b_util_memp.c ****  * \defgroup MEMP_Private_Macros
+  90:../../bos/utils/b_util_memp.c ****  * \{
+  91:../../bos/utils/b_util_memp.c ****  */
+  92:../../bos/utils/b_util_memp.c **** 
+  93:../../bos/utils/b_util_memp.c **** /**
+  94:../../bos/utils/b_util_memp.c ****  * \}
+  95:../../bos/utils/b_util_memp.c ****  */
+  96:../../bos/utils/b_util_memp.c **** 
+  97:../../bos/utils/b_util_memp.c **** /**
+  98:../../bos/utils/b_util_memp.c ****  * \defgroup MEMP_Private_Variables
+  99:../../bos/utils/b_util_memp.c ****  * \{
+ 100:../../bos/utils/b_util_memp.c ****  */
+ 101:../../bos/utils/b_util_memp.c **** static uint8_t bMempInitFlag = 0;
+ 102:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+ 103:../../bos/utils/b_util_memp.c **** static uint32_t bMemFreeSizeMin = MEMP_SIZE;
+ 104:../../bos/utils/b_util_memp.c **** #endif
+GAS LISTING /tmp/ccYhwHA9.s 			page 3
+
+
+ 105:../../bos/utils/b_util_memp.c **** /**
+ 106:../../bos/utils/b_util_memp.c ****  * \}
+ 107:../../bos/utils/b_util_memp.c ****  */
+ 108:../../bos/utils/b_util_memp.c **** 
+ 109:../../bos/utils/b_util_memp.c **** /**
+ 110:../../bos/utils/b_util_memp.c ****  * \defgroup MEMP_Private_FunctionPrototypes
+ 111:../../bos/utils/b_util_memp.c ****  * \{
+ 112:../../bos/utils/b_util_memp.c ****  */
+ 113:../../bos/utils/b_util_memp.c **** 
+ 114:../../bos/utils/b_util_memp.c **** /**
+ 115:../../bos/utils/b_util_memp.c ****  * \}
+ 116:../../bos/utils/b_util_memp.c ****  */
+ 117:../../bos/utils/b_util_memp.c **** 
+ 118:../../bos/utils/b_util_memp.c **** /**
+ 119:../../bos/utils/b_util_memp.c ****  * \defgroup MEMP_Private_Functions
+ 120:../../bos/utils/b_util_memp.c ****  * \{
+ 121:../../bos/utils/b_util_memp.c ****  */
+ 122:../../bos/utils/b_util_memp.c **** 
+ 123:../../bos/utils/b_util_memp.c **** static void _bMempInit()
+ 124:../../bos/utils/b_util_memp.c **** {
+ 125:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *phead = (bMempUnitHead_t *)bMempBuf;
+ 126:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 127:../../bos/utils/b_util_memp.c ****     {
+ 128:../../bos/utils/b_util_memp.c ****         memset(bMempBuf, 0, sizeof(bMempBuf));
+ 129:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 130:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 131:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 132:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 133:../../bos/utils/b_util_memp.c ****     }
+ 134:../../bos/utils/b_util_memp.c **** }
+ 135:../../bos/utils/b_util_memp.c **** 
+ 136:../../bos/utils/b_util_memp.c **** static uint32_t _bGetFreeSize()
+ 137:../../bos/utils/b_util_memp.c **** {
+ 138:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *phead = (bMempUnitHead_t *)bMempBuf;
+ 139:../../bos/utils/b_util_memp.c ****     uint32_t         ret   = 0;
+ 140:../../bos/utils/b_util_memp.c ****     while (phead)
+ 141:../../bos/utils/b_util_memp.c ****     {
+ 142:../../bos/utils/b_util_memp.c ****         if (phead->status == MEMP_UNIT_FREE)
+ 143:../../bos/utils/b_util_memp.c ****         {
+ 144:../../bos/utils/b_util_memp.c ****             ret += phead->size;
+ 145:../../bos/utils/b_util_memp.c ****         }
+ 146:../../bos/utils/b_util_memp.c ****         phead = phead->next;
+ 147:../../bos/utils/b_util_memp.c ****     }
+ 148:../../bos/utils/b_util_memp.c ****     return ret;
+ 149:../../bos/utils/b_util_memp.c **** }
+ 150:../../bos/utils/b_util_memp.c **** 
+ 151:../../bos/utils/b_util_memp.c **** static void *_bMempAlloc(uint32_t size)
+ 152:../../bos/utils/b_util_memp.c **** {
+ 153:../../bos/utils/b_util_memp.c ****     size = B_SIZE_ALIGNMENT(size, 4);
+ 154:../../bos/utils/b_util_memp.c **** 
+ 155:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *phead      = (bMempUnitHead_t *)bMempBuf;
+ 156:../../bos/utils/b_util_memp.c ****     void            *pret       = NULL;
+ 157:../../bos/utils/b_util_memp.c ****     uint32_t         real_size  = size + sizeof(bMempUnitHead_t);
+ 158:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *p_new_head = NULL;
+ 159:../../bos/utils/b_util_memp.c ****     while (phead)
+ 160:../../bos/utils/b_util_memp.c ****     {
+ 161:../../bos/utils/b_util_memp.c ****         if (phead->status == MEMP_UNIT_USED)
+GAS LISTING /tmp/ccYhwHA9.s 			page 4
+
+
+ 162:../../bos/utils/b_util_memp.c ****         {
+ 163:../../bos/utils/b_util_memp.c ****             phead = phead->next;
+ 164:../../bos/utils/b_util_memp.c ****         }
+ 165:../../bos/utils/b_util_memp.c ****         else
+ 166:../../bos/utils/b_util_memp.c ****         {
+ 167:../../bos/utils/b_util_memp.c ****             if (phead->size == size)
+ 168:../../bos/utils/b_util_memp.c ****             {
+ 169:../../bos/utils/b_util_memp.c ****                 phead->status = MEMP_UNIT_USED;
+ 170:../../bos/utils/b_util_memp.c ****                 pret          = (void *)(((char *)phead) + sizeof(bMempUnitHead_t));
+ 171:../../bos/utils/b_util_memp.c ****             }
+ 172:../../bos/utils/b_util_memp.c ****             else if (phead->size < real_size)
+ 173:../../bos/utils/b_util_memp.c ****             {
+ 174:../../bos/utils/b_util_memp.c ****                 phead = phead->next;
+ 175:../../bos/utils/b_util_memp.c ****             }
+ 176:../../bos/utils/b_util_memp.c ****             else
+ 177:../../bos/utils/b_util_memp.c ****             {
+ 178:../../bos/utils/b_util_memp.c ****                 phead->status = MEMP_UNIT_USED;
+ 179:../../bos/utils/b_util_memp.c ****                 pret          = (void *)(((char *)phead) + sizeof(bMempUnitHead_t));
+ 180:../../bos/utils/b_util_memp.c ****                 // create a new unit
+ 181:../../bos/utils/b_util_memp.c ****                 p_new_head         = (bMempUnitHead_t *)(((char *)pret) + size);
+ 182:../../bos/utils/b_util_memp.c ****                 p_new_head->status = MEMP_UNIT_FREE;
+ 183:../../bos/utils/b_util_memp.c ****                 p_new_head->size   = phead->size - size - sizeof(bMempUnitHead_t);
+ 184:../../bos/utils/b_util_memp.c ****                 p_new_head->next   = phead->next;
+ 185:../../bos/utils/b_util_memp.c ****                 phead->size        = size;
+ 186:../../bos/utils/b_util_memp.c ****                 phead->next        = p_new_head;
+ 187:../../bos/utils/b_util_memp.c ****             }
+ 188:../../bos/utils/b_util_memp.c ****         }
+ 189:../../bos/utils/b_util_memp.c ****         if (pret != NULL)
+ 190:../../bos/utils/b_util_memp.c ****         {
+ 191:../../bos/utils/b_util_memp.c ****             break;
+ 192:../../bos/utils/b_util_memp.c ****         }
+ 193:../../bos/utils/b_util_memp.c ****     }
+ 194:../../bos/utils/b_util_memp.c ****     if (pret == NULL)
+ 195:../../bos/utils/b_util_memp.c ****     {
+ 196:../../bos/utils/b_util_memp.c ****         b_log_e("memp alloc fail, size:%d", size);
+ 197:../../bos/utils/b_util_memp.c ****         bMallocFailedHook();
+ 198:../../bos/utils/b_util_memp.c ****     }
+ 199:../../bos/utils/b_util_memp.c ****     else
+ 200:../../bos/utils/b_util_memp.c ****     {
+ 201:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+ 202:../../bos/utils/b_util_memp.c ****         uint32_t c_freesize = _bGetFreeSize();
+ 203:../../bos/utils/b_util_memp.c ****         if (bMemFreeSizeMin > c_freesize)
+ 204:../../bos/utils/b_util_memp.c ****         {
+ 205:../../bos/utils/b_util_memp.c ****             bMemFreeSizeMin = c_freesize;
+ 206:../../bos/utils/b_util_memp.c ****         }
+ 207:../../bos/utils/b_util_memp.c **** #endif
+ 208:../../bos/utils/b_util_memp.c ****     }
+ 209:../../bos/utils/b_util_memp.c **** 
+ 210:../../bos/utils/b_util_memp.c ****     return pret;
+ 211:../../bos/utils/b_util_memp.c **** }
+ 212:../../bos/utils/b_util_memp.c **** 
+ 213:../../bos/utils/b_util_memp.c **** static void _bMempFree(uint32_t addr)
+ 214:../../bos/utils/b_util_memp.c **** {
+ 215:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *phead = (bMempUnitHead_t *)(addr - sizeof(bMempUnitHead_t));
+ 216:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+ 217:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 218:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+GAS LISTING /tmp/ccYhwHA9.s 			page 5
+
+
+ 219:../../bos/utils/b_util_memp.c ****     {
+ 220:../../bos/utils/b_util_memp.c ****         return;
+ 221:../../bos/utils/b_util_memp.c ****     }
+ 222:../../bos/utils/b_util_memp.c ****     phead->status = MEMP_UNIT_FREE;
+ 223:../../bos/utils/b_util_memp.c ****     phead         = (bMempUnitHead_t *)bMempBuf;
+ 224:../../bos/utils/b_util_memp.c **** 
+ 225:../../bos/utils/b_util_memp.c ****     while (phead != NULL)
+ 226:../../bos/utils/b_util_memp.c ****     {
+ 227:../../bos/utils/b_util_memp.c ****         if (phead->status == MEMP_UNIT_FREE)
+ 228:../../bos/utils/b_util_memp.c ****         {
+ 229:../../bos/utils/b_util_memp.c ****             while (phead->next != NULL && phead->next->status == MEMP_UNIT_FREE)
+ 230:../../bos/utils/b_util_memp.c ****             {
+ 231:../../bos/utils/b_util_memp.c ****                 phead->size += phead->next->size + sizeof(bMempUnitHead_t);
+ 232:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 233:../../bos/utils/b_util_memp.c ****             }
+ 234:../../bos/utils/b_util_memp.c ****         }
+ 235:../../bos/utils/b_util_memp.c ****         phead = phead->next;
+ 236:../../bos/utils/b_util_memp.c ****     }
+ 237:../../bos/utils/b_util_memp.c **** }
+ 238:../../bos/utils/b_util_memp.c **** 
+ 239:../../bos/utils/b_util_memp.c **** static uint32_t _bGetUsableSize(uint32_t addr)
+ 240:../../bos/utils/b_util_memp.c **** {
+ 241:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *phead = (bMempUnitHead_t *)(addr - sizeof(bMempUnitHead_t));
+ 242:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+ 243:../../bos/utils/b_util_memp.c ****         (uint32_t)addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 244:../../bos/utils/b_util_memp.c ****         (uint32_t)addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 245:../../bos/utils/b_util_memp.c ****     {
+ 246:../../bos/utils/b_util_memp.c ****         return 0;
+ 247:../../bos/utils/b_util_memp.c ****     }
+ 248:../../bos/utils/b_util_memp.c ****     return phead->size;
+ 249:../../bos/utils/b_util_memp.c **** }
+ 250:../../bos/utils/b_util_memp.c **** 
+ 251:../../bos/utils/b_util_memp.c **** /**
+ 252:../../bos/utils/b_util_memp.c ****  * \}
+ 253:../../bos/utils/b_util_memp.c ****  */
+ 254:../../bos/utils/b_util_memp.c **** 
+ 255:../../bos/utils/b_util_memp.c **** /**
+ 256:../../bos/utils/b_util_memp.c ****  * \addtogroup MEMP_Exported_Functions
+ 257:../../bos/utils/b_util_memp.c ****  * \{
+ 258:../../bos/utils/b_util_memp.c ****  */
+ 259:../../bos/utils/b_util_memp.c **** 
+ 260:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_MONITOR_ENABLE) && (_MEMP_MONITOR_ENABLE == 1))
+ 261:../../bos/utils/b_util_memp.c **** static void *_bMalloc(uint32_t size)
+ 262:../../bos/utils/b_util_memp.c **** {
+ 263:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 264:../../bos/utils/b_util_memp.c ****     if (size == 0)
+ 265:../../bos/utils/b_util_memp.c ****     {
+ 266:../../bos/utils/b_util_memp.c ****         return NULL;
+ 267:../../bos/utils/b_util_memp.c ****     }
+ 268:../../bos/utils/b_util_memp.c ****     return _bMempAlloc(size);
+ 269:../../bos/utils/b_util_memp.c **** }
+ 270:../../bos/utils/b_util_memp.c **** 
+ 271:../../bos/utils/b_util_memp.c **** static void *_bCalloc(uint32_t num, uint32_t size)
+ 272:../../bos/utils/b_util_memp.c **** {
+ 273:../../bos/utils/b_util_memp.c ****     void *p = NULL;
+ 274:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 275:../../bos/utils/b_util_memp.c ****     if (size == 0 || num == 0)
+GAS LISTING /tmp/ccYhwHA9.s 			page 6
+
+
+ 276:../../bos/utils/b_util_memp.c ****     {
+ 277:../../bos/utils/b_util_memp.c ****         return NULL;
+ 278:../../bos/utils/b_util_memp.c ****     }
+ 279:../../bos/utils/b_util_memp.c ****     p = _bMempAlloc(size * num);
+ 280:../../bos/utils/b_util_memp.c ****     if (p)
+ 281:../../bos/utils/b_util_memp.c ****     {
+ 282:../../bos/utils/b_util_memp.c ****         memset(p, 0, (size * num));
+ 283:../../bos/utils/b_util_memp.c ****     }
+ 284:../../bos/utils/b_util_memp.c ****     return p;
+ 285:../../bos/utils/b_util_memp.c **** }
+ 286:../../bos/utils/b_util_memp.c **** 
+ 287:../../bos/utils/b_util_memp.c **** static void _bFree(void *paddr)
+ 288:../../bos/utils/b_util_memp.c **** {
+ 289:../../bos/utils/b_util_memp.c ****     if (paddr == NULL || bMempInitFlag == 0)
+ 290:../../bos/utils/b_util_memp.c ****     {
+ 291:../../bos/utils/b_util_memp.c ****         return;
+ 292:../../bos/utils/b_util_memp.c ****     }
+ 293:../../bos/utils/b_util_memp.c ****     _bMempFree((uint32_t)paddr);
+ 294:../../bos/utils/b_util_memp.c **** }
+ 295:../../bos/utils/b_util_memp.c **** 
+ 296:../../bos/utils/b_util_memp.c **** static void *_bRealloc(void *paddr, uint32_t size)
+ 297:../../bos/utils/b_util_memp.c **** {
+ 298:../../bos/utils/b_util_memp.c ****     if (paddr == NULL)
+ 299:../../bos/utils/b_util_memp.c ****     {
+ 300:../../bos/utils/b_util_memp.c ****         return bMalloc(size);
+ 301:../../bos/utils/b_util_memp.c ****     }
+ 302:../../bos/utils/b_util_memp.c ****     if (size == 0)
+ 303:../../bos/utils/b_util_memp.c ****     {
+ 304:../../bos/utils/b_util_memp.c ****         bFree(paddr);
+ 305:../../bos/utils/b_util_memp.c ****         return NULL;
+ 306:../../bos/utils/b_util_memp.c ****     }
+ 307:../../bos/utils/b_util_memp.c ****     void *new_ptr = bMalloc(size);
+ 308:../../bos/utils/b_util_memp.c ****     if (new_ptr == NULL)
+ 309:../../bos/utils/b_util_memp.c ****     {
+ 310:../../bos/utils/b_util_memp.c ****         return NULL;
+ 311:../../bos/utils/b_util_memp.c ****     }
+ 312:../../bos/utils/b_util_memp.c ****     uint32_t old_size  = _bGetUsableSize((uint32_t)paddr);
+ 313:../../bos/utils/b_util_memp.c ****     uint32_t copy_size = (size < old_size) ? size : old_size;
+ 314:../../bos/utils/b_util_memp.c ****     memcpy(new_ptr, paddr, copy_size);
+ 315:../../bos/utils/b_util_memp.c ****     bFree(paddr);
+ 316:../../bos/utils/b_util_memp.c ****     return new_ptr;
+ 317:../../bos/utils/b_util_memp.c **** }
+ 318:../../bos/utils/b_util_memp.c **** 
+ 319:../../bos/utils/b_util_memp.c **** #else
+ 320:../../bos/utils/b_util_memp.c **** void *bMalloc(uint32_t size)
+ 321:../../bos/utils/b_util_memp.c **** {
+ 322:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 323:../../bos/utils/b_util_memp.c ****     if (size == 0)
+ 324:../../bos/utils/b_util_memp.c ****     {
+ 325:../../bos/utils/b_util_memp.c ****         return NULL;
+ 326:../../bos/utils/b_util_memp.c ****     }
+ 327:../../bos/utils/b_util_memp.c ****     return _bMempAlloc(size);
+ 328:../../bos/utils/b_util_memp.c **** }
+ 329:../../bos/utils/b_util_memp.c **** 
+ 330:../../bos/utils/b_util_memp.c **** void *bCalloc(uint32_t num, uint32_t size)
+ 331:../../bos/utils/b_util_memp.c **** {
+ 332:../../bos/utils/b_util_memp.c ****     void *p = NULL;
+GAS LISTING /tmp/ccYhwHA9.s 			page 7
+
+
+ 333:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 334:../../bos/utils/b_util_memp.c ****     if (size == 0 || num == 0)
+ 335:../../bos/utils/b_util_memp.c ****     {
+ 336:../../bos/utils/b_util_memp.c ****         return NULL;
+ 337:../../bos/utils/b_util_memp.c ****     }
+ 338:../../bos/utils/b_util_memp.c ****     p = _bMempAlloc(size * num);
+ 339:../../bos/utils/b_util_memp.c ****     if (p)
+ 340:../../bos/utils/b_util_memp.c ****     {
+ 341:../../bos/utils/b_util_memp.c ****         memset(p, 0, (size * num));
+ 342:../../bos/utils/b_util_memp.c ****     }
+ 343:../../bos/utils/b_util_memp.c ****     return p;
+ 344:../../bos/utils/b_util_memp.c **** }
+ 345:../../bos/utils/b_util_memp.c **** 
+ 346:../../bos/utils/b_util_memp.c **** void bFree(void *paddr)
+ 347:../../bos/utils/b_util_memp.c **** {
+  12              		.loc 1 347 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 347 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+ 348:../../bos/utils/b_util_memp.c ****     if (paddr == NULL || bMempInitFlag == 0)
+  16              		.loc 1 348 5 is_stmt 1 view .LVU2
+  17              		.loc 1 348 8 is_stmt 0 view .LVU3
+  18 0004 4885FF   		testq	%rdi, %rdi
+  19 0007 7409     		je	.L20
+  20              		.loc 1 348 23 discriminator 1 view .LVU4
+  21 0009 803D0000 		cmpb	$0, bMempInitFlag(%rip)
+  21      000000
+  22 0010 7506     		jne	.L31
+  23              	.LVL1:
+  24              	.L20:
+  25              		.loc 1 348 23 discriminator 1 view .LVU5
+  26 0012 C3       		ret
+  27              	.LVL2:
+  28              		.p2align 4,,10
+  29 0013 0F1F4400 		.p2align 3
+  29      00
+  30              	.L31:
+ 349:../../bos/utils/b_util_memp.c ****     {
+ 350:../../bos/utils/b_util_memp.c ****         return;
+ 351:../../bos/utils/b_util_memp.c ****     }
+ 352:../../bos/utils/b_util_memp.c ****     _bMempFree((uint32_t)paddr);
+  31              		.loc 1 352 5 is_stmt 1 view .LVU6
+  32              	.LBB38:
+  33              	.LBI38:
+ 213:../../bos/utils/b_util_memp.c **** {
+  34              		.loc 1 213 13 view .LVU7
+  35              	.LBB39:
+ 215:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+  36              		.loc 1 215 5 view .LVU8
+ 215:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+  37              		.loc 1 215 55 is_stmt 0 view .LVU9
+  38 0018 89FF     		movl	%edi, %edi
+  39              	.LVL3:
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+  40              		.loc 1 216 5 is_stmt 1 view .LVU10
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+  41              		.loc 1 216 8 is_stmt 0 view .LVU11
+GAS LISTING /tmp/ccYhwHA9.s 			page 8
+
+
+  42 001a 807FF4AA 		cmpb	$-86, -12(%rdi)
+  43 001e 75F2     		jne	.L20
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+  44              		.loc 1 217 18 view .LVU12
+  45 0020 488D1500 		leaq	bMempBuf(%rip), %rdx
+  45      000000
+  46 0027 89D0     		movl	%edx, %eax
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+  47              		.loc 1 217 38 view .LVU13
+  48 0029 4883C00C 		addq	$12, %rax
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+  49              		.loc 1 216 41 discriminator 1 view .LVU14
+  50 002d 4839C7   		cmpq	%rax, %rdi
+  51 0030 72E0     		jb	.L20
+ 218:../../bos/utils/b_util_memp.c ****     {
+  52              		.loc 1 218 38 view .LVU15
+  53 0032 8D820090 		leal	102400(%rdx), %eax
+  53      0100
+ 218:../../bos/utils/b_util_memp.c ****     {
+  54              		.loc 1 218 50 view .LVU16
+  55 0038 4883E80C 		subq	$12, %rax
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+  56              		.loc 1 217 65 view .LVU17
+  57 003c 4839F8   		cmpq	%rdi, %rax
+  58 003f 72D1     		jb	.L20
+ 222:../../bos/utils/b_util_memp.c ****     phead         = (bMempUnitHead_t *)bMempBuf;
+  59              		.loc 1 222 5 is_stmt 1 view .LVU18
+ 222:../../bos/utils/b_util_memp.c ****     phead         = (bMempUnitHead_t *)bMempBuf;
+  60              		.loc 1 222 19 is_stmt 0 view .LVU19
+  61 0041 C647F455 		movb	$85, -12(%rdi)
+ 223:../../bos/utils/b_util_memp.c **** 
+  62              		.loc 1 223 5 is_stmt 1 view .LVU20
+  63              	.LVL4:
+ 225:../../bos/utils/b_util_memp.c ****     {
+  64              		.loc 1 225 5 view .LVU21
+ 225:../../bos/utils/b_util_memp.c ****     {
+  65              		.loc 1 225 18 view .LVU22
+  66              	.L21:
+ 227:../../bos/utils/b_util_memp.c ****         {
+  67              		.loc 1 227 9 view .LVU23
+ 227:../../bos/utils/b_util_memp.c ****         {
+  68              		.loc 1 227 12 is_stmt 0 view .LVU24
+  69 0045 803A55   		cmpb	$85, (%rdx)
+ 229:../../bos/utils/b_util_memp.c ****             {
+  70              		.loc 1 229 25 view .LVU25
+  71 0048 488B4204 		movq	4(%rdx), %rax
+ 227:../../bos/utils/b_util_memp.c ****         {
+  72              		.loc 1 227 12 view .LVU26
+  73 004c 740A     		je	.L32
+ 235:../../bos/utils/b_util_memp.c ****     }
+  74              		.loc 1 235 9 is_stmt 1 view .LVU27
+ 225:../../bos/utils/b_util_memp.c ****     {
+  75              		.loc 1 225 18 view .LVU28
+  76 004e 4885C0   		testq	%rax, %rax
+  77 0051 74BF     		je	.L20
+  78              	.LVL5:
+  79              	.L27:
+GAS LISTING /tmp/ccYhwHA9.s 			page 9
+
+
+ 225:../../bos/utils/b_util_memp.c ****     {
+  80              		.loc 1 225 18 is_stmt 0 view .LVU29
+  81              	.LBE39:
+  82              	.LBE38:
+ 347:../../bos/utils/b_util_memp.c ****     if (paddr == NULL || bMempInitFlag == 0)
+  83              		.loc 1 347 1 view .LVU30
+  84 0053 4889C2   		movq	%rax, %rdx
+  85 0056 EBED     		jmp	.L21
+  86              	.LVL6:
+  87              	.L32:
+  88              	.LBB43:
+  89              	.LBB40:
+ 229:../../bos/utils/b_util_memp.c ****             {
+  90              		.loc 1 229 40 is_stmt 1 view .LVU31
+  91 0058 4885C0   		testq	%rax, %rax
+  92 005b 74B5     		je	.L20
+ 229:../../bos/utils/b_util_memp.c ****             {
+  93              		.loc 1 229 40 is_stmt 0 discriminator 1 view .LVU32
+  94 005d 803855   		cmpb	$85, (%rax)
+  95 0060 75F1     		jne	.L27
+  96              	.LBE40:
+  97              	.LBE43:
+ 347:../../bos/utils/b_util_memp.c ****     if (paddr == NULL || bMempInitFlag == 0)
+  98              		.loc 1 347 1 view .LVU33
+  99 0062 53       		pushq	%rbx
+ 100              	.LCFI0:
+ 101              		.cfi_def_cfa_offset 16
+ 102              		.cfi_offset 3, -16
+ 103 0063 EB08     		jmp	.L6
+ 104              	.LVL7:
+ 105              		.p2align 4,,10
+ 106 0065 0F1F00   		.p2align 3
+ 107              	.L33:
+ 108              	.LBB44:
+ 109              	.LBB41:
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 110              		.loc 1 229 40 discriminator 1 view .LVU34
+ 111 0068 803855   		cmpb	$85, (%rax)
+ 112 006b 7553     		jne	.L7
+ 113              	.L6:
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 114              		.loc 1 231 17 is_stmt 1 view .LVU35
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 115              		.loc 1 231 22 is_stmt 0 view .LVU36
+ 116 006d 0FB64A02 		movzbl	2(%rdx), %ecx
+ 117 0071 0FB67201 		movzbl	1(%rdx), %esi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 118              		.loc 1 231 43 view .LVU37
+ 119 0075 0FB67802 		movzbl	2(%rax), %edi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 120              		.loc 1 231 22 view .LVU38
+ 121 0079 48C1E108 		salq	$8, %rcx
+ 122 007d 4809F1   		orq	%rsi, %rcx
+ 123 0080 0FB67203 		movzbl	3(%rdx), %esi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 124              		.loc 1 231 43 view .LVU39
+ 125 0084 48C1E708 		salq	$8, %rdi
+GAS LISTING /tmp/ccYhwHA9.s 			page 10
+
+
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 126              		.loc 1 231 22 view .LVU40
+ 127 0088 48C1E610 		salq	$16, %rsi
+ 128 008c 4809CE   		orq	%rcx, %rsi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 129              		.loc 1 231 43 view .LVU41
+ 130 008f 0FB64801 		movzbl	1(%rax), %ecx
+ 131 0093 4809CF   		orq	%rcx, %rdi
+ 132 0096 0FB64803 		movzbl	3(%rax), %ecx
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 133              		.loc 1 232 42 view .LVU42
+ 134 009a 488B4004 		movq	4(%rax), %rax
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 135              		.loc 1 231 43 view .LVU43
+ 136 009e 48C1E110 		salq	$16, %rcx
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 137              		.loc 1 232 29 view .LVU44
+ 138 00a2 48894204 		movq	%rax, 4(%rdx)
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 139              		.loc 1 231 43 view .LVU45
+ 140 00a6 4809F9   		orq	%rdi, %rcx
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 141              		.loc 1 231 29 view .LVU46
+ 142 00a9 8D4C0E0C 		leal	12(%rsi,%rcx), %ecx
+ 143 00ad 884A01   		movb	%cl, 1(%rdx)
+ 144 00b0 886A02   		movb	%ch, 2(%rdx)
+ 145 00b3 C1E910   		shrl	$16, %ecx
+ 146 00b6 884A03   		movb	%cl, 3(%rdx)
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 147              		.loc 1 232 17 is_stmt 1 view .LVU47
+ 148              	.L29:
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 149              		.loc 1 229 40 view .LVU48
+ 150 00b9 4885C0   		testq	%rax, %rax
+ 151 00bc 75AA     		jne	.L33
+ 152              	.LBE41:
+ 153              	.LBE44:
+ 353:../../bos/utils/b_util_memp.c **** }
+ 154              		.loc 1 353 1 is_stmt 0 view .LVU49
+ 155 00be 5B       		popq	%rbx
+ 156              	.LCFI1:
+ 157              		.cfi_remember_state
+ 158              		.cfi_def_cfa_offset 8
+ 159 00bf C3       		ret
+ 160              	.LVL8:
+ 161              		.p2align 4,,10
+ 162              		.p2align 3
+ 163              	.L7:
+ 164              	.LCFI2:
+ 165              		.cfi_restore_state
+ 347:../../bos/utils/b_util_memp.c ****     if (paddr == NULL || bMempInitFlag == 0)
+ 166              		.loc 1 347 1 view .LVU50
+ 167 00c0 4889C2   		movq	%rax, %rdx
+ 168              	.LVL9:
+ 169              	.LBB45:
+ 170              	.LBB42:
+ 227:../../bos/utils/b_util_memp.c ****         {
+GAS LISTING /tmp/ccYhwHA9.s 			page 11
+
+
+ 171              		.loc 1 227 9 is_stmt 1 view .LVU51
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 172              		.loc 1 229 25 is_stmt 0 view .LVU52
+ 173 00c3 488B4004 		movq	4(%rax), %rax
+ 174              	.LVL10:
+ 227:../../bos/utils/b_util_memp.c ****         {
+ 175              		.loc 1 227 12 view .LVU53
+ 176 00c7 803A55   		cmpb	$85, (%rdx)
+ 177 00ca 74ED     		je	.L29
+ 235:../../bos/utils/b_util_memp.c ****     }
+ 178              		.loc 1 235 9 is_stmt 1 view .LVU54
+ 179              	.LVL11:
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 180              		.loc 1 225 18 view .LVU55
+ 181 00cc 4885C0   		testq	%rax, %rax
+ 182 00cf 75EF     		jne	.L7
+ 183              	.LBE42:
+ 184              	.LBE45:
+ 185              		.loc 1 353 1 is_stmt 0 view .LVU56
+ 186 00d1 5B       		popq	%rbx
+ 187              	.LCFI3:
+ 188              		.cfi_def_cfa_offset 8
+ 189 00d2 C3       		ret
+ 190              		.cfi_endproc
+ 191              	.LFE24:
+ 193              		.section	.text.bGetFreeSize,"ax",@progbits
+ 194              		.p2align 4
+ 195              		.globl	bGetFreeSize
+ 197              	bGetFreeSize:
+ 198              	.LFB26:
+ 354:../../bos/utils/b_util_memp.c **** 
+ 355:../../bos/utils/b_util_memp.c **** void *bRealloc(void *paddr, uint32_t size)
+ 356:../../bos/utils/b_util_memp.c **** {
+ 357:../../bos/utils/b_util_memp.c ****     if (paddr == NULL)
+ 358:../../bos/utils/b_util_memp.c ****     {
+ 359:../../bos/utils/b_util_memp.c ****         return bMalloc(size);
+ 360:../../bos/utils/b_util_memp.c ****     }
+ 361:../../bos/utils/b_util_memp.c ****     if (size == 0)
+ 362:../../bos/utils/b_util_memp.c ****     {
+ 363:../../bos/utils/b_util_memp.c ****         bFree(paddr);
+ 364:../../bos/utils/b_util_memp.c ****         return NULL;
+ 365:../../bos/utils/b_util_memp.c ****     }
+ 366:../../bos/utils/b_util_memp.c ****     void *new_ptr = bMalloc(size);
+ 367:../../bos/utils/b_util_memp.c ****     if (new_ptr == NULL)
+ 368:../../bos/utils/b_util_memp.c ****     {
+ 369:../../bos/utils/b_util_memp.c ****         return NULL;
+ 370:../../bos/utils/b_util_memp.c ****     }
+ 371:../../bos/utils/b_util_memp.c ****     uint32_t old_size  = _bGetUsableSize((uint32_t)paddr);
+ 372:../../bos/utils/b_util_memp.c ****     uint32_t copy_size = (size < old_size) ? size : old_size;
+ 373:../../bos/utils/b_util_memp.c ****     memcpy(new_ptr, paddr, copy_size);
+ 374:../../bos/utils/b_util_memp.c ****     bFree(paddr);
+ 375:../../bos/utils/b_util_memp.c ****     return new_ptr;
+ 376:../../bos/utils/b_util_memp.c **** }
+ 377:../../bos/utils/b_util_memp.c **** 
+ 378:../../bos/utils/b_util_memp.c **** #endif
+ 379:../../bos/utils/b_util_memp.c **** 
+ 380:../../bos/utils/b_util_memp.c **** uint32_t bGetFreeSize()
+GAS LISTING /tmp/ccYhwHA9.s 			page 12
+
+
+ 381:../../bos/utils/b_util_memp.c **** {
+ 199              		.loc 1 381 1 is_stmt 1 view -0
+ 200              		.cfi_startproc
+ 201 0000 F30F1EFA 		endbr64
+ 382:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 202              		.loc 1 382 5 view .LVU58
+ 203              	.LBB54:
+ 204              	.LBI54:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 205              		.loc 1 123 13 view .LVU59
+ 206              	.LBB55:
+ 125:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 207              		.loc 1 125 5 view .LVU60
+ 208              	.LVL12:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 209              		.loc 1 126 5 view .LVU61
+ 210              	.LBE55:
+ 211              	.LBE54:
+ 381:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 212              		.loc 1 381 1 is_stmt 0 view .LVU62
+ 213 0004 4883EC08 		subq	$8, %rsp
+ 214              	.LCFI4:
+ 215              		.cfi_def_cfa_offset 16
+ 216              	.LBB62:
+ 217              	.LBB60:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 218              		.loc 1 126 8 view .LVU63
+ 219 0008 803D0000 		cmpb	$0, bMempInitFlag(%rip)
+ 219      000000
+ 220 000f 745F     		je	.L35
+ 221              	.LBE60:
+ 222              	.LBE62:
+ 223              	.LBB63:
+ 224              	.LBB64:
+ 142:../../bos/utils/b_util_memp.c ****         {
+ 225              		.loc 1 142 18 view .LVU64
+ 226 0011 0FB60D00 		movzbl	bMempBuf(%rip), %ecx
+ 226      000000
+ 146:../../bos/utils/b_util_memp.c ****     }
+ 227              		.loc 1 146 15 view .LVU65
+ 228 0018 488B0500 		movq	4+bMempBuf(%rip), %rax
+ 228      000000
+ 229              	.L36:
+ 230              	.LBE64:
+ 231              	.LBE63:
+ 383:../../bos/utils/b_util_memp.c ****     return _bGetFreeSize();
+ 232              		.loc 1 383 5 is_stmt 1 view .LVU66
+ 233              	.LBB66:
+ 234              	.LBI63:
+ 136:../../bos/utils/b_util_memp.c **** {
+ 235              		.loc 1 136 17 view .LVU67
+ 236              	.LBB65:
+ 138:../../bos/utils/b_util_memp.c ****     uint32_t         ret   = 0;
+ 237              		.loc 1 138 5 view .LVU68
+ 238              	.LVL13:
+ 139:../../bos/utils/b_util_memp.c ****     while (phead)
+ 239              		.loc 1 139 5 view .LVU69
+GAS LISTING /tmp/ccYhwHA9.s 			page 13
+
+
+ 140:../../bos/utils/b_util_memp.c ****     {
+ 240              		.loc 1 140 5 view .LVU70
+ 140:../../bos/utils/b_util_memp.c ****     {
+ 241              		.loc 1 140 12 view .LVU71
+ 139:../../bos/utils/b_util_memp.c ****     while (phead)
+ 242              		.loc 1 139 22 is_stmt 0 view .LVU72
+ 243 001f 31F6     		xorl	%esi, %esi
+ 138:../../bos/utils/b_util_memp.c ****     uint32_t         ret   = 0;
+ 244              		.loc 1 138 22 view .LVU73
+ 245 0021 488D1500 		leaq	bMempBuf(%rip), %rdx
+ 245      000000
+ 246 0028 EB10     		jmp	.L39
+ 247              	.LVL14:
+ 248 002a 660F1F44 		.p2align 4,,10
+ 248      0000
+ 249              		.p2align 3
+ 250              	.L41:
+ 142:../../bos/utils/b_util_memp.c ****         {
+ 251              		.loc 1 142 18 view .LVU74
+ 252 0030 0FB608   		movzbl	(%rax), %ecx
+ 146:../../bos/utils/b_util_memp.c ****     }
+ 253              		.loc 1 146 15 view .LVU75
+ 254 0033 4889C2   		movq	%rax, %rdx
+ 255 0036 488B4004 		movq	4(%rax), %rax
+ 256              	.LVL15:
+ 257              	.L39:
+ 142:../../bos/utils/b_util_memp.c ****         {
+ 258              		.loc 1 142 9 is_stmt 1 view .LVU76
+ 142:../../bos/utils/b_util_memp.c ****         {
+ 259              		.loc 1 142 12 is_stmt 0 view .LVU77
+ 260 003a 80F955   		cmpb	$85, %cl
+ 261 003d 751C     		jne	.L37
+ 144:../../bos/utils/b_util_memp.c ****         }
+ 262              		.loc 1 144 13 is_stmt 1 view .LVU78
+ 144:../../bos/utils/b_util_memp.c ****         }
+ 263              		.loc 1 144 25 is_stmt 0 view .LVU79
+ 264 003f 0FB64A02 		movzbl	2(%rdx), %ecx
+ 265 0043 0FB67A01 		movzbl	1(%rdx), %edi
+ 266 0047 0FB65203 		movzbl	3(%rdx), %edx
+ 267 004b 48C1E108 		salq	$8, %rcx
+ 268 004f 4809F9   		orq	%rdi, %rcx
+ 269 0052 48C1E210 		salq	$16, %rdx
+ 270 0056 4809CA   		orq	%rcx, %rdx
+ 144:../../bos/utils/b_util_memp.c ****         }
+ 271              		.loc 1 144 17 view .LVU80
+ 272 0059 01D6     		addl	%edx, %esi
+ 273              	.LVL16:
+ 274              	.L37:
+ 146:../../bos/utils/b_util_memp.c ****     }
+ 275              		.loc 1 146 9 is_stmt 1 view .LVU81
+ 140:../../bos/utils/b_util_memp.c ****     {
+ 276              		.loc 1 140 12 view .LVU82
+ 277 005b 4885C0   		testq	%rax, %rax
+ 278 005e 75D0     		jne	.L41
+ 140:../../bos/utils/b_util_memp.c ****     {
+ 279              		.loc 1 140 12 is_stmt 0 view .LVU83
+ 280              	.LBE65:
+GAS LISTING /tmp/ccYhwHA9.s 			page 14
+
+
+ 281              	.LBE66:
+ 384:../../bos/utils/b_util_memp.c **** }
+ 282              		.loc 1 384 1 view .LVU84
+ 283 0060 89F0     		movl	%esi, %eax
+ 284 0062 4883C408 		addq	$8, %rsp
+ 285              	.LCFI5:
+ 286              		.cfi_remember_state
+ 287              		.cfi_def_cfa_offset 8
+ 288 0066 C3       		ret
+ 289              	.LVL17:
+ 290 0067 660F1F84 		.p2align 4,,10
+ 290      00000000 
+ 290      00
+ 291              		.p2align 3
+ 292              	.L35:
+ 293              	.LCFI6:
+ 294              		.cfi_restore_state
+ 295              	.LBB67:
+ 296              	.LBB61:
+ 297              	.LBB56:
+ 298              	.LBI56:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 299              		.loc 1 123 13 is_stmt 1 view .LVU85
+ 300              	.LBB57:
+ 128:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 301              		.loc 1 128 9 view .LVU86
+ 302              	.LBB58:
+ 303              	.LBI58:
+ 304              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+GAS LISTING /tmp/ccYhwHA9.s 			page 15
+
+
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+ 305              		.loc 2 57 1 view .LVU87
+ 306              	.LBB59:
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+ 307              		.loc 2 59 3 view .LVU88
+ 308              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU89
+ 309 0070 BA009001 		movl	$102400, %edx
+ 309      00
+ 310 0075 31F6     		xorl	%esi, %esi
+ 311 0077 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 311      000000
+ 312 007e E8000000 		call	memset@PLT
+ 312      00
+ 313              	.LVL18:
+ 314              		.loc 2 59 10 discriminator 1 view .LVU90
+ 315              	.LBE59:
+ 316              	.LBE58:
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 317              		.loc 1 129 9 is_stmt 1 view .LVU91
+ 130:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 318              		.loc 1 130 9 view .LVU92
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 319              		.loc 1 132 23 is_stmt 0 view .LVU93
+ 320 0083 C6050000 		movb	$1, bMempInitFlag(%rip)
+ 320      000001
+ 134:../../bos/utils/b_util_memp.c **** 
+ 321              		.loc 1 134 1 view .LVU94
+ 322 008a 31C0     		xorl	%eax, %eax
+GAS LISTING /tmp/ccYhwHA9.s 			page 16
+
+
+ 323 008c B9550000 		movl	$85, %ecx
+ 323      00
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 324              		.loc 1 129 23 view .LVU95
+ 325 0091 C7050000 		movl	$26211413, bMempBuf(%rip)
+ 325      000055F4 
+ 325      8F01
+ 131:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 326              		.loc 1 131 9 is_stmt 1 view .LVU96
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 327              		.loc 1 132 9 view .LVU97
+ 134:../../bos/utils/b_util_memp.c **** 
+ 328              		.loc 1 134 1 is_stmt 0 view .LVU98
+ 329 009b EB82     		jmp	.L36
+ 330              	.LBE57:
+ 331              	.LBE56:
+ 332              	.LBE61:
+ 333              	.LBE67:
+ 334              		.cfi_endproc
+ 335              	.LFE26:
+ 337              		.section	.text.bGetTotalSize,"ax",@progbits
+ 338              		.p2align 4
+ 339              		.globl	bGetTotalSize
+ 341              	bGetTotalSize:
+ 342              	.LFB27:
+ 385:../../bos/utils/b_util_memp.c **** 
+ 386:../../bos/utils/b_util_memp.c **** uint32_t bGetTotalSize()
+ 387:../../bos/utils/b_util_memp.c **** {
+ 343              		.loc 1 387 1 is_stmt 1 view -0
+ 344              		.cfi_startproc
+ 345 0000 F30F1EFA 		endbr64
+ 388:../../bos/utils/b_util_memp.c ****     return MEMP_SIZE;
+ 346              		.loc 1 388 5 view .LVU100
+ 389:../../bos/utils/b_util_memp.c **** }
+ 347              		.loc 1 389 1 is_stmt 0 view .LVU101
+ 348 0004 B8009001 		movl	$102400, %eax
+ 348      00
+ 349 0009 C3       		ret
+ 350              		.cfi_endproc
+ 351              	.LFE27:
+ 353              		.section	.text.bMallocFailedHook,"ax",@progbits
+ 354              		.p2align 4
+ 355              		.weak	bMallocFailedHook
+ 357              	bMallocFailedHook:
+ 358              	.LFB28:
+ 390:../../bos/utils/b_util_memp.c **** 
+ 391:../../bos/utils/b_util_memp.c **** #if defined(__WEAKDEF)
+ 392:../../bos/utils/b_util_memp.c **** __WEAKDEF void bMallocFailedHook()
+ 393:../../bos/utils/b_util_memp.c **** {
+ 359              		.loc 1 393 1 is_stmt 1 view -0
+ 360              		.cfi_startproc
+ 361 0000 F30F1EFA 		endbr64
+ 394:../../bos/utils/b_util_memp.c ****     ;
+ 362              		.loc 1 394 5 view .LVU103
+ 395:../../bos/utils/b_util_memp.c **** }
+ 363              		.loc 1 395 1 is_stmt 0 view .LVU104
+ 364 0004 C3       		ret
+GAS LISTING /tmp/ccYhwHA9.s 			page 17
+
+
+ 365              		.cfi_endproc
+ 366              	.LFE28:
+ 368              		.section	.rodata._bMempAlloc.str1.1,"aMS",@progbits,1
+ 369              	.LC0:
+ 370 0000 6D656D70 		.string	"memp alloc fail, size:%d"
+ 370      20616C6C 
+ 370      6F632066 
+ 370      61696C2C 
+ 370      2073697A 
+ 371              	.LC1:
+ 372 0019 2E2E2F2E 		.string	"../../bos/utils/b_util_memp.c"
+ 372      2E2F626F 
+ 372      732F7574 
+ 372      696C732F 
+ 372      625F7574 
+ 373              		.section	.text._bMempAlloc,"ax",@progbits
+ 374              		.p2align 4
+ 376              	_bMempAlloc:
+ 377              	.LVL19:
+ 378              	.LFB19:
+ 152:../../bos/utils/b_util_memp.c ****     size = B_SIZE_ALIGNMENT(size, 4);
+ 379              		.loc 1 152 1 is_stmt 1 view -0
+ 380              		.cfi_startproc
+ 153:../../bos/utils/b_util_memp.c **** 
+ 381              		.loc 1 153 5 view .LVU106
+ 152:../../bos/utils/b_util_memp.c ****     size = B_SIZE_ALIGNMENT(size, 4);
+ 382              		.loc 1 152 1 is_stmt 0 view .LVU107
+ 383 0000 53       		pushq	%rbx
+ 384              	.LCFI7:
+ 385              		.cfi_def_cfa_offset 16
+ 386              		.cfi_offset 3, -16
+ 153:../../bos/utils/b_util_memp.c **** 
+ 387              		.loc 1 153 12 view .LVU108
+ 388 0001 8D5F03   		leal	3(%rdi), %ebx
+ 155:../../bos/utils/b_util_memp.c ****     void            *pret       = NULL;
+ 389              		.loc 1 155 22 view .LVU109
+ 390 0004 488D0500 		leaq	bMempBuf(%rip), %rax
+ 390      000000
+ 153:../../bos/utils/b_util_memp.c **** 
+ 391              		.loc 1 153 10 view .LVU110
+ 392 000b 83E3FC   		andl	$-4, %ebx
+ 393 000e 4189DA   		movl	%ebx, %r10d
+ 394              	.LVL20:
+ 155:../../bos/utils/b_util_memp.c ****     void            *pret       = NULL;
+ 395              		.loc 1 155 5 is_stmt 1 view .LVU111
+ 156:../../bos/utils/b_util_memp.c ****     uint32_t         real_size  = size + sizeof(bMempUnitHead_t);
+ 396              		.loc 1 156 5 view .LVU112
+ 157:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *p_new_head = NULL;
+ 397              		.loc 1 157 5 view .LVU113
+ 157:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *p_new_head = NULL;
+ 398              		.loc 1 157 22 is_stmt 0 view .LVU114
+ 399 0011 8D7B0C   		leal	12(%rbx), %edi
+ 400              	.LVL21:
+ 158:../../bos/utils/b_util_memp.c ****     while (phead)
+ 401              		.loc 1 158 5 is_stmt 1 view .LVU115
+ 159:../../bos/utils/b_util_memp.c ****     {
+ 402              		.loc 1 159 5 view .LVU116
+GAS LISTING /tmp/ccYhwHA9.s 			page 18
+
+
+ 159:../../bos/utils/b_util_memp.c ****     {
+ 403              		.loc 1 159 12 view .LVU117
+ 404              		.p2align 4,,10
+ 405 0014 0F1F4000 		.p2align 3
+ 406              	.L49:
+ 161:../../bos/utils/b_util_memp.c ****         {
+ 407              		.loc 1 161 9 view .LVU118
+ 161:../../bos/utils/b_util_memp.c ****         {
+ 408              		.loc 1 161 12 is_stmt 0 view .LVU119
+ 409 0018 8038AA   		cmpb	$-86, (%rax)
+ 410 001b 7473     		je	.L53
+ 167:../../bos/utils/b_util_memp.c ****             {
+ 411              		.loc 1 167 13 is_stmt 1 view .LVU120
+ 167:../../bos/utils/b_util_memp.c ****             {
+ 412              		.loc 1 167 22 is_stmt 0 view .LVU121
+ 413 001d 0FB64802 		movzbl	2(%rax), %ecx
+ 414 0021 0FB65001 		movzbl	1(%rax), %edx
+ 415 0025 48C1E108 		salq	$8, %rcx
+ 416 0029 4809D1   		orq	%rdx, %rcx
+ 417 002c 0FB65003 		movzbl	3(%rax), %edx
+ 418 0030 48C1E210 		salq	$16, %rdx
+ 419 0034 4809CA   		orq	%rcx, %rdx
+ 167:../../bos/utils/b_util_memp.c ****             {
+ 420              		.loc 1 167 16 view .LVU122
+ 421 0037 4439D2   		cmpl	%r10d, %edx
+ 422 003a 0F849000 		je	.L54
+ 422      0000
+ 172:../../bos/utils/b_util_memp.c ****             {
+ 423              		.loc 1 172 18 is_stmt 1 view .LVU123
+ 163:../../bos/utils/b_util_memp.c ****         }
+ 424              		.loc 1 163 19 is_stmt 0 view .LVU124
+ 425 0040 488B7004 		movq	4(%rax), %rsi
+ 172:../../bos/utils/b_util_memp.c ****             {
+ 426              		.loc 1 172 21 view .LVU125
+ 427 0044 39FA     		cmpl	%edi, %edx
+ 428 0046 0F829400 		jb	.L50
+ 428      0000
+ 178:../../bos/utils/b_util_memp.c ****                 pret          = (void *)(((char *)phead) + sizeof(bMempUnitHead_t));
+ 429              		.loc 1 178 17 is_stmt 1 view .LVU126
+ 179:../../bos/utils/b_util_memp.c ****                 // create a new unit
+ 430              		.loc 1 179 31 is_stmt 0 view .LVU127
+ 431 004c 488D780C 		leaq	12(%rax), %rdi
+ 432              	.LVL22:
+ 181:../../bos/utils/b_util_memp.c ****                 p_new_head->status = MEMP_UNIT_FREE;
+ 433              		.loc 1 181 38 view .LVU128
+ 434 0050 4589D0   		movl	%r10d, %r8d
+ 183:../../bos/utils/b_util_memp.c ****                 p_new_head->next   = phead->next;
+ 435              		.loc 1 183 57 view .LVU129
+ 436 0053 4429D2   		subl	%r10d, %edx
+ 178:../../bos/utils/b_util_memp.c ****                 pret          = (void *)(((char *)phead) + sizeof(bMempUnitHead_t));
+ 437              		.loc 1 178 31 view .LVU130
+ 438 0056 C600AA   		movb	$-86, (%rax)
+ 179:../../bos/utils/b_util_memp.c ****                 // create a new unit
+ 439              		.loc 1 179 17 is_stmt 1 view .LVU131
+ 440              	.LVL23:
+ 181:../../bos/utils/b_util_memp.c ****                 p_new_head->status = MEMP_UNIT_FREE;
+ 441              		.loc 1 181 17 view .LVU132
+GAS LISTING /tmp/ccYhwHA9.s 			page 19
+
+
+ 181:../../bos/utils/b_util_memp.c ****                 p_new_head->status = MEMP_UNIT_FREE;
+ 442              		.loc 1 181 36 is_stmt 0 view .LVU133
+ 443 0059 4A8D0C07 		leaq	(%rdi,%r8), %rcx
+ 444              	.LVL24:
+ 182:../../bos/utils/b_util_memp.c ****                 p_new_head->size   = phead->size - size - sizeof(bMempUnitHead_t);
+ 445              		.loc 1 182 17 is_stmt 1 view .LVU134
+ 183:../../bos/utils/b_util_memp.c ****                 p_new_head->next   = phead->next;
+ 446              		.loc 1 183 57 is_stmt 0 view .LVU135
+ 447 005d 83EA0C   		subl	$12, %edx
+ 185:../../bos/utils/b_util_memp.c ****                 phead->next        = p_new_head;
+ 448              		.loc 1 185 36 view .LVU136
+ 449 0060 4489D3   		movl	%r10d, %ebx
+ 450              	.LVL25:
+ 183:../../bos/utils/b_util_memp.c ****                 p_new_head->next   = phead->next;
+ 451              		.loc 1 183 36 view .LVU137
+ 452 0063 885101   		movb	%dl, 1(%rcx)
+ 453 0066 887102   		movb	%dh, 2(%rcx)
+ 454 0069 C1EA10   		shrl	$16, %edx
+ 182:../../bos/utils/b_util_memp.c ****                 p_new_head->size   = phead->size - size - sizeof(bMempUnitHead_t);
+ 455              		.loc 1 182 36 view .LVU138
+ 456 006c C60155   		movb	$85, (%rcx)
+ 183:../../bos/utils/b_util_memp.c ****                 p_new_head->next   = phead->next;
+ 457              		.loc 1 183 17 is_stmt 1 view .LVU139
+ 183:../../bos/utils/b_util_memp.c ****                 p_new_head->next   = phead->next;
+ 458              		.loc 1 183 36 is_stmt 0 view .LVU140
+ 459 006f 885103   		movb	%dl, 3(%rcx)
+ 184:../../bos/utils/b_util_memp.c ****                 phead->size        = size;
+ 460              		.loc 1 184 17 is_stmt 1 view .LVU141
+ 184:../../bos/utils/b_util_memp.c ****                 phead->size        = size;
+ 461              		.loc 1 184 36 is_stmt 0 view .LVU142
+ 462 0072 48897104 		movq	%rsi, 4(%rcx)
+ 185:../../bos/utils/b_util_memp.c ****                 phead->next        = p_new_head;
+ 463              		.loc 1 185 17 is_stmt 1 view .LVU143
+ 185:../../bos/utils/b_util_memp.c ****                 phead->next        = p_new_head;
+ 464              		.loc 1 185 36 is_stmt 0 view .LVU144
+ 465 0076 887802   		movb	%bh, 2(%rax)
+ 466 0079 C1EB10   		shrl	$16, %ebx
+ 467 007c 44884001 		movb	%r8b, 1(%rax)
+ 468 0080 885803   		movb	%bl, 3(%rax)
+ 186:../../bos/utils/b_util_memp.c ****             }
+ 469              		.loc 1 186 17 is_stmt 1 view .LVU145
+ 186:../../bos/utils/b_util_memp.c ****             }
+ 470              		.loc 1 186 36 is_stmt 0 view .LVU146
+ 471 0083 48894804 		movq	%rcx, 4(%rax)
+ 189:../../bos/utils/b_util_memp.c ****         {
+ 472              		.loc 1 189 9 is_stmt 1 view .LVU147
+ 194:../../bos/utils/b_util_memp.c ****     {
+ 473              		.loc 1 194 5 view .LVU148
+ 211:../../bos/utils/b_util_memp.c **** 
+ 474              		.loc 1 211 1 is_stmt 0 view .LVU149
+ 475 0087 4889F8   		movq	%rdi, %rax
+ 476 008a 5B       		popq	%rbx
+ 477              	.LCFI8:
+ 478              		.cfi_remember_state
+ 479              		.cfi_def_cfa_offset 8
+ 480 008b C3       		ret
+ 481              	.LVL26:
+GAS LISTING /tmp/ccYhwHA9.s 			page 20
+
+
+ 482 008c 0F1F4000 		.p2align 4,,10
+ 483              		.p2align 3
+ 484              	.L53:
+ 485              	.LCFI9:
+ 486              		.cfi_restore_state
+ 163:../../bos/utils/b_util_memp.c ****         }
+ 487              		.loc 1 163 13 is_stmt 1 view .LVU150
+ 163:../../bos/utils/b_util_memp.c ****         }
+ 488              		.loc 1 163 19 is_stmt 0 view .LVU151
+ 489 0090 488B4004 		movq	4(%rax), %rax
+ 490              	.LVL27:
+ 491              	.L46:
+ 159:../../bos/utils/b_util_memp.c ****     {
+ 492              		.loc 1 159 12 is_stmt 1 view .LVU152
+ 493 0094 4885C0   		testq	%rax, %rax
+ 494 0097 0F857BFF 		jne	.L49
+ 494      FFFF
+ 194:../../bos/utils/b_util_memp.c ****     {
+ 495              		.loc 1 194 5 view .LVU153
+ 196:../../bos/utils/b_util_memp.c ****         bMallocFailedHook();
+ 496              		.loc 1 196 9 view .LVU154
+ 497 009d BF020000 		movl	$2, %edi
+ 497      00
+ 498              	.LVL28:
+ 196:../../bos/utils/b_util_memp.c ****         bMallocFailedHook();
+ 499              		.loc 1 196 9 is_stmt 0 view .LVU155
+ 500 00a2 4589D1   		movl	%r10d, %r9d
+ 501 00a5 4C8D0500 		leaq	.LC0(%rip), %r8
+ 501      000000
+ 502 00ac B9C40000 		movl	$196, %ecx
+ 502      00
+ 503 00b1 488D1500 		leaq	__func__.1(%rip), %rdx
+ 503      000000
+ 504 00b8 488D3500 		leaq	.LC1(%rip), %rsi
+ 504      000000
+ 505 00bf E8000000 		call	bLogOut@PLT
+ 505      00
+ 506              	.LVL29:
+ 197:../../bos/utils/b_util_memp.c ****     }
+ 507              		.loc 1 197 9 is_stmt 1 view .LVU156
+ 508 00c4 E8000000 		call	bMallocFailedHook
+ 508      00
+ 509              	.LVL30:
+ 510 00c9 31FF     		xorl	%edi, %edi
+ 208:../../bos/utils/b_util_memp.c **** 
+ 511              		.loc 1 208 5 view .LVU157
+ 210:../../bos/utils/b_util_memp.c **** }
+ 512              		.loc 1 210 5 view .LVU158
+ 211:../../bos/utils/b_util_memp.c **** 
+ 513              		.loc 1 211 1 is_stmt 0 view .LVU159
+ 514 00cb 5B       		popq	%rbx
+ 515              	.LCFI10:
+ 516              		.cfi_remember_state
+ 517              		.cfi_def_cfa_offset 8
+ 518              	.LVL31:
+ 211:../../bos/utils/b_util_memp.c **** 
+ 519              		.loc 1 211 1 view .LVU160
+GAS LISTING /tmp/ccYhwHA9.s 			page 21
+
+
+ 520 00cc 4889F8   		movq	%rdi, %rax
+ 521 00cf C3       		ret
+ 522              	.LVL32:
+ 523              		.p2align 4,,10
+ 524              		.p2align 3
+ 525              	.L54:
+ 526              	.LCFI11:
+ 527              		.cfi_restore_state
+ 169:../../bos/utils/b_util_memp.c ****                 pret          = (void *)(((char *)phead) + sizeof(bMempUnitHead_t));
+ 528              		.loc 1 169 17 is_stmt 1 view .LVU161
+ 170:../../bos/utils/b_util_memp.c ****             }
+ 529              		.loc 1 170 31 is_stmt 0 view .LVU162
+ 530 00d0 488D780C 		leaq	12(%rax), %rdi
+ 531              	.LVL33:
+ 169:../../bos/utils/b_util_memp.c ****                 pret          = (void *)(((char *)phead) + sizeof(bMempUnitHead_t));
+ 532              		.loc 1 169 31 view .LVU163
+ 533 00d4 C600AA   		movb	$-86, (%rax)
+ 170:../../bos/utils/b_util_memp.c ****             }
+ 534              		.loc 1 170 17 is_stmt 1 view .LVU164
+ 535              	.LVL34:
+ 189:../../bos/utils/b_util_memp.c ****         {
+ 536              		.loc 1 189 9 view .LVU165
+ 194:../../bos/utils/b_util_memp.c ****     {
+ 537              		.loc 1 194 5 view .LVU166
+ 211:../../bos/utils/b_util_memp.c **** 
+ 538              		.loc 1 211 1 is_stmt 0 view .LVU167
+ 539 00d7 5B       		popq	%rbx
+ 540              	.LCFI12:
+ 541              		.cfi_remember_state
+ 542              		.cfi_def_cfa_offset 8
+ 543              	.LVL35:
+ 211:../../bos/utils/b_util_memp.c **** 
+ 544              		.loc 1 211 1 view .LVU168
+ 545 00d8 4889F8   		movq	%rdi, %rax
+ 546 00db C3       		ret
+ 547              	.LVL36:
+ 548 00dc 0F1F4000 		.p2align 4,,10
+ 549              		.p2align 3
+ 550              	.L50:
+ 551              	.LCFI13:
+ 552              		.cfi_restore_state
+ 174:../../bos/utils/b_util_memp.c ****             }
+ 553              		.loc 1 174 23 view .LVU169
+ 554 00e0 4889F0   		movq	%rsi, %rax
+ 555 00e3 EBAF     		jmp	.L46
+ 556              		.cfi_endproc
+ 557              	.LFE19:
+ 559              		.section	.text.bMalloc,"ax",@progbits
+ 560              		.p2align 4
+ 561              		.globl	bMalloc
+ 563              	bMalloc:
+ 564              	.LVL37:
+ 565              	.LFB22:
+ 321:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 566              		.loc 1 321 1 is_stmt 1 view -0
+ 567              		.cfi_startproc
+ 321:../../bos/utils/b_util_memp.c ****     _bMempInit();
+GAS LISTING /tmp/ccYhwHA9.s 			page 22
+
+
+ 568              		.loc 1 321 1 is_stmt 0 view .LVU171
+ 569 0000 F30F1EFA 		endbr64
+ 322:../../bos/utils/b_util_memp.c ****     if (size == 0)
+ 570              		.loc 1 322 5 is_stmt 1 view .LVU172
+ 571              	.LBB76:
+ 572              	.LBI76:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 573              		.loc 1 123 13 view .LVU173
+ 574              	.LBB77:
+ 125:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 575              		.loc 1 125 5 view .LVU174
+ 576              	.LVL38:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 577              		.loc 1 126 5 view .LVU175
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 578              		.loc 1 126 8 is_stmt 0 view .LVU176
+ 579 0004 803D0000 		cmpb	$0, bMempInitFlag(%rip)
+ 579      000000
+ 580              	.LBE77:
+ 581              	.LBE76:
+ 321:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 582              		.loc 1 321 1 view .LVU177
+ 583 000b 53       		pushq	%rbx
+ 584              	.LCFI14:
+ 585              		.cfi_def_cfa_offset 16
+ 586              		.cfi_offset 3, -16
+ 321:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 587              		.loc 1 321 1 view .LVU178
+ 588 000c 89FB     		movl	%edi, %ebx
+ 589              	.LBB84:
+ 590              	.LBB82:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 591              		.loc 1 126 8 view .LVU179
+ 592 000e 7410     		je	.L59
+ 593              	.LBE82:
+ 594              	.LBE84:
+ 323:../../bos/utils/b_util_memp.c ****     {
+ 595              		.loc 1 323 5 is_stmt 1 view .LVU180
+ 323:../../bos/utils/b_util_memp.c ****     {
+ 596              		.loc 1 323 8 is_stmt 0 view .LVU181
+ 597 0010 85DB     		testl	%ebx, %ebx
+ 598 0012 7434     		je	.L57
+ 599              	.LVL39:
+ 600              	.L60:
+ 327:../../bos/utils/b_util_memp.c **** }
+ 601              		.loc 1 327 5 is_stmt 1 view .LVU182
+ 327:../../bos/utils/b_util_memp.c **** }
+ 602              		.loc 1 327 12 is_stmt 0 view .LVU183
+ 603 0014 89DF     		movl	%ebx, %edi
+ 328:../../bos/utils/b_util_memp.c **** 
+ 604              		.loc 1 328 1 view .LVU184
+ 605 0016 5B       		popq	%rbx
+ 606              	.LCFI15:
+ 607              		.cfi_remember_state
+ 608              		.cfi_def_cfa_offset 8
+ 609              	.LVL40:
+ 327:../../bos/utils/b_util_memp.c **** }
+GAS LISTING /tmp/ccYhwHA9.s 			page 23
+
+
+ 610              		.loc 1 327 12 view .LVU185
+ 611 0017 E9000000 		jmp	_bMempAlloc
+ 611      00
+ 612              	.LVL41:
+ 613 001c 0F1F4000 		.p2align 4,,10
+ 614              		.p2align 3
+ 615              	.L59:
+ 616              	.LCFI16:
+ 617              		.cfi_restore_state
+ 618              	.LBB85:
+ 619              	.LBB83:
+ 620              	.LBB78:
+ 621              	.LBI78:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 622              		.loc 1 123 13 is_stmt 1 view .LVU186
+ 623              	.LBB79:
+ 128:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 624              		.loc 1 128 9 view .LVU187
+ 625              	.LBB80:
+ 626              	.LBI80:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 627              		.loc 2 57 1 view .LVU188
+ 628              	.LBB81:
+ 629              		.loc 2 59 3 view .LVU189
+ 630              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU190
+ 631 0020 BA009001 		movl	$102400, %edx
+ 631      00
+ 632 0025 31F6     		xorl	%esi, %esi
+ 633 0027 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 633      000000
+ 634 002e E8000000 		call	memset@PLT
+ 634      00
+ 635              	.LVL42:
+ 636              		.loc 2 59 10 discriminator 1 view .LVU191
+ 637              	.LBE81:
+ 638              	.LBE80:
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 639              		.loc 1 129 9 is_stmt 1 view .LVU192
+ 130:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 640              		.loc 1 130 9 view .LVU193
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 641              		.loc 1 132 23 is_stmt 0 view .LVU194
+ 642 0033 C6050000 		movb	$1, bMempInitFlag(%rip)
+ 642      000001
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 643              		.loc 1 129 23 view .LVU195
+ 644 003a C7050000 		movl	$26211413, bMempBuf(%rip)
+ 644      000055F4 
+ 644      8F01
+ 131:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 645              		.loc 1 131 9 is_stmt 1 view .LVU196
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 646              		.loc 1 132 9 view .LVU197
+ 647              	.LBE79:
+ 648              	.LBE78:
+ 649              	.LBE83:
+ 650              	.LBE85:
+GAS LISTING /tmp/ccYhwHA9.s 			page 24
+
+
+ 323:../../bos/utils/b_util_memp.c ****     {
+ 651              		.loc 1 323 5 view .LVU198
+ 323:../../bos/utils/b_util_memp.c ****     {
+ 652              		.loc 1 323 8 is_stmt 0 view .LVU199
+ 653 0044 85DB     		testl	%ebx, %ebx
+ 654 0046 75CC     		jne	.L60
+ 655              	.L57:
+ 328:../../bos/utils/b_util_memp.c **** 
+ 656              		.loc 1 328 1 view .LVU200
+ 657 0048 31C0     		xorl	%eax, %eax
+ 658 004a 5B       		popq	%rbx
+ 659              	.LCFI17:
+ 660              		.cfi_def_cfa_offset 8
+ 661              	.LVL43:
+ 328:../../bos/utils/b_util_memp.c **** 
+ 662              		.loc 1 328 1 view .LVU201
+ 663 004b C3       		ret
+ 664              		.cfi_endproc
+ 665              	.LFE22:
+ 667              		.section	.text.bCalloc,"ax",@progbits
+ 668              		.p2align 4
+ 669              		.globl	bCalloc
+ 671              	bCalloc:
+ 672              	.LVL44:
+ 673              	.LFB23:
+ 331:../../bos/utils/b_util_memp.c ****     void *p = NULL;
+ 674              		.loc 1 331 1 is_stmt 1 view -0
+ 675              		.cfi_startproc
+ 331:../../bos/utils/b_util_memp.c ****     void *p = NULL;
+ 676              		.loc 1 331 1 is_stmt 0 view .LVU203
+ 677 0000 F30F1EFA 		endbr64
+ 332:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 678              		.loc 1 332 5 is_stmt 1 view .LVU204
+ 679              	.LVL45:
+ 333:../../bos/utils/b_util_memp.c ****     if (size == 0 || num == 0)
+ 680              		.loc 1 333 5 view .LVU205
+ 681              	.LBB98:
+ 682              	.LBI98:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 683              		.loc 1 123 13 view .LVU206
+ 684              	.LBB99:
+ 125:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 685              		.loc 1 125 5 view .LVU207
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 686              		.loc 1 126 5 view .LVU208
+ 687              	.LBE99:
+ 688              	.LBE98:
+ 331:../../bos/utils/b_util_memp.c ****     void *p = NULL;
+ 689              		.loc 1 331 1 is_stmt 0 view .LVU209
+ 690 0004 55       		pushq	%rbp
+ 691              	.LCFI18:
+ 692              		.cfi_def_cfa_offset 16
+ 693              		.cfi_offset 6, -16
+ 694 0005 89FD     		movl	%edi, %ebp
+ 695 0007 53       		pushq	%rbx
+ 696              	.LCFI19:
+ 697              		.cfi_def_cfa_offset 24
+GAS LISTING /tmp/ccYhwHA9.s 			page 25
+
+
+ 698              		.cfi_offset 3, -24
+ 699 0008 89F3     		movl	%esi, %ebx
+ 700 000a 4883EC08 		subq	$8, %rsp
+ 701              	.LCFI20:
+ 702              		.cfi_def_cfa_offset 32
+ 703              	.LBB106:
+ 704              	.LBB104:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 705              		.loc 1 126 8 view .LVU210
+ 706 000e 803D0000 		cmpb	$0, bMempInitFlag(%rip)
+ 706      000000
+ 707 0015 7439     		je	.L68
+ 708              	.LBE104:
+ 709              	.LBE106:
+ 334:../../bos/utils/b_util_memp.c ****     {
+ 710              		.loc 1 334 5 is_stmt 1 view .LVU211
+ 334:../../bos/utils/b_util_memp.c ****     {
+ 711              		.loc 1 334 8 is_stmt 0 view .LVU212
+ 712 0017 85DB     		testl	%ebx, %ebx
+ 713 0019 745D     		je	.L66
+ 714              	.LVL46:
+ 715              	.L69:
+ 334:../../bos/utils/b_util_memp.c ****     {
+ 716              		.loc 1 334 8 view .LVU213
+ 717 001b 85ED     		testl	%ebp, %ebp
+ 718 001d 7459     		je	.L66
+ 338:../../bos/utils/b_util_memp.c ****     if (p)
+ 719              		.loc 1 338 5 is_stmt 1 view .LVU214
+ 338:../../bos/utils/b_util_memp.c ****     if (p)
+ 720              		.loc 1 338 9 is_stmt 0 view .LVU215
+ 721 001f 0FAFDD   		imull	%ebp, %ebx
+ 722              	.LVL47:
+ 338:../../bos/utils/b_util_memp.c ****     if (p)
+ 723              		.loc 1 338 9 view .LVU216
+ 724 0022 89DF     		movl	%ebx, %edi
+ 725 0024 E8000000 		call	_bMempAlloc
+ 725      00
+ 726              	.LVL48:
+ 727 0029 4889C1   		movq	%rax, %rcx
+ 728              	.LVL49:
+ 339:../../bos/utils/b_util_memp.c ****     {
+ 729              		.loc 1 339 5 is_stmt 1 view .LVU217
+ 339:../../bos/utils/b_util_memp.c ****     {
+ 730              		.loc 1 339 8 is_stmt 0 view .LVU218
+ 731 002c 4885C0   		testq	%rax, %rax
+ 732 002f 740F     		je	.L61
+ 341:../../bos/utils/b_util_memp.c ****     }
+ 733              		.loc 1 341 9 is_stmt 1 view .LVU219
+ 734              	.LVL50:
+ 735              	.LBB107:
+ 736              	.LBI107:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 737              		.loc 2 57 1 view .LVU220
+ 738              	.LBB108:
+ 739              		.loc 2 59 3 view .LVU221
+ 740              	.LBE108:
+ 741              	.LBE107:
+GAS LISTING /tmp/ccYhwHA9.s 			page 26
+
+
+ 341:../../bos/utils/b_util_memp.c ****     }
+ 742              		.loc 1 341 9 is_stmt 0 view .LVU222
+ 743 0031 89DA     		movl	%ebx, %edx
+ 744              	.LVL51:
+ 745              	.LBB110:
+ 746              	.LBB109:
+ 747              		.loc 2 59 10 discriminator 1 view .LVU223
+ 748 0033 31F6     		xorl	%esi, %esi
+ 749 0035 4889C7   		movq	%rax, %rdi
+ 750 0038 E8000000 		call	memset@PLT
+ 750      00
+ 751              	.LVL52:
+ 752              		.loc 2 59 10 discriminator 1 view .LVU224
+ 753 003d 4889C1   		movq	%rax, %rcx
+ 754              	.LVL53:
+ 755              	.L61:
+ 756              		.loc 2 59 10 discriminator 1 view .LVU225
+ 757              	.LBE109:
+ 758              	.LBE110:
+ 344:../../bos/utils/b_util_memp.c **** 
+ 759              		.loc 1 344 1 view .LVU226
+ 760 0040 4883C408 		addq	$8, %rsp
+ 761              	.LCFI21:
+ 762              		.cfi_remember_state
+ 763              		.cfi_def_cfa_offset 24
+ 764 0044 4889C8   		movq	%rcx, %rax
+ 765 0047 5B       		popq	%rbx
+ 766              	.LCFI22:
+ 767              		.cfi_def_cfa_offset 16
+ 768 0048 5D       		popq	%rbp
+ 769              	.LCFI23:
+ 770              		.cfi_def_cfa_offset 8
+ 771              	.LVL54:
+ 344:../../bos/utils/b_util_memp.c **** 
+ 772              		.loc 1 344 1 view .LVU227
+ 773 0049 C3       		ret
+ 774              	.LVL55:
+ 775 004a 660F1F44 		.p2align 4,,10
+ 775      0000
+ 776              		.p2align 3
+ 777              	.L68:
+ 778              	.LCFI24:
+ 779              		.cfi_restore_state
+ 780              	.LBB111:
+ 781              	.LBB105:
+ 782              	.LBB100:
+ 783              	.LBI100:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 784              		.loc 1 123 13 is_stmt 1 view .LVU228
+ 785              	.LBB101:
+ 128:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 786              		.loc 1 128 9 view .LVU229
+ 787              	.LBB102:
+ 788              	.LBI102:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 789              		.loc 2 57 1 view .LVU230
+ 790              	.LBB103:
+GAS LISTING /tmp/ccYhwHA9.s 			page 27
+
+
+ 791              		.loc 2 59 3 view .LVU231
+ 792              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU232
+ 793 0050 BA009001 		movl	$102400, %edx
+ 793      00
+ 794 0055 31F6     		xorl	%esi, %esi
+ 795 0057 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 795      000000
+ 796              	.LVL56:
+ 797              		.loc 2 59 10 discriminator 1 view .LVU233
+ 798 005e E8000000 		call	memset@PLT
+ 798      00
+ 799              	.LVL57:
+ 800              		.loc 2 59 10 discriminator 1 view .LVU234
+ 801              	.LBE103:
+ 802              	.LBE102:
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 803              		.loc 1 129 9 is_stmt 1 view .LVU235
+ 130:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 804              		.loc 1 130 9 view .LVU236
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 805              		.loc 1 132 23 is_stmt 0 view .LVU237
+ 806 0063 C6050000 		movb	$1, bMempInitFlag(%rip)
+ 806      000001
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 807              		.loc 1 129 23 view .LVU238
+ 808 006a C7050000 		movl	$26211413, bMempBuf(%rip)
+ 808      000055F4 
+ 808      8F01
+ 131:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 809              		.loc 1 131 9 is_stmt 1 view .LVU239
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 810              		.loc 1 132 9 view .LVU240
+ 811              	.LBE101:
+ 812              	.LBE100:
+ 813              	.LBE105:
+ 814              	.LBE111:
+ 334:../../bos/utils/b_util_memp.c ****     {
+ 815              		.loc 1 334 5 view .LVU241
+ 334:../../bos/utils/b_util_memp.c ****     {
+ 816              		.loc 1 334 8 is_stmt 0 view .LVU242
+ 817 0074 85DB     		testl	%ebx, %ebx
+ 818 0076 75A3     		jne	.L69
+ 819              	.L66:
+ 344:../../bos/utils/b_util_memp.c **** 
+ 820              		.loc 1 344 1 view .LVU243
+ 821 0078 4883C408 		addq	$8, %rsp
+ 822              	.LCFI25:
+ 823              		.cfi_def_cfa_offset 24
+ 336:../../bos/utils/b_util_memp.c ****     }
+ 824              		.loc 1 336 16 view .LVU244
+ 825 007c 31C9     		xorl	%ecx, %ecx
+ 344:../../bos/utils/b_util_memp.c **** 
+ 826              		.loc 1 344 1 view .LVU245
+ 827 007e 4889C8   		movq	%rcx, %rax
+ 828 0081 5B       		popq	%rbx
+ 829              	.LCFI26:
+ 830              		.cfi_def_cfa_offset 16
+GAS LISTING /tmp/ccYhwHA9.s 			page 28
+
+
+ 831              	.LVL58:
+ 344:../../bos/utils/b_util_memp.c **** 
+ 832              		.loc 1 344 1 view .LVU246
+ 833 0082 5D       		popq	%rbp
+ 834              	.LCFI27:
+ 835              		.cfi_def_cfa_offset 8
+ 836              	.LVL59:
+ 344:../../bos/utils/b_util_memp.c **** 
+ 837              		.loc 1 344 1 view .LVU247
+ 838 0083 C3       		ret
+ 839              		.cfi_endproc
+ 840              	.LFE23:
+ 842              		.section	.text.bRealloc,"ax",@progbits
+ 843              		.p2align 4
+ 844              		.globl	bRealloc
+ 846              	bRealloc:
+ 847              	.LVL60:
+ 848              	.LFB25:
+ 356:../../bos/utils/b_util_memp.c ****     if (paddr == NULL)
+ 849              		.loc 1 356 1 is_stmt 1 view -0
+ 850              		.cfi_startproc
+ 356:../../bos/utils/b_util_memp.c ****     if (paddr == NULL)
+ 851              		.loc 1 356 1 is_stmt 0 view .LVU249
+ 852 0000 F30F1EFA 		endbr64
+ 357:../../bos/utils/b_util_memp.c ****     {
+ 853              		.loc 1 357 5 is_stmt 1 view .LVU250
+ 356:../../bos/utils/b_util_memp.c ****     if (paddr == NULL)
+ 854              		.loc 1 356 1 is_stmt 0 view .LVU251
+ 855 0004 4154     		pushq	%r12
+ 856              	.LCFI28:
+ 857              		.cfi_def_cfa_offset 16
+ 858              		.cfi_offset 12, -16
+ 859              	.LBB140:
+ 860              	.LBB141:
+ 861              	.LBB142:
+ 862              	.LBB143:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 863              		.loc 1 126 23 view .LVU252
+ 864 0006 0FB60500 		movzbl	bMempInitFlag(%rip), %eax
+ 864      000000
+ 865              	.LBE143:
+ 866              	.LBE142:
+ 867              	.LBE141:
+ 868              	.LBE140:
+ 356:../../bos/utils/b_util_memp.c ****     if (paddr == NULL)
+ 869              		.loc 1 356 1 view .LVU253
+ 870 000d 55       		pushq	%rbp
+ 871              	.LCFI29:
+ 872              		.cfi_def_cfa_offset 24
+ 873              		.cfi_offset 6, -24
+ 874 000e 89F5     		movl	%esi, %ebp
+ 875 0010 53       		pushq	%rbx
+ 876              	.LCFI30:
+ 877              		.cfi_def_cfa_offset 32
+ 878              		.cfi_offset 3, -32
+ 357:../../bos/utils/b_util_memp.c ****     {
+ 879              		.loc 1 357 8 view .LVU254
+GAS LISTING /tmp/ccYhwHA9.s 			page 29
+
+
+ 880 0011 4885FF   		testq	%rdi, %rdi
+ 881 0014 0F840602 		je	.L120
+ 881      0000
+ 882 001a 4889FB   		movq	%rdi, %rbx
+ 361:../../bos/utils/b_util_memp.c ****     {
+ 883              		.loc 1 361 5 is_stmt 1 view .LVU255
+ 361:../../bos/utils/b_util_memp.c ****     {
+ 884              		.loc 1 361 8 is_stmt 0 view .LVU256
+ 885 001d 85F6     		testl	%esi, %esi
+ 886 001f 0F842301 		je	.L121
+ 886      0000
+ 366:../../bos/utils/b_util_memp.c ****     if (new_ptr == NULL)
+ 887              		.loc 1 366 5 is_stmt 1 view .LVU257
+ 888              	.LVL61:
+ 889              	.LBB156:
+ 890              	.LBI156:
+ 320:../../bos/utils/b_util_memp.c **** {
+ 891              		.loc 1 320 7 view .LVU258
+ 892              	.LBB157:
+ 322:../../bos/utils/b_util_memp.c ****     if (size == 0)
+ 893              		.loc 1 322 5 view .LVU259
+ 894              	.LBB158:
+ 895              	.LBI158:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 896              		.loc 1 123 13 view .LVU260
+ 897              	.LBB159:
+ 125:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 898              		.loc 1 125 5 view .LVU261
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 899              		.loc 1 126 5 view .LVU262
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 900              		.loc 1 126 8 is_stmt 0 view .LVU263
+ 901 0025 84C0     		testb	%al, %al
+ 902 0027 0F84EB00 		je	.L122
+ 902      0000
+ 903              	.LVL62:
+ 904              	.L81:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 905              		.loc 1 126 8 view .LVU264
+ 906              	.LBE159:
+ 907              	.LBE158:
+ 323:../../bos/utils/b_util_memp.c ****     {
+ 908              		.loc 1 323 5 is_stmt 1 view .LVU265
+ 327:../../bos/utils/b_util_memp.c **** }
+ 909              		.loc 1 327 5 view .LVU266
+ 327:../../bos/utils/b_util_memp.c **** }
+ 910              		.loc 1 327 12 is_stmt 0 view .LVU267
+ 911 002d 89EF     		movl	%ebp, %edi
+ 912 002f E8000000 		call	_bMempAlloc
+ 912      00
+ 913              	.LVL63:
+ 914 0034 4989C1   		movq	%rax, %r9
+ 915              	.LVL64:
+ 327:../../bos/utils/b_util_memp.c **** }
+ 916              		.loc 1 327 12 view .LVU268
+ 917              	.LBE157:
+ 918              	.LBE156:
+GAS LISTING /tmp/ccYhwHA9.s 			page 30
+
+
+ 367:../../bos/utils/b_util_memp.c ****     {
+ 919              		.loc 1 367 5 is_stmt 1 view .LVU269
+ 367:../../bos/utils/b_util_memp.c ****     {
+ 920              		.loc 1 367 8 is_stmt 0 view .LVU270
+ 921 0037 4885C0   		testq	%rax, %rax
+ 922 003a 0F840C01 		je	.L73
+ 922      0000
+ 371:../../bos/utils/b_util_memp.c ****     uint32_t copy_size = (size < old_size) ? size : old_size;
+ 923              		.loc 1 371 5 is_stmt 1 view .LVU271
+ 924              	.LVL65:
+ 925              	.LBB167:
+ 926              	.LBI167:
+ 239:../../bos/utils/b_util_memp.c **** {
+ 927              		.loc 1 239 17 view .LVU272
+ 928              	.LBB168:
+ 241:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+ 929              		.loc 1 241 5 view .LVU273
+ 241:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+ 930              		.loc 1 241 55 is_stmt 0 view .LVU274
+ 931 0040 4189DC   		movl	%ebx, %r12d
+ 932              	.LVL66:
+ 242:../../bos/utils/b_util_memp.c ****         (uint32_t)addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 933              		.loc 1 242 5 is_stmt 1 view .LVU275
+ 934 0043 31D2     		xorl	%edx, %edx
+ 242:../../bos/utils/b_util_memp.c ****         (uint32_t)addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 935              		.loc 1 242 8 is_stmt 0 view .LVU276
+ 936 0045 41807C24 		cmpb	$-86, -12(%r12)
+ 936      F4AA
+ 937 004b 7423     		je	.L123
+ 938              	.LVL67:
+ 939              	.L82:
+ 242:../../bos/utils/b_util_memp.c ****         (uint32_t)addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 940              		.loc 1 242 8 view .LVU277
+ 941              	.LBE168:
+ 942              	.LBE167:
+ 372:../../bos/utils/b_util_memp.c ****     memcpy(new_ptr, paddr, copy_size);
+ 943              		.loc 1 372 5 is_stmt 1 view .LVU278
+ 373:../../bos/utils/b_util_memp.c ****     bFree(paddr);
+ 944              		.loc 1 373 5 view .LVU279
+ 945              	.LBB172:
+ 946              	.LBI172:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 947              		.loc 2 26 1 view .LVU280
+ 948              	.LBB173:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 949              		.loc 2 29 3 view .LVU281
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 950              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU282
+ 951 004d 4C89CF   		movq	%r9, %rdi
+ 952 0050 4889DE   		movq	%rbx, %rsi
+ 953 0053 E8000000 		call	memcpy@PLT
+ 953      00
+ 954              	.LVL68:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 955              		.loc 2 29 10 discriminator 1 view .LVU283
+ 956              	.LBE173:
+ 957              	.LBE172:
+GAS LISTING /tmp/ccYhwHA9.s 			page 31
+
+
+ 958              	.LBB175:
+ 959              	.LBB176:
+ 348:../../bos/utils/b_util_memp.c ****     {
+ 960              		.loc 1 348 23 discriminator 1 view .LVU284
+ 961 0058 803D0000 		cmpb	$0, bMempInitFlag(%rip)
+ 961      000000
+ 962              	.LBE176:
+ 963              	.LBE175:
+ 964              	.LBB187:
+ 965              	.LBB174:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 966              		.loc 2 29 10 discriminator 1 view .LVU285
+ 967 005f 4989C1   		movq	%rax, %r9
+ 968              	.LVL69:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 969              		.loc 2 29 10 discriminator 1 view .LVU286
+ 970              	.LBE174:
+ 971              	.LBE187:
+ 374:../../bos/utils/b_util_memp.c ****     return new_ptr;
+ 972              		.loc 1 374 5 is_stmt 1 view .LVU287
+ 973              	.LBB188:
+ 974              	.LBI175:
+ 346:../../bos/utils/b_util_memp.c **** {
+ 975              		.loc 1 346 6 view .LVU288
+ 976              	.LBB183:
+ 348:../../bos/utils/b_util_memp.c ****     {
+ 977              		.loc 1 348 5 view .LVU289
+ 348:../../bos/utils/b_util_memp.c ****     {
+ 978              		.loc 1 348 23 is_stmt 0 discriminator 1 view .LVU290
+ 979 0062 755C     		jne	.L124
+ 980              	.LVL70:
+ 981              	.L70:
+ 348:../../bos/utils/b_util_memp.c ****     {
+ 982              		.loc 1 348 23 discriminator 1 view .LVU291
+ 983              	.LBE183:
+ 984              	.LBE188:
+ 376:../../bos/utils/b_util_memp.c **** 
+ 985              		.loc 1 376 1 view .LVU292
+ 986 0064 5B       		popq	%rbx
+ 987              	.LCFI31:
+ 988              		.cfi_remember_state
+ 989              		.cfi_def_cfa_offset 24
+ 990 0065 4C89C8   		movq	%r9, %rax
+ 991 0068 5D       		popq	%rbp
+ 992              	.LCFI32:
+ 993              		.cfi_def_cfa_offset 16
+ 994 0069 415C     		popq	%r12
+ 995              	.LCFI33:
+ 996              		.cfi_def_cfa_offset 8
+ 997 006b C3       		ret
+ 998              	.LVL71:
+ 999 006c 0F1F4000 		.p2align 4,,10
+ 1000              		.p2align 3
+ 1001              	.L123:
+ 1002              	.LCFI34:
+ 1003              		.cfi_restore_state
+ 1004              	.LBB189:
+GAS LISTING /tmp/ccYhwHA9.s 			page 32
+
+
+ 1005              	.LBB169:
+ 243:../../bos/utils/b_util_memp.c ****         (uint32_t)addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1006              		.loc 1 243 28 view .LVU293
+ 1007 0070 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 1007      000000
+ 1008 0077 89F8     		movl	%edi, %eax
+ 1009              	.LVL72:
+ 243:../../bos/utils/b_util_memp.c ****         (uint32_t)addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1010              		.loc 1 243 48 view .LVU294
+ 1011 0079 4883C00C 		addq	$12, %rax
+ 242:../../bos/utils/b_util_memp.c ****         (uint32_t)addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 1012              		.loc 1 242 41 discriminator 1 view .LVU295
+ 1013 007d 4939C4   		cmpq	%rax, %r12
+ 1014 0080 72CB     		jb	.L82
+ 244:../../bos/utils/b_util_memp.c ****     {
+ 1015              		.loc 1 244 48 view .LVU296
+ 1016 0082 8D870090 		leal	102400(%rdi), %eax
+ 1016      0100
+ 244:../../bos/utils/b_util_memp.c ****     {
+ 1017              		.loc 1 244 60 view .LVU297
+ 1018 0088 4883E80C 		subq	$12, %rax
+ 243:../../bos/utils/b_util_memp.c ****         (uint32_t)addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1019              		.loc 1 243 75 view .LVU298
+ 1020 008c 4C39E0   		cmpq	%r12, %rax
+ 1021 008f 72BC     		jb	.L82
+ 248:../../bos/utils/b_util_memp.c **** }
+ 1022              		.loc 1 248 5 is_stmt 1 view .LVU299
+ 248:../../bos/utils/b_util_memp.c **** }
+ 1023              		.loc 1 248 17 is_stmt 0 view .LVU300
+ 1024 0091 410FB654 		movzbl	-10(%r12), %edx
+ 1024      24F6
+ 1025 0097 410FB644 		movzbl	-11(%r12), %eax
+ 1025      24F5
+ 1026 009d 48C1E208 		salq	$8, %rdx
+ 1027 00a1 4809C2   		orq	%rax, %rdx
+ 1028 00a4 410FB644 		movzbl	-9(%r12), %eax
+ 1028      24F7
+ 1029 00aa 48C1E010 		salq	$16, %rax
+ 1030 00ae 4809D0   		orq	%rdx, %rax
+ 1031              	.LBE169:
+ 1032              	.LBE189:
+ 372:../../bos/utils/b_util_memp.c ****     memcpy(new_ptr, paddr, copy_size);
+ 1033              		.loc 1 372 14 view .LVU301
+ 1034 00b1 39C5     		cmpl	%eax, %ebp
+ 1035 00b3 0F47E8   		cmova	%eax, %ebp
+ 1036              	.LVL73:
+ 373:../../bos/utils/b_util_memp.c ****     bFree(paddr);
+ 1037              		.loc 1 373 5 view .LVU302
+ 1038 00b6 89EA     		movl	%ebp, %edx
+ 1039              	.LBB190:
+ 1040              	.LBB170:
+ 248:../../bos/utils/b_util_memp.c **** }
+ 1041              		.loc 1 248 17 view .LVU303
+ 1042 00b8 EB93     		jmp	.L82
+ 1043              	.LVL74:
+ 1044 00ba 660F1F44 		.p2align 4,,10
+ 1044      0000
+GAS LISTING /tmp/ccYhwHA9.s 			page 33
+
+
+ 1045              		.p2align 3
+ 1046              	.L124:
+ 248:../../bos/utils/b_util_memp.c **** }
+ 1047              		.loc 1 248 17 view .LVU304
+ 1048              	.LBE170:
+ 1049              	.LBE190:
+ 1050              	.LBB191:
+ 1051              	.LBB184:
+ 352:../../bos/utils/b_util_memp.c **** }
+ 1052              		.loc 1 352 5 is_stmt 1 view .LVU305
+ 1053              	.LBB177:
+ 1054              	.LBI177:
+ 213:../../bos/utils/b_util_memp.c **** {
+ 1055              		.loc 1 213 13 view .LVU306
+ 1056              	.LBB178:
+ 215:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+ 1057              		.loc 1 215 5 view .LVU307
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 1058              		.loc 1 216 5 view .LVU308
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 1059              		.loc 1 216 8 is_stmt 0 view .LVU309
+ 1060 00c0 41807C24 		cmpb	$-86, -12(%r12)
+ 1060      F4AA
+ 1061 00c6 759C     		jne	.L70
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1062              		.loc 1 217 18 view .LVU310
+ 1063 00c8 488D0500 		leaq	bMempBuf(%rip), %rax
+ 1063      000000
+ 1064 00cf 89C2     		movl	%eax, %edx
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1065              		.loc 1 217 38 view .LVU311
+ 1066 00d1 4883C20C 		addq	$12, %rdx
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 1067              		.loc 1 216 41 discriminator 1 view .LVU312
+ 1068 00d5 4939D4   		cmpq	%rdx, %r12
+ 1069 00d8 728A     		jb	.L70
+ 218:../../bos/utils/b_util_memp.c ****     {
+ 1070              		.loc 1 218 38 view .LVU313
+ 1071 00da 8D900090 		leal	102400(%rax), %edx
+ 1071      0100
+ 218:../../bos/utils/b_util_memp.c ****     {
+ 1072              		.loc 1 218 50 view .LVU314
+ 1073 00e0 4883EA0C 		subq	$12, %rdx
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1074              		.loc 1 217 65 view .LVU315
+ 1075 00e4 4C39E2   		cmpq	%r12, %rdx
+ 1076 00e7 0F8277FF 		jb	.L70
+ 1076      FFFF
+ 222:../../bos/utils/b_util_memp.c ****     phead         = (bMempUnitHead_t *)bMempBuf;
+ 1077              		.loc 1 222 5 is_stmt 1 view .LVU316
+ 222:../../bos/utils/b_util_memp.c ****     phead         = (bMempUnitHead_t *)bMempBuf;
+ 1078              		.loc 1 222 19 is_stmt 0 view .LVU317
+ 1079 00ed 41C64424 		movb	$85, -12(%r12)
+ 1079      F455
+ 223:../../bos/utils/b_util_memp.c **** 
+ 1080              		.loc 1 223 5 is_stmt 1 view .LVU318
+ 1081              	.LVL75:
+GAS LISTING /tmp/ccYhwHA9.s 			page 34
+
+
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1082              		.loc 1 225 5 view .LVU319
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1083              		.loc 1 225 18 view .LVU320
+ 1084 00f3 EB0F     		jmp	.L89
+ 1085              	.LVL76:
+ 1086              		.p2align 4,,10
+ 1087 00f5 0F1F00   		.p2align 3
+ 1088              	.L84:
+ 235:../../bos/utils/b_util_memp.c ****     }
+ 1089              		.loc 1 235 9 view .LVU321
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1090              		.loc 1 225 18 view .LVU322
+ 1091 00f8 4885D2   		testq	%rdx, %rdx
+ 1092 00fb 0F8463FF 		je	.L70
+ 1092      FFFF
+ 1093              	.LVL77:
+ 1094              	.L88:
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1095              		.loc 1 225 18 is_stmt 0 view .LVU323
+ 1096              	.LBE178:
+ 1097              	.LBE177:
+ 1098              	.LBE184:
+ 1099              	.LBE191:
+ 1100              	.LBB192:
+ 1101              	.LBB171:
+ 1102 0101 4889D0   		movq	%rdx, %rax
+ 1103              	.LVL78:
+ 1104              	.L89:
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1105              		.loc 1 225 18 view .LVU324
+ 1106              	.LBE171:
+ 1107              	.LBE192:
+ 1108              	.LBB193:
+ 1109              	.LBB185:
+ 1110              	.LBB181:
+ 1111              	.LBB179:
+ 227:../../bos/utils/b_util_memp.c ****         {
+ 1112              		.loc 1 227 9 is_stmt 1 view .LVU325
+ 227:../../bos/utils/b_util_memp.c ****         {
+ 1113              		.loc 1 227 12 is_stmt 0 view .LVU326
+ 1114 0104 803855   		cmpb	$85, (%rax)
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 1115              		.loc 1 229 25 view .LVU327
+ 1116 0107 488B5004 		movq	4(%rax), %rdx
+ 227:../../bos/utils/b_util_memp.c ****         {
+ 1117              		.loc 1 227 12 view .LVU328
+ 1118 010b 75EB     		jne	.L84
+ 1119 010d E9A00000 		jmp	.L119
+ 1119      00
+ 1120              	.LVL79:
+ 1121              		.p2align 4,,10
+ 1122 0112 660F1F44 		.p2align 3
+ 1122      0000
+ 1123              	.L122:
+ 227:../../bos/utils/b_util_memp.c ****         {
+ 1124              		.loc 1 227 12 view .LVU329
+GAS LISTING /tmp/ccYhwHA9.s 			page 35
+
+
+ 1125              	.LBE179:
+ 1126              	.LBE181:
+ 1127              	.LBE185:
+ 1128              	.LBE193:
+ 1129              	.LBB194:
+ 1130              	.LBB166:
+ 1131              	.LBB165:
+ 1132              	.LBB164:
+ 1133              	.LBB160:
+ 1134              	.LBI160:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 1135              		.loc 1 123 13 is_stmt 1 view .LVU330
+ 1136              	.LBB161:
+ 128:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 1137              		.loc 1 128 9 view .LVU331
+ 1138              	.LBB162:
+ 1139              	.LBI162:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 1140              		.loc 2 57 1 view .LVU332
+ 1141              	.LBB163:
+ 1142              		.loc 2 59 3 view .LVU333
+ 1143              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU334
+ 1144 0118 BA009001 		movl	$102400, %edx
+ 1144      00
+ 1145 011d 31F6     		xorl	%esi, %esi
+ 1146              	.LVL80:
+ 1147              		.loc 2 59 10 discriminator 1 view .LVU335
+ 1148 011f 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 1148      000000
+ 1149 0126 E8000000 		call	memset@PLT
+ 1149      00
+ 1150              	.LVL81:
+ 1151              		.loc 2 59 10 discriminator 1 view .LVU336
+ 1152              	.LBE163:
+ 1153              	.LBE162:
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 1154              		.loc 1 129 9 is_stmt 1 view .LVU337
+ 130:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 1155              		.loc 1 130 9 view .LVU338
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 1156              		.loc 1 132 23 is_stmt 0 view .LVU339
+ 1157 012b C6050000 		movb	$1, bMempInitFlag(%rip)
+ 1157      000001
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 1158              		.loc 1 129 23 view .LVU340
+ 1159 0132 C7050000 		movl	$26211413, bMempBuf(%rip)
+ 1159      000055F4 
+ 1159      8F01
+ 131:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 1160              		.loc 1 131 9 is_stmt 1 view .LVU341
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 1161              		.loc 1 132 9 view .LVU342
+ 134:../../bos/utils/b_util_memp.c **** 
+ 1162              		.loc 1 134 1 is_stmt 0 view .LVU343
+ 1163 013c E9ECFEFF 		jmp	.L81
+ 1163      FF
+ 1164              	.LVL82:
+GAS LISTING /tmp/ccYhwHA9.s 			page 36
+
+
+ 1165              		.p2align 4,,10
+ 1166 0141 0F1F8000 		.p2align 3
+ 1166      000000
+ 1167              	.L121:
+ 134:../../bos/utils/b_util_memp.c **** 
+ 1168              		.loc 1 134 1 view .LVU344
+ 1169              	.LBE161:
+ 1170              	.LBE160:
+ 1171              	.LBE164:
+ 1172              	.LBE165:
+ 1173              	.LBE166:
+ 1174              	.LBE194:
+ 363:../../bos/utils/b_util_memp.c ****         return NULL;
+ 1175              		.loc 1 363 9 is_stmt 1 view .LVU345
+ 1176              	.LBB195:
+ 1177              	.LBI195:
+ 346:../../bos/utils/b_util_memp.c **** {
+ 1178              		.loc 1 346 6 view .LVU346
+ 1179              	.LBB196:
+ 348:../../bos/utils/b_util_memp.c ****     {
+ 1180              		.loc 1 348 5 view .LVU347
+ 348:../../bos/utils/b_util_memp.c ****     {
+ 1181              		.loc 1 348 23 is_stmt 0 discriminator 1 view .LVU348
+ 1182 0148 84C0     		testb	%al, %al
+ 1183 014a 7574     		jne	.L125
+ 1184              	.LVL83:
+ 1185              	.L73:
+ 1186              	.LBB197:
+ 1187              	.LBB198:
+ 235:../../bos/utils/b_util_memp.c ****     }
+ 1188              		.loc 1 235 9 is_stmt 1 view .LVU349
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1189              		.loc 1 225 18 view .LVU350
+ 1190              	.LBE198:
+ 1191              	.LBE197:
+ 1192              	.LBE196:
+ 1193              	.LBE195:
+ 364:../../bos/utils/b_util_memp.c ****     }
+ 1194              		.loc 1 364 16 is_stmt 0 view .LVU351
+ 1195 014c 4531C9   		xorl	%r9d, %r9d
+ 376:../../bos/utils/b_util_memp.c **** 
+ 1196              		.loc 1 376 1 view .LVU352
+ 1197 014f 5B       		popq	%rbx
+ 1198              	.LCFI35:
+ 1199              		.cfi_remember_state
+ 1200              		.cfi_def_cfa_offset 24
+ 1201 0150 5D       		popq	%rbp
+ 1202              	.LCFI36:
+ 1203              		.cfi_def_cfa_offset 16
+ 1204              	.LVL84:
+ 376:../../bos/utils/b_util_memp.c **** 
+ 1205              		.loc 1 376 1 view .LVU353
+ 1206 0151 4C89C8   		movq	%r9, %rax
+ 1207 0154 415C     		popq	%r12
+ 1208              	.LCFI37:
+ 1209              		.cfi_def_cfa_offset 8
+ 1210 0156 C3       		ret
+GAS LISTING /tmp/ccYhwHA9.s 			page 37
+
+
+ 1211              	.LVL85:
+ 1212 0157 660F1F84 		.p2align 4,,10
+ 1212      00000000 
+ 1212      00
+ 1213              		.p2align 3
+ 1214              	.L126:
+ 1215              	.LCFI38:
+ 1216              		.cfi_restore_state
+ 1217              	.LBB208:
+ 1218              	.LBB186:
+ 1219              	.LBB182:
+ 1220              	.LBB180:
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 1221              		.loc 1 229 40 discriminator 1 view .LVU354
+ 1222 0160 803A55   		cmpb	$85, (%rdx)
+ 1223 0163 759C     		jne	.L88
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1224              		.loc 1 231 17 is_stmt 1 view .LVU355
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1225              		.loc 1 231 22 is_stmt 0 view .LVU356
+ 1226 0165 0FB67002 		movzbl	2(%rax), %esi
+ 1227 0169 0FB67801 		movzbl	1(%rax), %edi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1228              		.loc 1 231 43 view .LVU357
+ 1229 016d 440FB642 		movzbl	2(%rdx), %r8d
+ 1229      02
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1230              		.loc 1 231 22 view .LVU358
+ 1231 0172 48C1E608 		salq	$8, %rsi
+ 1232 0176 4809FE   		orq	%rdi, %rsi
+ 1233 0179 0FB67803 		movzbl	3(%rax), %edi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1234              		.loc 1 231 43 view .LVU359
+ 1235 017d 49C1E008 		salq	$8, %r8
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1236              		.loc 1 231 22 view .LVU360
+ 1237 0181 48C1E710 		salq	$16, %rdi
+ 1238 0185 4809F7   		orq	%rsi, %rdi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1239              		.loc 1 231 43 view .LVU361
+ 1240 0188 0FB67201 		movzbl	1(%rdx), %esi
+ 1241 018c 4909F0   		orq	%rsi, %r8
+ 1242 018f 0FB67203 		movzbl	3(%rdx), %esi
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 1243              		.loc 1 232 42 view .LVU362
+ 1244 0193 488B5204 		movq	4(%rdx), %rdx
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1245              		.loc 1 231 43 view .LVU363
+ 1246 0197 48C1E610 		salq	$16, %rsi
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 1247              		.loc 1 232 29 view .LVU364
+ 1248 019b 48895004 		movq	%rdx, 4(%rax)
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1249              		.loc 1 231 43 view .LVU365
+ 1250 019f 4C09C6   		orq	%r8, %rsi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1251              		.loc 1 231 29 view .LVU366
+GAS LISTING /tmp/ccYhwHA9.s 			page 38
+
+
+ 1252 01a2 8D5C370C 		leal	12(%rdi,%rsi), %ebx
+ 1253 01a6 885801   		movb	%bl, 1(%rax)
+ 1254 01a9 887802   		movb	%bh, 2(%rax)
+ 1255 01ac C1EB10   		shrl	$16, %ebx
+ 1256 01af 885803   		movb	%bl, 3(%rax)
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 1257              		.loc 1 232 17 is_stmt 1 view .LVU367
+ 1258              	.L119:
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 1259              		.loc 1 229 40 view .LVU368
+ 1260 01b2 4885D2   		testq	%rdx, %rdx
+ 1261 01b5 75A9     		jne	.L126
+ 1262 01b7 E9A8FEFF 		jmp	.L70
+ 1262      FF
+ 1263              	.LVL86:
+ 1264 01bc 0F1F4000 		.p2align 4,,10
+ 1265              		.p2align 3
+ 1266              	.L125:
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 1267              		.loc 1 229 40 is_stmt 0 view .LVU369
+ 1268              	.LBE180:
+ 1269              	.LBE182:
+ 1270              	.LBE186:
+ 1271              	.LBE208:
+ 1272              	.LBB209:
+ 1273              	.LBB205:
+ 352:../../bos/utils/b_util_memp.c **** }
+ 1274              		.loc 1 352 5 is_stmt 1 view .LVU370
+ 1275              	.LBB202:
+ 1276              	.LBI197:
+ 213:../../bos/utils/b_util_memp.c **** {
+ 1277              		.loc 1 213 13 view .LVU371
+ 1278              	.LBB199:
+ 215:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+ 1279              		.loc 1 215 5 view .LVU372
+ 215:../../bos/utils/b_util_memp.c ****     if (phead->status != MEMP_UNIT_USED ||
+ 1280              		.loc 1 215 55 is_stmt 0 view .LVU373
+ 1281 01c0 89FB     		movl	%edi, %ebx
+ 1282              	.LVL87:
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 1283              		.loc 1 216 5 is_stmt 1 view .LVU374
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 1284              		.loc 1 216 8 is_stmt 0 view .LVU375
+ 1285 01c2 807BF4AA 		cmpb	$-86, -12(%rbx)
+ 1286 01c6 7584     		jne	.L73
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1287              		.loc 1 217 18 view .LVU376
+ 1288 01c8 488D0500 		leaq	bMempBuf(%rip), %rax
+ 1288      000000
+ 1289 01cf 89C2     		movl	%eax, %edx
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1290              		.loc 1 217 38 view .LVU377
+ 1291 01d1 4883C20C 		addq	$12, %rdx
+ 216:../../bos/utils/b_util_memp.c ****         addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+ 1292              		.loc 1 216 41 discriminator 1 view .LVU378
+ 1293 01d5 4839D3   		cmpq	%rdx, %rbx
+ 1294 01d8 0F826EFF 		jb	.L73
+GAS LISTING /tmp/ccYhwHA9.s 			page 39
+
+
+ 1294      FFFF
+ 218:../../bos/utils/b_util_memp.c ****     {
+ 1295              		.loc 1 218 38 view .LVU379
+ 1296 01de 8D900090 		leal	102400(%rax), %edx
+ 1296      0100
+ 218:../../bos/utils/b_util_memp.c ****     {
+ 1297              		.loc 1 218 50 view .LVU380
+ 1298 01e4 4883EA0C 		subq	$12, %rdx
+ 217:../../bos/utils/b_util_memp.c ****         addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+ 1299              		.loc 1 217 65 view .LVU381
+ 1300 01e8 4839DA   		cmpq	%rbx, %rdx
+ 1301 01eb 0F825BFF 		jb	.L73
+ 1301      FFFF
+ 222:../../bos/utils/b_util_memp.c ****     phead         = (bMempUnitHead_t *)bMempBuf;
+ 1302              		.loc 1 222 5 is_stmt 1 view .LVU382
+ 222:../../bos/utils/b_util_memp.c ****     phead         = (bMempUnitHead_t *)bMempBuf;
+ 1303              		.loc 1 222 19 is_stmt 0 view .LVU383
+ 1304 01f1 C643F455 		movb	$85, -12(%rbx)
+ 223:../../bos/utils/b_util_memp.c **** 
+ 1305              		.loc 1 223 5 is_stmt 1 view .LVU384
+ 1306              	.LVL88:
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1307              		.loc 1 225 5 view .LVU385
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1308              		.loc 1 225 18 view .LVU386
+ 1309 01f5 EB15     		jmp	.L80
+ 1310              	.LVL89:
+ 1311 01f7 660F1F84 		.p2align 4,,10
+ 1311      00000000 
+ 1311      00
+ 1312              		.p2align 3
+ 1313              	.L75:
+ 235:../../bos/utils/b_util_memp.c ****     }
+ 1314              		.loc 1 235 9 view .LVU387
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1315              		.loc 1 225 18 view .LVU388
+ 1316 0200 4885D2   		testq	%rdx, %rdx
+ 1317 0203 0F8443FF 		je	.L73
+ 1317      FFFF
+ 1318              	.LVL90:
+ 1319              	.L79:
+ 225:../../bos/utils/b_util_memp.c ****     {
+ 1320              		.loc 1 225 18 is_stmt 0 view .LVU389
+ 1321              	.LBE199:
+ 1322              	.LBE202:
+ 1323              	.LBE205:
+ 1324              	.LBE209:
+ 356:../../bos/utils/b_util_memp.c ****     if (paddr == NULL)
+ 1325              		.loc 1 356 1 view .LVU390
+ 1326 0209 4889D0   		movq	%rdx, %rax
+ 1327              	.LVL91:
+ 1328              	.L80:
+ 1329              	.LBB210:
+ 1330              	.LBB206:
+ 1331              	.LBB203:
+ 1332              	.LBB200:
+ 227:../../bos/utils/b_util_memp.c ****         {
+GAS LISTING /tmp/ccYhwHA9.s 			page 40
+
+
+ 1333              		.loc 1 227 9 is_stmt 1 view .LVU391
+ 227:../../bos/utils/b_util_memp.c ****         {
+ 1334              		.loc 1 227 12 is_stmt 0 view .LVU392
+ 1335 020c 803855   		cmpb	$85, (%rax)
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 1336              		.loc 1 229 25 view .LVU393
+ 1337 020f 488B5004 		movq	4(%rax), %rdx
+ 227:../../bos/utils/b_util_memp.c ****         {
+ 1338              		.loc 1 227 12 view .LVU394
+ 1339 0213 75EB     		jne	.L75
+ 1340 0215 EB7A     		jmp	.L118
+ 1341              	.LVL92:
+ 1342 0217 660F1F84 		.p2align 4,,10
+ 1342      00000000 
+ 1342      00
+ 1343              		.p2align 3
+ 1344              	.L120:
+ 227:../../bos/utils/b_util_memp.c ****         {
+ 1345              		.loc 1 227 12 view .LVU395
+ 1346              	.LBE200:
+ 1347              	.LBE203:
+ 1348              	.LBE206:
+ 1349              	.LBE210:
+ 359:../../bos/utils/b_util_memp.c ****     }
+ 1350              		.loc 1 359 9 is_stmt 1 view .LVU396
+ 1351              	.LBB211:
+ 1352              	.LBI140:
+ 320:../../bos/utils/b_util_memp.c **** {
+ 1353              		.loc 1 320 7 view .LVU397
+ 1354              	.LBB152:
+ 322:../../bos/utils/b_util_memp.c ****     if (size == 0)
+ 1355              		.loc 1 322 5 view .LVU398
+ 1356              	.LBB150:
+ 1357              	.LBI142:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 1358              		.loc 1 123 13 view .LVU399
+ 1359              	.LBB148:
+ 125:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 1360              		.loc 1 125 5 view .LVU400
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1361              		.loc 1 126 5 view .LVU401
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1362              		.loc 1 126 8 is_stmt 0 view .LVU402
+ 1363 0220 84C0     		testb	%al, %al
+ 1364 0222 747C     		je	.L127
+ 1365              	.LVL93:
+ 1366              	.L72:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1367              		.loc 1 126 8 view .LVU403
+ 1368              	.LBE148:
+ 1369              	.LBE150:
+ 323:../../bos/utils/b_util_memp.c ****     {
+ 1370              		.loc 1 323 5 is_stmt 1 view .LVU404
+ 323:../../bos/utils/b_util_memp.c ****     {
+ 1371              		.loc 1 323 8 is_stmt 0 view .LVU405
+ 1372 0224 85ED     		testl	%ebp, %ebp
+ 1373 0226 0F8420FF 		je	.L73
+GAS LISTING /tmp/ccYhwHA9.s 			page 41
+
+
+ 1373      FFFF
+ 327:../../bos/utils/b_util_memp.c **** }
+ 1374              		.loc 1 327 5 is_stmt 1 view .LVU406
+ 1375              	.LBE152:
+ 1376              	.LBE211:
+ 376:../../bos/utils/b_util_memp.c **** 
+ 1377              		.loc 1 376 1 is_stmt 0 view .LVU407
+ 1378 022c 5B       		popq	%rbx
+ 1379              	.LCFI39:
+ 1380              		.cfi_remember_state
+ 1381              		.cfi_def_cfa_offset 24
+ 1382              	.LBB212:
+ 1383              	.LBB153:
+ 327:../../bos/utils/b_util_memp.c **** }
+ 1384              		.loc 1 327 12 view .LVU408
+ 1385 022d 89EF     		movl	%ebp, %edi
+ 1386              	.LBE153:
+ 1387              	.LBE212:
+ 376:../../bos/utils/b_util_memp.c **** 
+ 1388              		.loc 1 376 1 view .LVU409
+ 1389 022f 5D       		popq	%rbp
+ 1390              	.LCFI40:
+ 1391              		.cfi_def_cfa_offset 16
+ 1392              	.LVL94:
+ 376:../../bos/utils/b_util_memp.c **** 
+ 1393              		.loc 1 376 1 view .LVU410
+ 1394 0230 415C     		popq	%r12
+ 1395              	.LCFI41:
+ 1396              		.cfi_def_cfa_offset 8
+ 1397              	.LBB213:
+ 1398              	.LBB154:
+ 327:../../bos/utils/b_util_memp.c **** }
+ 1399              		.loc 1 327 12 view .LVU411
+ 1400 0232 E9000000 		jmp	_bMempAlloc
+ 1400      00
+ 1401              	.LVL95:
+ 1402 0237 660F1F84 		.p2align 4,,10
+ 1402      00000000 
+ 1402      00
+ 1403              		.p2align 3
+ 1404              	.L128:
+ 1405              	.LCFI42:
+ 1406              		.cfi_restore_state
+ 327:../../bos/utils/b_util_memp.c **** }
+ 1407              		.loc 1 327 12 view .LVU412
+ 1408              	.LBE154:
+ 1409              	.LBE213:
+ 1410              	.LBB214:
+ 1411              	.LBB207:
+ 1412              	.LBB204:
+ 1413              	.LBB201:
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 1414              		.loc 1 229 40 discriminator 1 view .LVU413
+ 1415 0240 803A55   		cmpb	$85, (%rdx)
+ 1416 0243 75C4     		jne	.L79
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1417              		.loc 1 231 17 is_stmt 1 view .LVU414
+GAS LISTING /tmp/ccYhwHA9.s 			page 42
+
+
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1418              		.loc 1 231 22 is_stmt 0 view .LVU415
+ 1419 0245 0FB64802 		movzbl	2(%rax), %ecx
+ 1420 0249 0FB67001 		movzbl	1(%rax), %esi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1421              		.loc 1 231 43 view .LVU416
+ 1422 024d 0FB67A02 		movzbl	2(%rdx), %edi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1423              		.loc 1 231 22 view .LVU417
+ 1424 0251 48C1E108 		salq	$8, %rcx
+ 1425 0255 4809F1   		orq	%rsi, %rcx
+ 1426 0258 0FB67003 		movzbl	3(%rax), %esi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1427              		.loc 1 231 43 view .LVU418
+ 1428 025c 48C1E708 		salq	$8, %rdi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1429              		.loc 1 231 22 view .LVU419
+ 1430 0260 48C1E610 		salq	$16, %rsi
+ 1431 0264 4809CE   		orq	%rcx, %rsi
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1432              		.loc 1 231 43 view .LVU420
+ 1433 0267 0FB64A01 		movzbl	1(%rdx), %ecx
+ 1434 026b 4809CF   		orq	%rcx, %rdi
+ 1435 026e 0FB64A03 		movzbl	3(%rdx), %ecx
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 1436              		.loc 1 232 42 view .LVU421
+ 1437 0272 488B5204 		movq	4(%rdx), %rdx
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1438              		.loc 1 231 43 view .LVU422
+ 1439 0276 48C1E110 		salq	$16, %rcx
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 1440              		.loc 1 232 29 view .LVU423
+ 1441 027a 48895004 		movq	%rdx, 4(%rax)
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1442              		.loc 1 231 43 view .LVU424
+ 1443 027e 4809F9   		orq	%rdi, %rcx
+ 231:../../bos/utils/b_util_memp.c ****                 phead->next = phead->next->next;
+ 1444              		.loc 1 231 29 view .LVU425
+ 1445 0281 8D4C0E0C 		leal	12(%rsi,%rcx), %ecx
+ 1446 0285 884801   		movb	%cl, 1(%rax)
+ 1447 0288 886802   		movb	%ch, 2(%rax)
+ 1448 028b C1E910   		shrl	$16, %ecx
+ 1449 028e 884803   		movb	%cl, 3(%rax)
+ 232:../../bos/utils/b_util_memp.c ****             }
+ 1450              		.loc 1 232 17 is_stmt 1 view .LVU426
+ 1451              	.L118:
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 1452              		.loc 1 229 40 view .LVU427
+ 1453 0291 4885D2   		testq	%rdx, %rdx
+ 1454 0294 75AA     		jne	.L128
+ 1455 0296 E9B1FEFF 		jmp	.L73
+ 1455      FF
+ 1456              	.LVL96:
+ 1457 029b 0F1F4400 		.p2align 4,,10
+ 1457      00
+ 1458              		.p2align 3
+ 1459              	.L127:
+GAS LISTING /tmp/ccYhwHA9.s 			page 43
+
+
+ 229:../../bos/utils/b_util_memp.c ****             {
+ 1460              		.loc 1 229 40 is_stmt 0 view .LVU428
+ 1461              	.LBE201:
+ 1462              	.LBE204:
+ 1463              	.LBE207:
+ 1464              	.LBE214:
+ 1465              	.LBB215:
+ 1466              	.LBB155:
+ 1467              	.LBB151:
+ 1468              	.LBB149:
+ 1469              	.LBB144:
+ 1470              	.LBI144:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 1471              		.loc 1 123 13 is_stmt 1 view .LVU429
+ 1472              	.LBB145:
+ 128:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 1473              		.loc 1 128 9 view .LVU430
+ 1474              	.LBB146:
+ 1475              	.LBI146:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 1476              		.loc 2 57 1 view .LVU431
+ 1477              	.LBB147:
+ 1478              		.loc 2 59 3 view .LVU432
+ 1479              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU433
+ 1480 02a0 BA009001 		movl	$102400, %edx
+ 1480      00
+ 1481 02a5 31F6     		xorl	%esi, %esi
+ 1482              	.LVL97:
+ 1483              		.loc 2 59 10 discriminator 1 view .LVU434
+ 1484 02a7 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 1484      000000
+ 1485              	.LVL98:
+ 1486              		.loc 2 59 10 discriminator 1 view .LVU435
+ 1487 02ae E8000000 		call	memset@PLT
+ 1487      00
+ 1488              	.LVL99:
+ 1489              		.loc 2 59 10 discriminator 1 view .LVU436
+ 1490              	.LBE147:
+ 1491              	.LBE146:
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 1492              		.loc 1 129 9 is_stmt 1 view .LVU437
+ 130:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 1493              		.loc 1 130 9 view .LVU438
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 1494              		.loc 1 132 23 is_stmt 0 view .LVU439
+ 1495 02b3 C6050000 		movb	$1, bMempInitFlag(%rip)
+ 1495      000001
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 1496              		.loc 1 129 23 view .LVU440
+ 1497 02ba C7050000 		movl	$26211413, bMempBuf(%rip)
+ 1497      000055F4 
+ 1497      8F01
+ 131:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 1498              		.loc 1 131 9 is_stmt 1 view .LVU441
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 1499              		.loc 1 132 9 view .LVU442
+ 134:../../bos/utils/b_util_memp.c **** 
+GAS LISTING /tmp/ccYhwHA9.s 			page 44
+
+
+ 1500              		.loc 1 134 1 is_stmt 0 view .LVU443
+ 1501 02c4 E95BFFFF 		jmp	.L72
+ 1501      FF
+ 1502              	.LBE145:
+ 1503              	.LBE144:
+ 1504              	.LBE149:
+ 1505              	.LBE151:
+ 1506              	.LBE155:
+ 1507              	.LBE215:
+ 1508              		.cfi_endproc
+ 1509              	.LFE25:
+ 1511              		.section	.text.bStrDup,"ax",@progbits
+ 1512              		.p2align 4
+ 1513              		.globl	bStrDup
+ 1515              	bStrDup:
+ 1516              	.LVL100:
+ 1517              	.LFB29:
+ 396:../../bos/utils/b_util_memp.c **** #else
+ 397:../../bos/utils/b_util_memp.c **** static void (*pMallocFailHook)(void) = NULL;
+ 398:../../bos/utils/b_util_memp.c **** void bMallocRegisterHook(void (*hook)(void))
+ 399:../../bos/utils/b_util_memp.c **** {
+ 400:../../bos/utils/b_util_memp.c ****     pMallocFailHook = hook;
+ 401:../../bos/utils/b_util_memp.c **** }
+ 402:../../bos/utils/b_util_memp.c **** void bMallocFailedHook()
+ 403:../../bos/utils/b_util_memp.c **** {
+ 404:../../bos/utils/b_util_memp.c ****     if (pMallocFailHook)
+ 405:../../bos/utils/b_util_memp.c ****     {
+ 406:../../bos/utils/b_util_memp.c ****         pMallocFailHook();
+ 407:../../bos/utils/b_util_memp.c ****     }
+ 408:../../bos/utils/b_util_memp.c **** }
+ 409:../../bos/utils/b_util_memp.c **** #endif
+ 410:../../bos/utils/b_util_memp.c **** 
+ 411:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_MONITOR_ENABLE) && (_MEMP_MONITOR_ENABLE == 1))
+ 412:../../bos/utils/b_util_memp.c **** 
+ 413:../../bos/utils/b_util_memp.c **** void *bMallocPlus(uint32_t size, const char *func, int line)
+ 414:../../bos/utils/b_util_memp.c **** {
+ 415:../../bos/utils/b_util_memp.c ****     void *ptr = _bMalloc(size);
+ 416:../../bos/utils/b_util_memp.c ****     b_log("malloc in %s, %d, size %d, address %p\r\n", func, line, size, ptr);
+ 417:../../bos/utils/b_util_memp.c ****     return ptr;
+ 418:../../bos/utils/b_util_memp.c **** }
+ 419:../../bos/utils/b_util_memp.c **** 
+ 420:../../bos/utils/b_util_memp.c **** void *bCallocPlus(uint32_t num, uint32_t size, const char *func, int line)
+ 421:../../bos/utils/b_util_memp.c **** {
+ 422:../../bos/utils/b_util_memp.c ****     void *ptr = _bCalloc(num, size);
+ 423:../../bos/utils/b_util_memp.c ****     b_log("calloc in %s, %d, num %d size %d, address %p\r\n", func, line, num, size, ptr);
+ 424:../../bos/utils/b_util_memp.c ****     return ptr;
+ 425:../../bos/utils/b_util_memp.c **** }
+ 426:../../bos/utils/b_util_memp.c **** 
+ 427:../../bos/utils/b_util_memp.c **** void bFreePlus(void *ptr, const char *func, int line)
+ 428:../../bos/utils/b_util_memp.c **** {
+ 429:../../bos/utils/b_util_memp.c ****     _bFree(ptr);
+ 430:../../bos/utils/b_util_memp.c ****     b_log("free in %s, %d, address %p\r\n", func, line, ptr);
+ 431:../../bos/utils/b_util_memp.c **** }
+ 432:../../bos/utils/b_util_memp.c **** 
+ 433:../../bos/utils/b_util_memp.c **** void *bReallocPlus(void *ptr, uint32_t size, const char *func, int line)
+ 434:../../bos/utils/b_util_memp.c **** {
+ 435:../../bos/utils/b_util_memp.c ****     void *new_ptr = _bRealloc(ptr, size);
+GAS LISTING /tmp/ccYhwHA9.s 			page 45
+
+
+ 436:../../bos/utils/b_util_memp.c ****     b_log("realloc in %s, %d, address %p size %d\r\n", func, line, ptr, size);
+ 437:../../bos/utils/b_util_memp.c ****     return new_ptr;
+ 438:../../bos/utils/b_util_memp.c **** }
+ 439:../../bos/utils/b_util_memp.c **** 
+ 440:../../bos/utils/b_util_memp.c **** #endif
+ 441:../../bos/utils/b_util_memp.c **** 
+ 442:../../bos/utils/b_util_memp.c **** char *bStrDup(char *str)
+ 443:../../bos/utils/b_util_memp.c **** {
+ 1518              		.loc 1 443 1 is_stmt 1 view -0
+ 1519              		.cfi_startproc
+ 1520              		.loc 1 443 1 is_stmt 0 view .LVU445
+ 1521 0000 F30F1EFA 		endbr64
+ 444:../../bos/utils/b_util_memp.c ****     if (str == NULL)
+ 1522              		.loc 1 444 5 is_stmt 1 view .LVU446
+ 443:../../bos/utils/b_util_memp.c ****     if (str == NULL)
+ 1523              		.loc 1 443 1 is_stmt 0 view .LVU447
+ 1524 0004 4154     		pushq	%r12
+ 1525              	.LCFI43:
+ 1526              		.cfi_def_cfa_offset 16
+ 1527              		.cfi_offset 12, -16
+ 1528 0006 55       		pushq	%rbp
+ 1529              	.LCFI44:
+ 1530              		.cfi_def_cfa_offset 24
+ 1531              		.cfi_offset 6, -24
+ 1532 0007 53       		pushq	%rbx
+ 1533              	.LCFI45:
+ 1534              		.cfi_def_cfa_offset 32
+ 1535              		.cfi_offset 3, -32
+ 1536              		.loc 1 444 8 view .LVU448
+ 1537 0008 4885FF   		testq	%rdi, %rdi
+ 1538 000b 7453     		je	.L133
+ 1539 000d 4889FB   		movq	%rdi, %rbx
+ 445:../../bos/utils/b_util_memp.c ****     {
+ 446:../../bos/utils/b_util_memp.c ****         return NULL;
+ 447:../../bos/utils/b_util_memp.c ****     }
+ 448:../../bos/utils/b_util_memp.c ****     char *tmp = bCalloc(1, strlen(str) + 1);
+ 1540              		.loc 1 448 5 is_stmt 1 view .LVU449
+ 1541              		.loc 1 448 28 is_stmt 0 view .LVU450
+ 1542 0010 E8000000 		call	strlen@PLT
+ 1542      00
+ 1543              	.LVL101:
+ 1544              	.LBB228:
+ 1545              	.LBB229:
+ 1546              	.LBB230:
+ 1547              	.LBB231:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1548              		.loc 1 126 8 view .LVU451
+ 1549 0015 803D0000 		cmpb	$0, bMempInitFlag(%rip)
+ 1549      000000
+ 1550              	.LBE231:
+ 1551              	.LBE230:
+ 1552              	.LBE229:
+ 1553              	.LBE228:
+ 1554              		.loc 1 448 17 discriminator 1 view .LVU452
+ 1555 001c 8D6801   		leal	1(%rax), %ebp
+ 1556              	.LVL102:
+ 1557              	.LBB246:
+GAS LISTING /tmp/ccYhwHA9.s 			page 46
+
+
+ 1558              	.LBI228:
+ 330:../../bos/utils/b_util_memp.c **** {
+ 1559              		.loc 1 330 7 is_stmt 1 view .LVU453
+ 1560              	.LBB244:
+ 332:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 1561              		.loc 1 332 5 view .LVU454
+ 333:../../bos/utils/b_util_memp.c ****     if (size == 0 || num == 0)
+ 1562              		.loc 1 333 5 view .LVU455
+ 1563              	.LBB238:
+ 1564              	.LBI230:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 1565              		.loc 1 123 13 view .LVU456
+ 1566              	.LBB236:
+ 125:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 1567              		.loc 1 125 5 view .LVU457
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1568              		.loc 1 126 5 view .LVU458
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1569              		.loc 1 126 8 is_stmt 0 view .LVU459
+ 1570 001f 744F     		je	.L140
+ 1571              	.L132:
+ 1572              	.LBE236:
+ 1573              	.LBE238:
+ 334:../../bos/utils/b_util_memp.c ****     {
+ 1574              		.loc 1 334 5 is_stmt 1 view .LVU460
+ 334:../../bos/utils/b_util_memp.c ****     {
+ 1575              		.loc 1 334 8 is_stmt 0 view .LVU461
+ 1576 0021 85ED     		testl	%ebp, %ebp
+ 1577 0023 743B     		je	.L133
+ 338:../../bos/utils/b_util_memp.c ****     if (p)
+ 1578              		.loc 1 338 5 is_stmt 1 view .LVU462
+ 338:../../bos/utils/b_util_memp.c ****     if (p)
+ 1579              		.loc 1 338 9 is_stmt 0 view .LVU463
+ 1580 0025 89EF     		movl	%ebp, %edi
+ 1581 0027 E8000000 		call	_bMempAlloc
+ 1581      00
+ 1582              	.LVL103:
+ 1583 002c 4989C4   		movq	%rax, %r12
+ 1584              	.LVL104:
+ 339:../../bos/utils/b_util_memp.c ****     {
+ 1585              		.loc 1 339 5 is_stmt 1 view .LVU464
+ 339:../../bos/utils/b_util_memp.c ****     {
+ 1586              		.loc 1 339 8 is_stmt 0 view .LVU465
+ 1587 002f 4885C0   		testq	%rax, %rax
+ 1588 0032 7423     		je	.L129
+ 341:../../bos/utils/b_util_memp.c ****     }
+ 1589              		.loc 1 341 9 is_stmt 1 view .LVU466
+ 1590              	.LVL105:
+ 1591              	.LBB239:
+ 1592              	.LBI239:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 1593              		.loc 2 57 1 view .LVU467
+ 1594              	.LBB240:
+ 1595              		.loc 2 59 3 view .LVU468
+ 1596              	.LBE240:
+ 1597              	.LBE239:
+ 341:../../bos/utils/b_util_memp.c ****     }
+GAS LISTING /tmp/ccYhwHA9.s 			page 47
+
+
+ 1598              		.loc 1 341 9 is_stmt 0 view .LVU469
+ 1599 0034 89EA     		movl	%ebp, %edx
+ 1600              	.LVL106:
+ 1601              	.LBB242:
+ 1602              	.LBB241:
+ 1603              		.loc 2 59 10 discriminator 1 view .LVU470
+ 1604 0036 31F6     		xorl	%esi, %esi
+ 1605 0038 4889C7   		movq	%rax, %rdi
+ 1606 003b E8000000 		call	memset@PLT
+ 1606      00
+ 1607              	.LVL107:
+ 1608              		.loc 2 59 10 discriminator 1 view .LVU471
+ 1609              	.LBE241:
+ 1610              	.LBE242:
+ 1611              	.LBE244:
+ 1612              	.LBE246:
+ 449:../../bos/utils/b_util_memp.c ****     if (tmp == NULL)
+ 1613              		.loc 1 449 5 is_stmt 1 view .LVU472
+ 450:../../bos/utils/b_util_memp.c ****     {
+ 451:../../bos/utils/b_util_memp.c ****         return NULL;
+ 452:../../bos/utils/b_util_memp.c ****     }
+ 453:../../bos/utils/b_util_memp.c ****     memcpy(tmp, str, strlen(str) + 1);  // include null terminator
+ 1614              		.loc 1 453 5 view .LVU473
+ 1615              		.loc 1 453 22 is_stmt 0 view .LVU474
+ 1616 0040 4889DF   		movq	%rbx, %rdi
+ 1617 0043 E8000000 		call	strlen@PLT
+ 1617      00
+ 1618              	.LVL108:
+ 1619              	.LBB247:
+ 1620              	.LBI247:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1621              		.loc 2 26 1 is_stmt 1 view .LVU475
+ 1622              	.LBB248:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1623              		.loc 2 29 3 view .LVU476
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1624              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU477
+ 1625 0048 4889DE   		movq	%rbx, %rsi
+ 1626 004b 4C89E7   		movq	%r12, %rdi
+ 1627              	.LBE248:
+ 1628              	.LBE247:
+ 1629              		.loc 1 453 5 discriminator 1 view .LVU478
+ 1630 004e 488D5001 		leaq	1(%rax), %rdx
+ 1631              	.LVL109:
+ 1632              	.LBB250:
+ 1633              	.LBB249:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1634              		.loc 2 29 10 discriminator 1 view .LVU479
+ 1635 0052 E8000000 		call	memcpy@PLT
+ 1635      00
+ 1636              	.LVL110:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1637              		.loc 2 29 10 discriminator 1 view .LVU480
+ 1638              	.LBE249:
+ 1639              	.LBE250:
+ 454:../../bos/utils/b_util_memp.c ****     return tmp;
+ 1640              		.loc 1 454 5 is_stmt 1 view .LVU481
+GAS LISTING /tmp/ccYhwHA9.s 			page 48
+
+
+ 1641              	.L129:
+ 455:../../bos/utils/b_util_memp.c **** }
+ 1642              		.loc 1 455 1 is_stmt 0 view .LVU482
+ 1643 0057 4C89E0   		movq	%r12, %rax
+ 1644 005a 5B       		popq	%rbx
+ 1645              	.LCFI46:
+ 1646              		.cfi_remember_state
+ 1647              		.cfi_def_cfa_offset 24
+ 1648              	.LVL111:
+ 1649              		.loc 1 455 1 view .LVU483
+ 1650 005b 5D       		popq	%rbp
+ 1651              	.LCFI47:
+ 1652              		.cfi_def_cfa_offset 16
+ 1653 005c 415C     		popq	%r12
+ 1654              	.LCFI48:
+ 1655              		.cfi_def_cfa_offset 8
+ 1656 005e C3       		ret
+ 1657              	.LVL112:
+ 1658 005f 90       		.p2align 4,,10
+ 1659              		.p2align 3
+ 1660              	.L133:
+ 1661              	.LCFI49:
+ 1662              		.cfi_restore_state
+ 446:../../bos/utils/b_util_memp.c ****     }
+ 1663              		.loc 1 446 16 view .LVU484
+ 1664 0060 4531E4   		xorl	%r12d, %r12d
+ 1665              		.loc 1 455 1 view .LVU485
+ 1666 0063 5B       		popq	%rbx
+ 1667              	.LCFI50:
+ 1668              		.cfi_remember_state
+ 1669              		.cfi_def_cfa_offset 24
+ 1670 0064 5D       		popq	%rbp
+ 1671              	.LCFI51:
+ 1672              		.cfi_def_cfa_offset 16
+ 1673 0065 4C89E0   		movq	%r12, %rax
+ 1674 0068 415C     		popq	%r12
+ 1675              	.LCFI52:
+ 1676              		.cfi_def_cfa_offset 8
+ 1677 006a C3       		ret
+ 1678              	.LVL113:
+ 1679 006b 0F1F4400 		.p2align 4,,10
+ 1679      00
+ 1680              		.p2align 3
+ 1681              	.L140:
+ 1682              	.LCFI53:
+ 1683              		.cfi_restore_state
+ 1684              	.LBB251:
+ 1685              	.LBB245:
+ 1686              	.LBB243:
+ 1687              	.LBB237:
+ 1688              	.LBB232:
+ 1689              	.LBI232:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 1690              		.loc 1 123 13 is_stmt 1 view .LVU486
+ 1691              	.LBB233:
+ 128:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 1692              		.loc 1 128 9 view .LVU487
+GAS LISTING /tmp/ccYhwHA9.s 			page 49
+
+
+ 1693              	.LBB234:
+ 1694              	.LBI234:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 1695              		.loc 2 57 1 view .LVU488
+ 1696              	.LBB235:
+ 1697              		.loc 2 59 3 view .LVU489
+ 1698              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU490
+ 1699 0070 BA009001 		movl	$102400, %edx
+ 1699      00
+ 1700 0075 31F6     		xorl	%esi, %esi
+ 1701 0077 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 1701      000000
+ 1702 007e E8000000 		call	memset@PLT
+ 1702      00
+ 1703              	.LVL114:
+ 1704              		.loc 2 59 10 discriminator 1 view .LVU491
+ 1705              	.LBE235:
+ 1706              	.LBE234:
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 1707              		.loc 1 129 9 is_stmt 1 view .LVU492
+ 130:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 1708              		.loc 1 130 9 view .LVU493
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 1709              		.loc 1 132 23 is_stmt 0 view .LVU494
+ 1710 0083 C6050000 		movb	$1, bMempInitFlag(%rip)
+ 1710      000001
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 1711              		.loc 1 129 23 view .LVU495
+ 1712 008a C7050000 		movl	$26211413, bMempBuf(%rip)
+ 1712      000055F4 
+ 1712      8F01
+ 131:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 1713              		.loc 1 131 9 is_stmt 1 view .LVU496
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 1714              		.loc 1 132 9 view .LVU497
+ 134:../../bos/utils/b_util_memp.c **** 
+ 1715              		.loc 1 134 1 is_stmt 0 view .LVU498
+ 1716 0094 EB8B     		jmp	.L132
+ 1717              	.LBE233:
+ 1718              	.LBE232:
+ 1719              	.LBE237:
+ 1720              	.LBE243:
+ 1721              	.LBE245:
+ 1722              	.LBE251:
+ 1723              		.cfi_endproc
+ 1724              	.LFE29:
+ 1726              		.section	.rodata.bMemPrintStats.str1.8,"aMS",@progbits,1
+ 1727              		.align 8
+ 1728              	.LC2:
+ 1729 0000 0D0A3D3D 		.string	"\r\n========== Memory Statistics ==========\r\n"
+ 1729      3D3D3D3D 
+ 1729      3D3D3D3D 
+ 1729      204D656D 
+ 1729      6F727920 
+ 1730              		.section	.rodata.bMemPrintStats.str1.1,"aMS",@progbits,1
+ 1731              	.LC3:
+ 1732 0000 546F7461 		.string	"Total:      %u bytes\r\n"
+GAS LISTING /tmp/ccYhwHA9.s 			page 50
+
+
+ 1732      6C3A2020 
+ 1732      20202020 
+ 1732      25752062 
+ 1732      79746573 
+ 1733              		.section	.rodata.bMemPrintStats.str1.8
+ 1734 002c 00000000 		.align 8
+ 1735              	.LC6:
+ 1736 0030 55736564 		.string	"Used:       %u bytes (%.1f%%)\r\n"
+ 1736      3A202020 
+ 1736      20202020 
+ 1736      25752062 
+ 1736      79746573 
+ 1737              		.align 8
+ 1738              	.LC7:
+ 1739 0050 46726565 		.string	"Free:       %u bytes (%.1f%%)\r\n"
+ 1739      3A202020 
+ 1739      20202020 
+ 1739      25752062 
+ 1739      79746573 
+ 1740              		.section	.rodata.bMemPrintStats.str1.1
+ 1741              	.LC8:
+ 1742 0017 46726167 		.string	"Fragmentation: %d%%\r\n"
+ 1742      6D656E74 
+ 1742      6174696F 
+ 1742      6E3A2025 
+ 1742      6425250D 
+ 1743              		.section	.rodata.bMemPrintStats.str1.8
+ 1744              		.align 8
+ 1745              	.LC9:
+ 1746 0070 3D3D3D3D 		.string	"=======================================\r\n"
+ 1746      3D3D3D3D 
+ 1746      3D3D3D3D 
+ 1746      3D3D3D3D 
+ 1746      3D3D3D3D 
+ 1747              		.section	.text.bMemPrintStats,"ax",@progbits
+ 1748              		.p2align 4
+ 1749              		.globl	bMemPrintStats
+ 1751              	bMemPrintStats:
+ 1752              	.LFB30:
+ 456:../../bos/utils/b_util_memp.c **** 
+ 457:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+ 458:../../bos/utils/b_util_memp.c **** uint32_t bGetMemThreshold()
+ 459:../../bos/utils/b_util_memp.c **** {
+ 460:../../bos/utils/b_util_memp.c ****     return bMemFreeSizeMin;
+ 461:../../bos/utils/b_util_memp.c **** }
+ 462:../../bos/utils/b_util_memp.c **** #endif
+ 463:../../bos/utils/b_util_memp.c **** 
+ 464:../../bos/utils/b_util_memp.c **** void bMemPrintStats(void)
+ 465:../../bos/utils/b_util_memp.c **** {
+ 1753              		.loc 1 465 1 is_stmt 1 view -0
+ 1754              		.cfi_startproc
+ 1755 0000 F30F1EFA 		endbr64
+ 466:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 1756              		.loc 1 466 5 view .LVU500
+ 1757              	.LBB268:
+ 1758              	.LBI268:
+ 123:../../bos/utils/b_util_memp.c **** {
+GAS LISTING /tmp/ccYhwHA9.s 			page 51
+
+
+ 1759              		.loc 1 123 13 view .LVU501
+ 1760              	.LBB269:
+ 125:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 1761              		.loc 1 125 5 view .LVU502
+ 1762              	.LVL115:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1763              		.loc 1 126 5 view .LVU503
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1764              		.loc 1 126 8 is_stmt 0 view .LVU504
+ 1765 0004 803D0000 		cmpb	$0, bMempInitFlag(%rip)
+ 1765      000000
+ 1766              	.LBE269:
+ 1767              	.LBE268:
+ 465:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 1768              		.loc 1 465 1 view .LVU505
+ 1769 000b 4156     		pushq	%r14
+ 1770              	.LCFI54:
+ 1771              		.cfi_def_cfa_offset 16
+ 1772              		.cfi_offset 14, -16
+ 1773 000d 4155     		pushq	%r13
+ 1774              	.LCFI55:
+ 1775              		.cfi_def_cfa_offset 24
+ 1776              		.cfi_offset 13, -24
+ 1777 000f 4154     		pushq	%r12
+ 1778              	.LCFI56:
+ 1779              		.cfi_def_cfa_offset 32
+ 1780              		.cfi_offset 12, -32
+ 1781 0011 55       		pushq	%rbp
+ 1782              	.LCFI57:
+ 1783              		.cfi_def_cfa_offset 40
+ 1784              		.cfi_offset 6, -40
+ 1785 0012 53       		pushq	%rbx
+ 1786              	.LCFI58:
+ 1787              		.cfi_def_cfa_offset 48
+ 1788              		.cfi_offset 3, -48
+ 1789              	.LBB276:
+ 1790              	.LBB274:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 1791              		.loc 1 126 8 view .LVU506
+ 1792 0013 0F840702 		je	.L142
+ 1792      0000
+ 1793              	.LBE274:
+ 1794              	.LBE276:
+ 1795              	.LBB277:
+ 1796              	.LBB278:
+ 467:../../bos/utils/b_util_memp.c ****     uint32_t total      = MEMP_SIZE;
+ 468:../../bos/utils/b_util_memp.c ****     uint32_t free_size  = _bGetFreeSize();
+ 469:../../bos/utils/b_util_memp.c ****     uint32_t used_size  = total - free_size;
+ 470:../../bos/utils/b_util_memp.c ****     uint8_t  frag_ratio = bMemGetFragmentation();
+ 471:../../bos/utils/b_util_memp.c ****     
+ 472:../../bos/utils/b_util_memp.c ****     b_log("\r\n========== Memory Statistics ==========\r\n");
+ 473:../../bos/utils/b_util_memp.c ****     b_log("Total:      %u bytes\r\n", total);
+ 474:../../bos/utils/b_util_memp.c ****     b_log("Used:       %u bytes (%.1f%%)\r\n", used_size, (float)used_size * 100 / total);
+ 475:../../bos/utils/b_util_memp.c ****     b_log("Free:       %u bytes (%.1f%%)\r\n", free_size, (float)free_size * 100 / total);
+ 476:../../bos/utils/b_util_memp.c ****     b_log("Fragmentation: %d%%\r\n", frag_ratio);
+ 477:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+ 478:../../bos/utils/b_util_memp.c ****     b_log("Waterline:  %u bytes (min free)\r\n", bMemFreeSizeMin);
+GAS LISTING /tmp/ccYhwHA9.s 			page 52
+
+
+ 479:../../bos/utils/b_util_memp.c **** #endif
+ 480:../../bos/utils/b_util_memp.c ****     b_log("=======================================\r\n");
+ 481:../../bos/utils/b_util_memp.c **** }
+ 482:../../bos/utils/b_util_memp.c **** 
+ 483:../../bos/utils/b_util_memp.c **** uint8_t bMemGetFragmentation(void)
+ 484:../../bos/utils/b_util_memp.c **** {
+ 485:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 486:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *phead       = (bMempUnitHead_t *)bMempBuf;
+ 487:../../bos/utils/b_util_memp.c ****     uint32_t         free_size   = 0;
+ 488:../../bos/utils/b_util_memp.c ****     uint32_t         max_block   = 0;
+ 489:../../bos/utils/b_util_memp.c ****     uint32_t         block_count = 0;
+ 490:../../bos/utils/b_util_memp.c ****     
+ 491:../../bos/utils/b_util_memp.c ****     while (phead)
+ 492:../../bos/utils/b_util_memp.c ****     {
+ 493:../../bos/utils/b_util_memp.c ****         if (phead->status == MEMP_UNIT_FREE)
+ 1797              		.loc 1 493 18 view .LVU507
+ 1798 0019 0FB60D00 		movzbl	bMempBuf(%rip), %ecx
+ 1798      000000
+ 494:../../bos/utils/b_util_memp.c ****         {
+ 495:../../bos/utils/b_util_memp.c ****             free_size += phead->size;
+ 496:../../bos/utils/b_util_memp.c ****             if (phead->size > max_block)
+ 497:../../bos/utils/b_util_memp.c ****             {
+ 498:../../bos/utils/b_util_memp.c ****                 max_block = phead->size;
+ 499:../../bos/utils/b_util_memp.c ****             }
+ 500:../../bos/utils/b_util_memp.c ****             block_count++;
+ 501:../../bos/utils/b_util_memp.c ****         }
+ 502:../../bos/utils/b_util_memp.c ****         phead = phead->next;
+ 1799              		.loc 1 502 15 view .LVU508
+ 1800 0020 488B0500 		movq	4+bMempBuf(%rip), %rax
+ 1800      000000
+ 1801              	.L143:
+ 1802              	.LBE278:
+ 1803              	.LBE277:
+ 467:../../bos/utils/b_util_memp.c ****     uint32_t total      = MEMP_SIZE;
+ 1804              		.loc 1 467 5 is_stmt 1 view .LVU509
+ 1805              	.LVL116:
+ 468:../../bos/utils/b_util_memp.c ****     uint32_t used_size  = total - free_size;
+ 1806              		.loc 1 468 5 view .LVU510
+ 1807              	.LBB282:
+ 1808              	.LBI282:
+ 136:../../bos/utils/b_util_memp.c **** {
+ 1809              		.loc 1 136 17 view .LVU511
+ 1810              	.LBB283:
+ 138:../../bos/utils/b_util_memp.c ****     uint32_t         ret   = 0;
+ 1811              		.loc 1 138 5 view .LVU512
+ 139:../../bos/utils/b_util_memp.c ****     while (phead)
+ 1812              		.loc 1 139 5 view .LVU513
+ 140:../../bos/utils/b_util_memp.c ****     {
+ 1813              		.loc 1 140 5 view .LVU514
+ 140:../../bos/utils/b_util_memp.c ****     {
+ 1814              		.loc 1 140 12 view .LVU515
+ 146:../../bos/utils/b_util_memp.c ****     }
+ 1815              		.loc 1 146 15 is_stmt 0 view .LVU516
+ 1816 0027 4889C2   		movq	%rax, %rdx
+ 1817 002a 89CF     		movl	%ecx, %edi
+ 138:../../bos/utils/b_util_memp.c ****     uint32_t         ret   = 0;
+ 1818              		.loc 1 138 22 view .LVU517
+GAS LISTING /tmp/ccYhwHA9.s 			page 53
+
+
+ 1819 002c 488D3500 		leaq	bMempBuf(%rip), %rsi
+ 1819      000000
+ 139:../../bos/utils/b_util_memp.c ****     while (phead)
+ 1820              		.loc 1 139 22 view .LVU518
+ 1821 0033 31DB     		xorl	%ebx, %ebx
+ 1822 0035 EB13     		jmp	.L146
+ 1823              	.LVL117:
+ 1824 0037 660F1F84 		.p2align 4,,10
+ 1824      00000000 
+ 1824      00
+ 1825              		.p2align 3
+ 1826              	.L157:
+ 142:../../bos/utils/b_util_memp.c ****         {
+ 1827              		.loc 1 142 18 view .LVU519
+ 1828 0040 0FB63A   		movzbl	(%rdx), %edi
+ 146:../../bos/utils/b_util_memp.c ****     }
+ 1829              		.loc 1 146 15 view .LVU520
+ 1830 0043 4889D6   		movq	%rdx, %rsi
+ 1831 0046 488B5204 		movq	4(%rdx), %rdx
+ 1832              	.LVL118:
+ 1833              	.L146:
+ 142:../../bos/utils/b_util_memp.c ****         {
+ 1834              		.loc 1 142 9 is_stmt 1 view .LVU521
+ 142:../../bos/utils/b_util_memp.c ****         {
+ 1835              		.loc 1 142 12 is_stmt 0 view .LVU522
+ 1836 004a 4080FF55 		cmpb	$85, %dil
+ 1837 004e 751D     		jne	.L144
+ 144:../../bos/utils/b_util_memp.c ****         }
+ 1838              		.loc 1 144 13 is_stmt 1 view .LVU523
+ 144:../../bos/utils/b_util_memp.c ****         }
+ 1839              		.loc 1 144 25 is_stmt 0 view .LVU524
+ 1840 0050 0FB67E02 		movzbl	2(%rsi), %edi
+ 1841 0054 440FB646 		movzbl	1(%rsi), %r8d
+ 1841      01
+ 1842 0059 0FB67603 		movzbl	3(%rsi), %esi
+ 1843 005d 48C1E708 		salq	$8, %rdi
+ 1844 0061 4C09C7   		orq	%r8, %rdi
+ 1845 0064 48C1E610 		salq	$16, %rsi
+ 1846 0068 4809FE   		orq	%rdi, %rsi
+ 144:../../bos/utils/b_util_memp.c ****         }
+ 1847              		.loc 1 144 17 view .LVU525
+ 1848 006b 01F3     		addl	%esi, %ebx
+ 1849              	.LVL119:
+ 1850              	.L144:
+ 146:../../bos/utils/b_util_memp.c ****     }
+ 1851              		.loc 1 146 9 is_stmt 1 view .LVU526
+ 140:../../bos/utils/b_util_memp.c ****     {
+ 1852              		.loc 1 140 12 view .LVU527
+ 1853 006d 4885D2   		testq	%rdx, %rdx
+ 1854 0070 75CE     		jne	.L157
+ 148:../../bos/utils/b_util_memp.c **** }
+ 1855              		.loc 1 148 5 view .LVU528
+ 1856              	.LVL120:
+ 148:../../bos/utils/b_util_memp.c **** }
+ 1857              		.loc 1 148 5 is_stmt 0 view .LVU529
+ 1858              	.LBE283:
+ 1859              	.LBE282:
+GAS LISTING /tmp/ccYhwHA9.s 			page 54
+
+
+ 469:../../bos/utils/b_util_memp.c ****     uint8_t  frag_ratio = bMemGetFragmentation();
+ 1860              		.loc 1 469 5 is_stmt 1 view .LVU530
+ 469:../../bos/utils/b_util_memp.c ****     uint8_t  frag_ratio = bMemGetFragmentation();
+ 1861              		.loc 1 469 14 is_stmt 0 view .LVU531
+ 1862 0072 BD009001 		movl	$102400, %ebp
+ 1862      00
+ 1863              	.LBB284:
+ 1864              	.LBB279:
+ 489:../../bos/utils/b_util_memp.c ****     
+ 1865              		.loc 1 489 22 view .LVU532
+ 1866 0077 4531C0   		xorl	%r8d, %r8d
+ 488:../../bos/utils/b_util_memp.c ****     uint32_t         block_count = 0;
+ 1867              		.loc 1 488 22 view .LVU533
+ 1868 007a 31F6     		xorl	%esi, %esi
+ 487:../../bos/utils/b_util_memp.c ****     uint32_t         max_block   = 0;
+ 1869              		.loc 1 487 22 view .LVU534
+ 1870 007c 31FF     		xorl	%edi, %edi
+ 1871              	.LBE279:
+ 1872              	.LBE284:
+ 469:../../bos/utils/b_util_memp.c ****     uint8_t  frag_ratio = bMemGetFragmentation();
+ 1873              		.loc 1 469 14 view .LVU535
+ 1874 007e 29DD     		subl	%ebx, %ebp
+ 1875              	.LVL121:
+ 470:../../bos/utils/b_util_memp.c ****     
+ 1876              		.loc 1 470 5 is_stmt 1 view .LVU536
+ 1877              	.LBB285:
+ 1878              	.LBI277:
+ 483:../../bos/utils/b_util_memp.c **** {
+ 1879              		.loc 1 483 9 view .LVU537
+ 1880              	.LBB280:
+ 485:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *phead       = (bMempUnitHead_t *)bMempBuf;
+ 1881              		.loc 1 485 5 view .LVU538
+ 486:../../bos/utils/b_util_memp.c ****     uint32_t         free_size   = 0;
+ 1882              		.loc 1 486 5 view .LVU539
+ 487:../../bos/utils/b_util_memp.c ****     uint32_t         max_block   = 0;
+ 1883              		.loc 1 487 5 view .LVU540
+ 488:../../bos/utils/b_util_memp.c ****     uint32_t         block_count = 0;
+ 1884              		.loc 1 488 5 view .LVU541
+ 489:../../bos/utils/b_util_memp.c ****     
+ 1885              		.loc 1 489 5 view .LVU542
+ 491:../../bos/utils/b_util_memp.c ****     {
+ 1886              		.loc 1 491 5 view .LVU543
+ 491:../../bos/utils/b_util_memp.c ****     {
+ 1887              		.loc 1 491 12 view .LVU544
+ 486:../../bos/utils/b_util_memp.c ****     uint32_t         free_size   = 0;
+ 1888              		.loc 1 486 22 is_stmt 0 view .LVU545
+ 1889 0080 488D1500 		leaq	bMempBuf(%rip), %rdx
+ 1889      000000
+ 1890 0087 EB11     		jmp	.L149
+ 1891              	.LVL122:
+ 1892 0089 0F1F8000 		.p2align 4,,10
+ 1892      000000
+ 1893              		.p2align 3
+ 1894              	.L158:
+ 493:../../bos/utils/b_util_memp.c ****         {
+ 1895              		.loc 1 493 18 view .LVU546
+ 1896 0090 0FB608   		movzbl	(%rax), %ecx
+GAS LISTING /tmp/ccYhwHA9.s 			page 55
+
+
+ 1897              		.loc 1 502 15 view .LVU547
+ 1898 0093 4889C2   		movq	%rax, %rdx
+ 1899 0096 488B4004 		movq	4(%rax), %rax
+ 1900              	.LVL123:
+ 1901              	.L149:
+ 493:../../bos/utils/b_util_memp.c ****         {
+ 1902              		.loc 1 493 9 is_stmt 1 view .LVU548
+ 493:../../bos/utils/b_util_memp.c ****         {
+ 1903              		.loc 1 493 12 is_stmt 0 view .LVU549
+ 1904 009a 80F955   		cmpb	$85, %cl
+ 1905 009d 7526     		jne	.L147
+ 495:../../bos/utils/b_util_memp.c ****             if (phead->size > max_block)
+ 1906              		.loc 1 495 13 is_stmt 1 view .LVU550
+ 495:../../bos/utils/b_util_memp.c ****             if (phead->size > max_block)
+ 1907              		.loc 1 495 31 is_stmt 0 view .LVU551
+ 1908 009f 0FB64A02 		movzbl	2(%rdx), %ecx
+ 1909 00a3 440FB64A 		movzbl	1(%rdx), %r9d
+ 1909      01
+ 1910 00a8 0FB65203 		movzbl	3(%rdx), %edx
+ 1911 00ac 48C1E108 		salq	$8, %rcx
+ 1912 00b0 4C09C9   		orq	%r9, %rcx
+ 1913 00b3 48C1E210 		salq	$16, %rdx
+ 1914 00b7 4809CA   		orq	%rcx, %rdx
+ 495:../../bos/utils/b_util_memp.c ****             if (phead->size > max_block)
+ 1915              		.loc 1 495 23 view .LVU552
+ 1916 00ba 01D7     		addl	%edx, %edi
+ 1917              	.LVL124:
+ 496:../../bos/utils/b_util_memp.c ****             {
+ 1918              		.loc 1 496 13 is_stmt 1 view .LVU553
+ 496:../../bos/utils/b_util_memp.c ****             {
+ 1919              		.loc 1 496 16 is_stmt 0 view .LVU554
+ 1920 00bc 39D6     		cmpl	%edx, %esi
+ 1921 00be 0F42F2   		cmovb	%edx, %esi
+ 1922              	.LVL125:
+ 500:../../bos/utils/b_util_memp.c ****         }
+ 1923              		.loc 1 500 13 is_stmt 1 view .LVU555
+ 500:../../bos/utils/b_util_memp.c ****         }
+ 1924              		.loc 1 500 24 is_stmt 0 view .LVU556
+ 1925 00c1 4183C001 		addl	$1, %r8d
+ 1926              	.LVL126:
+ 1927              	.L147:
+ 1928              		.loc 1 502 9 is_stmt 1 view .LVU557
+ 491:../../bos/utils/b_util_memp.c ****     {
+ 1929              		.loc 1 491 12 view .LVU558
+ 1930 00c5 4885C0   		testq	%rax, %rax
+ 1931 00c8 75C6     		jne	.L158
+ 503:../../bos/utils/b_util_memp.c ****     }
+ 504:../../bos/utils/b_util_memp.c ****     
+ 505:../../bos/utils/b_util_memp.c ****     if (free_size == 0 || block_count <= 1)
+ 1932              		.loc 1 505 5 view .LVU559
+ 1933              		.loc 1 505 8 is_stmt 0 view .LVU560
+ 1934 00ca 85FF     		testl	%edi, %edi
+ 1935 00cc 0F843E01 		je	.L155
+ 1935      0000
+ 1936 00d2 4183F801 		cmpl	$1, %r8d
+ 1937 00d6 0F863401 		jbe	.L155
+ 1937      0000
+GAS LISTING /tmp/ccYhwHA9.s 			page 56
+
+
+ 506:../../bos/utils/b_util_memp.c ****     {
+ 507:../../bos/utils/b_util_memp.c ****         return 0;
+ 508:../../bos/utils/b_util_memp.c ****     }
+ 509:../../bos/utils/b_util_memp.c ****     
+ 510:../../bos/utils/b_util_memp.c ****     /* Fragmentation = (1 - max_block / free_size) * 100 */
+ 511:../../bos/utils/b_util_memp.c ****     return (uint8_t)((100 * (free_size - max_block)) / free_size);
+ 1938              		.loc 1 511 5 is_stmt 1 view .LVU561
+ 1939              		.loc 1 511 40 is_stmt 0 view .LVU562
+ 1940 00dc 89F8     		movl	%edi, %eax
+ 1941              		.loc 1 511 54 view .LVU563
+ 1942 00de 31D2     		xorl	%edx, %edx
+ 1943              		.loc 1 511 40 view .LVU564
+ 1944 00e0 29F0     		subl	%esi, %eax
+ 1945              		.loc 1 511 27 view .LVU565
+ 1946 00e2 6BC064   		imull	$100, %eax, %eax
+ 1947              		.loc 1 511 54 view .LVU566
+ 1948 00e5 F7F7     		divl	%edi
+ 1949              	.LBE280:
+ 1950              	.LBE285:
+ 476:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+ 1951              		.loc 1 476 5 view .LVU567
+ 1952 00e7 440FB6F0 		movzbl	%al, %r14d
+ 1953              	.L150:
+ 1954              	.LVL127:
+ 472:../../bos/utils/b_util_memp.c ****     b_log("Total:      %u bytes\r\n", total);
+ 1955              		.loc 1 472 5 is_stmt 1 view .LVU568
+ 1956 00eb 4C8D2D00 		leaq	__func__.0(%rip), %r13
+ 1956      000000
+ 1957 00f2 4C8D2500 		leaq	.LC1(%rip), %r12
+ 1957      000000
+ 1958 00f9 B9D80100 		movl	$472, %ecx
+ 1958      00
+ 1959 00fe 31C0     		xorl	%eax, %eax
+ 1960 0100 4C89EA   		movq	%r13, %rdx
+ 1961 0103 4C89E6   		movq	%r12, %rsi
+ 1962 0106 BF030000 		movl	$3, %edi
+ 1962      00
+ 1963 010b 4C8D0500 		leaq	.LC2(%rip), %r8
+ 1963      000000
+ 1964 0112 E8000000 		call	bLogOut@PLT
+ 1964      00
+ 1965              	.LVL128:
+ 473:../../bos/utils/b_util_memp.c ****     b_log("Used:       %u bytes (%.1f%%)\r\n", used_size, (float)used_size * 100 / total);
+ 1966              		.loc 1 473 5 view .LVU569
+ 1967 0117 4C89EA   		movq	%r13, %rdx
+ 1968 011a 4C89E6   		movq	%r12, %rsi
+ 1969 011d B9D90100 		movl	$473, %ecx
+ 1969      00
+ 1970 0122 41B90090 		movl	$102400, %r9d
+ 1970      0100
+ 1971 0128 4C8D0500 		leaq	.LC3(%rip), %r8
+ 1971      000000
+ 1972 012f BF030000 		movl	$3, %edi
+ 1972      00
+ 1973 0134 31C0     		xorl	%eax, %eax
+ 1974 0136 E8000000 		call	bLogOut@PLT
+ 1974      00
+GAS LISTING /tmp/ccYhwHA9.s 			page 57
+
+
+ 1975              	.LVL129:
+ 474:../../bos/utils/b_util_memp.c ****     b_log("Free:       %u bytes (%.1f%%)\r\n", free_size, (float)free_size * 100 / total);
+ 1976              		.loc 1 474 5 view .LVU570
+ 1977 013b 89E8     		movl	%ebp, %eax
+ 1978 013d 660FEFC0 		pxor	%xmm0, %xmm0
+ 1979 0141 4189E9   		movl	%ebp, %r9d
+ 1980 0144 4C89EA   		movq	%r13, %rdx
+ 1981 0147 4C89E6   		movq	%r12, %rsi
+ 1982 014a B9DA0100 		movl	$474, %ecx
+ 1982      00
+ 1983 014f BF030000 		movl	$3, %edi
+ 1983      00
+ 1984 0154 F3480F2A 		cvtsi2ssq	%rax, %xmm0
+ 1984      C0
+ 1985 0159 4C8D0500 		leaq	.LC6(%rip), %r8
+ 1985      000000
+ 1986 0160 F30F5905 		mulss	.LC4(%rip), %xmm0
+ 1986      00000000 
+ 1987 0168 B8010000 		movl	$1, %eax
+ 1987      00
+ 1988 016d F30F5E05 		divss	.LC5(%rip), %xmm0
+ 1988      00000000 
+ 1989 0175 F30F5AC0 		cvtss2sd	%xmm0, %xmm0
+ 1990 0179 E8000000 		call	bLogOut@PLT
+ 1990      00
+ 1991              	.LVL130:
+ 475:../../bos/utils/b_util_memp.c ****     b_log("Fragmentation: %d%%\r\n", frag_ratio);
+ 1992              		.loc 1 475 5 view .LVU571
+ 1993 017e 89D8     		movl	%ebx, %eax
+ 1994 0180 660FEFC0 		pxor	%xmm0, %xmm0
+ 1995 0184 4189D9   		movl	%ebx, %r9d
+ 1996 0187 4C89EA   		movq	%r13, %rdx
+ 1997 018a 4C89E6   		movq	%r12, %rsi
+ 1998 018d F3480F2A 		cvtsi2ssq	%rax, %xmm0
+ 1998      C0
+ 1999 0192 B9DB0100 		movl	$475, %ecx
+ 1999      00
+ 2000 0197 BF030000 		movl	$3, %edi
+ 2000      00
+ 2001 019c B8010000 		movl	$1, %eax
+ 2001      00
+ 2002 01a1 F30F5905 		mulss	.LC4(%rip), %xmm0
+ 2002      00000000 
+ 2003 01a9 4C8D0500 		leaq	.LC7(%rip), %r8
+ 2003      000000
+ 2004 01b0 F30F5E05 		divss	.LC5(%rip), %xmm0
+ 2004      00000000 
+ 2005 01b8 F30F5AC0 		cvtss2sd	%xmm0, %xmm0
+ 2006 01bc E8000000 		call	bLogOut@PLT
+ 2006      00
+ 2007              	.LVL131:
+ 476:../../bos/utils/b_util_memp.c **** #if (defined(_MEMP_WATERLINE_ENABLE) && (_MEMP_WATERLINE_ENABLE == 1))
+ 2008              		.loc 1 476 5 view .LVU572
+ 2009 01c1 4C89EA   		movq	%r13, %rdx
+ 2010 01c4 4C89E6   		movq	%r12, %rsi
+ 2011 01c7 4589F1   		movl	%r14d, %r9d
+ 2012 01ca 4C8D0500 		leaq	.LC8(%rip), %r8
+GAS LISTING /tmp/ccYhwHA9.s 			page 58
+
+
+ 2012      000000
+ 2013 01d1 31C0     		xorl	%eax, %eax
+ 2014 01d3 B9DC0100 		movl	$476, %ecx
+ 2014      00
+ 2015 01d8 BF030000 		movl	$3, %edi
+ 2015      00
+ 2016 01dd E8000000 		call	bLogOut@PLT
+ 2016      00
+ 2017              	.LVL132:
+ 480:../../bos/utils/b_util_memp.c **** }
+ 2018              		.loc 1 480 5 view .LVU573
+ 481:../../bos/utils/b_util_memp.c **** 
+ 2019              		.loc 1 481 1 is_stmt 0 view .LVU574
+ 2020 01e2 5B       		popq	%rbx
+ 2021              	.LCFI59:
+ 2022              		.cfi_remember_state
+ 2023              		.cfi_def_cfa_offset 40
+ 2024              	.LVL133:
+ 480:../../bos/utils/b_util_memp.c **** }
+ 2025              		.loc 1 480 5 view .LVU575
+ 2026 01e3 4C89EA   		movq	%r13, %rdx
+ 481:../../bos/utils/b_util_memp.c **** 
+ 2027              		.loc 1 481 1 view .LVU576
+ 2028 01e6 5D       		popq	%rbp
+ 2029              	.LCFI60:
+ 2030              		.cfi_def_cfa_offset 32
+ 2031              	.LVL134:
+ 480:../../bos/utils/b_util_memp.c **** }
+ 2032              		.loc 1 480 5 view .LVU577
+ 2033 01e7 4C89E6   		movq	%r12, %rsi
+ 2034 01ea 4C8D0500 		leaq	.LC9(%rip), %r8
+ 2034      000000
+ 481:../../bos/utils/b_util_memp.c **** 
+ 2035              		.loc 1 481 1 view .LVU578
+ 2036 01f1 415C     		popq	%r12
+ 2037              	.LCFI61:
+ 2038              		.cfi_def_cfa_offset 24
+ 480:../../bos/utils/b_util_memp.c **** }
+ 2039              		.loc 1 480 5 view .LVU579
+ 2040 01f3 31C0     		xorl	%eax, %eax
+ 481:../../bos/utils/b_util_memp.c **** 
+ 2041              		.loc 1 481 1 view .LVU580
+ 2042 01f5 415D     		popq	%r13
+ 2043              	.LCFI62:
+ 2044              		.cfi_def_cfa_offset 16
+ 480:../../bos/utils/b_util_memp.c **** }
+ 2045              		.loc 1 480 5 view .LVU581
+ 2046 01f7 B9E00100 		movl	$480, %ecx
+ 2046      00
+ 2047 01fc BF030000 		movl	$3, %edi
+ 2047      00
+ 481:../../bos/utils/b_util_memp.c **** 
+ 2048              		.loc 1 481 1 view .LVU582
+ 2049 0201 415E     		popq	%r14
+ 2050              	.LCFI63:
+ 2051              		.cfi_def_cfa_offset 8
+ 480:../../bos/utils/b_util_memp.c **** }
+GAS LISTING /tmp/ccYhwHA9.s 			page 59
+
+
+ 2052              		.loc 1 480 5 view .LVU583
+ 2053 0203 E9000000 		jmp	bLogOut@PLT
+ 2053      00
+ 2054              	.LVL135:
+ 2055 0208 0F1F8400 		.p2align 4,,10
+ 2055      00000000 
+ 2056              		.p2align 3
+ 2057              	.L155:
+ 2058              	.LCFI64:
+ 2059              		.cfi_restore_state
+ 2060              	.LBB286:
+ 2061              	.LBB281:
+ 480:../../bos/utils/b_util_memp.c **** }
+ 2062              		.loc 1 480 5 view .LVU584
+ 2063 0210 4531F6   		xorl	%r14d, %r14d
+ 2064 0213 E9D3FEFF 		jmp	.L150
+ 2064      FF
+ 2065              	.LVL136:
+ 2066 0218 0F1F8400 		.p2align 4,,10
+ 2066      00000000 
+ 2067              		.p2align 3
+ 2068              	.L142:
+ 480:../../bos/utils/b_util_memp.c **** }
+ 2069              		.loc 1 480 5 view .LVU585
+ 2070              	.LBE281:
+ 2071              	.LBE286:
+ 2072              	.LBB287:
+ 2073              	.LBB275:
+ 2074              	.LBB270:
+ 2075              	.LBI270:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 2076              		.loc 1 123 13 is_stmt 1 view .LVU586
+ 2077              	.LBB271:
+ 128:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 2078              		.loc 1 128 9 view .LVU587
+ 2079              	.LBB272:
+ 2080              	.LBI272:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 2081              		.loc 2 57 1 view .LVU588
+ 2082              	.LBB273:
+ 2083              		.loc 2 59 3 view .LVU589
+ 2084              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU590
+ 2085 0220 BA009001 		movl	$102400, %edx
+ 2085      00
+ 2086 0225 31F6     		xorl	%esi, %esi
+ 2087 0227 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 2087      000000
+ 2088 022e E8000000 		call	memset@PLT
+ 2088      00
+ 2089              	.LVL137:
+ 2090              		.loc 2 59 10 discriminator 1 view .LVU591
+ 2091              	.LBE273:
+ 2092              	.LBE272:
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 2093              		.loc 1 129 9 is_stmt 1 view .LVU592
+ 130:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 2094              		.loc 1 130 9 view .LVU593
+GAS LISTING /tmp/ccYhwHA9.s 			page 60
+
+
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 2095              		.loc 1 132 23 is_stmt 0 view .LVU594
+ 2096 0233 C6050000 		movb	$1, bMempInitFlag(%rip)
+ 2096      000001
+ 134:../../bos/utils/b_util_memp.c **** 
+ 2097              		.loc 1 134 1 view .LVU595
+ 2098 023a 31C0     		xorl	%eax, %eax
+ 2099 023c B9550000 		movl	$85, %ecx
+ 2099      00
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 2100              		.loc 1 129 23 view .LVU596
+ 2101 0241 C7050000 		movl	$26211413, bMempBuf(%rip)
+ 2101      000055F4 
+ 2101      8F01
+ 131:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 2102              		.loc 1 131 9 is_stmt 1 view .LVU597
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 2103              		.loc 1 132 9 view .LVU598
+ 134:../../bos/utils/b_util_memp.c **** 
+ 2104              		.loc 1 134 1 is_stmt 0 view .LVU599
+ 2105 024b E9D7FDFF 		jmp	.L143
+ 2105      FF
+ 2106              	.LBE271:
+ 2107              	.LBE270:
+ 2108              	.LBE275:
+ 2109              	.LBE287:
+ 2110              		.cfi_endproc
+ 2111              	.LFE30:
+ 2113              		.section	.text.bMemGetFragmentation,"ax",@progbits
+ 2114              		.p2align 4
+ 2115              		.globl	bMemGetFragmentation
+ 2117              	bMemGetFragmentation:
+ 2118              	.LFB31:
+ 484:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 2119              		.loc 1 484 1 is_stmt 1 view -0
+ 2120              		.cfi_startproc
+ 2121 0000 F30F1EFA 		endbr64
+ 485:../../bos/utils/b_util_memp.c ****     bMempUnitHead_t *phead       = (bMempUnitHead_t *)bMempBuf;
+ 2122              		.loc 1 485 5 view .LVU601
+ 2123              	.LBB294:
+ 2124              	.LBI294:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 2125              		.loc 1 123 13 view .LVU602
+ 2126              	.LBB295:
+ 125:../../bos/utils/b_util_memp.c ****     if (bMempInitFlag == 0)
+ 2127              		.loc 1 125 5 view .LVU603
+ 2128              	.LVL138:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 2129              		.loc 1 126 5 view .LVU604
+ 2130              	.LBE295:
+ 2131              	.LBE294:
+ 484:../../bos/utils/b_util_memp.c ****     _bMempInit();
+ 2132              		.loc 1 484 1 is_stmt 0 view .LVU605
+ 2133 0004 4883EC08 		subq	$8, %rsp
+ 2134              	.LCFI65:
+ 2135              		.cfi_def_cfa_offset 16
+ 2136              	.LBB302:
+GAS LISTING /tmp/ccYhwHA9.s 			page 61
+
+
+ 2137              	.LBB300:
+ 126:../../bos/utils/b_util_memp.c ****     {
+ 2138              		.loc 1 126 8 view .LVU606
+ 2139 0008 803D0000 		cmpb	$0, bMempInitFlag(%rip)
+ 2139      000000
+ 2140 000f 747F     		je	.L160
+ 2141              	.LBE300:
+ 2142              	.LBE302:
+ 493:../../bos/utils/b_util_memp.c ****         {
+ 2143              		.loc 1 493 18 view .LVU607
+ 2144 0011 0FB60D00 		movzbl	bMempBuf(%rip), %ecx
+ 2144      000000
+ 502:../../bos/utils/b_util_memp.c ****     }
+ 2145              		.loc 1 502 15 view .LVU608
+ 2146 0018 488B0500 		movq	4+bMempBuf(%rip), %rax
+ 2146      000000
+ 2147              	.L161:
+ 486:../../bos/utils/b_util_memp.c ****     uint32_t         free_size   = 0;
+ 2148              		.loc 1 486 5 is_stmt 1 view .LVU609
+ 2149              	.LVL139:
+ 487:../../bos/utils/b_util_memp.c ****     uint32_t         max_block   = 0;
+ 2150              		.loc 1 487 5 view .LVU610
+ 488:../../bos/utils/b_util_memp.c ****     uint32_t         block_count = 0;
+ 2151              		.loc 1 488 5 view .LVU611
+ 489:../../bos/utils/b_util_memp.c ****     
+ 2152              		.loc 1 489 5 view .LVU612
+ 491:../../bos/utils/b_util_memp.c ****     {
+ 2153              		.loc 1 491 5 view .LVU613
+ 491:../../bos/utils/b_util_memp.c ****     {
+ 2154              		.loc 1 491 12 view .LVU614
+ 489:../../bos/utils/b_util_memp.c ****     
+ 2155              		.loc 1 489 22 is_stmt 0 view .LVU615
+ 2156 001f 4531C0   		xorl	%r8d, %r8d
+ 488:../../bos/utils/b_util_memp.c ****     uint32_t         block_count = 0;
+ 2157              		.loc 1 488 22 view .LVU616
+ 2158 0022 31F6     		xorl	%esi, %esi
+ 486:../../bos/utils/b_util_memp.c ****     uint32_t         free_size   = 0;
+ 2159              		.loc 1 486 22 view .LVU617
+ 2160 0024 488D1500 		leaq	bMempBuf(%rip), %rdx
+ 2160      000000
+ 487:../../bos/utils/b_util_memp.c ****     uint32_t         max_block   = 0;
+ 2161              		.loc 1 487 22 view .LVU618
+ 2162 002b 31FF     		xorl	%edi, %edi
+ 2163 002d EB0B     		jmp	.L164
+ 2164              	.LVL140:
+ 2165 002f 90       		.p2align 4,,10
+ 2166              		.p2align 3
+ 2167              	.L168:
+ 493:../../bos/utils/b_util_memp.c ****         {
+ 2168              		.loc 1 493 18 view .LVU619
+ 2169 0030 0FB608   		movzbl	(%rax), %ecx
+ 502:../../bos/utils/b_util_memp.c ****     }
+ 2170              		.loc 1 502 15 view .LVU620
+ 2171 0033 4889C2   		movq	%rax, %rdx
+ 2172 0036 488B4004 		movq	4(%rax), %rax
+ 2173              	.LVL141:
+ 2174              	.L164:
+GAS LISTING /tmp/ccYhwHA9.s 			page 62
+
+
+ 493:../../bos/utils/b_util_memp.c ****         {
+ 2175              		.loc 1 493 9 is_stmt 1 view .LVU621
+ 493:../../bos/utils/b_util_memp.c ****         {
+ 2176              		.loc 1 493 12 is_stmt 0 view .LVU622
+ 2177 003a 80F955   		cmpb	$85, %cl
+ 2178 003d 7526     		jne	.L162
+ 495:../../bos/utils/b_util_memp.c ****             if (phead->size > max_block)
+ 2179              		.loc 1 495 13 is_stmt 1 view .LVU623
+ 495:../../bos/utils/b_util_memp.c ****             if (phead->size > max_block)
+ 2180              		.loc 1 495 31 is_stmt 0 view .LVU624
+ 2181 003f 0FB64A02 		movzbl	2(%rdx), %ecx
+ 2182 0043 440FB64A 		movzbl	1(%rdx), %r9d
+ 2182      01
+ 2183 0048 0FB65203 		movzbl	3(%rdx), %edx
+ 2184 004c 48C1E108 		salq	$8, %rcx
+ 2185 0050 4C09C9   		orq	%r9, %rcx
+ 2186 0053 48C1E210 		salq	$16, %rdx
+ 2187 0057 4809CA   		orq	%rcx, %rdx
+ 495:../../bos/utils/b_util_memp.c ****             if (phead->size > max_block)
+ 2188              		.loc 1 495 23 view .LVU625
+ 2189 005a 01D7     		addl	%edx, %edi
+ 2190              	.LVL142:
+ 496:../../bos/utils/b_util_memp.c ****             {
+ 2191              		.loc 1 496 13 is_stmt 1 view .LVU626
+ 496:../../bos/utils/b_util_memp.c ****             {
+ 2192              		.loc 1 496 16 is_stmt 0 view .LVU627
+ 2193 005c 39D6     		cmpl	%edx, %esi
+ 2194 005e 0F42F2   		cmovb	%edx, %esi
+ 2195              	.LVL143:
+ 500:../../bos/utils/b_util_memp.c ****         }
+ 2196              		.loc 1 500 13 is_stmt 1 view .LVU628
+ 500:../../bos/utils/b_util_memp.c ****         }
+ 2197              		.loc 1 500 24 is_stmt 0 view .LVU629
+ 2198 0061 4183C001 		addl	$1, %r8d
+ 2199              	.LVL144:
+ 2200              	.L162:
+ 502:../../bos/utils/b_util_memp.c ****     }
+ 2201              		.loc 1 502 9 is_stmt 1 view .LVU630
+ 491:../../bos/utils/b_util_memp.c ****     {
+ 2202              		.loc 1 491 12 view .LVU631
+ 2203 0065 4885C0   		testq	%rax, %rax
+ 2204 0068 75C6     		jne	.L168
+ 505:../../bos/utils/b_util_memp.c ****     {
+ 2205              		.loc 1 505 5 view .LVU632
+ 505:../../bos/utils/b_util_memp.c ****     {
+ 2206              		.loc 1 505 8 is_stmt 0 view .LVU633
+ 2207 006a 85FF     		testl	%edi, %edi
+ 2208 006c 741A     		je	.L166
+ 2209 006e 4183F801 		cmpl	$1, %r8d
+ 2210 0072 7614     		jbe	.L166
+ 2211              		.loc 1 511 5 is_stmt 1 view .LVU634
+ 2212              		.loc 1 511 40 is_stmt 0 view .LVU635
+ 2213 0074 89F8     		movl	%edi, %eax
+ 2214              		.loc 1 511 12 view .LVU636
+ 2215 0076 31D2     		xorl	%edx, %edx
+ 512:../../bos/utils/b_util_memp.c **** }
+ 2216              		.loc 1 512 1 view .LVU637
+GAS LISTING /tmp/ccYhwHA9.s 			page 63
+
+
+ 2217 0078 4883C408 		addq	$8, %rsp
+ 2218              	.LCFI66:
+ 2219              		.cfi_remember_state
+ 2220              		.cfi_def_cfa_offset 8
+ 511:../../bos/utils/b_util_memp.c **** }
+ 2221              		.loc 1 511 40 view .LVU638
+ 2222 007c 29F0     		subl	%esi, %eax
+ 511:../../bos/utils/b_util_memp.c **** }
+ 2223              		.loc 1 511 27 view .LVU639
+ 2224 007e 6BC064   		imull	$100, %eax, %eax
+ 511:../../bos/utils/b_util_memp.c **** }
+ 2225              		.loc 1 511 12 view .LVU640
+ 2226 0081 F7F7     		divl	%edi
+ 2227              		.loc 1 512 1 view .LVU641
+ 2228 0083 C3       		ret
+ 2229              		.p2align 4,,10
+ 2230 0084 0F1F4000 		.p2align 3
+ 2231              	.L166:
+ 2232              	.LCFI67:
+ 2233              		.cfi_restore_state
+ 507:../../bos/utils/b_util_memp.c ****     }
+ 2234              		.loc 1 507 16 view .LVU642
+ 2235 0088 31C0     		xorl	%eax, %eax
+ 2236              		.loc 1 512 1 view .LVU643
+ 2237 008a 4883C408 		addq	$8, %rsp
+ 2238              	.LCFI68:
+ 2239              		.cfi_remember_state
+ 2240              		.cfi_def_cfa_offset 8
+ 2241 008e C3       		ret
+ 2242              	.LVL145:
+ 2243 008f 90       		.p2align 4,,10
+ 2244              		.p2align 3
+ 2245              	.L160:
+ 2246              	.LCFI69:
+ 2247              		.cfi_restore_state
+ 2248              	.LBB303:
+ 2249              	.LBB301:
+ 2250              	.LBB296:
+ 2251              	.LBI296:
+ 123:../../bos/utils/b_util_memp.c **** {
+ 2252              		.loc 1 123 13 is_stmt 1 view .LVU644
+ 2253              	.LBB297:
+ 128:../../bos/utils/b_util_memp.c ****         phead->status = MEMP_UNIT_FREE;
+ 2254              		.loc 1 128 9 view .LVU645
+ 2255              	.LBB298:
+ 2256              	.LBI298:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 2257              		.loc 2 57 1 view .LVU646
+ 2258              	.LBB299:
+ 2259              		.loc 2 59 3 view .LVU647
+ 2260              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU648
+ 2261 0090 BA009001 		movl	$102400, %edx
+ 2261      00
+ 2262 0095 31F6     		xorl	%esi, %esi
+ 2263 0097 488D3D00 		leaq	bMempBuf(%rip), %rdi
+ 2263      000000
+ 2264 009e E8000000 		call	memset@PLT
+GAS LISTING /tmp/ccYhwHA9.s 			page 64
+
+
+ 2264      00
+ 2265              	.LVL146:
+ 2266              		.loc 2 59 10 discriminator 1 view .LVU649
+ 2267              	.LBE299:
+ 2268              	.LBE298:
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 2269              		.loc 1 129 9 is_stmt 1 view .LVU650
+ 130:../../bos/utils/b_util_memp.c ****         phead->next   = NULL;
+ 2270              		.loc 1 130 9 view .LVU651
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 2271              		.loc 1 132 23 is_stmt 0 view .LVU652
+ 2272 00a3 C6050000 		movb	$1, bMempInitFlag(%rip)
+ 2272      000001
+ 134:../../bos/utils/b_util_memp.c **** 
+ 2273              		.loc 1 134 1 view .LVU653
+ 2274 00aa 31C0     		xorl	%eax, %eax
+ 2275 00ac B9550000 		movl	$85, %ecx
+ 2275      00
+ 129:../../bos/utils/b_util_memp.c ****         phead->size   = MEMP_SIZE - sizeof(bMempUnitHead_t);
+ 2276              		.loc 1 129 23 view .LVU654
+ 2277 00b1 C7050000 		movl	$26211413, bMempBuf(%rip)
+ 2277      000055F4 
+ 2277      8F01
+ 131:../../bos/utils/b_util_memp.c ****         bMempInitFlag = 1;
+ 2278              		.loc 1 131 9 is_stmt 1 view .LVU655
+ 132:../../bos/utils/b_util_memp.c ****     }
+ 2279              		.loc 1 132 9 view .LVU656
+ 134:../../bos/utils/b_util_memp.c **** 
+ 2280              		.loc 1 134 1 is_stmt 0 view .LVU657
+ 2281 00bb E95FFFFF 		jmp	.L161
+ 2281      FF
+ 2282              	.LBE297:
+ 2283              	.LBE296:
+ 2284              	.LBE301:
+ 2285              	.LBE303:
+ 2286              		.cfi_endproc
+ 2287              	.LFE31:
+ 2289              		.section	.rodata.__func__.0,"a"
+ 2290              		.align 8
+ 2293              	__func__.0:
+ 2294 0000 624D656D 		.string	"bMemPrintStats"
+ 2294      5072696E 
+ 2294      74537461 
+ 2294      747300
+ 2295              		.section	.rodata.__func__.1,"a"
+ 2296              		.align 8
+ 2299              	__func__.1:
+ 2300 0000 5F624D65 		.string	"_bMempAlloc"
+ 2300      6D70416C 
+ 2300      6C6F6300 
+ 2301              		.section	.bss.bMempInitFlag,"aw",@nobits
+ 2304              	bMempInitFlag:
+ 2305 0000 00       		.zero	1
+ 2306              		.section	.bss.bMempBuf,"aw",@nobits
+ 2307              		.align 4
+ 2310              	bMempBuf:
+ 2311 0000 00000000 		.zero	102400
+GAS LISTING /tmp/ccYhwHA9.s 			page 65
+
+
+ 2311      00000000 
+ 2311      00000000 
+ 2311      00000000 
+ 2311      00000000 
+ 2312              		.section	.rodata.cst4,"aM",@progbits,4
+ 2313              		.align 4
+ 2314              	.LC4:
+ 2315 0000 0000C842 		.long	1120403456
+ 2316              		.align 4
+ 2317              	.LC5:
+ 2318 0004 0000C847 		.long	1204289536
+ 2319              		.text
+ 2320              	.Letext0:
+ 2321              		.file 3 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 2322              		.file 4 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 2323              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 2324              		.file 6 "/usr/include/string.h"
+ 2325              		.file 7 "../../bos/utils/inc/b_util_log.h"
+ 2326              		.file 8 "<built-in>"
+ 8195              		.section	.note.gnu.property,"a"
+ 8196              		.align 8
+ 8197 0000 04000000 		.long	1f - 0f
+ 8198 0004 10000000 		.long	4f - 1f
+ 8199 0008 05000000 		.long	5
+ 8200              	0:
+ 8201 000c 474E5500 		.string	"GNU"
+ 8202              	1:
+ 8203              		.align 8
+ 8204 0010 020000C0 		.long	0xc0000002
+ 8205 0014 04000000 		.long	3f - 2f
+ 8206              	2:
+ 8207 0018 03000000 		.long	0x3
+ 8208              	3:
+ 8209 001c 00000000 		.align 8
+ 8210              	4:
+GAS LISTING /tmp/ccYhwHA9.s 			page 66
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_util_memp.c
+     /tmp/ccYhwHA9.s:9      .text.bFree:0000000000000000 bFree
+     /tmp/ccYhwHA9.s:2304   .bss.bMempInitFlag:0000000000000000 bMempInitFlag
+     /tmp/ccYhwHA9.s:2310   .bss.bMempBuf:0000000000000000 bMempBuf
+     /tmp/ccYhwHA9.s:197    .text.bGetFreeSize:0000000000000000 bGetFreeSize
+     /tmp/ccYhwHA9.s:341    .text.bGetTotalSize:0000000000000000 bGetTotalSize
+     /tmp/ccYhwHA9.s:357    .text.bMallocFailedHook:0000000000000000 bMallocFailedHook
+     /tmp/ccYhwHA9.s:376    .text._bMempAlloc:0000000000000000 _bMempAlloc
+     /tmp/ccYhwHA9.s:2299   .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/ccYhwHA9.s:563    .text.bMalloc:0000000000000000 bMalloc
+     /tmp/ccYhwHA9.s:671    .text.bCalloc:0000000000000000 bCalloc
+     /tmp/ccYhwHA9.s:846    .text.bRealloc:0000000000000000 bRealloc
+     /tmp/ccYhwHA9.s:1515   .text.bStrDup:0000000000000000 bStrDup
+     /tmp/ccYhwHA9.s:1751   .text.bMemPrintStats:0000000000000000 bMemPrintStats
+     /tmp/ccYhwHA9.s:2293   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccYhwHA9.s:2117   .text.bMemGetFragmentation:0000000000000000 bMemGetFragmentation
+     /tmp/ccYhwHA9.s:369    .rodata._bMempAlloc.str1.1:0000000000000000 .LC0
+     /tmp/ccYhwHA9.s:371    .rodata._bMempAlloc.str1.1:0000000000000019 .LC1
+     /tmp/ccYhwHA9.s:1728   .rodata.bMemPrintStats.str1.8:0000000000000000 .LC2
+     /tmp/ccYhwHA9.s:1731   .rodata.bMemPrintStats.str1.1:0000000000000000 .LC3
+     /tmp/ccYhwHA9.s:1735   .rodata.bMemPrintStats.str1.8:0000000000000030 .LC6
+     /tmp/ccYhwHA9.s:2314   .rodata.cst4:0000000000000000 .LC4
+     /tmp/ccYhwHA9.s:2317   .rodata.cst4:0000000000000004 .LC5
+     /tmp/ccYhwHA9.s:1738   .rodata.bMemPrintStats.str1.8:0000000000000050 .LC7
+     /tmp/ccYhwHA9.s:1741   .rodata.bMemPrintStats.str1.1:0000000000000017 .LC8
+     /tmp/ccYhwHA9.s:1745   .rodata.bMemPrintStats.str1.8:0000000000000070 .LC9
+
+UNDEFINED SYMBOLS
+memset
+bLogOut
+memcpy
+strlen

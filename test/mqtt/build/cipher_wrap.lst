@@ -1,0 +1,1150 @@
+GAS LISTING /tmp/ccX2WTgb.s 			page 1
+
+
+   1              		.file	"cipher_wrap.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c"
+   5              		.section	.text.gcm_ctx_free,"ax",@progbits
+   6              		.p2align 4
+   8              	gcm_ctx_free:
+   9              	.LVL0:
+  10              	.LFB57:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** /**
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  * \file cipher_wrap.c
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  * \brief Generic cipher wrapper for Mbed TLS
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  *
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  * \author Adriaan de Jong <dejong@fox-it.com>
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  *
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  *  Copyright The Mbed TLS Contributors
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****  */
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "common.h"
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_C)
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "cipher_wrap.h"
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h"
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CHACHAPOLY_C)
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/chachapoly.h"
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_AES_C)
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/aes.h"
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CAMELLIA_C)
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/camellia.h"
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_ARIA_C)
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/aria.h"
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_DES_C)
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/des.h"
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CHACHA20_C)
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/chacha20.h"
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_GCM_C)
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/gcm.h"
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CCM_C)
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ccm.h"
+GAS LISTING /tmp/ccX2WTgb.s 			page 2
+
+
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_NIST_KW_C)
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/nist_kw.h"
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_NULL_CIPHER)
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include <string.h>
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** enum mbedtls_cipher_base_index {
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_AES_C)
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES,
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_ARIA_C)
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_ARIA,
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CAMELLIA_C)
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_CAMELLIA,
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_HAVE_CCM_AES_VIA_LEGACY_OR_USE_PSA)
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_CCM_AES,
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CCM_C) && defined(MBEDTLS_ARIA_C)
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_CCM_ARIA,
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CCM_C) && defined(MBEDTLS_CAMELLIA_C)
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_CCM_CAMELLIA,
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CHACHA20_C)
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_CHACHA20_BASE,
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CHACHAPOLY_C)
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_CHACHAPOLY_BASE,
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_DES_C)
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_DES_EDE3,
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_DES_C)
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_DES_EDE,
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_DES_C)
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_DES,
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_HAVE_GCM_AES_VIA_LEGACY_OR_USE_PSA)
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_GCM_AES,
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_GCM_C) && defined(MBEDTLS_ARIA_C)
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_GCM_ARIA,
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_GCM_C) && defined(MBEDTLS_CAMELLIA_C)
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_GCM_CAMELLIA,
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_NIST_KW_C)
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_KW_AES,
+GAS LISTING /tmp/ccX2WTgb.s 			page 3
+
+
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_NULL_CIPHER)
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_NULL_BASE,
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_XTS) && defined(MBEDTLS_AES_C)
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_XTS_AES,
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     /* Prevent compile failure due to empty enum */
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_PREVENT_EMPTY_ENUM
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_GCM_C) && \
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     (defined(MBEDTLS_CIPHER_HAVE_GCM_AES_VIA_LEGACY_OR_USE_PSA) || \
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     defined(MBEDTLS_ARIA_C) || defined(MBEDTLS_CAMELLIA_C))
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** /* shared by all GCM ciphers */
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static void *gcm_ctx_alloc(void)
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_gcm_context));
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     if (ctx != NULL) {
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         mbedtls_gcm_init((mbedtls_gcm_context *) ctx);
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     }
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return ctx;
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static void gcm_ctx_free(void *ctx)
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+  11              		.loc 1 133 1 view -0
+  12              		.cfi_startproc
+  13              		.loc 1 133 1 is_stmt 0 view .LVU1
+  14 0000 F30F1EFA 		endbr64
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_gcm_free(ctx);
+  15              		.loc 1 134 5 is_stmt 1 view .LVU2
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_gcm_free(ctx);
+  16              		.loc 1 133 1 is_stmt 0 view .LVU3
+  17 0004 53       		pushq	%rbx
+  18              	.LCFI0:
+  19              		.cfi_def_cfa_offset 16
+  20              		.cfi_offset 3, -16
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_gcm_free(ctx);
+  21              		.loc 1 133 1 view .LVU4
+  22 0005 4889FB   		movq	%rdi, %rbx
+  23              		.loc 1 134 5 view .LVU5
+  24 0008 E8000000 		call	mbedtls_gcm_free@PLT
+  24      00
+  25              	.LVL1:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(ctx);
+  26              		.loc 1 135 5 is_stmt 1 view .LVU6
+  27 000d 4889DF   		movq	%rbx, %rdi
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+  28              		.loc 1 136 1 is_stmt 0 view .LVU7
+  29 0010 5B       		popq	%rbx
+  30              	.LCFI1:
+  31              		.cfi_def_cfa_offset 8
+  32              	.LVL2:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(ctx);
+GAS LISTING /tmp/ccX2WTgb.s 			page 4
+
+
+  33              		.loc 1 135 5 view .LVU8
+  34 0011 E9000000 		jmp	mbedtls_free@PLT
+  34      00
+  35              	.LVL3:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(ctx);
+  36              		.loc 1 135 5 view .LVU9
+  37              		.cfi_endproc
+  38              	.LFE57:
+  40              		.section	.text.gcm_ctx_alloc,"ax",@progbits
+  41              		.p2align 4
+  43              	gcm_ctx_alloc:
+  44              	.LFB56:
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_gcm_context));
+  45              		.loc 1 122 1 is_stmt 1 view -0
+  46              		.cfi_startproc
+  47 0000 F30F1EFA 		endbr64
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  48              		.loc 1 123 5 view .LVU11
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_gcm_context));
+  49              		.loc 1 122 1 is_stmt 0 view .LVU12
+  50 0004 53       		pushq	%rbx
+  51              	.LCFI2:
+  52              		.cfi_def_cfa_offset 16
+  53              		.cfi_offset 3, -16
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  54              		.loc 1 123 17 view .LVU13
+  55 0005 BE900100 		movl	$400, %esi
+  55      00
+  56 000a BF010000 		movl	$1, %edi
+  56      00
+  57 000f E8000000 		call	mbedtls_calloc@PLT
+  57      00
+  58              	.LVL4:
+  59 0014 4889C3   		movq	%rax, %rbx
+  60              	.LVL5:
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         mbedtls_gcm_init((mbedtls_gcm_context *) ctx);
+  61              		.loc 1 125 5 is_stmt 1 view .LVU14
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         mbedtls_gcm_init((mbedtls_gcm_context *) ctx);
+  62              		.loc 1 125 8 is_stmt 0 view .LVU15
+  63 0017 4885C0   		testq	%rax, %rax
+  64 001a 7408     		je	.L4
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     }
+  65              		.loc 1 126 9 is_stmt 1 view .LVU16
+  66 001c 4889C7   		movq	%rax, %rdi
+  67 001f E8000000 		call	mbedtls_gcm_init@PLT
+  67      00
+  68              	.LVL6:
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+  69              		.loc 1 129 5 view .LVU17
+  70              	.L4:
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  71              		.loc 1 130 1 is_stmt 0 view .LVU18
+  72 0024 4889D8   		movq	%rbx, %rax
+  73 0027 5B       		popq	%rbx
+  74              	.LCFI3:
+  75              		.cfi_def_cfa_offset 8
+  76              	.LVL7:
+GAS LISTING /tmp/ccX2WTgb.s 			page 5
+
+
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+  77              		.loc 1 130 1 view .LVU19
+  78 0028 C3       		ret
+  79              		.cfi_endproc
+  80              	.LFE56:
+  82              		.section	.text.gcm_aes_setkey_wrap,"ax",@progbits
+  83              		.p2align 4
+  85              	gcm_aes_setkey_wrap:
+  86              	.LVL8:
+  87              	.LFB63:
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_GCM_C */
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CCM_C) && \
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     (defined(MBEDTLS_CIPHER_HAVE_CCM_AES_VIA_LEGACY_OR_USE_PSA) || \
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     defined(MBEDTLS_ARIA_C) || defined(MBEDTLS_CAMELLIA_C))
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** /* shared by all CCM ciphers */
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static void *ccm_ctx_alloc(void)
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_ccm_context));
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     if (ctx != NULL) {
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         mbedtls_ccm_init((mbedtls_ccm_context *) ctx);
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     }
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return ctx;
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static void ccm_ctx_free(void *ctx)
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_ccm_free(ctx);
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(ctx);
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CCM_C */
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_AES_C)
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_crypt_ecb_wrap(void *ctx, mbedtls_operation_t operation,
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               const unsigned char *input, unsigned char *output)
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_ecb((mbedtls_aes_context *) ctx, operation, input, output);
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CBC)
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_crypt_cbc_wrap(void *ctx, mbedtls_operation_t operation, size_t length,
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               unsigned char *iv, const unsigned char *input, unsigned char *output)
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_cbc((mbedtls_aes_context *) ctx, operation, length, iv, input,
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                  output);
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_CBC */
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CFB)
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_crypt_cfb128_wrap(void *ctx, mbedtls_operation_t operation,
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                  size_t length, size_t *iv_off, unsigned char *iv,
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                  const unsigned char *input, unsigned char *output)
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_cfb128((mbedtls_aes_context *) ctx, operation, length, iv_off, iv,
+GAS LISTING /tmp/ccX2WTgb.s 			page 6
+
+
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                     input, output);
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_CFB */
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_OFB)
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_crypt_ofb_wrap(void *ctx, size_t length, size_t *iv_off,
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               unsigned char *iv, const unsigned char *input, unsigned char *output)
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_ofb((mbedtls_aes_context *) ctx, length, iv_off,
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                  iv, input, output);
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_OFB */
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CTR)
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_crypt_ctr_wrap(void *ctx, size_t length, size_t *nc_off,
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               unsigned char *nonce_counter, unsigned char *stream_block,
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               const unsigned char *input, unsigned char *output)
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_ctr((mbedtls_aes_context *) ctx, length, nc_off, nonce_counter,
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                  stream_block, input, output);
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_CTR */
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_XTS)
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_crypt_xts_wrap(void *ctx, mbedtls_operation_t operation,
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               size_t length,
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               const unsigned char data_unit[16],
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               const unsigned char *input,
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                               unsigned char *output)
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_xts_context *xts_ctx = ctx;
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     int mode;
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     switch (operation) {
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         case MBEDTLS_ENCRYPT:
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****             mode = MBEDTLS_AES_ENCRYPT;
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****             break;
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         case MBEDTLS_DECRYPT:
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****             mode = MBEDTLS_AES_DECRYPT;
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****             break;
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         default:
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****             return MBEDTLS_ERR_CIPHER_BAD_INPUT_DATA;
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     }
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_xts(xts_ctx, mode, length,
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                  data_unit, input, output);
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_XTS */
+ 232:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if !defined(MBEDTLS_BLOCK_CIPHER_NO_DECRYPT)
+ 234:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_setkey_dec_wrap(void *ctx, const unsigned char *key,
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                unsigned int key_bitlen)
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_setkey_dec((mbedtls_aes_context *) ctx, key, key_bitlen);
+ 238:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+GAS LISTING /tmp/ccX2WTgb.s 			page 7
+
+
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int aes_setkey_enc_wrap(void *ctx, const unsigned char *key,
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                unsigned int key_bitlen)
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_setkey_enc((mbedtls_aes_context *) ctx, key, key_bitlen);
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static void *aes_ctx_alloc(void)
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_context *aes = mbedtls_calloc(1, sizeof(mbedtls_aes_context));
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     if (aes == NULL) {
+ 252:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         return NULL;
+ 253:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     }
+ 254:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 255:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_init(aes);
+ 256:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 257:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return aes;
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 260:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static void aes_ctx_free(void *ctx)
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_free((mbedtls_aes_context *) ctx);
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(ctx);
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 265:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 266:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_base_t aes_info = {
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_ID_AES,
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_crypt_ecb_wrap,
+ 269:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CBC)
+ 270:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_crypt_cbc_wrap,
+ 271:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CFB)
+ 273:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_crypt_cfb128_wrap,
+ 274:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_OFB)
+ 276:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_crypt_ofb_wrap,
+ 277:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 278:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CTR)
+ 279:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_crypt_ctr_wrap,
+ 280:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 281:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_XTS)
+ 282:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 284:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_STREAM)
+ 285:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
+ 286:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 287:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_setkey_enc_wrap,
+ 288:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if !defined(MBEDTLS_BLOCK_CIPHER_NO_DECRYPT)
+ 289:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_setkey_dec_wrap,
+ 290:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 291:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_ctx_alloc,
+ 292:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_ctx_free
+ 293:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 294:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 295:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_128_ecb_info = {
+ 296:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-128-ECB",
+ 297:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+GAS LISTING /tmp/ccX2WTgb.s 			page 8
+
+
+ 298:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0 >> MBEDTLS_IV_SIZE_SHIFT,
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     128 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 300:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_ECB,
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_128_ECB,
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 305:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 306:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if !defined(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH)
+ 307:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_192_ecb_info = {
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-192-ECB",
+ 309:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0 >> MBEDTLS_IV_SIZE_SHIFT,
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     192 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 312:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_ECB,
+ 313:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_192_ECB,
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 318:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_256_ecb_info = {
+ 319:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-256-ECB",
+ 320:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 321:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0 >> MBEDTLS_IV_SIZE_SHIFT,
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     256 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 323:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_ECB,
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_256_ECB,
+ 325:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 326:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 327:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 330:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CBC)
+ 331:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_128_cbc_info = {
+ 332:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-128-CBC",
+ 333:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 334:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 335:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     128 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CBC,
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_128_CBC,
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 341:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 342:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if !defined(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH)
+ 343:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_192_cbc_info = {
+ 344:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-192-CBC",
+ 345:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     192 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CBC,
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_192_CBC,
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 351:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 353:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 354:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_256_cbc_info = {
+GAS LISTING /tmp/ccX2WTgb.s 			page 9
+
+
+ 355:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-256-CBC",
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 357:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     256 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 359:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CBC,
+ 360:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_256_CBC,
+ 361:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 362:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 363:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 364:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 365:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_CBC */
+ 366:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 367:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CFB)
+ 368:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_128_cfb128_info = {
+ 369:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-128-CFB128",
+ 370:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 371:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 372:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     128 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 373:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CFB,
+ 374:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_128_CFB128,
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 376:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 377:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 378:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 379:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if !defined(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH)
+ 380:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_192_cfb128_info = {
+ 381:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-192-CFB128",
+ 382:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 383:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 384:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     192 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 385:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CFB,
+ 386:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_192_CFB128,
+ 387:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 388:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 389:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 390:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_256_cfb128_info = {
+ 392:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-256-CFB128",
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 394:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 395:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     256 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 396:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CFB,
+ 397:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_256_CFB128,
+ 398:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 399:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 400:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 401:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 402:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_CFB */
+ 403:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 404:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_OFB)
+ 405:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_128_ofb_info = {
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-128-OFB",
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 409:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     128 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 410:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_OFB,
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_128_OFB,
+GAS LISTING /tmp/ccX2WTgb.s 			page 10
+
+
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 413:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 414:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 416:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if !defined(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH)
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_192_ofb_info = {
+ 418:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-192-OFB",
+ 419:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 420:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 421:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     192 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 422:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_OFB,
+ 423:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_192_OFB,
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 426:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 427:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 428:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_256_ofb_info = {
+ 429:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-256-OFB",
+ 430:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 431:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 432:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     256 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 433:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_OFB,
+ 434:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_256_OFB,
+ 435:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 436:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 437:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 438:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_OFB */
+ 440:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CTR)
+ 442:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_128_ctr_info = {
+ 443:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-128-CTR",
+ 444:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 445:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 446:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     128 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 447:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CTR,
+ 448:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_128_CTR,
+ 449:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 450:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 451:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 452:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 453:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if !defined(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH)
+ 454:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_192_ctr_info = {
+ 455:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-192-CTR",
+ 456:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 457:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 458:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     192 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 459:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CTR,
+ 460:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_192_CTR,
+ 461:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 462:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 463:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 464:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 465:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_256_ctr_info = {
+ 466:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-256-CTR",
+ 467:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 468:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+GAS LISTING /tmp/ccX2WTgb.s 			page 11
+
+
+ 469:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     256 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 470:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_CTR,
+ 471:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_256_CTR,
+ 472:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 473:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_AES
+ 474:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 475:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 476:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_CTR */
+ 477:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 478:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_XTS)
+ 479:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int xts_aes_setkey_enc_wrap(void *ctx, const unsigned char *key,
+ 480:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                    unsigned int key_bitlen)
+ 481:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 482:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_xts_context *xts_ctx = ctx;
+ 483:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_xts_setkey_enc(xts_ctx, key, key_bitlen);
+ 484:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 485:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 486:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int xts_aes_setkey_dec_wrap(void *ctx, const unsigned char *key,
+ 487:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                    unsigned int key_bitlen)
+ 488:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 489:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_xts_context *xts_ctx = ctx;
+ 490:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_xts_setkey_dec(xts_ctx, key, key_bitlen);
+ 491:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 492:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 493:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static void *xts_aes_ctx_alloc(void)
+ 494:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 495:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_xts_context *xts_ctx = mbedtls_calloc(1, sizeof(*xts_ctx));
+ 496:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 497:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     if (xts_ctx != NULL) {
+ 498:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         mbedtls_aes_xts_init(xts_ctx);
+ 499:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     }
+ 500:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 501:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return xts_ctx;
+ 502:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 503:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 504:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static void xts_aes_ctx_free(void *ctx)
+ 505:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+ 506:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_xts_context *xts_ctx = ctx;
+ 507:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 508:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     if (xts_ctx == NULL) {
+ 509:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         return;
+ 510:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     }
+ 511:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 512:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_xts_free(xts_ctx);
+ 513:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(xts_ctx);
+ 514:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 515:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 516:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_base_t xts_aes_info = {
+ 517:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_ID_AES,
+ 518:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
+ 519:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CBC)
+ 520:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
+ 521:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 522:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CFB)
+ 523:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
+ 524:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 525:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_OFB)
+GAS LISTING /tmp/ccX2WTgb.s 			page 12
+
+
+ 526:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
+ 527:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 528:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_CTR)
+ 529:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
+ 530:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 531:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_XTS)
+ 532:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     aes_crypt_xts_wrap,
+ 533:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 534:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_CIPHER_MODE_STREAM)
+ 535:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     NULL,
+ 536:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 537:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     xts_aes_setkey_enc_wrap,
+ 538:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     xts_aes_setkey_dec_wrap,
+ 539:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     xts_aes_ctx_alloc,
+ 540:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     xts_aes_ctx_free
+ 541:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 542:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 543:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_128_xts_info = {
+ 544:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-128-XTS",
+ 545:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 546:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 547:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     256 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 548:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_XTS,
+ 549:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_128_XTS,
+ 550:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 551:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_XTS_AES
+ 552:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 553:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 554:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if !defined(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH)
+ 555:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static const mbedtls_cipher_info_t aes_256_xts_info = {
+ 556:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     "AES-256-XTS",
+ 557:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16,
+ 558:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     16 >> MBEDTLS_IV_SIZE_SHIFT,
+ 559:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     512 >> MBEDTLS_KEY_BITLEN_SHIFT,
+ 560:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_MODE_XTS,
+ 561:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_AES_256_XTS,
+ 562:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     0,
+ 563:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     MBEDTLS_CIPHER_BASE_INDEX_XTS_AES
+ 564:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** };
+ 565:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif
+ 566:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_CIPHER_MODE_XTS */
+ 567:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #endif /* MBEDTLS_AES_C */
+ 568:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 569:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** #if defined(MBEDTLS_GCM_C) && defined(MBEDTLS_CCM_GCM_CAN_AES)
+ 570:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** static int gcm_aes_setkey_wrap(void *ctx, const unsigned char *key,
+ 571:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****                                unsigned int key_bitlen)
+ 572:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** {
+  88              		.loc 1 572 1 is_stmt 1 view -0
+  89              		.cfi_startproc
+  90              		.loc 1 572 1 is_stmt 0 view .LVU21
+  91 0000 F30F1EFA 		endbr64
+ 573:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_gcm_setkey((mbedtls_gcm_context *) ctx, MBEDTLS_CIPHER_ID_AES,
+  92              		.loc 1 573 5 is_stmt 1 view .LVU22
+ 572:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_gcm_setkey((mbedtls_gcm_context *) ctx, MBEDTLS_CIPHER_ID_AES,
+  93              		.loc 1 572 1 is_stmt 0 view .LVU23
+  94 0004 89D1     		movl	%edx, %ecx
+  95              		.loc 1 573 12 view .LVU24
+GAS LISTING /tmp/ccX2WTgb.s 			page 13
+
+
+  96 0006 4889F2   		movq	%rsi, %rdx
+  97              	.LVL9:
+  98              		.loc 1 573 12 view .LVU25
+  99 0009 BE020000 		movl	$2, %esi
+  99      00
+ 100              	.LVL10:
+ 101              		.loc 1 573 12 view .LVU26
+ 102 000e E9000000 		jmp	mbedtls_gcm_setkey@PLT
+ 102      00
+ 103              	.LVL11:
+ 104              		.loc 1 573 12 view .LVU27
+ 105              		.cfi_endproc
+ 106              	.LFE63:
+ 108              		.section	.text.aes_ctx_free,"ax",@progbits
+ 109              		.p2align 4
+ 111              	aes_ctx_free:
+ 112              	.LVL12:
+ 113              	.LFB62:
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_free((mbedtls_aes_context *) ctx);
+ 114              		.loc 1 261 1 is_stmt 1 view -0
+ 115              		.cfi_startproc
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_free((mbedtls_aes_context *) ctx);
+ 116              		.loc 1 261 1 is_stmt 0 view .LVU29
+ 117 0000 F30F1EFA 		endbr64
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(ctx);
+ 118              		.loc 1 262 5 is_stmt 1 view .LVU30
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_free((mbedtls_aes_context *) ctx);
+ 119              		.loc 1 261 1 is_stmt 0 view .LVU31
+ 120 0004 53       		pushq	%rbx
+ 121              	.LCFI4:
+ 122              		.cfi_def_cfa_offset 16
+ 123              		.cfi_offset 3, -16
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_free((mbedtls_aes_context *) ctx);
+ 124              		.loc 1 261 1 view .LVU32
+ 125 0005 4889FB   		movq	%rdi, %rbx
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_free(ctx);
+ 126              		.loc 1 262 5 view .LVU33
+ 127 0008 E8000000 		call	mbedtls_aes_free@PLT
+ 127      00
+ 128              	.LVL13:
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 129              		.loc 1 263 5 is_stmt 1 view .LVU34
+ 130 000d 4889DF   		movq	%rbx, %rdi
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 131              		.loc 1 264 1 is_stmt 0 view .LVU35
+ 132 0010 5B       		popq	%rbx
+ 133              	.LCFI5:
+ 134              		.cfi_def_cfa_offset 8
+ 135              	.LVL14:
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 136              		.loc 1 263 5 view .LVU36
+ 137 0011 E9000000 		jmp	mbedtls_free@PLT
+ 137      00
+ 138              	.LVL15:
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 139              		.loc 1 263 5 view .LVU37
+ 140              		.cfi_endproc
+GAS LISTING /tmp/ccX2WTgb.s 			page 14
+
+
+ 141              	.LFE62:
+ 143              		.section	.text.aes_ctx_alloc,"ax",@progbits
+ 144              		.p2align 4
+ 146              	aes_ctx_alloc:
+ 147              	.LFB61:
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_context *aes = mbedtls_calloc(1, sizeof(mbedtls_aes_context));
+ 148              		.loc 1 248 1 is_stmt 1 view -0
+ 149              		.cfi_startproc
+ 150 0000 F30F1EFA 		endbr64
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 151              		.loc 1 249 5 view .LVU39
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     mbedtls_aes_context *aes = mbedtls_calloc(1, sizeof(mbedtls_aes_context));
+ 152              		.loc 1 248 1 is_stmt 0 view .LVU40
+ 153 0004 53       		pushq	%rbx
+ 154              	.LCFI6:
+ 155              		.cfi_def_cfa_offset 16
+ 156              		.cfi_offset 3, -16
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 157              		.loc 1 249 32 view .LVU41
+ 158 0005 BE200100 		movl	$288, %esi
+ 158      00
+ 159 000a BF010000 		movl	$1, %edi
+ 159      00
+ 160 000f E8000000 		call	mbedtls_calloc@PLT
+ 160      00
+ 161              	.LVL16:
+ 162 0014 4889C3   		movq	%rax, %rbx
+ 163              	.LVL17:
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         return NULL;
+ 164              		.loc 1 251 5 is_stmt 1 view .LVU42
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****         return NULL;
+ 165              		.loc 1 251 8 is_stmt 0 view .LVU43
+ 166 0017 4885C0   		testq	%rax, %rax
+ 167 001a 7408     		je	.L13
+ 255:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 168              		.loc 1 255 5 is_stmt 1 view .LVU44
+ 169 001c 4889C7   		movq	%rax, %rdi
+ 170 001f E8000000 		call	mbedtls_aes_init@PLT
+ 170      00
+ 171              	.LVL18:
+ 257:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 172              		.loc 1 257 5 view .LVU45
+ 173              	.L13:
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 174              		.loc 1 258 1 is_stmt 0 view .LVU46
+ 175 0024 4889D8   		movq	%rbx, %rax
+ 176 0027 5B       		popq	%rbx
+ 177              	.LCFI7:
+ 178              		.cfi_def_cfa_offset 8
+ 179              	.LVL19:
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** 
+ 180              		.loc 1 258 1 view .LVU47
+ 181 0028 C3       		ret
+ 182              		.cfi_endproc
+ 183              	.LFE61:
+ 185              		.section	.text.aes_setkey_dec_wrap,"ax",@progbits
+ 186              		.p2align 4
+GAS LISTING /tmp/ccX2WTgb.s 			page 15
+
+
+ 188              	aes_setkey_dec_wrap:
+ 189              	.LVL20:
+ 190              	.LFB59:
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_setkey_dec((mbedtls_aes_context *) ctx, key, key_bitlen);
+ 191              		.loc 1 236 1 is_stmt 1 view -0
+ 192              		.cfi_startproc
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_setkey_dec((mbedtls_aes_context *) ctx, key, key_bitlen);
+ 193              		.loc 1 236 1 is_stmt 0 view .LVU49
+ 194 0000 F30F1EFA 		endbr64
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 195              		.loc 1 237 5 is_stmt 1 view .LVU50
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 196              		.loc 1 237 12 is_stmt 0 view .LVU51
+ 197 0004 E9000000 		jmp	mbedtls_aes_setkey_dec@PLT
+ 197      00
+ 198              	.LVL21:
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 199              		.loc 1 237 12 view .LVU52
+ 200              		.cfi_endproc
+ 201              	.LFE59:
+ 203              		.section	.text.aes_setkey_enc_wrap,"ax",@progbits
+ 204              		.p2align 4
+ 206              	aes_setkey_enc_wrap:
+ 207              	.LVL22:
+ 208              	.LFB60:
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_setkey_enc((mbedtls_aes_context *) ctx, key, key_bitlen);
+ 209              		.loc 1 243 1 is_stmt 1 view -0
+ 210              		.cfi_startproc
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_setkey_enc((mbedtls_aes_context *) ctx, key, key_bitlen);
+ 211              		.loc 1 243 1 is_stmt 0 view .LVU54
+ 212 0000 F30F1EFA 		endbr64
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 213              		.loc 1 244 5 is_stmt 1 view .LVU55
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 214              		.loc 1 244 12 is_stmt 0 view .LVU56
+ 215 0004 E9000000 		jmp	mbedtls_aes_setkey_enc@PLT
+ 215      00
+ 216              	.LVL23:
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 217              		.loc 1 244 12 view .LVU57
+ 218              		.cfi_endproc
+ 219              	.LFE60:
+ 221              		.section	.text.aes_crypt_ecb_wrap,"ax",@progbits
+ 222              		.p2align 4
+ 224              	aes_crypt_ecb_wrap:
+ 225              	.LVL24:
+ 226              	.LFB58:
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_ecb((mbedtls_aes_context *) ctx, operation, input, output);
+ 227              		.loc 1 165 1 is_stmt 1 view -0
+ 228              		.cfi_startproc
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c ****     return mbedtls_aes_crypt_ecb((mbedtls_aes_context *) ctx, operation, input, output);
+ 229              		.loc 1 165 1 is_stmt 0 view .LVU59
+ 230 0000 F30F1EFA 		endbr64
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 231              		.loc 1 166 5 is_stmt 1 view .LVU60
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 232              		.loc 1 166 12 is_stmt 0 view .LVU61
+GAS LISTING /tmp/ccX2WTgb.s 			page 16
+
+
+ 233 0004 E9000000 		jmp	mbedtls_aes_crypt_ecb@PLT
+ 233      00
+ 234              	.LVL25:
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.c **** }
+ 235              		.loc 1 166 12 view .LVU62
+ 236              		.cfi_endproc
+ 237              	.LFE58:
+ 239              		.globl	mbedtls_cipher_base_lookup_table
+ 240              		.section	.data.rel.local.mbedtls_cipher_base_lookup_table,"aw"
+ 241              		.align 16
+ 244              	mbedtls_cipher_base_lookup_table:
+ 245 0000 00000000 		.quad	aes_info
+ 245      00000000 
+ 246 0008 00000000 		.quad	gcm_aes_info
+ 246      00000000 
+ 247              		.globl	mbedtls_cipher_supported
+ 248              		.section	.bss.mbedtls_cipher_supported,"aw",@nobits
+ 249              		.align 16
+ 252              	mbedtls_cipher_supported:
+ 253 0000 00000000 		.zero	28
+ 253      00000000 
+ 253      00000000 
+ 253      00000000 
+ 253      00000000 
+ 254              		.globl	mbedtls_cipher_definitions
+ 255              		.section	.data.rel.ro.local.mbedtls_cipher_definitions,"aw"
+ 256              		.align 32
+ 259              	mbedtls_cipher_definitions:
+ 260 0000 02000000 		.long	2
+ 261 0004 00000000 		.zero	4
+ 262 0008 00000000 		.quad	aes_128_ecb_info
+ 262      00000000 
+ 263 0010 03000000 		.long	3
+ 264 0014 00000000 		.zero	4
+ 265 0018 00000000 		.quad	aes_192_ecb_info
+ 265      00000000 
+ 266 0020 04000000 		.long	4
+ 267 0024 00000000 		.zero	4
+ 268 0028 00000000 		.quad	aes_256_ecb_info
+ 268      00000000 
+ 269 0030 0E000000 		.long	14
+ 270 0034 00000000 		.zero	4
+ 271 0038 00000000 		.quad	aes_128_gcm_info
+ 271      00000000 
+ 272 0040 0F000000 		.long	15
+ 273 0044 00000000 		.zero	4
+ 274 0048 00000000 		.quad	aes_192_gcm_info
+ 274      00000000 
+ 275 0050 10000000 		.long	16
+ 276 0054 00000000 		.zero	4
+ 277 0058 00000000 		.quad	aes_256_gcm_info
+ 277      00000000 
+ 278 0060 00000000 		.long	0
+ 279 0064 00000000 		.zero	4
+ 280 0068 00000000 		.quad	0
+ 280      00000000 
+ 281              		.section	.rodata.str1.1,"aMS",@progbits,1
+GAS LISTING /tmp/ccX2WTgb.s 			page 17
+
+
+ 282              	.LC0:
+ 283 0000 4145532D 		.string	"AES-256-GCM"
+ 283      3235362D 
+ 283      47434D00 
+ 284              		.section	.data.rel.ro.local.aes_256_gcm_info,"aw"
+ 285              		.align 16
+ 288              	aes_256_gcm_info:
+ 289 0000 00000000 		.quad	.LC0
+ 289      00000000 
+ 290 0008 70       		.byte	112
+ 291 0009 64       		.byte	100
+ 292 000a 10       		.byte	16
+ 293 000b 05       		.byte	5
+ 294 000c 00000000 		.zero	4
+ 295              		.section	.rodata.str1.1
+ 296              	.LC1:
+ 297 000c 4145532D 		.string	"AES-192-GCM"
+ 297      3139322D 
+ 297      47434D00 
+ 298              		.section	.data.rel.ro.local.aes_192_gcm_info,"aw"
+ 299              		.align 16
+ 302              	aes_192_gcm_info:
+ 303 0000 00000000 		.quad	.LC1
+ 303      00000000 
+ 304 0008 70       		.byte	112
+ 305 0009 63       		.byte	99
+ 306 000a 0F       		.byte	15
+ 307 000b 05       		.byte	5
+ 308 000c 00000000 		.zero	4
+ 309              		.section	.rodata.str1.1
+ 310              	.LC2:
+ 311 0018 4145532D 		.string	"AES-128-GCM"
+ 311      3132382D 
+ 311      47434D00 
+ 312              		.section	.data.rel.ro.local.aes_128_gcm_info,"aw"
+ 313              		.align 16
+ 316              	aes_128_gcm_info:
+ 317 0000 00000000 		.quad	.LC2
+ 317      00000000 
+ 318 0008 70       		.byte	112
+ 319 0009 62       		.byte	98
+ 320 000a 0E       		.byte	14
+ 321 000b 05       		.byte	5
+ 322 000c 00000000 		.zero	4
+ 323              		.section	.data.rel.ro.local.gcm_aes_info,"aw"
+ 324              		.align 32
+ 327              	gcm_aes_info:
+ 328 0000 02000000 		.long	2
+ 329 0004 00000000 		.zero	4
+ 330 0008 00000000 		.quad	0
+ 330      00000000 
+ 331 0010 00000000 		.quad	gcm_aes_setkey_wrap
+ 331      00000000 
+ 332 0018 00000000 		.quad	gcm_aes_setkey_wrap
+ 332      00000000 
+ 333 0020 00000000 		.quad	gcm_ctx_alloc
+ 333      00000000 
+GAS LISTING /tmp/ccX2WTgb.s 			page 18
+
+
+ 334 0028 00000000 		.quad	gcm_ctx_free
+ 334      00000000 
+ 335              		.section	.rodata.str1.1
+ 336              	.LC3:
+ 337 0024 4145532D 		.string	"AES-256-ECB"
+ 337      3235362D 
+ 337      45434200 
+ 338              		.section	.data.rel.ro.local.aes_256_ecb_info,"aw"
+ 339              		.align 16
+ 342              	aes_256_ecb_info:
+ 343 0000 00000000 		.quad	.LC3
+ 343      00000000 
+ 344 0008 10       		.byte	16
+ 345 0009 14       		.byte	20
+ 346 000a 04       		.byte	4
+ 347 000b 00       		.byte	0
+ 348 000c 00000000 		.zero	4
+ 349              		.section	.rodata.str1.1
+ 350              	.LC4:
+ 351 0030 4145532D 		.string	"AES-192-ECB"
+ 351      3139322D 
+ 351      45434200 
+ 352              		.section	.data.rel.ro.local.aes_192_ecb_info,"aw"
+ 353              		.align 16
+ 356              	aes_192_ecb_info:
+ 357 0000 00000000 		.quad	.LC4
+ 357      00000000 
+ 358 0008 10       		.byte	16
+ 359 0009 13       		.byte	19
+ 360 000a 03       		.byte	3
+ 361 000b 00       		.byte	0
+ 362 000c 00000000 		.zero	4
+ 363              		.section	.rodata.str1.1
+ 364              	.LC5:
+ 365 003c 4145532D 		.string	"AES-128-ECB"
+ 365      3132382D 
+ 365      45434200 
+ 366              		.section	.data.rel.ro.local.aes_128_ecb_info,"aw"
+ 367              		.align 16
+ 370              	aes_128_ecb_info:
+ 371 0000 00000000 		.quad	.LC5
+ 371      00000000 
+ 372 0008 10       		.byte	16
+ 373 0009 12       		.byte	18
+ 374 000a 02       		.byte	2
+ 375 000b 00       		.byte	0
+ 376 000c 00000000 		.zero	4
+ 377              		.section	.data.rel.ro.local.aes_info,"aw"
+ 378              		.align 32
+ 381              	aes_info:
+ 382 0000 02000000 		.long	2
+ 383 0004 00000000 		.zero	4
+ 384 0008 00000000 		.quad	aes_crypt_ecb_wrap
+ 384      00000000 
+ 385 0010 00000000 		.quad	aes_setkey_enc_wrap
+ 385      00000000 
+ 386 0018 00000000 		.quad	aes_setkey_dec_wrap
+GAS LISTING /tmp/ccX2WTgb.s 			page 19
+
+
+ 386      00000000 
+ 387 0020 00000000 		.quad	aes_ctx_alloc
+ 387      00000000 
+ 388 0028 00000000 		.quad	aes_ctx_free
+ 388      00000000 
+ 389              		.text
+ 390              	.Letext0:
+ 391              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 392              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 393              		.file 4 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 394              		.file 5 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h"
+ 395              		.file 6 "../../bos/thirdparty/mbedtls/bos_mbedtls/cipher_wrap.h"
+ 396              		.file 7 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/aes.h"
+ 397              		.file 8 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/gcm.h"
+ 398              		.file 9 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+ 3844              		.section	.note.gnu.property,"a"
+ 3845              		.align 8
+ 3846 0000 04000000 		.long	1f - 0f
+ 3847 0004 10000000 		.long	4f - 1f
+ 3848 0008 05000000 		.long	5
+ 3849              	0:
+ 3850 000c 474E5500 		.string	"GNU"
+ 3851              	1:
+ 3852              		.align 8
+ 3853 0010 020000C0 		.long	0xc0000002
+ 3854 0014 04000000 		.long	3f - 2f
+ 3855              	2:
+ 3856 0018 03000000 		.long	0x3
+ 3857              	3:
+ 3858 001c 00000000 		.align 8
+ 3859              	4:
+GAS LISTING /tmp/ccX2WTgb.s 			page 20
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 cipher_wrap.c
+     /tmp/ccX2WTgb.s:8      .text.gcm_ctx_free:0000000000000000 gcm_ctx_free
+     /tmp/ccX2WTgb.s:43     .text.gcm_ctx_alloc:0000000000000000 gcm_ctx_alloc
+     /tmp/ccX2WTgb.s:85     .text.gcm_aes_setkey_wrap:0000000000000000 gcm_aes_setkey_wrap
+     /tmp/ccX2WTgb.s:111    .text.aes_ctx_free:0000000000000000 aes_ctx_free
+     /tmp/ccX2WTgb.s:146    .text.aes_ctx_alloc:0000000000000000 aes_ctx_alloc
+     /tmp/ccX2WTgb.s:188    .text.aes_setkey_dec_wrap:0000000000000000 aes_setkey_dec_wrap
+     /tmp/ccX2WTgb.s:206    .text.aes_setkey_enc_wrap:0000000000000000 aes_setkey_enc_wrap
+     /tmp/ccX2WTgb.s:224    .text.aes_crypt_ecb_wrap:0000000000000000 aes_crypt_ecb_wrap
+     /tmp/ccX2WTgb.s:244    .data.rel.local.mbedtls_cipher_base_lookup_table:0000000000000000 mbedtls_cipher_base_lookup_table
+     /tmp/ccX2WTgb.s:381    .data.rel.ro.local.aes_info:0000000000000000 aes_info
+     /tmp/ccX2WTgb.s:327    .data.rel.ro.local.gcm_aes_info:0000000000000000 gcm_aes_info
+     /tmp/ccX2WTgb.s:252    .bss.mbedtls_cipher_supported:0000000000000000 mbedtls_cipher_supported
+     /tmp/ccX2WTgb.s:259    .data.rel.ro.local.mbedtls_cipher_definitions:0000000000000000 mbedtls_cipher_definitions
+     /tmp/ccX2WTgb.s:370    .data.rel.ro.local.aes_128_ecb_info:0000000000000000 aes_128_ecb_info
+     /tmp/ccX2WTgb.s:356    .data.rel.ro.local.aes_192_ecb_info:0000000000000000 aes_192_ecb_info
+     /tmp/ccX2WTgb.s:342    .data.rel.ro.local.aes_256_ecb_info:0000000000000000 aes_256_ecb_info
+     /tmp/ccX2WTgb.s:316    .data.rel.ro.local.aes_128_gcm_info:0000000000000000 aes_128_gcm_info
+     /tmp/ccX2WTgb.s:302    .data.rel.ro.local.aes_192_gcm_info:0000000000000000 aes_192_gcm_info
+     /tmp/ccX2WTgb.s:288    .data.rel.ro.local.aes_256_gcm_info:0000000000000000 aes_256_gcm_info
+
+UNDEFINED SYMBOLS
+mbedtls_gcm_free
+mbedtls_free
+mbedtls_calloc
+mbedtls_gcm_init
+mbedtls_gcm_setkey
+mbedtls_aes_free
+mbedtls_aes_init
+mbedtls_aes_setkey_dec
+mbedtls_aes_setkey_enc
+mbedtls_aes_crypt_ecb

@@ -1,0 +1,2224 @@
+GAS LISTING /tmp/ccWJ0RJe.s 			page 1
+
+
+   1              		.file	"entropy.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c"
+   5              		.section	.text.entropy_gather_internal.part.0,"ax",@progbits
+   6              		.p2align 4
+   8              	entropy_gather_internal.part.0:
+   9              	.LVL0:
+  10              	.LFB50:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** /*
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  *  Entropy accumulator implementation
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  *  Copyright The Mbed TLS Contributors
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  */
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #include "common.h"
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_ENTROPY_C)
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/entropy.h"
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #include "entropy_poll.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform_util.h"
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h"
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #include <string.h>
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_FS_IO)
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #include <stdio.h>
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #define ENTROPY_MAX_LOOP    256     /**< Maximum amount to loop before error */
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** void mbedtls_entropy_init(mbedtls_entropy_context *ctx)
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source_count = 0;
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     memset(ctx->source, 0, sizeof(ctx->source));
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_mutex_init(&ctx->mutex);
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->accumulator_started = 0;
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_md_init(&ctx->accumulator);
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /* Reminder: Update ENTROPY_HAVE_STRONG in the test files
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      *           when adding more strong entropy sources here. */
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if !defined(MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES)
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if !defined(MBEDTLS_NO_PLATFORM_ENTROPY)
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_entropy_add_source(ctx, mbedtls_platform_entropy_poll, NULL,
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                MBEDTLS_ENTROPY_MIN_PLATFORM,
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                MBEDTLS_ENTROPY_SOURCE_STRONG);
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_ENTROPY_HARDWARE_ALT)
+GAS LISTING /tmp/ccWJ0RJe.s 			page 2
+
+
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_entropy_add_source(ctx, mbedtls_hardware_poll, NULL,
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                MBEDTLS_ENTROPY_MIN_HARDWARE,
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                MBEDTLS_ENTROPY_SOURCE_STRONG);
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_ENTROPY_NV_SEED)
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_entropy_add_source(ctx, mbedtls_nv_seed_poll, NULL,
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                MBEDTLS_ENTROPY_BLOCK_SIZE,
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                MBEDTLS_ENTROPY_SOURCE_STRONG);
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->initial_entropy_run = 0;
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif /* MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES */
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** void mbedtls_entropy_free(mbedtls_entropy_context *ctx)
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /* If the context was already free, don't call free() again.
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * This is important for mutexes which don't allow double-free. */
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (ctx->accumulator_started == -1) {
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return;
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_mutex_free(&ctx->mutex);
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_md_free(&ctx->accumulator);
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_ENTROPY_NV_SEED)
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->initial_entropy_run = 0;
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source_count = 0;
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_platform_zeroize(ctx->source, sizeof(ctx->source));
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->accumulator_started = -1;
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** int mbedtls_entropy_add_source(mbedtls_entropy_context *ctx,
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_entropy_f_source_ptr f_source, void *p_source,
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                size_t threshold, int strong)
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int idx, ret = 0;
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if ((ret = mbedtls_mutex_lock(&ctx->mutex)) != 0) {
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return ret;
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     idx = ctx->source_count;
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (idx >= MBEDTLS_ENTROPY_MAX_SOURCES) {
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = MBEDTLS_ERR_ENTROPY_MAX_SOURCES;
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto exit;
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].f_source  = f_source;
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].p_source  = p_source;
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].threshold = threshold;
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].strong    = strong;
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source_count++;
+GAS LISTING /tmp/ccWJ0RJe.s 			page 3
+
+
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** exit:
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (mbedtls_mutex_unlock(&ctx->mutex) != 0) {
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     return ret;
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** /*
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  * Entropy accumulator update
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  */
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** static int entropy_update(mbedtls_entropy_context *ctx, unsigned char source_id,
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                           const unsigned char *data, size_t len)
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char header[2];
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char tmp[MBEDTLS_ENTROPY_BLOCK_SIZE];
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     size_t use_len = len;
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     const unsigned char *p = data;
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = 0;
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (use_len > MBEDTLS_ENTROPY_BLOCK_SIZE) {
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = mbedtls_md(mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD),
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         p = tmp;
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         use_len = MBEDTLS_ENTROPY_BLOCK_SIZE;
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     header[0] = source_id;
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     header[1] = use_len & 0xFF;
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /*
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * Start the accumulator if this has not already happened. Note that
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * it is sufficient to start the accumulator here only because all calls to
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * gather entropy eventually execute this code.
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      */
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (ctx->accumulator_started == 0) {
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = mbedtls_md_setup(&ctx->accumulator,
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = mbedtls_md_starts(&ctx->accumulator);
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->accumulator_started = 1;
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if ((ret = mbedtls_md_update(&ctx->accumulator, header, 2)) != 0) {
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto cleanup;
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ret = mbedtls_md_update(&ctx->accumulator, p, use_len);
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+GAS LISTING /tmp/ccWJ0RJe.s 			page 4
+
+
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** cleanup:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_platform_zeroize(tmp, sizeof(tmp));
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     return ret;
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** int mbedtls_entropy_update_manual(mbedtls_entropy_context *ctx,
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                   const unsigned char *data, size_t len)
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if ((ret = mbedtls_mutex_lock(&ctx->mutex)) != 0) {
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return ret;
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ret = entropy_update(ctx, MBEDTLS_ENTROPY_SOURCE_MANUAL, data, len);
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (mbedtls_mutex_unlock(&ctx->mutex) != 0) {
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     return ret;
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** /*
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  * Run through the different sources to add entropy to our accumulator
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  */
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** static int entropy_gather_internal(mbedtls_entropy_context *ctx)
+  11              		.loc 1 194 12 view -0
+  12              		.cfi_startproc
+  13              		.loc 1 194 12 is_stmt 0 view .LVU1
+  14 0000 4157     		pushq	%r15
+  15              	.LCFI0:
+  16              		.cfi_def_cfa_offset 16
+  17              		.cfi_offset 15, -16
+  18 0002 4156     		pushq	%r14
+  19              	.LCFI1:
+  20              		.cfi_def_cfa_offset 24
+  21              		.cfi_offset 14, -24
+  22 0004 4155     		pushq	%r13
+  23              	.LCFI2:
+  24              		.cfi_def_cfa_offset 32
+  25              		.cfi_offset 13, -32
+  26 0006 4154     		pushq	%r12
+  27              	.LCFI3:
+  28              		.cfi_def_cfa_offset 40
+  29              		.cfi_offset 12, -40
+  30 0008 55       		pushq	%rbp
+  31              	.LCFI4:
+  32              		.cfi_def_cfa_offset 48
+  33              		.cfi_offset 6, -48
+  34 0009 53       		pushq	%rbx
+  35              	.LCFI5:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 5
+
+
+  36              		.cfi_def_cfa_offset 56
+  37              		.cfi_offset 3, -56
+  38 000a 4881EC18 		subq	$280, %rsp
+  38      010000
+  39              	.LCFI6:
+  40              		.cfi_def_cfa_offset 336
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int i;
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int have_one_strong = 0;
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char buf[MBEDTLS_ENTROPY_MAX_GATHER];
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     size_t olen;
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (ctx->source_count == 0) {
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_NO_SOURCES_DEFINED;
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /*
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * Run through our entropy sources
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      */
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     for (i = 0; i < ctx->source_count; i++) {
+  41              		.loc 1 209 19 discriminator 1 view .LVU2
+  42 0011 8B571C   		movl	28(%rdi), %edx
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+  43              		.loc 1 194 12 view .LVU3
+  44 0014 64488B04 		movq	%fs:40, %rax
+  44      25280000 
+  44      00
+  45 001d 48898424 		movq	%rax, 264(%rsp)
+  45      08010000 
+  46 0025 31C0     		xorl	%eax, %eax
+  47              	.LVL1:
+  48              		.loc 1 209 19 is_stmt 1 discriminator 1 view .LVU4
+  49 0027 85D2     		testl	%edx, %edx
+  50 0029 0F8E2502 		jle	.L29
+  50      0000
+  51 002f 488D4424 		leaq	48(%rsp), %rax
+  51      30
+  52 0034 4889FD   		movq	%rdi, %rbp
+  53 0037 4C8D7720 		leaq	32(%rdi), %r14
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char buf[MBEDTLS_ENTROPY_MAX_GATHER];
+  54              		.loc 1 198 9 is_stmt 0 view .LVU5
+  55 003b 4531E4   		xorl	%r12d, %r12d
+  56 003e 48894424 		movq	%rax, 8(%rsp)
+  56      08
+  57              		.loc 1 209 12 view .LVU6
+  58 0043 31DB     		xorl	%ebx, %ebx
+  59 0045 4C8DAC24 		leaq	128(%rsp), %r13
+  59      80000000 
+  60 004d EB11     		jmp	.L13
+  61              	.LVL2:
+  62 004f 90       		.p2align 4,,10
+  63              		.p2align 3
+  64              	.L5:
+  65              		.loc 1 209 41 is_stmt 1 discriminator 2 view .LVU7
+  66 0050 83C301   		addl	$1, %ebx
+  67              	.LVL3:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 6
+
+
+  68              		.loc 1 209 19 discriminator 1 view .LVU8
+  69 0053 4983C628 		addq	$40, %r14
+  70 0057 3B5D1C   		cmpl	28(%rbp), %ebx
+  71 005a 0F8D2501 		jge	.L30
+  71      0000
+  72              	.LVL4:
+  73              	.L13:
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ctx->source[i].strong == MBEDTLS_ENTROPY_SOURCE_STRONG) {
+  74              		.loc 1 210 9 view .LVU9
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             have_one_strong = 1;
+  75              		.loc 1 211 29 is_stmt 0 view .LVU10
+  76 0060 41837E20 		cmpl	$1, 32(%r14)
+  76      01
+  77 0065 B8010000 		movl	$1, %eax
+  77      00
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         olen = 0;
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = ctx->source[i].f_source(ctx->source[i].p_source,
+  78              		.loc 1 215 20 view .LVU11
+  79 006a 498B7E08 		movq	8(%r14), %rdi
+  80 006e 4C89EE   		movq	%r13, %rsi
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             have_one_strong = 1;
+  81              		.loc 1 211 29 view .LVU12
+  82 0071 440F44E0 		cmove	%eax, %r12d
+  83              	.LVL5:
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = ctx->source[i].f_source(ctx->source[i].p_source,
+  84              		.loc 1 214 9 is_stmt 1 view .LVU13
+  85              		.loc 1 215 20 is_stmt 0 view .LVU14
+  86 0075 488B4C24 		movq	8(%rsp), %rcx
+  86      08
+  87 007a BA800000 		movl	$128, %edx
+  87      00
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = ctx->source[i].f_source(ctx->source[i].p_source,
+  88              		.loc 1 214 14 view .LVU15
+  89 007f 48C74424 		movq	$0, 48(%rsp)
+  89      30000000 
+  89      00
+  90              		.loc 1 215 9 is_stmt 1 view .LVU16
+  91              		.loc 1 215 20 is_stmt 0 view .LVU17
+  92 0088 41FF16   		call	*(%r14)
+  93              	.LVL6:
+  94 008b 4189C7   		movl	%eax, %r15d
+  95              	.LVL7:
+  96              		.loc 1 215 12 discriminator 1 view .LVU18
+  97 008e 85C0     		testl	%eax, %eax
+  98 0090 0F85F800 		jne	.L3
+  98      0000
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                            buf, MBEDTLS_ENTROPY_MAX_GATHER, &olen)) != 0) {
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         /*
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****          * Add if we actually gathered something
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****          */
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (olen > 0) {
+  99              		.loc 1 223 9 is_stmt 1 view .LVU19
+GAS LISTING /tmp/ccWJ0RJe.s 			page 7
+
+
+ 100              		.loc 1 223 18 is_stmt 0 view .LVU20
+ 101 0096 4C8B5424 		movq	48(%rsp), %r10
+ 101      30
+ 102              		.loc 1 223 12 view .LVU21
+ 103 009b 4D85D2   		testq	%r10, %r10
+ 104 009e 74B0     		je	.L5
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if ((ret = entropy_update(ctx, (unsigned char) i,
+ 105              		.loc 1 224 13 is_stmt 1 view .LVU22
+ 106 00a0 4189DB   		movl	%ebx, %r11d
+ 107              	.LVL8:
+ 108              	.LBB18:
+ 109              	.LBI18:
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                           const unsigned char *data, size_t len)
+ 110              		.loc 1 120 12 view .LVU23
+ 111              	.LBB19:
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char tmp[MBEDTLS_ENTROPY_BLOCK_SIZE];
+ 112              		.loc 1 123 5 view .LVU24
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     size_t use_len = len;
+ 113              		.loc 1 124 5 view .LVU25
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     const unsigned char *p = data;
+ 114              		.loc 1 125 5 view .LVU26
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = 0;
+ 115              		.loc 1 126 5 view .LVU27
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 116              		.loc 1 127 5 view .LVU28
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = mbedtls_md(mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD),
+ 117              		.loc 1 129 5 view .LVU29
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = mbedtls_md(mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD),
+ 118              		.loc 1 129 8 is_stmt 0 view .LVU30
+ 119 00a3 4983FA40 		cmpq	$64, %r10
+ 120 00a7 0F873301 		ja	.L31
+ 120      0000
+ 121 00ad 488D4C24 		leaq	64(%rsp), %rcx
+ 121      40
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = 0;
+ 122              		.loc 1 126 26 view .LVU31
+ 123 00b2 4C896C24 		movq	%r13, 24(%rsp)
+ 123      18
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 124              		.loc 1 139 15 view .LVU32
+ 125 00b7 4489D0   		movl	%r10d, %eax
+ 126              	.LVL9:
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 127              		.loc 1 139 15 view .LVU33
+ 128 00ba 48894C24 		movq	%rcx, 16(%rsp)
+ 128      10
+ 129              	.LVL10:
+ 130              	.L7:
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     header[1] = use_len & 0xFF;
+ 131              		.loc 1 138 5 is_stmt 1 view .LVU34
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 132              		.loc 1 139 15 is_stmt 0 view .LVU35
+ 133 00bf 8844243F 		movb	%al, 63(%rsp)
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = mbedtls_md_setup(&ctx->accumulator,
+ 134              		.loc 1 146 8 view .LVU36
+ 135 00c3 8B4518   		movl	24(%rbp), %eax
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     header[1] = use_len & 0xFF;
+GAS LISTING /tmp/ccWJ0RJe.s 			page 8
+
+
+ 136              		.loc 1 138 15 view .LVU37
+ 137 00c6 44885C24 		movb	%r11b, 62(%rsp)
+ 137      3E
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 138              		.loc 1 139 5 is_stmt 1 view .LVU38
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = mbedtls_md_setup(&ctx->accumulator,
+ 139              		.loc 1 146 5 view .LVU39
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = mbedtls_md_setup(&ctx->accumulator,
+ 140              		.loc 1 146 8 is_stmt 0 view .LVU40
+ 141 00cb 85C0     		testl	%eax, %eax
+ 142 00cd 754E     		jne	.L9
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 143              		.loc 1 147 15 view .LVU41
+ 144 00cf BF0B0000 		movl	$11, %edi
+ 144      00
+ 145 00d4 4C895424 		movq	%r10, 32(%rsp)
+ 145      20
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 146              		.loc 1 147 9 is_stmt 1 view .LVU42
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 147              		.loc 1 147 15 is_stmt 0 view .LVU43
+ 148 00d9 E8000000 		call	mbedtls_md_info_from_type@PLT
+ 148      00
+ 149              	.LVL11:
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 150              		.loc 1 147 15 discriminator 1 view .LVU44
+ 151 00de 31D2     		xorl	%edx, %edx
+ 152 00e0 4889EF   		movq	%rbp, %rdi
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 153              		.loc 1 147 15 view .LVU45
+ 154 00e3 4889C6   		movq	%rax, %rsi
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 155              		.loc 1 147 15 discriminator 1 view .LVU46
+ 156 00e6 E8000000 		call	mbedtls_md_setup@PLT
+ 156      00
+ 157              	.LVL12:
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 158              		.loc 1 149 9 is_stmt 1 view .LVU47
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 159              		.loc 1 149 12 is_stmt 0 view .LVU48
+ 160 00eb 4C8B5424 		movq	32(%rsp), %r10
+ 160      20
+ 161 00f0 85C0     		testl	%eax, %eax
+ 162 00f2 8944242C 		movl	%eax, 44(%rsp)
+ 163 00f6 0F85A400 		jne	.L27
+ 163      0000
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
+ 164              		.loc 1 152 15 view .LVU49
+ 165 00fc 4889EF   		movq	%rbp, %rdi
+ 166 00ff 4C895424 		movq	%r10, 32(%rsp)
+ 166      20
+ 167              	.LVL13:
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
+ 168              		.loc 1 152 9 is_stmt 1 view .LVU50
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
+ 169              		.loc 1 152 15 is_stmt 0 view .LVU51
+ 170 0104 E8000000 		call	mbedtls_md_starts@PLT
+GAS LISTING /tmp/ccWJ0RJe.s 			page 9
+
+
+ 170      00
+ 171              	.LVL14:
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 172              		.loc 1 153 9 is_stmt 1 view .LVU52
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 173              		.loc 1 153 12 is_stmt 0 view .LVU53
+ 174 0109 4C8B5424 		movq	32(%rsp), %r10
+ 174      20
+ 175 010e 85C0     		testl	%eax, %eax
+ 176 0110 0F852201 		jne	.L26
+ 176      0000
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 177              		.loc 1 156 9 is_stmt 1 view .LVU54
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 178              		.loc 1 156 34 is_stmt 0 view .LVU55
+ 179 0116 C7451801 		movl	$1, 24(%rbp)
+ 179      000000
+ 180              	.LVL15:
+ 181              	.L9:
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto cleanup;
+ 182              		.loc 1 158 16 view .LVU56
+ 183 011d 488D7424 		leaq	62(%rsp), %rsi
+ 183      3E
+ 184 0122 BA020000 		movl	$2, %edx
+ 184      00
+ 185 0127 4889EF   		movq	%rbp, %rdi
+ 186 012a 4C895424 		movq	%r10, 32(%rsp)
+ 186      20
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto cleanup;
+ 187              		.loc 1 158 5 is_stmt 1 view .LVU57
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto cleanup;
+ 188              		.loc 1 158 16 is_stmt 0 view .LVU58
+ 189 012f E8000000 		call	mbedtls_md_update@PLT
+ 189      00
+ 190              	.LVL16:
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto cleanup;
+ 191              		.loc 1 158 8 discriminator 1 view .LVU59
+ 192 0134 4C8B5424 		movq	32(%rsp), %r10
+ 192      20
+ 193 0139 85C0     		testl	%eax, %eax
+ 194 013b 8944242C 		movl	%eax, 44(%rsp)
+ 195 013f 755F     		jne	.L27
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 196              		.loc 1 161 5 is_stmt 1 view .LVU60
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 197              		.loc 1 161 11 is_stmt 0 view .LVU61
+ 198 0141 488B7424 		movq	24(%rsp), %rsi
+ 198      18
+ 199 0146 4C89D2   		movq	%r10, %rdx
+ 200 0149 4889EF   		movq	%rbp, %rdi
+ 201 014c E8000000 		call	mbedtls_md_update@PLT
+ 201      00
+ 202              	.LVL17:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 203              		.loc 1 164 5 view .LVU62
+ 204 0151 488B7C24 		movq	16(%rsp), %rdi
+ 204      10
+GAS LISTING /tmp/ccWJ0RJe.s 			page 10
+
+
+ 205 0156 BE400000 		movl	$64, %esi
+ 205      00
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 206              		.loc 1 161 11 view .LVU63
+ 207 015b 89442418 		movl	%eax, 24(%rsp)
+ 208              	.LVL18:
+ 209              	.LDL1:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 210              		.loc 1 164 5 is_stmt 1 view .LVU64
+ 211 015f E8000000 		call	mbedtls_platform_zeroize@PLT
+ 211      00
+ 212              	.LVL19:
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 213              		.loc 1 166 5 view .LVU65
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 214              		.loc 1 166 5 is_stmt 0 view .LVU66
+ 215              	.LBE19:
+ 216              	.LBE18:
+ 217              		.loc 1 224 16 discriminator 1 view .LVU67
+ 218 0164 8B442418 		movl	24(%rsp), %eax
+ 219 0168 85C0     		testl	%eax, %eax
+ 220 016a 7547     		jne	.L1
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                       buf, olen)) != 0) {
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                 return ret;
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             }
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             ctx->source[i].size += olen;
+ 221              		.loc 1 228 13 is_stmt 1 view .LVU68
+ 222              		.loc 1 228 33 is_stmt 0 view .LVU69
+ 223 016c 488B4424 		movq	48(%rsp), %rax
+ 223      30
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ctx->source[i].strong == MBEDTLS_ENTROPY_SOURCE_STRONG) {
+ 224              		.loc 1 209 41 discriminator 2 view .LVU70
+ 225 0171 83C301   		addl	$1, %ebx
+ 226              	.LVL20:
+ 227              		.loc 1 228 33 view .LVU71
+ 228 0174 49014610 		addq	%rax, 16(%r14)
+ 229              	.LVL21:
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ctx->source[i].strong == MBEDTLS_ENTROPY_SOURCE_STRONG) {
+ 230              		.loc 1 209 41 is_stmt 1 discriminator 2 view .LVU72
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ctx->source[i].strong == MBEDTLS_ENTROPY_SOURCE_STRONG) {
+ 231              		.loc 1 209 19 discriminator 1 view .LVU73
+ 232 0178 4983C628 		addq	$40, %r14
+ 233 017c 3B5D1C   		cmpl	28(%rbp), %ebx
+ 234 017f 0F8CDBFE 		jl	.L13
+ 234      FFFF
+ 235              	.L30:
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 232:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (have_one_strong == 0) {
+ 236              		.loc 1 232 5 view .LVU74
+ 237              		.loc 1 232 8 is_stmt 0 view .LVU75
+ 238 0185 4585E4   		testl	%r12d, %r12d
+ 239 0188 0F84D200 		je	.L14
+ 239      0000
+ 240              	.LVL22:
+ 241              	.L3:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 11
+
+
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = MBEDTLS_ERR_ENTROPY_NO_STRONG_SOURCE;
+ 234:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** cleanup:
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_platform_zeroize(buf, sizeof(buf));
+ 242              		.loc 1 237 5 is_stmt 1 view .LVU76
+ 243 018e BE800000 		movl	$128, %esi
+ 243      00
+ 244 0193 4C89EF   		movq	%r13, %rdi
+ 245 0196 E8000000 		call	mbedtls_platform_zeroize@PLT
+ 245      00
+ 246              	.LVL23:
+ 238:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     return ret;
+ 247              		.loc 1 239 5 view .LVU77
+ 248              		.loc 1 239 12 is_stmt 0 view .LVU78
+ 249 019b 4489F8   		movl	%r15d, %eax
+ 250 019e EB13     		jmp	.L1
+ 251              	.LVL24:
+ 252              		.p2align 4,,10
+ 253              		.p2align 3
+ 254              	.L27:
+ 255              	.LBB22:
+ 256              	.LBB20:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 257              		.loc 1 164 5 is_stmt 1 view .LVU79
+ 258 01a0 488B7C24 		movq	16(%rsp), %rdi
+ 258      10
+ 259 01a5 BE400000 		movl	$64, %esi
+ 259      00
+ 260 01aa E8000000 		call	mbedtls_platform_zeroize@PLT
+ 260      00
+ 261              	.LVL25:
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 262              		.loc 1 166 5 view .LVU80
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 263              		.loc 1 166 5 is_stmt 0 view .LVU81
+ 264 01af 8B44242C 		movl	44(%rsp), %eax
+ 265              	.LVL26:
+ 266              	.L1:
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 267              		.loc 1 166 5 view .LVU82
+ 268              	.LBE20:
+ 269              	.LBE22:
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 270              		.loc 1 240 1 view .LVU83
+ 271 01b3 488B9424 		movq	264(%rsp), %rdx
+ 271      08010000 
+ 272 01bb 64482B14 		subq	%fs:40, %rdx
+ 272      25280000 
+ 272      00
+ 273 01c4 0F85B100 		jne	.L32
+ 273      0000
+ 274 01ca 4881C418 		addq	$280, %rsp
+ 274      010000
+ 275              	.LCFI7:
+ 276              		.cfi_remember_state
+GAS LISTING /tmp/ccWJ0RJe.s 			page 12
+
+
+ 277              		.cfi_def_cfa_offset 56
+ 278 01d1 5B       		popq	%rbx
+ 279              	.LCFI8:
+ 280              		.cfi_def_cfa_offset 48
+ 281 01d2 5D       		popq	%rbp
+ 282              	.LCFI9:
+ 283              		.cfi_def_cfa_offset 40
+ 284 01d3 415C     		popq	%r12
+ 285              	.LCFI10:
+ 286              		.cfi_def_cfa_offset 32
+ 287 01d5 415D     		popq	%r13
+ 288              	.LCFI11:
+ 289              		.cfi_def_cfa_offset 24
+ 290 01d7 415E     		popq	%r14
+ 291              	.LCFI12:
+ 292              		.cfi_def_cfa_offset 16
+ 293 01d9 415F     		popq	%r15
+ 294              	.LCFI13:
+ 295              		.cfi_def_cfa_offset 8
+ 296 01db C3       		ret
+ 297              	.LVL27:
+ 298 01dc 0F1F4000 		.p2align 4,,10
+ 299              		.p2align 3
+ 300              	.L31:
+ 301              	.LCFI14:
+ 302              		.cfi_restore_state
+ 303              	.LBB23:
+ 304              	.LBB21:
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 305              		.loc 1 130 20 view .LVU84
+ 306 01e0 BF0B0000 		movl	$11, %edi
+ 306      00
+ 307 01e5 4C895424 		movq	%r10, 24(%rsp)
+ 307      18
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 308              		.loc 1 130 9 is_stmt 1 view .LVU85
+ 309 01ea 885C2420 		movb	%bl, 32(%rsp)
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 310              		.loc 1 130 20 is_stmt 0 view .LVU86
+ 311 01ee E8000000 		call	mbedtls_md_info_from_type@PLT
+ 311      00
+ 312              	.LVL28:
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 313              		.loc 1 130 20 discriminator 1 view .LVU87
+ 314 01f3 488B5424 		movq	24(%rsp), %rdx
+ 314      18
+ 315 01f8 4C89EE   		movq	%r13, %rsi
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 316              		.loc 1 130 20 view .LVU88
+ 317 01fb 4889C7   		movq	%rax, %rdi
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 318              		.loc 1 130 20 discriminator 1 view .LVU89
+ 319 01fe 488D4424 		leaq	64(%rsp), %rax
+ 319      40
+ 320 0203 4889C1   		movq	%rax, %rcx
+ 321 0206 48894424 		movq	%rax, 16(%rsp)
+ 321      10
+GAS LISTING /tmp/ccWJ0RJe.s 			page 13
+
+
+ 322 020b E8000000 		call	mbedtls_md@PLT
+ 322      00
+ 323              	.LVL29:
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 324              		.loc 1 130 12 discriminator 2 view .LVU90
+ 325 0210 440FB65C 		movzbl	32(%rsp), %r11d
+ 325      2420
+ 326 0216 85C0     		testl	%eax, %eax
+ 327 0218 751E     		jne	.L26
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         use_len = MBEDTLS_ENTROPY_BLOCK_SIZE;
+ 328              		.loc 1 134 11 view .LVU91
+ 329 021a 488B4C24 		movq	16(%rsp), %rcx
+ 329      10
+ 330 021f B8400000 		movl	$64, %eax
+ 330      00
+ 331              	.LVL30:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 332              		.loc 1 135 17 view .LVU92
+ 333 0224 41BA4000 		movl	$64, %r10d
+ 333      0000
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         use_len = MBEDTLS_ENTROPY_BLOCK_SIZE;
+ 334              		.loc 1 134 11 view .LVU93
+ 335 022a 48894C24 		movq	%rcx, 24(%rsp)
+ 335      18
+ 336              	.LVL31:
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         use_len = MBEDTLS_ENTROPY_BLOCK_SIZE;
+ 337              		.loc 1 134 11 view .LVU94
+ 338 022f E98BFEFF 		jmp	.L7
+ 338      FF
+ 339              	.LVL32:
+ 340              		.p2align 4,,10
+ 341 0234 0F1F4000 		.p2align 3
+ 342              	.L26:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 343              		.loc 1 164 5 view .LVU95
+ 344 0238 488B7C24 		movq	16(%rsp), %rdi
+ 344      10
+ 345 023d BE400000 		movl	$64, %esi
+ 345      00
+ 346 0242 89442408 		movl	%eax, 8(%rsp)
+ 347              	.LVL33:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 348              		.loc 1 164 5 is_stmt 1 view .LVU96
+ 349 0246 E8000000 		call	mbedtls_platform_zeroize@PLT
+ 349      00
+ 350              	.LVL34:
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 351              		.loc 1 166 5 view .LVU97
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 352              		.loc 1 166 5 is_stmt 0 view .LVU98
+ 353 024b 8B442408 		movl	8(%rsp), %eax
+ 354 024f E95FFFFF 		jmp	.L1
+ 354      FF
+ 355              	.LVL35:
+ 356              	.L29:
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 357              		.loc 1 166 5 view .LVU99
+GAS LISTING /tmp/ccWJ0RJe.s 			page 14
+
+
+ 358 0254 4C8DAC24 		leaq	128(%rsp), %r13
+ 358      80000000 
+ 359              	.LVL36:
+ 360 025c 0F1F4000 		.p2align 4,,10
+ 361              		.p2align 3
+ 362              	.L14:
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 363              		.loc 1 166 5 view .LVU100
+ 364              	.LBE21:
+ 365              	.LBE23:
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 366              		.loc 1 233 9 is_stmt 1 view .LVU101
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 367              		.loc 1 233 13 is_stmt 0 view .LVU102
+ 368 0260 41BFC3FF 		movl	$-61, %r15d
+ 368      FFFF
+ 369              	.LVL37:
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 370              		.loc 1 237 5 is_stmt 1 view .LVU103
+ 371 0266 BE800000 		movl	$128, %esi
+ 371      00
+ 372 026b 4C89EF   		movq	%r13, %rdi
+ 373 026e E8000000 		call	mbedtls_platform_zeroize@PLT
+ 373      00
+ 374              	.LVL38:
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 375              		.loc 1 239 5 view .LVU104
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 376              		.loc 1 239 12 is_stmt 0 view .LVU105
+ 377 0273 4489F8   		movl	%r15d, %eax
+ 378 0276 E938FFFF 		jmp	.L1
+ 378      FF
+ 379              	.LVL39:
+ 380              	.L32:
+ 381              		.loc 1 240 1 view .LVU106
+ 382 027b E8000000 		call	__stack_chk_fail@PLT
+ 382      00
+ 383              	.LVL40:
+ 384              		.loc 1 240 1 view .LVU107
+ 385              		.cfi_endproc
+ 386              	.LFE50:
+ 388              		.section	.text.mbedtls_entropy_init,"ax",@progbits
+ 389              		.p2align 4
+ 390              		.globl	mbedtls_entropy_init
+ 392              	mbedtls_entropy_init:
+ 393              	.LVL41:
+ 394              	.LFB42:
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source_count = 0;
+ 395              		.loc 1 28 1 is_stmt 1 view -0
+ 396              		.cfi_startproc
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source_count = 0;
+ 397              		.loc 1 28 1 is_stmt 0 view .LVU109
+ 398 0000 F30F1EFA 		endbr64
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     memset(ctx->source, 0, sizeof(ctx->source));
+ 399              		.loc 1 29 5 is_stmt 1 view .LVU110
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 400              		.loc 1 30 5 view .LVU111
+GAS LISTING /tmp/ccWJ0RJe.s 			page 15
+
+
+ 401              	.LVL42:
+ 402              	.LBB24:
+ 403              	.LBI24:
+ 404              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+GAS LISTING /tmp/ccWJ0RJe.s 			page 16
+
+
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+ 405              		.loc 2 57 1 view .LVU112
+ 406              	.LBB25:
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+ 407              		.loc 2 59 3 view .LVU113
+ 408              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU114
+ 409 0004 48C74720 		movq	$0, 32(%rdi)
+ 409      00000000 
+ 410              	.LBE25:
+ 411              	.LBE24:
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source_count = 0;
+ 412              		.loc 1 28 1 view .LVU115
+ 413 000c 4889FA   		movq	%rdi, %rdx
+ 414              	.LBB27:
+ 415              	.LBB26:
+ 416              		.loc 2 59 10 discriminator 1 view .LVU116
+ 417 000f 488D7F28 		leaq	40(%rdi), %rdi
+ 418              	.LVL43:
+ 419              		.loc 2 59 10 discriminator 1 view .LVU117
+ 420 0013 48C78710 		movq	$0, 784(%rdi)
+ 420      03000000 
+ 420      000000
+ 421 001e 89D0     		movl	%edx, %eax
+ 422 0020 4883E7F8 		andq	$-8, %rdi
+ 423 0024 29F8     		subl	%edi, %eax
+ 424 0026 8D884003 		leal	832(%rax), %ecx
+ 424      0000
+ 425 002c 31C0     		xorl	%eax, %eax
+ 426 002e C1E903   		shrl	$3, %ecx
+ 427 0031 F348AB   		rep stosq
+ 428              	.LVL44:
+ 429              		.loc 2 59 10 discriminator 1 view .LVU118
+ 430              	.LBE26:
+ 431              	.LBE27:
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_md_init(&ctx->accumulator);
+ 432              		.loc 1 36 5 is_stmt 1 view .LVU119
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_md_init(&ctx->accumulator);
+ 433              		.loc 1 36 30 is_stmt 0 view .LVU120
+ 434 0034 48C74218 		movq	$0, 24(%rdx)
+ 434      00000000 
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 435              		.loc 1 37 5 is_stmt 1 view .LVU121
+ 436 003c 4889D7   		movq	%rdx, %rdi
+ 437 003f E9000000 		jmp	mbedtls_md_init@PLT
+ 437      00
+ 438              	.LVL45:
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 439              		.loc 1 37 5 is_stmt 0 view .LVU122
+ 440              		.cfi_endproc
+ 441              	.LFE42:
+ 443              		.section	.text.mbedtls_entropy_free,"ax",@progbits
+ 444              		.p2align 4
+ 445              		.globl	mbedtls_entropy_free
+GAS LISTING /tmp/ccWJ0RJe.s 			page 17
+
+
+ 447              	mbedtls_entropy_free:
+ 448              	.LVL46:
+ 449              	.LFB43:
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /* If the context was already free, don't call free() again.
+ 450              		.loc 1 63 1 is_stmt 1 view -0
+ 451              		.cfi_startproc
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /* If the context was already free, don't call free() again.
+ 452              		.loc 1 63 1 is_stmt 0 view .LVU124
+ 453 0000 F30F1EFA 		endbr64
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return;
+ 454              		.loc 1 66 5 is_stmt 1 view .LVU125
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return;
+ 455              		.loc 1 66 8 is_stmt 0 view .LVU126
+ 456 0004 837F18FF 		cmpl	$-1, 24(%rdi)
+ 457 0008 742E     		je	.L37
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /* If the context was already free, don't call free() again.
+ 458              		.loc 1 63 1 view .LVU127
+ 459 000a 53       		pushq	%rbx
+ 460              	.LCFI15:
+ 461              		.cfi_def_cfa_offset 16
+ 462              		.cfi_offset 3, -16
+ 463 000b 4889FB   		movq	%rdi, %rbx
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_ENTROPY_NV_SEED)
+ 464              		.loc 1 73 5 is_stmt 1 view .LVU128
+ 465 000e E8000000 		call	mbedtls_md_free@PLT
+ 465      00
+ 466              	.LVL47:
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_platform_zeroize(ctx->source, sizeof(ctx->source));
+ 467              		.loc 1 77 5 view .LVU129
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_platform_zeroize(ctx->source, sizeof(ctx->source));
+ 468              		.loc 1 77 23 is_stmt 0 view .LVU130
+ 469 0013 C7431C00 		movl	$0, 28(%rbx)
+ 469      000000
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->accumulator_started = -1;
+ 470              		.loc 1 78 5 is_stmt 1 view .LVU131
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->accumulator_started = -1;
+ 471              		.loc 1 78 33 is_stmt 0 view .LVU132
+ 472 001a 488D7B20 		leaq	32(%rbx), %rdi
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->accumulator_started = -1;
+ 473              		.loc 1 78 5 view .LVU133
+ 474 001e BE200300 		movl	$800, %esi
+ 474      00
+ 475 0023 E8000000 		call	mbedtls_platform_zeroize@PLT
+ 475      00
+ 476              	.LVL48:
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 477              		.loc 1 79 5 is_stmt 1 view .LVU134
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 478              		.loc 1 79 30 is_stmt 0 view .LVU135
+ 479 0028 C74318FF 		movl	$-1, 24(%rbx)
+ 479      FFFFFF
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 480              		.loc 1 80 1 view .LVU136
+ 481 002f 5B       		popq	%rbx
+ 482              	.LCFI16:
+ 483              		.cfi_def_cfa_offset 8
+ 484              	.LVL49:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 18
+
+
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 485              		.loc 1 80 1 view .LVU137
+ 486 0030 C3       		ret
+ 487              	.LVL50:
+ 488              		.p2align 4,,10
+ 489 0031 0F1F8000 		.p2align 3
+ 489      000000
+ 490              	.L37:
+ 491              		.cfi_restore 3
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 492              		.loc 1 80 1 view .LVU138
+ 493 0038 C3       		ret
+ 494              		.cfi_endproc
+ 495              	.LFE43:
+ 497              		.section	.text.mbedtls_entropy_add_source,"ax",@progbits
+ 498              		.p2align 4
+ 499              		.globl	mbedtls_entropy_add_source
+ 501              	mbedtls_entropy_add_source:
+ 502              	.LVL51:
+ 503              	.LFB44:
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int idx, ret = 0;
+ 504              		.loc 1 85 1 is_stmt 1 view -0
+ 505              		.cfi_startproc
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int idx, ret = 0;
+ 506              		.loc 1 85 1 is_stmt 0 view .LVU140
+ 507 0000 F30F1EFA 		endbr64
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 508              		.loc 1 86 5 is_stmt 1 view .LVU141
+ 509              	.LVL52:
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (idx >= MBEDTLS_ENTROPY_MAX_SOURCES) {
+ 510              		.loc 1 94 5 view .LVU142
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int idx, ret = 0;
+ 511              		.loc 1 85 1 is_stmt 0 view .LVU143
+ 512 0004 4889F8   		movq	%rdi, %rax
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (idx >= MBEDTLS_ENTROPY_MAX_SOURCES) {
+ 513              		.loc 1 94 9 view .LVU144
+ 514 0007 8B7F1C   		movl	28(%rdi), %edi
+ 515              	.LVL53:
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = MBEDTLS_ERR_ENTROPY_MAX_SOURCES;
+ 516              		.loc 1 95 5 is_stmt 1 view .LVU145
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = MBEDTLS_ERR_ENTROPY_MAX_SOURCES;
+ 517              		.loc 1 95 8 is_stmt 0 view .LVU146
+ 518 000a 83FF13   		cmpl	$19, %edi
+ 519 000d 7F29     		jg	.L42
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].p_source  = p_source;
+ 520              		.loc 1 100 5 is_stmt 1 view .LVU147
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].p_source  = p_source;
+ 521              		.loc 1 100 32 is_stmt 0 view .LVU148
+ 522 000f 4C63CF   		movslq	%edi, %r9
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 523              		.loc 1 105 22 view .LVU149
+ 524 0012 83C701   		addl	$1, %edi
+ 525              	.LVL54:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].p_source  = p_source;
+ 526              		.loc 1 100 32 view .LVU150
+ 527 0015 4F8D0C89 		leaq	(%r9,%r9,4), %r9
+ 528 0019 4E8D0CC8 		leaq	(%rax,%r9,8), %r9
+GAS LISTING /tmp/ccWJ0RJe.s 			page 19
+
+
+ 529 001d 49897120 		movq	%rsi, 32(%r9)
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].threshold = threshold;
+ 530              		.loc 1 101 5 is_stmt 1 view .LVU151
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].threshold = threshold;
+ 531              		.loc 1 101 32 is_stmt 0 view .LVU152
+ 532 0021 49895128 		movq	%rdx, 40(%r9)
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].strong    = strong;
+ 533              		.loc 1 102 5 is_stmt 1 view .LVU153
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ctx->source[idx].strong    = strong;
+ 534              		.loc 1 102 32 is_stmt 0 view .LVU154
+ 535 0025 49894938 		movq	%rcx, 56(%r9)
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 536              		.loc 1 103 5 is_stmt 1 view .LVU155
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 537              		.loc 1 103 32 is_stmt 0 view .LVU156
+ 538 0029 45894140 		movl	%r8d, 64(%r9)
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 539              		.loc 1 105 5 is_stmt 1 view .LVU157
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 540              		.loc 1 105 22 is_stmt 0 view .LVU158
+ 541 002d 89781C   		movl	%edi, 28(%rax)
+ 542              	.LVL55:
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 543              		.loc 1 86 14 view .LVU159
+ 544 0030 31C0     		xorl	%eax, %eax
+ 545              	.LVL56:
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 546              		.loc 1 86 14 view .LVU160
+ 547 0032 C3       		ret
+ 548              	.LVL57:
+ 549              		.p2align 4,,10
+ 550 0033 0F1F4400 		.p2align 3
+ 550      00
+ 551              	.L42:
+ 552              	.L41:
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 553              		.loc 1 114 5 is_stmt 1 view .LVU161
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto exit;
+ 554              		.loc 1 96 13 is_stmt 0 view .LVU162
+ 555 0038 B8C2FFFF 		movl	$-62, %eax
+ 555      FF
+ 556              	.LVL58:
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 557              		.loc 1 115 1 view .LVU163
+ 558 003d C3       		ret
+ 559              		.cfi_endproc
+ 560              	.LFE44:
+ 562              		.section	.text.mbedtls_entropy_update_manual,"ax",@progbits
+ 563              		.p2align 4
+ 564              		.globl	mbedtls_entropy_update_manual
+ 566              	mbedtls_entropy_update_manual:
+ 567              	.LVL59:
+ 568              	.LFB46:
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 569              		.loc 1 171 1 is_stmt 1 view -0
+ 570              		.cfi_startproc
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+GAS LISTING /tmp/ccWJ0RJe.s 			page 20
+
+
+ 571              		.loc 1 171 1 is_stmt 0 view .LVU165
+ 572 0000 F30F1EFA 		endbr64
+ 573 0004 4156     		pushq	%r14
+ 574              	.LCFI17:
+ 575              		.cfi_def_cfa_offset 16
+ 576              		.cfi_offset 14, -16
+ 577 0006 4155     		pushq	%r13
+ 578              	.LCFI18:
+ 579              		.cfi_def_cfa_offset 24
+ 580              		.cfi_offset 13, -24
+ 581 0008 4989F5   		movq	%rsi, %r13
+ 582 000b 4154     		pushq	%r12
+ 583              	.LCFI19:
+ 584              		.cfi_def_cfa_offset 32
+ 585              		.cfi_offset 12, -32
+ 586 000d 4989D4   		movq	%rdx, %r12
+ 587 0010 55       		pushq	%rbp
+ 588              	.LCFI20:
+ 589              		.cfi_def_cfa_offset 40
+ 590              		.cfi_offset 6, -40
+ 591 0011 4889FD   		movq	%rdi, %rbp
+ 592 0014 53       		pushq	%rbx
+ 593              	.LCFI21:
+ 594              		.cfi_def_cfa_offset 48
+ 595              		.cfi_offset 3, -48
+ 596 0015 4883EC60 		subq	$96, %rsp
+ 597              	.LCFI22:
+ 598              		.cfi_def_cfa_offset 144
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 599              		.loc 1 171 1 view .LVU166
+ 600 0019 64488B04 		movq	%fs:40, %rax
+ 600      25280000 
+ 600      00
+ 601 0022 48894424 		movq	%rax, 88(%rsp)
+ 601      58
+ 602 0027 31C0     		xorl	%eax, %eax
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 603              		.loc 1 172 5 is_stmt 1 view .LVU167
+ 604              	.LVL60:
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 605              		.loc 1 180 5 view .LVU168
+ 606              	.LBB30:
+ 607              	.LBI30:
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                           const unsigned char *data, size_t len)
+ 608              		.loc 1 120 12 view .LVU169
+ 609              	.LBB31:
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char tmp[MBEDTLS_ENTROPY_BLOCK_SIZE];
+ 610              		.loc 1 123 5 view .LVU170
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     size_t use_len = len;
+ 611              		.loc 1 124 5 view .LVU171
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     const unsigned char *p = data;
+ 612              		.loc 1 125 5 view .LVU172
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = 0;
+ 613              		.loc 1 126 5 view .LVU173
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 614              		.loc 1 127 5 view .LVU174
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = mbedtls_md(mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD),
+GAS LISTING /tmp/ccWJ0RJe.s 			page 21
+
+
+ 615              		.loc 1 129 5 view .LVU175
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = mbedtls_md(mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD),
+ 616              		.loc 1 129 8 is_stmt 0 view .LVU176
+ 617 0029 4883FA40 		cmpq	$64, %rdx
+ 618 002d 0F87A500 		ja	.L44
+ 618      0000
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 619              		.loc 1 139 15 view .LVU177
+ 620 0033 89D0     		movl	%edx, %eax
+ 621 0035 4C8D7424 		leaq	16(%rsp), %r14
+ 621      10
+ 622              	.LVL61:
+ 623              	.L45:
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     header[1] = use_len & 0xFF;
+ 624              		.loc 1 138 5 is_stmt 1 view .LVU178
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 625              		.loc 1 139 15 is_stmt 0 view .LVU179
+ 626 003a 8844240F 		movb	%al, 15(%rsp)
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = mbedtls_md_setup(&ctx->accumulator,
+ 627              		.loc 1 146 8 view .LVU180
+ 628 003e 8B4518   		movl	24(%rbp), %eax
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     header[1] = use_len & 0xFF;
+ 629              		.loc 1 138 15 view .LVU181
+ 630 0041 C644240E 		movb	$20, 14(%rsp)
+ 630      14
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 631              		.loc 1 139 5 is_stmt 1 view .LVU182
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = mbedtls_md_setup(&ctx->accumulator,
+ 632              		.loc 1 146 5 view .LVU183
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ret = mbedtls_md_setup(&ctx->accumulator,
+ 633              		.loc 1 146 8 is_stmt 0 view .LVU184
+ 634 0046 85C0     		testl	%eax, %eax
+ 635 0048 7532     		jne	.L47
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 636              		.loc 1 147 9 is_stmt 1 view .LVU185
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 637              		.loc 1 147 15 is_stmt 0 view .LVU186
+ 638 004a BF0B0000 		movl	$11, %edi
+ 638      00
+ 639 004f E8000000 		call	mbedtls_md_info_from_type@PLT
+ 639      00
+ 640              	.LVL62:
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 641              		.loc 1 147 15 discriminator 1 view .LVU187
+ 642 0054 31D2     		xorl	%edx, %edx
+ 643 0056 4889EF   		movq	%rbp, %rdi
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 644              		.loc 1 147 15 view .LVU188
+ 645 0059 4889C6   		movq	%rax, %rsi
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 646              		.loc 1 147 15 discriminator 1 view .LVU189
+ 647 005c E8000000 		call	mbedtls_md_setup@PLT
+ 647      00
+ 648              	.LVL63:
+ 649 0061 89C3     		movl	%eax, %ebx
+ 650              	.LVL64:
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+GAS LISTING /tmp/ccWJ0RJe.s 			page 22
+
+
+ 651              		.loc 1 149 9 is_stmt 1 view .LVU190
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 652              		.loc 1 149 12 is_stmt 0 view .LVU191
+ 653 0063 85C0     		testl	%eax, %eax
+ 654 0065 752D     		jne	.L46
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
+ 655              		.loc 1 152 9 is_stmt 1 view .LVU192
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
+ 656              		.loc 1 152 15 is_stmt 0 view .LVU193
+ 657 0067 4889EF   		movq	%rbp, %rdi
+ 658 006a E8000000 		call	mbedtls_md_starts@PLT
+ 658      00
+ 659              	.LVL65:
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (ret != 0) {
+ 660              		.loc 1 152 15 view .LVU194
+ 661 006f 89C3     		movl	%eax, %ebx
+ 662              	.LVL66:
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 663              		.loc 1 153 9 is_stmt 1 view .LVU195
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto cleanup;
+ 664              		.loc 1 153 12 is_stmt 0 view .LVU196
+ 665 0071 85C0     		testl	%eax, %eax
+ 666 0073 751F     		jne	.L46
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 667              		.loc 1 156 9 is_stmt 1 view .LVU197
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 668              		.loc 1 156 34 is_stmt 0 view .LVU198
+ 669 0075 C7451801 		movl	$1, 24(%rbp)
+ 669      000000
+ 670              	.LVL67:
+ 671              	.L47:
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto cleanup;
+ 672              		.loc 1 158 5 is_stmt 1 view .LVU199
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto cleanup;
+ 673              		.loc 1 158 16 is_stmt 0 view .LVU200
+ 674 007c 488D7424 		leaq	14(%rsp), %rsi
+ 674      0E
+ 675 0081 BA020000 		movl	$2, %edx
+ 675      00
+ 676 0086 4889EF   		movq	%rbp, %rdi
+ 677 0089 E8000000 		call	mbedtls_md_update@PLT
+ 677      00
+ 678              	.LVL68:
+ 679 008e 89C3     		movl	%eax, %ebx
+ 680              	.LVL69:
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto cleanup;
+ 681              		.loc 1 158 8 discriminator 1 view .LVU201
+ 682 0090 85C0     		testl	%eax, %eax
+ 683 0092 742C     		je	.L50
+ 684              	.L46:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 685              		.loc 1 164 5 is_stmt 1 view .LVU202
+ 686 0094 BE400000 		movl	$64, %esi
+ 686      00
+ 687 0099 4C89F7   		movq	%r14, %rdi
+ 688 009c E8000000 		call	mbedtls_platform_zeroize@PLT
+ 688      00
+GAS LISTING /tmp/ccWJ0RJe.s 			page 23
+
+
+ 689              	.LVL70:
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 690              		.loc 1 166 5 view .LVU203
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 691              		.loc 1 166 5 is_stmt 0 view .LVU204
+ 692              	.LBE31:
+ 693              	.LBE30:
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 694              		.loc 1 188 5 is_stmt 1 view .LVU205
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 695              		.loc 1 189 1 is_stmt 0 view .LVU206
+ 696 00a1 488B4424 		movq	88(%rsp), %rax
+ 696      58
+ 697 00a6 64482B04 		subq	%fs:40, %rax
+ 697      25280000 
+ 697      00
+ 698 00af 7560     		jne	.L51
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 699              		.loc 1 189 1 view .LVU207
+ 700 00b1 4883C460 		addq	$96, %rsp
+ 701              	.LCFI23:
+ 702              		.cfi_remember_state
+ 703              		.cfi_def_cfa_offset 48
+ 704 00b5 89D8     		movl	%ebx, %eax
+ 705 00b7 5B       		popq	%rbx
+ 706              	.LCFI24:
+ 707              		.cfi_def_cfa_offset 40
+ 708              	.LVL71:
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 709              		.loc 1 189 1 view .LVU208
+ 710 00b8 5D       		popq	%rbp
+ 711              	.LCFI25:
+ 712              		.cfi_def_cfa_offset 32
+ 713              	.LVL72:
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 714              		.loc 1 189 1 view .LVU209
+ 715 00b9 415C     		popq	%r12
+ 716              	.LCFI26:
+ 717              		.cfi_def_cfa_offset 24
+ 718 00bb 415D     		popq	%r13
+ 719              	.LCFI27:
+ 720              		.cfi_def_cfa_offset 16
+ 721 00bd 415E     		popq	%r14
+ 722              	.LCFI28:
+ 723              		.cfi_def_cfa_offset 8
+ 724 00bf C3       		ret
+ 725              	.LVL73:
+ 726              		.p2align 4,,10
+ 727              		.p2align 3
+ 728              	.L50:
+ 729              	.LCFI29:
+ 730              		.cfi_restore_state
+ 731              	.LBB33:
+ 732              	.LBB32:
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 733              		.loc 1 161 5 is_stmt 1 view .LVU210
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+GAS LISTING /tmp/ccWJ0RJe.s 			page 24
+
+
+ 734              		.loc 1 161 11 is_stmt 0 view .LVU211
+ 735 00c0 4C89E2   		movq	%r12, %rdx
+ 736 00c3 4C89EE   		movq	%r13, %rsi
+ 737 00c6 4889EF   		movq	%rbp, %rdi
+ 738 00c9 E8000000 		call	mbedtls_md_update@PLT
+ 738      00
+ 739              	.LVL74:
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 740              		.loc 1 161 11 view .LVU212
+ 741 00ce 89C3     		movl	%eax, %ebx
+ 742              	.LVL75:
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 743              		.loc 1 161 11 view .LVU213
+ 744 00d0 EBC2     		jmp	.L46
+ 745              	.LVL76:
+ 746              		.p2align 4,,10
+ 747 00d2 660F1F44 		.p2align 3
+ 747      0000
+ 748              	.L44:
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 749              		.loc 1 130 9 is_stmt 1 view .LVU214
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 750              		.loc 1 130 20 is_stmt 0 view .LVU215
+ 751 00d8 BF0B0000 		movl	$11, %edi
+ 751      00
+ 752              	.LVL77:
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 753              		.loc 1 130 20 discriminator 1 view .LVU216
+ 754 00dd 4C8D7424 		leaq	16(%rsp), %r14
+ 754      10
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 755              		.loc 1 130 20 view .LVU217
+ 756 00e2 E8000000 		call	mbedtls_md_info_from_type@PLT
+ 756      00
+ 757              	.LVL78:
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 758              		.loc 1 130 20 discriminator 1 view .LVU218
+ 759 00e7 4C89F1   		movq	%r14, %rcx
+ 760 00ea 4C89E2   		movq	%r12, %rdx
+ 761 00ed 4C89EE   		movq	%r13, %rsi
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 762              		.loc 1 130 20 view .LVU219
+ 763 00f0 4889C7   		movq	%rax, %rdi
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 764              		.loc 1 130 20 discriminator 1 view .LVU220
+ 765 00f3 E8000000 		call	mbedtls_md@PLT
+ 765      00
+ 766              	.LVL79:
+ 767 00f8 89C3     		movl	%eax, %ebx
+ 768              	.LVL80:
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                               data, len, tmp)) != 0) {
+ 769              		.loc 1 130 12 discriminator 2 view .LVU221
+ 770 00fa 85C0     		testl	%eax, %eax
+ 771 00fc 7596     		jne	.L46
+ 772 00fe B8400000 		movl	$64, %eax
+ 772      00
+ 773              	.LVL81:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 25
+
+
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         use_len = MBEDTLS_ENTROPY_BLOCK_SIZE;
+ 774              		.loc 1 134 11 view .LVU222
+ 775 0103 4D89F5   		movq	%r14, %r13
+ 776              	.LVL82:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 777              		.loc 1 135 17 view .LVU223
+ 778 0106 41BC4000 		movl	$64, %r12d
+ 778      0000
+ 779              	.LVL83:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 780              		.loc 1 135 17 view .LVU224
+ 781 010c E929FFFF 		jmp	.L45
+ 781      FF
+ 782              	.LVL84:
+ 783              	.L51:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 784              		.loc 1 135 17 view .LVU225
+ 785              	.LBE32:
+ 786              	.LBE33:
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 787              		.loc 1 189 1 view .LVU226
+ 788 0111 E8000000 		call	__stack_chk_fail@PLT
+ 788      00
+ 789              	.LVL85:
+ 790              		.cfi_endproc
+ 791              	.LFE46:
+ 793              		.section	.text.mbedtls_entropy_gather,"ax",@progbits
+ 794              		.p2align 4
+ 795              		.globl	mbedtls_entropy_gather
+ 797              	mbedtls_entropy_gather:
+ 798              	.LVL86:
+ 799              	.LFB48:
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** /*
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  * Thread-safe wrapper for entropy_gather_internal()
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****  */
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** int mbedtls_entropy_gather(mbedtls_entropy_context *ctx)
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+ 800              		.loc 1 246 1 is_stmt 1 view -0
+ 801              		.cfi_startproc
+ 802              		.loc 1 246 1 is_stmt 0 view .LVU228
+ 803 0000 F30F1EFA 		endbr64
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 804              		.loc 1 247 5 is_stmt 1 view .LVU229
+ 805              	.LVL87:
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if ((ret = mbedtls_mutex_lock(&ctx->mutex)) != 0) {
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return ret;
+ 252:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 253:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+ 254:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 255:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ret = entropy_gather_internal(ctx);
+ 806              		.loc 1 255 5 view .LVU230
+ 807              	.LBB34:
+ 808              	.LBI34:
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+GAS LISTING /tmp/ccWJ0RJe.s 			page 26
+
+
+ 809              		.loc 1 194 12 view .LVU231
+ 810              	.LBB35:
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int i;
+ 811              		.loc 1 196 5 view .LVU232
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int have_one_strong = 0;
+ 812              		.loc 1 197 5 view .LVU233
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char buf[MBEDTLS_ENTROPY_MAX_GATHER];
+ 813              		.loc 1 198 5 view .LVU234
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     size_t olen;
+ 814              		.loc 1 199 5 view .LVU235
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 815              		.loc 1 200 5 view .LVU236
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_NO_SOURCES_DEFINED;
+ 816              		.loc 1 202 5 view .LVU237
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_NO_SOURCES_DEFINED;
+ 817              		.loc 1 202 8 is_stmt 0 view .LVU238
+ 818 0004 8B471C   		movl	28(%rdi), %eax
+ 819 0007 85C0     		testl	%eax, %eax
+ 820 0009 7405     		je	.L53
+ 821 000b E9000000 		jmp	entropy_gather_internal.part.0
+ 821      00
+ 822              	.LVL88:
+ 823              		.p2align 4,,10
+ 824              		.p2align 3
+ 825              	.L53:
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_NO_SOURCES_DEFINED;
+ 826              		.loc 1 202 8 view .LVU239
+ 827              	.LBE35:
+ 828              	.LBE34:
+ 256:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 257:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (mbedtls_mutex_unlock(&ctx->mutex) != 0) {
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
+ 260:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     return ret;
+ 829              		.loc 1 263 5 is_stmt 1 view .LVU240
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 830              		.loc 1 264 1 is_stmt 0 view .LVU241
+ 831 0010 B8C0FFFF 		movl	$-64, %eax
+ 831      FF
+ 832 0015 C3       		ret
+ 833              		.cfi_endproc
+ 834              	.LFE48:
+ 836              		.section	.text.mbedtls_entropy_func,"ax",@progbits
+ 837              		.p2align 4
+ 838              		.globl	mbedtls_entropy_func
+ 840              	mbedtls_entropy_func:
+ 841              	.LVL89:
+ 842              	.LFB49:
+ 265:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 266:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** int mbedtls_entropy_func(void *data, unsigned char *output, size_t len)
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+ 843              		.loc 1 267 1 is_stmt 1 view -0
+ 844              		.cfi_startproc
+ 845              		.loc 1 267 1 is_stmt 0 view .LVU243
+GAS LISTING /tmp/ccWJ0RJe.s 			page 27
+
+
+ 846 0000 F30F1EFA 		endbr64
+ 847 0004 4157     		pushq	%r15
+ 848              	.LCFI30:
+ 849              		.cfi_def_cfa_offset 16
+ 850              		.cfi_offset 15, -16
+ 851 0006 4156     		pushq	%r14
+ 852              	.LCFI31:
+ 853              		.cfi_def_cfa_offset 24
+ 854              		.cfi_offset 14, -24
+ 855 0008 4155     		pushq	%r13
+ 856              	.LCFI32:
+ 857              		.cfi_def_cfa_offset 32
+ 858              		.cfi_offset 13, -32
+ 859 000a 4154     		pushq	%r12
+ 860              	.LCFI33:
+ 861              		.cfi_def_cfa_offset 40
+ 862              		.cfi_offset 12, -40
+ 863 000c 55       		pushq	%rbp
+ 864              	.LCFI34:
+ 865              		.cfi_def_cfa_offset 48
+ 866              		.cfi_offset 6, -48
+ 867 000d 53       		pushq	%rbx
+ 868              	.LCFI35:
+ 869              		.cfi_def_cfa_offset 56
+ 870              		.cfi_offset 3, -56
+ 871 000e 4883EC68 		subq	$104, %rsp
+ 872              	.LCFI36:
+ 873              		.cfi_def_cfa_offset 160
+ 874              		.loc 1 267 1 view .LVU244
+ 875 0012 48897424 		movq	%rsi, 8(%rsp)
+ 875      08
+ 876 0017 64488B04 		movq	%fs:40, %rax
+ 876      25280000 
+ 876      00
+ 877 0020 48894424 		movq	%rax, 88(%rsp)
+ 877      58
+ 878 0025 31C0     		xorl	%eax, %eax
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int ret, count = 0, i, thresholds_reached;
+ 879              		.loc 1 268 5 is_stmt 1 view .LVU245
+ 880              	.LVL90:
+ 269:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     size_t strong_size;
+ 881              		.loc 1 269 5 view .LVU246
+ 270:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_entropy_context *ctx = (mbedtls_entropy_context *) data;
+ 882              		.loc 1 270 5 view .LVU247
+ 271:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char buf[MBEDTLS_ENTROPY_BLOCK_SIZE];
+ 883              		.loc 1 271 5 view .LVU248
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 273:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (len > MBEDTLS_ENTROPY_BLOCK_SIZE) {
+ 884              		.loc 1 273 5 view .LVU249
+ 885              		.loc 1 273 8 is_stmt 0 view .LVU250
+ 886 0027 4883FA40 		cmpq	$64, %rdx
+ 887 002b 0F87D601 		ja	.L66
+ 887      0000
+ 888 0031 4989FE   		movq	%rdi, %r14
+ 889 0034 4889D5   		movq	%rdx, %rbp
+ 890 0037 BB020100 		movl	$258, %ebx
+ 890      00
+GAS LISTING /tmp/ccWJ0RJe.s 			page 28
+
+
+ 274:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 276:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 277:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_ENTROPY_NV_SEED)
+ 278:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /* Update the NV entropy seed before generating any entropy for outside
+ 279:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * use.
+ 280:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      */
+ 281:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (ctx->initial_entropy_run == 0) {
+ 282:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->initial_entropy_run = 1;
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = mbedtls_entropy_update_nv_seed(ctx)) != 0) {
+ 284:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             return ret;
+ 285:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 286:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 287:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+ 288:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 289:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+ 290:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if ((ret = mbedtls_mutex_lock(&ctx->mutex)) != 0) {
+ 291:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return ret;
+ 292:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 293:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+ 294:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 295:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /*
+ 296:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * Always gather extra entropy before a call
+ 297:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      */
+ 298:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     do {
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (count++ > ENTROPY_MAX_LOOP) {
+ 300:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             ret = MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto exit;
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if ((ret = entropy_gather_internal(ctx)) != 0) {
+ 305:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto exit;
+ 306:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 307:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         thresholds_reached = 1;
+ 309:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         strong_size = 0;
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         for (i = 0; i < ctx->source_count; i++) {
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].size < ctx->source[i].threshold) {
+ 312:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                 thresholds_reached = 0;
+ 891              		.loc 1 312 36 view .LVU251
+ 892 003c 4531ED   		xorl	%r13d, %r13d
+ 893              	.LVL91:
+ 894 003f 90       		.p2align 4,,10
+ 895              		.p2align 3
+ 896              	.L56:
+ 298:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         if (count++ > ENTROPY_MAX_LOOP) {
+ 897              		.loc 1 298 5 is_stmt 1 view .LVU252
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             ret = MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
+ 898              		.loc 1 299 9 view .LVU253
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             ret = MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
+ 899              		.loc 1 299 12 is_stmt 0 view .LVU254
+ 900 0040 83EB01   		subl	$1, %ebx
+ 901 0043 0F84B101 		je	.L67
+ 901      0000
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto exit;
+ 902              		.loc 1 304 9 is_stmt 1 view .LVU255
+ 903              	.LVL92:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 29
+
+
+ 904              	.LBB36:
+ 905              	.LBI36:
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** {
+ 906              		.loc 1 194 12 view .LVU256
+ 907              	.LBB37:
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int i;
+ 908              		.loc 1 196 5 view .LVU257
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     int have_one_strong = 0;
+ 909              		.loc 1 197 5 view .LVU258
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     unsigned char buf[MBEDTLS_ENTROPY_MAX_GATHER];
+ 910              		.loc 1 198 5 view .LVU259
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     size_t olen;
+ 911              		.loc 1 199 5 view .LVU260
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 912              		.loc 1 200 5 view .LVU261
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_NO_SOURCES_DEFINED;
+ 913              		.loc 1 202 5 view .LVU262
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_NO_SOURCES_DEFINED;
+ 914              		.loc 1 202 8 is_stmt 0 view .LVU263
+ 915 0049 418B461C 		movl	28(%r14), %eax
+ 916 004d 85C0     		testl	%eax, %eax
+ 917 004f 0F846B01 		je	.L68
+ 917      0000
+ 918 0055 4C89F7   		movq	%r14, %rdi
+ 919 0058 E8000000 		call	entropy_gather_internal.part.0
+ 919      00
+ 920              	.LVL93:
+ 921 005d 4189C4   		movl	%eax, %r12d
+ 922              	.LVL94:
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_ENTROPY_NO_SOURCES_DEFINED;
+ 923              		.loc 1 202 8 view .LVU264
+ 924              	.LBE37:
+ 925              	.LBE36:
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto exit;
+ 926              		.loc 1 304 12 discriminator 1 view .LVU265
+ 927 0060 85C0     		testl	%eax, %eax
+ 928 0062 0F855E01 		jne	.L79
+ 928      0000
+ 929              	.LVL95:
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].size < ctx->source[i].threshold) {
+ 930              		.loc 1 310 23 is_stmt 1 discriminator 1 view .LVU266
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].size < ctx->source[i].threshold) {
+ 931              		.loc 1 310 28 is_stmt 0 discriminator 1 view .LVU267
+ 932 0068 4963461C 		movslq	28(%r14), %rax
+ 933              	.LVL96:
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].size < ctx->source[i].threshold) {
+ 934              		.loc 1 310 23 discriminator 1 view .LVU268
+ 935 006c 85C0     		testl	%eax, %eax
+ 936 006e 7ED0     		jle	.L56
+ 937 0070 4D8D7E30 		leaq	48(%r14), %r15
+ 938 0074 488D0480 		leaq	(%rax,%rax,4), %rax
+ 309:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         for (i = 0; i < ctx->source_count; i++) {
+ 939              		.loc 1 309 21 view .LVU269
+ 940 0078 31FF     		xorl	%edi, %edi
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         strong_size = 0;
+ 941              		.loc 1 308 28 view .LVU270
+ 942 007a B9010000 		movl	$1, %ecx
+GAS LISTING /tmp/ccWJ0RJe.s 			page 30
+
+
+ 942      00
+ 943 007f 498D34C7 		leaq	(%r15,%rax,8), %rsi
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].size < ctx->source[i].threshold) {
+ 944              		.loc 1 310 23 discriminator 1 view .LVU271
+ 945 0083 4C89F8   		movq	%r15, %rax
+ 946              	.LVL97:
+ 947 0086 662E0F1F 		.p2align 4,,10
+ 947      84000000 
+ 947      0000
+ 948              		.p2align 3
+ 949              	.L61:
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                 thresholds_reached = 0;
+ 950              		.loc 1 311 13 is_stmt 1 view .LVU272
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                 thresholds_reached = 0;
+ 951              		.loc 1 311 31 is_stmt 0 view .LVU273
+ 952 0090 488B10   		movq	(%rax), %rdx
+ 953              		.loc 1 312 36 view .LVU274
+ 954 0093 483B5008 		cmpq	8(%rax), %rdx
+ 955 0097 410F42CD 		cmovb	%r13d, %ecx
+ 956              	.LVL98:
+ 313:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             }
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].strong == MBEDTLS_ENTROPY_SOURCE_STRONG) {
+ 957              		.loc 1 314 13 is_stmt 1 view .LVU275
+ 958              		.loc 1 314 16 is_stmt 0 view .LVU276
+ 959 009b 83781001 		cmpl	$1, 16(%rax)
+ 960 009f 7503     		jne	.L60
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                 strong_size += ctx->source[i].size;
+ 961              		.loc 1 315 17 is_stmt 1 view .LVU277
+ 962              		.loc 1 315 29 is_stmt 0 view .LVU278
+ 963 00a1 4801D7   		addq	%rdx, %rdi
+ 964              	.LVL99:
+ 965              	.L60:
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].size < ctx->source[i].threshold) {
+ 966              		.loc 1 310 45 is_stmt 1 discriminator 2 view .LVU279
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].size < ctx->source[i].threshold) {
+ 967              		.loc 1 310 23 discriminator 1 view .LVU280
+ 968 00a4 4883C028 		addq	$40, %rax
+ 969              	.LVL100:
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             if (ctx->source[i].size < ctx->source[i].threshold) {
+ 970              		.loc 1 310 23 is_stmt 0 discriminator 1 view .LVU281
+ 971 00a8 4839F0   		cmpq	%rsi, %rax
+ 972 00ab 75E3     		jne	.L61
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             }
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         }
+ 318:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     } while (!thresholds_reached || strong_size < MBEDTLS_ENTROPY_BLOCK_SIZE);
+ 973              		.loc 1 318 34 is_stmt 1 view .LVU282
+ 974 00ad 4883FF3F 		cmpq	$63, %rdi
+ 975 00b1 768D     		jbe	.L56
+ 976 00b3 83E101   		andl	$1, %ecx
+ 977              	.LVL101:
+ 978              		.loc 1 318 34 is_stmt 0 view .LVU283
+ 979 00b6 7488     		je	.L56
+ 319:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 320:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     memset(buf, 0, MBEDTLS_ENTROPY_BLOCK_SIZE);
+ 980              		.loc 1 320 5 is_stmt 1 view .LVU284
+ 981              	.LVL102:
+ 982              	.LBB39:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 31
+
+
+ 983              	.LBI39:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 984              		.loc 2 57 1 view .LVU285
+ 985              	.LBB40:
+ 986              		.loc 2 59 3 view .LVU286
+ 987              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU287
+ 988 00b8 488D5C24 		leaq	16(%rsp), %rbx
+ 988      10
+ 989              	.LVL103:
+ 990              		.loc 2 59 10 discriminator 1 view .LVU288
+ 991 00bd 660FEFC0 		pxor	%xmm0, %xmm0
+ 992              	.LBE40:
+ 993              	.LBE39:
+ 321:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /*
+ 323:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * Note that at this stage it is assumed that the accumulator was started
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * in a previous call to entropy_update(). If this is not guaranteed, the
+ 325:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * code below will fail.
+ 326:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      */
+ 327:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if ((ret = mbedtls_md_finish(&ctx->accumulator, buf)) != 0) {
+ 994              		.loc 1 327 16 view .LVU289
+ 995 00c1 4C89F7   		movq	%r14, %rdi
+ 996              	.LVL104:
+ 997              		.loc 1 327 16 view .LVU290
+ 998 00c4 4889DE   		movq	%rbx, %rsi
+ 999              	.LBB42:
+ 1000              	.LBB41:
+ 1001              		.loc 2 59 10 discriminator 1 view .LVU291
+ 1002 00c7 0F294424 		movaps	%xmm0, 16(%rsp)
+ 1002      10
+ 1003 00cc 0F294424 		movaps	%xmm0, 32(%rsp)
+ 1003      20
+ 1004 00d1 0F294424 		movaps	%xmm0, 48(%rsp)
+ 1004      30
+ 1005 00d6 0F294424 		movaps	%xmm0, 64(%rsp)
+ 1005      40
+ 1006              	.LVL105:
+ 1007              		.loc 2 59 10 discriminator 1 view .LVU292
+ 1008              	.LBE41:
+ 1009              	.LBE42:
+ 1010              		.loc 1 327 5 is_stmt 1 view .LVU293
+ 1011              		.loc 1 327 16 is_stmt 0 view .LVU294
+ 1012 00db E8000000 		call	mbedtls_md_finish@PLT
+ 1012      00
+ 1013              	.LVL106:
+ 1014              		.loc 1 327 16 view .LVU295
+ 1015 00e0 4189C4   		movl	%eax, %r12d
+ 1016              	.LVL107:
+ 1017              		.loc 1 327 8 discriminator 1 view .LVU296
+ 1018 00e3 85C0     		testl	%eax, %eax
+ 1019 00e5 0F85E000 		jne	.L57
+ 1019      0000
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto exit;
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 330:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 331:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /*
+ 332:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * Reset accumulator and counters and recycle existing entropy
+GAS LISTING /tmp/ccWJ0RJe.s 			page 32
+
+
+ 333:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      */
+ 334:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_md_free(&ctx->accumulator);
+ 1020              		.loc 1 334 5 is_stmt 1 view .LVU297
+ 1021 00eb 4C89F7   		movq	%r14, %rdi
+ 1022 00ee E8000000 		call	mbedtls_md_free@PLT
+ 1022      00
+ 1023              	.LVL108:
+ 335:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_md_init(&ctx->accumulator);
+ 1024              		.loc 1 335 5 view .LVU298
+ 1025 00f3 4C89F7   		movq	%r14, %rdi
+ 1026 00f6 E8000000 		call	mbedtls_md_init@PLT
+ 1026      00
+ 1027              	.LVL109:
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ret = mbedtls_md_setup(&ctx->accumulator,
+ 1028              		.loc 1 336 5 view .LVU299
+ 1029              		.loc 1 336 11 is_stmt 0 view .LVU300
+ 1030 00fb BF0B0000 		movl	$11, %edi
+ 1030      00
+ 1031 0100 E8000000 		call	mbedtls_md_info_from_type@PLT
+ 1031      00
+ 1032              	.LVL110:
+ 1033              		.loc 1 336 11 discriminator 1 view .LVU301
+ 1034 0105 31D2     		xorl	%edx, %edx
+ 1035 0107 4C89F7   		movq	%r14, %rdi
+ 1036              		.loc 1 336 11 view .LVU302
+ 1037 010a 4889C6   		movq	%rax, %rsi
+ 1038              		.loc 1 336 11 discriminator 1 view .LVU303
+ 1039 010d E8000000 		call	mbedtls_md_setup@PLT
+ 1039      00
+ 1040              	.LVL111:
+ 1041 0112 4189C4   		movl	%eax, %r12d
+ 1042              	.LVL112:
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                            mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD), 0);
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (ret != 0) {
+ 1043              		.loc 1 338 5 is_stmt 1 view .LVU304
+ 1044              		.loc 1 338 8 is_stmt 0 view .LVU305
+ 1045 0115 85C0     		testl	%eax, %eax
+ 1046 0117 0F85AE00 		jne	.L57
+ 1046      0000
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto exit;
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 341:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ret = mbedtls_md_starts(&ctx->accumulator);
+ 1047              		.loc 1 341 5 is_stmt 1 view .LVU306
+ 1048              		.loc 1 341 11 is_stmt 0 view .LVU307
+ 1049 011d 4C89F7   		movq	%r14, %rdi
+ 1050 0120 E8000000 		call	mbedtls_md_starts@PLT
+ 1050      00
+ 1051              	.LVL113:
+ 1052              		.loc 1 341 11 view .LVU308
+ 1053 0125 4189C4   		movl	%eax, %r12d
+ 1054              	.LVL114:
+ 342:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (ret != 0) {
+ 1055              		.loc 1 342 5 is_stmt 1 view .LVU309
+ 1056              		.loc 1 342 8 is_stmt 0 view .LVU310
+ 1057 0128 85C0     		testl	%eax, %eax
+ 1058 012a 0F859B00 		jne	.L57
+ 1058      0000
+GAS LISTING /tmp/ccWJ0RJe.s 			page 33
+
+
+ 343:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto exit;
+ 344:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 345:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if ((ret = mbedtls_md_update(&ctx->accumulator, buf,
+ 1059              		.loc 1 345 5 is_stmt 1 view .LVU311
+ 1060              		.loc 1 345 16 is_stmt 0 view .LVU312
+ 1061 0130 BA400000 		movl	$64, %edx
+ 1061      00
+ 1062 0135 4889DE   		movq	%rbx, %rsi
+ 1063 0138 4C89F7   		movq	%r14, %rdi
+ 1064 013b E8000000 		call	mbedtls_md_update@PLT
+ 1064      00
+ 1065              	.LVL115:
+ 1066              		.loc 1 345 16 view .LVU313
+ 1067 0140 4189C4   		movl	%eax, %r12d
+ 1068              	.LVL116:
+ 1069              		.loc 1 345 8 discriminator 1 view .LVU314
+ 1070 0143 85C0     		testl	%eax, %eax
+ 1071 0145 0F858000 		jne	.L57
+ 1071      0000
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                                  MBEDTLS_ENTROPY_BLOCK_SIZE)) != 0) {
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto exit;
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     /*
+ 351:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      * Perform second hashing on entropy
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****      */
+ 353:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if ((ret = mbedtls_md(mbedtls_md_info_from_type(MBEDTLS_ENTROPY_MD),
+ 1072              		.loc 1 353 5 is_stmt 1 view .LVU315
+ 1073              		.loc 1 353 16 is_stmt 0 view .LVU316
+ 1074 014b BF0B0000 		movl	$11, %edi
+ 1074      00
+ 1075 0150 E8000000 		call	mbedtls_md_info_from_type@PLT
+ 1075      00
+ 1076              	.LVL117:
+ 1077              		.loc 1 353 16 discriminator 1 view .LVU317
+ 1078 0155 4889D9   		movq	%rbx, %rcx
+ 1079 0158 BA400000 		movl	$64, %edx
+ 1079      00
+ 1080 015d 4889DE   		movq	%rbx, %rsi
+ 1081              		.loc 1 353 16 view .LVU318
+ 1082 0160 4889C7   		movq	%rax, %rdi
+ 1083              		.loc 1 353 16 discriminator 1 view .LVU319
+ 1084 0163 E8000000 		call	mbedtls_md@PLT
+ 1084      00
+ 1085              	.LVL118:
+ 1086 0168 4189C4   		movl	%eax, %r12d
+ 1087              	.LVL119:
+ 1088              		.loc 1 353 8 discriminator 2 view .LVU320
+ 1089 016b 85C0     		testl	%eax, %eax
+ 1090 016d 755C     		jne	.L57
+ 1091              	.LVL120:
+ 354:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****                           buf, MBEDTLS_ENTROPY_BLOCK_SIZE, buf)) != 0) {
+ 355:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         goto exit;
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 357:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     for (i = 0; i < ctx->source_count; i++) {
+ 1092              		.loc 1 358 19 is_stmt 1 discriminator 1 view .LVU321
+GAS LISTING /tmp/ccWJ0RJe.s 			page 34
+
+
+ 1093              		.loc 1 358 24 is_stmt 0 discriminator 1 view .LVU322
+ 1094 016f 4963461C 		movslq	28(%r14), %rax
+ 1095              	.LVL121:
+ 1096              		.loc 1 358 19 discriminator 1 view .LVU323
+ 1097 0173 85C0     		testl	%eax, %eax
+ 1098 0175 7E35     		jle	.L64
+ 1099 0177 488D1480 		leaq	(%rax,%rax,4), %rdx
+ 1100 017b 498D04D7 		leaq	(%r15,%rdx,8), %rax
+ 1101 017f 83E201   		andl	$1, %edx
+ 1102 0182 7410     		je	.L63
+ 1103              	.LVL122:
+ 359:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1104              		.loc 1 359 9 is_stmt 1 view .LVU324
+ 1105              		.loc 1 359 29 is_stmt 0 view .LVU325
+ 1106 0184 49C70700 		movq	$0, (%r15)
+ 1106      000000
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1107              		.loc 1 358 41 is_stmt 1 discriminator 3 view .LVU326
+ 1108              	.LVL123:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1109              		.loc 1 358 19 discriminator 1 view .LVU327
+ 1110 018b 4983C728 		addq	$40, %r15
+ 1111              	.LVL124:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1112              		.loc 1 358 19 is_stmt 0 discriminator 1 view .LVU328
+ 1113 018f 4C39F8   		cmpq	%r15, %rax
+ 1114 0192 7418     		je	.L64
+ 1115              	.LVL125:
+ 1116              	.L63:
+ 1117              		.loc 1 359 9 is_stmt 1 view .LVU329
+ 1118              		.loc 1 359 29 is_stmt 0 view .LVU330
+ 1119 0194 49C70700 		movq	$0, (%r15)
+ 1119      000000
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1120              		.loc 1 358 41 is_stmt 1 discriminator 3 view .LVU331
+ 1121              	.LVL126:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1122              		.loc 1 358 19 discriminator 1 view .LVU332
+ 1123              		.loc 1 359 9 view .LVU333
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1124              		.loc 1 358 19 is_stmt 0 discriminator 1 view .LVU334
+ 1125 019b 4983C750 		addq	$80, %r15
+ 1126              	.LVL127:
+ 1127              		.loc 1 359 29 view .LVU335
+ 1128 019f 49C747D8 		movq	$0, -40(%r15)
+ 1128      00000000 
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1129              		.loc 1 358 41 is_stmt 1 discriminator 3 view .LVU336
+ 1130              	.LVL128:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         ctx->source[i].size = 0;
+ 1131              		.loc 1 358 19 discriminator 1 view .LVU337
+ 1132 01a7 4C39F8   		cmpq	%r15, %rax
+ 1133 01aa 75E8     		jne	.L63
+ 1134              	.LVL129:
+ 1135              	.L64:
+ 360:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 361:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+GAS LISTING /tmp/ccWJ0RJe.s 			page 35
+
+
+ 362:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     memcpy(output, buf, len);
+ 1136              		.loc 1 362 5 view .LVU338
+ 1137              	.LBB43:
+ 1138              	.LBI43:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1139              		.loc 2 26 1 view .LVU339
+ 1140              	.LBB44:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1141              		.loc 2 29 3 view .LVU340
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1142              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU341
+ 1143 01ac 488B7C24 		movq	8(%rsp), %rdi
+ 1143      08
+ 1144 01b1 4889EA   		movq	%rbp, %rdx
+ 1145 01b4 4889DE   		movq	%rbx, %rsi
+ 1146 01b7 E8000000 		call	memcpy@PLT
+ 1146      00
+ 1147              	.LVL130:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1148              		.loc 2 29 10 discriminator 1 view .LVU342
+ 1149              	.LBE44:
+ 1150              	.LBE43:
+ 363:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 364:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     ret = 0;
+ 1151              		.loc 1 364 5 is_stmt 1 view .LVU343
+ 1152              		.loc 1 364 5 is_stmt 0 view .LVU344
+ 1153 01bc EB0D     		jmp	.L57
+ 1154              	.LVL131:
+ 1155 01be 6690     		.p2align 4,,10
+ 1156              		.p2align 3
+ 1157              	.L68:
+ 1158              	.LBB45:
+ 1159              	.LBB38:
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 1160              		.loc 1 203 16 view .LVU345
+ 1161 01c0 41BCC0FF 		movl	$-64, %r12d
+ 1161      FFFF
+ 1162              	.LVL132:
+ 1163              	.L79:
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 1164              		.loc 1 203 16 view .LVU346
+ 1165 01c6 488D5C24 		leaq	16(%rsp), %rbx
+ 1165      10
+ 1166              	.L57:
+ 1167              	.LVL133:
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 1168              		.loc 1 203 16 view .LVU347
+ 1169              	.LBE38:
+ 1170              	.LBE45:
+ 365:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 366:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** exit:
+ 367:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     mbedtls_platform_zeroize(buf, sizeof(buf));
+ 1171              		.loc 1 367 5 is_stmt 1 view .LVU348
+ 1172 01cb BE400000 		movl	$64, %esi
+ 1172      00
+ 1173 01d0 4889DF   		movq	%rbx, %rdi
+ 1174 01d3 E8000000 		call	mbedtls_platform_zeroize@PLT
+GAS LISTING /tmp/ccWJ0RJe.s 			page 36
+
+
+ 1174      00
+ 1175              	.LVL134:
+ 368:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 369:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #if defined(MBEDTLS_THREADING_C)
+ 370:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     if (mbedtls_mutex_unlock(&ctx->mutex) != 0) {
+ 371:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****         return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
+ 372:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 373:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** #endif
+ 374:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** 
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     return ret;
+ 1176              		.loc 1 375 5 view .LVU349
+ 1177              	.L54:
+ 376:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c **** }
+ 1178              		.loc 1 376 1 is_stmt 0 view .LVU350
+ 1179 01d8 488B4424 		movq	88(%rsp), %rax
+ 1179      58
+ 1180 01dd 64482B04 		subq	%fs:40, %rax
+ 1180      25280000 
+ 1180      00
+ 1181 01e6 7527     		jne	.L80
+ 1182 01e8 4883C468 		addq	$104, %rsp
+ 1183              	.LCFI37:
+ 1184              		.cfi_remember_state
+ 1185              		.cfi_def_cfa_offset 56
+ 1186 01ec 4489E0   		movl	%r12d, %eax
+ 1187 01ef 5B       		popq	%rbx
+ 1188              	.LCFI38:
+ 1189              		.cfi_def_cfa_offset 48
+ 1190 01f0 5D       		popq	%rbp
+ 1191              	.LCFI39:
+ 1192              		.cfi_def_cfa_offset 40
+ 1193 01f1 415C     		popq	%r12
+ 1194              	.LCFI40:
+ 1195              		.cfi_def_cfa_offset 32
+ 1196 01f3 415D     		popq	%r13
+ 1197              	.LCFI41:
+ 1198              		.cfi_def_cfa_offset 24
+ 1199 01f5 415E     		popq	%r14
+ 1200              	.LCFI42:
+ 1201              		.cfi_def_cfa_offset 16
+ 1202 01f7 415F     		popq	%r15
+ 1203              	.LCFI43:
+ 1204              		.cfi_def_cfa_offset 8
+ 1205 01f9 C3       		ret
+ 1206              	.LVL135:
+ 1207              	.L67:
+ 1208              	.LCFI44:
+ 1209              		.cfi_restore_state
+ 300:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****             goto exit;
+ 1210              		.loc 1 300 17 view .LVU351
+ 1211 01fa 41BCC4FF 		movl	$-60, %r12d
+ 1211      FFFF
+ 1212 0200 488D5C24 		leaq	16(%rsp), %rbx
+ 1212      10
+ 1213 0205 EBC4     		jmp	.L57
+ 1214              	.LVL136:
+ 1215              	.L66:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 37
+
+
+ 274:../../bos/thirdparty/mbedtls/bos_mbedtls/entropy.c ****     }
+ 1216              		.loc 1 274 16 view .LVU352
+ 1217 0207 41BCC4FF 		movl	$-60, %r12d
+ 1217      FFFF
+ 1218 020d EBC9     		jmp	.L54
+ 1219              	.LVL137:
+ 1220              	.L80:
+ 1221              		.loc 1 376 1 view .LVU353
+ 1222 020f E8000000 		call	__stack_chk_fail@PLT
+ 1222      00
+ 1223              	.LVL138:
+ 1224              		.cfi_endproc
+ 1225              	.LFE49:
+ 1227              		.text
+ 1228              	.Letext0:
+ 1229              		.file 3 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1230              		.file 4 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h"
+ 1231              		.file 5 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/entropy.h"
+ 1232              		.file 6 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/platform_util.h"
+ 1233              		.file 7 "<built-in>"
+ 6478              		.section	.note.gnu.property,"a"
+ 6479              		.align 8
+ 6480 0000 04000000 		.long	1f - 0f
+ 6481 0004 10000000 		.long	4f - 1f
+ 6482 0008 05000000 		.long	5
+ 6483              	0:
+ 6484 000c 474E5500 		.string	"GNU"
+ 6485              	1:
+ 6486              		.align 8
+ 6487 0010 020000C0 		.long	0xc0000002
+ 6488 0014 04000000 		.long	3f - 2f
+ 6489              	2:
+ 6490 0018 03000000 		.long	0x3
+ 6491              	3:
+ 6492 001c 00000000 		.align 8
+ 6493              	4:
+GAS LISTING /tmp/ccWJ0RJe.s 			page 38
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 entropy.c
+     /tmp/ccWJ0RJe.s:8      .text.entropy_gather_internal.part.0:0000000000000000 entropy_gather_internal.part.0
+     /tmp/ccWJ0RJe.s:392    .text.mbedtls_entropy_init:0000000000000000 mbedtls_entropy_init
+     /tmp/ccWJ0RJe.s:447    .text.mbedtls_entropy_free:0000000000000000 mbedtls_entropy_free
+     /tmp/ccWJ0RJe.s:501    .text.mbedtls_entropy_add_source:0000000000000000 mbedtls_entropy_add_source
+     /tmp/ccWJ0RJe.s:566    .text.mbedtls_entropy_update_manual:0000000000000000 mbedtls_entropy_update_manual
+     /tmp/ccWJ0RJe.s:797    .text.mbedtls_entropy_gather:0000000000000000 mbedtls_entropy_gather
+     /tmp/ccWJ0RJe.s:840    .text.mbedtls_entropy_func:0000000000000000 mbedtls_entropy_func
+
+UNDEFINED SYMBOLS
+mbedtls_md_info_from_type
+mbedtls_md_setup
+mbedtls_md_starts
+mbedtls_md_update
+mbedtls_platform_zeroize
+mbedtls_md
+__stack_chk_fail
+mbedtls_md_init
+mbedtls_md_free
+mbedtls_md_finish
+memcpy

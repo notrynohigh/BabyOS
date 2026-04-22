@@ -1,0 +1,2632 @@
+GAS LISTING /tmp/ccumMMsB.s 			page 1
+
+
+   1              		.file	"b_mod_wifi.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/modules/b_mod_wifi.c"
+   5              		.section	.rodata._bWifiDrvCb.str1.1,"aMS",@progbits,1
+   6              	.LC0:
+   7 0000 6576743A 		.string	"evt:%d %p\r\n"
+   7      25642025 
+   7      700D0A00 
+   8              		.section	.rodata._bWifiDrvCb.str1.8,"aMS",@progbits,1
+   9              		.align 8
+  10              	.LC1:
+  11 0000 2E2E2F2E 		.string	"../../bos/modules/b_mod_wifi.c"
+  11      2E2F626F 
+  11      732F6D6F 
+  11      64756C65 
+  11      732F625F 
+  12              		.section	.text._bWifiDrvCb,"ax",@progbits
+  13              		.p2align 4
+  15              	_bWifiDrvCb:
+  16              	.LVL0:
+  17              	.LFB28:
+   1:../../bos/modules/b_mod_wifi.c **** /**
+   2:../../bos/modules/b_mod_wifi.c ****  *!
+   3:../../bos/modules/b_mod_wifi.c ****  * \file        b_mod_wifi.c
+   4:../../bos/modules/b_mod_wifi.c ****  * \version     v0.0.1
+   5:../../bos/modules/b_mod_wifi.c ****  * \date        2020/05/16
+   6:../../bos/modules/b_mod_wifi.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/modules/b_mod_wifi.c ****  *******************************************************************************
+   8:../../bos/modules/b_mod_wifi.c ****  * @attention
+   9:../../bos/modules/b_mod_wifi.c ****  *
+  10:../../bos/modules/b_mod_wifi.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/modules/b_mod_wifi.c ****  *
+  12:../../bos/modules/b_mod_wifi.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/modules/b_mod_wifi.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/modules/b_mod_wifi.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/modules/b_mod_wifi.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/modules/b_mod_wifi.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/modules/b_mod_wifi.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/modules/b_mod_wifi.c ****  *
+  19:../../bos/modules/b_mod_wifi.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/modules/b_mod_wifi.c ****  * copies or substantial portions of the Software.
+  21:../../bos/modules/b_mod_wifi.c ****  *
+  22:../../bos/modules/b_mod_wifi.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/modules/b_mod_wifi.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/modules/b_mod_wifi.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/modules/b_mod_wifi.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/modules/b_mod_wifi.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/modules/b_mod_wifi.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/modules/b_mod_wifi.c ****  * SOFTWARE.
+  29:../../bos/modules/b_mod_wifi.c ****  *******************************************************************************
+  30:../../bos/modules/b_mod_wifi.c ****  */
+  31:../../bos/modules/b_mod_wifi.c **** 
+  32:../../bos/modules/b_mod_wifi.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/modules/b_mod_wifi.c **** #include "modules/inc/b_mod_wifi.h"
+  34:../../bos/modules/b_mod_wifi.c **** 
+  35:../../bos/modules/b_mod_wifi.c **** #if (defined(_WIFI_ENABLE) && (_WIFI_ENABLE == 1))
+GAS LISTING /tmp/ccumMMsB.s 			page 2
+
+
+  36:../../bos/modules/b_mod_wifi.c **** #include "core/inc/b_core.h"
+  37:../../bos/modules/b_mod_wifi.c **** #include "core/inc/b_task.h"
+  38:../../bos/modules/b_mod_wifi.c **** #include "drivers/inc/b_driver_cmd.h"
+  39:../../bos/modules/b_mod_wifi.c **** #include "utils/inc/b_util_log.h"
+  40:../../bos/modules/b_mod_wifi.c **** #include "utils/inc/b_util_memp.h"
+  41:../../bos/modules/b_mod_wifi.c **** 
+  42:../../bos/modules/b_mod_wifi.c **** /**
+  43:../../bos/modules/b_mod_wifi.c ****  * \addtogroup BABYOS
+  44:../../bos/modules/b_mod_wifi.c ****  * \{
+  45:../../bos/modules/b_mod_wifi.c ****  */
+  46:../../bos/modules/b_mod_wifi.c **** 
+  47:../../bos/modules/b_mod_wifi.c **** /**
+  48:../../bos/modules/b_mod_wifi.c ****  * \addtogroup MODULES
+  49:../../bos/modules/b_mod_wifi.c ****  * \{
+  50:../../bos/modules/b_mod_wifi.c ****  */
+  51:../../bos/modules/b_mod_wifi.c **** 
+  52:../../bos/modules/b_mod_wifi.c **** /**
+  53:../../bos/modules/b_mod_wifi.c ****  * \addtogroup WIFI
+  54:../../bos/modules/b_mod_wifi.c ****  * \{
+  55:../../bos/modules/b_mod_wifi.c ****  */
+  56:../../bos/modules/b_mod_wifi.c **** 
+  57:../../bos/modules/b_mod_wifi.c **** /**
+  58:../../bos/modules/b_mod_wifi.c ****  * \defgroup WIFI_Private_TypesDefinitions
+  59:../../bos/modules/b_mod_wifi.c ****  * \{
+  60:../../bos/modules/b_mod_wifi.c ****  */
+  61:../../bos/modules/b_mod_wifi.c **** 
+  62:../../bos/modules/b_mod_wifi.c **** typedef struct
+  63:../../bos/modules/b_mod_wifi.c **** {
+  64:../../bos/modules/b_mod_wifi.c ****     uint8_t  linked;
+  65:../../bos/modules/b_mod_wifi.c ****     uint32_t dev_no;
+  66:../../bos/modules/b_mod_wifi.c **** 
+  67:../../bos/modules/b_mod_wifi.c ****     bWifiMode_t mode;
+  68:../../bos/modules/b_mod_wifi.c ****     bWifiMode_t cur_mode;
+  69:../../bos/modules/b_mod_wifi.c **** 
+  70:../../bos/modules/b_mod_wifi.c ****     bApInfo_t soft_ap;
+  71:../../bos/modules/b_mod_wifi.c ****     bApInfo_t ap;
+  72:../../bos/modules/b_mod_wifi.c **** 
+  73:../../bos/modules/b_mod_wifi.c ****     pWifiEvtCb_t cb;
+  74:../../bos/modules/b_mod_wifi.c ****     void        *user_data;
+  75:../../bos/modules/b_mod_wifi.c **** 
+  76:../../bos/modules/b_mod_wifi.c ****     bTaskAttr_t attr;
+  77:../../bos/modules/b_mod_wifi.c ****     bTaskId_t   task_id;
+  78:../../bos/modules/b_mod_wifi.c **** } bWifiModule_t;
+  79:../../bos/modules/b_mod_wifi.c **** 
+  80:../../bos/modules/b_mod_wifi.c **** /**
+  81:../../bos/modules/b_mod_wifi.c ****  * \}
+  82:../../bos/modules/b_mod_wifi.c ****  */
+  83:../../bos/modules/b_mod_wifi.c **** 
+  84:../../bos/modules/b_mod_wifi.c **** /**
+  85:../../bos/modules/b_mod_wifi.c ****  * \defgroup WIFI_Private_Defines
+  86:../../bos/modules/b_mod_wifi.c ****  * \{
+  87:../../bos/modules/b_mod_wifi.c ****  */
+  88:../../bos/modules/b_mod_wifi.c **** 
+  89:../../bos/modules/b_mod_wifi.c **** /**
+  90:../../bos/modules/b_mod_wifi.c ****  * \}
+  91:../../bos/modules/b_mod_wifi.c ****  */
+  92:../../bos/modules/b_mod_wifi.c **** 
+GAS LISTING /tmp/ccumMMsB.s 			page 3
+
+
+  93:../../bos/modules/b_mod_wifi.c **** /**
+  94:../../bos/modules/b_mod_wifi.c ****  * \defgroup WIFI_Private_Macros
+  95:../../bos/modules/b_mod_wifi.c ****  * \{
+  96:../../bos/modules/b_mod_wifi.c ****  */
+  97:../../bos/modules/b_mod_wifi.c **** 
+  98:../../bos/modules/b_mod_wifi.c **** /**
+  99:../../bos/modules/b_mod_wifi.c ****  * \}
+ 100:../../bos/modules/b_mod_wifi.c ****  */
+ 101:../../bos/modules/b_mod_wifi.c **** 
+ 102:../../bos/modules/b_mod_wifi.c **** /**
+ 103:../../bos/modules/b_mod_wifi.c ****  * \defgroup WIFI_Private_Variables
+ 104:../../bos/modules/b_mod_wifi.c ****  * \{
+ 105:../../bos/modules/b_mod_wifi.c ****  */
+ 106:../../bos/modules/b_mod_wifi.c **** 
+ 107:../../bos/modules/b_mod_wifi.c **** static bWifiModule_t bWifiModule = {
+ 108:../../bos/modules/b_mod_wifi.c ****     .dev_no = 0,
+ 109:../../bos/modules/b_mod_wifi.c **** };
+ 110:../../bos/modules/b_mod_wifi.c **** 
+ 111:../../bos/modules/b_mod_wifi.c **** /**
+ 112:../../bos/modules/b_mod_wifi.c ****  * \}
+ 113:../../bos/modules/b_mod_wifi.c ****  */
+ 114:../../bos/modules/b_mod_wifi.c **** 
+ 115:../../bos/modules/b_mod_wifi.c **** /**
+ 116:../../bos/modules/b_mod_wifi.c ****  * \defgroup WIFI_Private_FunctionPrototypes
+ 117:../../bos/modules/b_mod_wifi.c ****  * \{
+ 118:../../bos/modules/b_mod_wifi.c ****  */
+ 119:../../bos/modules/b_mod_wifi.c **** 
+ 120:../../bos/modules/b_mod_wifi.c **** /**
+ 121:../../bos/modules/b_mod_wifi.c ****  * \}
+ 122:../../bos/modules/b_mod_wifi.c ****  */
+ 123:../../bos/modules/b_mod_wifi.c **** 
+ 124:../../bos/modules/b_mod_wifi.c **** /**
+ 125:../../bos/modules/b_mod_wifi.c ****  * \defgroup WIFI_Private_Functions
+ 126:../../bos/modules/b_mod_wifi.c ****  * \{
+ 127:../../bos/modules/b_mod_wifi.c ****  */
+ 128:../../bos/modules/b_mod_wifi.c **** 
+ 129:../../bos/modules/b_mod_wifi.c **** static void _bWifiDrvCb(bWifiDrvEvent_t event, void *arg, void (*release)(void *), void *user_data)
+ 130:../../bos/modules/b_mod_wifi.c **** {
+  18              		.loc 1 130 1 view -0
+  19              		.cfi_startproc
+  20              		.loc 1 130 1 is_stmt 0 view .LVU1
+  21 0000 F30F1EFA 		endbr64
+  22 0004 53       		pushq	%rbx
+  23              	.LCFI0:
+  24              		.cfi_def_cfa_offset 16
+  25              		.cfi_offset 3, -16
+ 131:../../bos/modules/b_mod_wifi.c ****     uint8_t result = 0;
+ 132:../../bos/modules/b_mod_wifi.c ****     b_log_w("evt:%d %p\r\n", event, arg);
+  26              		.loc 1 132 5 view .LVU2
+  27 0005 4189F9   		movl	%edi, %r9d
+  28 0008 B9840000 		movl	$132, %ecx
+  28      00
+  29              	.LVL1:
+  30              		.loc 1 132 5 view .LVU3
+  31 000d 488D1500 		leaq	__func__.1(%rip), %rdx
+  31      000000
+  32              	.LVL2:
+GAS LISTING /tmp/ccumMMsB.s 			page 4
+
+
+ 130:../../bos/modules/b_mod_wifi.c ****     uint8_t result = 0;
+  33              		.loc 1 130 1 view .LVU4
+  34 0014 89FB     		movl	%edi, %ebx
+  35              		.loc 1 132 5 view .LVU5
+  36 0016 4C8D0500 		leaq	.LC0(%rip), %r8
+  36      000000
+  37 001d BF010000 		movl	$1, %edi
+  37      00
+  38              	.LVL3:
+ 130:../../bos/modules/b_mod_wifi.c ****     uint8_t result = 0;
+  39              		.loc 1 130 1 view .LVU6
+  40 0022 4883EC18 		subq	$24, %rsp
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 40
+ 130:../../bos/modules/b_mod_wifi.c ****     uint8_t result = 0;
+  43              		.loc 1 130 1 view .LVU7
+  44 0026 64488B04 		movq	%fs:40, %rax
+  44      25280000 
+  44      00
+  45 002f 48894424 		movq	%rax, 16(%rsp)
+  45      10
+  46 0034 31C0     		xorl	%eax, %eax
+ 131:../../bos/modules/b_mod_wifi.c ****     uint8_t result = 0;
+  47              		.loc 1 131 5 is_stmt 1 view .LVU8
+ 131:../../bos/modules/b_mod_wifi.c ****     uint8_t result = 0;
+  48              		.loc 1 131 13 is_stmt 0 view .LVU9
+  49 0036 C644240F 		movb	$0, 15(%rsp)
+  49      00
+  50              		.loc 1 132 5 is_stmt 1 view .LVU10
+  51 003b 56       		pushq	%rsi
+  52              	.LCFI2:
+  53              		.cfi_def_cfa_offset 48
+  54 003c 488D3500 		leaq	.LC1(%rip), %rsi
+  54      000000
+  55              	.LVL4:
+  56              		.loc 1 132 5 is_stmt 0 view .LVU11
+  57 0043 E8000000 		call	bLogOut@PLT
+  57      00
+  58              	.LVL5:
+ 133:../../bos/modules/b_mod_wifi.c ****     switch (event)
+  59              		.loc 1 133 5 is_stmt 1 view .LVU12
+  60 0048 5A       		popq	%rdx
+  61              	.LCFI3:
+  62              		.cfi_def_cfa_offset 40
+  63 0049 59       		popq	%rcx
+  64              	.LCFI4:
+  65              		.cfi_def_cfa_offset 32
+  66 004a 83FB01   		cmpl	$1, %ebx
+  67 004d 0F842501 		je	.L2
+  67      0000
+  68 0053 7F6B     		jg	.L3
+  69 0055 83FBA0   		cmpl	$-96, %ebx
+  70 0058 0F84C200 		je	.L4
+  70      0000
+  71 005e 83FBA1   		cmpl	$-95, %ebx
+  72 0061 0F8C9900 		jl	.L38
+  72      0000
+GAS LISTING /tmp/ccumMMsB.s 			page 5
+
+
+  73 0067 85DB     		testl	%ebx, %ebx
+  74 0069 7537     		jne	.L1
+ 134:../../bos/modules/b_mod_wifi.c ****     {
+ 135:../../bos/modules/b_mod_wifi.c ****         case B_EVT_MODE_STA_OK:
+ 136:../../bos/modules/b_mod_wifi.c ****         {
+ 137:../../bos/modules/b_mod_wifi.c ****             if (bWifiModule.mode == B_WIFI_MODE_STA)
+  75              		.loc 1 137 13 view .LVU13
+  76              		.loc 1 137 16 is_stmt 0 view .LVU14
+  77 006b 8B050000 		movl	8+bWifiModule(%rip), %eax
+  77      0000
+  78 0071 85C0     		testl	%eax, %eax
+  79 0073 752D     		jne	.L1
+ 138:../../bos/modules/b_mod_wifi.c ****             {
+ 139:../../bos/modules/b_mod_wifi.c ****                 result               = 1;
+  80              		.loc 1 139 17 is_stmt 1 view .LVU15
+ 140:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+ 141:../../bos/modules/b_mod_wifi.c ****                 B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+  81              		.loc 1 141 17 is_stmt 0 view .LVU16
+  82 0075 488B0500 		movq	216+bWifiModule(%rip), %rax
+  82      000000
+ 139:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+  83              		.loc 1 139 38 view .LVU17
+  84 007c C6442407 		movb	$1, 7(%rsp)
+  84      01
+ 140:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+  85              		.loc 1 140 17 is_stmt 1 view .LVU18
+ 140:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+  86              		.loc 1 140 38 is_stmt 0 view .LVU19
+  87 0081 C7050000 		movl	$0, 12+bWifiModule(%rip)
+  87      00000000 
+  87      0000
+  88              		.loc 1 141 17 is_stmt 1 view .LVU20
+  89              		.loc 1 141 17 view .LVU21
+  90 008b 4885C0   		testq	%rax, %rax
+  91 008e 7412     		je	.L1
+  92              	.LVL6:
+  93              	.L35:
+ 142:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 143:../../bos/modules/b_mod_wifi.c ****             }
+ 144:../../bos/modules/b_mod_wifi.c ****         }
+ 145:../../bos/modules/b_mod_wifi.c ****         break;
+ 146:../../bos/modules/b_mod_wifi.c ****         case B_EVT_MODE_AP_OK:
+ 147:../../bos/modules/b_mod_wifi.c ****         {
+ 148:../../bos/modules/b_mod_wifi.c ****             if (bWifiModule.mode == B_WIFI_MODE_AP)
+ 149:../../bos/modules/b_mod_wifi.c ****             {
+ 150:../../bos/modules/b_mod_wifi.c ****                 result               = 1;
+ 151:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+ 152:../../bos/modules/b_mod_wifi.c ****                 B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+ 153:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 154:../../bos/modules/b_mod_wifi.c ****             }
+ 155:../../bos/modules/b_mod_wifi.c ****         }
+ 156:../../bos/modules/b_mod_wifi.c ****         break;
+ 157:../../bos/modules/b_mod_wifi.c ****         case B_EVT_MODE_STA_AP_OK:
+ 158:../../bos/modules/b_mod_wifi.c ****         {
+ 159:../../bos/modules/b_mod_wifi.c ****             if (bWifiModule.mode == B_WIFI_MODE_STA_AP)
+ 160:../../bos/modules/b_mod_wifi.c ****             {
+ 161:../../bos/modules/b_mod_wifi.c ****                 result               = 1;
+GAS LISTING /tmp/ccumMMsB.s 			page 6
+
+
+ 162:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+ 163:../../bos/modules/b_mod_wifi.c ****                 B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+ 164:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 165:../../bos/modules/b_mod_wifi.c ****             }
+ 166:../../bos/modules/b_mod_wifi.c ****         }
+ 167:../../bos/modules/b_mod_wifi.c ****         break;
+ 168:../../bos/modules/b_mod_wifi.c ****         case B_EVT_JOIN_AP_OK:
+ 169:../../bos/modules/b_mod_wifi.c ****         {
+ 170:../../bos/modules/b_mod_wifi.c ****             bWifiModule.linked = 1;
+ 171:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_CONN_AP, &bWifiModule.linked, NULL,
+ 172:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 173:../../bos/modules/b_mod_wifi.c ****         }
+ 174:../../bos/modules/b_mod_wifi.c ****         break;
+ 175:../../bos/modules/b_mod_wifi.c ****         case B_EVT_FAIL_BASE:
+ 176:../../bos/modules/b_mod_wifi.c ****         {
+ 177:../../bos/modules/b_mod_wifi.c ****             ;
+ 178:../../bos/modules/b_mod_wifi.c ****         }
+ 179:../../bos/modules/b_mod_wifi.c ****         break;
+ 180:../../bos/modules/b_mod_wifi.c ****         case B_EVT_MODE_STA_FAIL:
+ 181:../../bos/modules/b_mod_wifi.c ****         case B_EVT_MODE_AP_FAIL:
+ 182:../../bos/modules/b_mod_wifi.c ****         case B_EVT_MODE_STA_AP_FAIL:
+ 183:../../bos/modules/b_mod_wifi.c ****         {
+ 184:../../bos/modules/b_mod_wifi.c ****             result = 0;
+ 185:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+  94              		.loc 1 185 13 discriminator 1 view .LVU22
+  95 0090 488B0D00 		movq	224+bWifiModule(%rip), %rcx
+  95      000000
+  96 0097 488D7424 		leaq	7(%rsp), %rsi
+  96      07
+  97 009c 31D2     		xorl	%edx, %edx
+  98 009e 31FF     		xorl	%edi, %edi
+  99 00a0 FFD0     		call	*%rax
+ 100              	.LVL7:
+ 101              	.L1:
+ 186:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 187:../../bos/modules/b_mod_wifi.c ****         }
+ 188:../../bos/modules/b_mod_wifi.c ****         break;
+ 189:../../bos/modules/b_mod_wifi.c ****         case B_EVT_JOIN_AP_FAIL:
+ 190:../../bos/modules/b_mod_wifi.c ****         {
+ 191:../../bos/modules/b_mod_wifi.c ****             bWifiModule.linked = 0;
+ 192:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_CONN_AP, &bWifiModule.linked, NULL,
+ 193:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 194:../../bos/modules/b_mod_wifi.c ****         }
+ 195:../../bos/modules/b_mod_wifi.c ****         break;
+ 196:../../bos/modules/b_mod_wifi.c ****         default:
+ 197:../../bos/modules/b_mod_wifi.c ****             break;
+ 198:../../bos/modules/b_mod_wifi.c ****     }
+ 199:../../bos/modules/b_mod_wifi.c **** }
+ 102              		.loc 1 199 1 is_stmt 0 view .LVU23
+ 103 00a2 488B4424 		movq	8(%rsp), %rax
+ 103      08
+ 104 00a7 64482B04 		subq	%fs:40, %rax
+ 104      25280000 
+ 104      00
+ 105 00b0 0F85F300 		jne	.L39
+ 105      0000
+ 106 00b6 4883C410 		addq	$16, %rsp
+GAS LISTING /tmp/ccumMMsB.s 			page 7
+
+
+ 107              	.LCFI5:
+ 108              		.cfi_remember_state
+ 109              		.cfi_def_cfa_offset 16
+ 110 00ba 5B       		popq	%rbx
+ 111              	.LCFI6:
+ 112              		.cfi_def_cfa_offset 8
+ 113 00bb C3       		ret
+ 114              	.LVL8:
+ 115 00bc 0F1F4000 		.p2align 4,,10
+ 116              		.p2align 3
+ 117              	.L3:
+ 118              	.LCFI7:
+ 119              		.cfi_restore_state
+ 133:../../bos/modules/b_mod_wifi.c ****     {
+ 120              		.loc 1 133 5 view .LVU24
+ 121 00c0 83FB02   		cmpl	$2, %ebx
+ 122 00c3 747B     		je	.L9
+ 123 00c5 83FB03   		cmpl	$3, %ebx
+ 124 00c8 75D8     		jne	.L1
+ 170:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_CONN_AP, &bWifiModule.linked, NULL,
+ 125              		.loc 1 170 13 is_stmt 1 view .LVU25
+ 171:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 126              		.loc 1 171 13 is_stmt 0 view .LVU26
+ 127 00ca 488B0500 		movq	216+bWifiModule(%rip), %rax
+ 127      000000
+ 170:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_CONN_AP, &bWifiModule.linked, NULL,
+ 128              		.loc 1 170 32 view .LVU27
+ 129 00d1 C6050000 		movb	$1, bWifiModule(%rip)
+ 129      000001
+ 171:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 130              		.loc 1 171 13 is_stmt 1 view .LVU28
+ 171:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 131              		.loc 1 171 13 view .LVU29
+ 132 00d8 4885C0   		testq	%rax, %rax
+ 133 00db 74C5     		je	.L1
+ 134              	.L36:
+ 192:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 135              		.loc 1 192 13 discriminator 1 view .LVU30
+ 136 00dd 488B0D00 		movq	224+bWifiModule(%rip), %rcx
+ 136      000000
+ 137 00e4 31D2     		xorl	%edx, %edx
+ 138 00e6 BF010000 		movl	$1, %edi
+ 138      00
+ 139 00eb 488D3500 		leaq	bWifiModule(%rip), %rsi
+ 139      000000
+ 140 00f2 FFD0     		call	*%rax
+ 141              	.LVL9:
+ 142              		.loc 1 199 1 is_stmt 0 view .LVU31
+ 143 00f4 EBAC     		jmp	.L1
+ 144 00f6 662E0F1F 		.p2align 4,,10
+ 144      84000000 
+ 144      0000
+ 145              		.p2align 3
+ 146              	.L38:
+ 133:../../bos/modules/b_mod_wifi.c ****     {
+ 147              		.loc 1 133 5 view .LVU32
+ 148 0100 83C363   		addl	$99, %ebx
+GAS LISTING /tmp/ccumMMsB.s 			page 8
+
+
+ 149              	.LVL10:
+ 133:../../bos/modules/b_mod_wifi.c ****     {
+ 150              		.loc 1 133 5 view .LVU33
+ 151 0103 83FB02   		cmpl	$2, %ebx
+ 152 0106 779A     		ja	.L1
+ 184:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+ 153              		.loc 1 184 13 is_stmt 1 view .LVU34
+ 185:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 154              		.loc 1 185 13 is_stmt 0 view .LVU35
+ 155 0108 488B0500 		movq	216+bWifiModule(%rip), %rax
+ 155      000000
+ 184:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+ 156              		.loc 1 184 20 view .LVU36
+ 157 010f C6442407 		movb	$0, 7(%rsp)
+ 157      00
+ 185:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 158              		.loc 1 185 13 is_stmt 1 view .LVU37
+ 185:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 159              		.loc 1 185 13 view .LVU38
+ 160 0114 4885C0   		testq	%rax, %rax
+ 161 0117 0F8573FF 		jne	.L35
+ 161      FFFF
+ 162 011d EB83     		jmp	.L1
+ 163              	.LVL11:
+ 164 011f 90       		.p2align 4,,10
+ 165              		.p2align 3
+ 166              	.L4:
+ 191:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_CONN_AP, &bWifiModule.linked, NULL,
+ 167              		.loc 1 191 13 view .LVU39
+ 192:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 168              		.loc 1 192 13 is_stmt 0 view .LVU40
+ 169 0120 488B0500 		movq	216+bWifiModule(%rip), %rax
+ 169      000000
+ 191:../../bos/modules/b_mod_wifi.c ****             B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_CONN_AP, &bWifiModule.linked, NULL,
+ 170              		.loc 1 191 32 view .LVU41
+ 171 0127 C6050000 		movb	$0, bWifiModule(%rip)
+ 171      000000
+ 192:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 172              		.loc 1 192 13 is_stmt 1 view .LVU42
+ 192:../../bos/modules/b_mod_wifi.c ****                           bWifiModule.user_data);
+ 173              		.loc 1 192 13 view .LVU43
+ 174 012e 4885C0   		testq	%rax, %rax
+ 175 0131 75AA     		jne	.L36
+ 176 0133 E96AFFFF 		jmp	.L1
+ 176      FF
+ 177 0138 0F1F8400 		.p2align 4,,10
+ 177      00000000 
+ 178              		.p2align 3
+ 179              	.L9:
+ 159:../../bos/modules/b_mod_wifi.c ****             {
+ 180              		.loc 1 159 13 view .LVU44
+ 159:../../bos/modules/b_mod_wifi.c ****             {
+ 181              		.loc 1 159 16 is_stmt 0 view .LVU45
+ 182 0140 833D0000 		cmpl	$2, 8+bWifiModule(%rip)
+ 182      000002
+ 183 0147 0F8555FF 		jne	.L1
+ 183      FFFF
+GAS LISTING /tmp/ccumMMsB.s 			page 9
+
+
+ 161:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+ 184              		.loc 1 161 17 is_stmt 1 view .LVU46
+ 163:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 185              		.loc 1 163 17 is_stmt 0 view .LVU47
+ 186 014d 488B0500 		movq	216+bWifiModule(%rip), %rax
+ 186      000000
+ 161:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+ 187              		.loc 1 161 38 view .LVU48
+ 188 0154 C6442407 		movb	$1, 7(%rsp)
+ 188      01
+ 162:../../bos/modules/b_mod_wifi.c ****                 B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+ 189              		.loc 1 162 17 is_stmt 1 view .LVU49
+ 162:../../bos/modules/b_mod_wifi.c ****                 B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+ 190              		.loc 1 162 38 is_stmt 0 view .LVU50
+ 191 0159 C7050000 		movl	$2, 12+bWifiModule(%rip)
+ 191      00000200 
+ 191      0000
+ 163:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 192              		.loc 1 163 17 is_stmt 1 view .LVU51
+ 163:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 193              		.loc 1 163 17 view .LVU52
+ 194 0163 4885C0   		testq	%rax, %rax
+ 195 0166 0F8524FF 		jne	.L35
+ 195      FFFF
+ 196 016c E931FFFF 		jmp	.L1
+ 196      FF
+ 197              		.p2align 4,,10
+ 198 0171 0F1F8000 		.p2align 3
+ 198      000000
+ 199              	.L2:
+ 148:../../bos/modules/b_mod_wifi.c ****             {
+ 200              		.loc 1 148 13 view .LVU53
+ 148:../../bos/modules/b_mod_wifi.c ****             {
+ 201              		.loc 1 148 16 is_stmt 0 view .LVU54
+ 202 0178 833D0000 		cmpl	$1, 8+bWifiModule(%rip)
+ 202      000001
+ 203 017f 0F851DFF 		jne	.L1
+ 203      FFFF
+ 150:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+ 204              		.loc 1 150 17 is_stmt 1 view .LVU55
+ 152:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 205              		.loc 1 152 17 is_stmt 0 view .LVU56
+ 206 0185 488B0500 		movq	216+bWifiModule(%rip), %rax
+ 206      000000
+ 150:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
+ 207              		.loc 1 150 38 view .LVU57
+ 208 018c C6442407 		movb	$1, 7(%rsp)
+ 208      01
+ 151:../../bos/modules/b_mod_wifi.c ****                 B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+ 209              		.loc 1 151 17 is_stmt 1 view .LVU58
+ 151:../../bos/modules/b_mod_wifi.c ****                 B_SAFE_INVOKE(bWifiModule.cb, B_WIFI_EVT_SWITCH_MODE, &result, NULL,
+ 210              		.loc 1 151 38 is_stmt 0 view .LVU59
+ 211 0191 C7050000 		movl	$1, 12+bWifiModule(%rip)
+ 211      00000100 
+ 211      0000
+ 152:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 212              		.loc 1 152 17 is_stmt 1 view .LVU60
+GAS LISTING /tmp/ccumMMsB.s 			page 10
+
+
+ 152:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
+ 213              		.loc 1 152 17 view .LVU61
+ 214 019b 4885C0   		testq	%rax, %rax
+ 215 019e 0F85ECFE 		jne	.L35
+ 215      FFFF
+ 216 01a4 E9F9FEFF 		jmp	.L1
+ 216      FF
+ 217              	.LVL12:
+ 218              	.L39:
+ 219              		.loc 1 199 1 is_stmt 0 view .LVU62
+ 220 01a9 E8000000 		call	__stack_chk_fail@PLT
+ 220      00
+ 221              	.LVL13:
+ 222              		.cfi_endproc
+ 223              	.LFE28:
+ 225              		.section	.rodata._bWifiTask.str1.1,"aMS",@progbits,1
+ 226              	.LC2:
+ 227 0000 6F70656E 		.string	"open wifi dev fail\r\n"
+ 227      20776966 
+ 227      69206465 
+ 227      76206661 
+ 227      696C0D0A 
+ 228              	.LC3:
+ 229 0015 77696669 		.string	"wifi mode error\r\n"
+ 229      206D6F64 
+ 229      65206572 
+ 229      726F720D 
+ 229      0A00
+ 230              		.section	.text._bWifiTask,"ax",@progbits
+ 231              		.p2align 4
+ 233              	_bWifiTask:
+ 234              	.LVL14:
+ 235              	.LFB29:
+ 200:../../bos/modules/b_mod_wifi.c **** 
+ 201:../../bos/modules/b_mod_wifi.c **** static PT_THREAD(_bWifiTask)(struct pt *pt, void *arg)
+ 202:../../bos/modules/b_mod_wifi.c **** {
+ 236              		.loc 1 202 1 is_stmt 1 view -0
+ 237              		.cfi_startproc
+ 238              		.loc 1 202 1 is_stmt 0 view .LVU64
+ 239 0000 F30F1EFA 		endbr64
+ 203:../../bos/modules/b_mod_wifi.c ****     uint8_t link_state = 0;
+ 240              		.loc 1 203 5 is_stmt 1 view .LVU65
+ 241              	.LVL15:
+ 204:../../bos/modules/b_mod_wifi.c ****     int     fd = -1, ret = -1;
+ 242              		.loc 1 204 5 view .LVU66
+ 205:../../bos/modules/b_mod_wifi.c ****     B_TASK_INIT_BEGIN();
+ 243              		.loc 1 205 5 view .LVU67
+ 202:../../bos/modules/b_mod_wifi.c ****     uint8_t link_state = 0;
+ 244              		.loc 1 202 1 is_stmt 0 view .LVU68
+ 245 0004 4154     		pushq	%r12
+ 246              	.LCFI8:
+ 247              		.cfi_def_cfa_offset 16
+ 248              		.cfi_offset 12, -16
+ 249 0006 55       		pushq	%rbp
+ 250              	.LCFI9:
+ 251              		.cfi_def_cfa_offset 24
+ 252              		.cfi_offset 6, -24
+GAS LISTING /tmp/ccumMMsB.s 			page 11
+
+
+ 253 0007 53       		pushq	%rbx
+ 254              	.LCFI10:
+ 255              		.cfi_def_cfa_offset 32
+ 256              		.cfi_offset 3, -32
+ 257              		.loc 1 205 5 view .LVU69
+ 258 0008 807F0D00 		cmpb	$0, 13(%rdi)
+ 202:../../bos/modules/b_mod_wifi.c ****     uint8_t link_state = 0;
+ 259              		.loc 1 202 1 view .LVU70
+ 260 000c 4889FB   		movq	%rdi, %rbx
+ 261              		.loc 1 205 5 view .LVU71
+ 262 000f 7504     		jne	.L41
+ 263              		.loc 1 205 5 is_stmt 1 discriminator 1 view .LVU72
+ 264 0011 C6470D01 		movb	$1, 13(%rdi)
+ 265              	.L41:
+ 266              		.loc 1 205 24 discriminator 3 view .LVU73
+ 206:../../bos/modules/b_mod_wifi.c ****     // ...
+ 207:../../bos/modules/b_mod_wifi.c ****     B_TASK_INIT_END();
+ 267              		.loc 1 207 22 view .LVU74
+ 268              	.LBB14:
+ 208:../../bos/modules/b_mod_wifi.c **** 
+ 209:../../bos/modules/b_mod_wifi.c ****     PT_BEGIN(pt);
+ 269              		.loc 1 209 5 view .LVU75
+ 270              	.LVL16:
+ 271              		.loc 1 209 5 view .LVU76
+ 272              		.loc 1 209 5 view .LVU77
+ 273 0015 0FB703   		movzwl	(%rbx), %eax
+ 274 0018 663DF400 		cmpw	$244, %ax
+ 275 001c 0F84C600 		je	.L42
+ 275      0000
+ 276 0022 773C     		ja	.L43
+ 277 0024 663DE200 		cmpw	$226, %ax
+ 278 0028 0F84BA00 		je	.L42
+ 278      0000
+ 279 002e 663DEB00 		cmpw	$235, %ax
+ 280 0032 0F84B000 		je	.L42
+ 280      0000
+ 281 0038 6685C0   		testw	%ax, %ax
+ 282 003b 7433     		je	.L46
+ 283              	.L47:
+ 210:../../bos/modules/b_mod_wifi.c ****     while (1)
+ 211:../../bos/modules/b_mod_wifi.c ****     {
+ 212:../../bos/modules/b_mod_wifi.c ****         if (bWifiModule.cur_mode != bWifiModule.mode)
+ 213:../../bos/modules/b_mod_wifi.c ****         {
+ 214:../../bos/modules/b_mod_wifi.c ****             fd = bOpen(bWifiModule.dev_no, BCORE_FLAG_RW);
+ 215:../../bos/modules/b_mod_wifi.c ****             if (fd < 0)
+ 216:../../bos/modules/b_mod_wifi.c ****             {
+ 217:../../bos/modules/b_mod_wifi.c ****                 b_log_e("open wifi dev fail\r\n");
+ 218:../../bos/modules/b_mod_wifi.c ****                 bTaskRestart(pt);
+ 219:../../bos/modules/b_mod_wifi.c ****             }
+ 220:../../bos/modules/b_mod_wifi.c ****             if (bWifiModule.mode == B_WIFI_MODE_STA)
+ 221:../../bos/modules/b_mod_wifi.c ****             {
+ 222:../../bos/modules/b_mod_wifi.c ****                 ret = bCtl(fd, bCMD_WIFI_MODE_STA, NULL);
+ 223:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 224:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 225:../../bos/modules/b_mod_wifi.c ****                 {
+ 226:../../bos/modules/b_mod_wifi.c ****                     PT_WAIT_UNTIL(pt, bWifiModule.cur_mode == bWifiModule.mode, MS2TICKS(5000));
+ 227:../../bos/modules/b_mod_wifi.c ****                 }
+GAS LISTING /tmp/ccumMMsB.s 			page 12
+
+
+ 228:../../bos/modules/b_mod_wifi.c ****             }
+ 229:../../bos/modules/b_mod_wifi.c ****             else if (bWifiModule.mode == B_WIFI_MODE_AP)
+ 230:../../bos/modules/b_mod_wifi.c ****             {
+ 231:../../bos/modules/b_mod_wifi.c ****                 ret = bCtl(fd, bCMD_WIFI_MODE_AP, &bWifiModule.soft_ap);
+ 232:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 233:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 234:../../bos/modules/b_mod_wifi.c ****                 {
+ 235:../../bos/modules/b_mod_wifi.c ****                     PT_WAIT_UNTIL(pt, bWifiModule.cur_mode == bWifiModule.mode, MS2TICKS(5000));
+ 236:../../bos/modules/b_mod_wifi.c ****                 }
+ 237:../../bos/modules/b_mod_wifi.c ****             }
+ 238:../../bos/modules/b_mod_wifi.c ****             else if (bWifiModule.mode == B_WIFI_MODE_STA_AP)
+ 239:../../bos/modules/b_mod_wifi.c ****             {
+ 240:../../bos/modules/b_mod_wifi.c ****                 ret = bCtl(fd, bCMD_WIFI_MODE_STA_AP, &bWifiModule.soft_ap);
+ 241:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 242:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 243:../../bos/modules/b_mod_wifi.c ****                 {
+ 244:../../bos/modules/b_mod_wifi.c ****                     PT_WAIT_UNTIL(pt, bWifiModule.cur_mode == bWifiModule.mode, MS2TICKS(5000));
+ 245:../../bos/modules/b_mod_wifi.c ****                 }
+ 246:../../bos/modules/b_mod_wifi.c ****             }
+ 247:../../bos/modules/b_mod_wifi.c ****             else
+ 248:../../bos/modules/b_mod_wifi.c ****             {
+ 249:../../bos/modules/b_mod_wifi.c ****                 b_log_e("wifi mode error\r\n");
+ 250:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 251:../../bos/modules/b_mod_wifi.c ****             }
+ 252:../../bos/modules/b_mod_wifi.c ****         }
+ 253:../../bos/modules/b_mod_wifi.c ****         else
+ 254:../../bos/modules/b_mod_wifi.c ****         {
+ 255:../../bos/modules/b_mod_wifi.c ****             if ((bWifiModule.cur_mode == B_WIFI_MODE_STA ||
+ 256:../../bos/modules/b_mod_wifi.c ****                  bWifiModule.cur_mode == B_WIFI_MODE_STA_AP) &&
+ 257:../../bos/modules/b_mod_wifi.c ****                 (strlen(&bWifiModule.ap.ssid[0]) > 0))
+ 258:../../bos/modules/b_mod_wifi.c ****             {
+ 259:../../bos/modules/b_mod_wifi.c ****                 if (bWifiModule.linked == 0)
+ 260:../../bos/modules/b_mod_wifi.c ****                 {
+ 261:../../bos/modules/b_mod_wifi.c ****                     fd = bOpen(bWifiModule.dev_no, BCORE_FLAG_RW);
+ 262:../../bos/modules/b_mod_wifi.c ****                     if (fd < 0)
+ 263:../../bos/modules/b_mod_wifi.c ****                     {
+ 264:../../bos/modules/b_mod_wifi.c ****                         b_log_e("open wifi dev fail\r\n");
+ 265:../../bos/modules/b_mod_wifi.c ****                         bTaskRestart(pt);
+ 266:../../bos/modules/b_mod_wifi.c ****                     }
+ 267:../../bos/modules/b_mod_wifi.c ****                     ret = bCtl(fd, bCMD_WIFI_JOIN_AP, &bWifiModule.ap);
+ 268:../../bos/modules/b_mod_wifi.c ****                     bClose(fd);
+ 269:../../bos/modules/b_mod_wifi.c ****                     if (0 == ret)
+ 270:../../bos/modules/b_mod_wifi.c ****                     {
+ 271:../../bos/modules/b_mod_wifi.c ****                         PT_WAIT_UNTIL(pt, bWifiModule.linked == 1, MS2TICKS(10000));
+ 272:../../bos/modules/b_mod_wifi.c ****                     }
+ 273:../../bos/modules/b_mod_wifi.c ****                 }
+ 274:../../bos/modules/b_mod_wifi.c ****             }
+ 275:../../bos/modules/b_mod_wifi.c ****         }
+ 276:../../bos/modules/b_mod_wifi.c ****         bTaskYield(pt);
+ 277:../../bos/modules/b_mod_wifi.c ****     }
+ 278:../../bos/modules/b_mod_wifi.c ****     PT_END(pt);
+ 284              		.loc 1 278 5 view .LVU78
+ 285              		.loc 1 278 5 view .LVU79
+ 286              	.LVL17:
+ 287              		.loc 1 278 5 view .LVU80
+ 288              		.loc 1 278 5 view .LVU81
+ 289 003d 31C0     		xorl	%eax, %eax
+GAS LISTING /tmp/ccumMMsB.s 			page 13
+
+
+ 290 003f 31D2     		xorl	%edx, %edx
+ 291 0041 48C74304 		movq	$0, 4(%rbx)
+ 291      00000000 
+ 292 0049 668903   		movw	%ax, (%rbx)
+ 293              		.loc 1 278 5 view .LVU82
+ 294              		.loc 1 278 5 view .LVU83
+ 295              		.loc 1 278 5 view .LVU84
+ 296              		.loc 1 278 5 view .LVU85
+ 297              		.loc 1 278 5 view .LVU86
+ 298              		.loc 1 278 5 view .LVU87
+ 299 004c B8030000 		movl	$3, %eax
+ 299      00
+ 300 0051 C6430C00 		movb	$0, 12(%rbx)
+ 301              		.loc 1 278 5 view .LVU88
+ 302              		.loc 1 278 5 view .LVU89
+ 303 0055 6689530E 		movw	%dx, 14(%rbx)
+ 304              		.loc 1 278 5 view .LVU90
+ 305              		.loc 1 278 5 view .LVU91
+ 306              		.loc 1 278 5 view .LVU92
+ 307              	.LBE14:
+ 308              		.loc 1 278 15 discriminator 1 view .LVU93
+ 279:../../bos/modules/b_mod_wifi.c **** }
+ 309              		.loc 1 279 1 is_stmt 0 view .LVU94
+ 310 0059 5B       		popq	%rbx
+ 311              	.LCFI11:
+ 312              		.cfi_remember_state
+ 313              		.cfi_def_cfa_offset 24
+ 314 005a 5D       		popq	%rbp
+ 315              	.LCFI12:
+ 316              		.cfi_def_cfa_offset 16
+ 317 005b 415C     		popq	%r12
+ 318              	.LCFI13:
+ 319              		.cfi_def_cfa_offset 8
+ 320 005d C3       		ret
+ 321              	.LVL18:
+ 322 005e 6690     		.p2align 4,,10
+ 323              		.p2align 3
+ 324              	.L43:
+ 325              	.LCFI14:
+ 326              		.cfi_restore_state
+ 327              	.LBB15:
+ 209:../../bos/modules/b_mod_wifi.c ****     while (1)
+ 328              		.loc 1 209 5 view .LVU95
+ 329 0060 663D0F01 		cmpw	$271, %ax
+ 330 0064 0F848601 		je	.L48
+ 330      0000
+ 331 006a 663D1401 		cmpw	$276, %ax
+ 332 006e 75CD     		jne	.L47
+ 333              	.L46:
+ 334              	.LVL19:
+ 209:../../bos/modules/b_mod_wifi.c ****     while (1)
+ 335              		.loc 1 209 17 is_stmt 1 discriminator 1 view .LVU96
+ 210:../../bos/modules/b_mod_wifi.c ****     while (1)
+ 336              		.loc 1 210 5 view .LVU97
+ 212:../../bos/modules/b_mod_wifi.c ****         {
+ 337              		.loc 1 212 9 view .LVU98
+ 212:../../bos/modules/b_mod_wifi.c ****         {
+GAS LISTING /tmp/ccumMMsB.s 			page 14
+
+
+ 338              		.loc 1 212 24 is_stmt 0 view .LVU99
+ 339 0070 8B050000 		movl	12+bWifiModule(%rip), %eax
+ 339      0000
+ 212:../../bos/modules/b_mod_wifi.c ****         {
+ 340              		.loc 1 212 12 view .LVU100
+ 341 0076 3B050000 		cmpl	8+bWifiModule(%rip), %eax
+ 341      0000
+ 342 007c 0F840601 		je	.L49
+ 342      0000
+ 214:../../bos/modules/b_mod_wifi.c ****             if (fd < 0)
+ 343              		.loc 1 214 13 is_stmt 1 view .LVU101
+ 214:../../bos/modules/b_mod_wifi.c ****             if (fd < 0)
+ 344              		.loc 1 214 18 is_stmt 0 view .LVU102
+ 345 0082 8B3D0000 		movl	4+bWifiModule(%rip), %edi
+ 345      0000
+ 346 0088 BE020000 		movl	$2, %esi
+ 346      00
+ 347              	.LVL20:
+ 214:../../bos/modules/b_mod_wifi.c ****             if (fd < 0)
+ 348              		.loc 1 214 18 view .LVU103
+ 349 008d E8000000 		call	bOpen@PLT
+ 349      00
+ 350              	.LVL21:
+ 217:../../bos/modules/b_mod_wifi.c ****                 bTaskRestart(pt);
+ 351              		.loc 1 217 17 view .LVU104
+ 352 0092 4C8D0500 		leaq	.LC2(%rip), %r8
+ 352      000000
+ 353 0099 B9D90000 		movl	$217, %ecx
+ 353      00
+ 214:../../bos/modules/b_mod_wifi.c ****             if (fd < 0)
+ 354              		.loc 1 214 18 view .LVU105
+ 355 009e 89C5     		movl	%eax, %ebp
+ 356              	.LVL22:
+ 215:../../bos/modules/b_mod_wifi.c ****             {
+ 357              		.loc 1 215 13 is_stmt 1 view .LVU106
+ 215:../../bos/modules/b_mod_wifi.c ****             {
+ 358              		.loc 1 215 16 is_stmt 0 view .LVU107
+ 359 00a0 85C0     		testl	%eax, %eax
+ 360 00a2 0F889D00 		js	.L92
+ 360      0000
+ 218:../../bos/modules/b_mod_wifi.c ****             }
+ 361              		.loc 1 218 17 is_stmt 1 view .LVU108
+ 220:../../bos/modules/b_mod_wifi.c ****             {
+ 362              		.loc 1 220 13 view .LVU109
+ 220:../../bos/modules/b_mod_wifi.c ****             {
+ 363              		.loc 1 220 28 is_stmt 0 view .LVU110
+ 364 00a8 8B050000 		movl	8+bWifiModule(%rip), %eax
+ 364      0000
+ 365              	.LVL23:
+ 220:../../bos/modules/b_mod_wifi.c ****             {
+ 366              		.loc 1 220 16 view .LVU111
+ 367 00ae 85C0     		testl	%eax, %eax
+ 368 00b0 0F855201 		jne	.L52
+ 368      0000
+ 222:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 369              		.loc 1 222 17 is_stmt 1 view .LVU112
+ 222:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+GAS LISTING /tmp/ccumMMsB.s 			page 15
+
+
+ 370              		.loc 1 222 23 is_stmt 0 view .LVU113
+ 371 00b6 31D2     		xorl	%edx, %edx
+ 372 00b8 89EF     		movl	%ebp, %edi
+ 373 00ba BE010000 		movl	$1, %esi
+ 373      00
+ 374 00bf E8000000 		call	bCtl@PLT
+ 374      00
+ 375              	.LVL24:
+ 223:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 376              		.loc 1 223 17 view .LVU114
+ 377 00c4 89EF     		movl	%ebp, %edi
+ 222:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 378              		.loc 1 222 23 view .LVU115
+ 379 00c6 4189C4   		movl	%eax, %r12d
+ 380              	.LVL25:
+ 223:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 381              		.loc 1 223 17 is_stmt 1 view .LVU116
+ 382 00c9 E8000000 		call	bClose@PLT
+ 382      00
+ 383              	.LVL26:
+ 224:../../bos/modules/b_mod_wifi.c ****                 {
+ 384              		.loc 1 224 17 view .LVU117
+ 224:../../bos/modules/b_mod_wifi.c ****                 {
+ 385              		.loc 1 224 20 is_stmt 0 view .LVU118
+ 386 00ce 4585E4   		testl	%r12d, %r12d
+ 387 00d1 7554     		jne	.L54
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 388              		.loc 1 226 21 is_stmt 1 view .LVU119
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 389              		.loc 1 226 21 view .LVU120
+ 390 00d3 807B0C00 		cmpb	$0, 12(%rbx)
+ 391 00d7 0F84E601 		je	.L96
+ 391      0000
+ 392              	.L55:
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 393              		.loc 1 226 21 discriminator 3 view .LVU121
+ 394 00dd B8E20000 		movl	$226, %eax
+ 394      00
+ 395 00e2 668903   		movw	%ax, (%rbx)
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 396              		.loc 1 226 21 discriminator 4 view .LVU122
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 397              		.loc 1 226 21 discriminator 4 view .LVU123
+ 398              	.LVL27:
+ 399              		.p2align 4,,10
+ 400 00e5 0F1F00   		.p2align 3
+ 401              	.L42:
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 402              		.loc 1 244 21 discriminator 4 view .LVU124
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 403              		.loc 1 244 21 discriminator 4 view .LVU125
+ 404 00e8 8B050000 		movl	8+bWifiModule(%rip), %eax
+ 404      0000
+ 405 00ee 39050000 		cmpl	%eax, 12+bWifiModule(%rip)
+ 405      0000
+ 406 00f4 7412     		je	.L75
+ 407              	.L56:
+GAS LISTING /tmp/ccumMMsB.s 			page 16
+
+
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 408              		.loc 1 226 21 is_stmt 0 discriminator 5 view .LVU126
+ 409 00f6 E8000000 		call	bHalGetSysTick@PLT
+ 409      00
+ 410              	.LVL28:
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 411              		.loc 1 226 21 discriminator 7 view .LVU127
+ 412 00fb E8000000 		call	bHalGetSysTick@PLT
+ 412      00
+ 413              	.LVL29:
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 414              		.loc 1 226 21 discriminator 1 view .LVU128
+ 415 0100 2B4304   		subl	4(%rbx), %eax
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 416              		.loc 1 226 21 discriminator 10 view .LVU129
+ 417 0103 3B4308   		cmpl	8(%rbx), %eax
+ 418 0106 7272     		jb	.L51
+ 419              	.L75:
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 420              		.loc 1 271 25 is_stmt 1 discriminator 12 view .LVU130
+ 421 0108 E8000000 		call	bHalGetSysTick@PLT
+ 421      00
+ 422              	.LVL30:
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 423              		.loc 1 271 25 is_stmt 0 discriminator 13 view .LVU131
+ 424 010d E8000000 		call	bHalGetSysTick@PLT
+ 424      00
+ 425              	.LVL31:
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 426              		.loc 1 271 25 discriminator 1 view .LVU132
+ 427 0112 2B4304   		subl	4(%rbx), %eax
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 428              		.loc 1 271 25 discriminator 16 view .LVU133
+ 429 0115 3B4308   		cmpl	8(%rbx), %eax
+ 430 0118 7209     		jb	.L61
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 431              		.loc 1 226 21 is_stmt 1 discriminator 17 view .LVU134
+ 432 011a B8FEFFFF 		movl	$-2, %eax
+ 432      FF
+ 433 011f 6689430E 		movw	%ax, 14(%rbx)
+ 434              	.L61:
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 435              		.loc 1 226 21 discriminator 19 view .LVU135
+ 436 0123 C6430C00 		movb	$0, 12(%rbx)
+ 437              	.L54:
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 438              		.loc 1 271 25 discriminator 20 view .LVU136
+ 276:../../bos/modules/b_mod_wifi.c ****     }
+ 439              		.loc 1 276 9 view .LVU137
+ 276:../../bos/modules/b_mod_wifi.c ****     }
+ 440              		.loc 1 276 9 view .LVU138
+ 441              	.LVL32:
+ 276:../../bos/modules/b_mod_wifi.c ****     }
+ 442              		.loc 1 276 9 view .LVU139
+ 443 0127 B9140100 		movl	$276, %ecx
+ 443      00
+ 276:../../bos/modules/b_mod_wifi.c ****     }
+GAS LISTING /tmp/ccumMMsB.s 			page 17
+
+
+ 444              		.loc 1 276 9 is_stmt 0 discriminator 2 view .LVU140
+ 445 012c B8010000 		movl	$1, %eax
+ 445      00
+ 276:../../bos/modules/b_mod_wifi.c ****     }
+ 446              		.loc 1 276 9 view .LVU141
+ 447 0131 66890B   		movw	%cx, (%rbx)
+ 276:../../bos/modules/b_mod_wifi.c ****     }
+ 448              		.loc 1 276 9 is_stmt 1 discriminator 1 view .LVU142
+ 276:../../bos/modules/b_mod_wifi.c ****     }
+ 449              		.loc 1 276 9 discriminator 1 view .LVU143
+ 276:../../bos/modules/b_mod_wifi.c ****     }
+ 450              		.loc 1 276 9 discriminator 2 view .LVU144
+ 451              	.LBE15:
+ 452              		.loc 1 279 1 is_stmt 0 view .LVU145
+ 453 0134 5B       		popq	%rbx
+ 454              	.LCFI15:
+ 455              		.cfi_remember_state
+ 456              		.cfi_def_cfa_offset 24
+ 457              	.LVL33:
+ 458              		.loc 1 279 1 view .LVU146
+ 459 0135 5D       		popq	%rbp
+ 460              	.LCFI16:
+ 461              		.cfi_def_cfa_offset 16
+ 462 0136 415C     		popq	%r12
+ 463              	.LCFI17:
+ 464              		.cfi_def_cfa_offset 8
+ 465 0138 C3       		ret
+ 466              	.LVL34:
+ 467              	.L97:
+ 468              	.LCFI18:
+ 469              		.cfi_restore_state
+ 470              	.LBB16:
+ 264:../../bos/modules/b_mod_wifi.c ****                         bTaskRestart(pt);
+ 471              		.loc 1 264 25 is_stmt 1 view .LVU147
+ 472 0139 4C8D0500 		leaq	.LC2(%rip), %r8
+ 472      000000
+ 473 0140 B9080100 		movl	$264, %ecx
+ 473      00
+ 474              	.L92:
+ 264:../../bos/modules/b_mod_wifi.c ****                         bTaskRestart(pt);
+ 475              		.loc 1 264 25 is_stmt 0 view .LVU148
+ 476 0145 488D1500 		leaq	__func__.0(%rip), %rdx
+ 476      000000
+ 477 014c 488D3500 		leaq	.LC1(%rip), %rsi
+ 477      000000
+ 478 0153 BF020000 		movl	$2, %edi
+ 478      00
+ 479 0158 31C0     		xorl	%eax, %eax
+ 480              	.LVL35:
+ 264:../../bos/modules/b_mod_wifi.c ****                         bTaskRestart(pt);
+ 481              		.loc 1 264 25 view .LVU149
+ 482 015a E8000000 		call	bLogOut@PLT
+ 482      00
+ 483              	.LVL36:
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 484              		.loc 1 265 25 is_stmt 1 view .LVU150
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+GAS LISTING /tmp/ccumMMsB.s 			page 18
+
+
+ 485              		.loc 1 265 25 view .LVU151
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 486              		.loc 1 265 25 view .LVU152
+ 487 015f 4531C0   		xorl	%r8d, %r8d
+ 488 0162 4531C9   		xorl	%r9d, %r9d
+ 489 0165 C6430C00 		movb	$0, 12(%rbx)
+ 490 0169 66448903 		movw	%r8w, (%rbx)
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 491              		.loc 1 265 25 view .LVU153
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 492              		.loc 1 265 25 view .LVU154
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 493              		.loc 1 265 25 view .LVU155
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 494              		.loc 1 265 25 view .LVU156
+ 495 016d 48C74304 		movq	$0, 4(%rbx)
+ 495      00000000 
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 496              		.loc 1 265 25 view .LVU157
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 497              		.loc 1 265 25 view .LVU158
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 498              		.loc 1 265 25 view .LVU159
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 499              		.loc 1 265 25 view .LVU160
+ 500 0175 6644894B 		movw	%r9w, 14(%rbx)
+ 500      0E
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 501              		.loc 1 265 25 view .LVU161
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 502              		.loc 1 265 25 view .LVU162
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 503              		.loc 1 265 25 view .LVU163
+ 504              	.LVL37:
+ 505              	.L51:
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 506              		.loc 1 265 25 is_stmt 0 view .LVU164
+ 507              	.LBE16:
+ 508              		.loc 1 279 1 view .LVU165
+ 509 017a 5B       		popq	%rbx
+ 510              	.LCFI19:
+ 511              		.cfi_remember_state
+ 512              		.cfi_def_cfa_offset 24
+ 513              	.LVL38:
+ 514              	.LBB17:
+ 218:../../bos/modules/b_mod_wifi.c ****             }
+ 515              		.loc 1 218 17 view .LVU166
+ 516 017b 31C0     		xorl	%eax, %eax
+ 517              	.LBE17:
+ 518              		.loc 1 279 1 view .LVU167
+ 519 017d 5D       		popq	%rbp
+ 520              	.LCFI20:
+ 521              		.cfi_def_cfa_offset 16
+ 522 017e 415C     		popq	%r12
+ 523              	.LCFI21:
+ 524              		.cfi_def_cfa_offset 8
+ 525 0180 C3       		ret
+GAS LISTING /tmp/ccumMMsB.s 			page 19
+
+
+ 526              	.LVL39:
+ 527              		.p2align 4,,10
+ 528 0181 0F1F8000 		.p2align 3
+ 528      000000
+ 529              	.L49:
+ 530              	.LCFI22:
+ 531              		.cfi_restore_state
+ 532              	.LBB18:
+ 255:../../bos/modules/b_mod_wifi.c ****                  bWifiModule.cur_mode == B_WIFI_MODE_STA_AP) &&
+ 533              		.loc 1 255 13 is_stmt 1 view .LVU168
+ 255:../../bos/modules/b_mod_wifi.c ****                  bWifiModule.cur_mode == B_WIFI_MODE_STA_AP) &&
+ 534              		.loc 1 255 16 is_stmt 0 view .LVU169
+ 535 0188 83E0FD   		andl	$-3, %eax
+ 536 018b 759A     		jne	.L54
+ 256:../../bos/modules/b_mod_wifi.c ****                 (strlen(&bWifiModule.ap.ssid[0]) > 0))
+ 537              		.loc 1 256 62 view .LVU170
+ 538 018d 803D0000 		cmpb	$0, 115+bWifiModule(%rip)
+ 538      000000
+ 539 0194 7491     		je	.L54
+ 259:../../bos/modules/b_mod_wifi.c ****                 {
+ 540              		.loc 1 259 17 is_stmt 1 view .LVU171
+ 259:../../bos/modules/b_mod_wifi.c ****                 {
+ 541              		.loc 1 259 20 is_stmt 0 view .LVU172
+ 542 0196 803D0000 		cmpb	$0, bWifiModule(%rip)
+ 542      000000
+ 543 019d 7588     		jne	.L54
+ 261:../../bos/modules/b_mod_wifi.c ****                     if (fd < 0)
+ 544              		.loc 1 261 21 is_stmt 1 view .LVU173
+ 261:../../bos/modules/b_mod_wifi.c ****                     if (fd < 0)
+ 545              		.loc 1 261 26 is_stmt 0 view .LVU174
+ 546 019f 8B3D0000 		movl	4+bWifiModule(%rip), %edi
+ 546      0000
+ 547 01a5 BE020000 		movl	$2, %esi
+ 547      00
+ 548              	.LVL40:
+ 261:../../bos/modules/b_mod_wifi.c ****                     if (fd < 0)
+ 549              		.loc 1 261 26 view .LVU175
+ 550 01aa E8000000 		call	bOpen@PLT
+ 550      00
+ 551              	.LVL41:
+ 552 01af 89C5     		movl	%eax, %ebp
+ 553              	.LVL42:
+ 262:../../bos/modules/b_mod_wifi.c ****                     {
+ 554              		.loc 1 262 21 is_stmt 1 view .LVU176
+ 262:../../bos/modules/b_mod_wifi.c ****                     {
+ 555              		.loc 1 262 24 is_stmt 0 view .LVU177
+ 556 01b1 85C0     		testl	%eax, %eax
+ 557 01b3 7884     		js	.L97
+ 265:../../bos/modules/b_mod_wifi.c ****                     }
+ 558              		.loc 1 265 25 is_stmt 1 view .LVU178
+ 267:../../bos/modules/b_mod_wifi.c ****                     bClose(fd);
+ 559              		.loc 1 267 21 view .LVU179
+ 267:../../bos/modules/b_mod_wifi.c ****                     bClose(fd);
+ 560              		.loc 1 267 27 is_stmt 0 view .LVU180
+ 561 01b5 89C7     		movl	%eax, %edi
+ 562 01b7 488D1500 		leaq	115+bWifiModule(%rip), %rdx
+ 562      000000
+GAS LISTING /tmp/ccumMMsB.s 			page 20
+
+
+ 563 01be BE040000 		movl	$4, %esi
+ 563      00
+ 564 01c3 E8000000 		call	bCtl@PLT
+ 564      00
+ 565              	.LVL43:
+ 268:../../bos/modules/b_mod_wifi.c ****                     if (0 == ret)
+ 566              		.loc 1 268 21 view .LVU181
+ 567 01c8 89EF     		movl	%ebp, %edi
+ 267:../../bos/modules/b_mod_wifi.c ****                     bClose(fd);
+ 568              		.loc 1 267 27 view .LVU182
+ 569 01ca 4189C4   		movl	%eax, %r12d
+ 570              	.LVL44:
+ 268:../../bos/modules/b_mod_wifi.c ****                     if (0 == ret)
+ 571              		.loc 1 268 21 is_stmt 1 view .LVU183
+ 572 01cd E8000000 		call	bClose@PLT
+ 572      00
+ 573              	.LVL45:
+ 269:../../bos/modules/b_mod_wifi.c ****                     {
+ 574              		.loc 1 269 21 view .LVU184
+ 269:../../bos/modules/b_mod_wifi.c ****                     {
+ 575              		.loc 1 269 24 is_stmt 0 view .LVU185
+ 576 01d2 4585E4   		testl	%r12d, %r12d
+ 577 01d5 0F854CFF 		jne	.L54
+ 577      FFFF
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 578              		.loc 1 271 25 is_stmt 1 view .LVU186
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 579              		.loc 1 271 25 view .LVU187
+ 580 01db 807B0C00 		cmpb	$0, 12(%rbx)
+ 581 01df 0F841C01 		je	.L98
+ 581      0000
+ 582              	.L73:
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 583              		.loc 1 271 25 discriminator 3 view .LVU188
+ 584 01e5 BE0F0100 		movl	$271, %esi
+ 584      00
+ 585 01ea 668933   		movw	%si, (%rbx)
+ 586              	.LVL46:
+ 587 01ed 0F1F00   		.p2align 4,,10
+ 588              		.p2align 3
+ 589              	.L48:
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 590              		.loc 1 271 25 discriminator 4 view .LVU189
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 591              		.loc 1 271 25 discriminator 4 view .LVU190
+ 592 01f0 803D0000 		cmpb	$1, bWifiModule(%rip)
+ 592      000001
+ 593 01f7 0F85F9FE 		jne	.L56
+ 593      FFFF
+ 594 01fd E906FFFF 		jmp	.L75
+ 594      FF
+ 595              	.LVL47:
+ 596              		.p2align 4,,10
+ 597 0202 660F1F44 		.p2align 3
+ 597      0000
+ 598              	.L52:
+ 229:../../bos/modules/b_mod_wifi.c ****             {
+GAS LISTING /tmp/ccumMMsB.s 			page 21
+
+
+ 599              		.loc 1 229 18 view .LVU191
+ 229:../../bos/modules/b_mod_wifi.c ****             {
+ 600              		.loc 1 229 21 is_stmt 0 view .LVU192
+ 601 0208 83F801   		cmpl	$1, %eax
+ 602 020b 747D     		je	.L99
+ 238:../../bos/modules/b_mod_wifi.c ****             {
+ 603              		.loc 1 238 18 is_stmt 1 view .LVU193
+ 238:../../bos/modules/b_mod_wifi.c ****             {
+ 604              		.loc 1 238 21 is_stmt 0 view .LVU194
+ 605 020d 83F802   		cmpl	$2, %eax
+ 606 0210 7546     		jne	.L68
+ 240:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 607              		.loc 1 240 17 is_stmt 1 view .LVU195
+ 240:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 608              		.loc 1 240 23 is_stmt 0 view .LVU196
+ 609 0212 89EF     		movl	%ebp, %edi
+ 610 0214 488D1500 		leaq	16+bWifiModule(%rip), %rdx
+ 610      000000
+ 611 021b BE030000 		movl	$3, %esi
+ 611      00
+ 612 0220 E8000000 		call	bCtl@PLT
+ 612      00
+ 613              	.LVL48:
+ 241:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 614              		.loc 1 241 17 view .LVU197
+ 615 0225 89EF     		movl	%ebp, %edi
+ 240:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 616              		.loc 1 240 23 view .LVU198
+ 617 0227 4189C4   		movl	%eax, %r12d
+ 618              	.LVL49:
+ 241:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 619              		.loc 1 241 17 is_stmt 1 view .LVU199
+ 620 022a E8000000 		call	bClose@PLT
+ 620      00
+ 621              	.LVL50:
+ 242:../../bos/modules/b_mod_wifi.c ****                 {
+ 622              		.loc 1 242 17 view .LVU200
+ 242:../../bos/modules/b_mod_wifi.c ****                 {
+ 623              		.loc 1 242 20 is_stmt 0 view .LVU201
+ 624 022f 4585E4   		testl	%r12d, %r12d
+ 625 0232 0F85EFFE 		jne	.L54
+ 625      FFFF
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 626              		.loc 1 244 21 is_stmt 1 view .LVU202
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 627              		.loc 1 244 21 view .LVU203
+ 628 0238 807B0C00 		cmpb	$0, 12(%rbx)
+ 629 023c 0F849F00 		je	.L100
+ 629      0000
+ 630              	.L69:
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 631              		.loc 1 244 21 discriminator 3 view .LVU204
+ 632 0242 41BAF400 		movl	$244, %r10d
+ 632      0000
+ 633 0248 66448913 		movw	%r10w, (%rbx)
+ 634 024c E997FEFF 		jmp	.L42
+ 634      FF
+GAS LISTING /tmp/ccumMMsB.s 			page 22
+
+
+ 635              	.LVL51:
+ 636              		.p2align 4,,10
+ 637 0251 0F1F8000 		.p2align 3
+ 637      000000
+ 638              	.L68:
+ 249:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 639              		.loc 1 249 17 view .LVU205
+ 640 0258 4C8D0500 		leaq	.LC3(%rip), %r8
+ 640      000000
+ 641 025f B9F90000 		movl	$249, %ecx
+ 641      00
+ 642 0264 31C0     		xorl	%eax, %eax
+ 643 0266 BF020000 		movl	$2, %edi
+ 643      00
+ 644 026b 488D1500 		leaq	__func__.0(%rip), %rdx
+ 644      000000
+ 645 0272 488D3500 		leaq	.LC1(%rip), %rsi
+ 645      000000
+ 646 0279 E8000000 		call	bLogOut@PLT
+ 646      00
+ 647              	.LVL52:
+ 250:../../bos/modules/b_mod_wifi.c ****             }
+ 648              		.loc 1 250 17 view .LVU206
+ 649 027e 89EF     		movl	%ebp, %edi
+ 650 0280 E8000000 		call	bClose@PLT
+ 650      00
+ 651              	.LVL53:
+ 652 0285 E99DFEFF 		jmp	.L54
+ 652      FF
+ 653              	.L99:
+ 231:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 654              		.loc 1 231 17 view .LVU207
+ 231:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 655              		.loc 1 231 23 is_stmt 0 view .LVU208
+ 656 028a 89EF     		movl	%ebp, %edi
+ 657 028c 488D1500 		leaq	16+bWifiModule(%rip), %rdx
+ 657      000000
+ 658 0293 BE020000 		movl	$2, %esi
+ 658      00
+ 659 0298 E8000000 		call	bCtl@PLT
+ 659      00
+ 660              	.LVL54:
+ 232:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 661              		.loc 1 232 17 view .LVU209
+ 662 029d 89EF     		movl	%ebp, %edi
+ 231:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
+ 663              		.loc 1 231 23 view .LVU210
+ 664 029f 4189C4   		movl	%eax, %r12d
+ 665              	.LVL55:
+ 232:../../bos/modules/b_mod_wifi.c ****                 if (0 == ret)
+ 666              		.loc 1 232 17 is_stmt 1 view .LVU211
+ 667 02a2 E8000000 		call	bClose@PLT
+ 667      00
+ 668              	.LVL56:
+ 233:../../bos/modules/b_mod_wifi.c ****                 {
+ 669              		.loc 1 233 17 view .LVU212
+ 233:../../bos/modules/b_mod_wifi.c ****                 {
+GAS LISTING /tmp/ccumMMsB.s 			page 23
+
+
+ 670              		.loc 1 233 20 is_stmt 0 view .LVU213
+ 671 02a7 4585E4   		testl	%r12d, %r12d
+ 672 02aa 0F8577FE 		jne	.L54
+ 672      FFFF
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 673              		.loc 1 235 21 is_stmt 1 view .LVU214
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 674              		.loc 1 235 21 view .LVU215
+ 675 02b0 807B0C00 		cmpb	$0, 12(%rbx)
+ 676 02b4 7469     		je	.L101
+ 677              	.LVL57:
+ 678              	.L64:
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 679              		.loc 1 235 21 discriminator 3 view .LVU216
+ 680 02b6 BDEB0000 		movl	$235, %ebp
+ 680      00
+ 681              	.LVL58:
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 682              		.loc 1 235 21 is_stmt 0 discriminator 3 view .LVU217
+ 683 02bb 66892B   		movw	%bp, (%rbx)
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 684              		.loc 1 235 21 is_stmt 1 discriminator 4 view .LVU218
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 685              		.loc 1 235 21 discriminator 4 view .LVU219
+ 686 02be E925FEFF 		jmp	.L42
+ 686      FF
+ 687              	.LVL59:
+ 688              	.L96:
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 689              		.loc 1 226 21 discriminator 1 view .LVU220
+ 690 02c3 E8000000 		call	bHalGetSysTick@PLT
+ 690      00
+ 691              	.LVL60:
+ 692 02c8 C7430888 		movl	$5000, 8(%rbx)
+ 692      130000
+ 693 02cf 894304   		movl	%eax, 4(%rbx)
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 694              		.loc 1 226 21 discriminator 1 view .LVU221
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 695              		.loc 1 226 21 discriminator 1 view .LVU222
+ 696 02d2 31C0     		xorl	%eax, %eax
+ 697 02d4 C6430C01 		movb	$1, 12(%rbx)
+ 226:../../bos/modules/b_mod_wifi.c ****                 }
+ 698              		.loc 1 226 21 discriminator 1 view .LVU223
+ 699 02d8 6689430E 		movw	%ax, 14(%rbx)
+ 700 02dc E9FCFDFF 		jmp	.L55
+ 700      FF
+ 701              	.L100:
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 702              		.loc 1 244 21 discriminator 1 view .LVU224
+ 703 02e1 E8000000 		call	bHalGetSysTick@PLT
+ 703      00
+ 704              	.LVL61:
+ 705 02e6 4531DB   		xorl	%r11d, %r11d
+ 706 02e9 C7430888 		movl	$5000, 8(%rbx)
+ 706      130000
+ 707 02f0 894304   		movl	%eax, 4(%rbx)
+GAS LISTING /tmp/ccumMMsB.s 			page 24
+
+
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 708              		.loc 1 244 21 discriminator 1 view .LVU225
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 709              		.loc 1 244 21 discriminator 1 view .LVU226
+ 710 02f3 C6430C01 		movb	$1, 12(%rbx)
+ 244:../../bos/modules/b_mod_wifi.c ****                 }
+ 711              		.loc 1 244 21 discriminator 1 view .LVU227
+ 712 02f7 6644895B 		movw	%r11w, 14(%rbx)
+ 712      0E
+ 713 02fc E941FFFF 		jmp	.L69
+ 713      FF
+ 714              	.L98:
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 715              		.loc 1 271 25 discriminator 1 view .LVU228
+ 716 0301 E8000000 		call	bHalGetSysTick@PLT
+ 716      00
+ 717              	.LVL62:
+ 718 0306 31FF     		xorl	%edi, %edi
+ 719 0308 C7430810 		movl	$10000, 8(%rbx)
+ 719      270000
+ 720 030f 894304   		movl	%eax, 4(%rbx)
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 721              		.loc 1 271 25 discriminator 1 view .LVU229
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 722              		.loc 1 271 25 discriminator 1 view .LVU230
+ 723 0312 C6430C01 		movb	$1, 12(%rbx)
+ 271:../../bos/modules/b_mod_wifi.c ****                     }
+ 724              		.loc 1 271 25 discriminator 1 view .LVU231
+ 725 0316 66897B0E 		movw	%di, 14(%rbx)
+ 726 031a E9C6FEFF 		jmp	.L73
+ 726      FF
+ 727              	.L101:
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 728              		.loc 1 235 21 discriminator 1 view .LVU232
+ 729 031f E8000000 		call	bHalGetSysTick@PLT
+ 729      00
+ 730              	.LVL63:
+ 731 0324 4531E4   		xorl	%r12d, %r12d
+ 732              	.LVL64:
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 733              		.loc 1 235 21 is_stmt 0 discriminator 1 view .LVU233
+ 734 0327 C7430888 		movl	$5000, 8(%rbx)
+ 734      130000
+ 735 032e 894304   		movl	%eax, 4(%rbx)
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 736              		.loc 1 235 21 is_stmt 1 discriminator 1 view .LVU234
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 737              		.loc 1 235 21 discriminator 1 view .LVU235
+ 738 0331 C6430C01 		movb	$1, 12(%rbx)
+ 235:../../bos/modules/b_mod_wifi.c ****                 }
+ 739              		.loc 1 235 21 discriminator 1 view .LVU236
+ 740 0335 66448963 		movw	%r12w, 14(%rbx)
+ 740      0E
+ 741 033a E977FFFF 		jmp	.L64
+ 741      FF
+ 742              	.LBE18:
+ 743              		.cfi_endproc
+GAS LISTING /tmp/ccumMMsB.s 			page 25
+
+
+ 744              	.LFE29:
+ 746              		.section	.text.bWifiInit,"ax",@progbits
+ 747              		.p2align 4
+ 748              		.globl	bWifiInit
+ 750              	bWifiInit:
+ 751              	.LVL65:
+ 752              	.LFB30:
+ 280:../../bos/modules/b_mod_wifi.c **** 
+ 281:../../bos/modules/b_mod_wifi.c **** /**
+ 282:../../bos/modules/b_mod_wifi.c ****  * \}
+ 283:../../bos/modules/b_mod_wifi.c ****  */
+ 284:../../bos/modules/b_mod_wifi.c **** 
+ 285:../../bos/modules/b_mod_wifi.c **** /**
+ 286:../../bos/modules/b_mod_wifi.c ****  * \addtogroup WIFI_Exported_Functions
+ 287:../../bos/modules/b_mod_wifi.c ****  * \{
+ 288:../../bos/modules/b_mod_wifi.c ****  */
+ 289:../../bos/modules/b_mod_wifi.c **** 
+ 290:../../bos/modules/b_mod_wifi.c **** int bWifiInit(uint32_t dev_no, pWifiEvtCb_t cb, void *user_data)
+ 291:../../bos/modules/b_mod_wifi.c **** {
+ 753              		.loc 1 291 1 view -0
+ 754              		.cfi_startproc
+ 755              		.loc 1 291 1 is_stmt 0 view .LVU238
+ 756 0000 F30F1EFA 		endbr64
+ 757 0004 4155     		pushq	%r13
+ 758              	.LCFI23:
+ 759              		.cfi_def_cfa_offset 16
+ 760              		.cfi_offset 13, -16
+ 761 0006 4154     		pushq	%r12
+ 762              	.LCFI24:
+ 763              		.cfi_def_cfa_offset 24
+ 764              		.cfi_offset 12, -24
+ 765 0008 55       		pushq	%rbp
+ 766              	.LCFI25:
+ 767              		.cfi_def_cfa_offset 32
+ 768              		.cfi_offset 6, -32
+ 769 0009 53       		pushq	%rbx
+ 770              	.LCFI26:
+ 771              		.cfi_def_cfa_offset 40
+ 772              		.cfi_offset 3, -40
+ 773 000a 4883EC28 		subq	$40, %rsp
+ 774              	.LCFI27:
+ 775              		.cfi_def_cfa_offset 80
+ 776              		.loc 1 291 1 view .LVU239
+ 777 000e 64488B04 		movq	%fs:40, %rax
+ 777      25280000 
+ 777      00
+ 778 0017 48894424 		movq	%rax, 24(%rsp)
+ 778      18
+ 779 001c 31C0     		xorl	%eax, %eax
+ 292:../../bos/modules/b_mod_wifi.c ****     bWifiDrvCallback_t drv_cb;
+ 780              		.loc 1 292 5 is_stmt 1 view .LVU240
+ 293:../../bos/modules/b_mod_wifi.c ****     if (cb == NULL)
+ 781              		.loc 1 293 5 view .LVU241
+ 782              		.loc 1 293 8 is_stmt 0 view .LVU242
+ 783 001e 4885F6   		testq	%rsi, %rsi
+ 784 0021 0F847E00 		je	.L104
+ 784      0000
+GAS LISTING /tmp/ccumMMsB.s 			page 26
+
+
+ 785 0027 4889F5   		movq	%rsi, %rbp
+ 294:../../bos/modules/b_mod_wifi.c ****     {
+ 295:../../bos/modules/b_mod_wifi.c ****         return -1;
+ 296:../../bos/modules/b_mod_wifi.c ****     }
+ 297:../../bos/modules/b_mod_wifi.c ****     int fd = bOpen(dev_no, BCORE_FLAG_RW);
+ 786              		.loc 1 297 14 view .LVU243
+ 787 002a BE020000 		movl	$2, %esi
+ 787      00
+ 788              	.LVL66:
+ 789              		.loc 1 297 14 view .LVU244
+ 790 002f 4189FC   		movl	%edi, %r12d
+ 791 0032 4989D5   		movq	%rdx, %r13
+ 792              		.loc 1 297 5 is_stmt 1 view .LVU245
+ 793              		.loc 1 297 14 is_stmt 0 view .LVU246
+ 794 0035 E8000000 		call	bOpen@PLT
+ 794      00
+ 795              	.LVL67:
+ 796              		.loc 1 297 14 view .LVU247
+ 797 003a 89C3     		movl	%eax, %ebx
+ 798              	.LVL68:
+ 298:../../bos/modules/b_mod_wifi.c ****     if (fd < 0)
+ 799              		.loc 1 298 5 is_stmt 1 view .LVU248
+ 800              		.loc 1 298 8 is_stmt 0 view .LVU249
+ 801 003c 85C0     		testl	%eax, %eax
+ 802 003e 7865     		js	.L104
+ 299:../../bos/modules/b_mod_wifi.c ****     {
+ 300:../../bos/modules/b_mod_wifi.c ****         return -1;
+ 301:../../bos/modules/b_mod_wifi.c ****     }
+ 302:../../bos/modules/b_mod_wifi.c ****     bWifiModule.dev_no    = dev_no;
+ 803              		.loc 1 302 5 is_stmt 1 view .LVU250
+ 303:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cb        = cb;
+ 304:../../bos/modules/b_mod_wifi.c ****     bWifiModule.user_data = user_data;
+ 305:../../bos/modules/b_mod_wifi.c ****     drv_cb.cb             = _bWifiDrvCb;
+ 804              		.loc 1 305 27 is_stmt 0 view .LVU251
+ 805 0040 488D0500 		leaq	_bWifiDrvCb(%rip), %rax
+ 805      000000
+ 806              	.LVL69:
+ 306:../../bos/modules/b_mod_wifi.c ****     drv_cb.user_data      = NULL;
+ 307:../../bos/modules/b_mod_wifi.c ****     if (bCtl(fd, bCMD_WIFI_REG_CALLBACK, &drv_cb) != 0)
+ 807              		.loc 1 307 9 view .LVU252
+ 808 0047 89DF     		movl	%ebx, %edi
+ 809 0049 4889E2   		movq	%rsp, %rdx
+ 810 004c 31F6     		xorl	%esi, %esi
+ 303:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cb        = cb;
+ 811              		.loc 1 303 27 view .LVU253
+ 812 004e 48892D00 		movq	%rbp, 216+bWifiModule(%rip)
+ 812      000000
+ 302:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cb        = cb;
+ 813              		.loc 1 302 27 view .LVU254
+ 814 0055 44892500 		movl	%r12d, 4+bWifiModule(%rip)
+ 814      000000
+ 303:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cb        = cb;
+ 815              		.loc 1 303 5 is_stmt 1 view .LVU255
+ 304:../../bos/modules/b_mod_wifi.c ****     drv_cb.cb             = _bWifiDrvCb;
+ 816              		.loc 1 304 5 view .LVU256
+ 304:../../bos/modules/b_mod_wifi.c ****     drv_cb.cb             = _bWifiDrvCb;
+ 817              		.loc 1 304 27 is_stmt 0 view .LVU257
+GAS LISTING /tmp/ccumMMsB.s 			page 27
+
+
+ 818 005c 4C892D00 		movq	%r13, 224+bWifiModule(%rip)
+ 818      000000
+ 305:../../bos/modules/b_mod_wifi.c ****     drv_cb.user_data      = NULL;
+ 819              		.loc 1 305 5 is_stmt 1 view .LVU258
+ 305:../../bos/modules/b_mod_wifi.c ****     drv_cb.user_data      = NULL;
+ 820              		.loc 1 305 27 is_stmt 0 view .LVU259
+ 821 0063 48890424 		movq	%rax, (%rsp)
+ 306:../../bos/modules/b_mod_wifi.c ****     if (bCtl(fd, bCMD_WIFI_REG_CALLBACK, &drv_cb) != 0)
+ 822              		.loc 1 306 5 is_stmt 1 view .LVU260
+ 306:../../bos/modules/b_mod_wifi.c ****     if (bCtl(fd, bCMD_WIFI_REG_CALLBACK, &drv_cb) != 0)
+ 823              		.loc 1 306 27 is_stmt 0 view .LVU261
+ 824 0067 48C74424 		movq	$0, 8(%rsp)
+ 824      08000000 
+ 824      00
+ 825              		.loc 1 307 5 is_stmt 1 view .LVU262
+ 826              		.loc 1 307 9 is_stmt 0 view .LVU263
+ 827 0070 E8000000 		call	bCtl@PLT
+ 827      00
+ 828              	.LVL70:
+ 308:../../bos/modules/b_mod_wifi.c ****     {
+ 309:../../bos/modules/b_mod_wifi.c ****         bClose(fd);
+ 829              		.loc 1 309 9 view .LVU264
+ 830 0075 89DF     		movl	%ebx, %edi
+ 307:../../bos/modules/b_mod_wifi.c ****     {
+ 831              		.loc 1 307 9 view .LVU265
+ 832 0077 89C5     		movl	%eax, %ebp
+ 833              	.LVL71:
+ 307:../../bos/modules/b_mod_wifi.c ****     {
+ 834              		.loc 1 307 8 discriminator 1 view .LVU266
+ 835 0079 85C0     		testl	%eax, %eax
+ 836 007b 7523     		jne	.L110
+ 310:../../bos/modules/b_mod_wifi.c ****         return -1;
+ 311:../../bos/modules/b_mod_wifi.c ****     }
+ 312:../../bos/modules/b_mod_wifi.c ****     bClose(fd);
+ 837              		.loc 1 312 5 is_stmt 1 view .LVU267
+ 838 007d E8000000 		call	bClose@PLT
+ 838      00
+ 839              	.LVL72:
+ 313:../../bos/modules/b_mod_wifi.c ****     return 0;
+ 840              		.loc 1 313 5 view .LVU268
+ 841              	.L102:
+ 314:../../bos/modules/b_mod_wifi.c **** }
+ 842              		.loc 1 314 1 is_stmt 0 view .LVU269
+ 843 0082 488B4424 		movq	24(%rsp), %rax
+ 843      18
+ 844 0087 64482B04 		subq	%fs:40, %rax
+ 844      25280000 
+ 844      00
+ 845 0090 751A     		jne	.L111
+ 846 0092 4883C428 		addq	$40, %rsp
+ 847              	.LCFI28:
+ 848              		.cfi_remember_state
+ 849              		.cfi_def_cfa_offset 40
+ 850 0096 89E8     		movl	%ebp, %eax
+ 851 0098 5B       		popq	%rbx
+ 852              	.LCFI29:
+ 853              		.cfi_def_cfa_offset 32
+GAS LISTING /tmp/ccumMMsB.s 			page 28
+
+
+ 854 0099 5D       		popq	%rbp
+ 855              	.LCFI30:
+ 856              		.cfi_def_cfa_offset 24
+ 857 009a 415C     		popq	%r12
+ 858              	.LCFI31:
+ 859              		.cfi_def_cfa_offset 16
+ 860 009c 415D     		popq	%r13
+ 861              	.LCFI32:
+ 862              		.cfi_def_cfa_offset 8
+ 863 009e C3       		ret
+ 864              	.LVL73:
+ 865 009f 90       		.p2align 4,,10
+ 866              		.p2align 3
+ 867              	.L110:
+ 868              	.LCFI33:
+ 869              		.cfi_restore_state
+ 309:../../bos/modules/b_mod_wifi.c ****         return -1;
+ 870              		.loc 1 309 9 is_stmt 1 view .LVU270
+ 871 00a0 E8000000 		call	bClose@PLT
+ 871      00
+ 872              	.LVL74:
+ 310:../../bos/modules/b_mod_wifi.c ****     }
+ 873              		.loc 1 310 9 view .LVU271
+ 874              	.L104:
+ 295:../../bos/modules/b_mod_wifi.c ****     }
+ 875              		.loc 1 295 16 is_stmt 0 view .LVU272
+ 876 00a5 BDFFFFFF 		movl	$-1, %ebp
+ 876      FF
+ 877 00aa EBD6     		jmp	.L102
+ 878              	.L111:
+ 879              		.loc 1 314 1 view .LVU273
+ 880 00ac E8000000 		call	__stack_chk_fail@PLT
+ 880      00
+ 881              	.LVL75:
+ 882              		.cfi_endproc
+ 883              	.LFE30:
+ 885              		.section	.rodata.bWifiSetMode.str1.1,"aMS",@progbits,1
+ 886              	.LC4:
+ 887 0000 77696669 		.string	"wifi"
+ 887      00
+ 888              		.section	.text.bWifiSetMode,"ax",@progbits
+ 889              		.p2align 4
+ 890              		.globl	bWifiSetMode
+ 892              	bWifiSetMode:
+ 893              	.LVL76:
+ 894              	.LFB31:
+ 315:../../bos/modules/b_mod_wifi.c **** 
+ 316:../../bos/modules/b_mod_wifi.c **** int bWifiSetMode(bWifiMode_t mode)
+ 317:../../bos/modules/b_mod_wifi.c **** {
+ 895              		.loc 1 317 1 is_stmt 1 view -0
+ 896              		.cfi_startproc
+ 897              		.loc 1 317 1 is_stmt 0 view .LVU275
+ 898 0000 F30F1EFA 		endbr64
+ 318:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cur_mode = B_WIFI_MODE_UNKNOWN;
+ 899              		.loc 1 318 5 is_stmt 1 view .LVU276
+ 319:../../bos/modules/b_mod_wifi.c ****     bWifiModule.mode     = mode;
+ 320:../../bos/modules/b_mod_wifi.c ****     if (bWifiModule.task_id == NULL)
+GAS LISTING /tmp/ccumMMsB.s 			page 29
+
+
+ 900              		.loc 1 320 8 is_stmt 0 view .LVU277
+ 901 0004 48833D00 		cmpq	$0, 296+bWifiModule(%rip)
+ 901      00000000 
+ 319:../../bos/modules/b_mod_wifi.c ****     bWifiModule.mode     = mode;
+ 902              		.loc 1 319 26 view .LVU278
+ 903 000c 893D0000 		movl	%edi, 8+bWifiModule(%rip)
+ 903      0000
+ 318:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cur_mode = B_WIFI_MODE_UNKNOWN;
+ 904              		.loc 1 318 26 view .LVU279
+ 905 0012 C7050000 		movl	$255, 12+bWifiModule(%rip)
+ 905      0000FF00 
+ 905      0000
+ 319:../../bos/modules/b_mod_wifi.c ****     bWifiModule.mode     = mode;
+ 906              		.loc 1 319 5 is_stmt 1 view .LVU280
+ 907              		.loc 1 320 5 view .LVU281
+ 908              		.loc 1 320 8 is_stmt 0 view .LVU282
+ 909 001c 740A     		je	.L118
+ 321:../../bos/modules/b_mod_wifi.c ****     {
+ 322:../../bos/modules/b_mod_wifi.c ****         bWifiModule.task_id = bTaskCreate("wifi", _bWifiTask, NULL, &bWifiModule.attr);
+ 323:../../bos/modules/b_mod_wifi.c ****     }
+ 324:../../bos/modules/b_mod_wifi.c ****     return 0;
+ 910              		.loc 1 324 5 is_stmt 1 view .LVU283
+ 325:../../bos/modules/b_mod_wifi.c **** }
+ 911              		.loc 1 325 1 is_stmt 0 view .LVU284
+ 912 001e 31C0     		xorl	%eax, %eax
+ 913 0020 C3       		ret
+ 914              		.p2align 4,,10
+ 915 0021 0F1F8000 		.p2align 3
+ 915      000000
+ 916              	.L118:
+ 322:../../bos/modules/b_mod_wifi.c ****     }
+ 917              		.loc 1 322 9 is_stmt 1 view .LVU285
+ 317:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cur_mode = B_WIFI_MODE_UNKNOWN;
+ 918              		.loc 1 317 1 is_stmt 0 view .LVU286
+ 919 0028 4883EC08 		subq	$8, %rsp
+ 920              	.LCFI34:
+ 921              		.cfi_def_cfa_offset 16
+ 322:../../bos/modules/b_mod_wifi.c ****     }
+ 922              		.loc 1 322 31 view .LVU287
+ 923 002c 488D0D00 		leaq	232+bWifiModule(%rip), %rcx
+ 923      000000
+ 924 0033 31D2     		xorl	%edx, %edx
+ 925 0035 488D3500 		leaq	_bWifiTask(%rip), %rsi
+ 925      000000
+ 926 003c 488D3D00 		leaq	.LC4(%rip), %rdi
+ 926      000000
+ 927              	.LVL77:
+ 322:../../bos/modules/b_mod_wifi.c ****     }
+ 928              		.loc 1 322 31 view .LVU288
+ 929 0043 E8000000 		call	bTaskCreate@PLT
+ 929      00
+ 930              	.LVL78:
+ 322:../../bos/modules/b_mod_wifi.c ****     }
+ 931              		.loc 1 322 29 discriminator 1 view .LVU289
+ 932 0048 48890500 		movq	%rax, 296+bWifiModule(%rip)
+ 932      000000
+ 324:../../bos/modules/b_mod_wifi.c **** }
+GAS LISTING /tmp/ccumMMsB.s 			page 30
+
+
+ 933              		.loc 1 324 5 is_stmt 1 view .LVU290
+ 934              		.loc 1 325 1 is_stmt 0 view .LVU291
+ 935 004f 31C0     		xorl	%eax, %eax
+ 936 0051 4883C408 		addq	$8, %rsp
+ 937              	.LCFI35:
+ 938              		.cfi_def_cfa_offset 8
+ 939 0055 C3       		ret
+ 940              		.cfi_endproc
+ 941              	.LFE31:
+ 943              		.section	.text.bWifiDeinit,"ax",@progbits
+ 944              		.p2align 4
+ 945              		.globl	bWifiDeinit
+ 947              	bWifiDeinit:
+ 948              	.LFB32:
+ 326:../../bos/modules/b_mod_wifi.c **** 
+ 327:../../bos/modules/b_mod_wifi.c **** int bWifiDeinit()
+ 328:../../bos/modules/b_mod_wifi.c **** {
+ 949              		.loc 1 328 1 is_stmt 1 view -0
+ 950              		.cfi_startproc
+ 951 0000 F30F1EFA 		endbr64
+ 329:../../bos/modules/b_mod_wifi.c ****     return 0;
+ 952              		.loc 1 329 5 view .LVU293
+ 330:../../bos/modules/b_mod_wifi.c **** }
+ 953              		.loc 1 330 1 is_stmt 0 view .LVU294
+ 954 0004 31C0     		xorl	%eax, %eax
+ 955 0006 C3       		ret
+ 956              		.cfi_endproc
+ 957              	.LFE32:
+ 959              		.section	.text.bWifiApConfig,"ax",@progbits
+ 960              		.p2align 4
+ 961              		.globl	bWifiApConfig
+ 963              	bWifiApConfig:
+ 964              	.LVL79:
+ 965              	.LFB33:
+ 331:../../bos/modules/b_mod_wifi.c **** 
+ 332:../../bos/modules/b_mod_wifi.c **** int bWifiApConfig(const char *ssid, const char *passwd)
+ 333:../../bos/modules/b_mod_wifi.c **** {
+ 966              		.loc 1 333 1 is_stmt 1 view -0
+ 967              		.cfi_startproc
+ 968              		.loc 1 333 1 is_stmt 0 view .LVU296
+ 969 0000 F30F1EFA 		endbr64
+ 334:../../bos/modules/b_mod_wifi.c ****     if (ssid == NULL)
+ 970              		.loc 1 334 5 is_stmt 1 view .LVU297
+ 971              		.loc 1 334 8 is_stmt 0 view .LVU298
+ 972 0004 4885FF   		testq	%rdi, %rdi
+ 973 0007 0F840201 		je	.L125
+ 973      0000
+ 333:../../bos/modules/b_mod_wifi.c ****     if (ssid == NULL)
+ 974              		.loc 1 333 1 view .LVU299
+ 975 000d 4154     		pushq	%r12
+ 976              	.LCFI36:
+ 977              		.cfi_def_cfa_offset 16
+ 978              		.cfi_offset 12, -16
+ 979 000f 55       		pushq	%rbp
+ 980              	.LCFI37:
+ 981              		.cfi_def_cfa_offset 24
+ 982              		.cfi_offset 6, -24
+GAS LISTING /tmp/ccumMMsB.s 			page 31
+
+
+ 983 0010 4889F5   		movq	%rsi, %rbp
+ 335:../../bos/modules/b_mod_wifi.c ****     {
+ 336:../../bos/modules/b_mod_wifi.c ****         return -1;
+ 337:../../bos/modules/b_mod_wifi.c ****     }
+ 338:../../bos/modules/b_mod_wifi.c ****     if (strlen(ssid) > WIFI_SSID_LEN_MAX)
+ 984              		.loc 1 338 5 is_stmt 1 view .LVU300
+ 333:../../bos/modules/b_mod_wifi.c ****     if (ssid == NULL)
+ 985              		.loc 1 333 1 is_stmt 0 view .LVU301
+ 986 0013 53       		pushq	%rbx
+ 987              	.LCFI38:
+ 988              		.cfi_def_cfa_offset 32
+ 989              		.cfi_offset 3, -32
+ 990 0014 4889FB   		movq	%rdi, %rbx
+ 991              		.loc 1 338 9 view .LVU302
+ 992 0017 E8000000 		call	strlen@PLT
+ 992      00
+ 993              	.LVL80:
+ 994              		.loc 1 338 8 discriminator 1 view .LVU303
+ 995 001c 4883F820 		cmpq	$32, %rax
+ 996 0020 0F87E200 		ja	.L127
+ 996      0000
+ 339:../../bos/modules/b_mod_wifi.c ****     {
+ 340:../../bos/modules/b_mod_wifi.c ****         return -1;
+ 341:../../bos/modules/b_mod_wifi.c ****     }
+ 342:../../bos/modules/b_mod_wifi.c ****     if (passwd != NULL)
+ 997              		.loc 1 342 5 is_stmt 1 view .LVU304
+ 998              		.loc 1 342 8 is_stmt 0 view .LVU305
+ 999 0026 4885ED   		testq	%rbp, %rbp
+ 1000 0029 0F849100 		je	.L122
+ 1000      0000
+ 343:../../bos/modules/b_mod_wifi.c ****     {
+ 344:../../bos/modules/b_mod_wifi.c ****         if (strlen(passwd) > WIFI_PASSWD_LEN_MAX)
+ 1001              		.loc 1 344 9 is_stmt 1 view .LVU306
+ 1002              		.loc 1 344 13 is_stmt 0 view .LVU307
+ 1003 002f 4889EF   		movq	%rbp, %rdi
+ 1004 0032 E8000000 		call	strlen@PLT
+ 1004      00
+ 1005              	.LVL81:
+ 1006              		.loc 1 344 12 discriminator 1 view .LVU308
+ 1007 0037 4883F840 		cmpq	$64, %rax
+ 1008 003b 0F87C700 		ja	.L127
+ 1008      0000
+ 345:../../bos/modules/b_mod_wifi.c ****         {
+ 346:../../bos/modules/b_mod_wifi.c ****             return -1;
+ 347:../../bos/modules/b_mod_wifi.c ****         }
+ 348:../../bos/modules/b_mod_wifi.c ****         if (strlen(passwd) == 0)
+ 1009              		.loc 1 348 9 is_stmt 1 view .LVU309
+ 1010              		.loc 1 348 12 is_stmt 0 view .LVU310
+ 1011 0041 807D0000 		cmpb	$0, 0(%rbp)
+ 1012 0045 7479     		je	.L122
+ 349:../../bos/modules/b_mod_wifi.c ****         {
+ 350:../../bos/modules/b_mod_wifi.c ****             passwd = NULL;
+ 351:../../bos/modules/b_mod_wifi.c ****         }
+ 352:../../bos/modules/b_mod_wifi.c ****     }
+ 353:../../bos/modules/b_mod_wifi.c ****     memset(&bWifiModule.soft_ap, 0, sizeof(bWifiModule.soft_ap));
+ 1013              		.loc 1 353 5 is_stmt 1 view .LVU311
+ 1014              	.LVL82:
+GAS LISTING /tmp/ccumMMsB.s 			page 32
+
+
+ 1015              	.LBB19:
+ 1016              	.LBI19:
+ 1017              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+GAS LISTING /tmp/ccumMMsB.s 			page 33
+
+
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+ 1018              		.loc 2 57 1 view .LVU312
+ 1019              	.LBB20:
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+ 1020              		.loc 2 59 3 view .LVU313
+ 1021              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU314
+ 1022 0047 4C8D2500 		leaq	16+bWifiModule(%rip), %r12
+ 1022      000000
+ 1023              	.LVL83:
+ 1024              		.loc 2 59 10 discriminator 1 view .LVU315
+ 1025 004e 31C0     		xorl	%eax, %eax
+ 1026 0050 B90C0000 		movl	$12, %ecx
+ 1026      00
+ 1027 0055 4C89E7   		movq	%r12, %rdi
+ 1028 0058 F348AB   		rep stosq
+ 1029 005b 31C0     		xorl	%eax, %eax
+ 1030 005d 668907   		movw	%ax, (%rdi)
+ 1031              	.LBE20:
+ 1032              	.LBE19:
+ 354:../../bos/modules/b_mod_wifi.c ****     memcpy(&bWifiModule.soft_ap.ssid[0], ssid, strlen(ssid));
+ 1033              		.loc 1 354 5 view .LVU316
+ 1034 0060 4889DF   		movq	%rbx, %rdi
+ 1035              	.LBB24:
+ 1036              	.LBB21:
+ 1037              		.loc 2 59 10 discriminator 1 view .LVU317
+ 1038 0063 C6050000 		movb	$0, 114+bWifiModule(%rip)
+ 1038      000000
+ 1039              	.LVL84:
+ 1040              		.loc 2 59 10 discriminator 1 view .LVU318
+ 1041              	.LBE21:
+ 1042              	.LBE24:
+ 1043              		.loc 1 354 5 is_stmt 1 view .LVU319
+ 1044 006a E8000000 		call	strlen@PLT
+ 1044      00
+ 1045              	.LVL85:
+ 1046              	.LBB25:
+ 1047              	.LBB26:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1048              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU320
+ 1049 006f B9200100 		movl	$288, %ecx
+ 1049      00
+ 1050 0074 4889DE   		movq	%rbx, %rsi
+ 1051 0077 4C89E7   		movq	%r12, %rdi
+ 1052              	.LBE26:
+ 1053              	.LBE25:
+ 1054              		.loc 1 354 5 view .LVU321
+ 1055 007a 4889C2   		movq	%rax, %rdx
+ 1056              	.LVL86:
+ 1057              	.LBB30:
+ 1058              	.LBI25:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1059              		.loc 2 26 1 is_stmt 1 view .LVU322
+ 1060              	.LBB27:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+GAS LISTING /tmp/ccumMMsB.s 			page 34
+
+
+ 1061              		.loc 2 29 3 view .LVU323
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1062              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU324
+ 1063 007d E8000000 		call	__memcpy_chk@PLT
+ 1063      00
+ 1064              	.LVL87:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1065              		.loc 2 29 10 discriminator 1 view .LVU325
+ 1066              	.LBE27:
+ 1067              	.LBE30:
+ 355:../../bos/modules/b_mod_wifi.c ****     if (passwd == NULL)
+ 1068              		.loc 1 355 5 is_stmt 1 view .LVU326
+ 356:../../bos/modules/b_mod_wifi.c ****     {
+ 357:../../bos/modules/b_mod_wifi.c ****         bWifiModule.soft_ap.encryption = 0;
+ 358:../../bos/modules/b_mod_wifi.c ****     }
+ 359:../../bos/modules/b_mod_wifi.c ****     else
+ 360:../../bos/modules/b_mod_wifi.c ****     {
+ 361:../../bos/modules/b_mod_wifi.c ****         bWifiModule.soft_ap.encryption = 3;
+ 1069              		.loc 1 361 9 view .LVU327
+ 362:../../bos/modules/b_mod_wifi.c ****         memcpy(&bWifiModule.soft_ap.passwd[0], passwd, strlen(passwd));
+ 1070              		.loc 1 362 9 is_stmt 0 view .LVU328
+ 1071 0082 4889EF   		movq	%rbp, %rdi
+ 361:../../bos/modules/b_mod_wifi.c ****         memcpy(&bWifiModule.soft_ap.passwd[0], passwd, strlen(passwd));
+ 1072              		.loc 1 361 40 view .LVU329
+ 1073 0085 C6050000 		movb	$3, 114+bWifiModule(%rip)
+ 1073      000003
+ 1074              		.loc 1 362 9 is_stmt 1 view .LVU330
+ 1075 008c E8000000 		call	strlen@PLT
+ 1075      00
+ 1076              	.LVL88:
+ 1077              	.LBB31:
+ 1078              	.LBB32:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1079              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU331
+ 1080 0091 B9FF0000 		movl	$255, %ecx
+ 1080      00
+ 1081 0096 4889EE   		movq	%rbp, %rsi
+ 1082 0099 498D7C24 		leaq	33(%r12), %rdi
+ 1082      21
+ 1083              	.LBE32:
+ 1084              	.LBE31:
+ 1085              		.loc 1 362 9 view .LVU332
+ 1086 009e 4889C2   		movq	%rax, %rdx
+ 1087              	.LVL89:
+ 1088              	.LBB34:
+ 1089              	.LBI31:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1090              		.loc 2 26 1 is_stmt 1 view .LVU333
+ 1091              	.LBB33:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1092              		.loc 2 29 3 view .LVU334
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1093              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU335
+ 1094 00a1 E8000000 		call	__memcpy_chk@PLT
+ 1094      00
+ 1095              	.LVL90:
+ 1096              	.L124:
+GAS LISTING /tmp/ccumMMsB.s 			page 35
+
+
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1097              		.loc 2 29 10 discriminator 1 view .LVU336
+ 1098              	.LBE33:
+ 1099              	.LBE34:
+ 363:../../bos/modules/b_mod_wifi.c ****     }
+ 364:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cur_mode = B_WIFI_MODE_UNKNOWN;
+ 1100              		.loc 1 364 5 is_stmt 1 view .LVU337
+ 1101              		.loc 1 364 26 is_stmt 0 view .LVU338
+ 1102 00a6 C7050000 		movl	$255, 12+bWifiModule(%rip)
+ 1102      0000FF00 
+ 1102      0000
+ 365:../../bos/modules/b_mod_wifi.c ****     return 0;
+ 1103              		.loc 1 365 5 is_stmt 1 view .LVU339
+ 1104              		.loc 1 365 12 is_stmt 0 view .LVU340
+ 1105 00b0 31C0     		xorl	%eax, %eax
+ 1106              	.L120:
+ 366:../../bos/modules/b_mod_wifi.c **** }
+ 1107              		.loc 1 366 1 view .LVU341
+ 1108 00b2 5B       		popq	%rbx
+ 1109              	.LCFI39:
+ 1110              		.cfi_remember_state
+ 1111              		.cfi_def_cfa_offset 24
+ 1112              	.LVL91:
+ 1113              		.loc 1 366 1 view .LVU342
+ 1114 00b3 5D       		popq	%rbp
+ 1115              	.LCFI40:
+ 1116              		.cfi_def_cfa_offset 16
+ 1117 00b4 415C     		popq	%r12
+ 1118              	.LCFI41:
+ 1119              		.cfi_def_cfa_offset 8
+ 1120 00b6 C3       		ret
+ 1121              	.LVL92:
+ 1122 00b7 660F1F84 		.p2align 4,,10
+ 1122      00000000 
+ 1122      00
+ 1123              		.p2align 3
+ 1124              	.L122:
+ 1125              	.LCFI42:
+ 1126              		.cfi_restore_state
+ 353:../../bos/modules/b_mod_wifi.c ****     memcpy(&bWifiModule.soft_ap.ssid[0], ssid, strlen(ssid));
+ 1127              		.loc 1 353 5 is_stmt 1 view .LVU343
+ 1128              	.LBB35:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 1129              		.loc 2 57 1 view .LVU344
+ 1130              	.LBB22:
+ 1131              		.loc 2 59 3 view .LVU345
+ 1132              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU346
+ 1133 00c0 488D2D00 		leaq	16+bWifiModule(%rip), %rbp
+ 1133      000000
+ 1134              	.LVL93:
+ 1135              		.loc 2 59 10 discriminator 1 view .LVU347
+ 1136 00c7 31C0     		xorl	%eax, %eax
+ 1137 00c9 B90C0000 		movl	$12, %ecx
+ 1137      00
+ 1138 00ce 31D2     		xorl	%edx, %edx
+ 1139 00d0 4889EF   		movq	%rbp, %rdi
+ 1140 00d3 F348AB   		rep stosq
+GAS LISTING /tmp/ccumMMsB.s 			page 36
+
+
+ 1141 00d6 668917   		movw	%dx, (%rdi)
+ 1142              	.LBE22:
+ 1143              	.LBE35:
+ 354:../../bos/modules/b_mod_wifi.c ****     if (passwd == NULL)
+ 1144              		.loc 1 354 5 view .LVU348
+ 1145 00d9 4889DF   		movq	%rbx, %rdi
+ 1146              	.LBB36:
+ 1147              	.LBB23:
+ 1148              		.loc 2 59 10 discriminator 1 view .LVU349
+ 1149 00dc C6050000 		movb	$0, 114+bWifiModule(%rip)
+ 1149      000000
+ 1150              	.LVL94:
+ 1151              		.loc 2 59 10 discriminator 1 view .LVU350
+ 1152              	.LBE23:
+ 1153              	.LBE36:
+ 354:../../bos/modules/b_mod_wifi.c ****     if (passwd == NULL)
+ 1154              		.loc 1 354 5 is_stmt 1 view .LVU351
+ 1155 00e3 E8000000 		call	strlen@PLT
+ 1155      00
+ 1156              	.LVL95:
+ 1157              	.LBB37:
+ 1158              	.LBB28:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1159              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU352
+ 1160 00e8 B9200100 		movl	$288, %ecx
+ 1160      00
+ 1161 00ed 4889DE   		movq	%rbx, %rsi
+ 1162 00f0 4889EF   		movq	%rbp, %rdi
+ 1163              	.LBE28:
+ 1164              	.LBE37:
+ 354:../../bos/modules/b_mod_wifi.c ****     if (passwd == NULL)
+ 1165              		.loc 1 354 5 view .LVU353
+ 1166 00f3 4889C2   		movq	%rax, %rdx
+ 1167              	.LVL96:
+ 1168              	.LBB38:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1169              		.loc 2 26 1 is_stmt 1 view .LVU354
+ 1170              	.LBB29:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1171              		.loc 2 29 3 view .LVU355
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1172              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU356
+ 1173 00f6 E8000000 		call	__memcpy_chk@PLT
+ 1173      00
+ 1174              	.LVL97:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1175              		.loc 2 29 10 discriminator 1 view .LVU357
+ 1176              	.LBE29:
+ 1177              	.LBE38:
+ 355:../../bos/modules/b_mod_wifi.c ****     {
+ 1178              		.loc 1 355 5 is_stmt 1 view .LVU358
+ 357:../../bos/modules/b_mod_wifi.c ****     }
+ 1179              		.loc 1 357 9 view .LVU359
+ 357:../../bos/modules/b_mod_wifi.c ****     }
+ 1180              		.loc 1 357 40 is_stmt 0 view .LVU360
+ 1181 00fb C6050000 		movb	$0, 114+bWifiModule(%rip)
+ 1181      000000
+GAS LISTING /tmp/ccumMMsB.s 			page 37
+
+
+ 1182 0102 EBA2     		jmp	.L124
+ 1183              	.LVL98:
+ 1184              		.p2align 4,,10
+ 1185 0104 0F1F4000 		.p2align 3
+ 1186              	.L127:
+ 336:../../bos/modules/b_mod_wifi.c ****     }
+ 1187              		.loc 1 336 16 view .LVU361
+ 1188 0108 B8FFFFFF 		movl	$-1, %eax
+ 1188      FF
+ 1189 010d EBA3     		jmp	.L120
+ 1190              	.LVL99:
+ 1191              	.L125:
+ 1192              	.LCFI43:
+ 1193              		.cfi_def_cfa_offset 8
+ 1194              		.cfi_restore 3
+ 1195              		.cfi_restore 6
+ 1196              		.cfi_restore 12
+ 336:../../bos/modules/b_mod_wifi.c ****     }
+ 1197              		.loc 1 336 16 view .LVU362
+ 1198 010f B8FFFFFF 		movl	$-1, %eax
+ 1198      FF
+ 1199              		.loc 1 366 1 view .LVU363
+ 1200 0114 C3       		ret
+ 1201              		.cfi_endproc
+ 1202              	.LFE33:
+ 1204              		.section	.text.bWifiJoinAp,"ax",@progbits
+ 1205              		.p2align 4
+ 1206              		.globl	bWifiJoinAp
+ 1208              	bWifiJoinAp:
+ 1209              	.LVL100:
+ 1210              	.LFB34:
+ 367:../../bos/modules/b_mod_wifi.c **** 
+ 368:../../bos/modules/b_mod_wifi.c **** int bWifiJoinAp(const char *ssid, const char *passwd)
+ 369:../../bos/modules/b_mod_wifi.c **** {
+ 1211              		.loc 1 369 1 is_stmt 1 view -0
+ 1212              		.cfi_startproc
+ 1213              		.loc 1 369 1 is_stmt 0 view .LVU365
+ 1214 0000 F30F1EFA 		endbr64
+ 370:../../bos/modules/b_mod_wifi.c ****     int retval = -1;
+ 1215              		.loc 1 370 5 is_stmt 1 view .LVU366
+ 1216              	.LVL101:
+ 371:../../bos/modules/b_mod_wifi.c ****     if (ssid == NULL)
+ 1217              		.loc 1 371 5 view .LVU367
+ 1218              		.loc 1 371 8 is_stmt 0 view .LVU368
+ 1219 0004 4885FF   		testq	%rdi, %rdi
+ 1220 0007 0F843201 		je	.L141
+ 1220      0000
+ 369:../../bos/modules/b_mod_wifi.c ****     int retval = -1;
+ 1221              		.loc 1 369 1 view .LVU369
+ 1222 000d 4154     		pushq	%r12
+ 1223              	.LCFI44:
+ 1224              		.cfi_def_cfa_offset 16
+ 1225              		.cfi_offset 12, -16
+ 1226 000f 55       		pushq	%rbp
+ 1227              	.LCFI45:
+ 1228              		.cfi_def_cfa_offset 24
+ 1229              		.cfi_offset 6, -24
+GAS LISTING /tmp/ccumMMsB.s 			page 38
+
+
+ 1230 0010 4889F5   		movq	%rsi, %rbp
+ 372:../../bos/modules/b_mod_wifi.c ****     {
+ 373:../../bos/modules/b_mod_wifi.c ****         return -1;
+ 374:../../bos/modules/b_mod_wifi.c ****     }
+ 375:../../bos/modules/b_mod_wifi.c ****     if (strlen(ssid) > WIFI_SSID_LEN_MAX)
+ 1231              		.loc 1 375 5 is_stmt 1 view .LVU370
+ 369:../../bos/modules/b_mod_wifi.c ****     int retval = -1;
+ 1232              		.loc 1 369 1 is_stmt 0 view .LVU371
+ 1233 0013 53       		pushq	%rbx
+ 1234              	.LCFI46:
+ 1235              		.cfi_def_cfa_offset 32
+ 1236              		.cfi_offset 3, -32
+ 1237 0014 4889FB   		movq	%rdi, %rbx
+ 1238              		.loc 1 375 9 view .LVU372
+ 1239 0017 E8000000 		call	strlen@PLT
+ 1239      00
+ 1240              	.LVL102:
+ 1241              		.loc 1 375 8 discriminator 1 view .LVU373
+ 1242 001c 4883F820 		cmpq	$32, %rax
+ 1243 0020 0F871201 		ja	.L143
+ 1243      0000
+ 376:../../bos/modules/b_mod_wifi.c ****     {
+ 377:../../bos/modules/b_mod_wifi.c ****         return -1;
+ 378:../../bos/modules/b_mod_wifi.c ****     }
+ 379:../../bos/modules/b_mod_wifi.c ****     if (passwd != NULL)
+ 1244              		.loc 1 379 5 is_stmt 1 view .LVU374
+ 1245              		.loc 1 379 8 is_stmt 0 view .LVU375
+ 1246 0026 4885ED   		testq	%rbp, %rbp
+ 1247 0029 0F84A900 		je	.L138
+ 1247      0000
+ 380:../../bos/modules/b_mod_wifi.c ****     {
+ 381:../../bos/modules/b_mod_wifi.c ****         if (strlen(passwd) > WIFI_PASSWD_LEN_MAX)
+ 1248              		.loc 1 381 9 is_stmt 1 view .LVU376
+ 1249              		.loc 1 381 13 is_stmt 0 view .LVU377
+ 1250 002f 4889EF   		movq	%rbp, %rdi
+ 1251 0032 E8000000 		call	strlen@PLT
+ 1251      00
+ 1252              	.LVL103:
+ 1253              		.loc 1 381 12 discriminator 1 view .LVU378
+ 1254 0037 4883F840 		cmpq	$64, %rax
+ 1255 003b 0F87F700 		ja	.L143
+ 1255      0000
+ 382:../../bos/modules/b_mod_wifi.c ****         {
+ 383:../../bos/modules/b_mod_wifi.c ****             return -1;
+ 384:../../bos/modules/b_mod_wifi.c ****         }
+ 385:../../bos/modules/b_mod_wifi.c ****         if (strlen(passwd) == 0)
+ 1256              		.loc 1 385 9 is_stmt 1 view .LVU379
+ 1257              		.loc 1 385 12 is_stmt 0 view .LVU380
+ 1258 0041 807D0000 		cmpb	$0, 0(%rbp)
+ 1259 0045 0F848D00 		je	.L138
+ 1259      0000
+ 386:../../bos/modules/b_mod_wifi.c ****         {
+ 387:../../bos/modules/b_mod_wifi.c ****             passwd = NULL;
+ 388:../../bos/modules/b_mod_wifi.c ****         }
+ 389:../../bos/modules/b_mod_wifi.c ****     }
+ 390:../../bos/modules/b_mod_wifi.c ****     memset(&bWifiModule.ap, 0, sizeof(bWifiModule.ap));
+ 1260              		.loc 1 390 5 is_stmt 1 view .LVU381
+GAS LISTING /tmp/ccumMMsB.s 			page 39
+
+
+ 1261              	.LVL104:
+ 1262              	.LBB39:
+ 1263              	.LBI39:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 1264              		.loc 2 57 1 view .LVU382
+ 1265              	.LBB40:
+ 1266              		.loc 2 59 3 view .LVU383
+ 1267              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU384
+ 1268 004b 4C8D2500 		leaq	115+bWifiModule(%rip), %r12
+ 1268      000000
+ 1269              	.LVL105:
+ 1270              		.loc 2 59 10 discriminator 1 view .LVU385
+ 1271 0052 31C0     		xorl	%eax, %eax
+ 1272 0054 48C70500 		movq	$0, 115+bWifiModule(%rip)
+ 1272      00000000 
+ 1272      000000
+ 1273 005f 498D7C24 		leaq	8(%r12), %rdi
+ 1273      08
+ 1274 0064 4C89E1   		movq	%r12, %rcx
+ 1275 0067 48C70500 		movq	$0, 206+bWifiModule(%rip)
+ 1275      00000000 
+ 1275      000000
+ 1276 0072 4883E7F8 		andq	$-8, %rdi
+ 1277 0076 4829F9   		subq	%rdi, %rcx
+ 1278 0079 83C163   		addl	$99, %ecx
+ 1279 007c C1E903   		shrl	$3, %ecx
+ 1280 007f F348AB   		rep stosq
+ 1281              	.LVL106:
+ 1282              		.loc 2 59 10 discriminator 1 view .LVU386
+ 1283              	.LBE40:
+ 1284              	.LBE39:
+ 391:../../bos/modules/b_mod_wifi.c ****     memcpy(&bWifiModule.ap.ssid[0], ssid, strlen(ssid));
+ 1285              		.loc 1 391 5 is_stmt 1 view .LVU387
+ 1286 0082 4889DF   		movq	%rbx, %rdi
+ 1287 0085 E8000000 		call	strlen@PLT
+ 1287      00
+ 1288              	.LVL107:
+ 1289              	.LBB42:
+ 1290              	.LBB43:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1291              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU388
+ 1292 008a B9BD0000 		movl	$189, %ecx
+ 1292      00
+ 1293 008f 4889DE   		movq	%rbx, %rsi
+ 1294 0092 4C89E7   		movq	%r12, %rdi
+ 1295              	.LBE43:
+ 1296              	.LBE42:
+ 1297              		.loc 1 391 5 view .LVU389
+ 1298 0095 4889C2   		movq	%rax, %rdx
+ 1299              	.LVL108:
+ 1300              	.LBB47:
+ 1301              	.LBI42:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1302              		.loc 2 26 1 is_stmt 1 view .LVU390
+ 1303              	.LBB44:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1304              		.loc 2 29 3 view .LVU391
+GAS LISTING /tmp/ccumMMsB.s 			page 40
+
+
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1305              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU392
+ 1306 0098 E8000000 		call	__memcpy_chk@PLT
+ 1306      00
+ 1307              	.LVL109:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1308              		.loc 2 29 10 discriminator 1 view .LVU393
+ 1309              	.LBE44:
+ 1310              	.LBE47:
+ 392:../../bos/modules/b_mod_wifi.c ****     if (passwd == NULL)
+ 1311              		.loc 1 392 5 is_stmt 1 view .LVU394
+ 393:../../bos/modules/b_mod_wifi.c ****     {
+ 394:../../bos/modules/b_mod_wifi.c ****         bWifiModule.ap.encryption = 0;
+ 395:../../bos/modules/b_mod_wifi.c ****     }
+ 396:../../bos/modules/b_mod_wifi.c ****     else
+ 397:../../bos/modules/b_mod_wifi.c ****     {
+ 398:../../bos/modules/b_mod_wifi.c ****         bWifiModule.ap.encryption = 3;
+ 1312              		.loc 1 398 9 view .LVU395
+ 399:../../bos/modules/b_mod_wifi.c ****         memcpy(&bWifiModule.ap.passwd[0], passwd, strlen(passwd));
+ 1313              		.loc 1 399 9 is_stmt 0 view .LVU396
+ 1314 009d 4889EF   		movq	%rbp, %rdi
+ 398:../../bos/modules/b_mod_wifi.c ****         memcpy(&bWifiModule.ap.passwd[0], passwd, strlen(passwd));
+ 1315              		.loc 1 398 35 view .LVU397
+ 1316 00a0 C6050000 		movb	$3, 213+bWifiModule(%rip)
+ 1316      000003
+ 1317              		.loc 1 399 9 is_stmt 1 view .LVU398
+ 1318 00a7 E8000000 		call	strlen@PLT
+ 1318      00
+ 1319              	.LVL110:
+ 1320              	.LBB48:
+ 1321              	.LBB49:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1322              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU399
+ 1323 00ac B99C0000 		movl	$156, %ecx
+ 1323      00
+ 1324 00b1 4889EE   		movq	%rbp, %rsi
+ 1325 00b4 498D7C24 		leaq	33(%r12), %rdi
+ 1325      21
+ 1326              	.LBE49:
+ 1327              	.LBE48:
+ 1328              		.loc 1 399 9 view .LVU400
+ 1329 00b9 4889C2   		movq	%rax, %rdx
+ 1330              	.LVL111:
+ 1331              	.LBB51:
+ 1332              	.LBI48:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1333              		.loc 2 26 1 is_stmt 1 view .LVU401
+ 1334              	.LBB50:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1335              		.loc 2 29 3 view .LVU402
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1336              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU403
+ 1337 00bc E8000000 		call	__memcpy_chk@PLT
+ 1337      00
+ 1338              	.LVL112:
+ 1339              	.L140:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+GAS LISTING /tmp/ccumMMsB.s 			page 41
+
+
+ 1340              		.loc 2 29 10 discriminator 1 view .LVU404
+ 1341              	.LBE50:
+ 1342              	.LBE51:
+ 400:../../bos/modules/b_mod_wifi.c ****     }
+ 401:../../bos/modules/b_mod_wifi.c ****     bWifiModule.cur_mode = B_WIFI_MODE_UNKNOWN;
+ 1343              		.loc 1 401 5 is_stmt 1 view .LVU405
+ 1344              		.loc 1 401 26 is_stmt 0 view .LVU406
+ 1345 00c1 C7050000 		movl	$255, 12+bWifiModule(%rip)
+ 1345      0000FF00 
+ 1345      0000
+ 402:../../bos/modules/b_mod_wifi.c ****     return 0;
+ 1346              		.loc 1 402 5 is_stmt 1 view .LVU407
+ 1347              		.loc 1 402 12 is_stmt 0 view .LVU408
+ 1348 00cb 31C0     		xorl	%eax, %eax
+ 1349              	.L136:
+ 403:../../bos/modules/b_mod_wifi.c **** }
+ 1350              		.loc 1 403 1 view .LVU409
+ 1351 00cd 5B       		popq	%rbx
+ 1352              	.LCFI47:
+ 1353              		.cfi_remember_state
+ 1354              		.cfi_def_cfa_offset 24
+ 1355              	.LVL113:
+ 1356              		.loc 1 403 1 view .LVU410
+ 1357 00ce 5D       		popq	%rbp
+ 1358              	.LCFI48:
+ 1359              		.cfi_def_cfa_offset 16
+ 1360 00cf 415C     		popq	%r12
+ 1361              	.LCFI49:
+ 1362              		.cfi_def_cfa_offset 8
+ 1363 00d1 C3       		ret
+ 1364              	.LVL114:
+ 1365              		.p2align 4,,10
+ 1366 00d2 660F1F44 		.p2align 3
+ 1366      0000
+ 1367              	.L138:
+ 1368              	.LCFI50:
+ 1369              		.cfi_restore_state
+ 390:../../bos/modules/b_mod_wifi.c ****     memcpy(&bWifiModule.ap.ssid[0], ssid, strlen(ssid));
+ 1370              		.loc 1 390 5 is_stmt 1 view .LVU411
+ 1371              	.LBB52:
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 1372              		.loc 2 57 1 view .LVU412
+ 1373              	.LBB41:
+ 1374              		.loc 2 59 3 view .LVU413
+ 1375              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU414
+ 1376 00d8 488D2D00 		leaq	115+bWifiModule(%rip), %rbp
+ 1376      000000
+ 1377              	.LVL115:
+ 1378              		.loc 2 59 10 discriminator 1 view .LVU415
+ 1379 00df 31C0     		xorl	%eax, %eax
+ 1380 00e1 48C70500 		movq	$0, 115+bWifiModule(%rip)
+ 1380      00000000 
+ 1380      000000
+ 1381 00ec 488D7D08 		leaq	8(%rbp), %rdi
+ 1382 00f0 4889E9   		movq	%rbp, %rcx
+ 1383 00f3 48C70500 		movq	$0, 206+bWifiModule(%rip)
+ 1383      00000000 
+GAS LISTING /tmp/ccumMMsB.s 			page 42
+
+
+ 1383      000000
+ 1384 00fe 4883E7F8 		andq	$-8, %rdi
+ 1385 0102 4829F9   		subq	%rdi, %rcx
+ 1386 0105 83C163   		addl	$99, %ecx
+ 1387 0108 C1E903   		shrl	$3, %ecx
+ 1388 010b F348AB   		rep stosq
+ 1389              	.LVL116:
+ 1390              		.loc 2 59 10 discriminator 1 view .LVU416
+ 1391              	.LBE41:
+ 1392              	.LBE52:
+ 391:../../bos/modules/b_mod_wifi.c ****     if (passwd == NULL)
+ 1393              		.loc 1 391 5 is_stmt 1 view .LVU417
+ 1394 010e 4889DF   		movq	%rbx, %rdi
+ 1395 0111 E8000000 		call	strlen@PLT
+ 1395      00
+ 1396              	.LVL117:
+ 1397              	.LBB53:
+ 1398              	.LBB45:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1399              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU418
+ 1400 0116 B9BD0000 		movl	$189, %ecx
+ 1400      00
+ 1401 011b 4889DE   		movq	%rbx, %rsi
+ 1402 011e 4889EF   		movq	%rbp, %rdi
+ 1403              	.LBE45:
+ 1404              	.LBE53:
+ 391:../../bos/modules/b_mod_wifi.c ****     if (passwd == NULL)
+ 1405              		.loc 1 391 5 view .LVU419
+ 1406 0121 4889C2   		movq	%rax, %rdx
+ 1407              	.LVL118:
+ 1408              	.LBB54:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1409              		.loc 2 26 1 is_stmt 1 view .LVU420
+ 1410              	.LBB46:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1411              		.loc 2 29 3 view .LVU421
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1412              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU422
+ 1413 0124 E8000000 		call	__memcpy_chk@PLT
+ 1413      00
+ 1414              	.LVL119:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 1415              		.loc 2 29 10 discriminator 1 view .LVU423
+ 1416              	.LBE46:
+ 1417              	.LBE54:
+ 392:../../bos/modules/b_mod_wifi.c ****     {
+ 1418              		.loc 1 392 5 is_stmt 1 view .LVU424
+ 394:../../bos/modules/b_mod_wifi.c ****     }
+ 1419              		.loc 1 394 9 view .LVU425
+ 394:../../bos/modules/b_mod_wifi.c ****     }
+ 1420              		.loc 1 394 35 is_stmt 0 view .LVU426
+ 1421 0129 C6050000 		movb	$0, 213+bWifiModule(%rip)
+ 1421      000000
+ 1422 0130 EB8F     		jmp	.L140
+ 1423              	.LVL120:
+ 1424              		.p2align 4,,10
+ 1425 0132 660F1F44 		.p2align 3
+GAS LISTING /tmp/ccumMMsB.s 			page 43
+
+
+ 1425      0000
+ 1426              	.L143:
+ 373:../../bos/modules/b_mod_wifi.c ****     }
+ 1427              		.loc 1 373 16 view .LVU427
+ 1428 0138 B8FFFFFF 		movl	$-1, %eax
+ 1428      FF
+ 1429 013d EB8E     		jmp	.L136
+ 1430              	.LVL121:
+ 1431              	.L141:
+ 1432              	.LCFI51:
+ 1433              		.cfi_def_cfa_offset 8
+ 1434              		.cfi_restore 3
+ 1435              		.cfi_restore 6
+ 1436              		.cfi_restore 12
+ 373:../../bos/modules/b_mod_wifi.c ****     }
+ 1437              		.loc 1 373 16 view .LVU428
+ 1438 013f B8FFFFFF 		movl	$-1, %eax
+ 1438      FF
+ 1439              		.loc 1 403 1 view .LVU429
+ 1440 0144 C3       		ret
+ 1441              		.cfi_endproc
+ 1442              	.LFE34:
+ 1444              		.section	.rodata.__func__.0,"a"
+ 1445              		.align 8
+ 1448              	__func__.0:
+ 1449 0000 5F625769 		.string	"_bWifiTask"
+ 1449      66695461 
+ 1449      736B00
+ 1450              		.section	.rodata.__func__.1,"a"
+ 1451              		.align 8
+ 1454              	__func__.1:
+ 1455 0000 5F625769 		.string	"_bWifiDrvCb"
+ 1455      66694472 
+ 1455      76436200 
+ 1456              		.section	.bss.bWifiModule,"aw",@nobits
+ 1457              		.align 32
+ 1460              	bWifiModule:
+ 1461 0000 00000000 		.zero	304
+ 1461      00000000 
+ 1461      00000000 
+ 1461      00000000 
+ 1461      00000000 
+ 1462              		.text
+ 1463              	.Letext0:
+ 1464              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1465              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"
+ 1466              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1467              		.file 6 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1468              		.file 7 "../../bos/modules/inc/b_mod_wifi.h"
+ 1469              		.file 8 "../../bos/utils/inc/b_util_list.h"
+ 1470              		.file 9 "../../bos/thirdparty/pt/lc-switch.h"
+ 1471              		.file 10 "../../bos/thirdparty/pt/pt.h"
+ 1472              		.file 11 "../../bos/core/inc/b_task.h"
+ 1473              		.file 12 "../../bos/drivers/inc/b_driver_cmd.h"
+ 1474              		.file 13 "/usr/include/string.h"
+ 1475              		.file 14 "../../bos/core/inc/b_core.h"
+ 1476              		.file 15 "../../bos/hal/inc/b_hal.h"
+GAS LISTING /tmp/ccumMMsB.s 			page 44
+
+
+ 1477              		.file 16 "../../bos/utils/inc/b_util_log.h"
+ 1478              		.file 17 "<built-in>"
+ 5879              		.section	.note.gnu.property,"a"
+ 5880              		.align 8
+ 5881 0000 04000000 		.long	1f - 0f
+ 5882 0004 10000000 		.long	4f - 1f
+ 5883 0008 05000000 		.long	5
+ 5884              	0:
+ 5885 000c 474E5500 		.string	"GNU"
+ 5886              	1:
+ 5887              		.align 8
+ 5888 0010 020000C0 		.long	0xc0000002
+ 5889 0014 04000000 		.long	3f - 2f
+ 5890              	2:
+ 5891 0018 03000000 		.long	0x3
+ 5892              	3:
+ 5893 001c 00000000 		.align 8
+ 5894              	4:
+GAS LISTING /tmp/ccumMMsB.s 			page 45
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_mod_wifi.c
+     /tmp/ccumMMsB.s:15     .text._bWifiDrvCb:0000000000000000 _bWifiDrvCb
+     /tmp/ccumMMsB.s:1454   .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/ccumMMsB.s:1460   .bss.bWifiModule:0000000000000000 bWifiModule
+     /tmp/ccumMMsB.s:233    .text._bWifiTask:0000000000000000 _bWifiTask
+     /tmp/ccumMMsB.s:1448   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccumMMsB.s:750    .text.bWifiInit:0000000000000000 bWifiInit
+     /tmp/ccumMMsB.s:892    .text.bWifiSetMode:0000000000000000 bWifiSetMode
+     /tmp/ccumMMsB.s:947    .text.bWifiDeinit:0000000000000000 bWifiDeinit
+     /tmp/ccumMMsB.s:963    .text.bWifiApConfig:0000000000000000 bWifiApConfig
+     /tmp/ccumMMsB.s:1208   .text.bWifiJoinAp:0000000000000000 bWifiJoinAp
+     /tmp/ccumMMsB.s:6      .rodata._bWifiDrvCb.str1.1:0000000000000000 .LC0
+     /tmp/ccumMMsB.s:10     .rodata._bWifiDrvCb.str1.8:0000000000000000 .LC1
+     /tmp/ccumMMsB.s:226    .rodata._bWifiTask.str1.1:0000000000000000 .LC2
+     /tmp/ccumMMsB.s:228    .rodata._bWifiTask.str1.1:0000000000000015 .LC3
+     /tmp/ccumMMsB.s:886    .rodata.bWifiSetMode.str1.1:0000000000000000 .LC4
+
+UNDEFINED SYMBOLS
+bLogOut
+__stack_chk_fail
+bOpen
+bCtl
+bClose
+bHalGetSysTick
+bTaskCreate
+strlen
+__memcpy_chk

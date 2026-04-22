@@ -1,0 +1,1920 @@
+GAS LISTING /tmp/ccRc2fk6.s 			page 1
+
+
+   1              		.file	"b_util_utc.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/utils/b_util_utc.c"
+   5              		.section	.text.bUTC_SetTime,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	bUTC_SetTime
+   9              	bUTC_SetTime:
+  10              	.LVL0:
+  11              	.LFB29:
+   1:../../bos/utils/b_util_utc.c **** /**
+   2:../../bos/utils/b_util_utc.c ****  *!
+   3:../../bos/utils/b_util_utc.c ****  * \file        b_util_utc.c
+   4:../../bos/utils/b_util_utc.c ****  * \version     v0.0.1
+   5:../../bos/utils/b_util_utc.c ****  * \date        2019/06/05
+   6:../../bos/utils/b_util_utc.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/b_util_utc.c ****  *******************************************************************************
+   8:../../bos/utils/b_util_utc.c ****  * @attention
+   9:../../bos/utils/b_util_utc.c ****  *
+  10:../../bos/utils/b_util_utc.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/b_util_utc.c ****  *
+  12:../../bos/utils/b_util_utc.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/b_util_utc.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/b_util_utc.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/b_util_utc.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/b_util_utc.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/b_util_utc.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/b_util_utc.c ****  *
+  19:../../bos/utils/b_util_utc.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/b_util_utc.c ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/b_util_utc.c ****  *
+  22:../../bos/utils/b_util_utc.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/b_util_utc.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/b_util_utc.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/b_util_utc.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/b_util_utc.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/b_util_utc.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/b_util_utc.c ****  * SOFTWARE.
+  29:../../bos/utils/b_util_utc.c ****  *******************************************************************************
+  30:../../bos/utils/b_util_utc.c ****  */
+  31:../../bos/utils/b_util_utc.c **** 
+  32:../../bos/utils/b_util_utc.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/utils/b_util_utc.c **** #include "utils/inc/b_util_utc.h"
+  34:../../bos/utils/b_util_utc.c **** 
+  35:../../bos/utils/b_util_utc.c **** #include "hal/inc/b_hal.h"
+  36:../../bos/utils/b_util_utc.c **** 
+  37:../../bos/utils/b_util_utc.c **** /**
+  38:../../bos/utils/b_util_utc.c ****  * \addtogroup B_UTILS
+  39:../../bos/utils/b_util_utc.c ****  * \{
+  40:../../bos/utils/b_util_utc.c ****  */
+  41:../../bos/utils/b_util_utc.c **** 
+  42:../../bos/utils/b_util_utc.c **** /**
+  43:../../bos/utils/b_util_utc.c ****  * \addtogroup UTC
+  44:../../bos/utils/b_util_utc.c ****  * \{
+  45:../../bos/utils/b_util_utc.c ****  */
+  46:../../bos/utils/b_util_utc.c **** 
+  47:../../bos/utils/b_util_utc.c **** /**
+GAS LISTING /tmp/ccRc2fk6.s 			page 2
+
+
+  48:../../bos/utils/b_util_utc.c ****  * \defgroup UTC_Private_TypesDefinitions
+  49:../../bos/utils/b_util_utc.c ****  * \{
+  50:../../bos/utils/b_util_utc.c ****  */
+  51:../../bos/utils/b_util_utc.c **** 
+  52:../../bos/utils/b_util_utc.c **** #define YEAR_CHECK(yr) (((yr % 400) == 0x0) || (((yr % 4) == 0) && ((yr % 100) != 0)))
+  53:../../bos/utils/b_util_utc.c **** 
+  54:../../bos/utils/b_util_utc.c **** #define YEAR_DAYS(yr) (YEAR_CHECK(yr) ? 366 : 365)
+  55:../../bos/utils/b_util_utc.c **** #define BEGYEAR 1970  // UTC started at 00:00:00 January 1, 2000
+  56:../../bos/utils/b_util_utc.c **** #define DAY 86400UL   // 24 hours * 60 minutes * 60 seconds
+  57:../../bos/utils/b_util_utc.c **** 
+  58:../../bos/utils/b_util_utc.c **** #define IS_TIME_VALID(n)                                                             \
+  59:../../bos/utils/b_util_utc.c ****     ((n.month > 0 && n.month <= 12) && (n.day > 0 && n.day <= 31) && n.hour <= 23 && \
+  60:../../bos/utils/b_util_utc.c ****      n.minute <= 59 && n.second <= 59)
+  61:../../bos/utils/b_util_utc.c **** 
+  62:../../bos/utils/b_util_utc.c **** /**
+  63:../../bos/utils/b_util_utc.c ****  * \}
+  64:../../bos/utils/b_util_utc.c ****  */
+  65:../../bos/utils/b_util_utc.c **** 
+  66:../../bos/utils/b_util_utc.c **** /**
+  67:../../bos/utils/b_util_utc.c ****  * \defgroup UTC_Private_Variables
+  68:../../bos/utils/b_util_utc.c ****  * \{
+  69:../../bos/utils/b_util_utc.c ****  */
+  70:../../bos/utils/b_util_utc.c **** static uint64_t bBaseUTC  = 0;
+  71:../../bos/utils/b_util_utc.c **** static uint64_t bBaseTick = 0;
+  72:../../bos/utils/b_util_utc.c **** /**
+  73:../../bos/utils/b_util_utc.c ****  * \}
+  74:../../bos/utils/b_util_utc.c ****  */
+  75:../../bos/utils/b_util_utc.c **** 
+  76:../../bos/utils/b_util_utc.c **** /**
+  77:../../bos/utils/b_util_utc.c ****  * \defgroup UTC_Private_Functions
+  78:../../bos/utils/b_util_utc.c ****  * \{
+  79:../../bos/utils/b_util_utc.c ****  */
+  80:../../bos/utils/b_util_utc.c **** static uint8_t _bUTC_CalendarMonthDays(uint8_t lpyr, uint8_t month)
+  81:../../bos/utils/b_util_utc.c **** {
+  82:../../bos/utils/b_util_utc.c ****     uint8_t days = 31, i = 0;
+  83:../../bos/utils/b_util_utc.c ****     uint8_t table[7] = {1, 3, 5, 7, 8, 10, 12};
+  84:../../bos/utils/b_util_utc.c ****     if (month < 1 || month > 12)
+  85:../../bos/utils/b_util_utc.c ****     {
+  86:../../bos/utils/b_util_utc.c ****         return 0;
+  87:../../bos/utils/b_util_utc.c ****     }
+  88:../../bos/utils/b_util_utc.c ****     if (month == 2)
+  89:../../bos/utils/b_util_utc.c ****     {
+  90:../../bos/utils/b_util_utc.c ****         days = (28 + lpyr);
+  91:../../bos/utils/b_util_utc.c ****     }
+  92:../../bos/utils/b_util_utc.c ****     else
+  93:../../bos/utils/b_util_utc.c ****     {
+  94:../../bos/utils/b_util_utc.c ****         for (i = 0; i < 7; i++)
+  95:../../bos/utils/b_util_utc.c ****         {
+  96:../../bos/utils/b_util_utc.c ****             if (month == table[i])
+  97:../../bos/utils/b_util_utc.c ****             {
+  98:../../bos/utils/b_util_utc.c ****                 days = 31;
+  99:../../bos/utils/b_util_utc.c ****                 break;
+ 100:../../bos/utils/b_util_utc.c ****             }
+ 101:../../bos/utils/b_util_utc.c ****         }
+ 102:../../bos/utils/b_util_utc.c ****         if (i >= 7)
+ 103:../../bos/utils/b_util_utc.c ****         {
+ 104:../../bos/utils/b_util_utc.c ****             days = 30;
+GAS LISTING /tmp/ccRc2fk6.s 			page 3
+
+
+ 105:../../bos/utils/b_util_utc.c ****         }
+ 106:../../bos/utils/b_util_utc.c ****     }
+ 107:../../bos/utils/b_util_utc.c ****     return days;
+ 108:../../bos/utils/b_util_utc.c **** }
+ 109:../../bos/utils/b_util_utc.c **** 
+ 110:../../bos/utils/b_util_utc.c **** /**
+ 111:../../bos/utils/b_util_utc.c ****  * \}
+ 112:../../bos/utils/b_util_utc.c ****  */
+ 113:../../bos/utils/b_util_utc.c **** 
+ 114:../../bos/utils/b_util_utc.c **** /**
+ 115:../../bos/utils/b_util_utc.c ****  * \addtogroup UTC_Exported_Functions
+ 116:../../bos/utils/b_util_utc.c ****  * \{
+ 117:../../bos/utils/b_util_utc.c ****  */
+ 118:../../bos/utils/b_util_utc.c **** 
+ 119:../../bos/utils/b_util_utc.c **** void bUTC_SetTime(bUTC_t utc)
+ 120:../../bos/utils/b_util_utc.c **** {
+  12              		.loc 1 120 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 120 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+ 121:../../bos/utils/b_util_utc.c ****     bBaseUTC  = utc;
+  16              		.loc 1 121 5 is_stmt 1 view .LVU2
+ 120:../../bos/utils/b_util_utc.c ****     bBaseUTC  = utc;
+  17              		.loc 1 120 1 is_stmt 0 view .LVU3
+  18 0004 4883EC08 		subq	$8, %rsp
+  19              	.LCFI0:
+  20              		.cfi_def_cfa_offset 16
+  21              		.loc 1 121 15 view .LVU4
+  22 0008 48893D00 		movq	%rdi, bBaseUTC(%rip)
+  22      000000
+ 122:../../bos/utils/b_util_utc.c ****     bBaseTick = bHalGetSysTickPlus();
+  23              		.loc 1 122 5 is_stmt 1 view .LVU5
+  24              		.loc 1 122 17 is_stmt 0 view .LVU6
+  25 000f E8000000 		call	bHalGetSysTickPlus@PLT
+  25      00
+  26              	.LVL1:
+  27              		.loc 1 122 15 discriminator 1 view .LVU7
+  28 0014 48890500 		movq	%rax, bBaseTick(%rip)
+  28      000000
+ 123:../../bos/utils/b_util_utc.c **** }
+  29              		.loc 1 123 1 view .LVU8
+  30 001b 4883C408 		addq	$8, %rsp
+  31              	.LCFI1:
+  32              		.cfi_def_cfa_offset 8
+  33 001f C3       		ret
+  34              		.cfi_endproc
+  35              	.LFE29:
+  37              		.section	.text.bUTC_GetTime,"ax",@progbits
+  38              		.p2align 4
+  39              		.globl	bUTC_GetTime
+  41              	bUTC_GetTime:
+  42              	.LFB30:
+ 124:../../bos/utils/b_util_utc.c **** 
+ 125:../../bos/utils/b_util_utc.c **** bUTC_t bUTC_GetTime()
+ 126:../../bos/utils/b_util_utc.c **** {
+  43              		.loc 1 126 1 is_stmt 1 view -0
+  44              		.cfi_startproc
+GAS LISTING /tmp/ccRc2fk6.s 			page 4
+
+
+  45 0000 F30F1EFA 		endbr64
+ 127:../../bos/utils/b_util_utc.c ****     bUTC_t utc = bBaseUTC + (TICKS2MS(bHalGetSysTickPlus() - bBaseTick)) / 1000;
+  46              		.loc 1 127 5 view .LVU10
+ 126:../../bos/utils/b_util_utc.c ****     bUTC_t utc = bBaseUTC + (TICKS2MS(bHalGetSysTickPlus() - bBaseTick)) / 1000;
+  47              		.loc 1 126 1 is_stmt 0 view .LVU11
+  48 0004 4883EC08 		subq	$8, %rsp
+  49              	.LCFI2:
+  50              		.cfi_def_cfa_offset 16
+  51              		.loc 1 127 30 view .LVU12
+  52 0008 E8000000 		call	bHalGetSysTickPlus@PLT
+  52      00
+  53              	.LVL2:
+ 128:../../bos/utils/b_util_utc.c ****     return utc;
+  54              		.loc 1 128 5 is_stmt 1 view .LVU13
+ 127:../../bos/utils/b_util_utc.c ****     bUTC_t utc = bBaseUTC + (TICKS2MS(bHalGetSysTickPlus() - bBaseTick)) / 1000;
+  55              		.loc 1 127 30 is_stmt 0 discriminator 1 view .LVU14
+  56 000d 482B0500 		subq	bBaseTick(%rip), %rax
+  56      000000
+  57              	.LVL3:
+ 127:../../bos/utils/b_util_utc.c ****     bUTC_t utc = bBaseUTC + (TICKS2MS(bHalGetSysTickPlus() - bBaseTick)) / 1000;
+  58              		.loc 1 127 30 discriminator 1 view .LVU15
+  59 0014 4889C2   		movq	%rax, %rdx
+ 127:../../bos/utils/b_util_utc.c ****     bUTC_t utc = bBaseUTC + (TICKS2MS(bHalGetSysTickPlus() - bBaseTick)) / 1000;
+  60              		.loc 1 127 74 discriminator 1 view .LVU16
+  61 0017 48B8CFF7 		movabsq	$2361183241434822607, %rax
+  61      53E3A59B 
+  61      C420
+  62 0021 48C1EA03 		shrq	$3, %rdx
+  63 0025 48F7E2   		mulq	%rdx
+ 127:../../bos/utils/b_util_utc.c ****     bUTC_t utc = bBaseUTC + (TICKS2MS(bHalGetSysTickPlus() - bBaseTick)) / 1000;
+  64              		.loc 1 127 27 discriminator 1 view .LVU17
+  65 0028 488B0500 		movq	bBaseUTC(%rip), %rax
+  65      000000
+ 129:../../bos/utils/b_util_utc.c **** }
+  66              		.loc 1 129 1 view .LVU18
+  67 002f 4883C408 		addq	$8, %rsp
+  68              	.LCFI3:
+  69              		.cfi_def_cfa_offset 8
+ 127:../../bos/utils/b_util_utc.c ****     return utc;
+  70              		.loc 1 127 74 discriminator 1 view .LVU19
+  71 0033 48C1EA04 		shrq	$4, %rdx
+ 127:../../bos/utils/b_util_utc.c ****     return utc;
+  72              		.loc 1 127 27 discriminator 1 view .LVU20
+  73 0037 4801D0   		addq	%rdx, %rax
+  74              		.loc 1 129 1 view .LVU21
+  75 003a C3       		ret
+  76              		.cfi_endproc
+  77              	.LFE30:
+  79              		.section	.text.bUTC2Struct,"ax",@progbits
+  80              		.p2align 4
+  81              		.globl	bUTC2Struct
+  83              	bUTC2Struct:
+  84              	.LVL4:
+  85              	.LFB31:
+ 130:../../bos/utils/b_util_utc.c **** 
+ 131:../../bos/utils/b_util_utc.c **** /**
+ 132:../../bos/utils/b_util_utc.c ****  * \brief UTC to date struct \ref bUTC_DateTime_t
+GAS LISTING /tmp/ccRc2fk6.s 			page 5
+
+
+ 133:../../bos/utils/b_util_utc.c ****  */
+ 134:../../bos/utils/b_util_utc.c **** void bUTC2Struct(bUTC_DateTime_t *tm, bUTC_t utc, double zone)
+ 135:../../bos/utils/b_util_utc.c **** {
+  86              		.loc 1 135 1 is_stmt 1 view -0
+  87              		.cfi_startproc
+  88              		.loc 1 135 1 is_stmt 0 view .LVU23
+  89 0000 F30F1EFA 		endbr64
+ 136:../../bos/utils/b_util_utc.c ****     utc = utc + zone * 60 * 60;
+  90              		.loc 1 136 5 is_stmt 1 view .LVU24
+  91              		.loc 1 136 22 is_stmt 0 view .LVU25
+  92 0004 F20F100D 		movsd	.LC0(%rip), %xmm1
+  92      00000000 
+ 137:../../bos/utils/b_util_utc.c **** 
+ 138:../../bos/utils/b_util_utc.c ****     uint32_t sec_in_day = utc % DAY;
+  93              		.loc 1 138 31 view .LVU26
+  94 000c 48B8B74A 		movabsq	$-4454547087429121353, %rax
+  94      89720645 
+  94      2EC2
+ 136:../../bos/utils/b_util_utc.c ****     utc = utc + zone * 60 * 60;
+  95              		.loc 1 136 22 view .LVU27
+  96 0016 F20F59C1 		mulsd	%xmm1, %xmm0
+  97              	.LVL5:
+ 136:../../bos/utils/b_util_utc.c ****     utc = utc + zone * 60 * 60;
+  98              		.loc 1 136 27 view .LVU28
+  99 001a F20F59C1 		mulsd	%xmm1, %xmm0
+ 136:../../bos/utils/b_util_utc.c ****     utc = utc + zone * 60 * 60;
+ 100              		.loc 1 136 15 view .LVU29
+ 101 001e 660FEFC9 		pxor	%xmm1, %xmm1
+ 102 0022 F2480F2A 		cvtsi2sdq	%rsi, %xmm1
+ 102      CE
+ 103 0027 F20F58C1 		addsd	%xmm1, %xmm0
+ 104              	.LVL6:
+ 105              		.loc 1 138 5 is_stmt 1 view .LVU30
+ 136:../../bos/utils/b_util_utc.c ****     utc = utc + zone * 60 * 60;
+ 106              		.loc 1 136 9 is_stmt 0 view .LVU31
+ 107 002b F2480F2C 		cvttsd2siq	%xmm0, %rcx
+ 107      C8
+ 108              	.LVL7:
+ 109              		.loc 1 138 31 view .LVU32
+ 110 0030 48F7E1   		mulq	%rcx
+ 111 0033 4889C8   		movq	%rcx, %rax
+ 112 0036 48C1EA10 		shrq	$16, %rdx
+ 139:../../bos/utils/b_util_utc.c ****     tm->second          = sec_in_day % 60;
+ 140:../../bos/utils/b_util_utc.c ****     tm->minute          = (sec_in_day % 3600) / 60;
+ 141:../../bos/utils/b_util_utc.c ****     tm->hour            = sec_in_day / 3600;
+ 142:../../bos/utils/b_util_utc.c **** 
+ 143:../../bos/utils/b_util_utc.c ****     uint32_t days = utc / DAY;
+ 144:../../bos/utils/b_util_utc.c **** 
+ 145:../../bos/utils/b_util_utc.c ****     tm->week = (((days % 7) + 3) % 7) + 1;
+ 113              		.loc 1 145 24 view .LVU33
+ 114 003a 4189D0   		movl	%edx, %r8d
+ 138:../../bos/utils/b_util_utc.c ****     tm->second          = sec_in_day % 60;
+ 115              		.loc 1 138 31 view .LVU34
+ 116 003d 4869F280 		imulq	$86400, %rdx, %rsi
+ 116      510100
+ 143:../../bos/utils/b_util_utc.c **** 
+ 117              		.loc 1 143 14 view .LVU35
+GAS LISTING /tmp/ccRc2fk6.s 			page 6
+
+
+ 118 0044 89D1     		movl	%edx, %ecx
+ 119              	.LVL8:
+ 120              		.loc 1 145 24 view .LVU36
+ 121 0046 4D69C025 		imulq	$613566757, %r8, %r8
+ 121      499224
+ 138:../../bos/utils/b_util_utc.c ****     tm->second          = sec_in_day % 60;
+ 122              		.loc 1 138 31 view .LVU37
+ 123 004d 4829F0   		subq	%rsi, %rax
+ 124              	.LVL9:
+ 139:../../bos/utils/b_util_utc.c ****     tm->second          = sec_in_day % 60;
+ 125              		.loc 1 139 5 is_stmt 1 view .LVU38
+ 140:../../bos/utils/b_util_utc.c ****     tm->hour            = sec_in_day / 3600;
+ 126              		.loc 1 140 5 view .LVU39
+ 141:../../bos/utils/b_util_utc.c **** 
+ 127              		.loc 1 141 5 view .LVU40
+ 143:../../bos/utils/b_util_utc.c **** 
+ 128              		.loc 1 143 5 view .LVU41
+ 129              		.loc 1 145 5 view .LVU42
+ 130              		.loc 1 145 24 is_stmt 0 view .LVU43
+ 131 0050 89D6     		movl	%edx, %esi
+ 132 0052 49C1E820 		shrq	$32, %r8
+ 140:../../bos/utils/b_util_utc.c ****     tm->hour            = sec_in_day / 3600;
+ 133              		.loc 1 140 47 view .LVU44
+ 134 0056 4189C1   		movl	%eax, %r9d
+ 135              		.loc 1 145 24 view .LVU45
+ 136 0059 4429C6   		subl	%r8d, %esi
+ 137 005c D1EE     		shrl	%esi
+ 138 005e 4401C6   		addl	%r8d, %esi
+ 139 0061 C1EE02   		shrl	$2, %esi
+ 140 0064 448D04F5 		leal	0(,%rsi,8), %r8d
+ 140      00000000 
+ 141 006c 4429C6   		subl	%r8d, %esi
+ 142              		.loc 1 145 29 view .LVU46
+ 143 006f 448D4416 		leal	3(%rsi,%rdx), %r8d
+ 143      03
+ 144 0074 4C89C2   		movq	%r8, %rdx
+ 145              	.LVL10:
+ 146              		.loc 1 145 34 view .LVU47
+ 147 0077 4D69C025 		imulq	$613566757, %r8, %r8
+ 147      499224
+ 148 007e 89D6     		movl	%edx, %esi
+ 149 0080 49C1E820 		shrq	$32, %r8
+ 150 0084 4429C6   		subl	%r8d, %esi
+ 151 0087 D1EE     		shrl	%esi
+ 152 0089 4401C6   		addl	%r8d, %esi
+ 153 008c C1EE02   		shrl	$2, %esi
+ 154 008f 448D04F5 		leal	0(,%rsi,8), %r8d
+ 154      00000000 
+ 155 0097 4129F0   		subl	%esi, %r8d
+ 141:../../bos/utils/b_util_utc.c **** 
+ 156              		.loc 1 141 38 view .LVU48
+ 157 009a BEC5B3A2 		movl	$2443359173, %esi
+ 157      91
+ 158              		.loc 1 145 34 view .LVU49
+ 159 009f 4429C2   		subl	%r8d, %edx
+ 141:../../bos/utils/b_util_utc.c **** 
+ 160              		.loc 1 141 38 view .LVU50
+GAS LISTING /tmp/ccRc2fk6.s 			page 7
+
+
+ 161 00a2 4189C0   		movl	%eax, %r8d
+ 162 00a5 490FAFF0 		imulq	%r8, %rsi
+ 163              		.loc 1 145 39 view .LVU51
+ 164 00a9 83C201   		addl	$1, %edx
+ 165              		.loc 1 145 14 view .LVU52
+ 166 00ac 0FB6D2   		movzbl	%dl, %edx
+ 141:../../bos/utils/b_util_utc.c **** 
+ 167              		.loc 1 141 38 view .LVU53
+ 168 00af 48C1EE2B 		shrq	$43, %rsi
+ 140:../../bos/utils/b_util_utc.c ****     tm->hour            = sec_in_day / 3600;
+ 169              		.loc 1 140 39 view .LVU54
+ 170 00b3 4469D610 		imull	$3600, %esi, %r10d
+ 170      0E0000
+ 171              		.loc 1 145 14 view .LVU55
+ 172 00ba 400FB6F6 		movzbl	%sil, %esi
+ 140:../../bos/utils/b_util_utc.c ****     tm->hour            = sec_in_day / 3600;
+ 173              		.loc 1 140 47 view .LVU56
+ 174 00be 4529D1   		subl	%r10d, %r9d
+ 175 00c1 41BA8988 		movl	$2290649225, %r10d
+ 175      8888
+ 139:../../bos/utils/b_util_utc.c ****     tm->minute          = (sec_in_day % 3600) / 60;
+ 176              		.loc 1 139 38 view .LVU57
+ 177 00c7 4D0FAFC2 		imulq	%r10, %r8
+ 140:../../bos/utils/b_util_utc.c ****     tm->hour            = sec_in_day / 3600;
+ 178              		.loc 1 140 47 view .LVU58
+ 179 00cb 4D0FAFCA 		imulq	%r10, %r9
+ 139:../../bos/utils/b_util_utc.c ****     tm->minute          = (sec_in_day % 3600) / 60;
+ 180              		.loc 1 139 38 view .LVU59
+ 181 00cf 49C1E825 		shrq	$37, %r8
+ 182 00d3 456BC03C 		imull	$60, %r8d, %r8d
+ 140:../../bos/utils/b_util_utc.c ****     tm->hour            = sec_in_day / 3600;
+ 183              		.loc 1 140 47 view .LVU60
+ 184 00d7 49C1E925 		shrq	$37, %r9
+ 139:../../bos/utils/b_util_utc.c ****     tm->minute          = (sec_in_day % 3600) / 60;
+ 185              		.loc 1 139 38 view .LVU61
+ 186 00db 4429C0   		subl	%r8d, %eax
+ 187              	.LVL11:
+ 188              		.loc 1 145 14 view .LVU62
+ 189 00de 450FB6C1 		movzbl	%r9b, %r8d
+ 190 00e2 0FB6C0   		movzbl	%al, %eax
+ 191 00e5 C1E008   		sall	$8, %eax
+ 192 00e8 4409C0   		orl	%r8d, %eax
+ 193 00eb C1E008   		sall	$8, %eax
+ 194 00ee 09F0     		orl	%esi, %eax
+ 195 00f0 C1E008   		sall	$8, %eax
+ 196 00f3 09D0     		orl	%edx, %eax
+ 197 00f5 894704   		movl	%eax, 4(%rdi)
+ 146:../../bos/utils/b_util_utc.c **** 
+ 147:../../bos/utils/b_util_utc.c ****     tm->year = BEGYEAR;
+ 198              		.loc 1 147 5 is_stmt 1 view .LVU63
+ 148:../../bos/utils/b_util_utc.c ****     while (days >= YEAR_DAYS(tm->year))
+ 199              		.loc 1 148 5 view .LVU64
+ 200              		.loc 1 148 11 is_stmt 0 view .LVU65
+ 201 00f8 B8B20700 		movl	$1970, %eax
+ 201      00
+ 202 00fd EB1B     		jmp	.L7
+ 203 00ff 90       		.p2align 4,,10
+GAS LISTING /tmp/ccRc2fk6.s 			page 8
+
+
+ 204              		.p2align 3
+ 205              	.L38:
+ 206              		.loc 1 148 20 discriminator 2 view .LVU66
+ 207 0100 A803     		testb	$3, %al
+ 208 0102 743C     		je	.L9
+ 209              		.loc 1 148 17 discriminator 8 view .LVU67
+ 210 0104 81F96C01 		cmpl	$364, %ecx
+ 210      0000
+ 211 010a 0F86FA00 		jbe	.L37
+ 211      0000
+ 212              	.L33:
+ 149:../../bos/utils/b_util_utc.c ****     {
+ 150:../../bos/utils/b_util_utc.c ****         days -= YEAR_DAYS(tm->year);
+ 213              		.loc 1 150 17 discriminator 6 view .LVU68
+ 214 0110 BA6D0100 		movl	$365, %edx
+ 214      00
+ 215              	.L10:
+ 216              		.loc 1 150 14 discriminator 8 view .LVU69
+ 217 0115 29D1     		subl	%edx, %ecx
+ 218              	.LVL12:
+ 151:../../bos/utils/b_util_utc.c ****         tm->year++;
+ 219              		.loc 1 151 9 is_stmt 1 view .LVU70
+ 220 0117 83C001   		addl	$1, %eax
+ 221              	.L7:
+ 148:../../bos/utils/b_util_utc.c ****     while (days >= YEAR_DAYS(tm->year))
+ 222              		.loc 1 148 17 view .LVU71
+ 223 011a 6669D029 		imulw	$23593, %ax, %dx
+ 223      5C
+ 224 011f 89D6     		movl	%edx, %esi
+ 225 0121 66C1CE04 		rorw	$4, %si
+ 148:../../bos/utils/b_util_utc.c ****     while (days >= YEAR_DAYS(tm->year))
+ 226              		.loc 1 148 20 is_stmt 0 view .LVU72
+ 227 0125 6681FEA3 		cmpw	$163, %si
+ 227      00
+ 228 012a 77D4     		ja	.L38
+ 148:../../bos/utils/b_util_utc.c ****     while (days >= YEAR_DAYS(tm->year))
+ 229              		.loc 1 148 17 discriminator 8 view .LVU73
+ 230 012c 81F96D01 		cmpl	$365, %ecx
+ 230      0000
+ 231 0132 0F868000 		jbe	.L39
+ 231      0000
+ 232              	.L34:
+ 150:../../bos/utils/b_util_utc.c ****         tm->year++;
+ 233              		.loc 1 150 17 discriminator 5 view .LVU74
+ 234 0138 BA6E0100 		movl	$366, %edx
+ 234      00
+ 235 013d EBD6     		jmp	.L10
+ 236 013f 90       		.p2align 4,,10
+ 237              		.p2align 3
+ 238              	.L9:
+ 150:../../bos/utils/b_util_utc.c ****         tm->year++;
+ 239              		.loc 1 150 17 discriminator 5 view .LVU75
+ 240 0140 66C1CA02 		rorw	$2, %dx
+ 148:../../bos/utils/b_util_utc.c ****     {
+ 241              		.loc 1 148 20 discriminator 3 view .LVU76
+ 242 0144 6681FA8F 		cmpw	$655, %dx
+ 242      02
+GAS LISTING /tmp/ccRc2fk6.s 			page 9
+
+
+ 243 0149 7615     		jbe	.L12
+ 148:../../bos/utils/b_util_utc.c ****     {
+ 244              		.loc 1 148 17 discriminator 8 view .LVU77
+ 245 014b 81F96D01 		cmpl	$365, %ecx
+ 245      0000
+ 246 0151 77E5     		ja	.L34
+ 247 0153 BE010000 		movl	$1, %esi
+ 247      00
+ 248 0158 EB10     		jmp	.L13
+ 249 015a 660F1F44 		.p2align 4,,10
+ 249      0000
+ 250              		.p2align 3
+ 251              	.L12:
+ 148:../../bos/utils/b_util_utc.c ****     {
+ 252              		.loc 1 148 17 discriminator 8 view .LVU78
+ 253 0160 81F96C01 		cmpl	$364, %ecx
+ 253      0000
+ 254 0166 77A8     		ja	.L33
+ 255 0168 31F6     		xorl	%esi, %esi
+ 256              	.L13:
+ 257              	.LBB8:
+ 258              	.LBB9:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 259              		.loc 1 90 14 view .LVU79
+ 260 016a 83C61C   		addl	$28, %esi
+ 261 016d 668907   		movw	%ax, (%rdi)
+  96:../../bos/utils/b_util_utc.c ****             {
+ 262              		.loc 1 96 16 view .LVU80
+ 263 0170 49C7C055 		movq	$-5547, %r8
+ 263      EAFFFF
+ 264              	.LBE9:
+ 265              	.LBE8:
+ 148:../../bos/utils/b_util_utc.c ****     {
+ 266              		.loc 1 148 17 discriminator 8 view .LVU81
+ 267 0177 B8010000 		movl	$1, %eax
+ 267      00
+ 152:../../bos/utils/b_util_utc.c ****     }
+ 153:../../bos/utils/b_util_utc.c ****     tm->month = 1;
+ 154:../../bos/utils/b_util_utc.c ****     while (days >= _bUTC_CalendarMonthDays(YEAR_CHECK(tm->year), tm->month))
+ 268              		.loc 1 154 20 discriminator 1 view .LVU82
+ 269 017c 400FB6F6 		movzbl	%sil, %esi
+ 270 0180 EB1F     		jmp	.L15
+ 271              	.LVL13:
+ 272              		.p2align 4,,10
+ 273 0182 660F1F44 		.p2align 3
+ 273      0000
+ 274              	.L36:
+ 275              	.LBB20:
+ 276              	.LBB10:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 277              		.loc 1 94 23 is_stmt 1 discriminator 1 view .LVU83
+  96:../../bos/utils/b_util_utc.c ****             {
+ 278              		.loc 1 96 13 view .LVU84
+  94:../../bos/utils/b_util_utc.c ****         {
+ 279              		.loc 1 94 29 discriminator 2 view .LVU85
+  94:../../bos/utils/b_util_utc.c ****         {
+ 280              		.loc 1 94 23 discriminator 1 view .LVU86
+GAS LISTING /tmp/ccRc2fk6.s 			page 10
+
+
+  96:../../bos/utils/b_util_utc.c ****             {
+ 281              		.loc 1 96 13 view .LVU87
+  94:../../bos/utils/b_util_utc.c ****         {
+ 282              		.loc 1 94 29 discriminator 2 view .LVU88
+  94:../../bos/utils/b_util_utc.c ****         {
+ 283              		.loc 1 94 23 discriminator 1 view .LVU89
+  96:../../bos/utils/b_util_utc.c ****             {
+ 284              		.loc 1 96 13 view .LVU90
+  94:../../bos/utils/b_util_utc.c ****         {
+ 285              		.loc 1 94 29 discriminator 2 view .LVU91
+  94:../../bos/utils/b_util_utc.c ****         {
+ 286              		.loc 1 94 23 discriminator 1 view .LVU92
+  96:../../bos/utils/b_util_utc.c ****             {
+ 287              		.loc 1 96 13 view .LVU93
+  94:../../bos/utils/b_util_utc.c ****         {
+ 288              		.loc 1 94 29 discriminator 2 view .LVU94
+  94:../../bos/utils/b_util_utc.c ****         {
+ 289              		.loc 1 94 23 discriminator 1 view .LVU95
+  96:../../bos/utils/b_util_utc.c ****             {
+ 290              		.loc 1 96 13 view .LVU96
+  94:../../bos/utils/b_util_utc.c ****         {
+ 291              		.loc 1 94 29 discriminator 2 view .LVU97
+  94:../../bos/utils/b_util_utc.c ****         {
+ 292              		.loc 1 94 23 discriminator 1 view .LVU98
+  96:../../bos/utils/b_util_utc.c ****             {
+ 293              		.loc 1 96 13 view .LVU99
+  94:../../bos/utils/b_util_utc.c ****         {
+ 294              		.loc 1 94 29 discriminator 2 view .LVU100
+  94:../../bos/utils/b_util_utc.c ****         {
+ 295              		.loc 1 94 23 discriminator 1 view .LVU101
+  96:../../bos/utils/b_util_utc.c ****             {
+ 296              		.loc 1 96 13 view .LVU102
+  96:../../bos/utils/b_util_utc.c ****             {
+ 297              		.loc 1 96 16 is_stmt 0 view .LVU103
+ 298 0188 490FA3C0 		btq	%rax, %r8
+ 299 018c 0F92C2   		setc	%dl
+ 300 018f 83F201   		xorl	$1, %edx
+ 301              	.LBE10:
+ 302              	.LBE20:
+ 303              		.loc 1 154 20 discriminator 1 view .LVU104
+ 304 0192 83C21E   		addl	$30, %edx
+ 305 0195 0FB6D2   		movzbl	%dl, %edx
+ 306              		.loc 1 154 17 discriminator 1 view .LVU105
+ 307 0198 39D1     		cmpl	%edx, %ecx
+ 308 019a 7264     		jb	.L20
+ 309              	.LVL14:
+ 310              	.LBB21:
+ 311              	.LBI21:
+  80:../../bos/utils/b_util_utc.c **** {
+ 312              		.loc 1 80 16 is_stmt 1 view .LVU106
+ 313              	.LBB22:
+  82:../../bos/utils/b_util_utc.c ****     uint8_t table[7] = {1, 3, 5, 7, 8, 10, 12};
+ 314              		.loc 1 82 5 view .LVU107
+  83:../../bos/utils/b_util_utc.c ****     if (month < 1 || month > 12)
+ 315              		.loc 1 83 5 view .LVU108
+  84:../../bos/utils/b_util_utc.c ****     {
+ 316              		.loc 1 84 5 view .LVU109
+GAS LISTING /tmp/ccRc2fk6.s 			page 11
+
+
+  88:../../bos/utils/b_util_utc.c ****     {
+ 317              		.loc 1 88 5 view .LVU110
+  94:../../bos/utils/b_util_utc.c ****         {
+ 318              		.loc 1 94 23 discriminator 1 view .LVU111
+  96:../../bos/utils/b_util_utc.c ****             {
+ 319              		.loc 1 96 13 view .LVU112
+  94:../../bos/utils/b_util_utc.c ****         {
+ 320              		.loc 1 94 29 discriminator 2 view .LVU113
+  94:../../bos/utils/b_util_utc.c ****         {
+ 321              		.loc 1 94 23 discriminator 1 view .LVU114
+  96:../../bos/utils/b_util_utc.c ****             {
+ 322              		.loc 1 96 13 view .LVU115
+  94:../../bos/utils/b_util_utc.c ****         {
+ 323              		.loc 1 94 29 discriminator 2 view .LVU116
+  94:../../bos/utils/b_util_utc.c ****         {
+ 324              		.loc 1 94 23 discriminator 1 view .LVU117
+  96:../../bos/utils/b_util_utc.c ****             {
+ 325              		.loc 1 96 13 view .LVU118
+  94:../../bos/utils/b_util_utc.c ****         {
+ 326              		.loc 1 94 29 discriminator 2 view .LVU119
+  94:../../bos/utils/b_util_utc.c ****         {
+ 327              		.loc 1 94 23 discriminator 1 view .LVU120
+  96:../../bos/utils/b_util_utc.c ****             {
+ 328              		.loc 1 96 13 view .LVU121
+  94:../../bos/utils/b_util_utc.c ****         {
+ 329              		.loc 1 94 29 discriminator 2 view .LVU122
+  94:../../bos/utils/b_util_utc.c ****         {
+ 330              		.loc 1 94 23 discriminator 1 view .LVU123
+  96:../../bos/utils/b_util_utc.c ****             {
+ 331              		.loc 1 96 13 view .LVU124
+  94:../../bos/utils/b_util_utc.c ****         {
+ 332              		.loc 1 94 29 discriminator 2 view .LVU125
+  94:../../bos/utils/b_util_utc.c ****         {
+ 333              		.loc 1 94 23 discriminator 1 view .LVU126
+  96:../../bos/utils/b_util_utc.c ****             {
+ 334              		.loc 1 96 13 view .LVU127
+  94:../../bos/utils/b_util_utc.c ****         {
+ 335              		.loc 1 94 29 discriminator 2 view .LVU128
+  94:../../bos/utils/b_util_utc.c ****         {
+ 336              		.loc 1 94 23 discriminator 1 view .LVU129
+  96:../../bos/utils/b_util_utc.c ****             {
+ 337              		.loc 1 96 13 view .LVU130
+ 338              	.LBE22:
+ 339              	.LBE21:
+ 155:../../bos/utils/b_util_utc.c ****     {
+ 156:../../bos/utils/b_util_utc.c ****         days -= _bUTC_CalendarMonthDays(YEAR_CHECK(tm->year), tm->month);
+ 340              		.loc 1 156 14 is_stmt 0 discriminator 1 view .LVU131
+ 341 019c 29D1     		subl	%edx, %ecx
+ 342              	.LVL15:
+ 343              	.L22:
+ 157:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 344              		.loc 1 157 9 is_stmt 1 view .LVU132
+ 345 019e 83C001   		addl	$1, %eax
+ 346              	.LVL16:
+ 347              	.L15:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 348              		.loc 1 154 17 view .LVU133
+GAS LISTING /tmp/ccRc2fk6.s 			page 12
+
+
+ 349              	.LBB29:
+ 350              	.LBI8:
+  80:../../bos/utils/b_util_utc.c **** {
+ 351              		.loc 1 80 16 view .LVU134
+ 352              	.LBB11:
+  82:../../bos/utils/b_util_utc.c ****     uint8_t table[7] = {1, 3, 5, 7, 8, 10, 12};
+ 353              		.loc 1 82 5 view .LVU135
+  83:../../bos/utils/b_util_utc.c ****     if (month < 1 || month > 12)
+ 354              		.loc 1 83 5 view .LVU136
+  84:../../bos/utils/b_util_utc.c ****     {
+ 355              		.loc 1 84 5 view .LVU137
+  84:../../bos/utils/b_util_utc.c ****     {
+ 356              		.loc 1 84 8 is_stmt 0 view .LVU138
+ 357 01a1 8D50FF   		leal	-1(%rax), %edx
+ 358 01a4 80FA0B   		cmpb	$11, %dl
+ 359 01a7 77F5     		ja	.L22
+  88:../../bos/utils/b_util_utc.c ****     {
+ 360              		.loc 1 88 5 is_stmt 1 view .LVU139
+  88:../../bos/utils/b_util_utc.c ****     {
+ 361              		.loc 1 88 8 is_stmt 0 view .LVU140
+ 362 01a9 3C02     		cmpb	$2, %al
+ 363 01ab 75DB     		jne	.L36
+  90:../../bos/utils/b_util_utc.c ****     }
+ 364              		.loc 1 90 9 is_stmt 1 view .LVU141
+ 365              	.LVL17:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 366              		.loc 1 90 9 is_stmt 0 view .LVU142
+ 367              	.LBE11:
+ 368              	.LBE29:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 369              		.loc 1 154 17 discriminator 1 view .LVU143
+ 370 01ad 39F1     		cmpl	%esi, %ecx
+ 371 01af 724F     		jb	.L20
+ 372              	.LBB30:
+ 373              	.LBB23:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 374              		.loc 1 90 9 is_stmt 1 view .LVU144
+ 375              	.LBE23:
+ 376              	.LBE30:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 377              		.loc 1 156 14 is_stmt 0 discriminator 1 view .LVU145
+ 378 01b1 29F1     		subl	%esi, %ecx
+ 379              	.LVL18:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 380              		.loc 1 156 14 discriminator 1 view .LVU146
+ 381 01b3 EBE9     		jmp	.L22
+ 382              	.LVL19:
+ 383              		.p2align 4,,10
+ 384 01b5 0F1F00   		.p2align 3
+ 385              	.L39:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 386              		.loc 1 156 14 discriminator 1 view .LVU147
+ 387 01b8 668907   		movw	%ax, (%rdi)
+ 153:../../bos/utils/b_util_utc.c ****     while (days >= _bUTC_CalendarMonthDays(YEAR_CHECK(tm->year), tm->month))
+ 388              		.loc 1 153 5 is_stmt 1 view .LVU148
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 389              		.loc 1 154 5 view .LVU149
+GAS LISTING /tmp/ccRc2fk6.s 			page 13
+
+
+ 390              	.LBB31:
+ 391              	.LBB12:
+  96:../../bos/utils/b_util_utc.c ****             {
+ 392              		.loc 1 96 16 is_stmt 0 view .LVU150
+ 393 01bb 48C7C655 		movq	$-5547, %rsi
+ 393      EAFFFF
+ 394              	.LBE12:
+ 395              	.LBE31:
+ 148:../../bos/utils/b_util_utc.c ****     {
+ 396              		.loc 1 148 17 discriminator 8 view .LVU151
+ 397 01c2 B8010000 		movl	$1, %eax
+ 397      00
+ 398 01c7 EB20     		jmp	.L14
+ 399              	.LVL20:
+ 400 01c9 0F1F8000 		.p2align 4,,10
+ 400      000000
+ 401              		.p2align 3
+ 402              	.L40:
+ 403              	.LBB32:
+ 404              	.LBB13:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 405              		.loc 1 94 23 is_stmt 1 discriminator 1 view .LVU152
+  96:../../bos/utils/b_util_utc.c ****             {
+ 406              		.loc 1 96 13 view .LVU153
+  94:../../bos/utils/b_util_utc.c ****         {
+ 407              		.loc 1 94 29 discriminator 2 view .LVU154
+  94:../../bos/utils/b_util_utc.c ****         {
+ 408              		.loc 1 94 23 discriminator 1 view .LVU155
+  96:../../bos/utils/b_util_utc.c ****             {
+ 409              		.loc 1 96 13 view .LVU156
+  96:../../bos/utils/b_util_utc.c ****             {
+ 410              		.loc 1 96 16 is_stmt 0 view .LVU157
+ 411 01d0 480FA3C6 		btq	%rax, %rsi
+ 412 01d4 0F92C2   		setc	%dl
+ 413 01d7 83F201   		xorl	$1, %edx
+ 414              	.LBE13:
+ 415              	.LBE32:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 416              		.loc 1 154 20 discriminator 1 view .LVU158
+ 417 01da 83C21E   		addl	$30, %edx
+ 418 01dd 0FB6D2   		movzbl	%dl, %edx
+ 419              	.LBB33:
+ 420              	.LBB14:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 421              		.loc 1 94 29 is_stmt 1 discriminator 2 view .LVU159
+ 422              	.LVL21:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 423              		.loc 1 94 23 discriminator 1 view .LVU160
+  96:../../bos/utils/b_util_utc.c ****             {
+ 424              		.loc 1 96 13 view .LVU161
+  94:../../bos/utils/b_util_utc.c ****         {
+ 425              		.loc 1 94 29 discriminator 2 view .LVU162
+  94:../../bos/utils/b_util_utc.c ****         {
+ 426              		.loc 1 94 23 discriminator 1 view .LVU163
+  96:../../bos/utils/b_util_utc.c ****             {
+ 427              		.loc 1 96 13 view .LVU164
+  94:../../bos/utils/b_util_utc.c ****         {
+GAS LISTING /tmp/ccRc2fk6.s 			page 14
+
+
+ 428              		.loc 1 94 29 discriminator 2 view .LVU165
+  94:../../bos/utils/b_util_utc.c ****         {
+ 429              		.loc 1 94 23 discriminator 1 view .LVU166
+  96:../../bos/utils/b_util_utc.c ****             {
+ 430              		.loc 1 96 13 view .LVU167
+  94:../../bos/utils/b_util_utc.c ****         {
+ 431              		.loc 1 94 29 discriminator 2 view .LVU168
+  94:../../bos/utils/b_util_utc.c ****         {
+ 432              		.loc 1 94 23 discriminator 1 view .LVU169
+  96:../../bos/utils/b_util_utc.c ****             {
+ 433              		.loc 1 96 13 view .LVU170
+  94:../../bos/utils/b_util_utc.c ****         {
+ 434              		.loc 1 94 29 discriminator 2 view .LVU171
+  94:../../bos/utils/b_util_utc.c ****         {
+ 435              		.loc 1 94 23 discriminator 1 view .LVU172
+  96:../../bos/utils/b_util_utc.c ****             {
+ 436              		.loc 1 96 13 view .LVU173
+  96:../../bos/utils/b_util_utc.c ****             {
+ 437              		.loc 1 96 13 is_stmt 0 view .LVU174
+ 438              	.LBE14:
+ 439              	.LBE33:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 440              		.loc 1 154 17 discriminator 1 view .LVU175
+ 441 01e0 39D1     		cmpl	%edx, %ecx
+ 442 01e2 721C     		jb	.L20
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 443              		.loc 1 156 9 is_stmt 1 view .LVU176
+ 444              	.LVL22:
+ 445              	.LBB34:
+ 446              	.LBB24:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 447              		.loc 1 94 23 discriminator 1 view .LVU177
+  96:../../bos/utils/b_util_utc.c ****             {
+ 448              		.loc 1 96 13 view .LVU178
+  94:../../bos/utils/b_util_utc.c ****         {
+ 449              		.loc 1 94 29 discriminator 2 view .LVU179
+  94:../../bos/utils/b_util_utc.c ****         {
+ 450              		.loc 1 94 23 discriminator 1 view .LVU180
+  96:../../bos/utils/b_util_utc.c ****             {
+ 451              		.loc 1 96 13 view .LVU181
+  94:../../bos/utils/b_util_utc.c ****         {
+ 452              		.loc 1 94 29 discriminator 2 view .LVU182
+  94:../../bos/utils/b_util_utc.c ****         {
+ 453              		.loc 1 94 23 discriminator 1 view .LVU183
+  96:../../bos/utils/b_util_utc.c ****             {
+ 454              		.loc 1 96 13 view .LVU184
+  94:../../bos/utils/b_util_utc.c ****         {
+ 455              		.loc 1 94 29 discriminator 2 view .LVU185
+  94:../../bos/utils/b_util_utc.c ****         {
+ 456              		.loc 1 94 23 discriminator 1 view .LVU186
+  96:../../bos/utils/b_util_utc.c ****             {
+ 457              		.loc 1 96 13 view .LVU187
+  94:../../bos/utils/b_util_utc.c ****         {
+ 458              		.loc 1 94 29 discriminator 2 view .LVU188
+  94:../../bos/utils/b_util_utc.c ****         {
+ 459              		.loc 1 94 23 discriminator 1 view .LVU189
+  96:../../bos/utils/b_util_utc.c ****             {
+GAS LISTING /tmp/ccRc2fk6.s 			page 15
+
+
+ 460              		.loc 1 96 13 view .LVU190
+  94:../../bos/utils/b_util_utc.c ****         {
+ 461              		.loc 1 94 29 discriminator 2 view .LVU191
+  94:../../bos/utils/b_util_utc.c ****         {
+ 462              		.loc 1 94 23 discriminator 1 view .LVU192
+  96:../../bos/utils/b_util_utc.c ****             {
+ 463              		.loc 1 96 13 view .LVU193
+  94:../../bos/utils/b_util_utc.c ****         {
+ 464              		.loc 1 94 29 discriminator 2 view .LVU194
+  94:../../bos/utils/b_util_utc.c ****         {
+ 465              		.loc 1 94 23 discriminator 1 view .LVU195
+  96:../../bos/utils/b_util_utc.c ****             {
+ 466              		.loc 1 96 13 view .LVU196
+ 467              	.LBE24:
+ 468              	.LBE34:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 469              		.loc 1 156 14 is_stmt 0 discriminator 1 view .LVU197
+ 470 01e4 29D1     		subl	%edx, %ecx
+ 471              	.LVL23:
+ 472              	.L27:
+ 473              		.loc 1 157 9 is_stmt 1 view .LVU198
+ 474 01e6 83C001   		addl	$1, %eax
+ 475              	.LVL24:
+ 476              	.L14:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 477              		.loc 1 154 17 view .LVU199
+ 478              	.LBB35:
+  80:../../bos/utils/b_util_utc.c **** {
+ 479              		.loc 1 80 16 view .LVU200
+ 480              	.LBB15:
+  82:../../bos/utils/b_util_utc.c ****     uint8_t table[7] = {1, 3, 5, 7, 8, 10, 12};
+ 481              		.loc 1 82 5 view .LVU201
+  83:../../bos/utils/b_util_utc.c ****     if (month < 1 || month > 12)
+ 482              		.loc 1 83 5 view .LVU202
+  84:../../bos/utils/b_util_utc.c ****     {
+ 483              		.loc 1 84 5 view .LVU203
+  84:../../bos/utils/b_util_utc.c ****     {
+ 484              		.loc 1 84 8 is_stmt 0 view .LVU204
+ 485 01e9 8D50FF   		leal	-1(%rax), %edx
+ 486 01ec 80FA0B   		cmpb	$11, %dl
+ 487 01ef 77F5     		ja	.L27
+  88:../../bos/utils/b_util_utc.c ****     {
+ 488              		.loc 1 88 5 is_stmt 1 view .LVU205
+  88:../../bos/utils/b_util_utc.c ****     {
+ 489              		.loc 1 88 8 is_stmt 0 view .LVU206
+ 490 01f1 3C02     		cmpb	$2, %al
+ 491 01f3 75DB     		jne	.L40
+  90:../../bos/utils/b_util_utc.c ****     }
+ 492              		.loc 1 90 9 is_stmt 1 view .LVU207
+ 493              	.LVL25:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 494              		.loc 1 90 9 is_stmt 0 view .LVU208
+ 495              	.LBE15:
+ 496              	.LBE35:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 497              		.loc 1 154 17 discriminator 1 view .LVU209
+ 498 01f5 83F91C   		cmpl	$28, %ecx
+GAS LISTING /tmp/ccRc2fk6.s 			page 16
+
+
+ 499 01f8 7606     		jbe	.L20
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 500              		.loc 1 156 9 is_stmt 1 view .LVU210
+ 501              	.LBB36:
+ 502              	.LBB25:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 503              		.loc 1 90 9 view .LVU211
+ 504              	.LBE25:
+ 505              	.LBE36:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 506              		.loc 1 156 14 is_stmt 0 discriminator 1 view .LVU212
+ 507 01fa 83E91D   		subl	$29, %ecx
+ 508              	.LVL26:
+ 509              	.LBB37:
+ 510              	.LBB26:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 511              		.loc 1 156 14 discriminator 1 view .LVU213
+ 512 01fd EBE7     		jmp	.L27
+ 513              	.LVL27:
+ 514 01ff 90       		.p2align 4,,10
+ 515              		.p2align 3
+ 516              	.L20:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 517              		.loc 1 156 14 discriminator 1 view .LVU214
+ 518              	.LBE26:
+ 519              	.LBE37:
+ 158:../../bos/utils/b_util_utc.c ****     }
+ 159:../../bos/utils/b_util_utc.c ****     tm->day = days + 1;
+ 520              		.loc 1 159 20 view .LVU215
+ 521 0200 83C101   		addl	$1, %ecx
+ 522              	.LVL28:
+ 523              		.loc 1 159 20 view .LVU216
+ 524 0203 884702   		movb	%al, 2(%rdi)
+ 525              		.loc 1 159 5 is_stmt 1 view .LVU217
+ 526              		.loc 1 159 20 is_stmt 0 view .LVU218
+ 527 0206 884F03   		movb	%cl, 3(%rdi)
+ 160:../../bos/utils/b_util_utc.c **** }
+ 528              		.loc 1 160 1 view .LVU219
+ 529 0209 C3       		ret
+ 530              	.LVL29:
+ 531              	.L37:
+ 532              		.loc 1 160 1 view .LVU220
+ 533 020a 668907   		movw	%ax, (%rdi)
+ 153:../../bos/utils/b_util_utc.c ****     while (days >= _bUTC_CalendarMonthDays(YEAR_CHECK(tm->year), tm->month))
+ 534              		.loc 1 153 5 is_stmt 1 view .LVU221
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 535              		.loc 1 154 5 view .LVU222
+ 536              	.LBB38:
+ 537              	.LBB16:
+  96:../../bos/utils/b_util_utc.c ****             {
+ 538              		.loc 1 96 16 is_stmt 0 view .LVU223
+ 539 020d 48C7C655 		movq	$-5547, %rsi
+ 539      EAFFFF
+ 540              	.LBE16:
+ 541              	.LBE38:
+ 148:../../bos/utils/b_util_utc.c ****     {
+ 542              		.loc 1 148 17 discriminator 8 view .LVU224
+GAS LISTING /tmp/ccRc2fk6.s 			page 17
+
+
+ 543 0214 B8010000 		movl	$1, %eax
+ 543      00
+ 544 0219 EB1E     		jmp	.L11
+ 545              	.LVL30:
+ 546 021b 0F1F4400 		.p2align 4,,10
+ 546      00
+ 547              		.p2align 3
+ 548              	.L35:
+ 549              	.LBB39:
+ 550              	.LBB17:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 551              		.loc 1 94 23 is_stmt 1 discriminator 1 view .LVU225
+  96:../../bos/utils/b_util_utc.c ****             {
+ 552              		.loc 1 96 13 view .LVU226
+  94:../../bos/utils/b_util_utc.c ****         {
+ 553              		.loc 1 94 29 discriminator 2 view .LVU227
+  94:../../bos/utils/b_util_utc.c ****         {
+ 554              		.loc 1 94 23 discriminator 1 view .LVU228
+  96:../../bos/utils/b_util_utc.c ****             {
+ 555              		.loc 1 96 13 view .LVU229
+  96:../../bos/utils/b_util_utc.c ****             {
+ 556              		.loc 1 96 16 is_stmt 0 view .LVU230
+ 557 0220 480FA3C6 		btq	%rax, %rsi
+ 558 0224 0F92C2   		setc	%dl
+ 559 0227 83F201   		xorl	$1, %edx
+ 560              	.LBE17:
+ 561              	.LBE39:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 562              		.loc 1 154 20 discriminator 1 view .LVU231
+ 563 022a 83C21E   		addl	$30, %edx
+ 564 022d 0FB6D2   		movzbl	%dl, %edx
+ 565              	.LBB40:
+ 566              	.LBB18:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 567              		.loc 1 94 29 is_stmt 1 discriminator 2 view .LVU232
+ 568              	.LVL31:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 569              		.loc 1 94 23 discriminator 1 view .LVU233
+  96:../../bos/utils/b_util_utc.c ****             {
+ 570              		.loc 1 96 13 view .LVU234
+  94:../../bos/utils/b_util_utc.c ****         {
+ 571              		.loc 1 94 29 discriminator 2 view .LVU235
+  94:../../bos/utils/b_util_utc.c ****         {
+ 572              		.loc 1 94 23 discriminator 1 view .LVU236
+  96:../../bos/utils/b_util_utc.c ****             {
+ 573              		.loc 1 96 13 view .LVU237
+  94:../../bos/utils/b_util_utc.c ****         {
+ 574              		.loc 1 94 29 discriminator 2 view .LVU238
+  94:../../bos/utils/b_util_utc.c ****         {
+ 575              		.loc 1 94 23 discriminator 1 view .LVU239
+  96:../../bos/utils/b_util_utc.c ****             {
+ 576              		.loc 1 96 13 view .LVU240
+  94:../../bos/utils/b_util_utc.c ****         {
+ 577              		.loc 1 94 29 discriminator 2 view .LVU241
+  94:../../bos/utils/b_util_utc.c ****         {
+ 578              		.loc 1 94 23 discriminator 1 view .LVU242
+  96:../../bos/utils/b_util_utc.c ****             {
+GAS LISTING /tmp/ccRc2fk6.s 			page 18
+
+
+ 579              		.loc 1 96 13 view .LVU243
+  94:../../bos/utils/b_util_utc.c ****         {
+ 580              		.loc 1 94 29 discriminator 2 view .LVU244
+  94:../../bos/utils/b_util_utc.c ****         {
+ 581              		.loc 1 94 23 discriminator 1 view .LVU245
+  96:../../bos/utils/b_util_utc.c ****             {
+ 582              		.loc 1 96 13 view .LVU246
+  96:../../bos/utils/b_util_utc.c ****             {
+ 583              		.loc 1 96 13 is_stmt 0 view .LVU247
+ 584              	.LBE18:
+ 585              	.LBE40:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 586              		.loc 1 154 17 discriminator 1 view .LVU248
+ 587 0230 39D1     		cmpl	%edx, %ecx
+ 588 0232 72CC     		jb	.L20
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 589              		.loc 1 156 9 is_stmt 1 view .LVU249
+ 590              	.LVL32:
+ 591              	.LBB41:
+ 592              	.LBB27:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 593              		.loc 1 94 23 discriminator 1 view .LVU250
+  96:../../bos/utils/b_util_utc.c ****             {
+ 594              		.loc 1 96 13 view .LVU251
+  94:../../bos/utils/b_util_utc.c ****         {
+ 595              		.loc 1 94 29 discriminator 2 view .LVU252
+  94:../../bos/utils/b_util_utc.c ****         {
+ 596              		.loc 1 94 23 discriminator 1 view .LVU253
+  96:../../bos/utils/b_util_utc.c ****             {
+ 597              		.loc 1 96 13 view .LVU254
+  94:../../bos/utils/b_util_utc.c ****         {
+ 598              		.loc 1 94 29 discriminator 2 view .LVU255
+  94:../../bos/utils/b_util_utc.c ****         {
+ 599              		.loc 1 94 23 discriminator 1 view .LVU256
+  96:../../bos/utils/b_util_utc.c ****             {
+ 600              		.loc 1 96 13 view .LVU257
+  94:../../bos/utils/b_util_utc.c ****         {
+ 601              		.loc 1 94 29 discriminator 2 view .LVU258
+  94:../../bos/utils/b_util_utc.c ****         {
+ 602              		.loc 1 94 23 discriminator 1 view .LVU259
+  96:../../bos/utils/b_util_utc.c ****             {
+ 603              		.loc 1 96 13 view .LVU260
+  94:../../bos/utils/b_util_utc.c ****         {
+ 604              		.loc 1 94 29 discriminator 2 view .LVU261
+  94:../../bos/utils/b_util_utc.c ****         {
+ 605              		.loc 1 94 23 discriminator 1 view .LVU262
+  96:../../bos/utils/b_util_utc.c ****             {
+ 606              		.loc 1 96 13 view .LVU263
+  94:../../bos/utils/b_util_utc.c ****         {
+ 607              		.loc 1 94 29 discriminator 2 view .LVU264
+  94:../../bos/utils/b_util_utc.c ****         {
+ 608              		.loc 1 94 23 discriminator 1 view .LVU265
+  96:../../bos/utils/b_util_utc.c ****             {
+ 609              		.loc 1 96 13 view .LVU266
+  94:../../bos/utils/b_util_utc.c ****         {
+ 610              		.loc 1 94 29 discriminator 2 view .LVU267
+  94:../../bos/utils/b_util_utc.c ****         {
+GAS LISTING /tmp/ccRc2fk6.s 			page 19
+
+
+ 611              		.loc 1 94 23 discriminator 1 view .LVU268
+  96:../../bos/utils/b_util_utc.c ****             {
+ 612              		.loc 1 96 13 view .LVU269
+ 613              	.LBE27:
+ 614              	.LBE41:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 615              		.loc 1 156 14 is_stmt 0 discriminator 1 view .LVU270
+ 616 0234 29D1     		subl	%edx, %ecx
+ 617              	.LVL33:
+ 618              	.L16:
+ 157:../../bos/utils/b_util_utc.c ****     }
+ 619              		.loc 1 157 9 is_stmt 1 view .LVU271
+ 620 0236 83C001   		addl	$1, %eax
+ 621              	.LVL34:
+ 622              	.L11:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 623              		.loc 1 154 17 view .LVU272
+ 624              	.LBB42:
+  80:../../bos/utils/b_util_utc.c **** {
+ 625              		.loc 1 80 16 view .LVU273
+ 626              	.LBB19:
+  82:../../bos/utils/b_util_utc.c ****     uint8_t table[7] = {1, 3, 5, 7, 8, 10, 12};
+ 627              		.loc 1 82 5 view .LVU274
+  83:../../bos/utils/b_util_utc.c ****     if (month < 1 || month > 12)
+ 628              		.loc 1 83 5 view .LVU275
+  84:../../bos/utils/b_util_utc.c ****     {
+ 629              		.loc 1 84 5 view .LVU276
+  84:../../bos/utils/b_util_utc.c ****     {
+ 630              		.loc 1 84 8 is_stmt 0 view .LVU277
+ 631 0239 8D50FF   		leal	-1(%rax), %edx
+ 632 023c 80FA0B   		cmpb	$11, %dl
+ 633 023f 77F5     		ja	.L16
+  88:../../bos/utils/b_util_utc.c ****     {
+ 634              		.loc 1 88 5 is_stmt 1 view .LVU278
+  88:../../bos/utils/b_util_utc.c ****     {
+ 635              		.loc 1 88 8 is_stmt 0 view .LVU279
+ 636 0241 3C02     		cmpb	$2, %al
+ 637 0243 75DB     		jne	.L35
+  90:../../bos/utils/b_util_utc.c ****     }
+ 638              		.loc 1 90 9 is_stmt 1 view .LVU280
+ 639              	.LVL35:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 640              		.loc 1 90 9 is_stmt 0 view .LVU281
+ 641              	.LBE19:
+ 642              	.LBE42:
+ 154:../../bos/utils/b_util_utc.c ****     {
+ 643              		.loc 1 154 17 discriminator 1 view .LVU282
+ 644 0245 83F91B   		cmpl	$27, %ecx
+ 645 0248 76B6     		jbe	.L20
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 646              		.loc 1 156 9 is_stmt 1 view .LVU283
+ 647              	.LBB43:
+ 648              	.LBB28:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 649              		.loc 1 90 9 view .LVU284
+ 650              	.LBE28:
+ 651              	.LBE43:
+GAS LISTING /tmp/ccRc2fk6.s 			page 20
+
+
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 652              		.loc 1 156 14 is_stmt 0 discriminator 1 view .LVU285
+ 653 024a 83E91C   		subl	$28, %ecx
+ 654              	.LVL36:
+ 156:../../bos/utils/b_util_utc.c ****         tm->month++;
+ 655              		.loc 1 156 14 discriminator 1 view .LVU286
+ 656 024d EBE7     		jmp	.L16
+ 657              		.cfi_endproc
+ 658              	.LFE31:
+ 660              		.section	.text.bStruct2UTC,"ax",@progbits
+ 661              		.p2align 4
+ 662              		.globl	bStruct2UTC
+ 664              	bStruct2UTC:
+ 665              	.LVL37:
+ 666              	.LFB32:
+ 161:../../bos/utils/b_util_utc.c **** 
+ 162:../../bos/utils/b_util_utc.c **** /**
+ 163:../../bos/utils/b_util_utc.c ****  * \brief Calculate UTC
+ 164:../../bos/utils/b_util_utc.c ****  */
+ 165:../../bos/utils/b_util_utc.c **** bUTC_t bStruct2UTC(bUTC_DateTime_t tm, double zone)
+ 166:../../bos/utils/b_util_utc.c **** {
+ 667              		.loc 1 166 1 is_stmt 1 view -0
+ 668              		.cfi_startproc
+ 669              		.loc 1 166 1 is_stmt 0 view .LVU288
+ 670 0000 F30F1EFA 		endbr64
+ 167:../../bos/utils/b_util_utc.c ****     bUTC_t seconds;
+ 671              		.loc 1 167 5 is_stmt 1 view .LVU289
+ 168:../../bos/utils/b_util_utc.c ****     if (!IS_TIME_VALID(tm))
+ 672              		.loc 1 168 5 view .LVU290
+ 673              		.loc 1 168 10 is_stmt 0 view .LVU291
+ 674 0004 4889F9   		movq	%rdi, %rcx
+ 166:../../bos/utils/b_util_utc.c ****     bUTC_t seconds;
+ 675              		.loc 1 166 1 view .LVU292
+ 676 0007 4889FA   		movq	%rdi, %rdx
+ 677              	.LVL38:
+ 169:../../bos/utils/b_util_utc.c ****     {
+ 170:../../bos/utils/b_util_utc.c ****         return 0;
+ 678              		.loc 1 170 16 view .LVU293
+ 679 000a 31C0     		xorl	%eax, %eax
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 680              		.loc 1 168 10 view .LVU294
+ 681 000c 48C1E910 		shrq	$16, %rcx
+ 682 0010 83E901   		subl	$1, %ecx
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 683              		.loc 1 168 8 view .LVU295
+ 684 0013 80F90B   		cmpb	$11, %cl
+ 685 0016 7742     		ja	.L41
+ 686              	.LVL39:
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 687              		.loc 1 168 8 view .LVU296
+ 688 0018 4889FE   		movq	%rdi, %rsi
+ 689 001b 4989F9   		movq	%rdi, %r9
+ 690 001e 4989D0   		movq	%rdx, %r8
+ 691 0021 48C1EF30 		shrq	$48, %rdi
+ 692              	.LVL40:
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 693              		.loc 1 168 8 view .LVU297
+GAS LISTING /tmp/ccRc2fk6.s 			page 21
+
+
+ 694 0025 48C1EE28 		shrq	$40, %rsi
+ 695 0029 49C1E838 		shrq	$56, %r8
+ 696 002d 49C1E918 		shrq	$24, %r9
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 697              		.loc 1 168 10 discriminator 2 view .LVU298
+ 698 0031 4080FE17 		cmpb	$23, %sil
+ 699 0035 0F97C0   		seta	%al
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 700              		.loc 1 168 10 discriminator 3 view .LVU299
+ 701 0038 4080FF3B 		cmpb	$59, %dil
+ 702 003c 410F97C2 		seta	%r10b
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 703              		.loc 1 168 9 discriminator 4 view .LVU300
+ 704 0040 4409D0   		orl	%r10d, %eax
+ 705 0043 4180F83B 		cmpb	$59, %r8b
+ 706 0047 410F97C2 		seta	%r10b
+ 707 004b 4408D0   		orb	%r10b, %al
+ 708 004e 7508     		jne	.L62
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 709              		.loc 1 168 10 discriminator 1 view .LVU301
+ 710 0050 418D41FF 		leal	-1(%r9), %eax
+ 168:../../bos/utils/b_util_utc.c ****     {
+ 711              		.loc 1 168 9 discriminator 4 view .LVU302
+ 712 0054 3C1E     		cmpb	$30, %al
+ 713 0056 7608     		jbe	.L70
+ 714              	.L62:
+ 715              		.loc 1 170 16 view .LVU303
+ 716 0058 31C0     		xorl	%eax, %eax
+ 717              	.L41:
+ 171:../../bos/utils/b_util_utc.c ****     }
+ 172:../../bos/utils/b_util_utc.c ****     seconds = (((tm.hour * 60) + tm.minute) * 60) + tm.second;
+ 173:../../bos/utils/b_util_utc.c **** 
+ 174:../../bos/utils/b_util_utc.c ****     bUTC_t days  = tm.day - 1;
+ 175:../../bos/utils/b_util_utc.c ****     int8_t month = tm.month;
+ 176:../../bos/utils/b_util_utc.c ****     month--;
+ 177:../../bos/utils/b_util_utc.c ****     while (month > 0)
+ 178:../../bos/utils/b_util_utc.c ****     {
+ 179:../../bos/utils/b_util_utc.c ****         days += _bUTC_CalendarMonthDays(YEAR_CHECK(tm.year), month);
+ 180:../../bos/utils/b_util_utc.c ****         month--;
+ 181:../../bos/utils/b_util_utc.c ****     }
+ 182:../../bos/utils/b_util_utc.c **** 
+ 183:../../bos/utils/b_util_utc.c ****     bUTC_t year = (tm.year > 0) ? (tm.year - 1) : 0;
+ 184:../../bos/utils/b_util_utc.c ****     while (year >= BEGYEAR)
+ 185:../../bos/utils/b_util_utc.c ****     {
+ 186:../../bos/utils/b_util_utc.c ****         days += YEAR_DAYS(year);
+ 187:../../bos/utils/b_util_utc.c ****         year--;
+ 188:../../bos/utils/b_util_utc.c ****     }
+ 189:../../bos/utils/b_util_utc.c **** 
+ 190:../../bos/utils/b_util_utc.c ****     seconds += (days * DAY);
+ 191:../../bos/utils/b_util_utc.c ****     seconds -= (bUTC_t)(zone * 60 * 60);
+ 192:../../bos/utils/b_util_utc.c **** 
+ 193:../../bos/utils/b_util_utc.c ****     return seconds;
+ 194:../../bos/utils/b_util_utc.c **** }
+ 718              		.loc 1 194 1 view .LVU304
+ 719 005a C3       		ret
+ 720 005b 0F1F4400 		.p2align 4,,10
+ 720      00
+GAS LISTING /tmp/ccRc2fk6.s 			page 22
+
+
+ 721              		.p2align 3
+ 722              	.L70:
+ 172:../../bos/utils/b_util_utc.c **** 
+ 723              		.loc 1 172 5 is_stmt 1 view .LVU305
+ 172:../../bos/utils/b_util_utc.c **** 
+ 724              		.loc 1 172 20 is_stmt 0 view .LVU306
+ 725 0060 400FB6C6 		movzbl	%sil, %eax
+ 172:../../bos/utils/b_util_utc.c **** 
+ 726              		.loc 1 172 36 view .LVU307
+ 727 0064 400FB6FF 		movzbl	%dil, %edi
+ 172:../../bos/utils/b_util_utc.c **** 
+ 728              		.loc 1 172 26 view .LVU308
+ 729 0068 6BC03C   		imull	$60, %eax, %eax
+ 172:../../bos/utils/b_util_utc.c **** 
+ 730              		.loc 1 172 32 view .LVU309
+ 731 006b 01F8     		addl	%edi, %eax
+ 172:../../bos/utils/b_util_utc.c **** 
+ 732              		.loc 1 172 45 view .LVU310
+ 733 006d 6BC03C   		imull	$60, %eax, %eax
+ 172:../../bos/utils/b_util_utc.c **** 
+ 734              		.loc 1 172 51 view .LVU311
+ 735 0070 4101C0   		addl	%eax, %r8d
+ 736              	.LVL41:
+ 174:../../bos/utils/b_util_utc.c ****     int8_t month = tm.month;
+ 737              		.loc 1 174 5 is_stmt 1 view .LVU312
+ 174:../../bos/utils/b_util_utc.c ****     int8_t month = tm.month;
+ 738              		.loc 1 174 22 is_stmt 0 view .LVU313
+ 739 0073 410FB6C1 		movzbl	%r9b, %eax
+ 174:../../bos/utils/b_util_utc.c ****     int8_t month = tm.month;
+ 740              		.loc 1 174 27 view .LVU314
+ 741 0077 83E801   		subl	$1, %eax
+ 174:../../bos/utils/b_util_utc.c ****     int8_t month = tm.month;
+ 742              		.loc 1 174 12 view .LVU315
+ 743 007a 4898     		cltq
+ 744              	.LVL42:
+ 175:../../bos/utils/b_util_utc.c ****     month--;
+ 745              		.loc 1 175 5 is_stmt 1 view .LVU316
+ 176:../../bos/utils/b_util_utc.c ****     while (month > 0)
+ 746              		.loc 1 176 5 view .LVU317
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 747              		.loc 1 177 5 view .LVU318
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 748              		.loc 1 177 18 view .LVU319
+ 749 007c 84C9     		testb	%cl, %cl
+ 750 007e 0F84FA00 		je	.L43
+ 750      0000
+ 751 0084 6669F229 		imulw	$23593, %dx, %si
+ 751      5C
+ 752 0089 89F7     		movl	%esi, %edi
+ 753 008b 66C1CF04 		rorw	$4, %di
+ 754 008f 6681FFA3 		cmpw	$163, %di
+ 754      00
+ 755 0094 0F86B600 		jbe	.L44
+ 755      0000
+ 756 009a F6C203   		testb	$3, %dl
+ 757 009d 0F841A01 		je	.L45
+ 757      0000
+GAS LISTING /tmp/ccRc2fk6.s 			page 23
+
+
+ 758 00a3 0FB6C9   		movzbl	%cl, %ecx
+ 759              	.LBB44:
+ 760              	.LBB45:
+  96:../../bos/utils/b_util_utc.c ****             {
+ 761              		.loc 1 96 16 is_stmt 0 view .LVU320
+ 762 00a6 BFAA0500 		movl	$1450, %edi
+ 762      00
+ 763              	.LVL43:
+ 764 00ab 0F1F4400 		.p2align 4,,10
+ 764      00
+ 765              		.p2align 3
+ 766              	.L49:
+  96:../../bos/utils/b_util_utc.c ****             {
+ 767              		.loc 1 96 16 view .LVU321
+ 768              	.LBE45:
+ 769              	.LBE44:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 770              		.loc 1 179 9 is_stmt 1 view .LVU322
+ 771              	.LBB53:
+ 772              	.LBI44:
+  80:../../bos/utils/b_util_utc.c **** {
+ 773              		.loc 1 80 16 view .LVU323
+ 774              	.LBB46:
+  82:../../bos/utils/b_util_utc.c ****     uint8_t table[7] = {1, 3, 5, 7, 8, 10, 12};
+ 775              		.loc 1 82 5 view .LVU324
+  83:../../bos/utils/b_util_utc.c ****     if (month < 1 || month > 12)
+ 776              		.loc 1 83 5 view .LVU325
+  84:../../bos/utils/b_util_utc.c ****     {
+ 777              		.loc 1 84 5 view .LVU326
+  88:../../bos/utils/b_util_utc.c ****     {
+ 778              		.loc 1 88 5 view .LVU327
+  88:../../bos/utils/b_util_utc.c ****     {
+ 779              		.loc 1 88 8 is_stmt 0 view .LVU328
+ 780 00b0 80F902   		cmpb	$2, %cl
+ 781 00b3 0F846701 		je	.L46
+ 781      0000
+  94:../../bos/utils/b_util_utc.c ****         {
+ 782              		.loc 1 94 23 is_stmt 1 discriminator 1 view .LVU329
+  96:../../bos/utils/b_util_utc.c ****             {
+ 783              		.loc 1 96 13 view .LVU330
+  94:../../bos/utils/b_util_utc.c ****         {
+ 784              		.loc 1 94 29 discriminator 2 view .LVU331
+ 785              	.LVL44:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 786              		.loc 1 94 23 discriminator 1 view .LVU332
+  96:../../bos/utils/b_util_utc.c ****             {
+ 787              		.loc 1 96 13 view .LVU333
+  94:../../bos/utils/b_util_utc.c ****         {
+ 788              		.loc 1 94 29 discriminator 2 view .LVU334
+  94:../../bos/utils/b_util_utc.c ****         {
+ 789              		.loc 1 94 23 discriminator 1 view .LVU335
+  96:../../bos/utils/b_util_utc.c ****             {
+ 790              		.loc 1 96 13 view .LVU336
+  94:../../bos/utils/b_util_utc.c ****         {
+ 791              		.loc 1 94 29 discriminator 2 view .LVU337
+  94:../../bos/utils/b_util_utc.c ****         {
+ 792              		.loc 1 94 23 discriminator 1 view .LVU338
+GAS LISTING /tmp/ccRc2fk6.s 			page 24
+
+
+  96:../../bos/utils/b_util_utc.c ****             {
+ 793              		.loc 1 96 13 view .LVU339
+  94:../../bos/utils/b_util_utc.c ****         {
+ 794              		.loc 1 94 29 discriminator 2 view .LVU340
+  94:../../bos/utils/b_util_utc.c ****         {
+ 795              		.loc 1 94 23 discriminator 1 view .LVU341
+  96:../../bos/utils/b_util_utc.c ****             {
+ 796              		.loc 1 96 13 view .LVU342
+  94:../../bos/utils/b_util_utc.c ****         {
+ 797              		.loc 1 94 29 discriminator 2 view .LVU343
+  94:../../bos/utils/b_util_utc.c ****         {
+ 798              		.loc 1 94 23 discriminator 1 view .LVU344
+  96:../../bos/utils/b_util_utc.c ****             {
+ 799              		.loc 1 96 13 view .LVU345
+  96:../../bos/utils/b_util_utc.c ****             {
+ 800              		.loc 1 96 16 is_stmt 0 view .LVU346
+ 801 00b9 480FA3CF 		btq	%rcx, %rdi
+ 802 00bd 400F92C6 		setc	%sil
+ 803              	.LBE46:
+ 804              	.LBE53:
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 805              		.loc 1 177 18 view .LVU347
+ 806 00c1 83E901   		subl	$1, %ecx
+ 807              	.LVL45:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 808              		.loc 1 179 17 discriminator 1 view .LVU348
+ 809 00c4 83C61E   		addl	$30, %esi
+ 810 00c7 400FB6F6 		movzbl	%sil, %esi
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 811              		.loc 1 179 14 discriminator 1 view .LVU349
+ 812 00cb 4801F0   		addq	%rsi, %rax
+ 813              	.LVL46:
+ 180:../../bos/utils/b_util_utc.c ****     }
+ 814              		.loc 1 180 9 is_stmt 1 view .LVU350
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 815              		.loc 1 177 18 view .LVU351
+ 816 00ce 84C9     		testb	%cl, %cl
+ 817 00d0 75DE     		jne	.L49
+ 818              	.L60:
+ 183:../../bos/utils/b_util_utc.c ****     while (year >= BEGYEAR)
+ 819              		.loc 1 183 38 is_stmt 0 discriminator 1 view .LVU352
+ 820 00d2 0FB7D2   		movzwl	%dx, %edx
+ 821              	.LVL47:
+ 183:../../bos/utils/b_util_utc.c ****     while (year >= BEGYEAR)
+ 822              		.loc 1 183 44 discriminator 1 view .LVU353
+ 823 00d5 83EA01   		subl	$1, %edx
+ 183:../../bos/utils/b_util_utc.c ****     while (year >= BEGYEAR)
+ 824              		.loc 1 183 49 discriminator 1 view .LVU354
+ 825 00d8 4863CA   		movslq	%edx, %rcx
+ 826              	.LVL48:
+ 184:../../bos/utils/b_util_utc.c ****     {
+ 827              		.loc 1 184 17 is_stmt 1 view .LVU355
+ 828 00db 81FAB107 		cmpl	$1969, %edx
+ 828      0000
+ 829 00e1 0F8EA000 		jle	.L57
+ 829      0000
+ 184:../../bos/utils/b_util_utc.c ****     {
+GAS LISTING /tmp/ccRc2fk6.s 			page 25
+
+
+ 830              		.loc 1 184 17 is_stmt 0 view .LVU356
+ 831 00e7 49BA295C 		movabsq	$-8116567392432202711, %r10
+ 831      8FC2F528 
+ 831      5C8F
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+ 832              		.loc 1 186 17 view .LVU357
+ 833 00f1 49B9D7A3 		movabsq	$46116860184273879, %r9
+ 833      703D0AD7 
+ 833      A300
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+ 834              		.loc 1 186 17 discriminator 3 view .LVU358
+ 835 00fb 49BB5C8F 		movabsq	$184467440737095516, %r11
+ 835      C2F5285C 
+ 835      8F02
+ 836              		.p2align 4,,10
+ 837 0105 0F1F00   		.p2align 3
+ 838              	.L59:
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+ 839              		.loc 1 186 9 is_stmt 1 view .LVU359
+ 184:../../bos/utils/b_util_utc.c ****     {
+ 840              		.loc 1 184 17 is_stmt 0 view .LVU360
+ 841 0108 4889CE   		movq	%rcx, %rsi
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+ 842              		.loc 1 186 17 discriminator 5 view .LVU361
+ 843 010b BA6E0100 		movl	$366, %edx
+ 843      00
+ 184:../../bos/utils/b_util_utc.c ****     {
+ 844              		.loc 1 184 17 view .LVU362
+ 845 0110 490FAFF2 		imulq	%r10, %rsi
+ 846 0114 4889F7   		movq	%rsi, %rdi
+ 847 0117 48C1CF04 		rorq	$4, %rdi
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+ 848              		.loc 1 186 17 view .LVU363
+ 849 011b 4939F9   		cmpq	%rdi, %r9
+ 850 011e 731D     		jnb	.L58
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+ 851              		.loc 1 186 17 discriminator 6 view .LVU364
+ 852 0120 BA6D0100 		movl	$365, %edx
+ 852      00
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+ 853              		.loc 1 186 17 discriminator 2 view .LVU365
+ 854 0125 F6C103   		testb	$3, %cl
+ 855 0128 7513     		jne	.L58
+ 856 012a 48C1CE02 		rorq	$2, %rsi
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+ 857              		.loc 1 186 17 discriminator 6 view .LVU366
+ 858 012e 31D2     		xorl	%edx, %edx
+ 859 0130 4939F3   		cmpq	%rsi, %r11
+ 860 0133 0F92C2   		setb	%dl
+ 861 0136 4881C26D 		addq	$365, %rdx
+ 861      010000
+ 862              	.L58:
+ 187:../../bos/utils/b_util_utc.c ****     }
+ 863              		.loc 1 187 13 view .LVU367
+ 864 013d 4883E901 		subq	$1, %rcx
+ 865              	.LVL49:
+ 186:../../bos/utils/b_util_utc.c ****         year--;
+GAS LISTING /tmp/ccRc2fk6.s 			page 26
+
+
+ 866              		.loc 1 186 14 discriminator 8 view .LVU368
+ 867 0141 4801D0   		addq	%rdx, %rax
+ 868              	.LVL50:
+ 187:../../bos/utils/b_util_utc.c ****     }
+ 869              		.loc 1 187 9 is_stmt 1 view .LVU369
+ 184:../../bos/utils/b_util_utc.c ****     {
+ 870              		.loc 1 184 17 view .LVU370
+ 871 0144 4881F9B1 		cmpq	$1969, %rcx
+ 871      070000
+ 872 014b 75BB     		jne	.L59
+ 873 014d EB38     		jmp	.L57
+ 874              	.LVL51:
+ 875 014f 90       		.p2align 4,,10
+ 876              		.p2align 3
+ 877              	.L44:
+ 184:../../bos/utils/b_util_utc.c ****     {
+ 878              		.loc 1 184 17 is_stmt 0 view .LVU371
+ 879 0150 0FB6C9   		movzbl	%cl, %ecx
+ 880              	.LBB54:
+ 881              	.LBB47:
+  96:../../bos/utils/b_util_utc.c ****             {
+ 882              		.loc 1 96 16 view .LVU372
+ 883 0153 BFAA0500 		movl	$1450, %edi
+ 883      00
+ 884              	.LVL52:
+ 885 0158 0F1F8400 		.p2align 4,,10
+ 885      00000000 
+ 886              		.p2align 3
+ 887              	.L53:
+  96:../../bos/utils/b_util_utc.c ****             {
+ 888              		.loc 1 96 16 view .LVU373
+ 889              	.LBE47:
+ 890              	.LBE54:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 891              		.loc 1 179 9 is_stmt 1 view .LVU374
+ 892              	.LBB55:
+  80:../../bos/utils/b_util_utc.c **** {
+ 893              		.loc 1 80 16 view .LVU375
+ 894              	.LBB48:
+  82:../../bos/utils/b_util_utc.c ****     uint8_t table[7] = {1, 3, 5, 7, 8, 10, 12};
+ 895              		.loc 1 82 5 view .LVU376
+  83:../../bos/utils/b_util_utc.c ****     if (month < 1 || month > 12)
+ 896              		.loc 1 83 5 view .LVU377
+  84:../../bos/utils/b_util_utc.c ****     {
+ 897              		.loc 1 84 5 view .LVU378
+  88:../../bos/utils/b_util_utc.c ****     {
+ 898              		.loc 1 88 5 view .LVU379
+  88:../../bos/utils/b_util_utc.c ****     {
+ 899              		.loc 1 88 8 is_stmt 0 view .LVU380
+ 900 0160 80F902   		cmpb	$2, %cl
+ 901 0163 744B     		je	.L54
+  94:../../bos/utils/b_util_utc.c ****         {
+ 902              		.loc 1 94 23 is_stmt 1 discriminator 1 view .LVU381
+  96:../../bos/utils/b_util_utc.c ****             {
+ 903              		.loc 1 96 13 view .LVU382
+  94:../../bos/utils/b_util_utc.c ****         {
+ 904              		.loc 1 94 29 discriminator 2 view .LVU383
+GAS LISTING /tmp/ccRc2fk6.s 			page 27
+
+
+ 905              	.LVL53:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 906              		.loc 1 94 23 discriminator 1 view .LVU384
+  96:../../bos/utils/b_util_utc.c ****             {
+ 907              		.loc 1 96 13 view .LVU385
+  94:../../bos/utils/b_util_utc.c ****         {
+ 908              		.loc 1 94 29 discriminator 2 view .LVU386
+  94:../../bos/utils/b_util_utc.c ****         {
+ 909              		.loc 1 94 23 discriminator 1 view .LVU387
+  96:../../bos/utils/b_util_utc.c ****             {
+ 910              		.loc 1 96 13 view .LVU388
+  94:../../bos/utils/b_util_utc.c ****         {
+ 911              		.loc 1 94 29 discriminator 2 view .LVU389
+  94:../../bos/utils/b_util_utc.c ****         {
+ 912              		.loc 1 94 23 discriminator 1 view .LVU390
+  96:../../bos/utils/b_util_utc.c ****             {
+ 913              		.loc 1 96 13 view .LVU391
+  94:../../bos/utils/b_util_utc.c ****         {
+ 914              		.loc 1 94 29 discriminator 2 view .LVU392
+  94:../../bos/utils/b_util_utc.c ****         {
+ 915              		.loc 1 94 23 discriminator 1 view .LVU393
+  96:../../bos/utils/b_util_utc.c ****             {
+ 916              		.loc 1 96 13 view .LVU394
+  94:../../bos/utils/b_util_utc.c ****         {
+ 917              		.loc 1 94 29 discriminator 2 view .LVU395
+  94:../../bos/utils/b_util_utc.c ****         {
+ 918              		.loc 1 94 23 discriminator 1 view .LVU396
+  96:../../bos/utils/b_util_utc.c ****             {
+ 919              		.loc 1 96 13 view .LVU397
+  96:../../bos/utils/b_util_utc.c ****             {
+ 920              		.loc 1 96 16 is_stmt 0 view .LVU398
+ 921 0165 480FA3CF 		btq	%rcx, %rdi
+ 922 0169 400F92C6 		setc	%sil
+ 923              	.LBE48:
+ 924              	.LBE55:
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 925              		.loc 1 177 18 view .LVU399
+ 926 016d 83E901   		subl	$1, %ecx
+ 927              	.LVL54:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 928              		.loc 1 179 17 discriminator 1 view .LVU400
+ 929 0170 83C61E   		addl	$30, %esi
+ 930 0173 400FB6F6 		movzbl	%sil, %esi
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 931              		.loc 1 179 14 discriminator 1 view .LVU401
+ 932 0177 4801F0   		addq	%rsi, %rax
+ 933              	.LVL55:
+ 180:../../bos/utils/b_util_utc.c ****     }
+ 934              		.loc 1 180 9 is_stmt 1 view .LVU402
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 935              		.loc 1 177 18 view .LVU403
+ 936 017a 84C9     		testb	%cl, %cl
+ 937 017c 75E2     		jne	.L53
+ 938              	.L43:
+ 183:../../bos/utils/b_util_utc.c ****     while (year >= BEGYEAR)
+ 939              		.loc 1 183 5 view .LVU404
+ 183:../../bos/utils/b_util_utc.c ****     while (year >= BEGYEAR)
+GAS LISTING /tmp/ccRc2fk6.s 			page 28
+
+
+ 940              		.loc 1 183 49 is_stmt 0 view .LVU405
+ 941 017e 6685D2   		testw	%dx, %dx
+ 942 0181 0F854BFF 		jne	.L60
+ 942      FFFF
+ 943              	.L57:
+ 944              	.LVL56:
+ 190:../../bos/utils/b_util_utc.c ****     seconds -= (bUTC_t)(zone * 60 * 60);
+ 945              		.loc 1 190 5 is_stmt 1 view .LVU406
+ 191:../../bos/utils/b_util_utc.c **** 
+ 946              		.loc 1 191 30 is_stmt 0 view .LVU407
+ 947 0187 F20F100D 		movsd	.LC0(%rip), %xmm1
+ 947      00000000 
+ 190:../../bos/utils/b_util_utc.c ****     seconds -= (bUTC_t)(zone * 60 * 60);
+ 948              		.loc 1 190 22 view .LVU408
+ 949 018f 4869C080 		imulq	$86400, %rax, %rax
+ 949      510100
+ 190:../../bos/utils/b_util_utc.c ****     seconds -= (bUTC_t)(zone * 60 * 60);
+ 950              		.loc 1 190 13 view .LVU409
+ 951 0196 4D63C0   		movslq	%r8d, %r8
+ 191:../../bos/utils/b_util_utc.c **** 
+ 952              		.loc 1 191 30 view .LVU410
+ 953 0199 F20F59C1 		mulsd	%xmm1, %xmm0
+ 954              	.LVL57:
+ 190:../../bos/utils/b_util_utc.c ****     seconds -= (bUTC_t)(zone * 60 * 60);
+ 955              		.loc 1 190 13 view .LVU411
+ 956 019d 4C01C0   		addq	%r8, %rax
+ 957              	.LVL58:
+ 191:../../bos/utils/b_util_utc.c **** 
+ 958              		.loc 1 191 5 is_stmt 1 view .LVU412
+ 191:../../bos/utils/b_util_utc.c **** 
+ 959              		.loc 1 191 35 is_stmt 0 view .LVU413
+ 960 01a0 F20F59C1 		mulsd	%xmm1, %xmm0
+ 191:../../bos/utils/b_util_utc.c **** 
+ 961              		.loc 1 191 16 view .LVU414
+ 962 01a4 F2480F2C 		cvttsd2siq	%xmm0, %rdx
+ 962      D0
+ 963              	.LVL59:
+ 191:../../bos/utils/b_util_utc.c **** 
+ 964              		.loc 1 191 13 view .LVU415
+ 965 01a9 4829D0   		subq	%rdx, %rax
+ 966              	.LVL60:
+ 193:../../bos/utils/b_util_utc.c **** }
+ 967              		.loc 1 193 5 is_stmt 1 view .LVU416
+ 193:../../bos/utils/b_util_utc.c **** }
+ 968              		.loc 1 193 12 is_stmt 0 view .LVU417
+ 969 01ac C3       		ret
+ 970              	.LVL61:
+ 971 01ad 0F1F00   		.p2align 4,,10
+ 972              		.p2align 3
+ 973              	.L54:
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 974              		.loc 1 177 18 view .LVU418
+ 975 01b0 83E901   		subl	$1, %ecx
+ 976              	.LVL62:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 977              		.loc 1 179 14 discriminator 1 view .LVU419
+ 978 01b3 4883C01D 		addq	$29, %rax
+GAS LISTING /tmp/ccRc2fk6.s 			page 29
+
+
+ 979              	.LVL63:
+ 180:../../bos/utils/b_util_utc.c ****     }
+ 980              		.loc 1 180 9 is_stmt 1 view .LVU420
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 981              		.loc 1 177 18 view .LVU421
+ 982 01b7 84C9     		testb	%cl, %cl
+ 983 01b9 75A5     		jne	.L53
+ 984 01bb EBC1     		jmp	.L43
+ 985              	.LVL64:
+ 986              	.L45:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 987              		.loc 1 179 41 is_stmt 0 discriminator 3 view .LVU422
+ 988 01bd 66C1CE02 		rorw	$2, %si
+ 989 01c1 0FB6C9   		movzbl	%cl, %ecx
+ 990              	.LBB56:
+ 991              	.LBB49:
+  96:../../bos/utils/b_util_utc.c ****             {
+ 992              		.loc 1 96 16 view .LVU423
+ 993 01c4 41B9AA05 		movl	$1450, %r9d
+ 993      0000
+ 994              	.LBE49:
+ 995              	.LBE56:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 996              		.loc 1 179 41 discriminator 3 view .LVU424
+ 997 01ca 6681FE8F 		cmpw	$655, %si
+ 997      02
+ 998 01cf 400F97C7 		seta	%dil
+ 999              	.LBB57:
+ 1000              	.LBB50:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 1001              		.loc 1 90 14 view .LVU425
+ 1002 01d3 83C71C   		addl	$28, %edi
+ 1003              	.LBE50:
+ 1004              	.LBE57:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 1005              		.loc 1 179 17 discriminator 1 view .LVU426
+ 1006 01d6 400FB6FF 		movzbl	%dil, %edi
+ 1007              	.LVL65:
+ 1008 01da 660F1F44 		.p2align 4,,10
+ 1008      0000
+ 1009              		.p2align 3
+ 1010              	.L52:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 1011              		.loc 1 179 9 is_stmt 1 view .LVU427
+ 1012              	.LBB58:
+  80:../../bos/utils/b_util_utc.c **** {
+ 1013              		.loc 1 80 16 view .LVU428
+ 1014              	.LBB51:
+  82:../../bos/utils/b_util_utc.c ****     uint8_t table[7] = {1, 3, 5, 7, 8, 10, 12};
+ 1015              		.loc 1 82 5 view .LVU429
+  83:../../bos/utils/b_util_utc.c ****     if (month < 1 || month > 12)
+ 1016              		.loc 1 83 5 view .LVU430
+  84:../../bos/utils/b_util_utc.c ****     {
+ 1017              		.loc 1 84 5 view .LVU431
+  88:../../bos/utils/b_util_utc.c ****     {
+ 1018              		.loc 1 88 5 view .LVU432
+  88:../../bos/utils/b_util_utc.c ****     {
+GAS LISTING /tmp/ccRc2fk6.s 			page 30
+
+
+ 1019              		.loc 1 88 8 is_stmt 0 view .LVU433
+ 1020 01e0 80F902   		cmpb	$2, %cl
+ 1021 01e3 7423     		je	.L71
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1022              		.loc 1 94 23 is_stmt 1 discriminator 1 view .LVU434
+  96:../../bos/utils/b_util_utc.c ****             {
+ 1023              		.loc 1 96 13 view .LVU435
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1024              		.loc 1 94 29 discriminator 2 view .LVU436
+ 1025              	.LVL66:
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1026              		.loc 1 94 23 discriminator 1 view .LVU437
+  96:../../bos/utils/b_util_utc.c ****             {
+ 1027              		.loc 1 96 13 view .LVU438
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1028              		.loc 1 94 29 discriminator 2 view .LVU439
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1029              		.loc 1 94 23 discriminator 1 view .LVU440
+  96:../../bos/utils/b_util_utc.c ****             {
+ 1030              		.loc 1 96 13 view .LVU441
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1031              		.loc 1 94 29 discriminator 2 view .LVU442
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1032              		.loc 1 94 23 discriminator 1 view .LVU443
+  96:../../bos/utils/b_util_utc.c ****             {
+ 1033              		.loc 1 96 13 view .LVU444
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1034              		.loc 1 94 29 discriminator 2 view .LVU445
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1035              		.loc 1 94 23 discriminator 1 view .LVU446
+  96:../../bos/utils/b_util_utc.c ****             {
+ 1036              		.loc 1 96 13 view .LVU447
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1037              		.loc 1 94 29 discriminator 2 view .LVU448
+  94:../../bos/utils/b_util_utc.c ****         {
+ 1038              		.loc 1 94 23 discriminator 1 view .LVU449
+  96:../../bos/utils/b_util_utc.c ****             {
+ 1039              		.loc 1 96 13 view .LVU450
+  96:../../bos/utils/b_util_utc.c ****             {
+ 1040              		.loc 1 96 16 is_stmt 0 view .LVU451
+ 1041 01e5 490FA3C9 		btq	%rcx, %r9
+ 1042 01e9 400F92C6 		setc	%sil
+ 1043              	.LBE51:
+ 1044              	.LBE58:
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 1045              		.loc 1 177 18 view .LVU452
+ 1046 01ed 83E901   		subl	$1, %ecx
+ 1047              	.LVL67:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 1048              		.loc 1 179 17 discriminator 1 view .LVU453
+ 1049 01f0 83C61E   		addl	$30, %esi
+ 1050 01f3 400FB6F6 		movzbl	%sil, %esi
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 1051              		.loc 1 179 14 discriminator 1 view .LVU454
+ 1052 01f7 4801F0   		addq	%rsi, %rax
+ 1053              	.LVL68:
+ 180:../../bos/utils/b_util_utc.c ****     }
+GAS LISTING /tmp/ccRc2fk6.s 			page 31
+
+
+ 1054              		.loc 1 180 9 is_stmt 1 view .LVU455
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 1055              		.loc 1 177 18 view .LVU456
+ 1056 01fa 84C9     		testb	%cl, %cl
+ 1057 01fc 75E2     		jne	.L52
+ 1058 01fe E9CFFEFF 		jmp	.L60
+ 1058      FF
+ 1059              	.LVL69:
+ 1060              		.p2align 4,,10
+ 1061 0203 0F1F4400 		.p2align 3
+ 1061      00
+ 1062              	.L71:
+ 1063              	.LBB59:
+ 1064              	.LBB52:
+  90:../../bos/utils/b_util_utc.c ****     }
+ 1065              		.loc 1 90 9 view .LVU457
+  90:../../bos/utils/b_util_utc.c ****     }
+ 1066              		.loc 1 90 9 is_stmt 0 view .LVU458
+ 1067              	.LBE52:
+ 1068              	.LBE59:
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 1069              		.loc 1 177 18 view .LVU459
+ 1070 0208 83E901   		subl	$1, %ecx
+ 1071              	.LVL70:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 1072              		.loc 1 179 14 discriminator 1 view .LVU460
+ 1073 020b 4801F8   		addq	%rdi, %rax
+ 1074              	.LVL71:
+ 180:../../bos/utils/b_util_utc.c ****     }
+ 1075              		.loc 1 180 9 is_stmt 1 view .LVU461
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 1076              		.loc 1 177 18 view .LVU462
+ 1077 020e 84C9     		testb	%cl, %cl
+ 1078 0210 75CE     		jne	.L52
+ 1079 0212 E9BBFEFF 		jmp	.L60
+ 1079      FF
+ 1080              	.LVL72:
+ 1081 0217 660F1F84 		.p2align 4,,10
+ 1081      00000000 
+ 1081      00
+ 1082              		.p2align 3
+ 1083              	.L46:
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 1084              		.loc 1 177 18 is_stmt 0 view .LVU463
+ 1085 0220 83E901   		subl	$1, %ecx
+ 1086              	.LVL73:
+ 179:../../bos/utils/b_util_utc.c ****         month--;
+ 1087              		.loc 1 179 14 discriminator 1 view .LVU464
+ 1088 0223 4883C01C 		addq	$28, %rax
+ 1089              	.LVL74:
+ 180:../../bos/utils/b_util_utc.c ****     }
+ 1090              		.loc 1 180 9 is_stmt 1 view .LVU465
+ 177:../../bos/utils/b_util_utc.c ****     {
+ 1091              		.loc 1 177 18 view .LVU466
+ 1092 0227 84C9     		testb	%cl, %cl
+ 1093 0229 0F8581FE 		jne	.L49
+ 1093      FFFF
+GAS LISTING /tmp/ccRc2fk6.s 			page 32
+
+
+ 1094 022f E99EFEFF 		jmp	.L60
+ 1094      FF
+ 1095              		.cfi_endproc
+ 1096              	.LFE32:
+ 1098              		.section	.bss.bBaseTick,"aw",@nobits
+ 1099              		.align 8
+ 1102              	bBaseTick:
+ 1103 0000 00000000 		.zero	8
+ 1103      00000000 
+ 1104              		.section	.bss.bBaseUTC,"aw",@nobits
+ 1105              		.align 8
+ 1108              	bBaseUTC:
+ 1109 0000 00000000 		.zero	8
+ 1109      00000000 
+ 1110              		.section	.rodata.cst8,"aM",@progbits,8
+ 1111              		.align 8
+ 1112              	.LC0:
+ 1113 0000 00000000 		.long	0
+ 1114 0004 00004E40 		.long	1078853632
+ 1115              		.text
+ 1116              	.Letext0:
+ 1117              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1118              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"
+ 1119              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1120              		.file 5 "../../bos/utils/inc/b_util_utc.h"
+ 1121              		.file 6 "../../bos/hal/inc/b_hal.h"
+ 3453              		.section	.note.gnu.property,"a"
+ 3454              		.align 8
+ 3455 0000 04000000 		.long	1f - 0f
+ 3456 0004 10000000 		.long	4f - 1f
+ 3457 0008 05000000 		.long	5
+ 3458              	0:
+ 3459 000c 474E5500 		.string	"GNU"
+ 3460              	1:
+ 3461              		.align 8
+ 3462 0010 020000C0 		.long	0xc0000002
+ 3463 0014 04000000 		.long	3f - 2f
+ 3464              	2:
+ 3465 0018 03000000 		.long	0x3
+ 3466              	3:
+ 3467 001c 00000000 		.align 8
+ 3468              	4:
+GAS LISTING /tmp/ccRc2fk6.s 			page 33
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_util_utc.c
+     /tmp/ccRc2fk6.s:9      .text.bUTC_SetTime:0000000000000000 bUTC_SetTime
+     /tmp/ccRc2fk6.s:1108   .bss.bBaseUTC:0000000000000000 bBaseUTC
+     /tmp/ccRc2fk6.s:1102   .bss.bBaseTick:0000000000000000 bBaseTick
+     /tmp/ccRc2fk6.s:41     .text.bUTC_GetTime:0000000000000000 bUTC_GetTime
+     /tmp/ccRc2fk6.s:83     .text.bUTC2Struct:0000000000000000 bUTC2Struct
+     /tmp/ccRc2fk6.s:664    .text.bStruct2UTC:0000000000000000 bStruct2UTC
+     /tmp/ccRc2fk6.s:1112   .rodata.cst8:0000000000000000 .LC0
+
+UNDEFINED SYMBOLS
+bHalGetSysTickPlus

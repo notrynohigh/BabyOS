@@ -1,0 +1,529 @@
+GAS LISTING /tmp/ccJwjQgj.s 			page 1
+
+
+   1              		.file	"b_hal_flash.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_flash.c"
+   5              		.section	.text.bMcuFlashInit,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuFlashInit
+   9              	bMcuFlashInit:
+  10              	.LFB28:
+   1:../../bos/hal/b_hal_flash.c **** /**
+   2:../../bos/hal/b_hal_flash.c ****  *!
+   3:../../bos/hal/b_hal_flash.c ****  * \file        b_hal_flash.c
+   4:../../bos/hal/b_hal_flash.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_flash.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_flash.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_flash.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_flash.c ****  * @attention
+   9:../../bos/hal/b_hal_flash.c ****  *
+  10:../../bos/hal/b_hal_flash.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_flash.c ****  *
+  12:../../bos/hal/b_hal_flash.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_flash.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_flash.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_flash.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_flash.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_flash.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_flash.c ****  *
+  19:../../bos/hal/b_hal_flash.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_flash.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_flash.c ****  *
+  22:../../bos/hal/b_hal_flash.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_flash.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_flash.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_flash.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_flash.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_flash.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_flash.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_flash.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_flash.c ****  */
+  31:../../bos/hal/b_hal_flash.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_flash.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_flash.c **** 
+  34:../../bos/hal/b_hal_flash.c **** /**
+  35:../../bos/hal/b_hal_flash.c ****  * \addtogroup B_HAL
+  36:../../bos/hal/b_hal_flash.c ****  * \{
+  37:../../bos/hal/b_hal_flash.c ****  */
+  38:../../bos/hal/b_hal_flash.c **** 
+  39:../../bos/hal/b_hal_flash.c **** /**
+  40:../../bos/hal/b_hal_flash.c ****  * \addtogroup FLASH
+  41:../../bos/hal/b_hal_flash.c ****  * \{
+  42:../../bos/hal/b_hal_flash.c ****  */
+  43:../../bos/hal/b_hal_flash.c **** 
+  44:../../bos/hal/b_hal_flash.c **** /**
+  45:../../bos/hal/b_hal_flash.c ****  * \addtogroup FLASH_Exported_Functions
+  46:../../bos/hal/b_hal_flash.c ****  * \{
+  47:../../bos/hal/b_hal_flash.c ****  */
+  48:../../bos/hal/b_hal_flash.c **** #if defined(__WEAKDEF)
+GAS LISTING /tmp/ccJwjQgj.s 			page 2
+
+
+  49:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashInit()
+  50:../../bos/hal/b_hal_flash.c **** {
+  11              		.loc 1 50 1 view -0
+  12              		.cfi_startproc
+  13 0000 F30F1EFA 		endbr64
+  51:../../bos/hal/b_hal_flash.c ****     return -1;
+  14              		.loc 1 51 5 view .LVU1
+  52:../../bos/hal/b_hal_flash.c **** }
+  15              		.loc 1 52 1 is_stmt 0 view .LVU2
+  16 0004 B8FFFFFF 		movl	$-1, %eax
+  16      FF
+  17 0009 C3       		ret
+  18              		.cfi_endproc
+  19              	.LFE28:
+  21              		.section	.text.bMcuFlashUnlock,"ax",@progbits
+  22              		.p2align 4
+  23              		.weak	bMcuFlashUnlock
+  25              	bMcuFlashUnlock:
+  26              	.LFB47:
+  27              		.cfi_startproc
+  53:../../bos/hal/b_hal_flash.c **** 
+  54:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashUnlock()
+  28              		.loc 1 54 15 is_stmt 1 view -0
+  29 0000 F30F1EFA 		endbr64
+  30 0004 B8FFFFFF 		movl	$-1, %eax
+  30      FF
+  31 0009 C3       		ret
+  32              		.cfi_endproc
+  33              	.LFE47:
+  35              		.section	.text.bMcuFlashLock,"ax",@progbits
+  36              		.p2align 4
+  37              		.weak	bMcuFlashLock
+  39              	bMcuFlashLock:
+  40              	.LFB49:
+  41              		.cfi_startproc
+  55:../../bos/hal/b_hal_flash.c **** {
+  56:../../bos/hal/b_hal_flash.c ****     return -1;
+  57:../../bos/hal/b_hal_flash.c **** }
+  58:../../bos/hal/b_hal_flash.c **** 
+  59:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashLock()
+  42              		.loc 1 59 15 view -0
+  43 0000 F30F1EFA 		endbr64
+  44 0004 B8FFFFFF 		movl	$-1, %eax
+  44      FF
+  45 0009 C3       		ret
+  46              		.cfi_endproc
+  47              	.LFE49:
+  49              		.section	.text.bMcuFlashErase,"ax",@progbits
+  50              		.p2align 4
+  51              		.weak	bMcuFlashErase
+  53              	bMcuFlashErase:
+  54              	.LVL0:
+  55              	.LFB31:
+  60:../../bos/hal/b_hal_flash.c **** {
+  61:../../bos/hal/b_hal_flash.c ****     return -1;
+  62:../../bos/hal/b_hal_flash.c **** }
+  63:../../bos/hal/b_hal_flash.c **** 
+GAS LISTING /tmp/ccJwjQgj.s 			page 3
+
+
+  64:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashErase(uint32_t raddr, uint32_t pages)
+  65:../../bos/hal/b_hal_flash.c **** {
+  56              		.loc 1 65 1 view -0
+  57              		.cfi_startproc
+  58              		.loc 1 65 1 is_stmt 0 view .LVU6
+  59 0000 F30F1EFA 		endbr64
+  66:../../bos/hal/b_hal_flash.c ****     return -1;
+  60              		.loc 1 66 5 is_stmt 1 view .LVU7
+  67:../../bos/hal/b_hal_flash.c **** }
+  61              		.loc 1 67 1 is_stmt 0 view .LVU8
+  62 0004 B8FFFFFF 		movl	$-1, %eax
+  62      FF
+  63 0009 C3       		ret
+  64              		.cfi_endproc
+  65              	.LFE31:
+  67              		.section	.text.bMcuFlashWrite,"ax",@progbits
+  68              		.p2align 4
+  69              		.weak	bMcuFlashWrite
+  71              	bMcuFlashWrite:
+  72              	.LVL1:
+  73              	.LFB32:
+  68:../../bos/hal/b_hal_flash.c **** 
+  69:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
+  70:../../bos/hal/b_hal_flash.c **** {
+  74              		.loc 1 70 1 is_stmt 1 view -0
+  75              		.cfi_startproc
+  76              		.loc 1 70 1 is_stmt 0 view .LVU10
+  77 0000 F30F1EFA 		endbr64
+  71:../../bos/hal/b_hal_flash.c ****     return -1;
+  78              		.loc 1 71 5 is_stmt 1 view .LVU11
+  72:../../bos/hal/b_hal_flash.c **** }
+  79              		.loc 1 72 1 is_stmt 0 view .LVU12
+  80 0004 B8FFFFFF 		movl	$-1, %eax
+  80      FF
+  81 0009 C3       		ret
+  82              		.cfi_endproc
+  83              	.LFE32:
+  85              		.section	.text.bMcuFlashRead,"ax",@progbits
+  86              		.p2align 4
+  87              		.weak	bMcuFlashRead
+  89              	bMcuFlashRead:
+  90              	.LFB51:
+  91              		.cfi_startproc
+  73:../../bos/hal/b_hal_flash.c **** 
+  74:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashRead(uint32_t raddr, uint8_t *pbuf, uint32_t len)
+  92              		.loc 1 74 15 is_stmt 1 view -0
+  93 0000 F30F1EFA 		endbr64
+  94 0004 B8FFFFFF 		movl	$-1, %eax
+  94      FF
+  95 0009 C3       		ret
+  96              		.cfi_endproc
+  97              	.LFE51:
+  99              		.section	.text.bMcuFlashSectorSize,"ax",@progbits
+ 100              		.p2align 4
+ 101              		.weak	bMcuFlashSectorSize
+ 103              	bMcuFlashSectorSize:
+ 104              	.LFB34:
+GAS LISTING /tmp/ccJwjQgj.s 			page 4
+
+
+  75:../../bos/hal/b_hal_flash.c **** {
+  76:../../bos/hal/b_hal_flash.c ****     return -1;
+  77:../../bos/hal/b_hal_flash.c **** }
+  78:../../bos/hal/b_hal_flash.c **** 
+  79:../../bos/hal/b_hal_flash.c **** __WEAKDEF uint32_t bMcuFlashSectorSize()
+  80:../../bos/hal/b_hal_flash.c **** {
+ 105              		.loc 1 80 1 view -0
+ 106              		.cfi_startproc
+ 107 0000 F30F1EFA 		endbr64
+  81:../../bos/hal/b_hal_flash.c ****     return 0;
+ 108              		.loc 1 81 5 view .LVU15
+  82:../../bos/hal/b_hal_flash.c **** }
+ 109              		.loc 1 82 1 is_stmt 0 view .LVU16
+ 110 0004 31C0     		xorl	%eax, %eax
+ 111 0006 C3       		ret
+ 112              		.cfi_endproc
+ 113              	.LFE34:
+ 115              		.section	.text.bMcuFlashChipSize,"ax",@progbits
+ 116              		.p2align 4
+ 117              		.weak	bMcuFlashChipSize
+ 119              	bMcuFlashChipSize:
+ 120              	.LFB53:
+ 121              		.cfi_startproc
+  83:../../bos/hal/b_hal_flash.c **** 
+  84:../../bos/hal/b_hal_flash.c **** __WEAKDEF uint32_t bMcuFlashChipSize()
+ 122              		.loc 1 84 20 is_stmt 1 view -0
+ 123 0000 F30F1EFA 		endbr64
+ 124 0004 31C0     		xorl	%eax, %eax
+ 125 0006 C3       		ret
+ 126              		.cfi_endproc
+ 127              	.LFE53:
+ 129              		.section	.text.bMcuFlashReadUID,"ax",@progbits
+ 130              		.p2align 4
+ 131              		.weak	bMcuFlashReadUID
+ 133              	bMcuFlashReadUID:
+ 134              	.LVL2:
+ 135              	.LFB36:
+  85:../../bos/hal/b_hal_flash.c **** {
+  86:../../bos/hal/b_hal_flash.c ****     return 0;
+  87:../../bos/hal/b_hal_flash.c **** }
+  88:../../bos/hal/b_hal_flash.c **** 
+  89:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen)
+  90:../../bos/hal/b_hal_flash.c **** {
+ 136              		.loc 1 90 1 view -0
+ 137              		.cfi_startproc
+ 138              		.loc 1 90 1 is_stmt 0 view .LVU19
+ 139 0000 F30F1EFA 		endbr64
+  91:../../bos/hal/b_hal_flash.c ****     return 0;
+ 140              		.loc 1 91 5 is_stmt 1 view .LVU20
+  92:../../bos/hal/b_hal_flash.c **** }
+ 141              		.loc 1 92 1 is_stmt 0 view .LVU21
+ 142 0004 31C0     		xorl	%eax, %eax
+ 143 0006 C3       		ret
+ 144              		.cfi_endproc
+ 145              	.LFE36:
+ 147              		.section	.text.bHalFlashInit,"ax",@progbits
+ 148              		.p2align 4
+GAS LISTING /tmp/ccJwjQgj.s 			page 5
+
+
+ 149              		.globl	bHalFlashInit
+ 151              	bHalFlashInit:
+ 152              	.LFB37:
+  93:../../bos/hal/b_hal_flash.c **** 
+  94:../../bos/hal/b_hal_flash.c **** #endif
+  95:../../bos/hal/b_hal_flash.c **** //---------------------------------------------------------------------------------------
+  96:../../bos/hal/b_hal_flash.c **** //---------------------------------------------------------------------------------------
+  97:../../bos/hal/b_hal_flash.c **** 
+  98:../../bos/hal/b_hal_flash.c **** int bHalFlashInit()
+  99:../../bos/hal/b_hal_flash.c **** {
+ 153              		.loc 1 99 1 is_stmt 1 view -0
+ 154              		.cfi_startproc
+ 155 0000 F30F1EFA 		endbr64
+ 100:../../bos/hal/b_hal_flash.c ****     return bMcuFlashInit();
+ 156              		.loc 1 100 5 view .LVU23
+ 157              		.loc 1 100 12 is_stmt 0 view .LVU24
+ 158 0004 E9000000 		jmp	bMcuFlashInit
+ 158      00
+ 159              	.LVL3:
+ 160              		.cfi_endproc
+ 161              	.LFE37:
+ 163              		.section	.text.bHalFlashUnlock,"ax",@progbits
+ 164              		.p2align 4
+ 165              		.globl	bHalFlashUnlock
+ 167              	bHalFlashUnlock:
+ 168              	.LFB38:
+ 101:../../bos/hal/b_hal_flash.c **** }
+ 102:../../bos/hal/b_hal_flash.c **** 
+ 103:../../bos/hal/b_hal_flash.c **** int bHalFlashUnlock()
+ 104:../../bos/hal/b_hal_flash.c **** {
+ 169              		.loc 1 104 1 is_stmt 1 view -0
+ 170              		.cfi_startproc
+ 171 0000 F30F1EFA 		endbr64
+ 105:../../bos/hal/b_hal_flash.c ****     return bMcuFlashUnlock();
+ 172              		.loc 1 105 5 view .LVU26
+ 173              		.loc 1 105 12 is_stmt 0 view .LVU27
+ 174 0004 E9000000 		jmp	bMcuFlashUnlock
+ 174      00
+ 175              	.LVL4:
+ 176              		.cfi_endproc
+ 177              	.LFE38:
+ 179              		.section	.text.bHalFlashLock,"ax",@progbits
+ 180              		.p2align 4
+ 181              		.globl	bHalFlashLock
+ 183              	bHalFlashLock:
+ 184              	.LFB39:
+ 106:../../bos/hal/b_hal_flash.c **** }
+ 107:../../bos/hal/b_hal_flash.c **** 
+ 108:../../bos/hal/b_hal_flash.c **** int bHalFlashLock()
+ 109:../../bos/hal/b_hal_flash.c **** {
+ 185              		.loc 1 109 1 is_stmt 1 view -0
+ 186              		.cfi_startproc
+ 187 0000 F30F1EFA 		endbr64
+ 110:../../bos/hal/b_hal_flash.c ****     return bMcuFlashLock();
+ 188              		.loc 1 110 5 view .LVU29
+ 189              		.loc 1 110 12 is_stmt 0 view .LVU30
+ 190 0004 E9000000 		jmp	bMcuFlashLock
+GAS LISTING /tmp/ccJwjQgj.s 			page 6
+
+
+ 190      00
+ 191              	.LVL5:
+ 192              		.cfi_endproc
+ 193              	.LFE39:
+ 195              		.section	.text.bHalFlashErase,"ax",@progbits
+ 196              		.p2align 4
+ 197              		.globl	bHalFlashErase
+ 199              	bHalFlashErase:
+ 200              	.LVL6:
+ 201              	.LFB40:
+ 111:../../bos/hal/b_hal_flash.c **** }
+ 112:../../bos/hal/b_hal_flash.c **** 
+ 113:../../bos/hal/b_hal_flash.c **** int bHalFlashErase(uint32_t raddr, uint32_t pages)
+ 114:../../bos/hal/b_hal_flash.c **** {
+ 202              		.loc 1 114 1 is_stmt 1 view -0
+ 203              		.cfi_startproc
+ 204              		.loc 1 114 1 is_stmt 0 view .LVU32
+ 205 0000 F30F1EFA 		endbr64
+ 115:../../bos/hal/b_hal_flash.c ****     return bMcuFlashErase(raddr, pages);
+ 206              		.loc 1 115 5 is_stmt 1 view .LVU33
+ 207              		.loc 1 115 12 is_stmt 0 view .LVU34
+ 208 0004 E9000000 		jmp	bMcuFlashErase
+ 208      00
+ 209              	.LVL7:
+ 210              		.loc 1 115 12 view .LVU35
+ 211              		.cfi_endproc
+ 212              	.LFE40:
+ 214              		.section	.text.bHalFlashWrite,"ax",@progbits
+ 215              		.p2align 4
+ 216              		.globl	bHalFlashWrite
+ 218              	bHalFlashWrite:
+ 219              	.LVL8:
+ 220              	.LFB41:
+ 116:../../bos/hal/b_hal_flash.c **** }
+ 117:../../bos/hal/b_hal_flash.c **** 
+ 118:../../bos/hal/b_hal_flash.c **** int bHalFlashWrite(uint32_t raddr, const uint8_t *pbuf, uint32_t len)
+ 119:../../bos/hal/b_hal_flash.c **** {
+ 221              		.loc 1 119 1 is_stmt 1 view -0
+ 222              		.cfi_startproc
+ 223              		.loc 1 119 1 is_stmt 0 view .LVU37
+ 224 0000 F30F1EFA 		endbr64
+ 120:../../bos/hal/b_hal_flash.c ****     if (IS_NULL(pbuf) || len == 0)
+ 225              		.loc 1 120 5 is_stmt 1 view .LVU38
+ 226              		.loc 1 120 8 is_stmt 0 view .LVU39
+ 227 0004 4885F6   		testq	%rsi, %rsi
+ 228 0007 740F     		je	.L16
+ 229 0009 85D2     		testl	%edx, %edx
+ 230 000b 740B     		je	.L16
+ 121:../../bos/hal/b_hal_flash.c ****     {
+ 122:../../bos/hal/b_hal_flash.c ****         return -1;
+ 123:../../bos/hal/b_hal_flash.c ****     }
+ 124:../../bos/hal/b_hal_flash.c ****     return bMcuFlashWrite(raddr, pbuf, len);
+ 231              		.loc 1 124 5 is_stmt 1 view .LVU40
+ 232              		.loc 1 124 12 is_stmt 0 view .LVU41
+ 233 000d E9000000 		jmp	bMcuFlashWrite
+ 233      00
+ 234              	.LVL9:
+GAS LISTING /tmp/ccJwjQgj.s 			page 7
+
+
+ 235              		.p2align 4,,10
+ 236 0012 660F1F44 		.p2align 3
+ 236      0000
+ 237              	.L16:
+ 125:../../bos/hal/b_hal_flash.c **** }
+ 238              		.loc 1 125 1 view .LVU42
+ 239 0018 B8FFFFFF 		movl	$-1, %eax
+ 239      FF
+ 240 001d C3       		ret
+ 241              		.cfi_endproc
+ 242              	.LFE41:
+ 244              		.section	.text.bHalFlashRead,"ax",@progbits
+ 245              		.p2align 4
+ 246              		.globl	bHalFlashRead
+ 248              	bHalFlashRead:
+ 249              	.LVL10:
+ 250              	.LFB42:
+ 126:../../bos/hal/b_hal_flash.c **** 
+ 127:../../bos/hal/b_hal_flash.c **** int bHalFlashRead(uint32_t raddr, uint8_t *pbuf, uint32_t len)
+ 128:../../bos/hal/b_hal_flash.c **** {
+ 251              		.loc 1 128 1 is_stmt 1 view -0
+ 252              		.cfi_startproc
+ 253              		.loc 1 128 1 is_stmt 0 view .LVU44
+ 254 0000 F30F1EFA 		endbr64
+ 129:../../bos/hal/b_hal_flash.c ****     if (IS_NULL(pbuf) || len == 0)
+ 255              		.loc 1 129 5 is_stmt 1 view .LVU45
+ 256              		.loc 1 129 8 is_stmt 0 view .LVU46
+ 257 0004 4885F6   		testq	%rsi, %rsi
+ 258 0007 740F     		je	.L18
+ 259 0009 85D2     		testl	%edx, %edx
+ 260 000b 740B     		je	.L18
+ 130:../../bos/hal/b_hal_flash.c ****     {
+ 131:../../bos/hal/b_hal_flash.c ****         return -1;
+ 132:../../bos/hal/b_hal_flash.c ****     }
+ 133:../../bos/hal/b_hal_flash.c ****     return bMcuFlashRead(raddr, pbuf, len);
+ 261              		.loc 1 133 5 is_stmt 1 view .LVU47
+ 262              		.loc 1 133 12 is_stmt 0 view .LVU48
+ 263 000d E9000000 		jmp	bMcuFlashRead
+ 263      00
+ 264              	.LVL11:
+ 265              		.p2align 4,,10
+ 266 0012 660F1F44 		.p2align 3
+ 266      0000
+ 267              	.L18:
+ 134:../../bos/hal/b_hal_flash.c **** }
+ 268              		.loc 1 134 1 view .LVU49
+ 269 0018 B8FFFFFF 		movl	$-1, %eax
+ 269      FF
+ 270 001d C3       		ret
+ 271              		.cfi_endproc
+ 272              	.LFE42:
+ 274              		.section	.text.bHalFlashSectorSize,"ax",@progbits
+ 275              		.p2align 4
+ 276              		.globl	bHalFlashSectorSize
+ 278              	bHalFlashSectorSize:
+ 279              	.LFB43:
+ 135:../../bos/hal/b_hal_flash.c **** 
+GAS LISTING /tmp/ccJwjQgj.s 			page 8
+
+
+ 136:../../bos/hal/b_hal_flash.c **** uint32_t bHalFlashSectorSize()
+ 137:../../bos/hal/b_hal_flash.c **** {
+ 280              		.loc 1 137 1 is_stmt 1 view -0
+ 281              		.cfi_startproc
+ 282 0000 F30F1EFA 		endbr64
+ 138:../../bos/hal/b_hal_flash.c ****     return bMcuFlashSectorSize();
+ 283              		.loc 1 138 5 view .LVU51
+ 284              		.loc 1 138 12 is_stmt 0 view .LVU52
+ 285 0004 E9000000 		jmp	bMcuFlashSectorSize
+ 285      00
+ 286              	.LVL12:
+ 287              		.cfi_endproc
+ 288              	.LFE43:
+ 290              		.section	.text.bHalFlashChipSize,"ax",@progbits
+ 291              		.p2align 4
+ 292              		.globl	bHalFlashChipSize
+ 294              	bHalFlashChipSize:
+ 295              	.LFB44:
+ 139:../../bos/hal/b_hal_flash.c **** }
+ 140:../../bos/hal/b_hal_flash.c **** 
+ 141:../../bos/hal/b_hal_flash.c **** uint32_t bHalFlashChipSize()
+ 142:../../bos/hal/b_hal_flash.c **** {
+ 296              		.loc 1 142 1 is_stmt 1 view -0
+ 297              		.cfi_startproc
+ 298 0000 F30F1EFA 		endbr64
+ 143:../../bos/hal/b_hal_flash.c ****     return bMcuFlashChipSize();
+ 299              		.loc 1 143 5 view .LVU54
+ 300              		.loc 1 143 12 is_stmt 0 view .LVU55
+ 301 0004 E9000000 		jmp	bMcuFlashChipSize
+ 301      00
+ 302              	.LVL13:
+ 303              		.cfi_endproc
+ 304              	.LFE44:
+ 306              		.section	.text.bHalFlashReadUID,"ax",@progbits
+ 307              		.p2align 4
+ 308              		.globl	bHalFlashReadUID
+ 310              	bHalFlashReadUID:
+ 311              	.LVL14:
+ 312              	.LFB45:
+ 144:../../bos/hal/b_hal_flash.c **** }
+ 145:../../bos/hal/b_hal_flash.c **** 
+ 146:../../bos/hal/b_hal_flash.c **** int bHalFlashReadUID(uint8_t *pbuf, uint8_t buf_size, uint8_t *rlen)
+ 147:../../bos/hal/b_hal_flash.c **** {
+ 313              		.loc 1 147 1 is_stmt 1 view -0
+ 314              		.cfi_startproc
+ 315              		.loc 1 147 1 is_stmt 0 view .LVU57
+ 316 0000 F30F1EFA 		endbr64
+ 148:../../bos/hal/b_hal_flash.c ****     return bMcuFlashReadUID(pbuf, buf_size, rlen);
+ 317              		.loc 1 148 5 is_stmt 1 view .LVU58
+ 318              		.loc 1 148 12 is_stmt 0 view .LVU59
+ 319 0004 400FB6F6 		movzbl	%sil, %esi
+ 320              		.loc 1 148 12 view .LVU60
+ 321 0008 E9000000 		jmp	bMcuFlashReadUID
+ 321      00
+ 322              	.LVL15:
+ 323              		.loc 1 148 12 view .LVU61
+ 324              		.cfi_endproc
+GAS LISTING /tmp/ccJwjQgj.s 			page 9
+
+
+ 325              	.LFE45:
+ 327              		.text
+ 328              	.Letext0:
+ 329              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 330              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1743              		.section	.note.gnu.property,"a"
+ 1744              		.align 8
+ 1745 0000 04000000 		.long	1f - 0f
+ 1746 0004 10000000 		.long	4f - 1f
+ 1747 0008 05000000 		.long	5
+ 1748              	0:
+ 1749 000c 474E5500 		.string	"GNU"
+ 1750              	1:
+ 1751              		.align 8
+ 1752 0010 020000C0 		.long	0xc0000002
+ 1753 0014 04000000 		.long	3f - 2f
+ 1754              	2:
+ 1755 0018 03000000 		.long	0x3
+ 1756              	3:
+ 1757 001c 00000000 		.align 8
+ 1758              	4:
+GAS LISTING /tmp/ccJwjQgj.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_flash.c
+     /tmp/ccJwjQgj.s:9      .text.bMcuFlashInit:0000000000000000 bMcuFlashInit
+     /tmp/ccJwjQgj.s:25     .text.bMcuFlashUnlock:0000000000000000 bMcuFlashUnlock
+     /tmp/ccJwjQgj.s:39     .text.bMcuFlashLock:0000000000000000 bMcuFlashLock
+     /tmp/ccJwjQgj.s:53     .text.bMcuFlashErase:0000000000000000 bMcuFlashErase
+     /tmp/ccJwjQgj.s:71     .text.bMcuFlashWrite:0000000000000000 bMcuFlashWrite
+     /tmp/ccJwjQgj.s:89     .text.bMcuFlashRead:0000000000000000 bMcuFlashRead
+     /tmp/ccJwjQgj.s:103    .text.bMcuFlashSectorSize:0000000000000000 bMcuFlashSectorSize
+     /tmp/ccJwjQgj.s:119    .text.bMcuFlashChipSize:0000000000000000 bMcuFlashChipSize
+     /tmp/ccJwjQgj.s:133    .text.bMcuFlashReadUID:0000000000000000 bMcuFlashReadUID
+     /tmp/ccJwjQgj.s:151    .text.bHalFlashInit:0000000000000000 bHalFlashInit
+     /tmp/ccJwjQgj.s:167    .text.bHalFlashUnlock:0000000000000000 bHalFlashUnlock
+     /tmp/ccJwjQgj.s:183    .text.bHalFlashLock:0000000000000000 bHalFlashLock
+     /tmp/ccJwjQgj.s:199    .text.bHalFlashErase:0000000000000000 bHalFlashErase
+     /tmp/ccJwjQgj.s:218    .text.bHalFlashWrite:0000000000000000 bHalFlashWrite
+     /tmp/ccJwjQgj.s:248    .text.bHalFlashRead:0000000000000000 bHalFlashRead
+     /tmp/ccJwjQgj.s:278    .text.bHalFlashSectorSize:0000000000000000 bHalFlashSectorSize
+     /tmp/ccJwjQgj.s:294    .text.bHalFlashChipSize:0000000000000000 bHalFlashChipSize
+     /tmp/ccJwjQgj.s:310    .text.bHalFlashReadUID:0000000000000000 bHalFlashReadUID
+
+NO UNDEFINED SYMBOLS

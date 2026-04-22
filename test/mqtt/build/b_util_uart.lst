@@ -1,0 +1,31 @@
+GAS LISTING /tmp/ccmfUVsp.s 			page 1
+
+
+   1              		.file	"b_util_uart.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/utils/b_util_uart.c"
+   5              	.Letext0:
+  17              		.section	.note.gnu.property,"a"
+  18              		.align 8
+  19 0000 04000000 		.long	1f - 0f
+  20 0004 10000000 		.long	4f - 1f
+  21 0008 05000000 		.long	5
+  22              	0:
+  23 000c 474E5500 		.string	"GNU"
+  24              	1:
+  25              		.align 8
+  26 0010 020000C0 		.long	0xc0000002
+  27 0014 04000000 		.long	3f - 2f
+  28              	2:
+  29 0018 03000000 		.long	0x3
+  30              	3:
+  31 001c 00000000 		.align 8
+  32              	4:
+GAS LISTING /tmp/ccmfUVsp.s 			page 2
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_util_uart.c
+
+NO UNDEFINED SYMBOLS

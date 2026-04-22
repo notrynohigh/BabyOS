@@ -1,0 +1,1368 @@
+GAS LISTING /tmp/ccqQBOh8.s 			page 1
+
+
+   1              		.file	"pem.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c"
+   5              		.section	.text.mbedtls_pem_init,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	mbedtls_pem_init
+   9              	mbedtls_pem_init:
+  10              	.LVL0:
+  11              	.LFB58:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** /*
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  *  Privacy Enhanced Mail (PEM) decoding
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  *  Copyright The Mbed TLS Contributors
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  */
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "common.h"
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_PEM_PARSE_C) || defined(MBEDTLS_PEM_WRITE_C)
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/pem.h"
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/base64.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/des.h"
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/aes.h"
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h"
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/cipher.h"
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform_util.h"
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h"
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include <string.h>
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #include "thirdparty/mbedtls/bos_mbedtls/psa/crypto.h"
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_MD_CAN_MD5) &&  \
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     defined(MBEDTLS_CIPHER_MODE_CBC) &&                             \
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     (defined(MBEDTLS_DES_C) || defined(MBEDTLS_AES_C))
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #define PEM_RFC1421
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* MBEDTLS_MD_CAN_MD5 &&
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****           MBEDTLS_CIPHER_MODE_CBC &&
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****           ( MBEDTLS_AES_C || MBEDTLS_DES_C ) */
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_PEM_PARSE_C)
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** void mbedtls_pem_init(mbedtls_pem_context *ctx)
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+  12              		.loc 1 39 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 39 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     memset(ctx, 0, sizeof(mbedtls_pem_context));
+  16              		.loc 1 40 5 is_stmt 1 view .LVU2
+  17              	.LVL1:
+  18              	.LBB8:
+GAS LISTING /tmp/ccqQBOh8.s 			page 2
+
+
+  19              	.LBI8:
+  20              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+GAS LISTING /tmp/ccqQBOh8.s 			page 3
+
+
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+  21              		.loc 2 57 1 view .LVU3
+  22              	.LBB9:
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+  23              		.loc 2 59 3 view .LVU4
+  24              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU5
+  25 0004 660FEFC0 		pxor	%xmm0, %xmm0
+  26 0008 48C74710 		movq	$0, 16(%rdi)
+  26      00000000 
+  27              	.LVL2:
+  28              		.loc 2 59 10 discriminator 1 view .LVU6
+  29 0010 0F1107   		movups	%xmm0, (%rdi)
+  30              	.LBE9:
+  31              	.LBE8:
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+  32              		.loc 1 41 1 view .LVU7
+  33 0013 C3       		ret
+  34              		.cfi_endproc
+  35              	.LFE58:
+  37              		.section	.rodata.mbedtls_pem_read_buffer.str1.1,"aMS",@progbits,1
+  38              	.LC0:
+  39 0000 50726F63 		.string	"Proc-Type: 4,ENCRYPTED"
+  39      2D547970 
+  39      653A2034 
+  39      2C454E43 
+  39      52595054 
+  40              		.section	.text.mbedtls_pem_read_buffer,"ax",@progbits
+  41              		.p2align 4
+  42              		.globl	mbedtls_pem_read_buffer
+  44              	mbedtls_pem_read_buffer:
+  45              	.LVL3:
+  46              	.LFB59:
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(PEM_RFC1421)
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** /*
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  * Read a 16-byte hex string and convert it to binary
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  */
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** static int pem_get_iv(const unsigned char *s, unsigned char *iv,
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                       size_t iv_len)
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     size_t i, j, k;
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     memset(iv, 0, iv_len);
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     for (i = 0; i < iv_len * 2; i++, s++) {
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (*s >= '0' && *s <= '9') {
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             j = *s - '0';
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (*s >= 'A' && *s <= 'F') {
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             j = *s - '7';
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (*s >= 'a' && *s <= 'f') {
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             j = *s - 'W';
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else {
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             return MBEDTLS_ERR_PEM_INVALID_ENC_IV;
+GAS LISTING /tmp/ccqQBOh8.s 			page 4
+
+
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         k = ((i & 1) != 0) ? j : j << 4;
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         iv[i >> 1] = (unsigned char) (iv[i >> 1] | k);
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     return 0;
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** static int pem_pbkdf1(unsigned char *key, size_t keylen,
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                       unsigned char *iv,
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                       const unsigned char *pwd, size_t pwdlen)
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_md_context_t md5_ctx;
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     const mbedtls_md_info_t *md5_info;
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     unsigned char md5sum[16];
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     size_t use_len;
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_md_init(&md5_ctx);
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     /* Prepare the context. (setup() errors gracefully on NULL info.) */
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     md5_info = mbedtls_md_info_from_type(MBEDTLS_MD_MD5);
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_setup(&md5_ctx, md5_info, 0)) != 0) {
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     /*
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****      * key[ 0..15] = MD5(pwd || IV)
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****      */
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_starts(&md5_ctx)) != 0) {
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_update(&md5_ctx, pwd, pwdlen)) != 0) {
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_update(&md5_ctx, iv,  8)) != 0) {
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_finish(&md5_ctx, md5sum)) != 0) {
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (keylen <= 16) {
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         memcpy(key, md5sum, keylen);
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     memcpy(key, md5sum, 16);
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     /*
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****      * key[16..23] = MD5(key[ 0..15] || pwd || IV])
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****      */
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_starts(&md5_ctx)) != 0) {
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+GAS LISTING /tmp/ccqQBOh8.s 			page 5
+
+
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_update(&md5_ctx, md5sum, 16)) != 0) {
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_update(&md5_ctx, pwd, pwdlen)) != 0) {
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_update(&md5_ctx, iv, 8)) != 0) {
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_md_finish(&md5_ctx, md5sum)) != 0) {
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     use_len = 16;
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (keylen < 32) {
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         use_len = keylen - 16;
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     memcpy(key + 16, md5sum, use_len);
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** exit:
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_md_free(&md5_ctx);
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_platform_zeroize(md5sum, 16);
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     return ret;
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_DES_C)
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** /*
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  * Decrypt with DES-CBC, using PBKDF1 for key derivation
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  */
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** static int pem_des_decrypt(unsigned char des_iv[8],
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                            unsigned char *buf, size_t buflen,
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                            const unsigned char *pwd, size_t pwdlen)
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_des_context des_ctx;
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     unsigned char des_key[8];
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_des_init(&des_ctx);
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = pem_pbkdf1(des_key, 8, des_iv, pwd, pwdlen)) != 0) {
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_des_setkey_dec(&des_ctx, des_key)) != 0) {
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ret = mbedtls_des_crypt_cbc(&des_ctx, MBEDTLS_DES_DECRYPT, buflen,
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                                 des_iv, buf, buf);
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** exit:
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_des_free(&des_ctx);
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_platform_zeroize(des_key, 8);
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     return ret;
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+GAS LISTING /tmp/ccqQBOh8.s 			page 6
+
+
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** /*
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  * Decrypt with 3DES-CBC, using PBKDF1 for key derivation
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  */
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** static int pem_des3_decrypt(unsigned char des3_iv[8],
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                             unsigned char *buf, size_t buflen,
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                             const unsigned char *pwd, size_t pwdlen)
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_des3_context des3_ctx;
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     unsigned char des3_key[24];
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_des3_init(&des3_ctx);
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = pem_pbkdf1(des3_key, 24, des3_iv, pwd, pwdlen)) != 0) {
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_des3_set3key_dec(&des3_ctx, des3_key)) != 0) {
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ret = mbedtls_des3_crypt_cbc(&des3_ctx, MBEDTLS_DES_DECRYPT, buflen,
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                                  des3_iv, buf, buf);
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** exit:
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_des3_free(&des3_ctx);
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_platform_zeroize(des3_key, 24);
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     return ret;
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* MBEDTLS_DES_C */
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_AES_C)
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** /*
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  * Decrypt with AES-XXX-CBC, using PBKDF1 for key derivation
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****  */
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** static int pem_aes_decrypt(unsigned char aes_iv[16], unsigned int keylen,
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                            unsigned char *buf, size_t buflen,
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                            const unsigned char *pwd, size_t pwdlen)
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_aes_context aes_ctx;
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     unsigned char aes_key[32];
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_aes_init(&aes_ctx);
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = pem_pbkdf1(aes_key, keylen, aes_iv, pwd, pwdlen)) != 0) {
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_aes_setkey_dec(&aes_ctx, aes_key, keylen * 8)) != 0) {
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         goto exit;
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 232:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ret = mbedtls_aes_crypt_cbc(&aes_ctx, MBEDTLS_AES_DECRYPT, buflen,
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                                 aes_iv, buf, buf);
+ 234:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** exit:
+GAS LISTING /tmp/ccqQBOh8.s 			page 7
+
+
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_aes_free(&aes_ctx);
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_platform_zeroize(aes_key, keylen);
+ 238:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     return ret;
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* MBEDTLS_AES_C */
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_DES_C) || defined(MBEDTLS_AES_C)
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** static int pem_check_pkcs_padding(unsigned char *input, size_t input_len, size_t *data_len)
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     /* input_len > 0 is guaranteed by mbedtls_pem_read_buffer(). */
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     size_t pad_len = input[input_len - 1];
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     size_t i;
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (pad_len > input_len) {
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_PASSWORD_MISMATCH;
+ 252:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 253:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 254:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     *data_len = input_len - pad_len;
+ 255:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 256:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     for (i = *data_len; i < input_len; i++) {
+ 257:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (input[i] != pad_len) {
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             return MBEDTLS_ERR_PEM_PASSWORD_MISMATCH;
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 260:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     return 0;
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* MBEDTLS_DES_C || MBEDTLS_AES_C */
+ 265:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 266:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* PEM_RFC1421 */
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** int mbedtls_pem_read_buffer(mbedtls_pem_context *ctx, const char *header, const char *footer,
+ 269:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                             const unsigned char *data, const unsigned char *pwd,
+ 270:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                             size_t pwdlen, size_t *use_len)
+ 271:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+  47              		.loc 1 271 1 is_stmt 1 view -0
+  48              		.cfi_startproc
+  49              		.loc 1 271 1 is_stmt 0 view .LVU9
+  50 0000 F30F1EFA 		endbr64
+  51 0004 4157     		pushq	%r15
+  52              	.LCFI0:
+  53              		.cfi_def_cfa_offset 16
+  54              		.cfi_offset 15, -16
+  55 0006 4156     		pushq	%r14
+  56              	.LCFI1:
+  57              		.cfi_def_cfa_offset 24
+  58              		.cfi_offset 14, -24
+  59 0008 4155     		pushq	%r13
+  60              	.LCFI2:
+  61              		.cfi_def_cfa_offset 32
+  62              		.cfi_offset 13, -32
+  63 000a 4154     		pushq	%r12
+  64              	.LCFI3:
+  65              		.cfi_def_cfa_offset 40
+  66              		.cfi_offset 12, -40
+  67 000c 55       		pushq	%rbp
+GAS LISTING /tmp/ccqQBOh8.s 			page 8
+
+
+  68              	.LCFI4:
+  69              		.cfi_def_cfa_offset 48
+  70              		.cfi_offset 6, -48
+  71 000d 53       		pushq	%rbx
+  72              	.LCFI5:
+  73              		.cfi_def_cfa_offset 56
+  74              		.cfi_offset 3, -56
+  75 000e 4883EC28 		subq	$40, %rsp
+  76              	.LCFI6:
+  77              		.cfi_def_cfa_offset 96
+  78              		.loc 1 271 1 view .LVU10
+  79 0012 488B4424 		movq	96(%rsp), %rax
+  79      60
+  80 0017 48894424 		movq	%rax, 8(%rsp)
+  80      08
+  81 001c 64488B04 		movq	%fs:40, %rax
+  81      25280000 
+  81      00
+  82 0025 48894424 		movq	%rax, 24(%rsp)
+  82      18
+  83 002a 31C0     		xorl	%eax, %eax
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     int ret, enc;
+  84              		.loc 1 272 5 is_stmt 1 view .LVU11
+ 273:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     size_t len;
+  85              		.loc 1 273 5 view .LVU12
+ 274:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     unsigned char *buf;
+  86              		.loc 1 274 5 view .LVU13
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     const unsigned char *s1, *s2, *end;
+  87              		.loc 1 275 5 view .LVU14
+ 276:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(PEM_RFC1421)
+ 277:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     unsigned char pem_iv[16];
+ 278:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_cipher_type_t enc_alg = MBEDTLS_CIPHER_NONE;
+ 279:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #else
+ 280:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ((void) pwd);
+  88              		.loc 1 280 5 view .LVU15
+ 281:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ((void) pwdlen);
+  89              		.loc 1 281 5 view .LVU16
+ 282:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* PEM_RFC1421 */
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 284:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (ctx == NULL) {
+  90              		.loc 1 284 5 view .LVU17
+  91              		.loc 1 284 8 is_stmt 0 view .LVU18
+  92 002c 4885FF   		testq	%rdi, %rdi
+  93 002f 0F84CB01 		je	.L14
+  93      0000
+  94 0035 4989FC   		movq	%rdi, %r12
+ 285:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_BAD_INPUT_DATA;
+ 286:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 287:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 288:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     s1 = (unsigned char *) strstr((const char *) data, header);
+  95              		.loc 1 288 28 view .LVU19
+  96 0038 4889CF   		movq	%rcx, %rdi
+  97              	.LVL4:
+  98              		.loc 1 288 28 view .LVU20
+  99 003b 4989F7   		movq	%rsi, %r15
+ 100 003e 4989D5   		movq	%rdx, %r13
+ 101 0041 4889CD   		movq	%rcx, %rbp
+GAS LISTING /tmp/ccqQBOh8.s 			page 9
+
+
+ 102              		.loc 1 288 5 is_stmt 1 view .LVU21
+ 103              		.loc 1 288 28 is_stmt 0 view .LVU22
+ 104 0044 E8000000 		call	strstr@PLT
+ 104      00
+ 105              	.LVL5:
+ 106              		.loc 1 288 28 view .LVU23
+ 107 0049 4889C3   		movq	%rax, %rbx
+ 108              	.LVL6:
+ 289:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 290:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (s1 == NULL) {
+ 109              		.loc 1 290 5 is_stmt 1 view .LVU24
+ 110              		.loc 1 290 8 is_stmt 0 view .LVU25
+ 111 004c 4885C0   		testq	%rax, %rax
+ 112 004f 0F849B01 		je	.L19
+ 112      0000
+ 291:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_NO_HEADER_FOOTER_PRESENT;
+ 292:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 293:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 294:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     s2 = (unsigned char *) strstr((const char *) data, footer);
+ 113              		.loc 1 294 5 is_stmt 1 view .LVU26
+ 114              		.loc 1 294 28 is_stmt 0 view .LVU27
+ 115 0055 4C89EE   		movq	%r13, %rsi
+ 116 0058 4889EF   		movq	%rbp, %rdi
+ 117 005b E8000000 		call	strstr@PLT
+ 117      00
+ 118              	.LVL7:
+ 119              		.loc 1 294 28 view .LVU28
+ 120 0060 4989C6   		movq	%rax, %r14
+ 121              	.LVL8:
+ 295:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 296:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (s2 == NULL || s2 <= s1) {
+ 122              		.loc 1 296 5 is_stmt 1 view .LVU29
+ 123              		.loc 1 296 8 is_stmt 0 view .LVU30
+ 124 0063 4885C0   		testq	%rax, %rax
+ 125 0066 0F848401 		je	.L19
+ 125      0000
+ 126 006c 4839C3   		cmpq	%rax, %rbx
+ 127 006f 0F837B01 		jnb	.L19
+ 127      0000
+ 297:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_NO_HEADER_FOOTER_PRESENT;
+ 298:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 300:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     s1 += strlen(header);
+ 128              		.loc 1 300 5 is_stmt 1 view .LVU31
+ 129              		.loc 1 300 11 is_stmt 0 view .LVU32
+ 130 0075 4C89FF   		movq	%r15, %rdi
+ 131 0078 E8000000 		call	strlen@PLT
+ 131      00
+ 132              	.LVL9:
+ 133              		.loc 1 300 8 discriminator 1 view .LVU33
+ 134 007d 4801C3   		addq	%rax, %rbx
+ 135              	.LVL10:
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (*s1 == ' ') {
+ 136              		.loc 1 301 5 is_stmt 1 view .LVU34
+ 137              		.loc 1 301 9 is_stmt 0 view .LVU35
+ 138 0080 0FB603   		movzbl	(%rbx), %eax
+ 139              		.loc 1 301 8 view .LVU36
+GAS LISTING /tmp/ccqQBOh8.s 			page 10
+
+
+ 140 0083 3C20     		cmpb	$32, %al
+ 141 0085 7508     		jne	.L6
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         s1++;
+ 142              		.loc 1 302 9 is_stmt 1 view .LVU37
+ 143              	.LVL11:
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (*s1 == '\r') {
+ 144              		.loc 1 304 9 is_stmt 0 view .LVU38
+ 145 0087 0FB64301 		movzbl	1(%rbx), %eax
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         s1++;
+ 146              		.loc 1 302 11 view .LVU39
+ 147 008b 4883C301 		addq	$1, %rbx
+ 148              	.LVL12:
+ 149              	.L6:
+ 150              		.loc 1 304 5 is_stmt 1 view .LVU40
+ 151              		.loc 1 304 8 is_stmt 0 view .LVU41
+ 152 008f 3C0D     		cmpb	$13, %al
+ 153 0091 7508     		jne	.L7
+ 305:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         s1++;
+ 154              		.loc 1 305 9 is_stmt 1 view .LVU42
+ 155              	.LVL13:
+ 306:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 307:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (*s1 == '\n') {
+ 156              		.loc 1 307 9 is_stmt 0 view .LVU43
+ 157 0093 0FB64301 		movzbl	1(%rbx), %eax
+ 305:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         s1++;
+ 158              		.loc 1 305 11 view .LVU44
+ 159 0097 4883C301 		addq	$1, %rbx
+ 160              	.LVL14:
+ 161              	.L7:
+ 162              		.loc 1 307 5 is_stmt 1 view .LVU45
+ 163              		.loc 1 307 8 is_stmt 0 view .LVU46
+ 164 009b 3C0A     		cmpb	$10, %al
+ 165 009d 0F854D01 		jne	.L19
+ 165      0000
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         s1++;
+ 166              		.loc 1 308 9 is_stmt 1 view .LVU47
+ 309:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     } else {
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_NO_HEADER_FOOTER_PRESENT;
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 312:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 313:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     end = s2;
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     end += strlen(footer);
+ 167              		.loc 1 314 12 is_stmt 0 view .LVU48
+ 168 00a3 4C89EF   		movq	%r13, %rdi
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         s1++;
+ 169              		.loc 1 308 11 view .LVU49
+ 170 00a6 4883C301 		addq	$1, %rbx
+ 171              	.LVL15:
+ 313:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     end += strlen(footer);
+ 172              		.loc 1 313 5 is_stmt 1 view .LVU50
+ 173              		.loc 1 314 5 view .LVU51
+ 174              		.loc 1 314 12 is_stmt 0 view .LVU52
+ 175 00aa E8000000 		call	strlen@PLT
+ 175      00
+ 176              	.LVL16:
+ 177              		.loc 1 314 9 discriminator 1 view .LVU53
+GAS LISTING /tmp/ccqQBOh8.s 			page 11
+
+
+ 178 00af 4C01F0   		addq	%r14, %rax
+ 179              	.LVL17:
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (*end == ' ') {
+ 180              		.loc 1 315 5 is_stmt 1 view .LVU54
+ 181              		.loc 1 315 9 is_stmt 0 view .LVU55
+ 182 00b2 0FB608   		movzbl	(%rax), %ecx
+ 183              		.loc 1 315 8 view .LVU56
+ 184 00b5 80F920   		cmpb	$32, %cl
+ 185 00b8 7508     		jne	.L8
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         end++;
+ 186              		.loc 1 316 9 is_stmt 1 view .LVU57
+ 187              	.LVL18:
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 318:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (*end == '\r') {
+ 188              		.loc 1 318 9 is_stmt 0 view .LVU58
+ 189 00ba 0FB64801 		movzbl	1(%rax), %ecx
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         end++;
+ 190              		.loc 1 316 12 view .LVU59
+ 191 00be 4883C001 		addq	$1, %rax
+ 192              	.LVL19:
+ 193              	.L8:
+ 194              		.loc 1 318 5 is_stmt 1 view .LVU60
+ 195              		.loc 1 318 8 is_stmt 0 view .LVU61
+ 196 00c2 80F90D   		cmpb	$13, %cl
+ 197 00c5 7508     		jne	.L9
+ 319:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         end++;
+ 198              		.loc 1 319 9 is_stmt 1 view .LVU62
+ 199              	.LVL20:
+ 320:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 321:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (*end == '\n') {
+ 200              		.loc 1 321 9 is_stmt 0 view .LVU63
+ 201 00c7 0FB64801 		movzbl	1(%rax), %ecx
+ 319:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         end++;
+ 202              		.loc 1 319 12 view .LVU64
+ 203 00cb 4883C001 		addq	$1, %rax
+ 204              	.LVL21:
+ 205              	.L9:
+ 206              		.loc 1 321 5 is_stmt 1 view .LVU65
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         end++;
+ 207              		.loc 1 322 12 is_stmt 0 view .LVU66
+ 208 00cf 80F90A   		cmpb	$10, %cl
+ 323:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     *use_len = (size_t) (end - data);
+ 209              		.loc 1 324 30 view .LVU67
+ 210 00d2 488B5424 		movq	8(%rsp), %rdx
+ 210      08
+ 325:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 326:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     enc = 0;
+ 327:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (s2 - s1 >= 22 && memcmp(s1, "Proc-Type: 4,ENCRYPTED", 22) == 0) {
+ 211              		.loc 1 328 12 view .LVU68
+ 212 00d7 4D89F5   		movq	%r14, %r13
+ 213              	.LVL22:
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 214              		.loc 1 322 12 view .LVU69
+ 215 00da 0F94C1   		sete	%cl
+ 216              		.loc 1 328 12 view .LVU70
+GAS LISTING /tmp/ccqQBOh8.s 			page 12
+
+
+ 217 00dd 4929DD   		subq	%rbx, %r13
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 218              		.loc 1 322 12 view .LVU71
+ 219 00e0 0FB6C9   		movzbl	%cl, %ecx
+ 220 00e3 4801C8   		addq	%rcx, %rax
+ 221              	.LVL23:
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 222              		.loc 1 324 5 is_stmt 1 view .LVU72
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 223              		.loc 1 324 30 is_stmt 0 view .LVU73
+ 224 00e6 4829E8   		subq	%rbp, %rax
+ 225              	.LVL24:
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 226              		.loc 1 324 30 view .LVU74
+ 227 00e9 488902   		movq	%rax, (%rdx)
+ 326:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 228              		.loc 1 326 5 is_stmt 1 view .LVU75
+ 229              	.LVL25:
+ 230              		.loc 1 328 5 view .LVU76
+ 231              		.loc 1 328 8 is_stmt 0 view .LVU77
+ 232 00ec 4983FD15 		cmpq	$21, %r13
+ 233 00f0 0F8F9A00 		jg	.L28
+ 233      0000
+ 234              	.L11:
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(PEM_RFC1421)
+ 330:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         enc++;
+ 331:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 332:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         s1 += 22;
+ 333:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (*s1 == '\r') {
+ 334:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1++;
+ 335:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (*s1 == '\n') {
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1++;
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else {
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             return MBEDTLS_ERR_PEM_INVALID_DATA;
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 341:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 342:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 343:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_DES_C)
+ 344:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (s2 - s1 >= 23 && memcmp(s1, "DEK-Info: DES-EDE3-CBC,", 23) == 0) {
+ 345:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             enc_alg = MBEDTLS_CIPHER_DES_EDE3_CBC;
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1 += 23;
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             if (s2 - s1 < 16 || pem_get_iv(s1, pem_iv, 8) != 0) {
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                 return MBEDTLS_ERR_PEM_INVALID_ENC_IV;
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             }
+ 351:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1 += 16;
+ 353:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else if (s2 - s1 >= 18 && memcmp(s1, "DEK-Info: DES-CBC,", 18) == 0) {
+ 354:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             enc_alg = MBEDTLS_CIPHER_DES_CBC;
+ 355:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1 += 18;
+ 357:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             if (s2 - s1 < 16 || pem_get_iv(s1, pem_iv, 8) != 0) {
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                 return MBEDTLS_ERR_PEM_INVALID_ENC_IV;
+ 359:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             }
+ 360:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 361:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1 += 16;
+GAS LISTING /tmp/ccqQBOh8.s 			page 13
+
+
+ 362:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 363:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* MBEDTLS_DES_C */
+ 364:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 365:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_AES_C)
+ 366:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (s2 - s1 >= 14 && memcmp(s1, "DEK-Info: AES-", 14) == 0) {
+ 367:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             if (s2 - s1 < 22) {
+ 368:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                 return MBEDTLS_ERR_PEM_UNKNOWN_ENC_ALG;
+ 369:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             } else if (memcmp(s1, "DEK-Info: AES-128-CBC,", 22) == 0) {
+ 370:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                 enc_alg = MBEDTLS_CIPHER_AES_128_CBC;
+ 371:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             } else if (memcmp(s1, "DEK-Info: AES-192-CBC,", 22) == 0) {
+ 372:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                 enc_alg = MBEDTLS_CIPHER_AES_192_CBC;
+ 373:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             } else if (memcmp(s1, "DEK-Info: AES-256-CBC,", 22) == 0) {
+ 374:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                 enc_alg = MBEDTLS_CIPHER_AES_256_CBC;
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             } else {
+ 376:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                 return MBEDTLS_ERR_PEM_UNKNOWN_ENC_ALG;
+ 377:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             }
+ 378:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 379:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1 += 22;
+ 380:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             if (s2 - s1 < 32 || pem_get_iv(s1, pem_iv, 16) != 0) {
+ 381:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****                 return MBEDTLS_ERR_PEM_INVALID_ENC_IV;
+ 382:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             }
+ 383:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 384:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1 += 32;
+ 385:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 386:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* MBEDTLS_AES_C */
+ 387:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 388:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (enc_alg == MBEDTLS_CIPHER_NONE) {
+ 389:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             return MBEDTLS_ERR_PEM_UNKNOWN_ENC_ALG;
+ 390:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 392:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (*s1 == '\r') {
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1++;
+ 394:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 395:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (*s1 == '\n') {
+ 396:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             s1++;
+ 397:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else {
+ 398:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             return MBEDTLS_ERR_PEM_INVALID_DATA;
+ 399:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 400:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #else
+ 401:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_FEATURE_UNAVAILABLE;
+ 402:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* PEM_RFC1421 */
+ 403:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 404:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 405:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (s1 >= s2) {
+ 235              		.loc 1 405 5 is_stmt 1 view .LVU78
+ 236              		.loc 1 405 8 is_stmt 0 view .LVU79
+ 237 00f6 4C39F3   		cmpq	%r14, %rbx
+ 238 00f9 0F831101 		jnb	.L21
+ 238      0000
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_INVALID_DATA;
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 409:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ret = mbedtls_base64_decode(NULL, 0, &len, s1, (size_t) (s2 - s1));
+ 239              		.loc 1 409 5 is_stmt 1 view .LVU80
+ 240              		.loc 1 409 11 is_stmt 0 view .LVU81
+ 241 00ff 4C8D7424 		leaq	16(%rsp), %r14
+ 241      10
+GAS LISTING /tmp/ccqQBOh8.s 			page 14
+
+
+ 242              	.LVL26:
+ 243              		.loc 1 409 11 view .LVU82
+ 244 0104 31F6     		xorl	%esi, %esi
+ 245 0106 31FF     		xorl	%edi, %edi
+ 246 0108 4D89E8   		movq	%r13, %r8
+ 247 010b 4889D9   		movq	%rbx, %rcx
+ 248 010e 4C89F2   		movq	%r14, %rdx
+ 249 0111 E8000000 		call	mbedtls_base64_decode@PLT
+ 249      00
+ 250              	.LVL27:
+ 410:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (ret == MBEDTLS_ERR_BASE64_INVALID_CHARACTER) {
+ 251              		.loc 1 411 5 is_stmt 1 view .LVU83
+ 252              		.loc 1 411 8 is_stmt 0 view .LVU84
+ 253 0116 83F8D4   		cmpl	$-44, %eax
+ 254 0119 0F840501 		je	.L22
+ 254      0000
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PEM_INVALID_DATA, ret);
+ 413:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 414:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (len == 0) {
+ 255              		.loc 1 415 5 is_stmt 1 view .LVU85
+ 256              		.loc 1 415 13 is_stmt 0 view .LVU86
+ 257 011f 488B7424 		movq	16(%rsp), %rsi
+ 257      10
+ 258              		.loc 1 415 8 view .LVU87
+ 259 0124 4885F6   		testq	%rsi, %rsi
+ 260 0127 0F84D300 		je	.L14
+ 260      0000
+ 416:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_BAD_INPUT_DATA;
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 418:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 419:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((buf = mbedtls_calloc(1, len)) == NULL) {
+ 261              		.loc 1 419 5 is_stmt 1 view .LVU88
+ 262              		.loc 1 419 16 is_stmt 0 view .LVU89
+ 263 012d BF010000 		movl	$1, %edi
+ 263      00
+ 264 0132 E8000000 		call	mbedtls_calloc@PLT
+ 264      00
+ 265              	.LVL28:
+ 266              		.loc 1 419 16 view .LVU90
+ 267 0137 4889C5   		movq	%rax, %rbp
+ 268              	.LVL29:
+ 269              		.loc 1 419 8 discriminator 1 view .LVU91
+ 270 013a 4885C0   		testq	%rax, %rax
+ 271 013d 0F84D700 		je	.L23
+ 271      0000
+ 420:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_ALLOC_FAILED;
+ 421:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 422:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 423:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if ((ret = mbedtls_base64_decode(buf, len, &len, s1, (size_t) (s2 - s1))) != 0) {
+ 272              		.loc 1 423 5 is_stmt 1 view .LVU92
+ 273              		.loc 1 423 16 is_stmt 0 view .LVU93
+ 274 0143 488B7424 		movq	16(%rsp), %rsi
+ 274      10
+ 275 0148 4D89E8   		movq	%r13, %r8
+ 276 014b 4889D9   		movq	%rbx, %rcx
+GAS LISTING /tmp/ccqQBOh8.s 			page 15
+
+
+ 277 014e 4C89F2   		movq	%r14, %rdx
+ 278 0151 4889C7   		movq	%rax, %rdi
+ 279 0154 E8000000 		call	mbedtls_base64_decode@PLT
+ 279      00
+ 280              	.LVL30:
+ 281              		.loc 1 423 8 discriminator 1 view .LVU94
+ 282 0159 85C0     		testl	%eax, %eax
+ 283 015b 7573     		jne	.L29
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         mbedtls_zeroize_and_free(buf, len);
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PEM_INVALID_DATA, ret);
+ 426:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 427:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 428:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (enc != 0) {
+ 284              		.loc 1 428 5 is_stmt 1 view .LVU95
+ 429:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(PEM_RFC1421)
+ 430:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (pwd == NULL) {
+ 431:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             mbedtls_zeroize_and_free(buf, len);
+ 432:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             return MBEDTLS_ERR_PEM_PASSWORD_REQUIRED;
+ 433:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 434:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 435:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         ret = 0;
+ 436:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 437:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_DES_C)
+ 438:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (enc_alg == MBEDTLS_CIPHER_DES_EDE3_CBC) {
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             ret = pem_des3_decrypt(pem_iv, buf, len, pwd, pwdlen);
+ 440:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else if (enc_alg == MBEDTLS_CIPHER_DES_CBC) {
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             ret = pem_des_decrypt(pem_iv, buf, len, pwd, pwdlen);
+ 442:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 443:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* MBEDTLS_DES_C */
+ 444:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 445:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(MBEDTLS_AES_C)
+ 446:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (enc_alg == MBEDTLS_CIPHER_AES_128_CBC) {
+ 447:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             ret = pem_aes_decrypt(pem_iv, 16, buf, len, pwd, pwdlen);
+ 448:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else if (enc_alg == MBEDTLS_CIPHER_AES_192_CBC) {
+ 449:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             ret = pem_aes_decrypt(pem_iv, 24, buf, len, pwd, pwdlen);
+ 450:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         } else if (enc_alg == MBEDTLS_CIPHER_AES_256_CBC) {
+ 451:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             ret = pem_aes_decrypt(pem_iv, 32, buf, len, pwd, pwdlen);
+ 452:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 453:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* MBEDTLS_AES_C */
+ 454:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 455:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (ret != 0) {
+ 456:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             mbedtls_zeroize_and_free(buf, len);
+ 457:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             return ret;
+ 458:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 459:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 460:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         /* Check PKCS padding and update data length based on padding info.
+ 461:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****          * This can be used to detect invalid padding data and password
+ 462:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****          * mismatches. */
+ 463:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         size_t unpadded_len;
+ 464:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         ret = pem_check_pkcs_padding(buf, len, &unpadded_len);
+ 465:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         if (ret != 0) {
+ 466:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             mbedtls_zeroize_and_free(buf, len);
+ 467:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****             return ret;
+ 468:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         }
+ 469:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         len = unpadded_len;
+ 470:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #else
+ 471:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         mbedtls_zeroize_and_free(buf, len);
+GAS LISTING /tmp/ccqQBOh8.s 			page 16
+
+
+ 472:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERR_PEM_FEATURE_UNAVAILABLE;
+ 473:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* PEM_RFC1421 */
+ 474:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 475:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 476:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ctx->buf = buf;
+ 285              		.loc 1 476 5 view .LVU96
+ 477:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ctx->buflen = len;
+ 286              		.loc 1 477 17 is_stmt 0 view .LVU97
+ 287 015d 488B5424 		movq	16(%rsp), %rdx
+ 287      10
+ 476:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     ctx->buflen = len;
+ 288              		.loc 1 476 14 view .LVU98
+ 289 0162 49892C24 		movq	%rbp, (%r12)
+ 290              		.loc 1 477 5 is_stmt 1 view .LVU99
+ 291              		.loc 1 477 17 is_stmt 0 view .LVU100
+ 292 0166 49895424 		movq	%rdx, 8(%r12)
+ 292      08
+ 478:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 479:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     return 0;
+ 293              		.loc 1 479 5 is_stmt 1 view .LVU101
+ 294              	.LVL31:
+ 295              	.L3:
+ 480:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+ 296              		.loc 1 480 1 is_stmt 0 view .LVU102
+ 297 016b 488B5424 		movq	24(%rsp), %rdx
+ 297      18
+ 298 0170 64482B14 		subq	%fs:40, %rdx
+ 298      25280000 
+ 298      00
+ 299 0179 0F85AF00 		jne	.L30
+ 299      0000
+ 300 017f 4883C428 		addq	$40, %rsp
+ 301              	.LCFI7:
+ 302              		.cfi_remember_state
+ 303              		.cfi_def_cfa_offset 56
+ 304 0183 5B       		popq	%rbx
+ 305              	.LCFI8:
+ 306              		.cfi_def_cfa_offset 48
+ 307 0184 5D       		popq	%rbp
+ 308              	.LCFI9:
+ 309              		.cfi_def_cfa_offset 40
+ 310 0185 415C     		popq	%r12
+ 311              	.LCFI10:
+ 312              		.cfi_def_cfa_offset 32
+ 313 0187 415D     		popq	%r13
+ 314              	.LCFI11:
+ 315              		.cfi_def_cfa_offset 24
+ 316 0189 415E     		popq	%r14
+ 317              	.LCFI12:
+ 318              		.cfi_def_cfa_offset 16
+ 319 018b 415F     		popq	%r15
+ 320              	.LCFI13:
+ 321              		.cfi_def_cfa_offset 8
+ 322 018d C3       		ret
+ 323              	.LVL32:
+ 324 018e 6690     		.p2align 4,,10
+ 325              		.p2align 3
+GAS LISTING /tmp/ccqQBOh8.s 			page 17
+
+
+ 326              	.L28:
+ 327              	.LCFI14:
+ 328              		.cfi_restore_state
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #if defined(PEM_RFC1421)
+ 329              		.loc 1 328 26 discriminator 1 view .LVU103
+ 330 0190 48B85072 		movabsq	$8104601558348427856, %rax
+ 330      6F632D54 
+ 330      7970
+ 331 019a 483303   		xorq	(%rbx), %rax
+ 332 019d 48B9653A 		movabsq	$4849889904880007781, %rcx
+ 332      20342C45 
+ 332      4E43
+ 333 01a7 48334B08 		xorq	8(%rbx), %rcx
+ 334 01ab 4809C8   		orq	%rcx, %rax
+ 335 01ae 0F8542FF 		jne	.L11
+ 335      FFFF
+ 336 01b4 48B84E43 		movabsq	$4919430872044815182, %rax
+ 336      52595054 
+ 336      4544
+ 337 01be 4839430E 		cmpq	%rax, 14(%rbx)
+ 338 01c2 0F852EFF 		jne	.L11
+ 338      FFFF
+ 401:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** #endif /* PEM_RFC1421 */
+ 339              		.loc 1 401 16 view .LVU104
+ 340 01c8 B800ECFF 		movl	$-5120, %eax
+ 340      FF
+ 341 01cd EB9C     		jmp	.L3
+ 342              	.LVL33:
+ 343 01cf 90       		.p2align 4,,10
+ 344              		.p2align 3
+ 345              	.L29:
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PEM_INVALID_DATA, ret);
+ 346              		.loc 1 424 9 view .LVU105
+ 347 01d0 488B7424 		movq	16(%rsp), %rsi
+ 347      10
+ 348 01d5 4889EF   		movq	%rbp, %rdi
+ 349 01d8 89442408 		movl	%eax, 8(%rsp)
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PEM_INVALID_DATA, ret);
+ 350              		.loc 1 424 9 is_stmt 1 view .LVU106
+ 351 01dc E8000000 		call	mbedtls_zeroize_and_free@PLT
+ 351      00
+ 352              	.LVL34:
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 353              		.loc 1 425 9 view .LVU107
+ 354              	.LBB10:
+ 355              	.LBI10:
+ 356              		.file 3 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h"
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \file error.h
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \brief Error to string translation
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /*
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *  Copyright The Mbed TLS Contributors
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #ifndef MBEDTLS_ERROR_H
+GAS LISTING /tmp/ccqQBOh8.s 			page 18
+
+
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERROR_H
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/build_info.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #include <stddef.h>
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Error code layout.
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Currently we try to keep all error codes within the negative space of 16
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * bits signed integers to support all platforms (-0x0001 - -0x7FFF). In
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * addition we'd like to give two layers of information on the error if
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * possible.
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * For that purpose the error codes are segmented in the following manner:
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 16 bit error code bit-segmentation
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 1 bit  - Unused (sign bit)
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 3 bits - High level module ID
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 5 bits - Module-dependent error code
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 7 bits - Low level module errors
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * For historical reasons, low-level error codes are divided in even and odd,
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * even codes were assigned first, and -1 is reserved for other errors.
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Low-level module errors (0x0002-0x007E, 0x0001-0x007F)
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Module   Nr  Codes assigned
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ERROR     2  0x006E          0x0001
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * MPI       7  0x0002-0x0010
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * GCM       3  0x0012-0x0016   0x0013-0x0013
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * THREADING 3  0x001A-0x001E
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * AES       5  0x0020-0x0022   0x0021-0x0025
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CAMELLIA  3  0x0024-0x0026   0x0027-0x0027
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * BASE64    2  0x002A-0x002C
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * OID       1  0x002E-0x002E   0x000B-0x000B
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PADLOCK   1  0x0030-0x0030
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * DES       2  0x0032-0x0032   0x0033-0x0033
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CTR_DBRG  4  0x0034-0x003A
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ENTROPY   3  0x003C-0x0040   0x003D-0x003F
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * NET      13  0x0042-0x0052   0x0043-0x0049
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ARIA      4  0x0058-0x005E
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ASN1      7  0x0060-0x006C
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CMAC      1  0x007A-0x007A
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PBKDF2    1  0x007C-0x007C
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * HMAC_DRBG 4                  0x0003-0x0009
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CCM       3                  0x000D-0x0011
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * MD5       1                  0x002F-0x002F
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * RIPEMD160 1                  0x0031-0x0031
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SHA1      1                  0x0035-0x0035 0x0073-0x0073
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SHA256    1                  0x0037-0x0037 0x0074-0x0074
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SHA512    1                  0x0039-0x0039 0x0075-0x0075
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SHA-3     1                  0x0076-0x0076
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CHACHA20  3                  0x0051-0x0055
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * POLY1305  3                  0x0057-0x005B
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CHACHAPOLY 2 0x0054-0x0056
+GAS LISTING /tmp/ccqQBOh8.s 			page 19
+
+
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PLATFORM  2  0x0070-0x0072
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * LMS       5  0x0011-0x0019
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * High-level module nr (3 bits - 0x0...-0x7...)
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Name      ID  Nr of Errors
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PEM       1   9
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PKCS#12   1   4 (Started from top)
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * X509      2   20
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PKCS5     2   4 (Started from top)
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * DHM       3   11
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PK        3   15 (Started from top)
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * RSA       4   11
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ECP       4   10 (Started from top)
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * MD        5   5
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * HKDF      5   1 (Started from top)
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PKCS7     5   12 (Started from 0x5300)
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SSL       5   2 (Started from 0x5F00)
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CIPHER    6   8 (Started from 0x6080)
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SSL       6   22 (Started from top, plus 0x6000)
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SSL       7   20 (Started from 0x7000, gaps at
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *                   0x7380, 0x7900-0x7980, 0x7A80-0x7E80)
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Module dependent error code (5 bits 0x.00.-0x.F8.)
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #ifdef __cplusplus
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** extern "C" {
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #endif
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /** Generic error */
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERR_ERROR_GENERIC_ERROR       -0x0001
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /** This is a bug in the library */
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED -0x006E
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /** Hardware accelerator failed */
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERR_PLATFORM_HW_ACCEL_FAILED     -0x0070
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /** The requested feature is not supported by the platform */
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED -0x0072
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \brief Combines a high-level and low-level error code together.
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        Wrapper macro for mbedtls_error_add(). See that function for
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        more details.
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERROR_ADD(high, low) \
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     mbedtls_error_add(high, low, __FILE__, __LINE__)
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #if defined(MBEDTLS_TEST_HOOKS)
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \brief Testing hook called before adding/combining two error codes together.
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        Only used when invasive testing is enabled via MBEDTLS_TEST_HOOKS.
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** extern void (*mbedtls_test_hook_error_add)(int, int, const char *, int);
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #endif
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+GAS LISTING /tmp/ccqQBOh8.s 			page 20
+
+
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \brief Combines a high-level and low-level error code together.
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        This function can be called directly however it is usually
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        called via the #MBEDTLS_ERROR_ADD macro.
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        While a value of zero is not a negative error code, it is still an
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        error code (that denotes success) and can be combined with both a
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        negative error code or another value of zero.
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \note  When invasive testing is enabled via #MBEDTLS_TEST_HOOKS, also try to
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        call \link mbedtls_test_hook_error_add \endlink.
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \param high      high-level error code. See error.h for more details.
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \param low       low-level error code. See error.h for more details.
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \param file      file where this error code addition occurred.
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \param line      line where this error code addition occurred.
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** static inline int mbedtls_error_add(int high, int low,
+ 357              		.loc 3 142 19 view .LVU108
+ 358              	.LBB11:
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****                                     const char *file, int line)
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** {
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #if defined(MBEDTLS_TEST_HOOKS)
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     if (*mbedtls_test_hook_error_add != NULL) {
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****         (*mbedtls_test_hook_error_add)(high, low, file, line);
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     }
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #endif
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     (void) file;
+ 359              		.loc 3 150 5 view .LVU109
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     (void) line;
+ 360              		.loc 3 151 5 view .LVU110
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     return high + low;
+ 361              		.loc 3 153 5 view .LVU111
+ 362              		.loc 3 153 17 is_stmt 0 view .LVU112
+ 363 01e1 8B442408 		movl	8(%rsp), %eax
+ 364 01e5 2D001100 		subl	$4352, %eax
+ 364      00
+ 365              	.LVL35:
+ 366              		.loc 3 153 17 view .LVU113
+ 367              	.LBE11:
+ 368              	.LBE10:
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 369              		.loc 1 425 16 view .LVU114
+ 370 01ea E97CFFFF 		jmp	.L3
+ 370      FF
+ 371              	.LVL36:
+ 372 01ef 90       		.p2align 4,,10
+ 373              		.p2align 3
+ 374              	.L19:
+ 291:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 375              		.loc 1 291 16 view .LVU115
+ 376 01f0 B880EFFF 		movl	$-4224, %eax
+ 376      FF
+ 377 01f5 E971FFFF 		jmp	.L3
+ 377      FF
+ 378              	.LVL37:
+GAS LISTING /tmp/ccqQBOh8.s 			page 21
+
+
+ 379 01fa 660F1F44 		.p2align 4,,10
+ 379      0000
+ 380              		.p2align 3
+ 381              	.L14:
+ 285:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 382              		.loc 1 285 16 view .LVU116
+ 383 0200 B880EBFF 		movl	$-5248, %eax
+ 383      FF
+ 384 0205 E961FFFF 		jmp	.L3
+ 384      FF
+ 385              	.LVL38:
+ 386 020a 660F1F44 		.p2align 4,,10
+ 386      0000
+ 387              		.p2align 3
+ 388              	.L21:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 389              		.loc 1 406 16 view .LVU117
+ 390 0210 B800EFFF 		movl	$-4352, %eax
+ 390      FF
+ 391 0215 E951FFFF 		jmp	.L3
+ 391      FF
+ 392              	.LVL39:
+ 393              	.L23:
+ 420:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 394              		.loc 1 420 16 view .LVU118
+ 395 021a B880EEFF 		movl	$-4480, %eax
+ 395      FF
+ 396              	.LVL40:
+ 420:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 397              		.loc 1 420 16 view .LVU119
+ 398 021f E947FFFF 		jmp	.L3
+ 398      FF
+ 399              	.LVL41:
+ 400              	.L22:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 401              		.loc 1 412 16 view .LVU120
+ 402 0224 B8D4EEFF 		movl	$-4396, %eax
+ 402      FF
+ 403              	.LVL42:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 404              		.loc 1 412 16 view .LVU121
+ 405 0229 E93DFFFF 		jmp	.L3
+ 405      FF
+ 406              	.LVL43:
+ 407              	.L30:
+ 408              		.loc 1 480 1 view .LVU122
+ 409 022e E8000000 		call	__stack_chk_fail@PLT
+ 409      00
+ 410              	.LVL44:
+ 411              		.cfi_endproc
+ 412              	.LFE59:
+ 414              		.section	.text.mbedtls_pem_free,"ax",@progbits
+ 415              		.p2align 4
+ 416              		.globl	mbedtls_pem_free
+ 418              	mbedtls_pem_free:
+ 419              	.LVL45:
+ 420              	.LFB60:
+GAS LISTING /tmp/ccqQBOh8.s 			page 22
+
+
+ 481:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 482:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** void mbedtls_pem_free(mbedtls_pem_context *ctx)
+ 483:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** {
+ 421              		.loc 1 483 1 is_stmt 1 view -0
+ 422              		.cfi_startproc
+ 423              		.loc 1 483 1 is_stmt 0 view .LVU124
+ 424 0000 F30F1EFA 		endbr64
+ 484:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (ctx->buf != NULL) {
+ 425              		.loc 1 484 5 is_stmt 1 view .LVU125
+ 483:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (ctx->buf != NULL) {
+ 426              		.loc 1 483 1 is_stmt 0 view .LVU126
+ 427 0004 53       		pushq	%rbx
+ 428              	.LCFI15:
+ 429              		.cfi_def_cfa_offset 16
+ 430              		.cfi_offset 3, -16
+ 483:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     if (ctx->buf != NULL) {
+ 431              		.loc 1 483 1 view .LVU127
+ 432 0005 4889FB   		movq	%rdi, %rbx
+ 433              		.loc 1 484 12 view .LVU128
+ 434 0008 488B3F   		movq	(%rdi), %rdi
+ 435              	.LVL46:
+ 436              		.loc 1 484 8 view .LVU129
+ 437 000b 4885FF   		testq	%rdi, %rdi
+ 438 000e 7409     		je	.L32
+ 485:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****         mbedtls_zeroize_and_free(ctx->buf, ctx->buflen);
+ 439              		.loc 1 485 9 is_stmt 1 view .LVU130
+ 440 0010 488B7308 		movq	8(%rbx), %rsi
+ 441 0014 E8000000 		call	mbedtls_zeroize_and_free@PLT
+ 441      00
+ 442              	.LVL47:
+ 443              	.L32:
+ 486:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     }
+ 487:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_free(ctx->info);
+ 444              		.loc 1 487 5 view .LVU131
+ 445 0019 488B7B10 		movq	16(%rbx), %rdi
+ 446 001d E8000000 		call	mbedtls_free@PLT
+ 446      00
+ 447              	.LVL48:
+ 488:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** 
+ 489:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c ****     mbedtls_platform_zeroize(ctx, sizeof(mbedtls_pem_context));
+ 448              		.loc 1 489 5 view .LVU132
+ 449 0022 4889DF   		movq	%rbx, %rdi
+ 450 0025 BE180000 		movl	$24, %esi
+ 450      00
+ 490:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+ 451              		.loc 1 490 1 is_stmt 0 view .LVU133
+ 452 002a 5B       		popq	%rbx
+ 453              	.LCFI16:
+ 454              		.cfi_def_cfa_offset 8
+ 455              	.LVL49:
+ 489:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+ 456              		.loc 1 489 5 view .LVU134
+ 457 002b E9000000 		jmp	mbedtls_platform_zeroize@PLT
+ 457      00
+ 458              	.LVL50:
+ 489:../../bos/thirdparty/mbedtls/bos_mbedtls/pem.c **** }
+ 459              		.loc 1 489 5 view .LVU135
+GAS LISTING /tmp/ccqQBOh8.s 			page 23
+
+
+ 460              		.cfi_endproc
+ 461              	.LFE60:
+ 463              		.text
+ 464              	.Letext0:
+ 465              		.file 4 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pem.h"
+ 466              		.file 5 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 467              		.file 6 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/platform_util.h"
+ 468              		.file 7 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+ 469              		.file 8 "../../bos/thirdparty/mbedtls/bos_mbedtls/common.h"
+ 470              		.file 9 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/base64.h"
+ 471              		.file 10 "/usr/include/string.h"
+ 2647              		.section	.note.gnu.property,"a"
+ 2648              		.align 8
+ 2649 0000 04000000 		.long	1f - 0f
+ 2650 0004 10000000 		.long	4f - 1f
+ 2651 0008 05000000 		.long	5
+ 2652              	0:
+ 2653 000c 474E5500 		.string	"GNU"
+ 2654              	1:
+ 2655              		.align 8
+ 2656 0010 020000C0 		.long	0xc0000002
+ 2657 0014 04000000 		.long	3f - 2f
+ 2658              	2:
+ 2659 0018 03000000 		.long	0x3
+ 2660              	3:
+ 2661 001c 00000000 		.align 8
+ 2662              	4:
+GAS LISTING /tmp/ccqQBOh8.s 			page 24
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 pem.c
+     /tmp/ccqQBOh8.s:9      .text.mbedtls_pem_init:0000000000000000 mbedtls_pem_init
+     /tmp/ccqQBOh8.s:44     .text.mbedtls_pem_read_buffer:0000000000000000 mbedtls_pem_read_buffer
+     /tmp/ccqQBOh8.s:418    .text.mbedtls_pem_free:0000000000000000 mbedtls_pem_free
+
+UNDEFINED SYMBOLS
+strstr
+strlen
+mbedtls_base64_decode
+mbedtls_calloc
+mbedtls_zeroize_and_free
+__stack_chk_fail
+mbedtls_free
+mbedtls_platform_zeroize

@@ -105,6 +105,18 @@ typedef struct
     struct list_head node;
 } bMqttSubscribeNode_t;
 
+typedef struct
+{
+    uint16_t         pack_id;
+    char            *topic;
+    uint8_t         *payload;
+    uint32_t         payload_len;
+    uint8_t          qos;
+    uint8_t          retry_count;
+    uint32_t         last_send_time;
+    struct list_head node;
+} bMqttPendingPub_t;
+
 /**
  * \}
  */
@@ -122,6 +134,8 @@ typedef struct
 #define MQTT_STEP_SUB (0x2)
 
 #define MAX_PACKET_ID 65535
+#define MQTT_MAX_RETRY_COUNT 3
+#define MQTT_RETRY_TIMEOUT_MS 5000
 /**
  * \}
  */
@@ -141,6 +155,7 @@ typedef struct
  */
 static bMqttSrvInstance_t *pbMqttInstance = NULL;
 static LIST_HEAD(bMqttSubscribeListHead);
+static LIST_HEAD(bMqttPendingPubListHead);
 
 B_TASK_CREATE_ATTR(bMqttTaskAttr);
 B_TIMER_CREATE_ATTR(bMqttTimerAttr);
@@ -463,7 +478,28 @@ static int _bMqttPublish(bMqttSrvInstance_t *pinstance, const char *topic, const
     }
 
     _bMqttFree(pbuf);
-    b_log("mqtt publish success: topic=%s, len=%d\r\n", topic, payload_len);
+
+    // For QoS 1, store the packet in pending list until PUBACK received
+    if (qos > 0)
+    {
+        bMqttPendingPub_t *pnode = _bMqttMalloc(sizeof(bMqttPendingPub_t));
+        if (pnode == NULL)
+        {
+            b_log_e("mqtt pending pub malloc failed\r\n");
+            return -1;
+        }
+        pnode->pack_id      = pack_id;
+        pnode->topic        = (char *)topic;  // topic is persistent in publish call
+        pnode->payload      = (uint8_t *)payload;
+        pnode->payload_len  = payload_len;
+        pnode->qos          = qos;
+        pnode->retry_count  = 0;
+        pnode->last_send_time = bHalGetSysTick();
+        list_add(&pnode->node, &bMqttPendingPubListHead);
+        b_log("mqtt publish stored: id=%d, topic=%s, qos=%d\r\n", pack_id, topic, qos);
+    }
+
+    b_log("mqtt publish success: topic=%s, len=%d, qos=%d, id=%d\r\n", topic, payload_len, qos, pack_id);
     return 0;
 }
 
@@ -633,6 +669,87 @@ static int _bMqttAddSubscribe(bMqttSrvInstance_t *pinstance, const char **topic,
     pnode->pack_len = len;
     list_add(&pnode->node, &bMqttSubscribeListHead);
     return 0;
+}
+
+// QoS 1: Handle PUBACK - remove from pending list
+static int _bMqttPubAckHandle(uint16_t pack_id)
+{
+    bMqttPendingPub_t *pnode = NULL;
+    struct list_head  *pos   = NULL;
+    struct list_head  *n     = NULL;
+    list_for_each_safe(pos, n, &bMqttPendingPubListHead)
+    {
+        pnode = list_entry(pos, bMqttPendingPub_t, node);
+        if (pnode->pack_id == pack_id)
+        {
+            b_log("qos1 puback received, remove pending: id=%d\r\n", pack_id);
+            list_del(&pnode->node);
+            _bMqttFree(pnode);
+            return 0;
+        }
+    }
+    b_log_w("qos1 puback: pack_id %d not found in pending list\r\n", pack_id);
+    return -1;
+}
+
+// QoS 1: Retry pending publishes that timed out
+static void _bMqttRetryPendingPub(bMqttSrvInstance_t *pinstance)
+{
+    bMqttPendingPub_t *pnode = NULL;
+    struct list_head   *pos   = NULL;
+    struct list_head   *n     = NULL;
+
+    list_for_each_safe(pos, n, &bMqttPendingPubListHead)
+    {
+        pnode = list_entry(pos, bMqttPendingPub_t, node);
+        // Check if timeout occurred
+        if ((TICK_DIFF_BIT32(pnode->last_send_time, bHalGetSysTick())) > MS2TICKS(MQTT_RETRY_TIMEOUT_MS))
+        {
+            if (pnode->retry_count >= MQTT_MAX_RETRY_COUNT)
+            {
+                b_log_e("qos1 publish timeout, giving up: id=%d, topic=%s\r\n", 
+                        pnode->pack_id, pnode->topic ? pnode->topic : "null");
+                list_del(&pnode->node);
+                _bMqttFree(pnode);
+                continue;
+            }
+            // Retry the publish
+            pnode->retry_count++;
+            b_log("qos1 retry publish: id=%d, retry=%d, topic=%s\r\n", 
+                  pnode->pack_id, pnode->retry_count, pnode->topic ? pnode->topic : "null");
+            
+            int       len    = 0;
+            uint8_t  *pbuf   = NULL;
+            uint32_t buf_size = 2 + strlen(pnode->topic) + 3 + pnode->payload_len;
+            pbuf = _bMqttMalloc(buf_size);
+            if (pbuf == NULL)
+            {
+                pnode->last_send_time = bHalGetSysTick();
+                continue;
+            }
+            
+            MQTTString topic_str = MQTTString_initializer;
+            topic_str.cstring     = pnode->topic;
+            len = MQTTSerialize_publish(pbuf, buf_size, 1, pnode->qos, 0, pnode->pack_id, 
+                                         topic_str, pnode->payload, pnode->payload_len);
+            if (len <= 0)
+            {
+                _bMqttFree(pbuf);
+                pnode->last_send_time = bHalGetSysTick();
+                continue;
+            }
+            
+            if (_bMqttWrite(pinstance, pbuf, len) < 0)
+            {
+                _bMqttFree(pbuf);
+                pnode->last_send_time = bHalGetSysTick();
+                continue;
+            }
+            
+            _bMqttFree(pbuf);
+            pnode->last_send_time = bHalGetSysTick();
+        }
+    }
 }
 
 static int _bMqttReadPacket(bMqttSrvInstance_t *pinstance, bMqttPack_t *pack)
@@ -837,7 +954,10 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
                         break;
                         case PUBACK:
                         {
-                            ;  // todo qos = 1
+                            // QoS 1: Handle PUBACK - extract packet ID and remove from pending
+                            uint16_t pack_id = (pack.pack[2] << 8) | pack.pack[3];
+                            b_log("qos1 puback received: id=%d\r\n", pack_id);
+                            _bMqttPubAckHandle(pack_id);
                         }
                         break;
                         case SUBACK:
@@ -883,6 +1003,9 @@ PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
             }
             else
             {
+                // Retry pending QoS 1 publishes
+                _bMqttRetryPendingPub(pinstance);
+                
                 if ((mqtt_step_f & MQTT_STEP_CONN) == 0)
                 {
                     _bMqttConnect(pinstance);
@@ -1043,6 +1166,16 @@ void bMqttSrvDestroy()
         _bMqttFree(pnode);
     }
     pnode = NULL;
+    
+    // Clean up pending publish list (QoS 1)
+    bMqttPendingPub_t *ppend = NULL;
+    list_for_each_safe(pos, n, &bMqttPendingPubListHead)
+    {
+        ppend = list_entry(pos, bMqttPendingPub_t, node);
+        list_del(&ppend->node);
+        _bMqttFree(ppend);
+    }
+    
     _bMqttFree(pinstance);
 }
 

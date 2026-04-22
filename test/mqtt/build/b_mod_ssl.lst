@@ -1,0 +1,2255 @@
+GAS LISTING /tmp/cc2lPFYN.s 			page 1
+
+
+   1              		.file	"b_mod_ssl.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/modules/b_mod_ssl.c"
+   5              		.section	.rodata._bSSLPrint.str1.1,"aMS",@progbits,1
+   6              	.LC0:
+   7 0000 25733A25 		.string	"%s:%04d: %s"
+   7      3034643A 
+   7      20257300 
+   8              	.LC1:
+   9 000c 2E2E2F2E 		.string	"../../bos/modules/b_mod_ssl.c"
+   9      2E2F626F 
+   9      732F6D6F 
+   9      64756C65 
+   9      732F625F 
+  10              		.section	.text._bSSLPrint,"ax",@progbits
+  11              		.p2align 4
+  13              	_bSSLPrint:
+  14              	.LVL0:
+  15              	.LFB125:
+   1:../../bos/modules/b_mod_ssl.c **** /**
+   2:../../bos/modules/b_mod_ssl.c ****  *!
+   3:../../bos/modules/b_mod_ssl.c ****  * \file        b_mod_ssl.c
+   4:../../bos/modules/b_mod_ssl.c ****  * \version     v0.0.1
+   5:../../bos/modules/b_mod_ssl.c ****  * \date        2020/05/16
+   6:../../bos/modules/b_mod_ssl.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/modules/b_mod_ssl.c ****  *******************************************************************************
+   8:../../bos/modules/b_mod_ssl.c ****  * @attention
+   9:../../bos/modules/b_mod_ssl.c ****  *
+  10:../../bos/modules/b_mod_ssl.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/modules/b_mod_ssl.c ****  *
+  12:../../bos/modules/b_mod_ssl.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/modules/b_mod_ssl.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/modules/b_mod_ssl.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/modules/b_mod_ssl.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/modules/b_mod_ssl.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/modules/b_mod_ssl.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/modules/b_mod_ssl.c ****  *
+  19:../../bos/modules/b_mod_ssl.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/modules/b_mod_ssl.c ****  * copies or substantial portions of the Software.
+  21:../../bos/modules/b_mod_ssl.c ****  *
+  22:../../bos/modules/b_mod_ssl.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/modules/b_mod_ssl.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/modules/b_mod_ssl.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/modules/b_mod_ssl.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/modules/b_mod_ssl.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/modules/b_mod_ssl.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/modules/b_mod_ssl.c ****  * SOFTWARE.
+  29:../../bos/modules/b_mod_ssl.c ****  *******************************************************************************
+  30:../../bos/modules/b_mod_ssl.c ****  */
+  31:../../bos/modules/b_mod_ssl.c **** 
+  32:../../bos/modules/b_mod_ssl.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/modules/b_mod_ssl.c **** #include "modules/inc/b_mod_ssl.h"
+  34:../../bos/modules/b_mod_ssl.c **** 
+  35:../../bos/modules/b_mod_ssl.c **** #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+  36:../../bos/modules/b_mod_ssl.c **** #include "hal/inc/b_hal.h"
+  37:../../bos/modules/b_mod_ssl.c **** #include "modules/inc/b_mod_tcpip.h"
+GAS LISTING /tmp/cc2lPFYN.s 			page 2
+
+
+  38:../../bos/modules/b_mod_ssl.c **** 
+  39:../../bos/modules/b_mod_ssl.c **** /**
+  40:../../bos/modules/b_mod_ssl.c ****  * \addtogroup BABYOS
+  41:../../bos/modules/b_mod_ssl.c ****  * \{
+  42:../../bos/modules/b_mod_ssl.c ****  */
+  43:../../bos/modules/b_mod_ssl.c **** 
+  44:../../bos/modules/b_mod_ssl.c **** /**
+  45:../../bos/modules/b_mod_ssl.c ****  * \addtogroup MODULES
+  46:../../bos/modules/b_mod_ssl.c ****  * \{
+  47:../../bos/modules/b_mod_ssl.c ****  */
+  48:../../bos/modules/b_mod_ssl.c **** 
+  49:../../bos/modules/b_mod_ssl.c **** /**
+  50:../../bos/modules/b_mod_ssl.c ****  * \addtogroup SSL
+  51:../../bos/modules/b_mod_ssl.c ****  * \{
+  52:../../bos/modules/b_mod_ssl.c ****  */
+  53:../../bos/modules/b_mod_ssl.c **** 
+  54:../../bos/modules/b_mod_ssl.c **** /**
+  55:../../bos/modules/b_mod_ssl.c ****  * \defgroup SSL_Private_TypesDefinitions
+  56:../../bos/modules/b_mod_ssl.c ****  * \{
+  57:../../bos/modules/b_mod_ssl.c ****  */
+  58:../../bos/modules/b_mod_ssl.c **** typedef struct
+  59:../../bos/modules/b_mod_ssl.c **** {
+  60:../../bos/modules/b_mod_ssl.c ****     mbedtls_ctr_drbg_context ctr_drbg;
+  61:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_context  entropy;
+  62:../../bos/modules/b_mod_ssl.c **** } bSSLRandom_t;
+  63:../../bos/modules/b_mod_ssl.c **** 
+  64:../../bos/modules/b_mod_ssl.c **** typedef struct
+  65:../../bos/modules/b_mod_ssl.c **** {
+  66:../../bos/modules/b_mod_ssl.c ****     bSSLRandom_t        random;
+  67:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_context ssl_ctx;
+  68:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_config  ssl_conf;
+  69:../../bos/modules/b_mod_ssl.c ****     mbedtls_x509_crt    ca;
+  70:../../bos/modules/b_mod_ssl.c ****     int                 sockfd;
+  71:../../bos/modules/b_mod_ssl.c **** } bSSL_t;
+  72:../../bos/modules/b_mod_ssl.c **** 
+  73:../../bos/modules/b_mod_ssl.c **** /**
+  74:../../bos/modules/b_mod_ssl.c ****  * \}
+  75:../../bos/modules/b_mod_ssl.c ****  */
+  76:../../bos/modules/b_mod_ssl.c **** 
+  77:../../bos/modules/b_mod_ssl.c **** /**
+  78:../../bos/modules/b_mod_ssl.c ****  * \defgroup SSL_Private_Defines
+  79:../../bos/modules/b_mod_ssl.c ****  * \{
+  80:../../bos/modules/b_mod_ssl.c ****  */
+  81:../../bos/modules/b_mod_ssl.c **** 
+  82:../../bos/modules/b_mod_ssl.c **** /**
+  83:../../bos/modules/b_mod_ssl.c ****  * \}
+  84:../../bos/modules/b_mod_ssl.c ****  */
+  85:../../bos/modules/b_mod_ssl.c **** 
+  86:../../bos/modules/b_mod_ssl.c **** /**
+  87:../../bos/modules/b_mod_ssl.c ****  * \defgroup SSL_Private_Macros
+  88:../../bos/modules/b_mod_ssl.c ****  * \{
+  89:../../bos/modules/b_mod_ssl.c ****  */
+  90:../../bos/modules/b_mod_ssl.c **** 
+  91:../../bos/modules/b_mod_ssl.c **** /**
+  92:../../bos/modules/b_mod_ssl.c ****  * \}
+  93:../../bos/modules/b_mod_ssl.c ****  */
+  94:../../bos/modules/b_mod_ssl.c **** 
+GAS LISTING /tmp/cc2lPFYN.s 			page 3
+
+
+  95:../../bos/modules/b_mod_ssl.c **** /**
+  96:../../bos/modules/b_mod_ssl.c ****  * \defgroup SSL_Private_Variables
+  97:../../bos/modules/b_mod_ssl.c ****  * \{
+  98:../../bos/modules/b_mod_ssl.c ****  */
+  99:../../bos/modules/b_mod_ssl.c **** 
+ 100:../../bos/modules/b_mod_ssl.c **** /**
+ 101:../../bos/modules/b_mod_ssl.c ****  * \}
+ 102:../../bos/modules/b_mod_ssl.c ****  */
+ 103:../../bos/modules/b_mod_ssl.c **** 
+ 104:../../bos/modules/b_mod_ssl.c **** /**
+ 105:../../bos/modules/b_mod_ssl.c ****  * \defgroup SSL_Private_FunctionPrototypes
+ 106:../../bos/modules/b_mod_ssl.c ****  * \{
+ 107:../../bos/modules/b_mod_ssl.c ****  */
+ 108:../../bos/modules/b_mod_ssl.c **** 
+ 109:../../bos/modules/b_mod_ssl.c **** /**
+ 110:../../bos/modules/b_mod_ssl.c ****  * \}
+ 111:../../bos/modules/b_mod_ssl.c ****  */
+ 112:../../bos/modules/b_mod_ssl.c **** 
+ 113:../../bos/modules/b_mod_ssl.c **** /**
+ 114:../../bos/modules/b_mod_ssl.c ****  * \defgroup SSL_Private_Functions
+ 115:../../bos/modules/b_mod_ssl.c ****  * \{
+ 116:../../bos/modules/b_mod_ssl.c ****  */
+ 117:../../bos/modules/b_mod_ssl.c **** 
+ 118:../../bos/modules/b_mod_ssl.c **** static int _bSSLEntropySource(void *data, uint8_t *output, uint32_t len, uint32_t *olen)
+ 119:../../bos/modules/b_mod_ssl.c **** {
+ 120:../../bos/modules/b_mod_ssl.c ****     uint32_t seed;
+ 121:../../bos/modules/b_mod_ssl.c ****     B_UNUSED(data);
+ 122:../../bos/modules/b_mod_ssl.c ****     seed = bHalRNGRead();
+ 123:../../bos/modules/b_mod_ssl.c ****     if (len > sizeof(seed))
+ 124:../../bos/modules/b_mod_ssl.c ****     {
+ 125:../../bos/modules/b_mod_ssl.c ****         len = sizeof(seed);
+ 126:../../bos/modules/b_mod_ssl.c ****     }
+ 127:../../bos/modules/b_mod_ssl.c ****     memcpy(output, &seed, len);
+ 128:../../bos/modules/b_mod_ssl.c ****     *olen = len;
+ 129:../../bos/modules/b_mod_ssl.c ****     return 0;
+ 130:../../bos/modules/b_mod_ssl.c **** }
+ 131:../../bos/modules/b_mod_ssl.c **** 
+ 132:../../bos/modules/b_mod_ssl.c **** static void _bSSLPrint(void *ctx, int level, const char *file, int line, const char *str)
+ 133:../../bos/modules/b_mod_ssl.c **** {
+  16              		.loc 1 133 1 view -0
+  17              		.cfi_startproc
+  18              		.loc 1 133 1 is_stmt 0 view .LVU1
+  19 0000 F30F1EFA 		endbr64
+ 134:../../bos/modules/b_mod_ssl.c ****     ((void)level);  // 忽略未使用的参数
+  20              		.loc 1 134 5 is_stmt 1 view .LVU2
+ 135:../../bos/modules/b_mod_ssl.c ****     ((void)ctx);    // 忽略未使用的参数
+  21              		.loc 1 135 5 view .LVU3
+ 136:../../bos/modules/b_mod_ssl.c ****     b_log("%s:%04d: %s", file, line, str);
+  22              		.loc 1 136 5 view .LVU4
+ 133:../../bos/modules/b_mod_ssl.c ****     ((void)level);  // 忽略未使用的参数
+  23              		.loc 1 133 1 is_stmt 0 view .LVU5
+  24 0004 4883EC08 		subq	$8, %rsp
+  25              	.LCFI0:
+  26              		.cfi_def_cfa_offset 16
+ 133:../../bos/modules/b_mod_ssl.c ****     ((void)level);  // 忽略未使用的参数
+  27              		.loc 1 133 1 view .LVU6
+  28 0008 4989D1   		movq	%rdx, %r9
+GAS LISTING /tmp/cc2lPFYN.s 			page 4
+
+
+  29              		.loc 1 136 5 view .LVU7
+  30 000b 488D3500 		leaq	.LC1(%rip), %rsi
+  30      000000
+  31              	.LVL1:
+  32              		.loc 1 136 5 view .LVU8
+  33 0012 31C0     		xorl	%eax, %eax
+  34 0014 4150     		pushq	%r8
+  35              	.LCFI1:
+  36              		.cfi_def_cfa_offset 24
+  37 0016 488D1500 		leaq	__func__.1(%rip), %rdx
+  37      000000
+  38              	.LVL2:
+  39              		.loc 1 136 5 view .LVU9
+  40 001d 4C8D0500 		leaq	.LC0(%rip), %r8
+  40      000000
+  41              	.LVL3:
+  42              		.loc 1 136 5 view .LVU10
+  43 0024 BF030000 		movl	$3, %edi
+  43      00
+  44              	.LVL4:
+  45              		.loc 1 136 5 view .LVU11
+  46 0029 51       		pushq	%rcx
+  47              	.LCFI2:
+  48              		.cfi_def_cfa_offset 32
+  49 002a B9880000 		movl	$136, %ecx
+  49      00
+  50              	.LVL5:
+  51              		.loc 1 136 5 view .LVU12
+  52 002f E8000000 		call	bLogOut@PLT
+  52      00
+  53              	.LVL6:
+ 137:../../bos/modules/b_mod_ssl.c **** }
+  54              		.loc 1 137 1 view .LVU13
+  55 0034 4883C418 		addq	$24, %rsp
+  56              	.LCFI3:
+  57              		.cfi_def_cfa_offset 8
+  58 0038 C3       		ret
+  59              		.cfi_endproc
+  60              	.LFE125:
+  62              		.section	.text._bSSLRecv,"ax",@progbits
+  63              		.p2align 4
+  65              	_bSSLRecv:
+  66              	.LVL7:
+  67              	.LFB129:
+ 138:../../bos/modules/b_mod_ssl.c **** 
+ 139:../../bos/modules/b_mod_ssl.c **** static int _bSSLDRBGInit(bSSLRandom_t *prandom)
+ 140:../../bos/modules/b_mod_ssl.c **** {
+ 141:../../bos/modules/b_mod_ssl.c ****     if (prandom == NULL)
+ 142:../../bos/modules/b_mod_ssl.c ****     {
+ 143:../../bos/modules/b_mod_ssl.c ****         return -1;
+ 144:../../bos/modules/b_mod_ssl.c ****     }
+ 145:../../bos/modules/b_mod_ssl.c ****     mbedtls_ctr_drbg_init(&prandom->ctr_drbg);
+ 146:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_init(&prandom->entropy);
+ 147:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_add_source(&prandom->entropy, _bSSLEntropySource, NULL,
+ 148:../../bos/modules/b_mod_ssl.c ****                                MBEDTLS_ENTROPY_MAX_GATHER, MBEDTLS_ENTROPY_SOURCE_STRONG);
+ 149:../../bos/modules/b_mod_ssl.c ****     mbedtls_ctr_drbg_seed(&prandom->ctr_drbg, mbedtls_entropy_func, &prandom->entropy,
+ 150:../../bos/modules/b_mod_ssl.c ****                           (const uint8_t *)"babyos", strlen("babyos"));
+GAS LISTING /tmp/cc2lPFYN.s 			page 5
+
+
+ 151:../../bos/modules/b_mod_ssl.c ****     return 0;
+ 152:../../bos/modules/b_mod_ssl.c **** }
+ 153:../../bos/modules/b_mod_ssl.c **** 
+ 154:../../bos/modules/b_mod_ssl.c **** static int _bSSLDRBGDeinit(bSSLRandom_t *prandom)
+ 155:../../bos/modules/b_mod_ssl.c **** {
+ 156:../../bos/modules/b_mod_ssl.c ****     if (prandom == NULL)
+ 157:../../bos/modules/b_mod_ssl.c ****     {
+ 158:../../bos/modules/b_mod_ssl.c ****         return -1;
+ 159:../../bos/modules/b_mod_ssl.c ****     }
+ 160:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_free(&prandom->entropy);
+ 161:../../bos/modules/b_mod_ssl.c ****     mbedtls_ctr_drbg_free(&prandom->ctr_drbg);
+ 162:../../bos/modules/b_mod_ssl.c ****     return 0;
+ 163:../../bos/modules/b_mod_ssl.c **** }
+ 164:../../bos/modules/b_mod_ssl.c **** 
+ 165:../../bos/modules/b_mod_ssl.c **** static int _bSSLSend(void *ctx, const unsigned char *buf, size_t len)
+ 166:../../bos/modules/b_mod_ssl.c **** {
+ 167:../../bos/modules/b_mod_ssl.c ****     bSSL_t  *p_ssl = (bSSL_t *)ctx;
+ 168:../../bos/modules/b_mod_ssl.c ****     uint16_t wlen  = 0;
+ 169:../../bos/modules/b_mod_ssl.c ****     int      ret   = bSend(p_ssl->sockfd, (uint8_t *)buf, len, &wlen);
+ 170:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+ 171:../../bos/modules/b_mod_ssl.c ****     {
+ 172:../../bos/modules/b_mod_ssl.c ****         return 0;
+ 173:../../bos/modules/b_mod_ssl.c ****     }
+ 174:../../bos/modules/b_mod_ssl.c ****     if (wlen == 0)
+ 175:../../bos/modules/b_mod_ssl.c ****     {
+ 176:../../bos/modules/b_mod_ssl.c ****         return MBEDTLS_ERR_SSL_WANT_WRITE;
+ 177:../../bos/modules/b_mod_ssl.c ****     }
+ 178:../../bos/modules/b_mod_ssl.c ****     return wlen;
+ 179:../../bos/modules/b_mod_ssl.c **** }
+ 180:../../bos/modules/b_mod_ssl.c **** 
+ 181:../../bos/modules/b_mod_ssl.c **** static int _bSSLRecv(void *ctx, unsigned char *buf, size_t len)
+ 182:../../bos/modules/b_mod_ssl.c **** {
+  68              		.loc 1 182 1 is_stmt 1 view -0
+  69              		.cfi_startproc
+  70              		.loc 1 182 1 is_stmt 0 view .LVU15
+  71 0000 F30F1EFA 		endbr64
+  72 0004 4883EC18 		subq	$24, %rsp
+  73              	.LCFI4:
+  74              		.cfi_def_cfa_offset 32
+ 183:../../bos/modules/b_mod_ssl.c ****     bSSL_t  *p_ssl = (bSSL_t *)ctx;
+ 184:../../bos/modules/b_mod_ssl.c ****     uint16_t rlen  = 0;
+ 185:../../bos/modules/b_mod_ssl.c ****     int      ret   = bRecv(p_ssl->sockfd, buf, len, &rlen);
+  75              		.loc 1 185 22 view .LVU16
+  76 0008 8BBFD009 		movl	2512(%rdi), %edi
+  76      0000
+  77              	.LVL8:
+  78              		.loc 1 185 22 view .LVU17
+  79 000e 0FB7D2   		movzwl	%dx, %edx
+  80              	.LVL9:
+ 182:../../bos/modules/b_mod_ssl.c ****     bSSL_t  *p_ssl = (bSSL_t *)ctx;
+  81              		.loc 1 182 1 view .LVU18
+  82 0011 64488B04 		movq	%fs:40, %rax
+  82      25280000 
+  82      00
+  83 001a 48894424 		movq	%rax, 8(%rsp)
+  83      08
+  84 001f 31C0     		xorl	%eax, %eax
+GAS LISTING /tmp/cc2lPFYN.s 			page 6
+
+
+ 183:../../bos/modules/b_mod_ssl.c ****     bSSL_t  *p_ssl = (bSSL_t *)ctx;
+  85              		.loc 1 183 5 is_stmt 1 view .LVU19
+ 184:../../bos/modules/b_mod_ssl.c ****     int      ret   = bRecv(p_ssl->sockfd, buf, len, &rlen);
+  86              		.loc 1 184 5 view .LVU20
+  87              		.loc 1 185 22 is_stmt 0 view .LVU21
+  88 0021 488D4C24 		leaq	6(%rsp), %rcx
+  88      06
+ 184:../../bos/modules/b_mod_ssl.c ****     int      ret   = bRecv(p_ssl->sockfd, buf, len, &rlen);
+  89              		.loc 1 184 14 view .LVU22
+  90 0026 31C0     		xorl	%eax, %eax
+  91 0028 66894424 		movw	%ax, 6(%rsp)
+  91      06
+  92              		.loc 1 185 5 is_stmt 1 view .LVU23
+  93              		.loc 1 185 22 is_stmt 0 view .LVU24
+  94 002d E8000000 		call	bRecv@PLT
+  94      00
+  95              	.LVL10:
+  96              		.loc 1 185 22 view .LVU25
+  97 0032 89C2     		movl	%eax, %edx
+  98              	.LVL11:
+ 186:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+  99              		.loc 1 186 5 is_stmt 1 view .LVU26
+ 187:../../bos/modules/b_mod_ssl.c ****     {
+ 188:../../bos/modules/b_mod_ssl.c ****         return 0;
+ 100              		.loc 1 188 16 is_stmt 0 view .LVU27
+ 101 0034 31C0     		xorl	%eax, %eax
+ 102              	.LVL12:
+ 186:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+ 103              		.loc 1 186 8 view .LVU28
+ 104 0036 85D2     		testl	%edx, %edx
+ 105 0038 780A     		js	.L4
+ 189:../../bos/modules/b_mod_ssl.c ****     }
+ 190:../../bos/modules/b_mod_ssl.c ****     if (rlen == 0)
+ 106              		.loc 1 190 5 is_stmt 1 view .LVU29
+ 107              		.loc 1 190 14 is_stmt 0 view .LVU30
+ 108 003a 0FB74424 		movzwl	6(%rsp), %eax
+ 108      06
+ 109              		.loc 1 190 8 view .LVU31
+ 110 003f 6685C0   		testw	%ax, %ax
+ 111 0042 7415     		je	.L10
+ 112              	.L4:
+ 191:../../bos/modules/b_mod_ssl.c ****     {
+ 192:../../bos/modules/b_mod_ssl.c ****         return MBEDTLS_ERR_SSL_WANT_READ;
+ 193:../../bos/modules/b_mod_ssl.c ****     }
+ 194:../../bos/modules/b_mod_ssl.c ****     return rlen;
+ 195:../../bos/modules/b_mod_ssl.c **** }
+ 113              		.loc 1 195 1 view .LVU32
+ 114 0044 488B5424 		movq	8(%rsp), %rdx
+ 114      08
+ 115 0049 64482B14 		subq	%fs:40, %rdx
+ 115      25280000 
+ 115      00
+ 116              	.LVL13:
+ 117              		.loc 1 195 1 view .LVU33
+ 118 0052 750C     		jne	.L11
+ 119 0054 4883C418 		addq	$24, %rsp
+ 120              	.LCFI5:
+GAS LISTING /tmp/cc2lPFYN.s 			page 7
+
+
+ 121              		.cfi_remember_state
+ 122              		.cfi_def_cfa_offset 8
+ 123 0058 C3       		ret
+ 124              	.LVL14:
+ 125              	.L10:
+ 126              	.LCFI6:
+ 127              		.cfi_restore_state
+ 192:../../bos/modules/b_mod_ssl.c ****     }
+ 128              		.loc 1 192 16 view .LVU34
+ 129 0059 B80097FF 		movl	$-26880, %eax
+ 129      FF
+ 130 005e EBE4     		jmp	.L4
+ 131              	.LVL15:
+ 132              	.L11:
+ 133              		.loc 1 195 1 view .LVU35
+ 134 0060 E8000000 		call	__stack_chk_fail@PLT
+ 134      00
+ 135              	.LVL16:
+ 136              		.cfi_endproc
+ 137              	.LFE129:
+ 139              		.section	.text._bSSLSend,"ax",@progbits
+ 140              		.p2align 4
+ 142              	_bSSLSend:
+ 143              	.LVL17:
+ 144              	.LFB128:
+ 166:../../bos/modules/b_mod_ssl.c ****     bSSL_t  *p_ssl = (bSSL_t *)ctx;
+ 145              		.loc 1 166 1 is_stmt 1 view -0
+ 146              		.cfi_startproc
+ 166:../../bos/modules/b_mod_ssl.c ****     bSSL_t  *p_ssl = (bSSL_t *)ctx;
+ 147              		.loc 1 166 1 is_stmt 0 view .LVU37
+ 148 0000 F30F1EFA 		endbr64
+ 149 0004 4883EC18 		subq	$24, %rsp
+ 150              	.LCFI7:
+ 151              		.cfi_def_cfa_offset 32
+ 169:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+ 152              		.loc 1 169 22 view .LVU38
+ 153 0008 8BBFD009 		movl	2512(%rdi), %edi
+ 153      0000
+ 154              	.LVL18:
+ 169:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+ 155              		.loc 1 169 22 view .LVU39
+ 156 000e 0FB7D2   		movzwl	%dx, %edx
+ 157              	.LVL19:
+ 166:../../bos/modules/b_mod_ssl.c ****     bSSL_t  *p_ssl = (bSSL_t *)ctx;
+ 158              		.loc 1 166 1 view .LVU40
+ 159 0011 64488B04 		movq	%fs:40, %rax
+ 159      25280000 
+ 159      00
+ 160 001a 48894424 		movq	%rax, 8(%rsp)
+ 160      08
+ 161 001f 31C0     		xorl	%eax, %eax
+ 167:../../bos/modules/b_mod_ssl.c ****     uint16_t wlen  = 0;
+ 162              		.loc 1 167 5 is_stmt 1 view .LVU41
+ 168:../../bos/modules/b_mod_ssl.c ****     int      ret   = bSend(p_ssl->sockfd, (uint8_t *)buf, len, &wlen);
+ 163              		.loc 1 168 5 view .LVU42
+ 169:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+ 164              		.loc 1 169 22 is_stmt 0 view .LVU43
+GAS LISTING /tmp/cc2lPFYN.s 			page 8
+
+
+ 165 0021 488D4C24 		leaq	6(%rsp), %rcx
+ 165      06
+ 168:../../bos/modules/b_mod_ssl.c ****     int      ret   = bSend(p_ssl->sockfd, (uint8_t *)buf, len, &wlen);
+ 166              		.loc 1 168 14 view .LVU44
+ 167 0026 31C0     		xorl	%eax, %eax
+ 168 0028 66894424 		movw	%ax, 6(%rsp)
+ 168      06
+ 169:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+ 169              		.loc 1 169 5 is_stmt 1 view .LVU45
+ 169:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+ 170              		.loc 1 169 22 is_stmt 0 view .LVU46
+ 171 002d E8000000 		call	bSend@PLT
+ 171      00
+ 172              	.LVL20:
+ 169:../../bos/modules/b_mod_ssl.c ****     if (ret < 0)
+ 173              		.loc 1 169 22 view .LVU47
+ 174 0032 89C2     		movl	%eax, %edx
+ 175              	.LVL21:
+ 170:../../bos/modules/b_mod_ssl.c ****     {
+ 176              		.loc 1 170 5 is_stmt 1 view .LVU48
+ 172:../../bos/modules/b_mod_ssl.c ****     }
+ 177              		.loc 1 172 16 is_stmt 0 view .LVU49
+ 178 0034 31C0     		xorl	%eax, %eax
+ 179              	.LVL22:
+ 170:../../bos/modules/b_mod_ssl.c ****     {
+ 180              		.loc 1 170 8 view .LVU50
+ 181 0036 85D2     		testl	%edx, %edx
+ 182 0038 780A     		js	.L12
+ 174:../../bos/modules/b_mod_ssl.c ****     {
+ 183              		.loc 1 174 5 is_stmt 1 view .LVU51
+ 174:../../bos/modules/b_mod_ssl.c ****     {
+ 184              		.loc 1 174 14 is_stmt 0 view .LVU52
+ 185 003a 0FB74424 		movzwl	6(%rsp), %eax
+ 185      06
+ 174:../../bos/modules/b_mod_ssl.c ****     {
+ 186              		.loc 1 174 8 view .LVU53
+ 187 003f 6685C0   		testw	%ax, %ax
+ 188 0042 7415     		je	.L18
+ 189              	.L12:
+ 179:../../bos/modules/b_mod_ssl.c **** 
+ 190              		.loc 1 179 1 view .LVU54
+ 191 0044 488B5424 		movq	8(%rsp), %rdx
+ 191      08
+ 192 0049 64482B14 		subq	%fs:40, %rdx
+ 192      25280000 
+ 192      00
+ 193              	.LVL23:
+ 179:../../bos/modules/b_mod_ssl.c **** 
+ 194              		.loc 1 179 1 view .LVU55
+ 195 0052 750C     		jne	.L19
+ 196 0054 4883C418 		addq	$24, %rsp
+ 197              	.LCFI8:
+ 198              		.cfi_remember_state
+ 199              		.cfi_def_cfa_offset 8
+ 200 0058 C3       		ret
+ 201              	.LVL24:
+ 202              	.L18:
+GAS LISTING /tmp/cc2lPFYN.s 			page 9
+
+
+ 203              	.LCFI9:
+ 204              		.cfi_restore_state
+ 176:../../bos/modules/b_mod_ssl.c ****     }
+ 205              		.loc 1 176 16 view .LVU56
+ 206 0059 B88097FF 		movl	$-26752, %eax
+ 206      FF
+ 207 005e EBE4     		jmp	.L12
+ 208              	.LVL25:
+ 209              	.L19:
+ 179:../../bos/modules/b_mod_ssl.c **** 
+ 210              		.loc 1 179 1 view .LVU57
+ 211 0060 E8000000 		call	__stack_chk_fail@PLT
+ 211      00
+ 212              	.LVL26:
+ 213              		.cfi_endproc
+ 214              	.LFE128:
+ 216              		.section	.text._bSSLEntropySource,"ax",@progbits
+ 217              		.p2align 4
+ 219              	_bSSLEntropySource:
+ 220              	.LVL27:
+ 221              	.LFB124:
+ 119:../../bos/modules/b_mod_ssl.c ****     uint32_t seed;
+ 222              		.loc 1 119 1 is_stmt 1 view -0
+ 223              		.cfi_startproc
+ 119:../../bos/modules/b_mod_ssl.c ****     uint32_t seed;
+ 224              		.loc 1 119 1 is_stmt 0 view .LVU59
+ 225 0000 F30F1EFA 		endbr64
+ 226 0004 4154     		pushq	%r12
+ 227              	.LCFI10:
+ 228              		.cfi_def_cfa_offset 16
+ 229              		.cfi_offset 12, -16
+ 230 0006 4989CC   		movq	%rcx, %r12
+ 231 0009 55       		pushq	%rbp
+ 232              	.LCFI11:
+ 233              		.cfi_def_cfa_offset 24
+ 234              		.cfi_offset 6, -24
+ 235 000a 4889F5   		movq	%rsi, %rbp
+ 236 000d 53       		pushq	%rbx
+ 237              	.LCFI12:
+ 238              		.cfi_def_cfa_offset 32
+ 239              		.cfi_offset 3, -32
+ 240 000e 89D3     		movl	%edx, %ebx
+ 241 0010 4883EC10 		subq	$16, %rsp
+ 242              	.LCFI13:
+ 243              		.cfi_def_cfa_offset 48
+ 119:../../bos/modules/b_mod_ssl.c ****     uint32_t seed;
+ 244              		.loc 1 119 1 view .LVU60
+ 245 0014 64488B04 		movq	%fs:40, %rax
+ 245      25280000 
+ 245      00
+ 246 001d 48894424 		movq	%rax, 8(%rsp)
+ 246      08
+ 247 0022 31C0     		xorl	%eax, %eax
+ 120:../../bos/modules/b_mod_ssl.c ****     B_UNUSED(data);
+ 248              		.loc 1 120 5 is_stmt 1 view .LVU61
+ 121:../../bos/modules/b_mod_ssl.c ****     seed = bHalRNGRead();
+ 249              		.loc 1 121 5 view .LVU62
+GAS LISTING /tmp/cc2lPFYN.s 			page 10
+
+
+ 122:../../bos/modules/b_mod_ssl.c ****     if (len > sizeof(seed))
+ 250              		.loc 1 122 5 view .LVU63
+ 122:../../bos/modules/b_mod_ssl.c ****     if (len > sizeof(seed))
+ 251              		.loc 1 122 12 is_stmt 0 view .LVU64
+ 252 0024 E8000000 		call	bHalRNGRead@PLT
+ 252      00
+ 253              	.LVL28:
+ 122:../../bos/modules/b_mod_ssl.c ****     if (len > sizeof(seed))
+ 254              		.loc 1 122 10 discriminator 1 view .LVU65
+ 255 0029 89442404 		movl	%eax, 4(%rsp)
+ 123:../../bos/modules/b_mod_ssl.c ****     {
+ 256              		.loc 1 123 5 is_stmt 1 view .LVU66
+ 123:../../bos/modules/b_mod_ssl.c ****     {
+ 257              		.loc 1 123 8 is_stmt 0 view .LVU67
+ 258 002d B8040000 		movl	$4, %eax
+ 258      00
+ 259 0032 39C3     		cmpl	%eax, %ebx
+ 260 0034 0F46C3   		cmovbe	%ebx, %eax
+ 261 0037 89C2     		movl	%eax, %edx
+ 262              	.LVL29:
+ 127:../../bos/modules/b_mod_ssl.c ****     *olen = len;
+ 263              		.loc 1 127 5 is_stmt 1 view .LVU68
+ 264              	.LBB8:
+ 265              	.LBI8:
+ 266              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+ 267              		.loc 2 26 1 view .LVU69
+ 268              	.LBB9:
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+ 269              		.loc 2 29 3 view .LVU70
+GAS LISTING /tmp/cc2lPFYN.s 			page 11
+
+
+ 270              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU71
+ 271 0039 85C0     		testl	%eax, %eax
+ 272 003b 7419     		je	.L22
+ 273 003d 488D7424 		leaq	4(%rsp), %rsi
+ 273      04
+ 274              	.LVL30:
+ 275              		.loc 2 29 10 discriminator 1 view .LVU72
+ 276 0042 31C0     		xorl	%eax, %eax
+ 277              	.LVL31:
+ 278              	.L21:
+ 279              		.loc 2 29 10 discriminator 1 view .LVU73
+ 280 0044 89C1     		movl	%eax, %ecx
+ 281 0046 83C001   		addl	$1, %eax
+ 282 0049 0FB63C0E 		movzbl	(%rsi,%rcx), %edi
+ 283 004d 40887C0D 		movb	%dil, 0(%rbp,%rcx)
+ 283      00
+ 284 0052 39D0     		cmpl	%edx, %eax
+ 285 0054 72EE     		jb	.L21
+ 286              	.LVL32:
+ 287              	.L22:
+ 288              		.loc 2 29 10 discriminator 1 view .LVU74
+ 289              	.LBE9:
+ 290              	.LBE8:
+ 128:../../bos/modules/b_mod_ssl.c ****     return 0;
+ 291              		.loc 1 128 5 is_stmt 1 view .LVU75
+ 128:../../bos/modules/b_mod_ssl.c ****     return 0;
+ 292              		.loc 1 128 11 is_stmt 0 view .LVU76
+ 293 0056 41891424 		movl	%edx, (%r12)
+ 129:../../bos/modules/b_mod_ssl.c **** }
+ 294              		.loc 1 129 5 is_stmt 1 view .LVU77
+ 130:../../bos/modules/b_mod_ssl.c **** 
+ 295              		.loc 1 130 1 is_stmt 0 view .LVU78
+ 296 005a 488B4424 		movq	8(%rsp), %rax
+ 296      08
+ 297 005f 64482B04 		subq	%fs:40, %rax
+ 297      25280000 
+ 297      00
+ 298 0068 750B     		jne	.L29
+ 130:../../bos/modules/b_mod_ssl.c **** 
+ 299              		.loc 1 130 1 view .LVU79
+ 300 006a 4883C410 		addq	$16, %rsp
+ 301              	.LCFI14:
+ 302              		.cfi_remember_state
+ 303              		.cfi_def_cfa_offset 32
+ 304 006e 31C0     		xorl	%eax, %eax
+ 305 0070 5B       		popq	%rbx
+ 306              	.LCFI15:
+ 307              		.cfi_def_cfa_offset 24
+ 308 0071 5D       		popq	%rbp
+ 309              	.LCFI16:
+ 310              		.cfi_def_cfa_offset 16
+ 311              	.LVL33:
+ 130:../../bos/modules/b_mod_ssl.c **** 
+ 312              		.loc 1 130 1 view .LVU80
+ 313 0072 415C     		popq	%r12
+ 314              	.LCFI17:
+ 315              		.cfi_def_cfa_offset 8
+GAS LISTING /tmp/cc2lPFYN.s 			page 12
+
+
+ 316              	.LVL34:
+ 130:../../bos/modules/b_mod_ssl.c **** 
+ 317              		.loc 1 130 1 view .LVU81
+ 318 0074 C3       		ret
+ 319              	.LVL35:
+ 320              	.L29:
+ 321              	.LCFI18:
+ 322              		.cfi_restore_state
+ 130:../../bos/modules/b_mod_ssl.c **** 
+ 323              		.loc 1 130 1 view .LVU82
+ 324 0075 E8000000 		call	__stack_chk_fail@PLT
+ 324      00
+ 325              	.LVL36:
+ 130:../../bos/modules/b_mod_ssl.c **** 
+ 326              		.loc 1 130 1 view .LVU83
+ 327              		.cfi_endproc
+ 328              	.LFE124:
+ 330              		.section	.rodata.bSSLInit.str1.8,"aMS",@progbits,1
+ 331              		.align 8
+ 332              	.LC2:
+ 333 0000 2D2D2D2D 		.ascii	"-----BEGIN CERTIFICATE-----\nMIIDjjCCAnagAwIBAgIQAzrx5qcRqaC"
+ 333      2D424547 
+ 333      494E2043 
+ 333      45525449 
+ 333      46494341 
+ 334 003b 374B4753 		.ascii	"7KGSxHQn65TANBgkqhkiG9w0BAQsFADBh\nMQswCQYDVQQGEwJVUzEVMBMGA"
+ 334      7848516E 
+ 334      36355441 
+ 334      4E42676B 
+ 334      71686B69 
+ 335 0076 31554543 		.ascii	"1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3\nd3cuZGlnaWNlcnQuY29"
+ 335      684D4D52 
+ 335      476C6E61 
+ 335      554E6C63 
+ 335      6E516753 
+ 336 00b1 744D5341 		.ascii	"tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBH\nMjAeFw0xMzA4M"
+ 336      77486759 
+ 336      44565151 
+ 336      44457864 
+ 336      45615764 
+ 337 00ec 4445784D 		.ascii	"DExMjAwMDBaFw0zODAxMTUxMjAwMDBaMGExCzAJBgNVBAYTAlVT\nMRUwEwY"
+ 337      6A41774D 
+ 337      44426146 
+ 337      77307A4F 
+ 337      4441784D 
+ 338 0127 44565151 		.ascii	"DVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j\nb"
+ 338      4B457778 
+ 338      45615764 
+ 338      70513256 
+ 338      79644342 
+ 339 0162 32307849 		.ascii	"20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IEcyMIIBIjANBgkqh"
+ 339      44416542 
+ 339      674E5642 
+ 339      414D5446 
+ 339      3052705A 
+ 340 019e 6B69470A 		.ascii	"kiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuzfNNNx7a8myaJCtSnX/RrohCgi"
+ 340      39773042 
+GAS LISTING /tmp/cc2lPFYN.s 			page 13
+
+
+ 340      41514546 
+ 340      41414F43 
+ 340      41513841 
+ 341 01d9 4E39526C 		.ascii	"N9RlUyfuI\n2/Ou8jqJkTx65qsGGmvPrC3oXgkkRLpimn7Wo6h+4FR1IAWsU"
+ 341      55796675 
+ 341      490A322F 
+ 341      4F75386A 
+ 341      714A6B54 
+ 342 0214 4C656359 		.ascii	"LecYxpsMNzaHxmx\n1x7e/dfgy5SDN67sH0NO3Xss0r0upS/kqbitOtSZpLY"
+ 342      7870734D 
+ 342      4E7A6148 
+ 342      786D780A 
+ 342      31783765 
+ 343 024f 6C365A74 		.ascii	"l6ZtrAGCSYP9PIUkY92eQ\nq2EGnI/yuum06ZIya7XzV+hdG82MHauVBJVJ8"
+ 343      72414743 
+ 343      53595039 
+ 343      5049556B 
+ 343      59393265 
+ 344 028a 7A55746C 		.ascii	"zUtluNJbd134/tJS7SsVQepj5Wz\ntCO7TG1F8PapspUwtP1MVYwnSlcUfIK"
+ 344      754E4A62 
+ 344      64313334 
+ 344      2F744A53 
+ 344      37537356 
+ 345 02c5 647A584F 		.ascii	"dzXOS0xZKBgyMUNGPHgm+F6HmIcr9g+UQ\nvIOlCsRnKPZzFBQ9RnbDhxSJI"
+ 345      5330785A 
+ 345      4B426779 
+ 345      4D554E47 
+ 345      5048676D 
+ 346 0300 54524E72 		.ascii	"TRNrw9FDKZJobq7nMWxM4MphQIDAQABo0IwQDAP\nBgNVHRMBAf8EBTADAQH"
+ 346      77394644 
+ 346      4B5A4A6F 
+ 346      6271376E 
+ 346      4D57784D 
+ 347 033b 2F4D4134 		.ascii	"/MA4GA1UdDwEB/wQEAwIBhjAdBgNVHQ4EFgQUTiJUIBiV\n5uNu5g/6+rkS7"
+ 347      47413155 
+ 347      64447745 
+ 347      422F7751 
+ 347      45417749 
+ 348 0376 5159586A 		.ascii	"QYXjzkwDQYJKoZIhvcNAQELBQADggEBAGBnKJRvDkhj6zHd6mcY\n1Yl9PMW"
+ 348      7A6B7744 
+ 348      51594A4B 
+ 348      6F5A4968 
+ 348      76634E41 
+ 349 03b1 4C536E2F 		.ascii	"LSn/pvtsrF9+wX3N3KjITOYFnQoQj8kVnNeyIv/iPsGEMNKSuIEyExtv4\nN"
+ 349      70767473 
+ 349      7246392B 
+ 349      7758334E 
+ 349      334B6A49 
+ 350 03ec 65463232 		.ascii	"eF22d+mQrvHRAiGfzZ0JFrabA0UWTW98kn"
+ 350      642B6D51 
+ 350      72764852 
+ 350      41694766 
+ 350      7A5A304A 
+ 351 040e 6474682F 		.string	"dth/Jsw1HKj2ZL7tcu7XUIOGZX1NG\nFdtom/DzMNU+MeKNhJ7jitralj41E6Vf8PlwUHBHQRFXGU7Aj64GxJUTFy
+ 351      4A737731 
+ 351      484B6A32 
+ 351      5A4C3774 
+GAS LISTING /tmp/cc2lPFYN.s 			page 14
+
+
+ 351      63753758 
+ 352              		.section	.rodata.bSSLInit.str1.1,"aMS",@progbits,1
+ 353              	.LC3:
+ 354 0000 6D656D20 		.string	"mem error..\r\n"
+ 354      6572726F 
+ 354      722E2E0D 
+ 354      0A00
+ 355              	.LC4:
+ 356 000e 62616279 		.string	"babyos"
+ 356      6F7300
+ 357              	.LC5:
+ 358 0015 53757070 		.string	"Supported ciphersuites:\n"
+ 358      6F727465 
+ 358      64206369 
+ 358      70686572 
+ 358      73756974 
+ 359              	.LC6:
+ 360 002e 25730A00 		.string	"%s\n"
+ 361              	.LC7:
+ 362 0032 63657274 		.string	"cert parse error..-0x%x\r\n"
+ 362      20706172 
+ 362      73652065 
+ 362      72726F72 
+ 362      2E2E2D30 
+ 363              	.LC8:
+ 364 004c 6E6F2076 		.string	"no valid cert ....\r\n"
+ 364      616C6964 
+ 364      20636572 
+ 364      74202E2E 
+ 364      2E2E0D0A 
+ 365              		.section	.text.bSSLInit,"ax",@progbits
+ 366              		.p2align 4
+ 367              		.globl	bSSLInit
+ 369              	bSSLInit:
+ 370              	.LVL37:
+ 371              	.LFB130:
+ 196:../../bos/modules/b_mod_ssl.c **** 
+ 197:../../bos/modules/b_mod_ssl.c **** /**
+ 198:../../bos/modules/b_mod_ssl.c ****  * \}
+ 199:../../bos/modules/b_mod_ssl.c ****  */
+ 200:../../bos/modules/b_mod_ssl.c **** 
+ 201:../../bos/modules/b_mod_ssl.c **** /**
+ 202:../../bos/modules/b_mod_ssl.c ****  * \addtogroup SSL_Exported_Functions
+ 203:../../bos/modules/b_mod_ssl.c ****  * \{
+ 204:../../bos/modules/b_mod_ssl.c ****  */
+ 205:../../bos/modules/b_mod_ssl.c **** 
+ 206:../../bos/modules/b_mod_ssl.c **** bSSLHandle_t bSSLInit(const char *hostname, bSSLCert_t *cert)
+ 207:../../bos/modules/b_mod_ssl.c **** {
+ 372              		.loc 1 207 1 is_stmt 1 view -0
+ 373              		.cfi_startproc
+ 374              		.loc 1 207 1 is_stmt 0 view .LVU85
+ 375 0000 F30F1EFA 		endbr64
+ 208:../../bos/modules/b_mod_ssl.c ****     int        ret       = 0;
+ 376              		.loc 1 208 5 is_stmt 1 view .LVU86
+ 377              	.LVL38:
+ 209:../../bos/modules/b_mod_ssl.c ****     bSSLCert_t root_cert = {
+ 378              		.loc 1 209 5 view .LVU87
+GAS LISTING /tmp/cc2lPFYN.s 			page 15
+
+
+ 210:../../bos/modules/b_mod_ssl.c ****         .pbuf = NULL,
+ 211:../../bos/modules/b_mod_ssl.c ****         .len  = 0,
+ 212:../../bos/modules/b_mod_ssl.c ****     };
+ 213:../../bos/modules/b_mod_ssl.c ****     if (hostname == NULL)
+ 379              		.loc 1 213 5 view .LVU88
+ 207:../../bos/modules/b_mod_ssl.c ****     int        ret       = 0;
+ 380              		.loc 1 207 1 is_stmt 0 view .LVU89
+ 381 0004 4157     		pushq	%r15
+ 382              	.LCFI19:
+ 383              		.cfi_def_cfa_offset 16
+ 384              		.cfi_offset 15, -16
+ 385 0006 4156     		pushq	%r14
+ 386              	.LCFI20:
+ 387              		.cfi_def_cfa_offset 24
+ 388              		.cfi_offset 14, -24
+ 389 0008 4155     		pushq	%r13
+ 390              	.LCFI21:
+ 391              		.cfi_def_cfa_offset 32
+ 392              		.cfi_offset 13, -32
+ 393 000a 4154     		pushq	%r12
+ 394              	.LCFI22:
+ 395              		.cfi_def_cfa_offset 40
+ 396              		.cfi_offset 12, -40
+ 397 000c 55       		pushq	%rbp
+ 398              	.LCFI23:
+ 399              		.cfi_def_cfa_offset 48
+ 400              		.cfi_offset 6, -48
+ 401 000d 53       		pushq	%rbx
+ 402              	.LCFI24:
+ 403              		.cfi_def_cfa_offset 56
+ 404              		.cfi_offset 3, -56
+ 405 000e 4883EC28 		subq	$40, %rsp
+ 406              	.LCFI25:
+ 407              		.cfi_def_cfa_offset 96
+ 207:../../bos/modules/b_mod_ssl.c ****     int        ret       = 0;
+ 408              		.loc 1 207 1 view .LVU90
+ 409 0012 48897424 		movq	%rsi, 8(%rsp)
+ 409      08
+ 410              		.loc 1 213 8 view .LVU91
+ 411 0017 4885FF   		testq	%rdi, %rdi
+ 412 001a 0F849602 		je	.L31
+ 412      0000
+ 413 0020 4889FD   		movq	%rdi, %rbp
+ 214:../../bos/modules/b_mod_ssl.c ****     {
+ 215:../../bos/modules/b_mod_ssl.c ****         return NULL;
+ 216:../../bos/modules/b_mod_ssl.c ****     }
+ 217:../../bos/modules/b_mod_ssl.c ****     bSSL_t *p_ssl = bCalloc(1, sizeof(bSSL_t));
+ 414              		.loc 1 217 5 is_stmt 1 view .LVU92
+ 415              		.loc 1 217 21 is_stmt 0 view .LVU93
+ 416 0023 BED80900 		movl	$2520, %esi
+ 416      00
+ 417              	.LVL39:
+ 418              		.loc 1 217 21 view .LVU94
+ 419 0028 BF010000 		movl	$1, %edi
+ 419      00
+ 420              	.LVL40:
+ 421              		.loc 1 217 21 view .LVU95
+GAS LISTING /tmp/cc2lPFYN.s 			page 16
+
+
+ 422 002d E8000000 		call	bCalloc@PLT
+ 422      00
+ 423              	.LVL41:
+ 424 0032 4889C3   		movq	%rax, %rbx
+ 425              	.LVL42:
+ 218:../../bos/modules/b_mod_ssl.c ****     if (p_ssl == NULL)
+ 426              		.loc 1 218 5 is_stmt 1 view .LVU96
+ 427              		.loc 1 218 8 is_stmt 0 view .LVU97
+ 428 0035 4885C0   		testq	%rax, %rax
+ 429 0038 0F845202 		je	.L55
+ 429      0000
+ 219:../../bos/modules/b_mod_ssl.c ****     {
+ 220:../../bos/modules/b_mod_ssl.c ****         b_log_e("mem error..\r\n");
+ 221:../../bos/modules/b_mod_ssl.c ****         return NULL;
+ 222:../../bos/modules/b_mod_ssl.c ****     }
+ 223:../../bos/modules/b_mod_ssl.c ****     if (_bSSLDRBGInit(&p_ssl->random) < 0)
+ 430              		.loc 1 223 5 is_stmt 1 view .LVU98
+ 431              	.LVL43:
+ 432              	.LBB14:
+ 433              	.LBI14:
+ 139:../../bos/modules/b_mod_ssl.c **** {
+ 434              		.loc 1 139 12 view .LVU99
+ 435              	.LBB15:
+ 141:../../bos/modules/b_mod_ssl.c ****     {
+ 436              		.loc 1 141 5 view .LVU100
+ 145:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_init(&prandom->entropy);
+ 437              		.loc 1 145 5 view .LVU101
+ 438 003e 4889C7   		movq	%rax, %rdi
+ 146:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_add_source(&prandom->entropy, _bSSLEntropySource, NULL,
+ 439              		.loc 1 146 5 is_stmt 0 view .LVU102
+ 440 0041 4C8DA358 		leaq	344(%rbx), %r12
+ 440      010000
+ 441              	.LBE15:
+ 442              	.LBE14:
+ 224:../../bos/modules/b_mod_ssl.c ****     {
+ 225:../../bos/modules/b_mod_ssl.c ****         bFree(p_ssl);
+ 226:../../bos/modules/b_mod_ssl.c ****         return NULL;
+ 227:../../bos/modules/b_mod_ssl.c ****     }
+ 228:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_init(&p_ssl->ssl_ctx);
+ 443              		.loc 1 228 5 view .LVU103
+ 444 0048 4C8DBB98 		leaq	1176(%rbx), %r15
+ 444      040000
+ 445              	.LBB18:
+ 446              	.LBB16:
+ 145:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_init(&prandom->entropy);
+ 447              		.loc 1 145 5 view .LVU104
+ 448 004f E8000000 		call	mbedtls_ctr_drbg_init@PLT
+ 448      00
+ 449              	.LVL44:
+ 146:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_add_source(&prandom->entropy, _bSSLEntropySource, NULL,
+ 450              		.loc 1 146 5 is_stmt 1 view .LVU105
+ 451 0054 4C89E7   		movq	%r12, %rdi
+ 452              	.LBE16:
+ 453              	.LBE18:
+ 229:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_config_init(&p_ssl->ssl_conf);
+ 454              		.loc 1 229 5 is_stmt 0 view .LVU106
+ 455 0057 4C8DB320 		leaq	1568(%rbx), %r14
+GAS LISTING /tmp/cc2lPFYN.s 			page 17
+
+
+ 455      060000
+ 456 005e 4C8D2D00 		leaq	__func__.2(%rip), %r13
+ 456      000000
+ 457              	.LBB19:
+ 458              	.LBB17:
+ 146:../../bos/modules/b_mod_ssl.c ****     mbedtls_entropy_add_source(&prandom->entropy, _bSSLEntropySource, NULL,
+ 459              		.loc 1 146 5 view .LVU107
+ 460 0065 E8000000 		call	mbedtls_entropy_init@PLT
+ 460      00
+ 461              	.LVL45:
+ 147:../../bos/modules/b_mod_ssl.c ****                                MBEDTLS_ENTROPY_MAX_GATHER, MBEDTLS_ENTROPY_SOURCE_STRONG);
+ 462              		.loc 1 147 5 is_stmt 1 view .LVU108
+ 463 006a 4C89E7   		movq	%r12, %rdi
+ 464 006d 41B80100 		movl	$1, %r8d
+ 464      0000
+ 465 0073 31D2     		xorl	%edx, %edx
+ 466 0075 B9800000 		movl	$128, %ecx
+ 466      00
+ 467 007a 488D3500 		leaq	_bSSLEntropySource(%rip), %rsi
+ 467      000000
+ 468 0081 E8000000 		call	mbedtls_entropy_add_source@PLT
+ 468      00
+ 469              	.LVL46:
+ 149:../../bos/modules/b_mod_ssl.c ****                           (const uint8_t *)"babyos", strlen("babyos"));
+ 470              		.loc 1 149 5 view .LVU109
+ 471 0086 488B3500 		movq	mbedtls_entropy_func@GOTPCREL(%rip), %rsi
+ 471      000000
+ 472 008d 4C89E2   		movq	%r12, %rdx
+ 473 0090 4889DF   		movq	%rbx, %rdi
+ 474 0093 41B80600 		movl	$6, %r8d
+ 474      0000
+ 475 0099 488D0D00 		leaq	.LC4(%rip), %rcx
+ 475      000000
+ 476 00a0 4C8D2500 		leaq	.LC1(%rip), %r12
+ 476      000000
+ 477 00a7 E8000000 		call	mbedtls_ctr_drbg_seed@PLT
+ 477      00
+ 478              	.LVL47:
+ 151:../../bos/modules/b_mod_ssl.c **** }
+ 479              		.loc 1 151 5 view .LVU110
+ 151:../../bos/modules/b_mod_ssl.c **** }
+ 480              		.loc 1 151 5 is_stmt 0 view .LVU111
+ 481              	.LBE17:
+ 482              	.LBE19:
+ 228:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_config_init(&p_ssl->ssl_conf);
+ 483              		.loc 1 228 5 is_stmt 1 view .LVU112
+ 484 00ac 4C89FF   		movq	%r15, %rdi
+ 485 00af 4C897C24 		movq	%r15, 16(%rsp)
+ 485      10
+ 486 00b4 E8000000 		call	mbedtls_ssl_init@PLT
+ 486      00
+ 487              	.LVL48:
+ 488              		.loc 1 229 5 view .LVU113
+ 489 00b9 4C89F7   		movq	%r14, %rdi
+ 490 00bc E8000000 		call	mbedtls_ssl_config_init@PLT
+ 490      00
+ 491              	.LVL49:
+GAS LISTING /tmp/cc2lPFYN.s 			page 18
+
+
+ 230:../../bos/modules/b_mod_ssl.c ****     mbedtls_x509_crt_init(&p_ssl->ca);
+ 492              		.loc 1 230 5 view .LVU114
+ 493 00c1 488D83E8 		leaq	1768(%rbx), %rax
+ 493      060000
+ 494 00c8 4889C7   		movq	%rax, %rdi
+ 495 00cb 48894424 		movq	%rax, 24(%rsp)
+ 495      18
+ 496 00d0 E8000000 		call	mbedtls_x509_crt_init@PLT
+ 496      00
+ 497              	.LVL50:
+ 231:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_conf_dbg(&p_ssl->ssl_conf, _bSSLPrint, NULL);
+ 498              		.loc 1 231 5 view .LVU115
+ 499 00d5 31D2     		xorl	%edx, %edx
+ 500 00d7 488D3500 		leaq	_bSSLPrint(%rip), %rsi
+ 500      000000
+ 501 00de 4C89F7   		movq	%r14, %rdi
+ 502 00e1 E8000000 		call	mbedtls_ssl_conf_dbg@PLT
+ 502      00
+ 503              	.LVL51:
+ 232:../../bos/modules/b_mod_ssl.c ****     mbedtls_debug_set_threshold(MBEDTLS_DEBUG_LEVEL);
+ 504              		.loc 1 232 5 view .LVU116
+ 505 00e6 BF010000 		movl	$1, %edi
+ 505      00
+ 506 00eb E8000000 		call	mbedtls_debug_set_threshold@PLT
+ 506      00
+ 507              	.LVL52:
+ 233:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_config_defaults(&p_ssl->ssl_conf, MBEDTLS_SSL_IS_CLIENT,
+ 508              		.loc 1 233 5 view .LVU117
+ 509 00f0 31C9     		xorl	%ecx, %ecx
+ 510 00f2 31D2     		xorl	%edx, %edx
+ 511 00f4 31F6     		xorl	%esi, %esi
+ 512 00f6 4C89F7   		movq	%r14, %rdi
+ 513 00f9 E8000000 		call	mbedtls_ssl_config_defaults@PLT
+ 513      00
+ 514              	.LVL53:
+ 234:../../bos/modules/b_mod_ssl.c ****                                 MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);
+ 235:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_conf_rng(&p_ssl->ssl_conf, mbedtls_ctr_drbg_random, &p_ssl->random.ctr_drbg);
+ 515              		.loc 1 235 5 view .LVU118
+ 516 00fe 488B3500 		movq	mbedtls_ctr_drbg_random@GOTPCREL(%rip), %rsi
+ 516      000000
+ 517 0105 4889DA   		movq	%rbx, %rdx
+ 518 0108 4C89F7   		movq	%r14, %rdi
+ 519 010b E8000000 		call	mbedtls_ssl_conf_rng@PLT
+ 519      00
+ 520              	.LVL54:
+ 236:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_set_hostname(&p_ssl->ssl_ctx, hostname);
+ 521              		.loc 1 236 5 view .LVU119
+ 522 0110 4889EE   		movq	%rbp, %rsi
+ 523 0113 4C89FF   		movq	%r15, %rdi
+ 237:../../bos/modules/b_mod_ssl.c ****     const int *ciphersuites = mbedtls_ssl_list_ciphersuites();
+ 238:../../bos/modules/b_mod_ssl.c ****     printf("Supported ciphersuites:\n");
+ 239:../../bos/modules/b_mod_ssl.c ****     while (*ciphersuites != 0)
+ 240:../../bos/modules/b_mod_ssl.c ****     {
+ 241:../../bos/modules/b_mod_ssl.c ****         b_log("%s\n", mbedtls_ssl_get_ciphersuite_name(*ciphersuites));
+ 524              		.loc 1 241 9 is_stmt 0 discriminator 1 view .LVU120
+ 525 0116 488D2D00 		leaq	.LC6(%rip), %rbp
+ 525      000000
+GAS LISTING /tmp/cc2lPFYN.s 			page 19
+
+
+ 526              	.LVL55:
+ 236:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_set_hostname(&p_ssl->ssl_ctx, hostname);
+ 527              		.loc 1 236 5 view .LVU121
+ 528 011d E8000000 		call	mbedtls_ssl_set_hostname@PLT
+ 528      00
+ 529              	.LVL56:
+ 237:../../bos/modules/b_mod_ssl.c ****     const int *ciphersuites = mbedtls_ssl_list_ciphersuites();
+ 530              		.loc 1 237 5 is_stmt 1 view .LVU122
+ 237:../../bos/modules/b_mod_ssl.c ****     const int *ciphersuites = mbedtls_ssl_list_ciphersuites();
+ 531              		.loc 1 237 31 is_stmt 0 view .LVU123
+ 532 0122 E8000000 		call	mbedtls_ssl_list_ciphersuites@PLT
+ 532      00
+ 533              	.LVL57:
+ 534              	.LBB20:
+ 535              	.LBB21:
+ 536              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdio2.h"
+   1:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** /* Checking macros for stdio functions.
+   2:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   3:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    This file is part of the GNU C Library.
+   4:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+   5:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is free software; you can redistribute it and/or
+   6:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    modify it under the terms of the GNU Lesser General Public
+   7:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License as published by the Free Software Foundation; either
+   8:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    version 2.1 of the License, or (at your option) any later version.
+   9:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  10:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  11:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  12:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  13:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Lesser General Public License for more details.
+  14:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  15:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    You should have received a copy of the GNU Lesser General Public
+  16:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License along with the GNU C Library; if not, see
+  17:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    <https://www.gnu.org/licenses/>.  */
+  18:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  19:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _BITS_STDIO2_H
+  20:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #define _BITS_STDIO2_H 1
+  21:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  22:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _STDIO_H
+  23:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # error "Never include <bits/stdio2.h> directly; use <stdio.h> instead."
+  24:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  25:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  26:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifdef __va_arg_pack
+  27:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  28:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (sprintf (char *__restrict __s, const char *__restrict __fmt, ...))
+  29:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  30:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+  31:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				  __glibc_objsize (__s), __fmt,
+  32:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				  __va_arg_pack ());
+  33:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  34:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #elif !defined __cplusplus
+  35:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # define sprintf(str, ...) \
+  36:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   __builtin___sprintf_chk (str, __USE_FORTIFY_LEVEL - 1,		      \
+  37:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 			   __glibc_objsize (str), __VA_ARGS__)
+  38:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  39:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  41:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (vsprintf (char *__restrict __s, const char *__restrict __fmt,
+GAS LISTING /tmp/cc2lPFYN.s 			page 20
+
+
+  42:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 __gnuc_va_list __ap))
+  43:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  44:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___vsprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+  45:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt, __ap);
+  46:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  47:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  48:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #if defined __USE_ISOC99 || defined __USE_UNIX98
+  49:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # ifdef __va_arg_pack
+  50:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (snprintf (char *__restrict __s, size_t __n,
+  52:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+  53:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  54:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+  55:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt,
+  56:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __va_arg_pack ());
+  57:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  58:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # elif !defined __cplusplus
+  59:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #  define snprintf(str, len, ...) \
+  60:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   __builtin___snprintf_chk (str, len, __USE_FORTIFY_LEVEL - 1,		      \
+  61:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 			    __glibc_objsize (str), __VA_ARGS__)
+  62:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # endif
+  63:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  64:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  65:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (vsnprintf (char *__restrict __s, size_t __n,
+  66:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		  const char *__restrict __fmt, __gnuc_va_list __ap))
+  67:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  68:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___vsnprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+  69:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				    __glibc_objsize (__s), __fmt, __ap);
+  70:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  71:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  72:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  73:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  74:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #if __USE_FORTIFY_LEVEL > 1
+  75:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # ifdef __va_arg_pack
+  76:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function __nonnull ((1)) int
+  77:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** fprintf (FILE *__restrict __stream, const char *__restrict __fmt, ...)
+  78:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  79:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+  80:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 			__va_arg_pack ());
+  81:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  82:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  83:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  84:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** printf (const char *__restrict __fmt, ...)
+  85:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  86:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+ 537              		.loc 3 86 10 view .LVU124
+ 538 0127 BF020000 		movl	$2, %edi
+ 538      00
+ 539 012c 488D3500 		leaq	.LC5(%rip), %rsi
+ 539      000000
+ 540              	.LBE21:
+ 541              	.LBE20:
+ 237:../../bos/modules/b_mod_ssl.c ****     const int *ciphersuites = mbedtls_ssl_list_ciphersuites();
+ 542              		.loc 1 237 31 view .LVU125
+ 543 0133 4989C7   		movq	%rax, %r15
+ 544              	.LVL58:
+ 238:../../bos/modules/b_mod_ssl.c ****     while (*ciphersuites != 0)
+GAS LISTING /tmp/cc2lPFYN.s 			page 21
+
+
+ 545              		.loc 1 238 5 is_stmt 1 view .LVU126
+ 546              	.LBB23:
+ 547              	.LBI20:
+  84:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+ 548              		.loc 3 84 1 view .LVU127
+ 549              	.LBB22:
+ 550              		.loc 3 86 3 view .LVU128
+ 551              		.loc 3 86 10 is_stmt 0 view .LVU129
+ 552 0136 31C0     		xorl	%eax, %eax
+ 553              	.LVL59:
+ 554              		.loc 3 86 10 view .LVU130
+ 555 0138 E8000000 		call	__printf_chk@PLT
+ 555      00
+ 556              	.LVL60:
+ 557              		.loc 3 86 10 view .LVU131
+ 558              	.LBE22:
+ 559              	.LBE23:
+ 239:../../bos/modules/b_mod_ssl.c ****     {
+ 560              		.loc 1 239 5 is_stmt 1 view .LVU132
+ 239:../../bos/modules/b_mod_ssl.c ****     {
+ 561              		.loc 1 239 26 view .LVU133
+ 239:../../bos/modules/b_mod_ssl.c ****     {
+ 562              		.loc 1 239 12 is_stmt 0 view .LVU134
+ 563 013d 418B3F   		movl	(%r15), %edi
+ 239:../../bos/modules/b_mod_ssl.c ****     {
+ 564              		.loc 1 239 26 view .LVU135
+ 565 0140 85FF     		testl	%edi, %edi
+ 566 0142 7431     		je	.L37
+ 567              		.p2align 4,,10
+ 568 0144 0F1F4000 		.p2align 3
+ 569              	.L34:
+ 570              		.loc 1 241 9 is_stmt 1 view .LVU136
+ 571 0148 E8000000 		call	mbedtls_ssl_get_ciphersuite_name@PLT
+ 571      00
+ 572              	.LVL61:
+ 242:../../bos/modules/b_mod_ssl.c ****         ciphersuites++;
+ 573              		.loc 1 242 21 is_stmt 0 view .LVU137
+ 574 014d 4983C704 		addq	$4, %r15
+ 575              	.LVL62:
+ 241:../../bos/modules/b_mod_ssl.c ****         ciphersuites++;
+ 576              		.loc 1 241 9 discriminator 1 view .LVU138
+ 577 0151 4989E8   		movq	%rbp, %r8
+ 578 0154 4C89EA   		movq	%r13, %rdx
+ 241:../../bos/modules/b_mod_ssl.c ****         ciphersuites++;
+ 579              		.loc 1 241 9 view .LVU139
+ 580 0157 4989C1   		movq	%rax, %r9
+ 241:../../bos/modules/b_mod_ssl.c ****         ciphersuites++;
+ 581              		.loc 1 241 9 discriminator 1 view .LVU140
+ 582 015a BF030000 		movl	$3, %edi
+ 582      00
+ 583 015f B9F10000 		movl	$241, %ecx
+ 583      00
+ 584 0164 4C89E6   		movq	%r12, %rsi
+ 585 0167 31C0     		xorl	%eax, %eax
+ 586 0169 E8000000 		call	bLogOut@PLT
+ 586      00
+ 587              	.LVL63:
+GAS LISTING /tmp/cc2lPFYN.s 			page 22
+
+
+ 588              		.loc 1 242 9 is_stmt 1 view .LVU141
+ 239:../../bos/modules/b_mod_ssl.c ****     {
+ 589              		.loc 1 239 26 view .LVU142
+ 239:../../bos/modules/b_mod_ssl.c ****     {
+ 590              		.loc 1 239 12 is_stmt 0 view .LVU143
+ 591 016e 418B3F   		movl	(%r15), %edi
+ 239:../../bos/modules/b_mod_ssl.c ****     {
+ 592              		.loc 1 239 26 view .LVU144
+ 593 0171 85FF     		testl	%edi, %edi
+ 594 0173 75D3     		jne	.L34
+ 595              	.L37:
+ 243:../../bos/modules/b_mod_ssl.c ****     }
+ 244:../../bos/modules/b_mod_ssl.c ****     p_ssl->sockfd = -1;
+ 596              		.loc 1 244 5 is_stmt 1 view .LVU145
+ 597              		.loc 1 244 19 is_stmt 0 view .LVU146
+ 598 0175 C783D009 		movl	$-1, 2512(%rbx)
+ 598      0000FFFF 
+ 598      FFFF
+ 245:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_set_bio(&p_ssl->ssl_ctx, p_ssl, _bSSLSend, _bSSLRecv, NULL);
+ 599              		.loc 1 245 5 is_stmt 1 view .LVU147
+ 600 017f 488B7C24 		movq	16(%rsp), %rdi
+ 600      10
+ 601 0184 4531C0   		xorl	%r8d, %r8d
+ 602 0187 4889DE   		movq	%rbx, %rsi
+ 603 018a 488D1500 		leaq	_bSSLSend(%rip), %rdx
+ 603      000000
+ 604 0191 488D0D00 		leaq	_bSSLRecv(%rip), %rcx
+ 604      000000
+ 605 0198 E8000000 		call	mbedtls_ssl_set_bio@PLT
+ 605      00
+ 606              	.LVL64:
+ 246:../../bos/modules/b_mod_ssl.c **** 
+ 247:../../bos/modules/b_mod_ssl.c ****     if (cert)
+ 607              		.loc 1 247 5 view .LVU148
+ 608              		.loc 1 247 8 is_stmt 0 view .LVU149
+ 609 019d 48837C24 		cmpq	$0, 8(%rsp)
+ 609      0800
+ 610 01a3 BA0F0500 		movl	$1295, %edx
+ 610      00
+ 248:../../bos/modules/b_mod_ssl.c ****     {
+ 249:../../bos/modules/b_mod_ssl.c ****         root_cert.pbuf = cert->pbuf;
+ 250:../../bos/modules/b_mod_ssl.c ****         root_cert.len  = cert->len;
+ 251:../../bos/modules/b_mod_ssl.c ****     }
+ 252:../../bos/modules/b_mod_ssl.c ****     else
+ 253:../../bos/modules/b_mod_ssl.c ****     {
+ 254:../../bos/modules/b_mod_ssl.c **** #if defined(MBEDTLS_SSL_DEFAULT_CERT)
+ 255:../../bos/modules/b_mod_ssl.c ****         root_cert.pbuf = MBEDTLS_SSL_DEFAULT_CERT;
+ 611              		.loc 1 255 24 view .LVU150
+ 612 01a8 488D3500 		leaq	.LC2(%rip), %rsi
+ 612      000000
+ 247:../../bos/modules/b_mod_ssl.c ****     {
+ 613              		.loc 1 247 8 view .LVU151
+ 614 01af 746F     		je	.L36
+ 249:../../bos/modules/b_mod_ssl.c ****         root_cert.len  = cert->len;
+ 615              		.loc 1 249 9 is_stmt 1 view .LVU152
+ 249:../../bos/modules/b_mod_ssl.c ****         root_cert.len  = cert->len;
+ 616              		.loc 1 249 30 is_stmt 0 view .LVU153
+GAS LISTING /tmp/cc2lPFYN.s 			page 23
+
+
+ 617 01b1 488B4424 		movq	8(%rsp), %rax
+ 617      08
+ 618 01b6 488B30   		movq	(%rax), %rsi
+ 619              	.LVL65:
+ 250:../../bos/modules/b_mod_ssl.c ****     }
+ 620              		.loc 1 250 9 is_stmt 1 view .LVU154
+ 250:../../bos/modules/b_mod_ssl.c ****     }
+ 621              		.loc 1 250 30 is_stmt 0 view .LVU155
+ 622 01b9 8B4008   		movl	8(%rax), %eax
+ 623              	.LVL66:
+ 256:../../bos/modules/b_mod_ssl.c ****         root_cert.len  = sizeof(MBEDTLS_SSL_DEFAULT_CERT);
+ 257:../../bos/modules/b_mod_ssl.c **** #endif
+ 258:../../bos/modules/b_mod_ssl.c ****     }
+ 259:../../bos/modules/b_mod_ssl.c **** 
+ 260:../../bos/modules/b_mod_ssl.c ****     if (root_cert.pbuf != NULL && root_cert.len != 0)
+ 624              		.loc 1 260 5 is_stmt 1 view .LVU156
+ 625              		.loc 1 260 32 is_stmt 0 discriminator 1 view .LVU157
+ 626 01bc 85C0     		testl	%eax, %eax
+ 627 01be 7405     		je	.L38
+ 628 01c0 4885F6   		testq	%rsi, %rsi
+ 629 01c3 754F     		jne	.L56
+ 630              	.L38:
+ 261:../../bos/modules/b_mod_ssl.c ****     {
+ 262:../../bos/modules/b_mod_ssl.c ****         ret = mbedtls_x509_crt_parse(&p_ssl->ca, root_cert.pbuf, root_cert.len);
+ 263:../../bos/modules/b_mod_ssl.c ****         if (ret == 0)
+ 264:../../bos/modules/b_mod_ssl.c ****         {
+ 265:../../bos/modules/b_mod_ssl.c ****             mbedtls_ssl_conf_ca_chain(&p_ssl->ssl_conf, &p_ssl->ca, NULL);
+ 266:../../bos/modules/b_mod_ssl.c ****             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
+ 267:../../bos/modules/b_mod_ssl.c ****         }
+ 268:../../bos/modules/b_mod_ssl.c ****         else
+ 269:../../bos/modules/b_mod_ssl.c ****         {
+ 270:../../bos/modules/b_mod_ssl.c ****             b_log_e("cert parse error..-0x%x\r\n", 0 - ret);
+ 271:../../bos/modules/b_mod_ssl.c ****             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
+ 272:../../bos/modules/b_mod_ssl.c ****         }
+ 273:../../bos/modules/b_mod_ssl.c ****     }
+ 274:../../bos/modules/b_mod_ssl.c ****     else
+ 275:../../bos/modules/b_mod_ssl.c ****     {
+ 276:../../bos/modules/b_mod_ssl.c ****         b_log_w("no valid cert ....\r\n");
+ 631              		.loc 1 276 9 is_stmt 1 view .LVU158
+ 632 01c5 488D3500 		leaq	.LC1(%rip), %rsi
+ 632      000000
+ 633              	.LVL67:
+ 634              		.loc 1 276 9 is_stmt 0 view .LVU159
+ 635 01cc BF010000 		movl	$1, %edi
+ 635      00
+ 636 01d1 31C0     		xorl	%eax, %eax
+ 637              	.LVL68:
+ 638              		.loc 1 276 9 view .LVU160
+ 639 01d3 B9140100 		movl	$276, %ecx
+ 639      00
+ 640 01d8 4C8D0500 		leaq	.LC8(%rip), %r8
+ 640      000000
+ 641 01df 488D1500 		leaq	__func__.2(%rip), %rdx
+ 641      000000
+ 642 01e6 E8000000 		call	bLogOut@PLT
+ 642      00
+ 643              	.LVL69:
+GAS LISTING /tmp/cc2lPFYN.s 			page 24
+
+
+ 277:../../bos/modules/b_mod_ssl.c ****         mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
+ 644              		.loc 1 277 9 is_stmt 1 view .LVU161
+ 645 01eb 31F6     		xorl	%esi, %esi
+ 646 01ed 4C89F7   		movq	%r14, %rdi
+ 647 01f0 E8000000 		call	mbedtls_ssl_conf_authmode@PLT
+ 647      00
+ 648              	.LVL70:
+ 649              	.L40:
+ 278:../../bos/modules/b_mod_ssl.c ****     }
+ 279:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_setup(&p_ssl->ssl_ctx, &p_ssl->ssl_conf);
+ 650              		.loc 1 279 5 view .LVU162
+ 651 01f5 488B7C24 		movq	16(%rsp), %rdi
+ 651      10
+ 652 01fa 4C89F6   		movq	%r14, %rsi
+ 653 01fd E8000000 		call	mbedtls_ssl_setup@PLT
+ 653      00
+ 654              	.LVL71:
+ 280:../../bos/modules/b_mod_ssl.c ****     return p_ssl;
+ 655              		.loc 1 280 5 view .LVU163
+ 656              	.L30:
+ 281:../../bos/modules/b_mod_ssl.c **** }
+ 657              		.loc 1 281 1 is_stmt 0 view .LVU164
+ 658 0202 4883C428 		addq	$40, %rsp
+ 659              	.LCFI26:
+ 660              		.cfi_remember_state
+ 661              		.cfi_def_cfa_offset 56
+ 662 0206 4889D8   		movq	%rbx, %rax
+ 663 0209 5B       		popq	%rbx
+ 664              	.LCFI27:
+ 665              		.cfi_def_cfa_offset 48
+ 666 020a 5D       		popq	%rbp
+ 667              	.LCFI28:
+ 668              		.cfi_def_cfa_offset 40
+ 669 020b 415C     		popq	%r12
+ 670              	.LCFI29:
+ 671              		.cfi_def_cfa_offset 32
+ 672 020d 415D     		popq	%r13
+ 673              	.LCFI30:
+ 674              		.cfi_def_cfa_offset 24
+ 675 020f 415E     		popq	%r14
+ 676              	.LCFI31:
+ 677              		.cfi_def_cfa_offset 16
+ 678 0211 415F     		popq	%r15
+ 679              	.LCFI32:
+ 680              		.cfi_def_cfa_offset 8
+ 681 0213 C3       		ret
+ 682              	.LVL72:
+ 683              	.L56:
+ 684              	.LCFI33:
+ 685              		.cfi_restore_state
+ 262:../../bos/modules/b_mod_ssl.c ****         if (ret == 0)
+ 686              		.loc 1 262 15 view .LVU165
+ 687 0214 89C2     		movl	%eax, %edx
+ 688              	.LVL73:
+ 689 0216 662E0F1F 		.p2align 4,,10
+ 689      84000000 
+ 689      0000
+GAS LISTING /tmp/cc2lPFYN.s 			page 25
+
+
+ 690              		.p2align 3
+ 691              	.L36:
+ 262:../../bos/modules/b_mod_ssl.c ****         if (ret == 0)
+ 692              		.loc 1 262 9 is_stmt 1 view .LVU166
+ 262:../../bos/modules/b_mod_ssl.c ****         if (ret == 0)
+ 693              		.loc 1 262 15 is_stmt 0 view .LVU167
+ 694 0220 4C8B7C24 		movq	24(%rsp), %r15
+ 694      18
+ 695              	.LVL74:
+ 262:../../bos/modules/b_mod_ssl.c ****         if (ret == 0)
+ 696              		.loc 1 262 15 view .LVU168
+ 697 0225 4C89FF   		movq	%r15, %rdi
+ 698 0228 E8000000 		call	mbedtls_x509_crt_parse@PLT
+ 698      00
+ 699              	.LVL75:
+ 263:../../bos/modules/b_mod_ssl.c ****         {
+ 700              		.loc 1 263 9 is_stmt 1 view .LVU169
+ 263:../../bos/modules/b_mod_ssl.c ****         {
+ 701              		.loc 1 263 12 is_stmt 0 view .LVU170
+ 702 022d 85C0     		testl	%eax, %eax
+ 703 022f 751F     		jne	.L39
+ 265:../../bos/modules/b_mod_ssl.c ****             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
+ 704              		.loc 1 265 13 is_stmt 1 view .LVU171
+ 705 0231 4C89FE   		movq	%r15, %rsi
+ 706 0234 4C89F7   		movq	%r14, %rdi
+ 707 0237 31D2     		xorl	%edx, %edx
+ 708 0239 E8000000 		call	mbedtls_ssl_conf_ca_chain@PLT
+ 708      00
+ 709              	.LVL76:
+ 266:../../bos/modules/b_mod_ssl.c ****         }
+ 710              		.loc 1 266 13 view .LVU172
+ 711 023e BE020000 		movl	$2, %esi
+ 711      00
+ 712 0243 4C89F7   		movq	%r14, %rdi
+ 713 0246 E8000000 		call	mbedtls_ssl_conf_authmode@PLT
+ 713      00
+ 714              	.LVL77:
+ 715 024b EBA8     		jmp	.L40
+ 716              	.LVL78:
+ 717 024d 0F1F00   		.p2align 4,,10
+ 718              		.p2align 3
+ 719              	.L39:
+ 270:../../bos/modules/b_mod_ssl.c ****             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
+ 720              		.loc 1 270 13 view .LVU173
+ 721 0250 F7D8     		negl	%eax
+ 722              	.LVL79:
+ 270:../../bos/modules/b_mod_ssl.c ****             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
+ 723              		.loc 1 270 13 is_stmt 0 view .LVU174
+ 724 0252 4C8D0500 		leaq	.LC7(%rip), %r8
+ 724      000000
+ 725 0259 B90E0100 		movl	$270, %ecx
+ 725      00
+ 726 025e BF020000 		movl	$2, %edi
+ 726      00
+ 727 0263 4189C1   		movl	%eax, %r9d
+ 728 0266 488D1500 		leaq	__func__.2(%rip), %rdx
+ 728      000000
+GAS LISTING /tmp/cc2lPFYN.s 			page 26
+
+
+ 729 026d 488D3500 		leaq	.LC1(%rip), %rsi
+ 729      000000
+ 730 0274 31C0     		xorl	%eax, %eax
+ 731              	.LVL80:
+ 270:../../bos/modules/b_mod_ssl.c ****             mbedtls_ssl_conf_authmode(&p_ssl->ssl_conf, MBEDTLS_SSL_VERIFY_NONE);
+ 732              		.loc 1 270 13 view .LVU175
+ 733 0276 E8000000 		call	bLogOut@PLT
+ 733      00
+ 734              	.LVL81:
+ 271:../../bos/modules/b_mod_ssl.c ****         }
+ 735              		.loc 1 271 13 is_stmt 1 view .LVU176
+ 736 027b 31F6     		xorl	%esi, %esi
+ 737 027d 4C89F7   		movq	%r14, %rdi
+ 738 0280 E8000000 		call	mbedtls_ssl_conf_authmode@PLT
+ 738      00
+ 739              	.LVL82:
+ 740 0285 E96BFFFF 		jmp	.L40
+ 740      FF
+ 741              	.LVL83:
+ 742 028a 660F1F44 		.p2align 4,,10
+ 742      0000
+ 743              		.p2align 3
+ 744              	.L55:
+ 220:../../bos/modules/b_mod_ssl.c ****         return NULL;
+ 745              		.loc 1 220 9 view .LVU177
+ 746 0290 4C8D0500 		leaq	.LC3(%rip), %r8
+ 746      000000
+ 747 0297 B9DC0000 		movl	$220, %ecx
+ 747      00
+ 748 029c 31C0     		xorl	%eax, %eax
+ 749              	.LVL84:
+ 220:../../bos/modules/b_mod_ssl.c ****         return NULL;
+ 750              		.loc 1 220 9 is_stmt 0 view .LVU178
+ 751 029e BF020000 		movl	$2, %edi
+ 751      00
+ 752 02a3 488D1500 		leaq	__func__.2(%rip), %rdx
+ 752      000000
+ 753 02aa 488D3500 		leaq	.LC1(%rip), %rsi
+ 753      000000
+ 754 02b1 E8000000 		call	bLogOut@PLT
+ 754      00
+ 755              	.LVL85:
+ 221:../../bos/modules/b_mod_ssl.c ****     }
+ 756              		.loc 1 221 9 is_stmt 1 view .LVU179
+ 757              	.L31:
+ 215:../../bos/modules/b_mod_ssl.c ****     }
+ 758              		.loc 1 215 16 is_stmt 0 view .LVU180
+ 759 02b6 31DB     		xorl	%ebx, %ebx
+ 760 02b8 E945FFFF 		jmp	.L30
+ 760      FF
+ 761              		.cfi_endproc
+ 762              	.LFE130:
+ 764              		.section	.text.bSSLDeinit,"ax",@progbits
+ 765              		.p2align 4
+ 766              		.globl	bSSLDeinit
+ 768              	bSSLDeinit:
+ 769              	.LVL86:
+GAS LISTING /tmp/cc2lPFYN.s 			page 27
+
+
+ 770              	.LFB131:
+ 282:../../bos/modules/b_mod_ssl.c **** 
+ 283:../../bos/modules/b_mod_ssl.c **** int bSSLDeinit(bSSLHandle_t ssl)
+ 284:../../bos/modules/b_mod_ssl.c **** {
+ 771              		.loc 1 284 1 is_stmt 1 view -0
+ 772              		.cfi_startproc
+ 773              		.loc 1 284 1 is_stmt 0 view .LVU182
+ 774 0000 F30F1EFA 		endbr64
+ 285:../../bos/modules/b_mod_ssl.c ****     if (SSLHANDLE_IS_INVALID(ssl))
+ 775              		.loc 1 285 5 is_stmt 1 view .LVU183
+ 776              		.loc 1 285 8 is_stmt 0 view .LVU184
+ 777 0004 4885FF   		testq	%rdi, %rdi
+ 778 0007 7452     		je	.L59
+ 284:../../bos/modules/b_mod_ssl.c ****     if (SSLHANDLE_IS_INVALID(ssl))
+ 779              		.loc 1 284 1 view .LVU185
+ 780 0009 53       		pushq	%rbx
+ 781              	.LCFI34:
+ 782              		.cfi_def_cfa_offset 16
+ 783              		.cfi_offset 3, -16
+ 784 000a 4889FB   		movq	%rdi, %rbx
+ 286:../../bos/modules/b_mod_ssl.c ****     {
+ 287:../../bos/modules/b_mod_ssl.c ****         return -1;
+ 288:../../bos/modules/b_mod_ssl.c ****     }
+ 289:../../bos/modules/b_mod_ssl.c ****     bSSL_t *p_ssl = (bSSL_t *)ssl;
+ 785              		.loc 1 289 5 is_stmt 1 view .LVU186
+ 786              	.LVL87:
+ 290:../../bos/modules/b_mod_ssl.c ****     p_ssl->sockfd = -1;
+ 787              		.loc 1 290 5 view .LVU187
+ 291:../../bos/modules/b_mod_ssl.c ****     mbedtls_x509_crt_free(&p_ssl->ca);
+ 788              		.loc 1 291 5 is_stmt 0 view .LVU188
+ 789 000d 488DBFE8 		leaq	1768(%rdi), %rdi
+ 789      060000
+ 790              	.LVL88:
+ 290:../../bos/modules/b_mod_ssl.c ****     p_ssl->sockfd = -1;
+ 791              		.loc 1 290 19 view .LVU189
+ 792 0014 C787E802 		movl	$-1, 744(%rdi)
+ 792      0000FFFF 
+ 792      FFFF
+ 793              		.loc 1 291 5 is_stmt 1 view .LVU190
+ 794 001e E8000000 		call	mbedtls_x509_crt_free@PLT
+ 794      00
+ 795              	.LVL89:
+ 292:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_config_free(&p_ssl->ssl_conf);
+ 796              		.loc 1 292 5 view .LVU191
+ 797 0023 488DBB20 		leaq	1568(%rbx), %rdi
+ 797      060000
+ 798 002a E8000000 		call	mbedtls_ssl_config_free@PLT
+ 798      00
+ 799              	.LVL90:
+ 293:../../bos/modules/b_mod_ssl.c ****     mbedtls_ssl_free(&p_ssl->ssl_ctx);
+ 800              		.loc 1 293 5 view .LVU192
+ 801 002f 488DBB98 		leaq	1176(%rbx), %rdi
+ 801      040000
+ 802 0036 E8000000 		call	mbedtls_ssl_free@PLT
+ 802      00
+ 803              	.LVL91:
+ 294:../../bos/modules/b_mod_ssl.c ****     _bSSLDRBGDeinit(&p_ssl->random);
+GAS LISTING /tmp/cc2lPFYN.s 			page 28
+
+
+ 804              		.loc 1 294 5 view .LVU193
+ 805              	.LBB24:
+ 806              	.LBI24:
+ 154:../../bos/modules/b_mod_ssl.c **** {
+ 807              		.loc 1 154 12 view .LVU194
+ 808              	.LBB25:
+ 156:../../bos/modules/b_mod_ssl.c ****     {
+ 809              		.loc 1 156 5 view .LVU195
+ 160:../../bos/modules/b_mod_ssl.c ****     mbedtls_ctr_drbg_free(&prandom->ctr_drbg);
+ 810              		.loc 1 160 5 view .LVU196
+ 811 003b 488DBB58 		leaq	344(%rbx), %rdi
+ 811      010000
+ 812 0042 E8000000 		call	mbedtls_entropy_free@PLT
+ 812      00
+ 813              	.LVL92:
+ 161:../../bos/modules/b_mod_ssl.c ****     return 0;
+ 814              		.loc 1 161 5 view .LVU197
+ 815 0047 4889DF   		movq	%rbx, %rdi
+ 816 004a E8000000 		call	mbedtls_ctr_drbg_free@PLT
+ 816      00
+ 817              	.LVL93:
+ 162:../../bos/modules/b_mod_ssl.c **** }
+ 818              		.loc 1 162 5 view .LVU198
+ 162:../../bos/modules/b_mod_ssl.c **** }
+ 819              		.loc 1 162 5 is_stmt 0 view .LVU199
+ 820              	.LBE25:
+ 821              	.LBE24:
+ 295:../../bos/modules/b_mod_ssl.c ****     bFree(p_ssl);
+ 822              		.loc 1 295 5 is_stmt 1 view .LVU200
+ 823 004f 4889DF   		movq	%rbx, %rdi
+ 824 0052 E8000000 		call	bFree@PLT
+ 824      00
+ 825              	.LVL94:
+ 296:../../bos/modules/b_mod_ssl.c ****     return 0;
+ 826              		.loc 1 296 5 view .LVU201
+ 827              		.loc 1 296 12 is_stmt 0 view .LVU202
+ 828 0057 31C0     		xorl	%eax, %eax
+ 297:../../bos/modules/b_mod_ssl.c **** }
+ 829              		.loc 1 297 1 view .LVU203
+ 830 0059 5B       		popq	%rbx
+ 831              	.LCFI35:
+ 832              		.cfi_def_cfa_offset 8
+ 833              	.LVL95:
+ 834              		.loc 1 297 1 view .LVU204
+ 835 005a C3       		ret
+ 836              	.LVL96:
+ 837              	.L59:
+ 838              		.cfi_restore 3
+ 287:../../bos/modules/b_mod_ssl.c ****     }
+ 839              		.loc 1 287 16 view .LVU205
+ 840 005b B8FFFFFF 		movl	$-1, %eax
+ 840      FF
+ 841              		.loc 1 297 1 view .LVU206
+ 842 0060 C3       		ret
+ 843              		.cfi_endproc
+ 844              	.LFE131:
+ 846              		.section	.rodata.bSSLHandshake.str1.1,"aMS",@progbits,1
+GAS LISTING /tmp/cc2lPFYN.s 			page 29
+
+
+ 847              	.LC9:
+ 848 0000 6661696C 		.string	"fail -0x%x\r\n"
+ 848      202D3078 
+ 848      25780D0A 
+ 848      00
+ 849              		.section	.text.bSSLHandshake,"ax",@progbits
+ 850              		.p2align 4
+ 851              		.globl	bSSLHandshake
+ 853              	bSSLHandshake:
+ 854              	.LVL97:
+ 855              	.LFB132:
+ 298:../../bos/modules/b_mod_ssl.c **** 
+ 299:../../bos/modules/b_mod_ssl.c **** /**
+ 300:../../bos/modules/b_mod_ssl.c ****  * \brief
+ 301:../../bos/modules/b_mod_ssl.c ****  * \param ssl
+ 302:../../bos/modules/b_mod_ssl.c ****  * \param sockfd
+ 303:../../bos/modules/b_mod_ssl.c ****  * \return int (< 0: error) (0: success) (1: in progress)
+ 304:../../bos/modules/b_mod_ssl.c ****  */
+ 305:../../bos/modules/b_mod_ssl.c **** int bSSLHandshake(bSSLHandle_t ssl, int sockfd)
+ 306:../../bos/modules/b_mod_ssl.c **** {
+ 856              		.loc 1 306 1 is_stmt 1 view -0
+ 857              		.cfi_startproc
+ 858              		.loc 1 306 1 is_stmt 0 view .LVU208
+ 859 0000 F30F1EFA 		endbr64
+ 307:../../bos/modules/b_mod_ssl.c ****     int ret = 0;
+ 860              		.loc 1 307 5 is_stmt 1 view .LVU209
+ 861              	.LVL98:
+ 308:../../bos/modules/b_mod_ssl.c ****     if (SSLHANDLE_IS_INVALID(ssl) || SOCKFD_IS_INVALID(sockfd))
+ 862              		.loc 1 308 5 view .LVU210
+ 306:../../bos/modules/b_mod_ssl.c ****     int ret = 0;
+ 863              		.loc 1 306 1 is_stmt 0 view .LVU211
+ 864 0004 53       		pushq	%rbx
+ 865              	.LCFI36:
+ 866              		.cfi_def_cfa_offset 16
+ 867              		.cfi_offset 3, -16
+ 868              		.loc 1 308 8 view .LVU212
+ 869 0005 4885FF   		testq	%rdi, %rdi
+ 870 0008 7466     		je	.L67
+ 871 000a 85F6     		testl	%esi, %esi
+ 872 000c 7E62     		jle	.L67
+ 309:../../bos/modules/b_mod_ssl.c ****     {
+ 310:../../bos/modules/b_mod_ssl.c ****         return -1;
+ 311:../../bos/modules/b_mod_ssl.c ****     }
+ 312:../../bos/modules/b_mod_ssl.c ****     bSSL_t *p_ssl = (bSSL_t *)ssl;
+ 873              		.loc 1 312 5 is_stmt 1 view .LVU213
+ 874              	.LVL99:
+ 313:../../bos/modules/b_mod_ssl.c ****     if (p_ssl->sockfd != sockfd)
+ 875              		.loc 1 313 5 view .LVU214
+ 876              		.loc 1 313 8 is_stmt 0 view .LVU215
+ 877 000e 39B7D009 		cmpl	%esi, 2512(%rdi)
+ 877      0000
+ 878 0014 7406     		je	.L66
+ 314:../../bos/modules/b_mod_ssl.c ****     {
+ 315:../../bos/modules/b_mod_ssl.c ****         p_ssl->sockfd = sockfd;
+ 879              		.loc 1 315 9 is_stmt 1 view .LVU216
+ 880              		.loc 1 315 23 is_stmt 0 view .LVU217
+ 881 0016 89B7D009 		movl	%esi, 2512(%rdi)
+GAS LISTING /tmp/cc2lPFYN.s 			page 30
+
+
+ 881      0000
+ 882              	.L66:
+ 316:../../bos/modules/b_mod_ssl.c ****     }
+ 317:../../bos/modules/b_mod_ssl.c ****     ret = mbedtls_ssl_handshake(&p_ssl->ssl_ctx);
+ 883              		.loc 1 317 5 is_stmt 1 view .LVU218
+ 884              		.loc 1 317 11 is_stmt 0 view .LVU219
+ 885 001c 4881C798 		addq	$1176, %rdi
+ 885      040000
+ 886              	.LVL100:
+ 887              		.loc 1 317 11 view .LVU220
+ 888 0023 E8000000 		call	mbedtls_ssl_handshake@PLT
+ 888      00
+ 889              	.LVL101:
+ 890              		.loc 1 317 11 view .LVU221
+ 891 0028 89C3     		movl	%eax, %ebx
+ 892              	.LVL102:
+ 318:../../bos/modules/b_mod_ssl.c ****     if (ret == MBEDTLS_ERR_SSL_WANT_WRITE || ret == MBEDTLS_ERR_SSL_WANT_READ)
+ 893              		.loc 1 318 5 is_stmt 1 view .LVU222
+ 894              		.loc 1 318 50 is_stmt 0 view .LVU223
+ 895 002a 247F     		andb	$127, %al
+ 896              	.LVL103:
+ 897              		.loc 1 318 8 view .LVU224
+ 898 002c 3D0097FF 		cmpl	$-26880, %eax
+ 898      FF
+ 899 0031 750D     		jne	.L70
+ 319:../../bos/modules/b_mod_ssl.c ****     {
+ 320:../../bos/modules/b_mod_ssl.c ****         return 1;
+ 900              		.loc 1 320 16 view .LVU225
+ 901 0033 BB010000 		movl	$1, %ebx
+ 901      00
+ 902              	.LVL104:
+ 903              	.L64:
+ 321:../../bos/modules/b_mod_ssl.c ****     }
+ 322:../../bos/modules/b_mod_ssl.c ****     b_log_e("fail -0x%x\r\n", -ret);
+ 323:../../bos/modules/b_mod_ssl.c ****     return ret;
+ 324:../../bos/modules/b_mod_ssl.c **** }
+ 904              		.loc 1 324 1 view .LVU226
+ 905 0038 89D8     		movl	%ebx, %eax
+ 906 003a 5B       		popq	%rbx
+ 907              	.LCFI37:
+ 908              		.cfi_remember_state
+ 909              		.cfi_def_cfa_offset 8
+ 910 003b C3       		ret
+ 911              	.LVL105:
+ 912 003c 0F1F4000 		.p2align 4,,10
+ 913              		.p2align 3
+ 914              	.L70:
+ 915              	.LCFI38:
+ 916              		.cfi_restore_state
+ 322:../../bos/modules/b_mod_ssl.c ****     return ret;
+ 917              		.loc 1 322 5 is_stmt 1 view .LVU227
+ 918 0040 4189D9   		movl	%ebx, %r9d
+ 919 0043 31C0     		xorl	%eax, %eax
+ 920 0045 B9420100 		movl	$322, %ecx
+ 920      00
+ 921 004a BF020000 		movl	$2, %edi
+ 921      00
+GAS LISTING /tmp/cc2lPFYN.s 			page 31
+
+
+ 922 004f 41F7D9   		negl	%r9d
+ 923 0052 4C8D0500 		leaq	.LC9(%rip), %r8
+ 923      000000
+ 924 0059 488D1500 		leaq	__func__.0(%rip), %rdx
+ 924      000000
+ 925 0060 488D3500 		leaq	.LC1(%rip), %rsi
+ 925      000000
+ 926 0067 E8000000 		call	bLogOut@PLT
+ 926      00
+ 927              	.LVL106:
+ 323:../../bos/modules/b_mod_ssl.c **** }
+ 928              		.loc 1 323 5 view .LVU228
+ 929              		.loc 1 324 1 is_stmt 0 view .LVU229
+ 930 006c 89D8     		movl	%ebx, %eax
+ 931 006e 5B       		popq	%rbx
+ 932              	.LCFI39:
+ 933              		.cfi_remember_state
+ 934              		.cfi_def_cfa_offset 8
+ 935              	.LVL107:
+ 936              		.loc 1 324 1 view .LVU230
+ 937 006f C3       		ret
+ 938              	.LVL108:
+ 939              		.p2align 4,,10
+ 940              		.p2align 3
+ 941              	.L67:
+ 942              	.LCFI40:
+ 943              		.cfi_restore_state
+ 310:../../bos/modules/b_mod_ssl.c ****     }
+ 944              		.loc 1 310 16 view .LVU231
+ 945 0070 BBFFFFFF 		movl	$-1, %ebx
+ 945      FF
+ 946 0075 EBC1     		jmp	.L64
+ 947              		.cfi_endproc
+ 948              	.LFE132:
+ 950              		.section	.text.bSSLRecv,"ax",@progbits
+ 951              		.p2align 4
+ 952              		.globl	bSSLRecv
+ 954              	bSSLRecv:
+ 955              	.LVL109:
+ 956              	.LFB133:
+ 325:../../bos/modules/b_mod_ssl.c **** 
+ 326:../../bos/modules/b_mod_ssl.c **** int bSSLRecv(bSSLHandle_t ssl, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen)
+ 327:../../bos/modules/b_mod_ssl.c **** {
+ 957              		.loc 1 327 1 is_stmt 1 view -0
+ 958              		.cfi_startproc
+ 959              		.loc 1 327 1 is_stmt 0 view .LVU233
+ 960 0000 F30F1EFA 		endbr64
+ 328:../../bos/modules/b_mod_ssl.c ****     int ret = 0;
+ 961              		.loc 1 328 5 is_stmt 1 view .LVU234
+ 962              	.LVL110:
+ 329:../../bos/modules/b_mod_ssl.c ****     if (SSLHANDLE_IS_INVALID(ssl) || (pbuf == NULL && buf_len != 0))
+ 963              		.loc 1 329 5 view .LVU235
+ 964              		.loc 1 329 8 is_stmt 0 view .LVU236
+ 965 0004 4885FF   		testq	%rdi, %rdi
+ 966 0007 745E     		je	.L76
+ 327:../../bos/modules/b_mod_ssl.c ****     int ret = 0;
+ 967              		.loc 1 327 1 view .LVU237
+GAS LISTING /tmp/cc2lPFYN.s 			page 32
+
+
+ 968 0009 53       		pushq	%rbx
+ 969              	.LCFI41:
+ 970              		.cfi_def_cfa_offset 16
+ 971              		.cfi_offset 3, -16
+ 972 000a 4889CB   		movq	%rcx, %rbx
+ 973              		.loc 1 329 35 discriminator 1 view .LVU238
+ 974 000d 4885F6   		testq	%rsi, %rsi
+ 975 0010 7505     		jne	.L79
+ 976 0012 6685D2   		testw	%dx, %dx
+ 977 0015 7549     		jne	.L77
+ 978              	.L79:
+ 330:../../bos/modules/b_mod_ssl.c ****     {
+ 331:../../bos/modules/b_mod_ssl.c ****         return -1;
+ 332:../../bos/modules/b_mod_ssl.c ****     }
+ 333:../../bos/modules/b_mod_ssl.c ****     bSSL_t *p_ssl = (bSSL_t *)ssl;
+ 979              		.loc 1 333 5 is_stmt 1 view .LVU239
+ 980              	.LVL111:
+ 334:../../bos/modules/b_mod_ssl.c ****     ret           = mbedtls_ssl_read(&p_ssl->ssl_ctx, pbuf, buf_len);
+ 981              		.loc 1 334 5 view .LVU240
+ 982              		.loc 1 334 21 is_stmt 0 view .LVU241
+ 983 0017 0FB7D2   		movzwl	%dx, %edx
+ 984              		.loc 1 334 21 view .LVU242
+ 985 001a 4881C798 		addq	$1176, %rdi
+ 985      040000
+ 986              	.LVL112:
+ 987              		.loc 1 334 21 view .LVU243
+ 988 0021 E8000000 		call	mbedtls_ssl_read@PLT
+ 988      00
+ 989              	.LVL113:
+ 335:../../bos/modules/b_mod_ssl.c ****     if (ret == MBEDTLS_ERR_SSL_WANT_WRITE || ret == MBEDTLS_ERR_SSL_WANT_READ)
+ 990              		.loc 1 335 5 is_stmt 1 view .LVU244
+ 991              		.loc 1 335 50 is_stmt 0 view .LVU245
+ 992 0026 89C2     		movl	%eax, %edx
+ 993 0028 80E27F   		andb	$127, %dl
+ 994              		.loc 1 335 8 view .LVU246
+ 995 002b 81FA0097 		cmpl	$-26880, %edx
+ 995      FFFF
+ 996 0031 741D     		je	.L78
+ 336:../../bos/modules/b_mod_ssl.c ****     {
+ 337:../../bos/modules/b_mod_ssl.c ****         ret = 0;
+ 338:../../bos/modules/b_mod_ssl.c ****     }
+ 339:../../bos/modules/b_mod_ssl.c ****     if (ret >= 0 && rlen)
+ 997              		.loc 1 339 13 view .LVU247
+ 998 0033 89C2     		movl	%eax, %edx
+ 999 0035 F7D2     		notl	%edx
+ 1000 0037 C1EA1F   		shrl	$31, %edx
+ 1001              	.LVL114:
+ 1002              	.L74:
+ 1003              		.loc 1 339 5 is_stmt 1 view .LVU248
+ 1004              		.loc 1 339 8 is_stmt 0 view .LVU249
+ 1005 003a 4885DB   		testq	%rbx, %rbx
+ 1006 003d 7407     		je	.L71
+ 1007 003f 84D2     		testb	%dl, %dl
+ 1008 0041 7403     		je	.L71
+ 340:../../bos/modules/b_mod_ssl.c ****     {
+ 341:../../bos/modules/b_mod_ssl.c ****         *rlen = ret;
+ 1009              		.loc 1 341 9 is_stmt 1 view .LVU250
+GAS LISTING /tmp/cc2lPFYN.s 			page 33
+
+
+ 1010              		.loc 1 341 15 is_stmt 0 view .LVU251
+ 1011 0043 668903   		movw	%ax, (%rbx)
+ 1012              	.L71:
+ 342:../../bos/modules/b_mod_ssl.c ****     }
+ 343:../../bos/modules/b_mod_ssl.c ****     return ret;
+ 344:../../bos/modules/b_mod_ssl.c **** }
+ 1013              		.loc 1 344 1 view .LVU252
+ 1014 0046 5B       		popq	%rbx
+ 1015              	.LCFI42:
+ 1016              		.cfi_remember_state
+ 1017              		.cfi_def_cfa_offset 8
+ 1018              	.LVL115:
+ 1019              		.loc 1 344 1 view .LVU253
+ 1020 0047 C3       		ret
+ 1021              	.LVL116:
+ 1022 0048 0F1F8400 		.p2align 4,,10
+ 1022      00000000 
+ 1023              		.p2align 3
+ 1024              	.L78:
+ 1025              	.LCFI43:
+ 1026              		.cfi_restore_state
+ 1027              		.loc 1 344 1 view .LVU254
+ 1028 0050 BA010000 		movl	$1, %edx
+ 1028      00
+ 337:../../bos/modules/b_mod_ssl.c ****     }
+ 1029              		.loc 1 337 13 view .LVU255
+ 1030 0055 31C0     		xorl	%eax, %eax
+ 1031              	.LVL117:
+ 337:../../bos/modules/b_mod_ssl.c ****     }
+ 1032              		.loc 1 337 13 view .LVU256
+ 1033 0057 EBE1     		jmp	.L74
+ 1034              	.LVL118:
+ 1035 0059 0F1F8000 		.p2align 4,,10
+ 1035      000000
+ 1036              		.p2align 3
+ 1037              	.L77:
+ 331:../../bos/modules/b_mod_ssl.c ****     }
+ 1038              		.loc 1 331 16 view .LVU257
+ 1039 0060 B8FFFFFF 		movl	$-1, %eax
+ 1039      FF
+ 1040              		.loc 1 344 1 view .LVU258
+ 1041 0065 5B       		popq	%rbx
+ 1042              	.LCFI44:
+ 1043              		.cfi_def_cfa_offset 8
+ 1044 0066 C3       		ret
+ 1045              	.L76:
+ 1046              		.cfi_restore 3
+ 331:../../bos/modules/b_mod_ssl.c ****     }
+ 1047              		.loc 1 331 16 view .LVU259
+ 1048 0067 B8FFFFFF 		movl	$-1, %eax
+ 1048      FF
+ 1049              		.loc 1 344 1 view .LVU260
+ 1050 006c C3       		ret
+ 1051              		.cfi_endproc
+ 1052              	.LFE133:
+ 1054              		.section	.text.bSSLSend,"ax",@progbits
+ 1055              		.p2align 4
+GAS LISTING /tmp/cc2lPFYN.s 			page 34
+
+
+ 1056              		.globl	bSSLSend
+ 1058              	bSSLSend:
+ 1059              	.LVL119:
+ 1060              	.LFB134:
+ 345:../../bos/modules/b_mod_ssl.c **** 
+ 346:../../bos/modules/b_mod_ssl.c **** int bSSLSend(bSSLHandle_t ssl, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
+ 347:../../bos/modules/b_mod_ssl.c **** {
+ 1061              		.loc 1 347 1 is_stmt 1 view -0
+ 1062              		.cfi_startproc
+ 1063              		.loc 1 347 1 is_stmt 0 view .LVU262
+ 1064 0000 F30F1EFA 		endbr64
+ 348:../../bos/modules/b_mod_ssl.c ****     int ret = 0;
+ 1065              		.loc 1 348 5 is_stmt 1 view .LVU263
+ 1066              	.LVL120:
+ 349:../../bos/modules/b_mod_ssl.c ****     if (SSLHANDLE_IS_INVALID(ssl) || (pbuf == NULL && buf_len != 0))
+ 1067              		.loc 1 349 5 view .LVU264
+ 1068              		.loc 1 349 8 is_stmt 0 view .LVU265
+ 1069 0004 4885FF   		testq	%rdi, %rdi
+ 1070 0007 745E     		je	.L98
+ 347:../../bos/modules/b_mod_ssl.c ****     int ret = 0;
+ 1071              		.loc 1 347 1 view .LVU266
+ 1072 0009 53       		pushq	%rbx
+ 1073              	.LCFI45:
+ 1074              		.cfi_def_cfa_offset 16
+ 1075              		.cfi_offset 3, -16
+ 1076 000a 4889CB   		movq	%rcx, %rbx
+ 1077              		.loc 1 349 35 discriminator 1 view .LVU267
+ 1078 000d 4885F6   		testq	%rsi, %rsi
+ 1079 0010 7505     		jne	.L101
+ 1080 0012 6685D2   		testw	%dx, %dx
+ 1081 0015 7549     		jne	.L99
+ 1082              	.L101:
+ 350:../../bos/modules/b_mod_ssl.c ****     {
+ 351:../../bos/modules/b_mod_ssl.c ****         return -1;
+ 352:../../bos/modules/b_mod_ssl.c ****     }
+ 353:../../bos/modules/b_mod_ssl.c ****     bSSL_t *p_ssl = (bSSL_t *)ssl;
+ 1083              		.loc 1 353 5 is_stmt 1 view .LVU268
+ 1084              	.LVL121:
+ 354:../../bos/modules/b_mod_ssl.c ****     ret           = mbedtls_ssl_write(&p_ssl->ssl_ctx, pbuf, buf_len);
+ 1085              		.loc 1 354 5 view .LVU269
+ 1086              		.loc 1 354 21 is_stmt 0 view .LVU270
+ 1087 0017 0FB7D2   		movzwl	%dx, %edx
+ 1088              		.loc 1 354 21 view .LVU271
+ 1089 001a 4881C798 		addq	$1176, %rdi
+ 1089      040000
+ 1090              	.LVL122:
+ 1091              		.loc 1 354 21 view .LVU272
+ 1092 0021 E8000000 		call	mbedtls_ssl_write@PLT
+ 1092      00
+ 1093              	.LVL123:
+ 355:../../bos/modules/b_mod_ssl.c ****     if (ret == MBEDTLS_ERR_SSL_WANT_WRITE || ret == MBEDTLS_ERR_SSL_WANT_READ)
+ 1094              		.loc 1 355 5 is_stmt 1 view .LVU273
+ 1095              		.loc 1 355 50 is_stmt 0 view .LVU274
+ 1096 0026 89C2     		movl	%eax, %edx
+ 1097 0028 80E27F   		andb	$127, %dl
+ 1098              		.loc 1 355 8 view .LVU275
+ 1099 002b 81FA0097 		cmpl	$-26880, %edx
+GAS LISTING /tmp/cc2lPFYN.s 			page 35
+
+
+ 1099      FFFF
+ 1100 0031 741D     		je	.L100
+ 356:../../bos/modules/b_mod_ssl.c ****     {
+ 357:../../bos/modules/b_mod_ssl.c ****         ret = 0;
+ 358:../../bos/modules/b_mod_ssl.c ****     }
+ 359:../../bos/modules/b_mod_ssl.c ****     if (ret >= 0 && wlen)
+ 1101              		.loc 1 359 13 view .LVU276
+ 1102 0033 89C2     		movl	%eax, %edx
+ 1103 0035 F7D2     		notl	%edx
+ 1104 0037 C1EA1F   		shrl	$31, %edx
+ 1105              	.LVL124:
+ 1106              	.L96:
+ 1107              		.loc 1 359 5 is_stmt 1 view .LVU277
+ 1108              		.loc 1 359 8 is_stmt 0 view .LVU278
+ 1109 003a 4885DB   		testq	%rbx, %rbx
+ 1110 003d 7407     		je	.L93
+ 1111 003f 84D2     		testb	%dl, %dl
+ 1112 0041 7403     		je	.L93
+ 360:../../bos/modules/b_mod_ssl.c ****     {
+ 361:../../bos/modules/b_mod_ssl.c ****         *wlen = ret;
+ 1113              		.loc 1 361 9 is_stmt 1 view .LVU279
+ 1114              		.loc 1 361 15 is_stmt 0 view .LVU280
+ 1115 0043 668903   		movw	%ax, (%rbx)
+ 1116              	.L93:
+ 362:../../bos/modules/b_mod_ssl.c ****     }
+ 363:../../bos/modules/b_mod_ssl.c ****     return ret;
+ 364:../../bos/modules/b_mod_ssl.c **** }
+ 1117              		.loc 1 364 1 view .LVU281
+ 1118 0046 5B       		popq	%rbx
+ 1119              	.LCFI46:
+ 1120              		.cfi_remember_state
+ 1121              		.cfi_def_cfa_offset 8
+ 1122              	.LVL125:
+ 1123              		.loc 1 364 1 view .LVU282
+ 1124 0047 C3       		ret
+ 1125              	.LVL126:
+ 1126 0048 0F1F8400 		.p2align 4,,10
+ 1126      00000000 
+ 1127              		.p2align 3
+ 1128              	.L100:
+ 1129              	.LCFI47:
+ 1130              		.cfi_restore_state
+ 1131              		.loc 1 364 1 view .LVU283
+ 1132 0050 BA010000 		movl	$1, %edx
+ 1132      00
+ 357:../../bos/modules/b_mod_ssl.c ****     }
+ 1133              		.loc 1 357 13 view .LVU284
+ 1134 0055 31C0     		xorl	%eax, %eax
+ 1135              	.LVL127:
+ 357:../../bos/modules/b_mod_ssl.c ****     }
+ 1136              		.loc 1 357 13 view .LVU285
+ 1137 0057 EBE1     		jmp	.L96
+ 1138              	.LVL128:
+ 1139 0059 0F1F8000 		.p2align 4,,10
+ 1139      000000
+ 1140              		.p2align 3
+ 1141              	.L99:
+GAS LISTING /tmp/cc2lPFYN.s 			page 36
+
+
+ 351:../../bos/modules/b_mod_ssl.c ****     }
+ 1142              		.loc 1 351 16 view .LVU286
+ 1143 0060 B8FFFFFF 		movl	$-1, %eax
+ 1143      FF
+ 1144              		.loc 1 364 1 view .LVU287
+ 1145 0065 5B       		popq	%rbx
+ 1146              	.LCFI48:
+ 1147              		.cfi_def_cfa_offset 8
+ 1148 0066 C3       		ret
+ 1149              	.L98:
+ 1150              		.cfi_restore 3
+ 351:../../bos/modules/b_mod_ssl.c ****     }
+ 1151              		.loc 1 351 16 view .LVU288
+ 1152 0067 B8FFFFFF 		movl	$-1, %eax
+ 1152      FF
+ 1153              		.loc 1 364 1 view .LVU289
+ 1154 006c C3       		ret
+ 1155              		.cfi_endproc
+ 1156              	.LFE134:
+ 1158              		.section	.rodata.__func__.0,"a"
+ 1159              		.align 8
+ 1162              	__func__.0:
+ 1163 0000 6253534C 		.string	"bSSLHandshake"
+ 1163      48616E64 
+ 1163      7368616B 
+ 1163      6500
+ 1164              		.section	.rodata.__func__.1,"a"
+ 1165              		.align 8
+ 1168              	__func__.1:
+ 1169 0000 5F625353 		.string	"_bSSLPrint"
+ 1169      4C507269 
+ 1169      6E7400
+ 1170              		.section	.rodata.__func__.2,"a"
+ 1171              		.align 8
+ 1174              	__func__.2:
+ 1175 0000 6253534C 		.string	"bSSLInit"
+ 1175      496E6974 
+ 1175      00
+ 1176              		.text
+ 1177              	.Letext0:
+ 1178              		.file 4 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1179              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1180              		.file 6 "/usr/include/stdint.h"
+ 1181              		.file 7 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1182              		.file 8 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/aes.h"
+ 1183              		.file 9 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h"
+ 1184              		.file 10 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/entropy.h"
+ 1185              		.file 11 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ctr_drbg.h"
+ 1186              		.file 12 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ecp.h"
+ 1187              		.file 13 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h"
+ 1188              		.file 14 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/asn1.h"
+ 1189              		.file 15 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/x509.h"
+ 1190              		.file 16 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/x509_crl.h"
+ 1191              		.file 17 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/x509_crt.h"
+ 1192              		.file 18 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ssl.h"
+ 1193              		.file 19 "../../bos/modules/inc/b_mod_ssl.h"
+ 1194              		.file 20 "/usr/include/x86_64-linux-gnu/bits/stdio2-decl.h"
+GAS LISTING /tmp/cc2lPFYN.s 			page 37
+
+
+ 1195              		.file 21 "../../bos/modules/inc/b_mod_tcpip.h"
+ 1196              		.file 22 "../../bos/hal/inc/b_hal_rng.h"
+ 1197              		.file 23 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ssl_ciphersuites.h"
+ 1198              		.file 24 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/debug.h"
+ 1199              		.file 25 "../../bos/utils/inc/b_util_memp.h"
+ 1200              		.file 26 "../../bos/utils/inc/b_util_log.h"
+ 9615              		.section	.note.gnu.property,"a"
+ 9616              		.align 8
+ 9617 0000 04000000 		.long	1f - 0f
+ 9618 0004 10000000 		.long	4f - 1f
+ 9619 0008 05000000 		.long	5
+ 9620              	0:
+ 9621 000c 474E5500 		.string	"GNU"
+ 9622              	1:
+ 9623              		.align 8
+ 9624 0010 020000C0 		.long	0xc0000002
+ 9625 0014 04000000 		.long	3f - 2f
+ 9626              	2:
+ 9627 0018 03000000 		.long	0x3
+ 9628              	3:
+ 9629 001c 00000000 		.align 8
+ 9630              	4:
+GAS LISTING /tmp/cc2lPFYN.s 			page 38
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_mod_ssl.c
+     /tmp/cc2lPFYN.s:13     .text._bSSLPrint:0000000000000000 _bSSLPrint
+     /tmp/cc2lPFYN.s:1168   .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/cc2lPFYN.s:65     .text._bSSLRecv:0000000000000000 _bSSLRecv
+     /tmp/cc2lPFYN.s:142    .text._bSSLSend:0000000000000000 _bSSLSend
+     /tmp/cc2lPFYN.s:219    .text._bSSLEntropySource:0000000000000000 _bSSLEntropySource
+     /tmp/cc2lPFYN.s:369    .text.bSSLInit:0000000000000000 bSSLInit
+     /tmp/cc2lPFYN.s:1174   .rodata.__func__.2:0000000000000000 __func__.2
+     /tmp/cc2lPFYN.s:768    .text.bSSLDeinit:0000000000000000 bSSLDeinit
+     /tmp/cc2lPFYN.s:853    .text.bSSLHandshake:0000000000000000 bSSLHandshake
+     /tmp/cc2lPFYN.s:1162   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/cc2lPFYN.s:954    .text.bSSLRecv:0000000000000000 bSSLRecv
+     /tmp/cc2lPFYN.s:1058   .text.bSSLSend:0000000000000000 bSSLSend
+     /tmp/cc2lPFYN.s:8      .rodata._bSSLPrint.str1.1:000000000000000c .LC1
+     /tmp/cc2lPFYN.s:6      .rodata._bSSLPrint.str1.1:0000000000000000 .LC0
+     /tmp/cc2lPFYN.s:355    .rodata.bSSLInit.str1.1:000000000000000e .LC4
+     /tmp/cc2lPFYN.s:359    .rodata.bSSLInit.str1.1:000000000000002e .LC6
+     /tmp/cc2lPFYN.s:357    .rodata.bSSLInit.str1.1:0000000000000015 .LC5
+     /tmp/cc2lPFYN.s:332    .rodata.bSSLInit.str1.8:0000000000000000 .LC2
+     /tmp/cc2lPFYN.s:363    .rodata.bSSLInit.str1.1:000000000000004c .LC8
+     /tmp/cc2lPFYN.s:361    .rodata.bSSLInit.str1.1:0000000000000032 .LC7
+     /tmp/cc2lPFYN.s:353    .rodata.bSSLInit.str1.1:0000000000000000 .LC3
+     /tmp/cc2lPFYN.s:847    .rodata.bSSLHandshake.str1.1:0000000000000000 .LC9
+
+UNDEFINED SYMBOLS
+bLogOut
+bRecv
+__stack_chk_fail
+bSend
+bHalRNGRead
+bCalloc
+mbedtls_ctr_drbg_init
+mbedtls_entropy_init
+mbedtls_entropy_add_source
+_GLOBAL_OFFSET_TABLE_
+mbedtls_entropy_func
+mbedtls_ctr_drbg_seed
+mbedtls_ssl_init
+mbedtls_ssl_config_init
+mbedtls_x509_crt_init
+mbedtls_ssl_conf_dbg
+mbedtls_debug_set_threshold
+mbedtls_ssl_config_defaults
+mbedtls_ctr_drbg_random
+mbedtls_ssl_conf_rng
+mbedtls_ssl_set_hostname
+mbedtls_ssl_list_ciphersuites
+__printf_chk
+mbedtls_ssl_get_ciphersuite_name
+mbedtls_ssl_set_bio
+mbedtls_ssl_conf_authmode
+mbedtls_ssl_setup
+mbedtls_x509_crt_parse
+mbedtls_ssl_conf_ca_chain
+mbedtls_x509_crt_free
+mbedtls_ssl_config_free
+GAS LISTING /tmp/cc2lPFYN.s 			page 39
+
+
+mbedtls_ssl_free
+mbedtls_entropy_free
+mbedtls_ctr_drbg_free
+bFree
+mbedtls_ssl_handshake
+mbedtls_ssl_read
+mbedtls_ssl_write

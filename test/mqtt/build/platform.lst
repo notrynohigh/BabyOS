@@ -1,0 +1,577 @@
+GAS LISTING /tmp/ccQNs0EC.s 			page 1
+
+
+   1              		.file	"platform.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c"
+   5              		.section	.text.mbedtls_calloc,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	mbedtls_calloc
+   9              	mbedtls_calloc:
+  10              	.LVL0:
+  11              	.LFB41:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  *  Platform abstraction layer
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  *  Copyright The Mbed TLS Contributors
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #include "common.h"
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_C)
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform_util.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h"
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /* The compile time configuration of memory allocation via the macros
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * MBEDTLS_PLATFORM_{FREE/CALLOC}_MACRO takes precedence over the runtime
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * configuration via mbedtls_platform_set_calloc_free(). So, omit everything
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * related to the latter if MBEDTLS_PLATFORM_{FREE/CALLOC}_MACRO are defined. */
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_MEMORY) &&                 \
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     !(defined(MBEDTLS_PLATFORM_CALLOC_MACRO) &&        \
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     defined(MBEDTLS_PLATFORM_FREE_MACRO))
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_CALLOC)
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static void *platform_calloc_uninit(size_t n, size_t size)
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) n);
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) size);
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return NULL;
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_CALLOC   platform_calloc_uninit
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_CALLOC */
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_FREE)
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static void platform_free_uninit(void *ptr)
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) ptr);
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_FREE     platform_free_uninit
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_FREE */
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static void * (*mbedtls_calloc_func)(size_t, size_t) = MBEDTLS_PLATFORM_STD_CALLOC;
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static void (*mbedtls_free_func)(void *) = MBEDTLS_PLATFORM_STD_FREE;
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** void *mbedtls_calloc(size_t nmemb, size_t size)
+GAS LISTING /tmp/ccQNs0EC.s 			page 2
+
+
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  12              		.loc 1 48 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 48 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return (*mbedtls_calloc_func)(nmemb, size);
+  16              		.loc 1 49 5 is_stmt 1 view .LVU2
+  17              		.loc 1 49 13 is_stmt 0 view .LVU3
+  18 0004 FF250000 		jmp	*mbedtls_calloc_func(%rip)
+  18      0000
+  19              	.LVL1:
+  20              		.loc 1 49 13 view .LVU4
+  21              		.cfi_endproc
+  22              	.LFE41:
+  24              		.section	.text.mbedtls_free,"ax",@progbits
+  25              		.p2align 4
+  26              		.globl	mbedtls_free
+  28              	mbedtls_free:
+  29              	.LVL2:
+  30              	.LFB42:
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** void mbedtls_free(void *ptr)
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  31              		.loc 1 53 1 is_stmt 1 view -0
+  32              		.cfi_startproc
+  33              		.loc 1 53 1 is_stmt 0 view .LVU6
+  34 0000 F30F1EFA 		endbr64
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     (*mbedtls_free_func)(ptr);
+  35              		.loc 1 54 5 is_stmt 1 view .LVU7
+  36              		.loc 1 54 6 is_stmt 0 view .LVU8
+  37 0004 FF250000 		jmp	*mbedtls_free_func(%rip)
+  37      0000
+  38              	.LVL3:
+  39              		.loc 1 54 6 view .LVU9
+  40              		.cfi_endproc
+  41              	.LFE42:
+  43              		.section	.text.mbedtls_platform_set_calloc_free,"ax",@progbits
+  44              		.p2align 4
+  45              		.globl	mbedtls_platform_set_calloc_free
+  47              	mbedtls_platform_set_calloc_free:
+  48              	.LVL4:
+  49              	.LFB43:
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_calloc_free(void *(*calloc_func)(size_t, size_t),
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                                      void (*free_func)(void *))
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  50              		.loc 1 59 1 is_stmt 1 view -0
+  51              		.cfi_startproc
+  52              		.loc 1 59 1 is_stmt 0 view .LVU11
+  53 0000 F30F1EFA 		endbr64
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_calloc_func = calloc_func;
+  54              		.loc 1 60 5 is_stmt 1 view .LVU12
+  55              		.loc 1 60 25 is_stmt 0 view .LVU13
+  56 0004 48893D00 		movq	%rdi, mbedtls_calloc_func(%rip)
+  56      000000
+GAS LISTING /tmp/ccQNs0EC.s 			page 3
+
+
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_free_func = free_func;
+  57              		.loc 1 61 5 is_stmt 1 view .LVU14
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  58              		.loc 1 63 1 is_stmt 0 view .LVU15
+  59 000b 31C0     		xorl	%eax, %eax
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_free_func = free_func;
+  60              		.loc 1 61 23 view .LVU16
+  61 000d 48893500 		movq	%rsi, mbedtls_free_func(%rip)
+  61      000000
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+  62              		.loc 1 62 5 is_stmt 1 view .LVU17
+  63              		.loc 1 63 1 is_stmt 0 view .LVU18
+  64 0014 C3       		ret
+  65              		.cfi_endproc
+  66              	.LFE43:
+  68              		.section	.text.mbedtls_platform_setup,"ax",@progbits
+  69              		.p2align 4
+  70              		.globl	mbedtls_platform_setup
+  72              	mbedtls_platform_setup:
+  73              	.LVL5:
+  74              	.LFB44:
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_MEMORY &&
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****           !( defined(MBEDTLS_PLATFORM_CALLOC_MACRO) &&
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****              defined(MBEDTLS_PLATFORM_FREE_MACRO) ) */
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_HAS_NON_CONFORMING_SNPRINTF)
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #include <stdarg.h>
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_win32_snprintf(char *s, size_t n, const char *fmt, ...)
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     va_list argp;
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     va_start(argp, fmt);
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ret = mbedtls_vsnprintf(s, n, fmt, argp);
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     va_end(argp);
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return ret;
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_SNPRINTF_ALT)
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_SNPRINTF)
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static int platform_snprintf_uninit(char *s, size_t n,
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                                     const char *format, ...)
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) s);
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) n);
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) format);
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_SNPRINTF    platform_snprintf_uninit
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_SNPRINTF */
+GAS LISTING /tmp/ccQNs0EC.s 			page 4
+
+
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int (*mbedtls_snprintf)(char *s, size_t n,
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                         const char *format,
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                         ...) = MBEDTLS_PLATFORM_STD_SNPRINTF;
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_snprintf(int (*snprintf_func)(char *s, size_t n,
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                                                        const char *format,
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                                                        ...))
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_snprintf = snprintf_func;
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_SNPRINTF_ALT */
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_HAS_NON_CONFORMING_VSNPRINTF)
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #include <stdarg.h>
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_win32_vsnprintf(char *s, size_t n, const char *fmt, va_list arg)
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     /* Avoid calling the invalid parameter handler by checking ourselves */
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     if (s == NULL || n == 0 || fmt == NULL) {
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         return -1;
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     }
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(_TRUNCATE)
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ret = vsnprintf_s(s, n, _TRUNCATE, fmt, arg);
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #else
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ret = vsnprintf(s, n, fmt, arg);
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     if (ret < 0 || (size_t) ret == n) {
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         s[n-1] = '\0';
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         ret = -1;
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     }
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return ret;
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_VSNPRINTF_ALT)
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_VSNPRINTF)
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static int platform_vsnprintf_uninit(char *s, size_t n,
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                                      const char *format, va_list arg)
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) s);
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) n);
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) format);
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) arg);
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return -1;
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_VSNPRINTF    platform_vsnprintf_uninit
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_VSNPRINTF */
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+GAS LISTING /tmp/ccQNs0EC.s 			page 5
+
+
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int (*mbedtls_vsnprintf)(char *s, size_t n,
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                          const char *format,
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                          va_list arg) = MBEDTLS_PLATFORM_STD_VSNPRINTF;
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_vsnprintf(int (*vsnprintf_func)(char *s, size_t n,
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                                                          const char *format,
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****                                                          va_list arg))
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_vsnprintf = vsnprintf_func;
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_VSNPRINTF_ALT */
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_PRINTF_ALT)
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_PRINTF)
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static int platform_printf_uninit(const char *format, ...)
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) format);
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_PRINTF    platform_printf_uninit
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_PRINTF */
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int (*mbedtls_printf)(const char *, ...) = MBEDTLS_PLATFORM_STD_PRINTF;
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_printf(int (*printf_func)(const char *, ...))
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_printf = printf_func;
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_PRINTF_ALT */
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_FPRINTF_ALT)
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_FPRINTF)
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static int platform_fprintf_uninit(FILE *stream, const char *format, ...)
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) stream);
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) format);
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_FPRINTF   platform_fprintf_uninit
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_FPRINTF */
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int (*mbedtls_fprintf)(FILE *, const char *, ...) =
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     MBEDTLS_PLATFORM_STD_FPRINTF;
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_fprintf(int (*fprintf_func)(FILE *, const char *, ...))
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_fprintf = fprintf_func;
+GAS LISTING /tmp/ccQNs0EC.s 			page 6
+
+
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_FPRINTF_ALT */
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_SETBUF_ALT)
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_SETBUF)
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static void platform_setbuf_uninit(FILE *stream, char *buf)
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) stream);
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) buf);
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_SETBUF   platform_setbuf_uninit
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_SETBUF */
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** void (*mbedtls_setbuf)(FILE *stream, char *buf) = MBEDTLS_PLATFORM_STD_SETBUF;
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 232:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_setbuf(void (*setbuf_func)(FILE *stream, char *buf))
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 234:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_setbuf = setbuf_func;
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_SETBUF_ALT */
+ 238:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_EXIT_ALT)
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_EXIT)
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static void platform_exit_uninit(int status)
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) status);
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_EXIT   platform_exit_uninit
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_EXIT */
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 252:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** void (*mbedtls_exit)(int status) = MBEDTLS_PLATFORM_STD_EXIT;
+ 253:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 254:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_exit(void (*exit_func)(int status))
+ 255:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 256:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_exit = exit_func;
+ 257:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_EXIT_ALT */
+ 260:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_HAVE_TIME)
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_TIME_ALT)
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_TIME)
+ 265:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 266:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static mbedtls_time_t platform_time_uninit(mbedtls_time_t *timer)
+ 269:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+GAS LISTING /tmp/ccQNs0EC.s 			page 7
+
+
+ 270:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) timer);
+ 271:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 273:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 274:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_TIME   platform_time_uninit
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_TIME */
+ 276:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 277:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** mbedtls_time_t (*mbedtls_time)(mbedtls_time_t *timer) = MBEDTLS_PLATFORM_STD_TIME;
+ 278:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 279:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_time(mbedtls_time_t (*time_func)(mbedtls_time_t *timer))
+ 280:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 281:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_time = time_func;
+ 282:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 284:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_TIME_ALT */
+ 285:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 286:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_HAVE_TIME */
+ 287:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 288:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_ENTROPY_NV_SEED)
+ 289:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_NO_STD_FUNCTIONS) && defined(MBEDTLS_FS_IO)
+ 290:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /* Default implementations for the platform independent seed functions use
+ 291:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * standard libc file functions to read from and write to a pre-defined filename
+ 292:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 293:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_std_nv_seed_read(unsigned char *buf, size_t buf_len)
+ 294:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 295:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     FILE *file;
+ 296:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     size_t n;
+ 297:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 298:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     if ((file = fopen(MBEDTLS_PLATFORM_STD_NV_SEED_FILE, "rb")) == NULL) {
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         return -1;
+ 300:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     }
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_setbuf(file, NULL);
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 305:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     if ((n = fread(buf, 1, buf_len, file)) != buf_len) {
+ 306:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         fclose(file);
+ 307:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         mbedtls_platform_zeroize(buf, buf_len);
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         return -1;
+ 309:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     }
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     fclose(file);
+ 312:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return (int) n;
+ 313:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_std_nv_seed_write(unsigned char *buf, size_t buf_len)
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     FILE *file;
+ 318:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     size_t n;
+ 319:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 320:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     if ((file = fopen(MBEDTLS_PLATFORM_STD_NV_SEED_FILE, "w")) == NULL) {
+ 321:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         return -1;
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     }
+ 323:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
+ 325:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_setbuf(file, NULL);
+ 326:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+GAS LISTING /tmp/ccQNs0EC.s 			page 8
+
+
+ 327:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     if ((n = fwrite(buf, 1, buf_len, file)) != buf_len) {
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         fclose(file);
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****         return -1;
+ 330:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     }
+ 331:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 332:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     fclose(file);
+ 333:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return (int) n;
+ 334:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 335:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_NO_STD_FUNCTIONS */
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if defined(MBEDTLS_PLATFORM_NV_SEED_ALT)
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_NV_SEED_READ)
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+ 341:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 342:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static int platform_nv_seed_read_uninit(unsigned char *buf, size_t buf_len)
+ 343:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 344:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) buf);
+ 345:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) buf_len);
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return -1;
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_NV_SEED_READ   platform_nv_seed_read_uninit
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_NV_SEED_READ */
+ 351:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_STD_NV_SEED_WRITE)
+ 353:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 354:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Make dummy function to prevent NULL pointer dereferences
+ 355:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** static int platform_nv_seed_write_uninit(unsigned char *buf, size_t buf_len)
+ 357:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) buf);
+ 359:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     ((void) buf_len);
+ 360:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return -1;
+ 361:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 362:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 363:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #define MBEDTLS_PLATFORM_STD_NV_SEED_WRITE   platform_nv_seed_write_uninit
+ 364:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* !MBEDTLS_PLATFORM_STD_NV_SEED_WRITE */
+ 365:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 366:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int (*mbedtls_nv_seed_read)(unsigned char *buf, size_t buf_len) =
+ 367:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     MBEDTLS_PLATFORM_STD_NV_SEED_READ;
+ 368:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int (*mbedtls_nv_seed_write)(unsigned char *buf, size_t buf_len) =
+ 369:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     MBEDTLS_PLATFORM_STD_NV_SEED_WRITE;
+ 370:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 371:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_set_nv_seed(
+ 372:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     int (*nv_seed_read_func)(unsigned char *buf, size_t buf_len),
+ 373:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     int (*nv_seed_write_func)(unsigned char *buf, size_t buf_len))
+ 374:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_nv_seed_read = nv_seed_read_func;
+ 376:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     mbedtls_nv_seed_write = nv_seed_write_func;
+ 377:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+ 378:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+ 379:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_PLATFORM_NV_SEED_ALT */
+ 380:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #endif /* MBEDTLS_ENTROPY_NV_SEED */
+ 381:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 382:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** #if !defined(MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT)
+ 383:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+GAS LISTING /tmp/ccQNs0EC.s 			page 9
+
+
+ 384:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Placeholder platform setup that does nothing by default
+ 385:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 386:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** int mbedtls_platform_setup(mbedtls_platform_context *ctx)
+ 387:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  75              		.loc 1 387 1 is_stmt 1 view -0
+  76              		.cfi_startproc
+  77              		.loc 1 387 1 is_stmt 0 view .LVU20
+  78 0000 F30F1EFA 		endbr64
+ 388:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     (void) ctx;
+  79              		.loc 1 388 5 is_stmt 1 view .LVU21
+ 389:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 390:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     return 0;
+  80              		.loc 1 390 5 view .LVU22
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  81              		.loc 1 391 1 is_stmt 0 view .LVU23
+  82 0004 31C0     		xorl	%eax, %eax
+  83 0006 C3       		ret
+  84              		.cfi_endproc
+  85              	.LFE44:
+  87              		.section	.text.mbedtls_platform_teardown,"ax",@progbits
+  88              		.p2align 4
+  89              		.globl	mbedtls_platform_teardown
+  91              	mbedtls_platform_teardown:
+  92              	.LVL6:
+  93              	.LFB45:
+ 392:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** 
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** /*
+ 394:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  * Placeholder platform teardown that does nothing by default
+ 395:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****  */
+ 396:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** void mbedtls_platform_teardown(mbedtls_platform_context *ctx)
+ 397:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** {
+  94              		.loc 1 397 1 is_stmt 1 view -0
+  95              		.cfi_startproc
+  96              		.loc 1 397 1 is_stmt 0 view .LVU25
+  97 0000 F30F1EFA 		endbr64
+ 398:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c ****     (void) ctx;
+  98              		.loc 1 398 5 is_stmt 1 view .LVU26
+ 399:../../bos/thirdparty/mbedtls/bos_mbedtls/platform.c **** }
+  99              		.loc 1 399 1 is_stmt 0 view .LVU27
+ 100 0004 C3       		ret
+ 101              		.cfi_endproc
+ 102              	.LFE45:
+ 104              		.section	.data.rel.mbedtls_free_func,"aw"
+ 105              		.align 8
+ 108              	mbedtls_free_func:
+ 109 0000 00000000 		.quad	bFree
+ 109      00000000 
+ 110              		.section	.data.rel.mbedtls_calloc_func,"aw"
+ 111              		.align 8
+ 114              	mbedtls_calloc_func:
+ 115 0000 00000000 		.quad	bCalloc
+ 115      00000000 
+ 116              		.text
+ 117              	.Letext0:
+ 118              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 119              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 120              		.file 4 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+GAS LISTING /tmp/ccQNs0EC.s 			page 10
+
+
+ 121              		.file 5 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+ 122              		.file 6 "../../bos/utils/inc/b_util_memp.h"
+ 1054              		.section	.note.gnu.property,"a"
+ 1055              		.align 8
+ 1056 0000 04000000 		.long	1f - 0f
+ 1057 0004 10000000 		.long	4f - 1f
+ 1058 0008 05000000 		.long	5
+ 1059              	0:
+ 1060 000c 474E5500 		.string	"GNU"
+ 1061              	1:
+ 1062              		.align 8
+ 1063 0010 020000C0 		.long	0xc0000002
+ 1064 0014 04000000 		.long	3f - 2f
+ 1065              	2:
+ 1066 0018 03000000 		.long	0x3
+ 1067              	3:
+ 1068 001c 00000000 		.align 8
+ 1069              	4:
+GAS LISTING /tmp/ccQNs0EC.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 platform.c
+     /tmp/ccQNs0EC.s:9      .text.mbedtls_calloc:0000000000000000 mbedtls_calloc
+     /tmp/ccQNs0EC.s:114    .data.rel.mbedtls_calloc_func:0000000000000000 mbedtls_calloc_func
+     /tmp/ccQNs0EC.s:28     .text.mbedtls_free:0000000000000000 mbedtls_free
+     /tmp/ccQNs0EC.s:108    .data.rel.mbedtls_free_func:0000000000000000 mbedtls_free_func
+     /tmp/ccQNs0EC.s:47     .text.mbedtls_platform_set_calloc_free:0000000000000000 mbedtls_platform_set_calloc_free
+     /tmp/ccQNs0EC.s:72     .text.mbedtls_platform_setup:0000000000000000 mbedtls_platform_setup
+     /tmp/ccQNs0EC.s:91     .text.mbedtls_platform_teardown:0000000000000000 mbedtls_platform_teardown
+
+UNDEFINED SYMBOLS
+bFree
+bCalloc

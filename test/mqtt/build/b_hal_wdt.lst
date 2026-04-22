@@ -1,0 +1,201 @@
+GAS LISTING /tmp/ccpgz0xp.s 			page 1
+
+
+   1              		.file	"b_hal_wdt.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_wdt.c"
+   5              		.section	.text.bMcuWdtStart,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuWdtStart
+   9              	bMcuWdtStart:
+  10              	.LVL0:
+  11              	.LFB28:
+   1:../../bos/hal/b_hal_wdt.c **** /**
+   2:../../bos/hal/b_hal_wdt.c ****  *!
+   3:../../bos/hal/b_hal_wdt.c ****  * \file        b_hal_wdt.c
+   4:../../bos/hal/b_hal_wdt.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_wdt.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_wdt.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_wdt.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_wdt.c ****  * @attention
+   9:../../bos/hal/b_hal_wdt.c ****  *
+  10:../../bos/hal/b_hal_wdt.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_wdt.c ****  *
+  12:../../bos/hal/b_hal_wdt.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_wdt.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_wdt.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_wdt.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_wdt.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_wdt.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_wdt.c ****  *
+  19:../../bos/hal/b_hal_wdt.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_wdt.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_wdt.c ****  *
+  22:../../bos/hal/b_hal_wdt.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_wdt.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_wdt.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SWDTL THE
+  25:../../bos/hal/b_hal_wdt.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_wdt.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_wdt.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_wdt.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_wdt.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_wdt.c ****  */
+  31:../../bos/hal/b_hal_wdt.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_wdt.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_wdt.c **** 
+  34:../../bos/hal/b_hal_wdt.c **** /**
+  35:../../bos/hal/b_hal_wdt.c ****  * \addtogroup B_HAL
+  36:../../bos/hal/b_hal_wdt.c ****  * \{
+  37:../../bos/hal/b_hal_wdt.c ****  */
+  38:../../bos/hal/b_hal_wdt.c **** 
+  39:../../bos/hal/b_hal_wdt.c **** /**
+  40:../../bos/hal/b_hal_wdt.c ****  * \addtogroup WDT
+  41:../../bos/hal/b_hal_wdt.c ****  * \{
+  42:../../bos/hal/b_hal_wdt.c ****  */
+  43:../../bos/hal/b_hal_wdt.c **** 
+  44:../../bos/hal/b_hal_wdt.c **** /**
+  45:../../bos/hal/b_hal_wdt.c ****  * \defgroup WDT_Private_Variables
+  46:../../bos/hal/b_hal_wdt.c ****  * \{
+  47:../../bos/hal/b_hal_wdt.c ****  */
+GAS LISTING /tmp/ccpgz0xp.s 			page 2
+
+
+  48:../../bos/hal/b_hal_wdt.c **** 
+  49:../../bos/hal/b_hal_wdt.c **** /**
+  50:../../bos/hal/b_hal_wdt.c ****  * \}
+  51:../../bos/hal/b_hal_wdt.c ****  */
+  52:../../bos/hal/b_hal_wdt.c **** 
+  53:../../bos/hal/b_hal_wdt.c **** /**
+  54:../../bos/hal/b_hal_wdt.c ****  * \addtogroup WDT_Private_Functions
+  55:../../bos/hal/b_hal_wdt.c ****  * \{
+  56:../../bos/hal/b_hal_wdt.c ****  */
+  57:../../bos/hal/b_hal_wdt.c **** 
+  58:../../bos/hal/b_hal_wdt.c **** /**
+  59:../../bos/hal/b_hal_wdt.c ****  * \}
+  60:../../bos/hal/b_hal_wdt.c ****  */
+  61:../../bos/hal/b_hal_wdt.c **** 
+  62:../../bos/hal/b_hal_wdt.c **** /**
+  63:../../bos/hal/b_hal_wdt.c ****  * \addtogroup WDT_Exported_Functions
+  64:../../bos/hal/b_hal_wdt.c ****  * \{
+  65:../../bos/hal/b_hal_wdt.c ****  */
+  66:../../bos/hal/b_hal_wdt.c **** #if defined(__WEAKDEF)
+  67:../../bos/hal/b_hal_wdt.c **** __WEAKDEF int bMcuWdtStart(uint8_t timeout_s)
+  68:../../bos/hal/b_hal_wdt.c **** {
+  12              		.loc 1 68 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 68 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  69:../../bos/hal/b_hal_wdt.c ****     return -1;
+  16              		.loc 1 69 5 is_stmt 1 view .LVU2
+  70:../../bos/hal/b_hal_wdt.c **** }
+  17              		.loc 1 70 1 is_stmt 0 view .LVU3
+  18 0004 B8FFFFFF 		movl	$-1, %eax
+  18      FF
+  19 0009 C3       		ret
+  20              		.cfi_endproc
+  21              	.LFE28:
+  23              		.section	.text.bMcuWdtFeed,"ax",@progbits
+  24              		.p2align 4
+  25              		.weak	bMcuWdtFeed
+  27              	bMcuWdtFeed:
+  28              	.LFB29:
+  71:../../bos/hal/b_hal_wdt.c **** 
+  72:../../bos/hal/b_hal_wdt.c **** __WEAKDEF int bMcuWdtFeed()
+  73:../../bos/hal/b_hal_wdt.c **** {
+  29              		.loc 1 73 1 is_stmt 1 view -0
+  30              		.cfi_startproc
+  31 0000 F30F1EFA 		endbr64
+  74:../../bos/hal/b_hal_wdt.c ****     return -1;
+  32              		.loc 1 74 5 view .LVU5
+  75:../../bos/hal/b_hal_wdt.c **** }
+  33              		.loc 1 75 1 is_stmt 0 view .LVU6
+  34 0004 B8FFFFFF 		movl	$-1, %eax
+  34      FF
+  35 0009 C3       		ret
+  36              		.cfi_endproc
+  37              	.LFE29:
+  39              		.section	.text.bHalWdtStart,"ax",@progbits
+  40              		.p2align 4
+  41              		.globl	bHalWdtStart
+GAS LISTING /tmp/ccpgz0xp.s 			page 3
+
+
+  43              	bHalWdtStart:
+  44              	.LVL1:
+  45              	.LFB30:
+  76:../../bos/hal/b_hal_wdt.c **** #endif
+  77:../../bos/hal/b_hal_wdt.c **** //---------------------------------------------------------------------------------------
+  78:../../bos/hal/b_hal_wdt.c **** //---------------------------------------------------------------------------------------
+  79:../../bos/hal/b_hal_wdt.c **** 
+  80:../../bos/hal/b_hal_wdt.c **** int bHalWdtStart(uint8_t timeout_s)
+  81:../../bos/hal/b_hal_wdt.c **** {
+  46              		.loc 1 81 1 is_stmt 1 view -0
+  47              		.cfi_startproc
+  48              		.loc 1 81 1 is_stmt 0 view .LVU8
+  49 0000 F30F1EFA 		endbr64
+  82:../../bos/hal/b_hal_wdt.c ****     return bMcuWdtStart(timeout_s);
+  50              		.loc 1 82 5 is_stmt 1 view .LVU9
+  51              		.loc 1 82 12 is_stmt 0 view .LVU10
+  52 0004 400FB6FF 		movzbl	%dil, %edi
+  53              		.loc 1 82 12 view .LVU11
+  54 0008 E9000000 		jmp	bMcuWdtStart
+  54      00
+  55              	.LVL2:
+  56              		.loc 1 82 12 view .LVU12
+  57              		.cfi_endproc
+  58              	.LFE30:
+  60              		.section	.text.bHalWdtFeed,"ax",@progbits
+  61              		.p2align 4
+  62              		.globl	bHalWdtFeed
+  64              	bHalWdtFeed:
+  65              	.LFB31:
+  83:../../bos/hal/b_hal_wdt.c **** }
+  84:../../bos/hal/b_hal_wdt.c **** 
+  85:../../bos/hal/b_hal_wdt.c **** int bHalWdtFeed()
+  86:../../bos/hal/b_hal_wdt.c **** {
+  66              		.loc 1 86 1 is_stmt 1 view -0
+  67              		.cfi_startproc
+  68 0000 F30F1EFA 		endbr64
+  87:../../bos/hal/b_hal_wdt.c ****     return bMcuWdtFeed();
+  69              		.loc 1 87 5 view .LVU14
+  70              		.loc 1 87 12 is_stmt 0 view .LVU15
+  71 0004 E9000000 		jmp	bMcuWdtFeed
+  71      00
+  72              	.LVL3:
+  73              		.cfi_endproc
+  74              	.LFE31:
+  76              		.text
+  77              	.Letext0:
+  78              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+  79              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 549              		.section	.note.gnu.property,"a"
+ 550              		.align 8
+ 551 0000 04000000 		.long	1f - 0f
+ 552 0004 10000000 		.long	4f - 1f
+ 553 0008 05000000 		.long	5
+ 554              	0:
+ 555 000c 474E5500 		.string	"GNU"
+ 556              	1:
+ 557              		.align 8
+GAS LISTING /tmp/ccpgz0xp.s 			page 4
+
+
+ 558 0010 020000C0 		.long	0xc0000002
+ 559 0014 04000000 		.long	3f - 2f
+ 560              	2:
+ 561 0018 03000000 		.long	0x3
+ 562              	3:
+ 563 001c 00000000 		.align 8
+ 564              	4:
+GAS LISTING /tmp/ccpgz0xp.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_wdt.c
+     /tmp/ccpgz0xp.s:9      .text.bMcuWdtStart:0000000000000000 bMcuWdtStart
+     /tmp/ccpgz0xp.s:27     .text.bMcuWdtFeed:0000000000000000 bMcuWdtFeed
+     /tmp/ccpgz0xp.s:43     .text.bHalWdtStart:0000000000000000 bHalWdtStart
+     /tmp/ccpgz0xp.s:64     .text.bHalWdtFeed:0000000000000000 bHalWdtFeed
+
+NO UNDEFINED SYMBOLS

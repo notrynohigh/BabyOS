@@ -1,0 +1,2438 @@
+GAS LISTING /tmp/cc0DmMpA.s 			page 1
+
+
+   1              		.file	"b_device.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/core/b_device.c"
+   5              		.section	.text._bDriverNullInit,"ax",@progbits
+   6              		.p2align 4
+   8              	_bDriverNullInit:
+   9              	.LVL0:
+  10              	.LFB28:
+   1:../../bos/core/b_device.c **** /**
+   2:../../bos/core/b_device.c ****  *!
+   3:../../bos/core/b_device.c ****  * \file        b_device.c
+   4:../../bos/core/b_device.c ****  * \version     v0.0.1
+   5:../../bos/core/b_device.c ****  * \date        2019/06/05
+   6:../../bos/core/b_device.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/core/b_device.c ****  *******************************************************************************
+   8:../../bos/core/b_device.c ****  * @attention
+   9:../../bos/core/b_device.c ****  *
+  10:../../bos/core/b_device.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/core/b_device.c ****  *
+  12:../../bos/core/b_device.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/core/b_device.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/core/b_device.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/core/b_device.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/core/b_device.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/core/b_device.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/core/b_device.c ****  *
+  19:../../bos/core/b_device.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/core/b_device.c ****  * copies or substantial portions of the Software.
+  21:../../bos/core/b_device.c ****  *
+  22:../../bos/core/b_device.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/core/b_device.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/core/b_device.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/core/b_device.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/core/b_device.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/core/b_device.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/core/b_device.c ****  * SOFTWARE.
+  29:../../bos/core/b_device.c ****  *******************************************************************************
+  30:../../bos/core/b_device.c ****  */
+  31:../../bos/core/b_device.c **** 
+  32:../../bos/core/b_device.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/core/b_device.c **** #include "core/inc/b_device.h"
+  34:../../bos/core/b_device.c **** 
+  35:../../bos/core/b_device.c **** #include "drivers/inc/b_driver.h"
+  36:../../bos/core/b_device.c **** #include "utils/inc/b_util_log.h"
+  37:../../bos/core/b_device.c **** /**
+  38:../../bos/core/b_device.c ****  * \addtogroup BABYOS
+  39:../../bos/core/b_device.c ****  * \{
+  40:../../bos/core/b_device.c ****  */
+  41:../../bos/core/b_device.c **** 
+  42:../../bos/core/b_device.c **** /**
+  43:../../bos/core/b_device.c ****  * \addtogroup CORE
+  44:../../bos/core/b_device.c ****  * \{
+  45:../../bos/core/b_device.c ****  */
+  46:../../bos/core/b_device.c **** 
+  47:../../bos/core/b_device.c **** /**
+  48:../../bos/core/b_device.c ****  * \addtogroup DEVICE
+GAS LISTING /tmp/cc0DmMpA.s 			page 2
+
+
+  49:../../bos/core/b_device.c ****  * \{
+  50:../../bos/core/b_device.c ****  */
+  51:../../bos/core/b_device.c **** 
+  52:../../bos/core/b_device.c **** /**
+  53:../../bos/core/b_device.c ****  * \defgroup DEVICE_Private_TypesDefinitions
+  54:../../bos/core/b_device.c ****  * \{
+  55:../../bos/core/b_device.c ****  */
+  56:../../bos/core/b_device.c **** 
+  57:../../bos/core/b_device.c **** /**
+  58:../../bos/core/b_device.c ****  * \}
+  59:../../bos/core/b_device.c ****  */
+  60:../../bos/core/b_device.c **** 
+  61:../../bos/core/b_device.c **** /**
+  62:../../bos/core/b_device.c ****  * \defgroup DEVICE_Private_Defines
+  63:../../bos/core/b_device.c ****  * \{
+  64:../../bos/core/b_device.c ****  */
+  65:../../bos/core/b_device.c **** 
+  66:../../bos/core/b_device.c **** /**
+  67:../../bos/core/b_device.c ****  * \}
+  68:../../bos/core/b_device.c ****  */
+  69:../../bos/core/b_device.c **** 
+  70:../../bos/core/b_device.c **** /**
+  71:../../bos/core/b_device.c ****  * \defgroup DEVICE_Private_Macros
+  72:../../bos/core/b_device.c ****  * \{
+  73:../../bos/core/b_device.c ****  */
+  74:../../bos/core/b_device.c **** 
+  75:../../bos/core/b_device.c **** /**
+  76:../../bos/core/b_device.c ****  * \}
+  77:../../bos/core/b_device.c ****  */
+  78:../../bos/core/b_device.c **** 
+  79:../../bos/core/b_device.c **** /**
+  80:../../bos/core/b_device.c ****  * \defgroup DEVICE_Private_Variables
+  81:../../bos/core/b_device.c ****  * \{
+  82:../../bos/core/b_device.c ****  */
+  83:../../bos/core/b_device.c **** static bDriverNumber_t bDriverNumberTable[B_REG_DEV_NUMBER] = {
+  84:../../bos/core/b_device.c ****     B_DRIVER_NULL,
+  85:../../bos/core/b_device.c **** #define B_DEVICE_REG(dev, driver, desc) driver,
+  86:../../bos/core/b_device.c **** #include "b_device_list.h"
+  87:../../bos/core/b_device.c **** };
+  88:../../bos/core/b_device.c **** 
+  89:../../bos/core/b_device.c **** static const char *bDeviceDescTable[B_REG_DEV_NUMBER] = {
+  90:../../bos/core/b_device.c ****     "null",
+  91:../../bos/core/b_device.c **** #define B_DEVICE_REG(dev, driver, desc) desc,
+  92:../../bos/core/b_device.c **** #include "b_device_list.h"
+  93:../../bos/core/b_device.c **** };
+  94:../../bos/core/b_device.c **** 
+  95:../../bos/core/b_device.c **** static bDriverInterface_t bDriverInterfaceTable[B_REG_DEV_NUMBER];
+  96:../../bos/core/b_device.c **** 
+  97:../../bos/core/b_device.c **** bSECTION_DEF_FLASH(driver_init_0, bDriverRegInit_t);
+  98:../../bos/core/b_device.c **** bSECTION_DEF_FLASH(driver_init, bDriverRegInit_t);
+  99:../../bos/core/b_device.c **** /**
+ 100:../../bos/core/b_device.c ****  * \}
+ 101:../../bos/core/b_device.c ****  */
+ 102:../../bos/core/b_device.c **** 
+ 103:../../bos/core/b_device.c **** /**
+ 104:../../bos/core/b_device.c ****  * \defgroup DEVICE_Private_FunctionPrototypes
+ 105:../../bos/core/b_device.c ****  * \{
+GAS LISTING /tmp/cc0DmMpA.s 			page 3
+
+
+ 106:../../bos/core/b_device.c ****  */
+ 107:../../bos/core/b_device.c **** 
+ 108:../../bos/core/b_device.c **** /**
+ 109:../../bos/core/b_device.c ****  * \}
+ 110:../../bos/core/b_device.c ****  */
+ 111:../../bos/core/b_device.c **** 
+ 112:../../bos/core/b_device.c **** /**
+ 113:../../bos/core/b_device.c ****  * \defgroup DEVICE_Private_Functions
+ 114:../../bos/core/b_device.c ****  * \{
+ 115:../../bos/core/b_device.c ****  */
+ 116:../../bos/core/b_device.c **** 
+ 117:../../bos/core/b_device.c **** static int _bDriverNullInit(bDriverInterface_t *pdrv)
+ 118:../../bos/core/b_device.c **** {
+  11              		.loc 1 118 1 view -0
+  12              		.cfi_startproc
+  13              		.loc 1 118 1 is_stmt 0 view .LVU1
+  14 0000 F30F1EFA 		endbr64
+ 119:../../bos/core/b_device.c ****     (void)pdrv;  // prevent unused warning
+  15              		.loc 1 119 5 is_stmt 1 view .LVU2
+ 120:../../bos/core/b_device.c ****     if (B_REG_DEV_NUMBER == 1)
+  16              		.loc 1 120 5 view .LVU3
+ 121:../../bos/core/b_device.c ****     {
+ 122:../../bos/core/b_device.c ****         b_log_i("No device is registered\r\n");
+ 123:../../bos/core/b_device.c ****     }
+ 124:../../bos/core/b_device.c ****     return 0;
+  17              		.loc 1 124 5 view .LVU4
+ 125:../../bos/core/b_device.c **** }
+  18              		.loc 1 125 1 is_stmt 0 view .LVU5
+  19 0004 31C0     		xorl	%eax, %eax
+  20 0006 C3       		ret
+  21              		.cfi_endproc
+  22              	.LFE28:
+  24              		.section	.rodata.bDeviceInit.str1.1,"aMS",@progbits,1
+  25              	.LC0:
+  26 0000 64657300 		.string	"des"
+  27              	.LC1:
+  28 0004 0D0A6465 		.string	"\r\ndev_no\t\t%16s\tstate\r\n"
+  28      765F6E6F 
+  28      09092531 
+  28      36730973 
+  28      74617465 
+  29              	.LC2:
+  30 001b 2E2E2F2E 		.string	"../../bos/core/b_device.c"
+  30      2E2F626F 
+  30      732F636F 
+  30      72652F62 
+  30      5F646576 
+  31              	.LC3:
+  32 0035 6E756C6C 		.string	"null"
+  32      00
+  33              	.LC4:
+  34 003a 74657374 		.string	"testmac"
+  34      6D616300 
+  35              	.LC5:
+  36 0042 25640909 		.string	"%d\t\t%16s\t%d\r\n"
+  36      25313673 
+  36      0925640D 
+GAS LISTING /tmp/cc0DmMpA.s 			page 4
+
+
+  36      0A00
+  37              	.LC6:
+  38 0050 6E6F2064 		.string	"no drive"
+  38      72697665 
+  38      00
+  39              	.LC7:
+  40 0059 0D0A00   		.string	"\r\n"
+  41              		.section	.text.bDeviceInit,"ax",@progbits
+  42              		.p2align 4
+  43              		.globl	bDeviceInit
+  45              	bDeviceInit:
+  46              	.LFB29:
+ 126:../../bos/core/b_device.c **** #ifdef BSECTION_NEED_PRAGMA
+ 127:../../bos/core/b_device.c **** #pragma section driver_init_0
+ 128:../../bos/core/b_device.c **** #endif
+ 129:../../bos/core/b_device.c **** bDRIVER_REG_INIT_0(B_DRIVER_NULL, _bDriverNullInit);
+ 130:../../bos/core/b_device.c **** #ifdef BSECTION_NEED_PRAGMA
+ 131:../../bos/core/b_device.c **** #pragma section 
+ 132:../../bos/core/b_device.c **** #endif
+ 133:../../bos/core/b_device.c **** 
+ 134:../../bos/core/b_device.c **** #ifdef BSECTION_NEED_PRAGMA
+ 135:../../bos/core/b_device.c **** #pragma section driver_init
+ 136:../../bos/core/b_device.c **** #endif
+ 137:../../bos/core/b_device.c **** bDRIVER_REG_INIT(B_DRIVER_NULL, _bDriverNullInit);
+ 138:../../bos/core/b_device.c **** #ifdef BSECTION_NEED_PRAGMA
+ 139:../../bos/core/b_device.c **** #pragma section 
+ 140:../../bos/core/b_device.c **** #endif
+ 141:../../bos/core/b_device.c **** 
+ 142:../../bos/core/b_device.c **** /**
+ 143:../../bos/core/b_device.c ****  * \}
+ 144:../../bos/core/b_device.c ****  */
+ 145:../../bos/core/b_device.c **** 
+ 146:../../bos/core/b_device.c **** /**
+ 147:../../bos/core/b_device.c ****  * \addtogroup DEVICE_Exported_Functions
+ 148:../../bos/core/b_device.c ****  * \{
+ 149:../../bos/core/b_device.c ****  */
+ 150:../../bos/core/b_device.c **** 
+ 151:../../bos/core/b_device.c **** /**
+ 152:../../bos/core/b_device.c ****  * \brief Device Initialize
+ 153:../../bos/core/b_device.c ****  */
+ 154:../../bos/core/b_device.c **** int bDeviceInit()
+ 155:../../bos/core/b_device.c **** {
+  47              		.loc 1 155 1 is_stmt 1 view -0
+  48              		.cfi_startproc
+  49 0000 F30F1EFA 		endbr64
+ 156:../../bos/core/b_device.c ****     uint32_t i = 0, j = 0;
+  50              		.loc 1 156 5 view .LVU7
+  51              	.LVL1:
+ 157:../../bos/core/b_device.c ****     memset(bDriverInterfaceTable, 0, sizeof(bDriverInterfaceTable));
+  52              		.loc 1 157 5 view .LVU8
+  53              	.LBB6:
+  54              	.LBI6:
+  55              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+GAS LISTING /tmp/cc0DmMpA.s 			page 5
+
+
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+  56              		.loc 2 57 1 view .LVU9
+  57              	.LBB7:
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+GAS LISTING /tmp/cc0DmMpA.s 			page 6
+
+
+  58              		.loc 2 59 3 view .LVU10
+  59              	.LBE7:
+  60              	.LBE6:
+ 155:../../bos/core/b_device.c ****     uint32_t i = 0, j = 0;
+  61              		.loc 1 155 1 is_stmt 0 view .LVU11
+  62 0004 4157     		pushq	%r15
+  63              	.LCFI0:
+  64              		.cfi_def_cfa_offset 16
+  65              		.cfi_offset 15, -16
+  66              	.LBB11:
+  67              	.LBB8:
+  68              		.loc 2 59 10 discriminator 1 view .LVU12
+  69 0006 31C0     		xorl	%eax, %eax
+  70 0008 B91E0000 		movl	$30, %ecx
+  70      00
+  71 000d 4531FF   		xorl	%r15d, %r15d
+  72              	.LBE8:
+  73              	.LBE11:
+ 155:../../bos/core/b_device.c ****     uint32_t i = 0, j = 0;
+  74              		.loc 1 155 1 view .LVU13
+  75 0010 4156     		pushq	%r14
+  76              	.LCFI1:
+  77              		.cfi_def_cfa_offset 24
+  78              		.cfi_offset 14, -24
+  79 0012 4C8D3500 		leaq	.LC3(%rip), %r14
+  79      000000
+  80 0019 4155     		pushq	%r13
+  81              	.LCFI2:
+  82              		.cfi_def_cfa_offset 32
+  83              		.cfi_offset 13, -32
+  84 001b 4C8D2D00 		leaq	.LC4(%rip), %r13
+  84      000000
+  85 0022 4154     		pushq	%r12
+  86              	.LCFI3:
+  87              		.cfi_def_cfa_offset 40
+  88              		.cfi_offset 12, -40
+  89              	.LBB12:
+ 158:../../bos/core/b_device.c ****     bSECTION_FOR_EACH(driver_init_0, bDriverRegInit_t, pdriver_init_0)
+  90              		.loc 1 158 5 discriminator 1 view .LVU14
+  91 0024 4C8D2500 		leaq	__start_driver_init_0(%rip), %r12
+  91      000000
+  92              	.LBE12:
+ 155:../../bos/core/b_device.c ****     uint32_t i = 0, j = 0;
+  93              		.loc 1 155 1 view .LVU15
+  94 002b 55       		pushq	%rbp
+  95              	.LCFI4:
+  96              		.cfi_def_cfa_offset 48
+  97              		.cfi_offset 6, -48
+  98 002c 53       		pushq	%rbx
+  99              	.LCFI5:
+ 100              		.cfi_def_cfa_offset 56
+ 101              		.cfi_offset 3, -56
+ 102              	.LBB13:
+ 103              	.LBB9:
+ 104              		.loc 2 59 10 discriminator 1 view .LVU16
+ 105 002d 488D1D00 		leaq	bDriverInterfaceTable(%rip), %rbx
+ 105      000000
+GAS LISTING /tmp/cc0DmMpA.s 			page 7
+
+
+ 106 0034 4889DF   		movq	%rbx, %rdi
+ 107              	.LBE9:
+ 108              	.LBE13:
+ 155:../../bos/core/b_device.c ****     uint32_t i = 0, j = 0;
+ 109              		.loc 1 155 1 view .LVU17
+ 110 0037 4883EC08 		subq	$8, %rsp
+ 111              	.LCFI6:
+ 112              		.cfi_def_cfa_offset 64
+ 113              	.LBB14:
+ 114              	.LBB10:
+ 115              		.loc 2 59 10 discriminator 1 view .LVU18
+ 116 003b F348AB   		rep stosq
+ 117              	.LVL2:
+ 118              		.loc 2 59 10 discriminator 1 view .LVU19
+ 119              	.LBE10:
+ 120              	.LBE14:
+ 121              		.loc 1 158 5 is_stmt 1 view .LVU20
+ 122              	.LBB15:
+ 123              		.loc 1 158 5 view .LVU21
+ 124              		.loc 1 158 5 discriminator 1 view .LVU22
+ 125 003e 488D0500 		leaq	__stop_driver_init_0(%rip), %rax
+ 125      000000
+ 126 0045 89C5     		movl	%eax, %ebp
+ 127 0047 4439E0   		cmpl	%r12d, %eax
+ 128 004a 745C     		je	.L9
+ 129              	.LVL3:
+ 130 004c 0F1F4000 		.p2align 4,,10
+ 131              		.p2align 3
+ 132              	.L4:
+ 159:../../bos/core/b_device.c ****     {
+ 160:../../bos/core/b_device.c ****         j = 0;
+ 161:../../bos/core/b_device.c ****         for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 133              		.loc 1 161 23 discriminator 1 view .LVU23
+ 162:../../bos/core/b_device.c ****         {
+ 163:../../bos/core/b_device.c ****             if (bDriverNumberTable[i] == pdriver_init_0->drv_number)
+ 134              		.loc 1 163 13 view .LVU24
+ 135              		.loc 1 163 56 is_stmt 0 view .LVU25
+ 136 0050 418B0424 		movl	(%r12), %eax
+ 160:../../bos/core/b_device.c ****         for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 137              		.loc 1 160 11 view .LVU26
+ 138 0054 31C9     		xorl	%ecx, %ecx
+ 139              		.loc 1 163 16 view .LVU27
+ 140 0056 85C0     		testl	%eax, %eax
+ 141 0058 7521     		jne	.L7
+ 164:../../bos/core/b_device.c ****             {
+ 165:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].drv_no = j++;
+ 142              		.loc 1 165 17 is_stmt 1 view .LVU28
+ 143              	.LVL4:
+ 144              		.loc 1 165 49 is_stmt 0 view .LVU29
+ 145 005a 44893D00 		movl	%r15d, 72+bDriverInterfaceTable(%rip)
+ 145      000000
+ 166:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 146              		.loc 1 166 17 is_stmt 1 view .LVU30
+ 167:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].status = pdriver_init_0->init(&bDriverInterfaceTable[i]);
+ 147              		.loc 1 167 51 is_stmt 0 view .LVU31
+ 148 0061 4889DF   		movq	%rbx, %rdi
+ 166:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+GAS LISTING /tmp/cc0DmMpA.s 			page 8
+
+
+ 149              		.loc 1 166 49 view .LVU32
+ 150 0064 4C893500 		movq	%r14, 64+bDriverInterfaceTable(%rip)
+ 150      000000
+ 151              		.loc 1 167 17 is_stmt 1 view .LVU33
+ 152              		.loc 1 167 51 is_stmt 0 view .LVU34
+ 153 006b 41FF5424 		call	*8(%r12)
+ 153      08
+ 154              	.LVL5:
+ 165:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 155              		.loc 1 165 52 view .LVU35
+ 156 0070 B9010000 		movl	$1, %ecx
+ 156      00
+ 157              		.loc 1 167 49 discriminator 1 view .LVU36
+ 158 0075 8903     		movl	%eax, (%rbx)
+ 163:../../bos/core/b_device.c ****             {
+ 159              		.loc 1 163 56 view .LVU37
+ 160 0077 418B0424 		movl	(%r12), %eax
+ 161              	.LVL6:
+ 162              	.L7:
+ 161:../../bos/core/b_device.c ****         {
+ 163              		.loc 1 161 44 is_stmt 1 discriminator 2 view .LVU38
+ 161:../../bos/core/b_device.c ****         {
+ 164              		.loc 1 161 23 discriminator 1 view .LVU39
+ 163:../../bos/core/b_device.c ****             {
+ 165              		.loc 1 163 13 view .LVU40
+ 163:../../bos/core/b_device.c ****             {
+ 166              		.loc 1 163 16 is_stmt 0 view .LVU41
+ 167 007b 83F81C   		cmpl	$28, %eax
+ 168 007e 751F     		jne	.L8
+ 165:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 169              		.loc 1 165 17 is_stmt 1 view .LVU42
+ 170              	.LVL7:
+ 165:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 171              		.loc 1 165 49 is_stmt 0 view .LVU43
+ 172 0080 890D0000 		movl	%ecx, 192+bDriverInterfaceTable(%rip)
+ 172      0000
+ 166:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].status = pdriver_init_0->init(&bDriverInterfaceTable[i]);
+ 173              		.loc 1 166 17 is_stmt 1 view .LVU44
+ 174              		.loc 1 167 51 is_stmt 0 view .LVU45
+ 175 0086 488D3D00 		leaq	120+bDriverInterfaceTable(%rip), %rdi
+ 175      000000
+ 166:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].status = pdriver_init_0->init(&bDriverInterfaceTable[i]);
+ 176              		.loc 1 166 49 view .LVU46
+ 177 008d 4C892D00 		movq	%r13, 184+bDriverInterfaceTable(%rip)
+ 177      000000
+ 178              		.loc 1 167 17 is_stmt 1 view .LVU47
+ 179              		.loc 1 167 51 is_stmt 0 view .LVU48
+ 180 0094 41FF5424 		call	*8(%r12)
+ 180      08
+ 181              	.LVL8:
+ 182              		.loc 1 167 49 discriminator 1 view .LVU49
+ 183 0099 89050000 		movl	%eax, 120+bDriverInterfaceTable(%rip)
+ 183      0000
+ 184              	.LVL9:
+ 185              	.L8:
+ 161:../../bos/core/b_device.c ****         {
+ 186              		.loc 1 161 44 is_stmt 1 discriminator 2 view .LVU50
+GAS LISTING /tmp/cc0DmMpA.s 			page 9
+
+
+ 161:../../bos/core/b_device.c ****         {
+ 187              		.loc 1 161 23 discriminator 1 view .LVU51
+ 158:../../bos/core/b_device.c ****     {
+ 188              		.loc 1 158 5 discriminator 2 view .LVU52
+ 189 009f 4983C410 		addq	$16, %r12
+ 190              	.LVL10:
+ 158:../../bos/core/b_device.c ****     {
+ 191              		.loc 1 158 5 discriminator 1 view .LVU53
+ 192 00a3 4439E5   		cmpl	%r12d, %ebp
+ 193 00a6 75A8     		jne	.L4
+ 194              	.LVL11:
+ 195              	.L9:
+ 158:../../bos/core/b_device.c ****     {
+ 196              		.loc 1 158 5 is_stmt 0 discriminator 1 view .LVU54
+ 197              	.LBE15:
+ 198              	.LBB16:
+ 168:../../bos/core/b_device.c ****             }
+ 169:../../bos/core/b_device.c ****         }
+ 170:../../bos/core/b_device.c ****     }
+ 171:../../bos/core/b_device.c ****     bSECTION_FOR_EACH(driver_init, bDriverRegInit_t, pdriver_init)
+ 199              		.loc 1 171 5 is_stmt 1 discriminator 1 view .LVU55
+ 200 00a8 488D0500 		leaq	__stop_driver_init(%rip), %rax
+ 200      000000
+ 201 00af 4C8D2500 		leaq	__start_driver_init(%rip), %r12
+ 201      000000
+ 172:../../bos/core/b_device.c ****     {
+ 173:../../bos/core/b_device.c ****         j = 0;
+ 202              		.loc 1 173 11 is_stmt 0 view .LVU56
+ 203 00b6 4531FF   		xorl	%r15d, %r15d
+ 171:../../bos/core/b_device.c ****     {
+ 204              		.loc 1 171 5 discriminator 1 view .LVU57
+ 205 00b9 8D28     		leal	(%rax), %ebp
+ 174:../../bos/core/b_device.c ****         for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 175:../../bos/core/b_device.c ****         {
+ 176:../../bos/core/b_device.c ****             if (bDriverNumberTable[i] == pdriver_init->drv_number)
+ 177:../../bos/core/b_device.c ****             {
+ 178:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].drv_no = j++;
+ 179:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 206              		.loc 1 179 49 view .LVU58
+ 207 00bb 4C8D3500 		leaq	.LC3(%rip), %r14
+ 207      000000
+ 208 00c2 4C8D2D00 		leaq	.LC4(%rip), %r13
+ 208      000000
+ 171:../../bos/core/b_device.c ****     {
+ 209              		.loc 1 171 5 discriminator 1 view .LVU59
+ 210 00c9 4139C4   		cmpl	%eax, %r12d
+ 211 00cc 745A     		je	.L12
+ 212              	.LVL12:
+ 213 00ce 6690     		.p2align 4,,10
+ 214              		.p2align 3
+ 215              	.L5:
+ 174:../../bos/core/b_device.c ****         for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 216              		.loc 1 174 23 is_stmt 1 discriminator 1 view .LVU60
+ 176:../../bos/core/b_device.c ****             {
+ 217              		.loc 1 176 13 view .LVU61
+ 176:../../bos/core/b_device.c ****             {
+ 218              		.loc 1 176 54 is_stmt 0 view .LVU62
+GAS LISTING /tmp/cc0DmMpA.s 			page 10
+
+
+ 219 00d0 418B0424 		movl	(%r12), %eax
+ 173:../../bos/core/b_device.c ****         for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 220              		.loc 1 173 11 view .LVU63
+ 221 00d4 31C9     		xorl	%ecx, %ecx
+ 176:../../bos/core/b_device.c ****             {
+ 222              		.loc 1 176 16 view .LVU64
+ 223 00d6 85C0     		testl	%eax, %eax
+ 224 00d8 7521     		jne	.L10
+ 178:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 225              		.loc 1 178 17 is_stmt 1 view .LVU65
+ 226              	.LVL13:
+ 178:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 227              		.loc 1 178 49 is_stmt 0 view .LVU66
+ 228 00da 44893D00 		movl	%r15d, 72+bDriverInterfaceTable(%rip)
+ 228      000000
+ 229              		.loc 1 179 17 is_stmt 1 view .LVU67
+ 180:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].status = pdriver_init->init(&bDriverInterfaceTable[i]);
+ 230              		.loc 1 180 51 is_stmt 0 view .LVU68
+ 231 00e1 4889DF   		movq	%rbx, %rdi
+ 179:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].status = pdriver_init->init(&bDriverInterfaceTable[i]);
+ 232              		.loc 1 179 49 view .LVU69
+ 233 00e4 4C893500 		movq	%r14, 64+bDriverInterfaceTable(%rip)
+ 233      000000
+ 234              		.loc 1 180 17 is_stmt 1 view .LVU70
+ 235              		.loc 1 180 51 is_stmt 0 view .LVU71
+ 236 00eb 41FF5424 		call	*8(%r12)
+ 236      08
+ 237              	.LVL14:
+ 178:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 238              		.loc 1 178 52 view .LVU72
+ 239 00f0 B9010000 		movl	$1, %ecx
+ 239      00
+ 240              		.loc 1 180 49 discriminator 1 view .LVU73
+ 241 00f5 8903     		movl	%eax, (%rbx)
+ 176:../../bos/core/b_device.c ****             {
+ 242              		.loc 1 176 54 view .LVU74
+ 243 00f7 418B0424 		movl	(%r12), %eax
+ 244              	.LVL15:
+ 245              	.L10:
+ 174:../../bos/core/b_device.c ****         {
+ 246              		.loc 1 174 44 is_stmt 1 discriminator 2 view .LVU75
+ 174:../../bos/core/b_device.c ****         {
+ 247              		.loc 1 174 23 discriminator 1 view .LVU76
+ 176:../../bos/core/b_device.c ****             {
+ 248              		.loc 1 176 13 view .LVU77
+ 176:../../bos/core/b_device.c ****             {
+ 249              		.loc 1 176 16 is_stmt 0 view .LVU78
+ 250 00fb 83F81C   		cmpl	$28, %eax
+ 251 00fe 751F     		jne	.L11
+ 178:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 252              		.loc 1 178 17 is_stmt 1 view .LVU79
+ 253              	.LVL16:
+ 178:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
+ 254              		.loc 1 178 49 is_stmt 0 view .LVU80
+ 255 0100 890D0000 		movl	%ecx, 192+bDriverInterfaceTable(%rip)
+ 255      0000
+ 179:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].status = pdriver_init->init(&bDriverInterfaceTable[i]);
+GAS LISTING /tmp/cc0DmMpA.s 			page 11
+
+
+ 256              		.loc 1 179 17 is_stmt 1 view .LVU81
+ 257              		.loc 1 180 51 is_stmt 0 view .LVU82
+ 258 0106 488D3D00 		leaq	120+bDriverInterfaceTable(%rip), %rdi
+ 258      000000
+ 179:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].status = pdriver_init->init(&bDriverInterfaceTable[i]);
+ 259              		.loc 1 179 49 view .LVU83
+ 260 010d 4C892D00 		movq	%r13, 184+bDriverInterfaceTable(%rip)
+ 260      000000
+ 261              		.loc 1 180 17 is_stmt 1 view .LVU84
+ 262              		.loc 1 180 51 is_stmt 0 view .LVU85
+ 263 0114 41FF5424 		call	*8(%r12)
+ 263      08
+ 264              	.LVL17:
+ 265              		.loc 1 180 49 discriminator 1 view .LVU86
+ 266 0119 89050000 		movl	%eax, 120+bDriverInterfaceTable(%rip)
+ 266      0000
+ 267              	.LVL18:
+ 268              	.L11:
+ 174:../../bos/core/b_device.c ****         {
+ 269              		.loc 1 174 44 is_stmt 1 discriminator 2 view .LVU87
+ 174:../../bos/core/b_device.c ****         {
+ 270              		.loc 1 174 23 discriminator 1 view .LVU88
+ 171:../../bos/core/b_device.c ****     {
+ 271              		.loc 1 171 5 discriminator 2 view .LVU89
+ 272 011f 4983C410 		addq	$16, %r12
+ 273              	.LVL19:
+ 171:../../bos/core/b_device.c ****     {
+ 274              		.loc 1 171 5 discriminator 1 view .LVU90
+ 275 0123 4439E5   		cmpl	%r12d, %ebp
+ 276 0126 75A8     		jne	.L5
+ 277              	.LVL20:
+ 278              	.L12:
+ 171:../../bos/core/b_device.c ****     {
+ 279              		.loc 1 171 5 is_stmt 0 discriminator 1 view .LVU91
+ 280              	.LBE16:
+ 181:../../bos/core/b_device.c ****             }
+ 182:../../bos/core/b_device.c ****         }
+ 183:../../bos/core/b_device.c ****     }
+ 184:../../bos/core/b_device.c **** 
+ 185:../../bos/core/b_device.c ****     b_log("\r\ndev_no\t\t%16s\tstate\r\n", "des");
+ 281              		.loc 1 185 5 is_stmt 1 view .LVU92
+ 282 0128 4C8D2D00 		leaq	__func__.6(%rip), %r13
+ 282      000000
+ 283 012f 31C0     		xorl	%eax, %eax
+ 284 0131 B9B90000 		movl	$185, %ecx
+ 284      00
+ 186:../../bos/core/b_device.c ****     for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 285              		.loc 1 186 12 is_stmt 0 view .LVU93
+ 286 0136 31ED     		xorl	%ebp, %ebp
+ 185:../../bos/core/b_device.c ****     for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 287              		.loc 1 185 5 view .LVU94
+ 288 0138 4C8D2500 		leaq	.LC2(%rip), %r12
+ 288      000000
+ 289 013f 4C8D0D00 		leaq	.LC0(%rip), %r9
+ 289      000000
+ 290 0146 4C89EA   		movq	%r13, %rdx
+ 291 0149 BF030000 		movl	$3, %edi
+GAS LISTING /tmp/cc0DmMpA.s 			page 12
+
+
+ 291      00
+ 292 014e 4C8D0500 		leaq	.LC1(%rip), %r8
+ 292      000000
+ 293 0155 4C89E6   		movq	%r12, %rsi
+ 294 0158 488D1D00 		leaq	bDriverInterfaceTable(%rip), %rbx
+ 294      000000
+ 295 015f E8000000 		call	bLogOut@PLT
+ 295      00
+ 296              	.LVL21:
+ 297              		.loc 1 186 5 is_stmt 1 view .LVU95
+ 298              		.loc 1 186 19 discriminator 1 view .LVU96
+ 187:../../bos/core/b_device.c ****     {
+ 188:../../bos/core/b_device.c ****         if (bDriverInterfaceTable[i].pdes == NULL)
+ 299              		.loc 1 188 9 view .LVU97
+ 300              		.loc 1 188 37 is_stmt 0 view .LVU98
+ 301 0164 488B4340 		movq	64(%rbx), %rax
+ 302              		.loc 1 188 12 view .LVU99
+ 303 0168 4885C0   		testq	%rax, %rax
+ 304 016b 743D     		je	.L27
+ 305              	.L13:
+ 189:../../bos/core/b_device.c ****         {
+ 190:../../bos/core/b_device.c ****             b_log("%d\t\t%16s\t%d\r\n", i, "no drive", -1);
+ 191:../../bos/core/b_device.c ****             continue;
+ 192:../../bos/core/b_device.c ****         }
+ 193:../../bos/core/b_device.c ****         b_log("%d\t\t%16s\t%d\r\n", i, bDriverInterfaceTable[i].pdes,
+ 306              		.loc 1 193 9 is_stmt 1 view .LVU100
+ 307 016d 8B13     		movl	(%rbx), %edx
+ 308 016f 4189E9   		movl	%ebp, %r9d
+ 309 0172 B9C10000 		movl	$193, %ecx
+ 309      00
+ 310 0177 4C8D0500 		leaq	.LC5(%rip), %r8
+ 310      000000
+ 311 017e 52       		pushq	%rdx
+ 312              	.LCFI7:
+ 313              		.cfi_def_cfa_offset 72
+ 314 017f 50       		pushq	%rax
+ 315              	.LCFI8:
+ 316              		.cfi_def_cfa_offset 80
+ 317              	.L26:
+ 318              		.loc 1 193 9 is_stmt 0 view .LVU101
+ 319 0180 4C89EA   		movq	%r13, %rdx
+ 320 0183 31C0     		xorl	%eax, %eax
+ 321 0185 4C89E6   		movq	%r12, %rsi
+ 322 0188 BF030000 		movl	$3, %edi
+ 322      00
+ 323 018d E8000000 		call	bLogOut@PLT
+ 323      00
+ 324              	.LVL22:
+ 186:../../bos/core/b_device.c ****     {
+ 325              		.loc 1 186 19 discriminator 1 view .LVU102
+ 326 0192 4883C378 		addq	$120, %rbx
+ 327              		.loc 1 193 9 view .LVU103
+ 328 0196 58       		popq	%rax
+ 329              	.LCFI9:
+ 330              		.cfi_def_cfa_offset 72
+ 331 0197 5A       		popq	%rdx
+ 332              	.LCFI10:
+GAS LISTING /tmp/cc0DmMpA.s 			page 13
+
+
+ 333              		.cfi_def_cfa_offset 64
+ 186:../../bos/core/b_device.c ****     {
+ 334              		.loc 1 186 40 is_stmt 1 discriminator 2 view .LVU104
+ 335              	.LVL23:
+ 186:../../bos/core/b_device.c ****     {
+ 336              		.loc 1 186 19 discriminator 1 view .LVU105
+ 337 0198 85ED     		testl	%ebp, %ebp
+ 338 019a 752C     		jne	.L28
+ 188:../../bos/core/b_device.c ****         {
+ 339              		.loc 1 188 37 is_stmt 0 view .LVU106
+ 340 019c 488B4340 		movq	64(%rbx), %rax
+ 341 01a0 BD010000 		movl	$1, %ebp
+ 341      00
+ 342              	.LVL24:
+ 188:../../bos/core/b_device.c ****         {
+ 343              		.loc 1 188 9 is_stmt 1 view .LVU107
+ 188:../../bos/core/b_device.c ****         {
+ 344              		.loc 1 188 12 is_stmt 0 view .LVU108
+ 345 01a5 4885C0   		testq	%rax, %rax
+ 346 01a8 75C3     		jne	.L13
+ 347              	.L27:
+ 190:../../bos/core/b_device.c ****             continue;
+ 348              		.loc 1 190 13 is_stmt 1 view .LVU109
+ 349 01aa 488D0500 		leaq	.LC6(%rip), %rax
+ 349      000000
+ 350 01b1 6AFF     		pushq	$-1
+ 351              	.LCFI11:
+ 352              		.cfi_remember_state
+ 353              		.cfi_def_cfa_offset 72
+ 354 01b3 4189E9   		movl	%ebp, %r9d
+ 355 01b6 4C8D0500 		leaq	.LC5(%rip), %r8
+ 355      000000
+ 356 01bd 50       		pushq	%rax
+ 357              	.LCFI12:
+ 358              		.cfi_def_cfa_offset 80
+ 359 01be B9BE0000 		movl	$190, %ecx
+ 359      00
+ 360 01c3 EBBB     		jmp	.L26
+ 361              	.LVL25:
+ 362              		.p2align 4,,10
+ 363 01c5 0F1F00   		.p2align 3
+ 364              	.L28:
+ 365              	.LCFI13:
+ 366              		.cfi_restore_state
+ 194:../../bos/core/b_device.c ****               bDriverInterfaceTable[i].status);
+ 195:../../bos/core/b_device.c ****     }
+ 196:../../bos/core/b_device.c ****     b_log("\r\n");
+ 367              		.loc 1 196 5 view .LVU110
+ 368 01c8 4C89EA   		movq	%r13, %rdx
+ 369 01cb 4C89E6   		movq	%r12, %rsi
+ 370 01ce 31C0     		xorl	%eax, %eax
+ 371 01d0 B9C40000 		movl	$196, %ecx
+ 371      00
+ 372 01d5 4C8D0500 		leaq	.LC7(%rip), %r8
+ 372      000000
+ 373 01dc BF030000 		movl	$3, %edi
+ 373      00
+GAS LISTING /tmp/cc0DmMpA.s 			page 14
+
+
+ 374 01e1 E8000000 		call	bLogOut@PLT
+ 374      00
+ 375              	.LVL26:
+ 197:../../bos/core/b_device.c ****     return 0;
+ 376              		.loc 1 197 5 view .LVU111
+ 198:../../bos/core/b_device.c **** }
+ 377              		.loc 1 198 1 is_stmt 0 view .LVU112
+ 378 01e6 4883C408 		addq	$8, %rsp
+ 379              	.LCFI14:
+ 380              		.cfi_def_cfa_offset 56
+ 381 01ea 31C0     		xorl	%eax, %eax
+ 382 01ec 5B       		popq	%rbx
+ 383              	.LCFI15:
+ 384              		.cfi_def_cfa_offset 48
+ 385 01ed 5D       		popq	%rbp
+ 386              	.LCFI16:
+ 387              		.cfi_def_cfa_offset 40
+ 388              	.LVL27:
+ 389              		.loc 1 198 1 view .LVU113
+ 390 01ee 415C     		popq	%r12
+ 391              	.LCFI17:
+ 392              		.cfi_def_cfa_offset 32
+ 393 01f0 415D     		popq	%r13
+ 394              	.LCFI18:
+ 395              		.cfi_def_cfa_offset 24
+ 396 01f2 415E     		popq	%r14
+ 397              	.LCFI19:
+ 398              		.cfi_def_cfa_offset 16
+ 399 01f4 415F     		popq	%r15
+ 400              	.LCFI20:
+ 401              		.cfi_def_cfa_offset 8
+ 402 01f6 C3       		ret
+ 403              		.cfi_endproc
+ 404              	.LFE29:
+ 406              		.section	.text.bDeviceReinit,"ax",@progbits
+ 407              		.p2align 4
+ 408              		.globl	bDeviceReinit
+ 410              	bDeviceReinit:
+ 411              	.LVL28:
+ 412              	.LFB30:
+ 199:../../bos/core/b_device.c **** 
+ 200:../../bos/core/b_device.c **** int bDeviceReinit(uint32_t dev_no)
+ 201:../../bos/core/b_device.c **** {
+ 413              		.loc 1 201 1 is_stmt 1 view -0
+ 414              		.cfi_startproc
+ 415              		.loc 1 201 1 is_stmt 0 view .LVU115
+ 416 0000 F30F1EFA 		endbr64
+ 202:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 417              		.loc 1 202 5 is_stmt 1 view .LVU116
+ 418              		.loc 1 202 8 is_stmt 0 view .LVU117
+ 419 0004 83FF01   		cmpl	$1, %edi
+ 420 0007 7737     		ja	.L31
+ 203:../../bos/core/b_device.c ****     {
+ 204:../../bos/core/b_device.c ****         return -1;
+ 205:../../bos/core/b_device.c ****     }
+ 206:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].init == NULL)
+ 421              		.loc 1 206 5 is_stmt 1 view .LVU118
+GAS LISTING /tmp/cc0DmMpA.s 			page 15
+
+
+ 422              		.loc 1 206 38 is_stmt 0 view .LVU119
+ 423 0009 89FF     		movl	%edi, %edi
+ 424              		.loc 1 206 38 view .LVU120
+ 425 000b 488D1500 		leaq	bDriverInterfaceTable(%rip), %rdx
+ 425      000000
+ 201:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 426              		.loc 1 201 1 view .LVU121
+ 427 0012 53       		pushq	%rbx
+ 428              	.LCFI21:
+ 429              		.cfi_def_cfa_offset 16
+ 430              		.cfi_offset 3, -16
+ 431              		.loc 1 206 38 view .LVU122
+ 432 0013 4889F8   		movq	%rdi, %rax
+ 433 0016 48C1E004 		salq	$4, %rax
+ 434 001a 4829F8   		subq	%rdi, %rax
+ 435 001d 488D1CC2 		leaq	(%rdx,%rax,8), %rbx
+ 436 0021 488B4308 		movq	8(%rbx), %rax
+ 437              		.loc 1 206 8 view .LVU123
+ 438 0025 4885C0   		testq	%rax, %rax
+ 439 0028 741C     		je	.L32
+ 207:../../bos/core/b_device.c ****     {
+ 208:../../bos/core/b_device.c ****         return B_DEVICE_FUNC_NULL;
+ 209:../../bos/core/b_device.c ****     }
+ 210:../../bos/core/b_device.c ****     bDriverInterfaceTable[dev_no].status =
+ 440              		.loc 1 210 5 is_stmt 1 view .LVU124
+ 211:../../bos/core/b_device.c ****         bDriverInterfaceTable[dev_no].init(&bDriverInterfaceTable[dev_no]);
+ 441              		.loc 1 211 44 is_stmt 0 view .LVU125
+ 442 002a 48F7DF   		negq	%rdi
+ 443              	.LVL29:
+ 444              		.loc 1 211 44 view .LVU126
+ 445 002d 83E778   		andl	$120, %edi
+ 446              	.LVL30:
+ 447              		.loc 1 211 44 view .LVU127
+ 448 0030 4801D7   		addq	%rdx, %rdi
+ 449              		.loc 1 211 9 view .LVU128
+ 450 0033 FFD0     		call	*%rax
+ 451              	.LVL31:
+ 210:../../bos/core/b_device.c ****         bDriverInterfaceTable[dev_no].init(&bDriverInterfaceTable[dev_no]);
+ 452              		.loc 1 210 42 view .LVU129
+ 453 0035 8903     		movl	%eax, (%rbx)
+ 212:../../bos/core/b_device.c ****     return bDriverInterfaceTable[dev_no].status;
+ 454              		.loc 1 212 5 is_stmt 1 view .LVU130
+ 213:../../bos/core/b_device.c **** }
+ 455              		.loc 1 213 1 is_stmt 0 view .LVU131
+ 456 0037 5B       		popq	%rbx
+ 457              	.LCFI22:
+ 458              		.cfi_def_cfa_offset 8
+ 459 0038 C3       		ret
+ 460              	.LVL32:
+ 461 0039 0F1F8000 		.p2align 4,,10
+ 461      000000
+ 462              		.p2align 3
+ 463              	.L31:
+ 464              		.cfi_restore 3
+ 204:../../bos/core/b_device.c ****     }
+ 465              		.loc 1 204 16 view .LVU132
+ 466 0040 B8FFFFFF 		movl	$-1, %eax
+GAS LISTING /tmp/cc0DmMpA.s 			page 16
+
+
+ 466      FF
+ 467              		.loc 1 213 1 view .LVU133
+ 468 0045 C3       		ret
+ 469              	.L32:
+ 470              	.LCFI23:
+ 471              		.cfi_def_cfa_offset 16
+ 472              		.cfi_offset 3, -16
+ 208:../../bos/core/b_device.c ****     }
+ 473              		.loc 1 208 16 view .LVU134
+ 474 0046 B802FFFF 		movl	$-254, %eax
+ 474      FF
+ 475              		.loc 1 213 1 view .LVU135
+ 476 004b 5B       		popq	%rbx
+ 477              	.LCFI24:
+ 478              		.cfi_def_cfa_offset 8
+ 479 004c C3       		ret
+ 480              		.cfi_endproc
+ 481              	.LFE30:
+ 483              		.section	.rodata.bDeviceOpen.str1.1,"aMS",@progbits,1
+ 484              	.LC8:
+ 485 0000 25732065 		.string	"%s err\r\n"
+ 485      72720D0A 
+ 485      00
+ 486              		.section	.text.bDeviceOpen,"ax",@progbits
+ 487              		.p2align 4
+ 488              		.globl	bDeviceOpen
+ 490              	bDeviceOpen:
+ 491              	.LVL33:
+ 492              	.LFB31:
+ 214:../../bos/core/b_device.c **** 
+ 215:../../bos/core/b_device.c **** int bDeviceOpen(uint32_t dev_no)
+ 216:../../bos/core/b_device.c **** {
+ 493              		.loc 1 216 1 is_stmt 1 view -0
+ 494              		.cfi_startproc
+ 495              		.loc 1 216 1 is_stmt 0 view .LVU137
+ 496 0000 F30F1EFA 		endbr64
+ 217:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 497              		.loc 1 217 5 is_stmt 1 view .LVU138
+ 498              	.LVL34:
+ 218:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 499              		.loc 1 218 5 view .LVU139
+ 500              		.loc 1 218 8 is_stmt 0 view .LVU140
+ 501 0004 83FF01   		cmpl	$1, %edi
+ 502 0007 7737     		ja	.L40
+ 219:../../bos/core/b_device.c ****     {
+ 220:../../bos/core/b_device.c ****         return -1;
+ 221:../../bos/core/b_device.c ****     }
+ 222:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].status == 0)
+ 503              		.loc 1 222 5 is_stmt 1 view .LVU141
+ 504              		.loc 1 222 38 is_stmt 0 view .LVU142
+ 505 0009 89FF     		movl	%edi, %edi
+ 506              		.loc 1 222 38 view .LVU143
+ 507 000b 488D1500 		leaq	bDriverInterfaceTable(%rip), %rdx
+ 507      000000
+ 508 0012 4889F8   		movq	%rdi, %rax
+ 509 0015 48C1E004 		salq	$4, %rax
+ 510 0019 4829F8   		subq	%rdi, %rax
+GAS LISTING /tmp/cc0DmMpA.s 			page 17
+
+
+ 511 001c 488D04C2 		leaq	(%rdx,%rax,8), %rax
+ 512              		.loc 1 222 8 view .LVU144
+ 513 0020 8B08     		movl	(%rax), %ecx
+ 514 0022 85C9     		testl	%ecx, %ecx
+ 515 0024 7520     		jne	.L39
+ 223:../../bos/core/b_device.c ****     {
+ 224:../../bos/core/b_device.c ****         if (bDriverInterfaceTable[dev_no].open != NULL)
+ 516              		.loc 1 224 9 is_stmt 1 view .LVU145
+ 517              		.loc 1 224 42 is_stmt 0 view .LVU146
+ 518 0026 488B4010 		movq	16(%rax), %rax
+ 519              		.loc 1 224 12 view .LVU147
+ 520 002a 4885C0   		testq	%rax, %rax
+ 521 002d 7456     		je	.L41
+ 225:../../bos/core/b_device.c ****         {
+ 226:../../bos/core/b_device.c ****             retval = bDriverInterfaceTable[dev_no].open(&bDriverInterfaceTable[dev_no]);
+ 522              		.loc 1 226 13 is_stmt 1 view .LVU148
+ 523              		.loc 1 226 57 is_stmt 0 view .LVU149
+ 524 002f 48F7DF   		negq	%rdi
+ 525              	.LVL35:
+ 526              		.loc 1 226 57 view .LVU150
+ 527 0032 83E778   		andl	$120, %edi
+ 528              	.LVL36:
+ 529              		.loc 1 226 57 view .LVU151
+ 530 0035 4801D7   		addq	%rdx, %rdi
+ 531              		.loc 1 226 22 view .LVU152
+ 532 0038 FFE0     		jmp	*%rax
+ 533              	.LVL37:
+ 534 003a 660F1F44 		.p2align 4,,10
+ 534      0000
+ 535              		.p2align 3
+ 536              	.L40:
+ 220:../../bos/core/b_device.c ****     }
+ 537              		.loc 1 220 16 view .LVU153
+ 538 0040 B8FFFFFF 		movl	$-1, %eax
+ 538      FF
+ 539 0045 C3       		ret
+ 540              	.L39:
+ 227:../../bos/core/b_device.c ****         }
+ 228:../../bos/core/b_device.c ****     }
+ 229:../../bos/core/b_device.c ****     else
+ 230:../../bos/core/b_device.c ****     {
+ 231:../../bos/core/b_device.c ****         b_log_e("%s err\r\n", bDeviceDescTable[dev_no]);
+ 541              		.loc 1 231 9 is_stmt 1 view .LVU154
+ 542 0046 488D0500 		leaq	bDeviceDescTable(%rip), %rax
+ 542      000000
+ 216:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 543              		.loc 1 216 1 is_stmt 0 view .LVU155
+ 544 004d 4883EC08 		subq	$8, %rsp
+ 545              	.LCFI25:
+ 546              		.cfi_def_cfa_offset 16
+ 547              		.loc 1 231 9 view .LVU156
+ 548 0051 4C8D0500 		leaq	.LC8(%rip), %r8
+ 548      000000
+ 549 0058 B9E70000 		movl	$231, %ecx
+ 549      00
+ 550 005d 4C8B0CF8 		movq	(%rax,%rdi,8), %r9
+ 551 0061 488D1500 		leaq	__func__.5(%rip), %rdx
+GAS LISTING /tmp/cc0DmMpA.s 			page 18
+
+
+ 551      000000
+ 552 0068 31C0     		xorl	%eax, %eax
+ 553 006a 488D3500 		leaq	.LC2(%rip), %rsi
+ 553      000000
+ 554 0071 BF020000 		movl	$2, %edi
+ 554      00
+ 555              	.LVL38:
+ 556              		.loc 1 231 9 view .LVU157
+ 557 0076 E8000000 		call	bLogOut@PLT
+ 557      00
+ 558              	.LVL39:
+ 232:../../bos/core/b_device.c ****         retval = B_DEVICE_STAT_ERR;
+ 559              		.loc 1 232 9 is_stmt 1 view .LVU158
+ 560              		.loc 1 232 16 is_stmt 0 view .LVU159
+ 561 007b B801FFFF 		movl	$-255, %eax
+ 561      FF
+ 233:../../bos/core/b_device.c ****     }
+ 234:../../bos/core/b_device.c ****     return retval;
+ 235:../../bos/core/b_device.c **** }
+ 562              		.loc 1 235 1 view .LVU160
+ 563 0080 4883C408 		addq	$8, %rsp
+ 564              	.LCFI26:
+ 565              		.cfi_def_cfa_offset 8
+ 566 0084 C3       		ret
+ 567              	.LVL40:
+ 568              	.L41:
+ 217:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 569              		.loc 1 217 9 view .LVU161
+ 570 0085 B802FFFF 		movl	$-254, %eax
+ 570      FF
+ 571              	.LVL41:
+ 572              		.loc 1 235 1 view .LVU162
+ 573 008a C3       		ret
+ 574              		.cfi_endproc
+ 575              	.LFE31:
+ 577              		.section	.text.bDeviceRead,"ax",@progbits
+ 578              		.p2align 4
+ 579              		.globl	bDeviceRead
+ 581              	bDeviceRead:
+ 582              	.LVL42:
+ 583              	.LFB32:
+ 236:../../bos/core/b_device.c **** 
+ 237:../../bos/core/b_device.c **** int bDeviceRead(uint32_t dev_no, uint32_t offset, uint8_t *pdata, uint32_t len)
+ 238:../../bos/core/b_device.c **** {
+ 584              		.loc 1 238 1 is_stmt 1 view -0
+ 585              		.cfi_startproc
+ 586              		.loc 1 238 1 is_stmt 0 view .LVU164
+ 587 0000 F30F1EFA 		endbr64
+ 239:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 588              		.loc 1 239 5 is_stmt 1 view .LVU165
+ 589              	.LVL43:
+ 240:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER || pdata == NULL)
+ 590              		.loc 1 240 5 view .LVU166
+ 591              		.loc 1 240 8 is_stmt 0 view .LVU167
+ 592 0004 83FF01   		cmpl	$1, %edi
+ 593 0007 773F     		ja	.L48
+ 594 0009 4885D2   		testq	%rdx, %rdx
+GAS LISTING /tmp/cc0DmMpA.s 			page 19
+
+
+ 595 000c 743A     		je	.L48
+ 241:../../bos/core/b_device.c ****     {
+ 242:../../bos/core/b_device.c ****         return -1;
+ 243:../../bos/core/b_device.c ****     }
+ 244:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].status == 0)
+ 596              		.loc 1 244 5 is_stmt 1 view .LVU168
+ 597              		.loc 1 244 38 is_stmt 0 view .LVU169
+ 598 000e 89FF     		movl	%edi, %edi
+ 599              		.loc 1 244 38 view .LVU170
+ 600 0010 4C8D0500 		leaq	bDriverInterfaceTable(%rip), %r8
+ 600      000000
+ 601 0017 4889F8   		movq	%rdi, %rax
+ 602 001a 48C1E004 		salq	$4, %rax
+ 603 001e 4829F8   		subq	%rdi, %rax
+ 604 0021 498D04C0 		leaq	(%r8,%rax,8), %rax
+ 605              		.loc 1 244 8 view .LVU171
+ 606 0025 448B08   		movl	(%rax), %r9d
+ 607 0028 4585C9   		testl	%r9d, %r9d
+ 608 002b 7521     		jne	.L47
+ 245:../../bos/core/b_device.c ****     {
+ 246:../../bos/core/b_device.c ****         if (bDriverInterfaceTable[dev_no].read != NULL)
+ 609              		.loc 1 246 9 is_stmt 1 view .LVU172
+ 610              		.loc 1 246 42 is_stmt 0 view .LVU173
+ 611 002d 488B4030 		movq	48(%rax), %rax
+ 612              		.loc 1 246 12 view .LVU174
+ 613 0031 4885C0   		testq	%rax, %rax
+ 614 0034 7457     		je	.L49
+ 247:../../bos/core/b_device.c ****         {
+ 248:../../bos/core/b_device.c ****             retval = bDriverInterfaceTable[dev_no].read(&bDriverInterfaceTable[dev_no], offset,
+ 615              		.loc 1 248 13 is_stmt 1 view .LVU175
+ 616              		.loc 1 248 57 is_stmt 0 view .LVU176
+ 617 0036 48F7DF   		negq	%rdi
+ 618              	.LVL44:
+ 619              		.loc 1 248 57 view .LVU177
+ 620 0039 83E778   		andl	$120, %edi
+ 621              	.LVL45:
+ 622              		.loc 1 248 57 view .LVU178
+ 623 003c 4C01C7   		addq	%r8, %rdi
+ 624              		.loc 1 248 22 view .LVU179
+ 625 003f FFE0     		jmp	*%rax
+ 626              	.LVL46:
+ 627              		.p2align 4,,10
+ 628 0041 0F1F8000 		.p2align 3
+ 628      000000
+ 629              	.L48:
+ 242:../../bos/core/b_device.c ****     }
+ 630              		.loc 1 242 16 view .LVU180
+ 631 0048 B8FFFFFF 		movl	$-1, %eax
+ 631      FF
+ 632 004d C3       		ret
+ 633              	.L47:
+ 249:../../bos/core/b_device.c ****                                                         pdata, len);
+ 250:../../bos/core/b_device.c ****         }
+ 251:../../bos/core/b_device.c ****     }
+ 252:../../bos/core/b_device.c ****     else
+ 253:../../bos/core/b_device.c ****     {
+ 254:../../bos/core/b_device.c ****         b_log_e("%s err\r\n", bDeviceDescTable[dev_no]);
+GAS LISTING /tmp/cc0DmMpA.s 			page 20
+
+
+ 634              		.loc 1 254 9 is_stmt 1 view .LVU181
+ 635 004e 488D0500 		leaq	bDeviceDescTable(%rip), %rax
+ 635      000000
+ 238:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 636              		.loc 1 238 1 is_stmt 0 view .LVU182
+ 637 0055 4883EC08 		subq	$8, %rsp
+ 638              	.LCFI27:
+ 639              		.cfi_def_cfa_offset 16
+ 640              		.loc 1 254 9 view .LVU183
+ 641 0059 4C8D0500 		leaq	.LC8(%rip), %r8
+ 641      000000
+ 642 0060 B9FE0000 		movl	$254, %ecx
+ 642      00
+ 643              	.LVL47:
+ 644              		.loc 1 254 9 view .LVU184
+ 645 0065 4C8B0CF8 		movq	(%rax,%rdi,8), %r9
+ 646 0069 488D1500 		leaq	__func__.4(%rip), %rdx
+ 646      000000
+ 647              	.LVL48:
+ 648              		.loc 1 254 9 view .LVU185
+ 649 0070 31C0     		xorl	%eax, %eax
+ 650 0072 488D3500 		leaq	.LC2(%rip), %rsi
+ 650      000000
+ 651              	.LVL49:
+ 652              		.loc 1 254 9 view .LVU186
+ 653 0079 BF020000 		movl	$2, %edi
+ 653      00
+ 654              	.LVL50:
+ 655              		.loc 1 254 9 view .LVU187
+ 656 007e E8000000 		call	bLogOut@PLT
+ 656      00
+ 657              	.LVL51:
+ 255:../../bos/core/b_device.c ****         retval = B_DEVICE_STAT_ERR;
+ 658              		.loc 1 255 9 is_stmt 1 view .LVU188
+ 659              		.loc 1 255 16 is_stmt 0 view .LVU189
+ 660 0083 B801FFFF 		movl	$-255, %eax
+ 660      FF
+ 256:../../bos/core/b_device.c ****     }
+ 257:../../bos/core/b_device.c ****     return retval;
+ 258:../../bos/core/b_device.c **** }
+ 661              		.loc 1 258 1 view .LVU190
+ 662 0088 4883C408 		addq	$8, %rsp
+ 663              	.LCFI28:
+ 664              		.cfi_def_cfa_offset 8
+ 665 008c C3       		ret
+ 666              	.LVL52:
+ 667              	.L49:
+ 239:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER || pdata == NULL)
+ 668              		.loc 1 239 9 view .LVU191
+ 669 008d B802FFFF 		movl	$-254, %eax
+ 669      FF
+ 670              	.LVL53:
+ 671              		.loc 1 258 1 view .LVU192
+ 672 0092 C3       		ret
+ 673              		.cfi_endproc
+ 674              	.LFE32:
+ 676              		.section	.text.bDeviceWrite,"ax",@progbits
+GAS LISTING /tmp/cc0DmMpA.s 			page 21
+
+
+ 677              		.p2align 4
+ 678              		.globl	bDeviceWrite
+ 680              	bDeviceWrite:
+ 681              	.LVL54:
+ 682              	.LFB33:
+ 259:../../bos/core/b_device.c **** 
+ 260:../../bos/core/b_device.c **** int bDeviceWrite(uint32_t dev_no, uint32_t address, uint8_t *pdata, uint32_t len)
+ 261:../../bos/core/b_device.c **** {
+ 683              		.loc 1 261 1 is_stmt 1 view -0
+ 684              		.cfi_startproc
+ 685              		.loc 1 261 1 is_stmt 0 view .LVU194
+ 686 0000 F30F1EFA 		endbr64
+ 262:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 687              		.loc 1 262 5 is_stmt 1 view .LVU195
+ 688              	.LVL55:
+ 263:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER || pdata == NULL)
+ 689              		.loc 1 263 5 view .LVU196
+ 690              		.loc 1 263 8 is_stmt 0 view .LVU197
+ 691 0004 83FF01   		cmpl	$1, %edi
+ 692 0007 773F     		ja	.L56
+ 693 0009 4885D2   		testq	%rdx, %rdx
+ 694 000c 743A     		je	.L56
+ 264:../../bos/core/b_device.c ****     {
+ 265:../../bos/core/b_device.c ****         return -1;
+ 266:../../bos/core/b_device.c ****     }
+ 267:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].status == 0)
+ 695              		.loc 1 267 5 is_stmt 1 view .LVU198
+ 696              		.loc 1 267 38 is_stmt 0 view .LVU199
+ 697 000e 89FF     		movl	%edi, %edi
+ 698              		.loc 1 267 38 view .LVU200
+ 699 0010 4C8D0500 		leaq	bDriverInterfaceTable(%rip), %r8
+ 699      000000
+ 700 0017 4889F8   		movq	%rdi, %rax
+ 701 001a 48C1E004 		salq	$4, %rax
+ 702 001e 4829F8   		subq	%rdi, %rax
+ 703 0021 498D04C0 		leaq	(%r8,%rax,8), %rax
+ 704              		.loc 1 267 8 view .LVU201
+ 705 0025 448B08   		movl	(%rax), %r9d
+ 706 0028 4585C9   		testl	%r9d, %r9d
+ 707 002b 7521     		jne	.L55
+ 268:../../bos/core/b_device.c ****     {
+ 269:../../bos/core/b_device.c ****         if (bDriverInterfaceTable[dev_no].write != NULL)
+ 708              		.loc 1 269 9 is_stmt 1 view .LVU202
+ 709              		.loc 1 269 42 is_stmt 0 view .LVU203
+ 710 002d 488B4028 		movq	40(%rax), %rax
+ 711              		.loc 1 269 12 view .LVU204
+ 712 0031 4885C0   		testq	%rax, %rax
+ 713 0034 7457     		je	.L57
+ 270:../../bos/core/b_device.c ****         {
+ 271:../../bos/core/b_device.c ****             retval = bDriverInterfaceTable[dev_no].write(&bDriverInterfaceTable[dev_no], address,
+ 714              		.loc 1 271 13 is_stmt 1 view .LVU205
+ 715              		.loc 1 271 58 is_stmt 0 view .LVU206
+ 716 0036 48F7DF   		negq	%rdi
+ 717              	.LVL56:
+ 718              		.loc 1 271 58 view .LVU207
+ 719 0039 83E778   		andl	$120, %edi
+ 720              	.LVL57:
+GAS LISTING /tmp/cc0DmMpA.s 			page 22
+
+
+ 721              		.loc 1 271 58 view .LVU208
+ 722 003c 4C01C7   		addq	%r8, %rdi
+ 723              		.loc 1 271 22 view .LVU209
+ 724 003f FFE0     		jmp	*%rax
+ 725              	.LVL58:
+ 726              		.p2align 4,,10
+ 727 0041 0F1F8000 		.p2align 3
+ 727      000000
+ 728              	.L56:
+ 265:../../bos/core/b_device.c ****     }
+ 729              		.loc 1 265 16 view .LVU210
+ 730 0048 B8FFFFFF 		movl	$-1, %eax
+ 730      FF
+ 731 004d C3       		ret
+ 732              	.L55:
+ 272:../../bos/core/b_device.c ****                                                          pdata, len);
+ 273:../../bos/core/b_device.c ****         }
+ 274:../../bos/core/b_device.c ****     }
+ 275:../../bos/core/b_device.c ****     else
+ 276:../../bos/core/b_device.c ****     {
+ 277:../../bos/core/b_device.c ****         b_log_e("%s err\r\n", bDeviceDescTable[dev_no]);
+ 733              		.loc 1 277 9 is_stmt 1 view .LVU211
+ 734 004e 488D0500 		leaq	bDeviceDescTable(%rip), %rax
+ 734      000000
+ 261:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 735              		.loc 1 261 1 is_stmt 0 view .LVU212
+ 736 0055 4883EC08 		subq	$8, %rsp
+ 737              	.LCFI29:
+ 738              		.cfi_def_cfa_offset 16
+ 739              		.loc 1 277 9 view .LVU213
+ 740 0059 4C8D0500 		leaq	.LC8(%rip), %r8
+ 740      000000
+ 741 0060 B9150100 		movl	$277, %ecx
+ 741      00
+ 742              	.LVL59:
+ 743              		.loc 1 277 9 view .LVU214
+ 744 0065 4C8B0CF8 		movq	(%rax,%rdi,8), %r9
+ 745 0069 488D1500 		leaq	__func__.3(%rip), %rdx
+ 745      000000
+ 746              	.LVL60:
+ 747              		.loc 1 277 9 view .LVU215
+ 748 0070 31C0     		xorl	%eax, %eax
+ 749 0072 488D3500 		leaq	.LC2(%rip), %rsi
+ 749      000000
+ 750              	.LVL61:
+ 751              		.loc 1 277 9 view .LVU216
+ 752 0079 BF020000 		movl	$2, %edi
+ 752      00
+ 753              	.LVL62:
+ 754              		.loc 1 277 9 view .LVU217
+ 755 007e E8000000 		call	bLogOut@PLT
+ 755      00
+ 756              	.LVL63:
+ 278:../../bos/core/b_device.c ****         retval = B_DEVICE_STAT_ERR;
+ 757              		.loc 1 278 9 is_stmt 1 view .LVU218
+ 758              		.loc 1 278 16 is_stmt 0 view .LVU219
+ 759 0083 B801FFFF 		movl	$-255, %eax
+GAS LISTING /tmp/cc0DmMpA.s 			page 23
+
+
+ 759      FF
+ 279:../../bos/core/b_device.c ****     }
+ 280:../../bos/core/b_device.c ****     return retval;
+ 281:../../bos/core/b_device.c **** }
+ 760              		.loc 1 281 1 view .LVU220
+ 761 0088 4883C408 		addq	$8, %rsp
+ 762              	.LCFI30:
+ 763              		.cfi_def_cfa_offset 8
+ 764 008c C3       		ret
+ 765              	.LVL64:
+ 766              	.L57:
+ 262:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER || pdata == NULL)
+ 767              		.loc 1 262 9 view .LVU221
+ 768 008d B802FFFF 		movl	$-254, %eax
+ 768      FF
+ 769              	.LVL65:
+ 770              		.loc 1 281 1 view .LVU222
+ 771 0092 C3       		ret
+ 772              		.cfi_endproc
+ 773              	.LFE33:
+ 775              		.section	.text.bDeviceClose,"ax",@progbits
+ 776              		.p2align 4
+ 777              		.globl	bDeviceClose
+ 779              	bDeviceClose:
+ 780              	.LVL66:
+ 781              	.LFB34:
+ 282:../../bos/core/b_device.c **** 
+ 283:../../bos/core/b_device.c **** int bDeviceClose(uint32_t dev_no)
+ 284:../../bos/core/b_device.c **** {
+ 782              		.loc 1 284 1 is_stmt 1 view -0
+ 783              		.cfi_startproc
+ 784              		.loc 1 284 1 is_stmt 0 view .LVU224
+ 785 0000 F30F1EFA 		endbr64
+ 285:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 786              		.loc 1 285 5 is_stmt 1 view .LVU225
+ 787              	.LVL67:
+ 286:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 788              		.loc 1 286 5 view .LVU226
+ 789              		.loc 1 286 8 is_stmt 0 view .LVU227
+ 790 0004 83FF01   		cmpl	$1, %edi
+ 791 0007 7737     		ja	.L64
+ 287:../../bos/core/b_device.c ****     {
+ 288:../../bos/core/b_device.c ****         return -1;
+ 289:../../bos/core/b_device.c ****     }
+ 290:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].status == 0)
+ 792              		.loc 1 290 5 is_stmt 1 view .LVU228
+ 793              		.loc 1 290 38 is_stmt 0 view .LVU229
+ 794 0009 89FF     		movl	%edi, %edi
+ 795              		.loc 1 290 38 view .LVU230
+ 796 000b 488D1500 		leaq	bDriverInterfaceTable(%rip), %rdx
+ 796      000000
+ 797 0012 4889F8   		movq	%rdi, %rax
+ 798 0015 48C1E004 		salq	$4, %rax
+ 799 0019 4829F8   		subq	%rdi, %rax
+ 800 001c 488D04C2 		leaq	(%rdx,%rax,8), %rax
+ 801              		.loc 1 290 8 view .LVU231
+ 802 0020 8B08     		movl	(%rax), %ecx
+GAS LISTING /tmp/cc0DmMpA.s 			page 24
+
+
+ 803 0022 85C9     		testl	%ecx, %ecx
+ 804 0024 7520     		jne	.L63
+ 291:../../bos/core/b_device.c ****     {
+ 292:../../bos/core/b_device.c ****         if (bDriverInterfaceTable[dev_no].close != NULL)
+ 805              		.loc 1 292 9 is_stmt 1 view .LVU232
+ 806              		.loc 1 292 42 is_stmt 0 view .LVU233
+ 807 0026 488B4018 		movq	24(%rax), %rax
+ 808              		.loc 1 292 12 view .LVU234
+ 809 002a 4885C0   		testq	%rax, %rax
+ 810 002d 7456     		je	.L65
+ 293:../../bos/core/b_device.c ****         {
+ 294:../../bos/core/b_device.c ****             retval = bDriverInterfaceTable[dev_no].close(&bDriverInterfaceTable[dev_no]);
+ 811              		.loc 1 294 13 is_stmt 1 view .LVU235
+ 812              		.loc 1 294 58 is_stmt 0 view .LVU236
+ 813 002f 48F7DF   		negq	%rdi
+ 814              	.LVL68:
+ 815              		.loc 1 294 58 view .LVU237
+ 816 0032 83E778   		andl	$120, %edi
+ 817              	.LVL69:
+ 818              		.loc 1 294 58 view .LVU238
+ 819 0035 4801D7   		addq	%rdx, %rdi
+ 820              		.loc 1 294 22 view .LVU239
+ 821 0038 FFE0     		jmp	*%rax
+ 822              	.LVL70:
+ 823 003a 660F1F44 		.p2align 4,,10
+ 823      0000
+ 824              		.p2align 3
+ 825              	.L64:
+ 288:../../bos/core/b_device.c ****     }
+ 826              		.loc 1 288 16 view .LVU240
+ 827 0040 B8FFFFFF 		movl	$-1, %eax
+ 827      FF
+ 828 0045 C3       		ret
+ 829              	.L63:
+ 295:../../bos/core/b_device.c ****         }
+ 296:../../bos/core/b_device.c ****     }
+ 297:../../bos/core/b_device.c ****     else
+ 298:../../bos/core/b_device.c ****     {
+ 299:../../bos/core/b_device.c ****         b_log_e("%s err\r\n", bDeviceDescTable[dev_no]);
+ 830              		.loc 1 299 9 is_stmt 1 view .LVU241
+ 831 0046 488D0500 		leaq	bDeviceDescTable(%rip), %rax
+ 831      000000
+ 284:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 832              		.loc 1 284 1 is_stmt 0 view .LVU242
+ 833 004d 4883EC08 		subq	$8, %rsp
+ 834              	.LCFI31:
+ 835              		.cfi_def_cfa_offset 16
+ 836              		.loc 1 299 9 view .LVU243
+ 837 0051 4C8D0500 		leaq	.LC8(%rip), %r8
+ 837      000000
+ 838 0058 B92B0100 		movl	$299, %ecx
+ 838      00
+ 839 005d 4C8B0CF8 		movq	(%rax,%rdi,8), %r9
+ 840 0061 488D1500 		leaq	__func__.2(%rip), %rdx
+ 840      000000
+ 841 0068 31C0     		xorl	%eax, %eax
+ 842 006a 488D3500 		leaq	.LC2(%rip), %rsi
+GAS LISTING /tmp/cc0DmMpA.s 			page 25
+
+
+ 842      000000
+ 843 0071 BF020000 		movl	$2, %edi
+ 843      00
+ 844              	.LVL71:
+ 845              		.loc 1 299 9 view .LVU244
+ 846 0076 E8000000 		call	bLogOut@PLT
+ 846      00
+ 847              	.LVL72:
+ 300:../../bos/core/b_device.c ****         retval = B_DEVICE_STAT_ERR;
+ 848              		.loc 1 300 9 is_stmt 1 view .LVU245
+ 849              		.loc 1 300 16 is_stmt 0 view .LVU246
+ 850 007b B801FFFF 		movl	$-255, %eax
+ 850      FF
+ 301:../../bos/core/b_device.c ****     }
+ 302:../../bos/core/b_device.c ****     return retval;
+ 303:../../bos/core/b_device.c **** }
+ 851              		.loc 1 303 1 view .LVU247
+ 852 0080 4883C408 		addq	$8, %rsp
+ 853              	.LCFI32:
+ 854              		.cfi_def_cfa_offset 8
+ 855 0084 C3       		ret
+ 856              	.LVL73:
+ 857              	.L65:
+ 285:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 858              		.loc 1 285 9 view .LVU248
+ 859 0085 B802FFFF 		movl	$-254, %eax
+ 859      FF
+ 860              	.LVL74:
+ 861              		.loc 1 303 1 view .LVU249
+ 862 008a C3       		ret
+ 863              		.cfi_endproc
+ 864              	.LFE34:
+ 866              		.section	.text.bDeviceCtl,"ax",@progbits
+ 867              		.p2align 4
+ 868              		.globl	bDeviceCtl
+ 870              	bDeviceCtl:
+ 871              	.LVL75:
+ 872              	.LFB35:
+ 304:../../bos/core/b_device.c **** 
+ 305:../../bos/core/b_device.c **** int bDeviceCtl(uint32_t dev_no, uint8_t cmd, void *param)
+ 306:../../bos/core/b_device.c **** {
+ 873              		.loc 1 306 1 is_stmt 1 view -0
+ 874              		.cfi_startproc
+ 875              		.loc 1 306 1 is_stmt 0 view .LVU251
+ 876 0000 F30F1EFA 		endbr64
+ 307:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 877              		.loc 1 307 5 is_stmt 1 view .LVU252
+ 878              	.LVL76:
+ 308:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 879              		.loc 1 308 5 view .LVU253
+ 880              		.loc 1 308 8 is_stmt 0 view .LVU254
+ 881 0004 83FF01   		cmpl	$1, %edi
+ 882 0007 7737     		ja	.L72
+ 309:../../bos/core/b_device.c ****     {
+ 310:../../bos/core/b_device.c ****         return -1;
+ 311:../../bos/core/b_device.c ****     }
+ 312:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].status == 0)
+GAS LISTING /tmp/cc0DmMpA.s 			page 26
+
+
+ 883              		.loc 1 312 5 is_stmt 1 view .LVU255
+ 884              		.loc 1 312 38 is_stmt 0 view .LVU256
+ 885 0009 89FF     		movl	%edi, %edi
+ 886              		.loc 1 312 38 view .LVU257
+ 887 000b 488D0D00 		leaq	bDriverInterfaceTable(%rip), %rcx
+ 887      000000
+ 888 0012 4889F8   		movq	%rdi, %rax
+ 889 0015 48C1E004 		salq	$4, %rax
+ 890 0019 4829F8   		subq	%rdi, %rax
+ 891 001c 488D04C1 		leaq	(%rcx,%rax,8), %rax
+ 892              		.loc 1 312 8 view .LVU258
+ 893 0020 448B00   		movl	(%rax), %r8d
+ 894 0023 4585C0   		testl	%r8d, %r8d
+ 895 0026 751E     		jne	.L71
+ 313:../../bos/core/b_device.c ****     {
+ 314:../../bos/core/b_device.c ****         if (bDriverInterfaceTable[dev_no].ctl != NULL)
+ 896              		.loc 1 314 9 is_stmt 1 view .LVU259
+ 897              		.loc 1 314 42 is_stmt 0 view .LVU260
+ 898 0028 488B4020 		movq	32(%rax), %rax
+ 899              		.loc 1 314 12 view .LVU261
+ 900 002c 4885C0   		testq	%rax, %rax
+ 901 002f 7454     		je	.L73
+ 315:../../bos/core/b_device.c ****         {
+ 316:../../bos/core/b_device.c ****             retval = bDriverInterfaceTable[dev_no].ctl(&bDriverInterfaceTable[dev_no], cmd, param);
+ 902              		.loc 1 316 13 is_stmt 1 view .LVU262
+ 903              		.loc 1 316 56 is_stmt 0 view .LVU263
+ 904 0031 48F7DF   		negq	%rdi
+ 905              	.LVL77:
+ 906              		.loc 1 316 22 view .LVU264
+ 907 0034 400FB6F6 		movzbl	%sil, %esi
+ 908              		.loc 1 316 56 view .LVU265
+ 909 0038 83E778   		andl	$120, %edi
+ 910              	.LVL78:
+ 911              		.loc 1 316 56 view .LVU266
+ 912 003b 4801CF   		addq	%rcx, %rdi
+ 913              		.loc 1 316 22 view .LVU267
+ 914 003e FFE0     		jmp	*%rax
+ 915              	.LVL79:
+ 916              		.p2align 4,,10
+ 917              		.p2align 3
+ 918              	.L72:
+ 310:../../bos/core/b_device.c ****     }
+ 919              		.loc 1 310 16 view .LVU268
+ 920 0040 B8FFFFFF 		movl	$-1, %eax
+ 920      FF
+ 921 0045 C3       		ret
+ 922              	.L71:
+ 317:../../bos/core/b_device.c ****         }
+ 318:../../bos/core/b_device.c ****     }
+ 319:../../bos/core/b_device.c ****     else
+ 320:../../bos/core/b_device.c ****     {
+ 321:../../bos/core/b_device.c ****         b_log_e("%s err\r\n", bDeviceDescTable[dev_no]);
+ 923              		.loc 1 321 9 is_stmt 1 view .LVU269
+ 924 0046 488D0500 		leaq	bDeviceDescTable(%rip), %rax
+ 924      000000
+ 306:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
+ 925              		.loc 1 306 1 is_stmt 0 view .LVU270
+GAS LISTING /tmp/cc0DmMpA.s 			page 27
+
+
+ 926 004d 4883EC08 		subq	$8, %rsp
+ 927              	.LCFI33:
+ 928              		.cfi_def_cfa_offset 16
+ 929              		.loc 1 321 9 view .LVU271
+ 930 0051 4C8D0500 		leaq	.LC8(%rip), %r8
+ 930      000000
+ 931 0058 B9410100 		movl	$321, %ecx
+ 931      00
+ 932 005d 4C8B0CF8 		movq	(%rax,%rdi,8), %r9
+ 933 0061 488D1500 		leaq	__func__.1(%rip), %rdx
+ 933      000000
+ 934              	.LVL80:
+ 935              		.loc 1 321 9 view .LVU272
+ 936 0068 31C0     		xorl	%eax, %eax
+ 937 006a 488D3500 		leaq	.LC2(%rip), %rsi
+ 937      000000
+ 938              	.LVL81:
+ 939              		.loc 1 321 9 view .LVU273
+ 940 0071 BF020000 		movl	$2, %edi
+ 940      00
+ 941              	.LVL82:
+ 942              		.loc 1 321 9 view .LVU274
+ 943 0076 E8000000 		call	bLogOut@PLT
+ 943      00
+ 944              	.LVL83:
+ 322:../../bos/core/b_device.c ****         retval = B_DEVICE_STAT_ERR;
+ 945              		.loc 1 322 9 is_stmt 1 view .LVU275
+ 946              		.loc 1 322 16 is_stmt 0 view .LVU276
+ 947 007b B801FFFF 		movl	$-255, %eax
+ 947      FF
+ 323:../../bos/core/b_device.c ****     }
+ 324:../../bos/core/b_device.c ****     return retval;
+ 325:../../bos/core/b_device.c **** }
+ 948              		.loc 1 325 1 view .LVU277
+ 949 0080 4883C408 		addq	$8, %rsp
+ 950              	.LCFI34:
+ 951              		.cfi_def_cfa_offset 8
+ 952 0084 C3       		ret
+ 953              	.LVL84:
+ 954              	.L73:
+ 307:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 955              		.loc 1 307 9 view .LVU278
+ 956 0085 B802FFFF 		movl	$-254, %eax
+ 956      FF
+ 957              	.LVL85:
+ 958              		.loc 1 325 1 view .LVU279
+ 959 008a C3       		ret
+ 960              		.cfi_endproc
+ 961              	.LFE35:
+ 963              		.section	.text.bDeviceModifyHalIf,"ax",@progbits
+ 964              		.p2align 4
+ 965              		.globl	bDeviceModifyHalIf
+ 967              	bDeviceModifyHalIf:
+ 968              	.LVL86:
+ 969              	.LFB36:
+ 326:../../bos/core/b_device.c **** 
+ 327:../../bos/core/b_device.c **** int bDeviceModifyHalIf(uint32_t dev_no, uint32_t offset, const uint8_t *pVal, uint8_t size)
+GAS LISTING /tmp/cc0DmMpA.s 			page 28
+
+
+ 328:../../bos/core/b_device.c **** {
+ 970              		.loc 1 328 1 is_stmt 1 view -0
+ 971              		.cfi_startproc
+ 972              		.loc 1 328 1 is_stmt 0 view .LVU281
+ 973 0000 F30F1EFA 		endbr64
+ 329:../../bos/core/b_device.c ****     uint32_t halif_addr = 0;
+ 974              		.loc 1 329 5 is_stmt 1 view .LVU282
+ 975              	.LVL87:
+ 330:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER || pVal == NULL || size == 0)
+ 976              		.loc 1 330 5 view .LVU283
+ 977              		.loc 1 330 44 is_stmt 0 view .LVU284
+ 978 0004 4885D2   		testq	%rdx, %rdx
+ 979 0007 0F94C0   		sete	%al
+ 980              		.loc 1 330 52 discriminator 1 view .LVU285
+ 981 000a 84C9     		testb	%cl, %cl
+ 982 000c 0F94C2   		sete	%dl
+ 983              	.LVL88:
+ 984              		.loc 1 330 52 discriminator 1 view .LVU286
+ 985 000f 08D0     		orb	%dl, %al
+ 986 0011 752D     		jne	.L79
+ 987 0013 83FF01   		cmpl	$1, %edi
+ 988 0016 7728     		ja	.L79
+ 331:../../bos/core/b_device.c ****     {
+ 332:../../bos/core/b_device.c ****         return -1;
+ 333:../../bos/core/b_device.c ****     }
+ 334:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].hal_if == NULL)
+ 989              		.loc 1 334 5 is_stmt 1 view .LVU287
+ 990              		.loc 1 334 38 is_stmt 0 view .LVU288
+ 991 0018 89FF     		movl	%edi, %edi
+ 332:../../bos/core/b_device.c ****     }
+ 992              		.loc 1 332 16 view .LVU289
+ 993 001a 488D1500 		leaq	bDriverInterfaceTable(%rip), %rdx
+ 993      000000
+ 994              		.loc 1 334 38 view .LVU290
+ 995 0021 4889F8   		movq	%rdi, %rax
+ 996 0024 48C1E004 		salq	$4, %rax
+ 997 0028 4829F8   		subq	%rdi, %rax
+ 332:../../bos/core/b_device.c ****     }
+ 998              		.loc 1 332 16 view .LVU291
+ 999 002b 488B44C2 		movq	56(%rdx,%rax,8), %rax
+ 999      38
+ 1000 0030 48F7D8   		negq	%rax
+ 1001 0033 19C0     		sbbl	%eax, %eax
+ 1002 0035 83C8FE   		orl	$-2, %eax
+ 1003 0038 C3       		ret
+ 1004 0039 0F1F8000 		.p2align 4,,10
+ 1004      000000
+ 1005              		.p2align 3
+ 1006              	.L79:
+ 332:../../bos/core/b_device.c ****     }
+ 1007              		.loc 1 332 16 view .LVU292
+ 1008 0040 B8FFFFFF 		movl	$-1, %eax
+ 1008      FF
+ 335:../../bos/core/b_device.c ****     {
+ 336:../../bos/core/b_device.c ****         return -2;
+ 337:../../bos/core/b_device.c ****     }
+ 338:../../bos/core/b_device.c ****     halif_addr = ((uint32_t)bDriverInterfaceTable[dev_no].hal_if) + offset;
+GAS LISTING /tmp/cc0DmMpA.s 			page 29
+
+
+ 339:../../bos/core/b_device.c **** #if (defined(_HALIF_VARIABLE_ENABLE) && (_HALIF_VARIABLE_ENABLE == 1))
+ 340:../../bos/core/b_device.c ****     memcpy((uint8_t *)halif_addr, pVal, size);
+ 341:../../bos/core/b_device.c ****     return 0;
+ 342:../../bos/core/b_device.c **** #else
+ 343:../../bos/core/b_device.c ****     halif_addr = halif_addr;
+ 344:../../bos/core/b_device.c ****     return -1;
+ 345:../../bos/core/b_device.c **** #endif
+ 346:../../bos/core/b_device.c **** }
+ 1009              		.loc 1 346 1 view .LVU293
+ 1010 0045 C3       		ret
+ 1011              		.cfi_endproc
+ 1012              	.LFE36:
+ 1014              		.section	.rodata.bDeviceISNormal.str1.1,"aMS",@progbits,1
+ 1015              	.LC9:
+ 1016 0000 2573203A 		.string	"%s :%d\r\n"
+ 1016      25640D0A 
+ 1016      00
+ 1017              		.section	.text.bDeviceISNormal,"ax",@progbits
+ 1018              		.p2align 4
+ 1019              		.globl	bDeviceISNormal
+ 1021              	bDeviceISNormal:
+ 1022              	.LVL89:
+ 1023              	.LFB37:
+ 347:../../bos/core/b_device.c **** 
+ 348:../../bos/core/b_device.c **** int bDeviceISNormal(uint32_t dev_no)
+ 349:../../bos/core/b_device.c **** {
+ 1024              		.loc 1 349 1 is_stmt 1 view -0
+ 1025              		.cfi_startproc
+ 1026              		.loc 1 349 1 is_stmt 0 view .LVU295
+ 1027 0000 F30F1EFA 		endbr64
+ 350:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 1028              		.loc 1 350 5 is_stmt 1 view .LVU296
+ 1029              		.loc 1 350 8 is_stmt 0 view .LVU297
+ 1030 0004 83FF01   		cmpl	$1, %edi
+ 1031 0007 7757     		ja	.L83
+ 351:../../bos/core/b_device.c ****     {
+ 352:../../bos/core/b_device.c ****         return -1;
+ 353:../../bos/core/b_device.c ****     }
+ 354:../../bos/core/b_device.c ****     b_log("%s :%d\r\n", bDeviceDescTable[dev_no], bDriverInterfaceTable[dev_no].status);
+ 1032              		.loc 1 354 5 is_stmt 1 view .LVU298
+ 1033 0009 89FF     		movl	%edi, %edi
+ 349:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 1034              		.loc 1 349 1 is_stmt 0 view .LVU299
+ 1035 000b 53       		pushq	%rbx
+ 1036              	.LCFI35:
+ 1037              		.cfi_def_cfa_offset 16
+ 1038              		.cfi_offset 3, -16
+ 1039              		.loc 1 354 5 view .LVU300
+ 1040 000c 488D1500 		leaq	bDriverInterfaceTable(%rip), %rdx
+ 1040      000000
+ 1041 0013 B9620100 		movl	$354, %ecx
+ 1041      00
+ 1042 0018 4889F8   		movq	%rdi, %rax
+ 1043 001b 4C8D0500 		leaq	.LC9(%rip), %r8
+ 1043      000000
+ 1044 0022 488D3500 		leaq	.LC2(%rip), %rsi
+ 1044      000000
+GAS LISTING /tmp/cc0DmMpA.s 			page 30
+
+
+ 1045 0029 48C1E004 		salq	$4, %rax
+ 1046 002d 4829F8   		subq	%rdi, %rax
+ 1047 0030 4883EC08 		subq	$8, %rsp
+ 1048              	.LCFI36:
+ 1049              		.cfi_def_cfa_offset 24
+ 1050 0034 488D1CC2 		leaq	(%rdx,%rax,8), %rbx
+ 1051 0038 488D1500 		leaq	__func__.0(%rip), %rdx
+ 1051      000000
+ 1052 003f 8B03     		movl	(%rbx), %eax
+ 1053 0041 50       		pushq	%rax
+ 1054              	.LCFI37:
+ 1055              		.cfi_def_cfa_offset 32
+ 1056 0042 488D0500 		leaq	bDeviceDescTable(%rip), %rax
+ 1056      000000
+ 1057 0049 4C8B0CF8 		movq	(%rax,%rdi,8), %r9
+ 1058 004d 31C0     		xorl	%eax, %eax
+ 1059 004f BF030000 		movl	$3, %edi
+ 1059      00
+ 1060              	.LVL90:
+ 1061              		.loc 1 354 5 view .LVU301
+ 1062 0054 E8000000 		call	bLogOut@PLT
+ 1062      00
+ 1063              	.LVL91:
+ 355:../../bos/core/b_device.c ****     return bDriverInterfaceTable[dev_no].status;
+ 1064              		.loc 1 355 5 is_stmt 1 view .LVU302
+ 1065              		.loc 1 355 41 is_stmt 0 view .LVU303
+ 1066 0059 8B03     		movl	(%rbx), %eax
+ 1067 005b 5A       		popq	%rdx
+ 1068              	.LCFI38:
+ 1069              		.cfi_def_cfa_offset 24
+ 1070 005c 59       		popq	%rcx
+ 1071              	.LCFI39:
+ 1072              		.cfi_def_cfa_offset 16
+ 356:../../bos/core/b_device.c **** }
+ 1073              		.loc 1 356 1 view .LVU304
+ 1074 005d 5B       		popq	%rbx
+ 1075              	.LCFI40:
+ 1076              		.cfi_def_cfa_offset 8
+ 1077 005e C3       		ret
+ 1078              	.LVL92:
+ 1079 005f 90       		.p2align 4,,10
+ 1080              		.p2align 3
+ 1081              	.L83:
+ 1082              		.cfi_restore 3
+ 352:../../bos/core/b_device.c ****     }
+ 1083              		.loc 1 352 16 view .LVU305
+ 1084 0060 B8FFFFFF 		movl	$-1, %eax
+ 1084      FF
+ 1085              		.loc 1 356 1 view .LVU306
+ 1086 0065 C3       		ret
+ 1087              		.cfi_endproc
+ 1088              	.LFE37:
+ 1090              		.section	.text.bDeviceReadMessage,"ax",@progbits
+ 1091              		.p2align 4
+ 1092              		.globl	bDeviceReadMessage
+ 1094              	bDeviceReadMessage:
+ 1095              	.LVL93:
+GAS LISTING /tmp/cc0DmMpA.s 			page 31
+
+
+ 1096              	.LFB38:
+ 357:../../bos/core/b_device.c **** 
+ 358:../../bos/core/b_device.c **** /**
+ 359:../../bos/core/b_device.c ****  * \brief Read device private information
+ 360:../../bos/core/b_device.c ****  * \retval Result
+ 361:../../bos/core/b_device.c ****  *          \arg 0  OK
+ 362:../../bos/core/b_device.c ****  *          \arg -1 ERR
+ 363:../../bos/core/b_device.c ****  */
+ 364:../../bos/core/b_device.c **** int bDeviceReadMessage(uint32_t dev_no, bDeviceMsg_t *pmsg)
+ 365:../../bos/core/b_device.c **** {
+ 1097              		.loc 1 365 1 is_stmt 1 view -0
+ 1098              		.cfi_startproc
+ 1099              		.loc 1 365 1 is_stmt 0 view .LVU308
+ 1100 0000 F30F1EFA 		endbr64
+ 366:../../bos/core/b_device.c ****     if (pmsg == NULL || dev_no >= B_REG_DEV_NUMBER)
+ 1101              		.loc 1 366 5 is_stmt 1 view .LVU309
+ 1102              		.loc 1 366 8 is_stmt 0 view .LVU310
+ 1103 0004 4885F6   		testq	%rsi, %rsi
+ 1104 0007 7427     		je	.L90
+ 1105 0009 83FF01   		cmpl	$1, %edi
+ 1106 000c 7722     		ja	.L90
+ 367:../../bos/core/b_device.c ****     {
+ 368:../../bos/core/b_device.c ****         return -1;
+ 369:../../bos/core/b_device.c ****     }
+ 370:../../bos/core/b_device.c ****     pmsg->v = bDriverInterfaceTable[dev_no]._private.v;
+ 1107              		.loc 1 370 5 is_stmt 1 view .LVU311
+ 1108              		.loc 1 370 53 is_stmt 0 view .LVU312
+ 1109 000e 89FF     		movl	%edi, %edi
+ 1110              		.loc 1 370 13 view .LVU313
+ 1111 0010 488D1500 		leaq	bDriverInterfaceTable(%rip), %rdx
+ 1111      000000
+ 1112              		.loc 1 370 53 view .LVU314
+ 1113 0017 4889F8   		movq	%rdi, %rax
+ 1114 001a 48C1E004 		salq	$4, %rax
+ 1115 001e 4829F8   		subq	%rdi, %rax
+ 1116              		.loc 1 370 13 view .LVU315
+ 1117 0021 8B44C270 		movl	112(%rdx,%rax,8), %eax
+ 1118 0025 8906     		movl	%eax, (%rsi)
+ 371:../../bos/core/b_device.c ****     return 0;
+ 1119              		.loc 1 371 5 is_stmt 1 view .LVU316
+ 1120              		.loc 1 371 12 is_stmt 0 view .LVU317
+ 1121 0027 31C0     		xorl	%eax, %eax
+ 1122 0029 C3       		ret
+ 1123 002a 660F1F44 		.p2align 4,,10
+ 1123      0000
+ 1124              		.p2align 3
+ 1125              	.L90:
+ 368:../../bos/core/b_device.c ****     }
+ 1126              		.loc 1 368 16 view .LVU318
+ 1127 0030 B8FFFFFF 		movl	$-1, %eax
+ 1127      FF
+ 372:../../bos/core/b_device.c **** }
+ 1128              		.loc 1 372 1 view .LVU319
+ 1129 0035 C3       		ret
+ 1130              		.cfi_endproc
+ 1131              	.LFE38:
+ 1133              		.section	.text.bDeviceWriteMessage,"ax",@progbits
+GAS LISTING /tmp/cc0DmMpA.s 			page 32
+
+
+ 1134              		.p2align 4
+ 1135              		.globl	bDeviceWriteMessage
+ 1137              	bDeviceWriteMessage:
+ 1138              	.LVL94:
+ 1139              	.LFB39:
+ 373:../../bos/core/b_device.c **** 
+ 374:../../bos/core/b_device.c **** /**
+ 375:../../bos/core/b_device.c ****  * \brief Write device private information
+ 376:../../bos/core/b_device.c ****  * \retval Result
+ 377:../../bos/core/b_device.c ****  *          \arg 0  OK
+ 378:../../bos/core/b_device.c ****  *          \arg -1 ERR
+ 379:../../bos/core/b_device.c ****  */
+ 380:../../bos/core/b_device.c **** int bDeviceWriteMessage(uint32_t dev_no, bDeviceMsg_t *pmsg)
+ 381:../../bos/core/b_device.c **** {
+ 1140              		.loc 1 381 1 is_stmt 1 view -0
+ 1141              		.cfi_startproc
+ 1142              		.loc 1 381 1 is_stmt 0 view .LVU321
+ 1143 0000 F30F1EFA 		endbr64
+ 382:../../bos/core/b_device.c ****     if (pmsg == NULL || dev_no >= B_REG_DEV_NUMBER)
+ 1144              		.loc 1 382 5 is_stmt 1 view .LVU322
+ 1145              		.loc 1 382 8 is_stmt 0 view .LVU323
+ 1146 0004 4885F6   		testq	%rsi, %rsi
+ 1147 0007 7427     		je	.L93
+ 1148 0009 83FF01   		cmpl	$1, %edi
+ 1149 000c 7722     		ja	.L93
+ 383:../../bos/core/b_device.c ****     {
+ 384:../../bos/core/b_device.c ****         return -1;
+ 385:../../bos/core/b_device.c ****     }
+ 386:../../bos/core/b_device.c ****     bDriverInterfaceTable[dev_no]._private.v = pmsg->v;
+ 1150              		.loc 1 386 5 is_stmt 1 view .LVU324
+ 1151              		.loc 1 386 46 is_stmt 0 view .LVU325
+ 1152 000e 89FF     		movl	%edi, %edi
+ 1153              		.loc 1 386 46 view .LVU326
+ 1154 0010 8B0E     		movl	(%rsi), %ecx
+ 1155 0012 488D1500 		leaq	bDriverInterfaceTable(%rip), %rdx
+ 1155      000000
+ 1156 0019 4889F8   		movq	%rdi, %rax
+ 1157 001c 48C1E004 		salq	$4, %rax
+ 1158 0020 4829F8   		subq	%rdi, %rax
+ 1159 0023 894CC270 		movl	%ecx, 112(%rdx,%rax,8)
+ 387:../../bos/core/b_device.c ****     return 0;
+ 1160              		.loc 1 387 5 is_stmt 1 view .LVU327
+ 1161              		.loc 1 387 12 is_stmt 0 view .LVU328
+ 1162 0027 31C0     		xorl	%eax, %eax
+ 1163 0029 C3       		ret
+ 1164 002a 660F1F44 		.p2align 4,,10
+ 1164      0000
+ 1165              		.p2align 3
+ 1166              	.L93:
+ 384:../../bos/core/b_device.c ****     }
+ 1167              		.loc 1 384 16 view .LVU329
+ 1168 0030 B8FFFFFF 		movl	$-1, %eax
+ 1168      FF
+ 388:../../bos/core/b_device.c **** }
+ 1169              		.loc 1 388 1 view .LVU330
+ 1170 0035 C3       		ret
+ 1171              		.cfi_endproc
+GAS LISTING /tmp/cc0DmMpA.s 			page 33
+
+
+ 1172              	.LFE39:
+ 1174              		.section	.text.bDeviceIsReadable,"ax",@progbits
+ 1175              		.p2align 4
+ 1176              		.globl	bDeviceIsReadable
+ 1178              	bDeviceIsReadable:
+ 1179              	.LVL95:
+ 1180              	.LFB40:
+ 389:../../bos/core/b_device.c **** 
+ 390:../../bos/core/b_device.c **** uint8_t bDeviceIsReadable(uint32_t dev_no)
+ 391:../../bos/core/b_device.c **** {
+ 1181              		.loc 1 391 1 is_stmt 1 view -0
+ 1182              		.cfi_startproc
+ 1183              		.loc 1 391 1 is_stmt 0 view .LVU332
+ 1184 0000 F30F1EFA 		endbr64
+ 1185 0004 4883EC18 		subq	$24, %rsp
+ 1186              	.LCFI41:
+ 1187              		.cfi_def_cfa_offset 32
+ 392:../../bos/core/b_device.c ****     uint8_t  retval = 0;
+ 393:../../bos/core/b_device.c ****     uint16_t len    = 0;
+ 1188              		.loc 1 393 14 view .LVU333
+ 1189 0008 31D2     		xorl	%edx, %edx
+ 391:../../bos/core/b_device.c ****     uint8_t  retval = 0;
+ 1190              		.loc 1 391 1 view .LVU334
+ 1191 000a 64488B04 		movq	%fs:40, %rax
+ 1191      25280000 
+ 1191      00
+ 1192 0013 48894424 		movq	%rax, 8(%rsp)
+ 1192      08
+ 1193 0018 31C0     		xorl	%eax, %eax
+ 392:../../bos/core/b_device.c ****     uint8_t  retval = 0;
+ 1194              		.loc 1 392 5 is_stmt 1 view .LVU335
+ 1195              	.LVL96:
+ 1196              		.loc 1 393 5 view .LVU336
+ 1197              		.loc 1 393 14 is_stmt 0 view .LVU337
+ 1198 001a 66895424 		movw	%dx, 6(%rsp)
+ 1198      06
+ 394:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 1199              		.loc 1 394 5 is_stmt 1 view .LVU338
+ 1200              		.loc 1 394 8 is_stmt 0 view .LVU339
+ 1201 001f 83FF01   		cmpl	$1, %edi
+ 1202 0022 7748     		ja	.L94
+ 395:../../bos/core/b_device.c ****     {
+ 396:../../bos/core/b_device.c ****         return retval;
+ 397:../../bos/core/b_device.c ****     }
+ 398:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].read == NULL)
+ 1203              		.loc 1 398 5 is_stmt 1 view .LVU340
+ 1204              		.loc 1 398 38 is_stmt 0 view .LVU341
+ 1205 0024 89FF     		movl	%edi, %edi
+ 1206              		.loc 1 398 38 view .LVU342
+ 1207 0026 488D0D00 		leaq	bDriverInterfaceTable(%rip), %rcx
+ 1207      000000
+ 1208 002d 4889FA   		movq	%rdi, %rdx
+ 1209 0030 48C1E204 		salq	$4, %rdx
+ 1210 0034 4829FA   		subq	%rdi, %rdx
+ 1211 0037 488D14D1 		leaq	(%rcx,%rdx,8), %rdx
+ 1212              		.loc 1 398 8 view .LVU343
+ 1213 003b 48837A30 		cmpq	$0, 48(%rdx)
+GAS LISTING /tmp/cc0DmMpA.s 			page 34
+
+
+ 1213      00
+ 1214 0040 742A     		je	.L94
+ 399:../../bos/core/b_device.c ****     {
+ 400:../../bos/core/b_device.c ****         return retval;
+ 401:../../bos/core/b_device.c ****     }
+ 402:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].r_cache.pbuf == NULL)
+ 1215              		.loc 1 402 5 is_stmt 1 view .LVU344
+ 1216              		.loc 1 402 8 is_stmt 0 view .LVU345
+ 1217 0042 48837A50 		cmpq	$0, 80(%rdx)
+ 1217      00
+ 403:../../bos/core/b_device.c ****     {
+ 404:../../bos/core/b_device.c ****         retval = 1;
+ 1218              		.loc 1 404 16 view .LVU346
+ 1219 0047 B8010000 		movl	$1, %eax
+ 1219      00
+ 402:../../bos/core/b_device.c ****     {
+ 1220              		.loc 1 402 8 view .LVU347
+ 1221 004c 741E     		je	.L94
+ 405:../../bos/core/b_device.c ****     }
+ 406:../../bos/core/b_device.c ****     else
+ 407:../../bos/core/b_device.c ****     {
+ 408:../../bos/core/b_device.c ****         bFIFO_Length(&bDriverInterfaceTable[dev_no].r_cache, &len);
+ 1222              		.loc 1 408 9 is_stmt 1 view .LVU348
+ 1223              		.loc 1 408 22 is_stmt 0 view .LVU349
+ 1224 004e 48F7DF   		negq	%rdi
+ 1225              	.LVL97:
+ 1226              		.loc 1 408 9 view .LVU350
+ 1227 0051 488D7424 		leaq	6(%rsp), %rsi
+ 1227      06
+ 1228              		.loc 1 408 22 view .LVU351
+ 1229 0056 83E778   		andl	$120, %edi
+ 1230              	.LVL98:
+ 1231              		.loc 1 408 22 view .LVU352
+ 1232 0059 488D7C39 		leaq	80(%rcx,%rdi), %rdi
+ 1232      50
+ 1233              		.loc 1 408 9 view .LVU353
+ 1234 005e E8000000 		call	bFIFO_Length@PLT
+ 1234      00
+ 1235              	.LVL99:
+ 409:../../bos/core/b_device.c ****         retval = (len > 0);
+ 1236              		.loc 1 409 9 is_stmt 1 view .LVU354
+ 1237              		.loc 1 409 23 is_stmt 0 view .LVU355
+ 1238 0063 66837C24 		cmpw	$0, 6(%rsp)
+ 1238      0600
+ 1239 0069 0F95C0   		setne	%al
+ 1240              	.LVL100:
+ 1241              	.L94:
+ 410:../../bos/core/b_device.c ****     }
+ 411:../../bos/core/b_device.c ****     return retval;
+ 412:../../bos/core/b_device.c **** }
+ 1242              		.loc 1 412 1 view .LVU356
+ 1243 006c 488B5424 		movq	8(%rsp), %rdx
+ 1243      08
+ 1244 0071 64482B14 		subq	%fs:40, %rdx
+ 1244      25280000 
+ 1244      00
+ 1245 007a 7505     		jne	.L101
+GAS LISTING /tmp/cc0DmMpA.s 			page 35
+
+
+ 1246 007c 4883C418 		addq	$24, %rsp
+ 1247              	.LCFI42:
+ 1248              		.cfi_remember_state
+ 1249              		.cfi_def_cfa_offset 8
+ 1250 0080 C3       		ret
+ 1251              	.L101:
+ 1252              	.LCFI43:
+ 1253              		.cfi_restore_state
+ 1254 0081 E8000000 		call	__stack_chk_fail@PLT
+ 1254      00
+ 1255              	.LVL101:
+ 1256              		.cfi_endproc
+ 1257              	.LFE40:
+ 1259              		.section	.text.bDeviceIsWritable,"ax",@progbits
+ 1260              		.p2align 4
+ 1261              		.globl	bDeviceIsWritable
+ 1263              	bDeviceIsWritable:
+ 1264              	.LVL102:
+ 1265              	.LFB41:
+ 413:../../bos/core/b_device.c **** 
+ 414:../../bos/core/b_device.c **** uint8_t bDeviceIsWritable(uint32_t dev_no)
+ 415:../../bos/core/b_device.c **** {
+ 1266              		.loc 1 415 1 is_stmt 1 view -0
+ 1267              		.cfi_startproc
+ 1268              		.loc 1 415 1 is_stmt 0 view .LVU358
+ 1269 0000 F30F1EFA 		endbr64
+ 1270 0004 4883EC18 		subq	$24, %rsp
+ 1271              	.LCFI44:
+ 1272              		.cfi_def_cfa_offset 32
+ 416:../../bos/core/b_device.c ****     uint8_t  retval = 0;
+ 417:../../bos/core/b_device.c ****     uint16_t len    = 0;
+ 1273              		.loc 1 417 14 view .LVU359
+ 1274 0008 31D2     		xorl	%edx, %edx
+ 415:../../bos/core/b_device.c ****     uint8_t  retval = 0;
+ 1275              		.loc 1 415 1 view .LVU360
+ 1276 000a 64488B04 		movq	%fs:40, %rax
+ 1276      25280000 
+ 1276      00
+ 1277 0013 48894424 		movq	%rax, 8(%rsp)
+ 1277      08
+ 1278 0018 31C0     		xorl	%eax, %eax
+ 416:../../bos/core/b_device.c ****     uint8_t  retval = 0;
+ 1279              		.loc 1 416 5 is_stmt 1 view .LVU361
+ 1280              	.LVL103:
+ 1281              		.loc 1 417 5 view .LVU362
+ 1282              		.loc 1 417 14 is_stmt 0 view .LVU363
+ 1283 001a 66895424 		movw	%dx, 6(%rsp)
+ 1283      06
+ 418:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 1284              		.loc 1 418 5 is_stmt 1 view .LVU364
+ 1285              		.loc 1 418 8 is_stmt 0 view .LVU365
+ 1286 001f 83FF01   		cmpl	$1, %edi
+ 1287 0022 7748     		ja	.L102
+ 419:../../bos/core/b_device.c ****     {
+ 420:../../bos/core/b_device.c ****         return retval;
+ 421:../../bos/core/b_device.c ****     }
+ 422:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].write == NULL)
+GAS LISTING /tmp/cc0DmMpA.s 			page 36
+
+
+ 1288              		.loc 1 422 5 is_stmt 1 view .LVU366
+ 1289              		.loc 1 422 38 is_stmt 0 view .LVU367
+ 1290 0024 89FF     		movl	%edi, %edi
+ 1291              		.loc 1 422 38 view .LVU368
+ 1292 0026 488D0D00 		leaq	bDriverInterfaceTable(%rip), %rcx
+ 1292      000000
+ 1293 002d 4889FA   		movq	%rdi, %rdx
+ 1294 0030 48C1E204 		salq	$4, %rdx
+ 1295 0034 4829FA   		subq	%rdi, %rdx
+ 1296 0037 488D14D1 		leaq	(%rcx,%rdx,8), %rdx
+ 1297              		.loc 1 422 8 view .LVU369
+ 1298 003b 48837A28 		cmpq	$0, 40(%rdx)
+ 1298      00
+ 1299 0040 742A     		je	.L102
+ 423:../../bos/core/b_device.c ****     {
+ 424:../../bos/core/b_device.c ****         return retval;
+ 425:../../bos/core/b_device.c ****     }
+ 426:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].w_cache.pbuf == NULL)
+ 1300              		.loc 1 426 5 is_stmt 1 view .LVU370
+ 1301              		.loc 1 426 8 is_stmt 0 view .LVU371
+ 1302 0042 48837A60 		cmpq	$0, 96(%rdx)
+ 1302      00
+ 427:../../bos/core/b_device.c ****     {
+ 428:../../bos/core/b_device.c ****         retval = 1;
+ 1303              		.loc 1 428 16 view .LVU372
+ 1304 0047 B8010000 		movl	$1, %eax
+ 1304      00
+ 426:../../bos/core/b_device.c ****     {
+ 1305              		.loc 1 426 8 view .LVU373
+ 1306 004c 741E     		je	.L102
+ 429:../../bos/core/b_device.c ****     }
+ 430:../../bos/core/b_device.c ****     else
+ 431:../../bos/core/b_device.c ****     {
+ 432:../../bos/core/b_device.c ****         bFIFO_Length(&bDriverInterfaceTable[dev_no].w_cache, &len);
+ 1307              		.loc 1 432 9 is_stmt 1 view .LVU374
+ 1308              		.loc 1 432 22 is_stmt 0 view .LVU375
+ 1309 004e 48F7DF   		negq	%rdi
+ 1310              	.LVL104:
+ 1311              		.loc 1 432 9 view .LVU376
+ 1312 0051 488D7424 		leaq	6(%rsp), %rsi
+ 1312      06
+ 1313              		.loc 1 432 22 view .LVU377
+ 1314 0056 83E778   		andl	$120, %edi
+ 1315              	.LVL105:
+ 1316              		.loc 1 432 22 view .LVU378
+ 1317 0059 488D7C39 		leaq	96(%rcx,%rdi), %rdi
+ 1317      60
+ 1318              		.loc 1 432 9 view .LVU379
+ 1319 005e E8000000 		call	bFIFO_Length@PLT
+ 1319      00
+ 1320              	.LVL106:
+ 433:../../bos/core/b_device.c ****         retval = (len > 0);
+ 1321              		.loc 1 433 9 is_stmt 1 view .LVU380
+ 1322              		.loc 1 433 23 is_stmt 0 view .LVU381
+ 1323 0063 66837C24 		cmpw	$0, 6(%rsp)
+ 1323      0600
+ 1324 0069 0F95C0   		setne	%al
+GAS LISTING /tmp/cc0DmMpA.s 			page 37
+
+
+ 1325              	.LVL107:
+ 1326              	.L102:
+ 434:../../bos/core/b_device.c ****     }
+ 435:../../bos/core/b_device.c ****     return retval;
+ 436:../../bos/core/b_device.c **** }
+ 1327              		.loc 1 436 1 view .LVU382
+ 1328 006c 488B5424 		movq	8(%rsp), %rdx
+ 1328      08
+ 1329 0071 64482B14 		subq	%fs:40, %rdx
+ 1329      25280000 
+ 1329      00
+ 1330 007a 7505     		jne	.L109
+ 1331 007c 4883C418 		addq	$24, %rsp
+ 1332              	.LCFI45:
+ 1333              		.cfi_remember_state
+ 1334              		.cfi_def_cfa_offset 8
+ 1335 0080 C3       		ret
+ 1336              	.L109:
+ 1337              	.LCFI46:
+ 1338              		.cfi_restore_state
+ 1339 0081 E8000000 		call	__stack_chk_fail@PLT
+ 1339      00
+ 1340              	.LVL108:
+ 1341              		.cfi_endproc
+ 1342              	.LFE41:
+ 1344              		.section	.text.bDeviceIsAbnormal,"ax",@progbits
+ 1345              		.p2align 4
+ 1346              		.globl	bDeviceIsAbnormal
+ 1348              	bDeviceIsAbnormal:
+ 1349              	.LVL109:
+ 1350              	.LFB42:
+ 437:../../bos/core/b_device.c **** 
+ 438:../../bos/core/b_device.c **** uint8_t bDeviceIsAbnormal(uint32_t dev_no)
+ 439:../../bos/core/b_device.c **** {
+ 1351              		.loc 1 439 1 is_stmt 1 view -0
+ 1352              		.cfi_startproc
+ 1353              		.loc 1 439 1 is_stmt 0 view .LVU384
+ 1354 0000 F30F1EFA 		endbr64
+ 440:../../bos/core/b_device.c ****     uint8_t retval = 1;
+ 1355              		.loc 1 440 5 is_stmt 1 view .LVU385
+ 1356              	.LVL110:
+ 441:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 1357              		.loc 1 441 5 view .LVU386
+ 442:../../bos/core/b_device.c ****     {
+ 443:../../bos/core/b_device.c ****         return retval;
+ 1358              		.loc 1 443 16 is_stmt 0 view .LVU387
+ 1359 0004 B8010000 		movl	$1, %eax
+ 1359      00
+ 441:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 1360              		.loc 1 441 8 view .LVU388
+ 1361 0009 83FF01   		cmpl	$1, %edi
+ 1362 000c 771B     		ja	.L110
+ 444:../../bos/core/b_device.c ****     }
+ 445:../../bos/core/b_device.c ****     return (bDriverInterfaceTable[dev_no].status != 0);
+ 1363              		.loc 1 445 5 is_stmt 1 view .LVU389
+ 1364              		.loc 1 445 42 is_stmt 0 view .LVU390
+ 1365 000e 89FF     		movl	%edi, %edi
+GAS LISTING /tmp/cc0DmMpA.s 			page 38
+
+
+ 1366              		.loc 1 445 50 view .LVU391
+ 1367 0010 488D1500 		leaq	bDriverInterfaceTable(%rip), %rdx
+ 1367      000000
+ 1368              		.loc 1 445 42 view .LVU392
+ 1369 0017 4889F8   		movq	%rdi, %rax
+ 1370 001a 48C1E004 		salq	$4, %rax
+ 1371 001e 4829F8   		subq	%rdi, %rax
+ 1372              		.loc 1 445 50 view .LVU393
+ 1373 0021 8B04C2   		movl	(%rdx,%rax,8), %eax
+ 1374 0024 85C0     		testl	%eax, %eax
+ 1375 0026 0F95C0   		setne	%al
+ 1376              	.LVL111:
+ 1377              	.L110:
+ 446:../../bos/core/b_device.c **** }
+ 1378              		.loc 1 446 1 view .LVU394
+ 1379 0029 C3       		ret
+ 1380              		.cfi_endproc
+ 1381              	.LFE42:
+ 1383              		.section	.text.bDeviceDescription,"ax",@progbits
+ 1384              		.p2align 4
+ 1385              		.globl	bDeviceDescription
+ 1387              	bDeviceDescription:
+ 1388              	.LVL112:
+ 1389              	.LFB43:
+ 447:../../bos/core/b_device.c **** 
+ 448:../../bos/core/b_device.c **** const char *bDeviceDescription(uint32_t dev_no)
+ 449:../../bos/core/b_device.c **** {
+ 1390              		.loc 1 449 1 is_stmt 1 view -0
+ 1391              		.cfi_startproc
+ 1392              		.loc 1 449 1 is_stmt 0 view .LVU396
+ 1393 0000 F30F1EFA 		endbr64
+ 450:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 1394              		.loc 1 450 5 is_stmt 1 view .LVU397
+ 451:../../bos/core/b_device.c ****     {
+ 452:../../bos/core/b_device.c ****         return NULL;
+ 1395              		.loc 1 452 16 is_stmt 0 view .LVU398
+ 1396 0004 31C0     		xorl	%eax, %eax
+ 450:../../bos/core/b_device.c ****     if (dev_no >= B_REG_DEV_NUMBER)
+ 1397              		.loc 1 450 8 view .LVU399
+ 1398 0006 83FF01   		cmpl	$1, %edi
+ 1399 0009 770D     		ja	.L113
+ 453:../../bos/core/b_device.c ****     }
+ 454:../../bos/core/b_device.c ****     return bDeviceDescTable[dev_no];
+ 1400              		.loc 1 454 5 is_stmt 1 view .LVU400
+ 1401              		.loc 1 454 28 is_stmt 0 view .LVU401
+ 1402 000b 89FF     		movl	%edi, %edi
+ 1403              		.loc 1 454 28 view .LVU402
+ 1404 000d 488D0500 		leaq	bDeviceDescTable(%rip), %rax
+ 1404      000000
+ 1405 0014 488B04F8 		movq	(%rax,%rdi,8), %rax
+ 1406              	.LVL113:
+ 1407              	.L113:
+ 455:../../bos/core/b_device.c **** }
+ 1408              		.loc 1 455 1 view .LVU403
+ 1409 0018 C3       		ret
+ 1410              		.cfi_endproc
+ 1411              	.LFE43:
+GAS LISTING /tmp/cc0DmMpA.s 			page 39
+
+
+ 1413              		.section	.rodata.__func__.0,"a"
+ 1414              		.align 16
+ 1417              	__func__.0:
+ 1418 0000 62446576 		.string	"bDeviceISNormal"
+ 1418      69636549 
+ 1418      534E6F72 
+ 1418      6D616C00 
+ 1419              		.section	.rodata.__func__.1,"a"
+ 1420              		.align 8
+ 1423              	__func__.1:
+ 1424 0000 62446576 		.string	"bDeviceCtl"
+ 1424      69636543 
+ 1424      746C00
+ 1425              		.section	.rodata.__func__.2,"a"
+ 1426              		.align 8
+ 1429              	__func__.2:
+ 1430 0000 62446576 		.string	"bDeviceClose"
+ 1430      69636543 
+ 1430      6C6F7365 
+ 1430      00
+ 1431              		.section	.rodata.__func__.3,"a"
+ 1432              		.align 8
+ 1435              	__func__.3:
+ 1436 0000 62446576 		.string	"bDeviceWrite"
+ 1436      69636557 
+ 1436      72697465 
+ 1436      00
+ 1437              		.section	.rodata.__func__.4,"a"
+ 1438              		.align 8
+ 1441              	__func__.4:
+ 1442 0000 62446576 		.string	"bDeviceRead"
+ 1442      69636552 
+ 1442      65616400 
+ 1443              		.section	.rodata.__func__.5,"a"
+ 1444              		.align 8
+ 1447              	__func__.5:
+ 1448 0000 62446576 		.string	"bDeviceOpen"
+ 1448      6963654F 
+ 1448      70656E00 
+ 1449              		.section	.rodata.__func__.6,"a"
+ 1450              		.align 8
+ 1453              	__func__.6:
+ 1454 0000 62446576 		.string	"bDeviceInit"
+ 1454      69636549 
+ 1454      6E697400 
+ 1455              		.globl	init_bDriverNullInit
+ 1456              		.section	.driver_init,"aw"
+ 1457              		.align 16
+ 1460              	init_bDriverNullInit:
+ 1461 0000 00000000 		.long	0
+ 1462 0004 00000000 		.zero	4
+ 1463 0008 00000000 		.quad	_bDriverNullInit
+ 1463      00000000 
+ 1464              		.globl	init0_bDriverNullInit
+ 1465              		.section	.driver_init_0,"aw"
+ 1466              		.align 16
+ 1469              	init0_bDriverNullInit:
+GAS LISTING /tmp/cc0DmMpA.s 			page 40
+
+
+ 1470 0000 00000000 		.long	0
+ 1471 0004 00000000 		.zero	4
+ 1472 0008 00000000 		.quad	_bDriverNullInit
+ 1472      00000000 
+ 1473              		.section	.bss.bDriverInterfaceTable,"aw",@nobits
+ 1474              		.align 32
+ 1477              	bDriverInterfaceTable:
+ 1478 0000 00000000 		.zero	240
+ 1478      00000000 
+ 1478      00000000 
+ 1478      00000000 
+ 1478      00000000 
+ 1479              		.section	.data.rel.ro.local.bDeviceDescTable,"aw"
+ 1480              		.align 16
+ 1483              	bDeviceDescTable:
+ 1484 0000 00000000 		.quad	.LC3
+ 1484      00000000 
+ 1485 0008 00000000 		.quad	.LC4
+ 1485      00000000 
+ 1486              		.text
+ 1487              	.Letext0:
+ 1488              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1489              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1490              		.file 5 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1491              		.file 6 "../../bos/core/inc/b_device.h"
+ 1492              		.file 7 "../../bos/utils/inc/b_util_fifo.h"
+ 1493              		.file 8 "../../bos/drivers/inc/b_driver.h"
+ 1494              		.file 9 "../../bos/utils/inc/b_util_log.h"
+ 6325              		.section	.note.gnu.property,"a"
+ 6326              		.align 8
+ 6327 0000 04000000 		.long	1f - 0f
+ 6328 0004 10000000 		.long	4f - 1f
+ 6329 0008 05000000 		.long	5
+ 6330              	0:
+ 6331 000c 474E5500 		.string	"GNU"
+ 6332              	1:
+ 6333              		.align 8
+ 6334 0010 020000C0 		.long	0xc0000002
+ 6335 0014 04000000 		.long	3f - 2f
+ 6336              	2:
+ 6337 0018 03000000 		.long	0x3
+ 6338              	3:
+ 6339 001c 00000000 		.align 8
+ 6340              	4:
+GAS LISTING /tmp/cc0DmMpA.s 			page 41
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_device.c
+     /tmp/cc0DmMpA.s:8      .text._bDriverNullInit:0000000000000000 _bDriverNullInit
+     /tmp/cc0DmMpA.s:45     .text.bDeviceInit:0000000000000000 bDeviceInit
+     /tmp/cc0DmMpA.s:1477   .bss.bDriverInterfaceTable:0000000000000000 bDriverInterfaceTable
+     /tmp/cc0DmMpA.s:1453   .rodata.__func__.6:0000000000000000 __func__.6
+     /tmp/cc0DmMpA.s:410    .text.bDeviceReinit:0000000000000000 bDeviceReinit
+     /tmp/cc0DmMpA.s:490    .text.bDeviceOpen:0000000000000000 bDeviceOpen
+     /tmp/cc0DmMpA.s:1483   .data.rel.ro.local.bDeviceDescTable:0000000000000000 bDeviceDescTable
+     /tmp/cc0DmMpA.s:1447   .rodata.__func__.5:0000000000000000 __func__.5
+     /tmp/cc0DmMpA.s:581    .text.bDeviceRead:0000000000000000 bDeviceRead
+     /tmp/cc0DmMpA.s:1441   .rodata.__func__.4:0000000000000000 __func__.4
+     /tmp/cc0DmMpA.s:680    .text.bDeviceWrite:0000000000000000 bDeviceWrite
+     /tmp/cc0DmMpA.s:1435   .rodata.__func__.3:0000000000000000 __func__.3
+     /tmp/cc0DmMpA.s:779    .text.bDeviceClose:0000000000000000 bDeviceClose
+     /tmp/cc0DmMpA.s:1429   .rodata.__func__.2:0000000000000000 __func__.2
+     /tmp/cc0DmMpA.s:870    .text.bDeviceCtl:0000000000000000 bDeviceCtl
+     /tmp/cc0DmMpA.s:1423   .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/cc0DmMpA.s:967    .text.bDeviceModifyHalIf:0000000000000000 bDeviceModifyHalIf
+     /tmp/cc0DmMpA.s:1021   .text.bDeviceISNormal:0000000000000000 bDeviceISNormal
+     /tmp/cc0DmMpA.s:1417   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/cc0DmMpA.s:1094   .text.bDeviceReadMessage:0000000000000000 bDeviceReadMessage
+     /tmp/cc0DmMpA.s:1137   .text.bDeviceWriteMessage:0000000000000000 bDeviceWriteMessage
+     /tmp/cc0DmMpA.s:1178   .text.bDeviceIsReadable:0000000000000000 bDeviceIsReadable
+     /tmp/cc0DmMpA.s:1263   .text.bDeviceIsWritable:0000000000000000 bDeviceIsWritable
+     /tmp/cc0DmMpA.s:1348   .text.bDeviceIsAbnormal:0000000000000000 bDeviceIsAbnormal
+     /tmp/cc0DmMpA.s:1387   .text.bDeviceDescription:0000000000000000 bDeviceDescription
+     /tmp/cc0DmMpA.s:1460   .driver_init:0000000000000000 init_bDriverNullInit
+     /tmp/cc0DmMpA.s:1469   .driver_init_0:0000000000000000 init0_bDriverNullInit
+     /tmp/cc0DmMpA.s:31     .rodata.bDeviceInit.str1.1:0000000000000035 .LC3
+     /tmp/cc0DmMpA.s:33     .rodata.bDeviceInit.str1.1:000000000000003a .LC4
+     /tmp/cc0DmMpA.s:29     .rodata.bDeviceInit.str1.1:000000000000001b .LC2
+     /tmp/cc0DmMpA.s:25     .rodata.bDeviceInit.str1.1:0000000000000000 .LC0
+     /tmp/cc0DmMpA.s:27     .rodata.bDeviceInit.str1.1:0000000000000004 .LC1
+     /tmp/cc0DmMpA.s:35     .rodata.bDeviceInit.str1.1:0000000000000042 .LC5
+     /tmp/cc0DmMpA.s:37     .rodata.bDeviceInit.str1.1:0000000000000050 .LC6
+     /tmp/cc0DmMpA.s:39     .rodata.bDeviceInit.str1.1:0000000000000059 .LC7
+     /tmp/cc0DmMpA.s:484    .rodata.bDeviceOpen.str1.1:0000000000000000 .LC8
+     /tmp/cc0DmMpA.s:1015   .rodata.bDeviceISNormal.str1.1:0000000000000000 .LC9
+
+UNDEFINED SYMBOLS
+__start_driver_init_0
+__stop_driver_init_0
+__stop_driver_init
+__start_driver_init
+bLogOut
+bFIFO_Length
+__stack_chk_fail

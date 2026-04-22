@@ -1,0 +1,1792 @@
+GAS LISTING /tmp/cciSkYxW.s 			page 1
+
+
+   1              		.file	"b_timer.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/core/b_timer.c"
+   5              		.section	.text._bTimerTaskFunc,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	_bTimerTaskFunc
+   9              	_bTimerTaskFunc:
+  10              	.LVL0:
+  11              	.LFB29:
+   1:../../bos/core/b_timer.c **** /**
+   2:../../bos/core/b_timer.c ****  *!
+   3:../../bos/core/b_timer.c ****  * \file        b_timer.c
+   4:../../bos/core/b_timer.c ****  * \version     v0.0.1
+   5:../../bos/core/b_timer.c ****  * \date        2019/06/05
+   6:../../bos/core/b_timer.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/core/b_timer.c ****  *******************************************************************************
+   8:../../bos/core/b_timer.c ****  * @attention
+   9:../../bos/core/b_timer.c ****  *
+  10:../../bos/core/b_timer.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/core/b_timer.c ****  *
+  12:../../bos/core/b_timer.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/core/b_timer.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/core/b_timer.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/core/b_timer.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/core/b_timer.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/core/b_timer.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/core/b_timer.c ****  *
+  19:../../bos/core/b_timer.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/core/b_timer.c ****  * copies or substantial portions of the Software.
+  21:../../bos/core/b_timer.c ****  *
+  22:../../bos/core/b_timer.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/core/b_timer.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/core/b_timer.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/core/b_timer.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/core/b_timer.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/core/b_timer.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/core/b_timer.c ****  * SOFTWARE.
+  29:../../bos/core/b_timer.c ****  *******************************************************************************
+  30:../../bos/core/b_timer.c ****  */
+  31:../../bos/core/b_timer.c **** 
+  32:../../bos/core/b_timer.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/core/b_timer.c **** #include "core/inc/b_timer.h"
+  34:../../bos/core/b_timer.c **** 
+  35:../../bos/core/b_timer.c **** #include "b_section.h"
+  36:../../bos/core/b_timer.c **** #include "core/inc/b_task.h"
+  37:../../bos/core/b_timer.c **** #include "hal/inc/b_hal.h"
+  38:../../bos/core/b_timer.c **** 
+  39:../../bos/core/b_timer.c **** /**
+  40:../../bos/core/b_timer.c ****  * \addtogroup BABYOS
+  41:../../bos/core/b_timer.c ****  * \{
+  42:../../bos/core/b_timer.c ****  */
+  43:../../bos/core/b_timer.c **** 
+  44:../../bos/core/b_timer.c **** /**
+  45:../../bos/core/b_timer.c ****  * \addtogroup CORE
+  46:../../bos/core/b_timer.c ****  * \{
+  47:../../bos/core/b_timer.c ****  */
+GAS LISTING /tmp/cciSkYxW.s 			page 2
+
+
+  48:../../bos/core/b_timer.c **** 
+  49:../../bos/core/b_timer.c **** /**
+  50:../../bos/core/b_timer.c ****  * \addtogroup TIMER
+  51:../../bos/core/b_timer.c ****  * \{
+  52:../../bos/core/b_timer.c ****  */
+  53:../../bos/core/b_timer.c **** 
+  54:../../bos/core/b_timer.c **** /**
+  55:../../bos/core/b_timer.c ****  * \defgroup TIMER_Private_TypesDefinitions
+  56:../../bos/core/b_timer.c ****  * \{
+  57:../../bos/core/b_timer.c ****  */
+  58:../../bos/core/b_timer.c **** 
+  59:../../bos/core/b_timer.c **** /**
+  60:../../bos/core/b_timer.c ****  * \}
+  61:../../bos/core/b_timer.c ****  */
+  62:../../bos/core/b_timer.c **** 
+  63:../../bos/core/b_timer.c **** /**
+  64:../../bos/core/b_timer.c ****  * \defgroup TIMER_Private_Defines
+  65:../../bos/core/b_timer.c ****  * \{
+  66:../../bos/core/b_timer.c ****  */
+  67:../../bos/core/b_timer.c **** 
+  68:../../bos/core/b_timer.c **** /**
+  69:../../bos/core/b_timer.c ****  * \}
+  70:../../bos/core/b_timer.c ****  */
+  71:../../bos/core/b_timer.c **** 
+  72:../../bos/core/b_timer.c **** /**
+  73:../../bos/core/b_timer.c ****  * \defgroup TIMER_Private_Macros
+  74:../../bos/core/b_timer.c ****  * \{
+  75:../../bos/core/b_timer.c ****  */
+  76:../../bos/core/b_timer.c **** 
+  77:../../bos/core/b_timer.c **** /**
+  78:../../bos/core/b_timer.c ****  * \}
+  79:../../bos/core/b_timer.c ****  */
+  80:../../bos/core/b_timer.c **** 
+  81:../../bos/core/b_timer.c **** /**
+  82:../../bos/core/b_timer.c ****  * \defgroup TIMER_Private_Variables
+  83:../../bos/core/b_timer.c ****  * \{
+  84:../../bos/core/b_timer.c ****  */
+  85:../../bos/core/b_timer.c **** 
+  86:../../bos/core/b_timer.c **** static LIST_HEAD(bTimerListHead);
+  87:../../bos/core/b_timer.c **** static bTaskId_t bTimerTaskId = NULL;
+  88:../../bos/core/b_timer.c **** B_TASK_CREATE_ATTR(bTimerTaskAttr);
+  89:../../bos/core/b_timer.c **** 
+  90:../../bos/core/b_timer.c **** /**
+  91:../../bos/core/b_timer.c ****  * \}
+  92:../../bos/core/b_timer.c ****  */
+  93:../../bos/core/b_timer.c **** 
+  94:../../bos/core/b_timer.c **** /**
+  95:../../bos/core/b_timer.c ****  * \defgroup TIMER_Private_FunctionPrototypes
+  96:../../bos/core/b_timer.c ****  * \{
+  97:../../bos/core/b_timer.c ****  */
+  98:../../bos/core/b_timer.c **** 
+  99:../../bos/core/b_timer.c **** /**
+ 100:../../bos/core/b_timer.c ****  * \}
+ 101:../../bos/core/b_timer.c ****  */
+ 102:../../bos/core/b_timer.c **** 
+ 103:../../bos/core/b_timer.c **** /**
+ 104:../../bos/core/b_timer.c ****  * \defgroup TIMER_Private_Functions
+GAS LISTING /tmp/cciSkYxW.s 			page 3
+
+
+ 105:../../bos/core/b_timer.c ****  * \{
+ 106:../../bos/core/b_timer.c ****  */
+ 107:../../bos/core/b_timer.c **** 
+ 108:../../bos/core/b_timer.c **** static bTimerAttr_t *_bTimerFind(bTimerId_t id)
+ 109:../../bos/core/b_timer.c **** {
+ 110:../../bos/core/b_timer.c ****     struct list_head *pos   = NULL;
+ 111:../../bos/core/b_timer.c ****     bTimerAttr_t     *pattr = NULL;
+ 112:../../bos/core/b_timer.c ****     list_for_each(pos, &bTimerListHead)
+ 113:../../bos/core/b_timer.c ****     {
+ 114:../../bos/core/b_timer.c ****         pattr = list_entry(pos, bTimerAttr_t, list);
+ 115:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 116:../../bos/core/b_timer.c ****         {
+ 117:../../bos/core/b_timer.c ****             break;
+ 118:../../bos/core/b_timer.c ****         }
+ 119:../../bos/core/b_timer.c ****         pattr = NULL;
+ 120:../../bos/core/b_timer.c ****     }
+ 121:../../bos/core/b_timer.c ****     return pattr;
+ 122:../../bos/core/b_timer.c **** }
+ 123:../../bos/core/b_timer.c **** 
+ 124:../../bos/core/b_timer.c **** PT_THREAD(_bTimerTaskFunc)(struct pt *pt, void *arg)
+ 125:../../bos/core/b_timer.c **** {
+  12              		.loc 1 125 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 125 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+ 126:../../bos/core/b_timer.c ****     struct list_head *pos = NULL, *n = NULL;
+  16              		.loc 1 126 5 is_stmt 1 view .LVU2
+  17              	.LVL1:
+ 127:../../bos/core/b_timer.c ****     bTimerAttr_t     *pattr = NULL;
+  18              		.loc 1 127 5 view .LVU3
+ 128:../../bos/core/b_timer.c ****     B_TASK_INIT_BEGIN();
+  19              		.loc 1 128 5 view .LVU4
+ 125:../../bos/core/b_timer.c ****     struct list_head *pos = NULL, *n = NULL;
+  20              		.loc 1 125 1 is_stmt 0 view .LVU5
+  21 0004 4155     		pushq	%r13
+  22              	.LCFI0:
+  23              		.cfi_def_cfa_offset 16
+  24              		.cfi_offset 13, -16
+  25 0006 4154     		pushq	%r12
+  26              	.LCFI1:
+  27              		.cfi_def_cfa_offset 24
+  28              		.cfi_offset 12, -24
+  29 0008 4989FC   		movq	%rdi, %r12
+  30 000b 55       		pushq	%rbp
+  31              	.LCFI2:
+  32              		.cfi_def_cfa_offset 32
+  33              		.cfi_offset 6, -32
+  34 000c 53       		pushq	%rbx
+  35              	.LCFI3:
+  36              		.cfi_def_cfa_offset 40
+  37              		.cfi_offset 3, -40
+  38 000d 4883EC08 		subq	$8, %rsp
+  39              	.LCFI4:
+  40              		.cfi_def_cfa_offset 48
+  41              		.loc 1 128 5 view .LVU6
+  42 0011 807F0D00 		cmpb	$0, 13(%rdi)
+  43 0015 7504     		jne	.L2
+GAS LISTING /tmp/cciSkYxW.s 			page 4
+
+
+  44              		.loc 1 128 5 is_stmt 1 discriminator 1 view .LVU7
+  45 0017 C6470D01 		movb	$1, 13(%rdi)
+  46              	.L2:
+  47              		.loc 1 128 24 discriminator 3 view .LVU8
+ 129:../../bos/core/b_timer.c ****     // ...
+ 130:../../bos/core/b_timer.c ****     B_TASK_INIT_END();
+  48              		.loc 1 130 22 view .LVU9
+  49              	.LBB48:
+ 131:../../bos/core/b_timer.c **** 
+ 132:../../bos/core/b_timer.c ****     PT_BEGIN(pt);
+  50              		.loc 1 132 5 view .LVU10
+  51              	.LVL2:
+  52              		.loc 1 132 5 view .LVU11
+  53              		.loc 1 132 5 view .LVU12
+  54 001b 410FB704 		movzwl	(%r12), %eax
+  54      24
+  55 0020 6685C0   		testw	%ax, %ax
+  56 0023 743B     		je	.L3
+  57 0025 663D9F00 		cmpw	$159, %ax
+  58 0029 7435     		je	.L3
+ 133:../../bos/core/b_timer.c ****     while (1)
+ 134:../../bos/core/b_timer.c ****     {
+ 135:../../bos/core/b_timer.c ****         if (list_empty(&bTimerListHead))
+ 136:../../bos/core/b_timer.c ****         {
+ 137:../../bos/core/b_timer.c ****             bTaskRestart(pt);
+ 138:../../bos/core/b_timer.c ****         }
+ 139:../../bos/core/b_timer.c ****         list_for_each_safe(pos, n, &bTimerListHead)
+ 140:../../bos/core/b_timer.c ****         {
+ 141:../../bos/core/b_timer.c ****             pattr = list_entry(pos, bTimerAttr_t, list);
+ 142:../../bos/core/b_timer.c ****             if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
+ 143:../../bos/core/b_timer.c ****             {
+ 144:../../bos/core/b_timer.c ****                 if (TICK_DIFF_BIT32(pattr->tick, bHalGetSysTick()) > MS2TICKS(pattr->cycle))
+ 145:../../bos/core/b_timer.c ****                 {
+ 146:../../bos/core/b_timer.c ****                     if (pattr->type == B_TIMER_ONCE)
+ 147:../../bos/core/b_timer.c ****                     {
+ 148:../../bos/core/b_timer.c ****                         pattr->enable = 0;
+ 149:../../bos/core/b_timer.c ****                         __list_del(pos->prev, pos->next);
+ 150:../../bos/core/b_timer.c ****                     }
+ 151:../../bos/core/b_timer.c ****                     else
+ 152:../../bos/core/b_timer.c ****                     {
+ 153:../../bos/core/b_timer.c ****                         pattr->tick = bHalGetSysTick();
+ 154:../../bos/core/b_timer.c ****                     }
+ 155:../../bos/core/b_timer.c ****                     pattr->func(pattr->arg);
+ 156:../../bos/core/b_timer.c ****                 }
+ 157:../../bos/core/b_timer.c ****             }
+ 158:../../bos/core/b_timer.c ****         }
+ 159:../../bos/core/b_timer.c ****         bTaskYield(pt);
+ 160:../../bos/core/b_timer.c ****     }
+ 161:../../bos/core/b_timer.c ****     PT_END(pt);
+  59              		.loc 1 161 5 view .LVU13
+  60              		.loc 1 161 5 view .LVU14
+  61              	.LVL3:
+  62              		.loc 1 161 5 view .LVU15
+  63              		.loc 1 161 5 view .LVU16
+  64 002b 31C0     		xorl	%eax, %eax
+  65 002d 31D2     		xorl	%edx, %edx
+  66 002f 41C64424 		movb	$0, 12(%r12)
+GAS LISTING /tmp/cciSkYxW.s 			page 5
+
+
+  66      0C00
+  67 0035 66418904 		movw	%ax, (%r12)
+  67      24
+  68              		.loc 1 161 5 view .LVU17
+  69              		.loc 1 161 5 view .LVU18
+  70              		.loc 1 161 5 view .LVU19
+  71              		.loc 1 161 5 view .LVU20
+  72 003a B8030000 		movl	$3, %eax
+  72      00
+  73 003f 49C74424 		movq	$0, 4(%r12)
+  73      04000000 
+  73      00
+  74              		.loc 1 161 5 view .LVU21
+  75              		.loc 1 161 5 view .LVU22
+  76              		.loc 1 161 5 view .LVU23
+  77              		.loc 1 161 5 view .LVU24
+  78 0048 66418954 		movw	%dx, 14(%r12)
+  78      240E
+  79              		.loc 1 161 5 view .LVU25
+  80              		.loc 1 161 5 view .LVU26
+  81              		.loc 1 161 5 view .LVU27
+  82              	.LBE48:
+  83              		.loc 1 161 15 discriminator 1 view .LVU28
+ 162:../../bos/core/b_timer.c **** }
+  84              		.loc 1 162 1 is_stmt 0 view .LVU29
+  85 004e 4883C408 		addq	$8, %rsp
+  86              	.LCFI5:
+  87              		.cfi_remember_state
+  88              		.cfi_def_cfa_offset 40
+  89 0052 5B       		popq	%rbx
+  90              	.LCFI6:
+  91              		.cfi_def_cfa_offset 32
+  92 0053 5D       		popq	%rbp
+  93              	.LCFI7:
+  94              		.cfi_def_cfa_offset 24
+  95 0054 415C     		popq	%r12
+  96              	.LCFI8:
+  97              		.cfi_def_cfa_offset 16
+  98 0056 415D     		popq	%r13
+  99              	.LCFI9:
+ 100              		.cfi_def_cfa_offset 8
+ 101 0058 C3       		ret
+ 102              	.LVL4:
+ 103 0059 0F1F8000 		.p2align 4,,10
+ 103      000000
+ 104              		.p2align 3
+ 105              	.L3:
+ 106              	.LCFI10:
+ 107              		.cfi_restore_state
+ 108              	.LBB49:
+ 109              	.LBI49:
+ 124:../../bos/core/b_timer.c **** {
+ 110              		.loc 1 124 1 is_stmt 1 view .LVU30
+ 111              	.LBB50:
+ 112              	.LBB51:
+ 132:../../bos/core/b_timer.c ****     while (1)
+ 113              		.loc 1 132 17 discriminator 1 view .LVU31
+GAS LISTING /tmp/cciSkYxW.s 			page 6
+
+
+ 133:../../bos/core/b_timer.c ****     {
+ 114              		.loc 1 133 5 view .LVU32
+ 135:../../bos/core/b_timer.c ****         {
+ 115              		.loc 1 135 9 view .LVU33
+ 116              	.LBB52:
+ 117              	.LBI52:
+ 118              		.file 2 "../../bos/utils/inc/b_util_list.h"
+   1:../../bos/utils/inc/b_util_list.h **** /**
+   2:../../bos/utils/inc/b_util_list.h ****  *!
+   3:../../bos/utils/inc/b_util_list.h ****  * \file        b_util_list.h
+   4:../../bos/utils/inc/b_util_list.h ****  * \version     v0.0.1
+   5:../../bos/utils/inc/b_util_list.h ****  * \date        2019/12/23
+   6:../../bos/utils/inc/b_util_list.h ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+   8:../../bos/utils/inc/b_util_list.h ****  * @attention
+   9:../../bos/utils/inc/b_util_list.h ****  *
+  10:../../bos/utils/inc/b_util_list.h ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/inc/b_util_list.h ****  *
+  12:../../bos/utils/inc/b_util_list.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/inc/b_util_list.h ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/inc/b_util_list.h ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/inc/b_util_list.h ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/inc/b_util_list.h ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/inc/b_util_list.h ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/inc/b_util_list.h ****  *
+  19:../../bos/utils/inc/b_util_list.h ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/inc/b_util_list.h ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/inc/b_util_list.h ****  *
+  22:../../bos/utils/inc/b_util_list.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/inc/b_util_list.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/inc/b_util_list.h ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/inc/b_util_list.h ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/inc/b_util_list.h ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/inc/b_util_list.h ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/inc/b_util_list.h ****  * SOFTWARE.
+  29:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+  30:../../bos/utils/inc/b_util_list.h ****  */
+  31:../../bos/utils/inc/b_util_list.h **** #ifndef __B_UTIL_LIST_H__
+  32:../../bos/utils/inc/b_util_list.h **** #define __B_UTIL_LIST_H__
+  33:../../bos/utils/inc/b_util_list.h **** 
+  34:../../bos/utils/inc/b_util_list.h **** #ifdef __cplusplus
+  35:../../bos/utils/inc/b_util_list.h **** extern "C" {
+  36:../../bos/utils/inc/b_util_list.h **** #endif
+  37:../../bos/utils/inc/b_util_list.h **** 
+  38:../../bos/utils/inc/b_util_list.h **** /*Includes ----------------------------------------------*/
+  39:../../bos/utils/inc/b_util_list.h **** #include "b_type.h"
+  40:../../bos/utils/inc/b_util_list.h **** /**
+  41:../../bos/utils/inc/b_util_list.h ****  * \addtogroup B_UTILS
+  42:../../bos/utils/inc/b_util_list.h ****  * \{
+  43:../../bos/utils/inc/b_util_list.h ****  */
+  44:../../bos/utils/inc/b_util_list.h **** 
+  45:../../bos/utils/inc/b_util_list.h **** /**
+  46:../../bos/utils/inc/b_util_list.h ****  * \addtogroup LIST
+  47:../../bos/utils/inc/b_util_list.h ****  * \{
+  48:../../bos/utils/inc/b_util_list.h ****  */
+  49:../../bos/utils/inc/b_util_list.h **** 
+  50:../../bos/utils/inc/b_util_list.h **** struct list_head
+GAS LISTING /tmp/cciSkYxW.s 			page 7
+
+
+  51:../../bos/utils/inc/b_util_list.h **** {
+  52:../../bos/utils/inc/b_util_list.h ****     struct list_head *next, *prev;
+  53:../../bos/utils/inc/b_util_list.h **** };
+  54:../../bos/utils/inc/b_util_list.h **** 
+  55:../../bos/utils/inc/b_util_list.h **** #define WRITE_ONCE(var, val) (var) = (val)
+  56:../../bos/utils/inc/b_util_list.h **** 
+  57:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD_INIT(name) \
+  58:../../bos/utils/inc/b_util_list.h ****     {                        \
+  59:../../bos/utils/inc/b_util_list.h ****         &(name), &(name)     \
+  60:../../bos/utils/inc/b_util_list.h ****     }
+  61:../../bos/utils/inc/b_util_list.h **** 
+  62:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD(name) struct list_head name = LIST_HEAD_INIT(name)
+  63:../../bos/utils/inc/b_util_list.h **** 
+  64:../../bos/utils/inc/b_util_list.h **** #define INIT_LIST_HEAD(ptr)  \
+  65:../../bos/utils/inc/b_util_list.h ****     do                       \
+  66:../../bos/utils/inc/b_util_list.h ****     {                        \
+  67:../../bos/utils/inc/b_util_list.h ****         (ptr)->next = (ptr); \
+  68:../../bos/utils/inc/b_util_list.h ****         (ptr)->prev = (ptr); \
+  69:../../bos/utils/inc/b_util_list.h ****     } while (0)
+  70:../../bos/utils/inc/b_util_list.h **** 
+  71:../../bos/utils/inc/b_util_list.h **** /**
+  72:../../bos/utils/inc/b_util_list.h ****  * list_entry - get the struct for this entry
+  73:../../bos/utils/inc/b_util_list.h ****  * @ptr: the &struct list_head pointer.
+  74:../../bos/utils/inc/b_util_list.h ****  * @type: the type of the struct this is embedded in.
+  75:../../bos/utils/inc/b_util_list.h ****  * @member: the name of the list_struct within the struct.
+  76:../../bos/utils/inc/b_util_list.h ****  */
+  77:../../bos/utils/inc/b_util_list.h **** #define list_entry(ptr, type, member) \
+  78:../../bos/utils/inc/b_util_list.h ****     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
+  79:../../bos/utils/inc/b_util_list.h **** 
+  80:../../bos/utils/inc/b_util_list.h **** #define list_first_entry(ptr, type, member) list_entry((ptr)->next, type, member)
+  81:../../bos/utils/inc/b_util_list.h **** 
+  82:../../bos/utils/inc/b_util_list.h **** #define list_next_entry(pos, type, member) list_entry((pos)->member.next, type, member)
+  83:../../bos/utils/inc/b_util_list.h **** 
+  84:../../bos/utils/inc/b_util_list.h **** /*
+  85:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry between two known consecutive entries.
+  86:../../bos/utils/inc/b_util_list.h ****  *
+  87:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+  88:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+  89:../../bos/utils/inc/b_util_list.h ****  */
+  90:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_add(struct list_head *newItem, struct list_head *prev,
+  91:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+  92:../../bos/utils/inc/b_util_list.h **** {
+  93:../../bos/utils/inc/b_util_list.h ****     next->prev    = newItem;
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+  95:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+  96:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+  97:../../bos/utils/inc/b_util_list.h **** }
+  98:../../bos/utils/inc/b_util_list.h **** 
+  99:../../bos/utils/inc/b_util_list.h **** /**
+ 100:../../bos/utils/inc/b_util_list.h ****  * list_add - add a new entry
+ 101:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 102:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it after
+ 103:../../bos/utils/inc/b_util_list.h ****  *
+ 104:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry after the specified head.
+ 105:../../bos/utils/inc/b_util_list.h ****  * This is good for implementing stacks.
+ 106:../../bos/utils/inc/b_util_list.h ****  */
+ 107:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add(struct list_head *newItem, struct list_head *head)
+GAS LISTING /tmp/cciSkYxW.s 			page 8
+
+
+ 108:../../bos/utils/inc/b_util_list.h **** {
+ 109:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head, head->next);
+ 110:../../bos/utils/inc/b_util_list.h **** }
+ 111:../../bos/utils/inc/b_util_list.h **** 
+ 112:../../bos/utils/inc/b_util_list.h **** /**
+ 113:../../bos/utils/inc/b_util_list.h ****  * list_add_tail - add a new entry
+ 114:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 115:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it before
+ 116:../../bos/utils/inc/b_util_list.h ****  *
+ 117:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry before the specified head.
+ 118:../../bos/utils/inc/b_util_list.h ****  * This is useful for implementing queues.
+ 119:../../bos/utils/inc/b_util_list.h ****  */
+ 120:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add_tail(struct list_head *newItem, struct list_head *head)
+ 121:../../bos/utils/inc/b_util_list.h **** {
+ 122:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head->prev, head);
+ 123:../../bos/utils/inc/b_util_list.h **** }
+ 124:../../bos/utils/inc/b_util_list.h **** 
+ 125:../../bos/utils/inc/b_util_list.h **** /*
+ 126:../../bos/utils/inc/b_util_list.h ****  * Delete a list entry by making the prev/next entries
+ 127:../../bos/utils/inc/b_util_list.h ****  * point to each other.
+ 128:../../bos/utils/inc/b_util_list.h ****  *
+ 129:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+ 130:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+ 131:../../bos/utils/inc/b_util_list.h ****  */
+ 132:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_del(struct list_head *prev, struct list_head *next)
+ 133:../../bos/utils/inc/b_util_list.h **** {
+ 134:../../bos/utils/inc/b_util_list.h ****     next->prev = prev;
+ 135:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 136:../../bos/utils/inc/b_util_list.h **** }
+ 137:../../bos/utils/inc/b_util_list.h **** 
+ 138:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_del(struct list_head *item)
+ 139:../../bos/utils/inc/b_util_list.h **** {
+ 140:../../bos/utils/inc/b_util_list.h ****     __list_del(item->prev, item->next);
+ 141:../../bos/utils/inc/b_util_list.h **** }
+ 142:../../bos/utils/inc/b_util_list.h **** 
+ 143:../../bos/utils/inc/b_util_list.h **** /**
+ 144:../../bos/utils/inc/b_util_list.h ****  * list_is_first -- tests whether @list is the first entry in list @head
+ 145:../../bos/utils/inc/b_util_list.h ****  * @list: the entry to test
+ 146:../../bos/utils/inc/b_util_list.h ****  * @head: the head of the list
+ 147:../../bos/utils/inc/b_util_list.h ****  */
+ 148:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF int list_is_first(const struct list_head *list, const struct list_head *head)
+ 149:../../bos/utils/inc/b_util_list.h **** {
+ 150:../../bos/utils/inc/b_util_list.h ****     return list->prev == head;
+ 151:../../bos/utils/inc/b_util_list.h **** }
+ 152:../../bos/utils/inc/b_util_list.h **** 
+ 153:../../bos/utils/inc/b_util_list.h **** /**
+ 154:../../bos/utils/inc/b_util_list.h ****  * list_is_last - tests whether @list is the last entry in list @head
+ 155:../../bos/utils/inc/b_util_list.h ****  * @list: the entry to test
+ 156:../../bos/utils/inc/b_util_list.h ****  * @head: the head of the list
+ 157:../../bos/utils/inc/b_util_list.h ****  */
+ 158:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF int list_is_last(const struct list_head *list, const struct list_head *head)
+ 159:../../bos/utils/inc/b_util_list.h **** {
+ 160:../../bos/utils/inc/b_util_list.h ****     return list->next == head;
+ 161:../../bos/utils/inc/b_util_list.h **** }
+ 162:../../bos/utils/inc/b_util_list.h **** 
+ 163:../../bos/utils/inc/b_util_list.h **** /**
+ 164:../../bos/utils/inc/b_util_list.h ****  * list_is_head - tests whether @list is the list @head
+GAS LISTING /tmp/cciSkYxW.s 			page 9
+
+
+ 165:../../bos/utils/inc/b_util_list.h ****  * @list: the entry to test
+ 166:../../bos/utils/inc/b_util_list.h ****  * @head: the head of the list
+ 167:../../bos/utils/inc/b_util_list.h ****  */
+ 168:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF int list_is_head(const struct list_head *list, const struct list_head *head)
+ 169:../../bos/utils/inc/b_util_list.h **** {
+ 170:../../bos/utils/inc/b_util_list.h ****     return list == head;
+ 171:../../bos/utils/inc/b_util_list.h **** }
+ 172:../../bos/utils/inc/b_util_list.h **** 
+ 173:../../bos/utils/inc/b_util_list.h **** /**
+ 174:../../bos/utils/inc/b_util_list.h ****  * list_empty - tests whether a list is empty
+ 175:../../bos/utils/inc/b_util_list.h ****  * @head: the list to test.
+ 176:../../bos/utils/inc/b_util_list.h ****  */
+ 177:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF int list_empty(const struct list_head *head)
+ 119              		.loc 2 177 25 view .LVU34
+ 120              	.LBB53:
+ 178:../../bos/utils/inc/b_util_list.h **** {
+ 179:../../bos/utils/inc/b_util_list.h ****     return head->next == head;
+ 121              		.loc 2 179 5 view .LVU35
+ 122              		.loc 2 179 16 is_stmt 0 view .LVU36
+ 123 0060 488B1D00 		movq	bTimerListHead(%rip), %rbx
+ 123      000000
+ 124              	.LVL5:
+ 125              		.loc 2 179 16 view .LVU37
+ 126 0067 4C8D2D00 		leaq	bTimerListHead(%rip), %r13
+ 126      000000
+ 127              	.LBE53:
+ 128              	.LBE52:
+ 135:../../bos/core/b_timer.c ****         {
+ 129              		.loc 1 135 12 discriminator 1 view .LVU38
+ 130 006e 4C39EB   		cmpq	%r13, %rbx
+ 131 0071 0F848100 		je	.L21
+ 131      0000
+ 137:../../bos/core/b_timer.c ****         }
+ 132              		.loc 1 137 13 is_stmt 1 view .LVU39
+ 139:../../bos/core/b_timer.c ****         {
+ 133              		.loc 1 139 9 view .LVU40
+ 134              	.LVL6:
+ 139:../../bos/core/b_timer.c ****         {
+ 135              		.loc 1 139 9 is_stmt 0 view .LVU41
+ 136 0077 488B2B   		movq	(%rbx), %rbp
+ 137              	.LVL7:
+ 139:../../bos/core/b_timer.c ****         {
+ 138              		.loc 1 139 9 is_stmt 1 discriminator 1 view .LVU42
+ 139 007a EB13     		jmp	.L14
+ 140              	.LVL8:
+ 141 007c 0F1F4000 		.p2align 4,,10
+ 142              		.p2align 3
+ 143              	.L8:
+ 139:../../bos/core/b_timer.c ****         {
+ 144              		.loc 1 139 9 discriminator 2 view .LVU43
+ 139:../../bos/core/b_timer.c ****         {
+ 145              		.loc 1 139 9 is_stmt 0 discriminator 2 view .LVU44
+ 146 0080 488B4500 		movq	0(%rbp), %rax
+ 147              	.LVL9:
+ 139:../../bos/core/b_timer.c ****         {
+ 148              		.loc 1 139 9 is_stmt 1 discriminator 1 view .LVU45
+ 149 0084 4889EB   		movq	%rbp, %rbx
+GAS LISTING /tmp/cciSkYxW.s 			page 10
+
+
+ 150              	.LVL10:
+ 139:../../bos/core/b_timer.c ****         {
+ 151              		.loc 1 139 9 is_stmt 0 discriminator 1 view .LVU46
+ 152 0087 4C39ED   		cmpq	%r13, %rbp
+ 153 008a 744E     		je	.L22
+ 154              	.LVL11:
+ 155              	.L15:
+ 139:../../bos/core/b_timer.c ****         {
+ 156              		.loc 1 139 9 discriminator 1 view .LVU47
+ 157 008c 4889C5   		movq	%rax, %rbp
+ 158              	.LVL12:
+ 159              	.L14:
+ 141:../../bos/core/b_timer.c ****             if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
+ 160              		.loc 1 141 13 is_stmt 1 view .LVU48
+ 142:../../bos/core/b_timer.c ****             {
+ 161              		.loc 1 142 13 view .LVU49
+ 142:../../bos/core/b_timer.c ****             {
+ 162              		.loc 1 142 31 is_stmt 0 discriminator 1 view .LVU50
+ 163 008f 48837BE0 		cmpq	$0, -32(%rbx)
+ 163      00
+ 164 0094 74EA     		je	.L8
+ 142:../../bos/core/b_timer.c ****             {
+ 165              		.loc 1 142 54 discriminator 2 view .LVU51
+ 166 0096 807BF001 		cmpb	$1, -16(%rbx)
+ 167 009a 75E4     		jne	.L8
+ 144:../../bos/core/b_timer.c ****                 {
+ 168              		.loc 1 144 17 is_stmt 1 view .LVU52
+ 144:../../bos/core/b_timer.c ****                 {
+ 169              		.loc 1 144 21 is_stmt 0 view .LVU53
+ 170 009c E8000000 		call	bHalGetSysTick@PLT
+ 170      00
+ 171              	.LVL13:
+ 144:../../bos/core/b_timer.c ****                 {
+ 172              		.loc 1 144 21 discriminator 2 view .LVU54
+ 173 00a1 E8000000 		call	bHalGetSysTick@PLT
+ 173      00
+ 174              	.LVL14:
+ 144:../../bos/core/b_timer.c ****                 {
+ 175              		.loc 1 144 21 discriminator 1 view .LVU55
+ 176 00a6 2B43F4   		subl	-12(%rbx), %eax
+ 144:../../bos/core/b_timer.c ****                 {
+ 177              		.loc 1 144 20 discriminator 4 view .LVU56
+ 178 00a9 3943F8   		cmpl	%eax, -8(%rbx)
+ 179 00ac 73D2     		jnb	.L8
+ 146:../../bos/core/b_timer.c ****                     {
+ 180              		.loc 1 146 21 is_stmt 1 view .LVU57
+ 146:../../bos/core/b_timer.c ****                     {
+ 181              		.loc 1 146 24 is_stmt 0 view .LVU58
+ 182 00ae 8B73FC   		movl	-4(%rbx), %esi
+ 183 00b1 85F6     		testl	%esi, %esi
+ 184 00b3 7573     		jne	.L12
+ 148:../../bos/core/b_timer.c ****                         __list_del(pos->prev, pos->next);
+ 185              		.loc 1 148 25 is_stmt 1 view .LVU59
+ 149:../../bos/core/b_timer.c ****                     }
+ 186              		.loc 1 149 25 is_stmt 0 view .LVU60
+ 187 00b5 488B13   		movq	(%rbx), %rdx
+ 188 00b8 488B4308 		movq	8(%rbx), %rax
+GAS LISTING /tmp/cciSkYxW.s 			page 11
+
+
+ 148:../../bos/core/b_timer.c ****                         __list_del(pos->prev, pos->next);
+ 189              		.loc 1 148 39 view .LVU61
+ 190 00bc C643F000 		movb	$0, -16(%rbx)
+ 149:../../bos/core/b_timer.c ****                     }
+ 191              		.loc 1 149 25 is_stmt 1 view .LVU62
+ 192              	.LVL15:
+ 193              	.LBB54:
+ 194              	.LBI54:
+ 132:../../bos/utils/inc/b_util_list.h **** {
+ 195              		.loc 2 132 26 view .LVU63
+ 196              	.LBB55:
+ 134:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 197              		.loc 2 134 5 view .LVU64
+ 134:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 198              		.loc 2 134 16 is_stmt 0 view .LVU65
+ 199 00c0 48894208 		movq	%rax, 8(%rdx)
+ 135:../../bos/utils/inc/b_util_list.h **** }
+ 200              		.loc 2 135 5 is_stmt 1 view .LVU66
+ 201 00c4 488910   		movq	%rdx, (%rax)
+ 202              	.LVL16:
+ 203              	.L13:
+ 135:../../bos/utils/inc/b_util_list.h **** }
+ 204              		.loc 2 135 5 is_stmt 0 view .LVU67
+ 205              	.LBE55:
+ 206              	.LBE54:
+ 155:../../bos/core/b_timer.c ****                 }
+ 207              		.loc 1 155 21 is_stmt 1 view .LVU68
+ 208 00c7 488B7BE8 		movq	-24(%rbx), %rdi
+ 209 00cb FF53E0   		call	*-32(%rbx)
+ 210              	.LVL17:
+ 139:../../bos/core/b_timer.c ****         {
+ 211              		.loc 1 139 9 discriminator 2 view .LVU69
+ 139:../../bos/core/b_timer.c ****         {
+ 212              		.loc 1 139 9 is_stmt 0 discriminator 2 view .LVU70
+ 213 00ce 488B4500 		movq	0(%rbp), %rax
+ 214              	.LVL18:
+ 139:../../bos/core/b_timer.c ****         {
+ 215              		.loc 1 139 9 is_stmt 1 discriminator 1 view .LVU71
+ 216 00d2 4889EB   		movq	%rbp, %rbx
+ 217              	.LVL19:
+ 139:../../bos/core/b_timer.c ****         {
+ 218              		.loc 1 139 9 is_stmt 0 discriminator 1 view .LVU72
+ 219 00d5 4C39ED   		cmpq	%r13, %rbp
+ 220 00d8 75B2     		jne	.L15
+ 221              	.LVL20:
+ 222              	.L22:
+ 159:../../bos/core/b_timer.c ****     }
+ 223              		.loc 1 159 9 is_stmt 1 view .LVU73
+ 159:../../bos/core/b_timer.c ****     }
+ 224              		.loc 1 159 9 view .LVU74
+ 159:../../bos/core/b_timer.c ****     }
+ 225              		.loc 1 159 9 view .LVU75
+ 226 00da B99F0000 		movl	$159, %ecx
+ 226      00
+ 159:../../bos/core/b_timer.c ****     }
+ 227              		.loc 1 159 9 is_stmt 0 discriminator 2 view .LVU76
+ 228 00df B8010000 		movl	$1, %eax
+GAS LISTING /tmp/cciSkYxW.s 			page 12
+
+
+ 228      00
+ 229              	.LVL21:
+ 159:../../bos/core/b_timer.c ****     }
+ 230              		.loc 1 159 9 view .LVU77
+ 231 00e4 6641890C 		movw	%cx, (%r12)
+ 231      24
+ 159:../../bos/core/b_timer.c ****     }
+ 232              		.loc 1 159 9 is_stmt 1 discriminator 1 view .LVU78
+ 159:../../bos/core/b_timer.c ****     }
+ 233              		.loc 1 159 9 discriminator 1 view .LVU79
+ 159:../../bos/core/b_timer.c ****     }
+ 234              		.loc 1 159 9 discriminator 2 view .LVU80
+ 235              	.LBE51:
+ 236              	.LBE50:
+ 237              	.LBE49:
+ 238              		.loc 1 162 1 is_stmt 0 view .LVU81
+ 239 00e9 4883C408 		addq	$8, %rsp
+ 240              	.LCFI11:
+ 241              		.cfi_remember_state
+ 242              		.cfi_def_cfa_offset 40
+ 243 00ed 5B       		popq	%rbx
+ 244              	.LCFI12:
+ 245              		.cfi_def_cfa_offset 32
+ 246              	.LVL22:
+ 247              		.loc 1 162 1 view .LVU82
+ 248 00ee 5D       		popq	%rbp
+ 249              	.LCFI13:
+ 250              		.cfi_def_cfa_offset 24
+ 251              	.LVL23:
+ 252              		.loc 1 162 1 view .LVU83
+ 253 00ef 415C     		popq	%r12
+ 254              	.LCFI14:
+ 255              		.cfi_def_cfa_offset 16
+ 256              	.LVL24:
+ 257              		.loc 1 162 1 view .LVU84
+ 258 00f1 415D     		popq	%r13
+ 259              	.LCFI15:
+ 260              		.cfi_def_cfa_offset 8
+ 261 00f3 C3       		ret
+ 262              	.LVL25:
+ 263              		.p2align 4,,10
+ 264 00f4 0F1F4000 		.p2align 3
+ 265              	.L21:
+ 266              	.LCFI16:
+ 267              		.cfi_restore_state
+ 268              	.LBB60:
+ 269              	.LBB58:
+ 270              	.LBB56:
+ 137:../../bos/core/b_timer.c ****         }
+ 271              		.loc 1 137 13 is_stmt 1 view .LVU85
+ 137:../../bos/core/b_timer.c ****         }
+ 272              		.loc 1 137 13 view .LVU86
+ 137:../../bos/core/b_timer.c ****         }
+ 273              		.loc 1 137 13 view .LVU87
+ 274 00f8 31FF     		xorl	%edi, %edi
+ 275              	.LVL26:
+ 137:../../bos/core/b_timer.c ****         }
+GAS LISTING /tmp/cciSkYxW.s 			page 13
+
+
+ 276              		.loc 1 137 13 is_stmt 0 view .LVU88
+ 277 00fa 4531C0   		xorl	%r8d, %r8d
+ 278 00fd 41C64424 		movb	$0, 12(%r12)
+ 278      0C00
+ 279 0103 31C0     		xorl	%eax, %eax
+ 280 0105 6641893C 		movw	%di, (%r12)
+ 280      24
+ 137:../../bos/core/b_timer.c ****         }
+ 281              		.loc 1 137 13 is_stmt 1 view .LVU89
+ 137:../../bos/core/b_timer.c ****         }
+ 282              		.loc 1 137 13 view .LVU90
+ 137:../../bos/core/b_timer.c ****         }
+ 283              		.loc 1 137 13 view .LVU91
+ 137:../../bos/core/b_timer.c ****         }
+ 284              		.loc 1 137 13 view .LVU92
+ 285 010a 49C74424 		movq	$0, 4(%r12)
+ 285      04000000 
+ 285      00
+ 137:../../bos/core/b_timer.c ****         }
+ 286              		.loc 1 137 13 view .LVU93
+ 137:../../bos/core/b_timer.c ****         }
+ 287              		.loc 1 137 13 view .LVU94
+ 137:../../bos/core/b_timer.c ****         }
+ 288              		.loc 1 137 13 view .LVU95
+ 137:../../bos/core/b_timer.c ****         }
+ 289              		.loc 1 137 13 view .LVU96
+ 290 0113 66458944 		movw	%r8w, 14(%r12)
+ 290      240E
+ 137:../../bos/core/b_timer.c ****         }
+ 291              		.loc 1 137 13 view .LVU97
+ 137:../../bos/core/b_timer.c ****         }
+ 292              		.loc 1 137 13 view .LVU98
+ 137:../../bos/core/b_timer.c ****         }
+ 293              		.loc 1 137 13 view .LVU99
+ 294              	.LBE56:
+ 295              	.LBE58:
+ 296              	.LBE60:
+ 297              		.loc 1 162 1 is_stmt 0 view .LVU100
+ 298 0119 4883C408 		addq	$8, %rsp
+ 299              	.LCFI17:
+ 300              		.cfi_remember_state
+ 301              		.cfi_def_cfa_offset 40
+ 302 011d 5B       		popq	%rbx
+ 303              	.LCFI18:
+ 304              		.cfi_def_cfa_offset 32
+ 305 011e 5D       		popq	%rbp
+ 306              	.LCFI19:
+ 307              		.cfi_def_cfa_offset 24
+ 308 011f 415C     		popq	%r12
+ 309              	.LCFI20:
+ 310              		.cfi_def_cfa_offset 16
+ 311              	.LVL27:
+ 312              		.loc 1 162 1 view .LVU101
+ 313 0121 415D     		popq	%r13
+ 314              	.LCFI21:
+ 315              		.cfi_def_cfa_offset 8
+ 316 0123 C3       		ret
+GAS LISTING /tmp/cciSkYxW.s 			page 14
+
+
+ 317              	.LVL28:
+ 318              		.p2align 4,,10
+ 319 0124 0F1F4000 		.p2align 3
+ 320              	.L12:
+ 321              	.LCFI22:
+ 322              		.cfi_restore_state
+ 323              	.LBB61:
+ 324              	.LBB59:
+ 325              	.LBB57:
+ 153:../../bos/core/b_timer.c ****                     }
+ 326              		.loc 1 153 25 is_stmt 1 view .LVU102
+ 153:../../bos/core/b_timer.c ****                     }
+ 327              		.loc 1 153 39 is_stmt 0 view .LVU103
+ 328 0128 E8000000 		call	bHalGetSysTick@PLT
+ 328      00
+ 329              	.LVL29:
+ 153:../../bos/core/b_timer.c ****                     }
+ 330              		.loc 1 153 37 discriminator 1 view .LVU104
+ 331 012d 8943F4   		movl	%eax, -12(%rbx)
+ 332 0130 EB95     		jmp	.L13
+ 333              	.LBE57:
+ 334              	.LBE59:
+ 335              	.LBE61:
+ 336              		.cfi_endproc
+ 337              	.LFE29:
+ 339              		.section	.rodata.bTimerCreate.str1.1,"aMS",@progbits,1
+ 340              	.LC0:
+ 341 0000 74696D65 		.string	"timer"
+ 341      7200
+ 342              		.section	.text.bTimerCreate,"ax",@progbits
+ 343              		.p2align 4
+ 344              		.globl	bTimerCreate
+ 346              	bTimerCreate:
+ 347              	.LVL30:
+ 348              	.LFB30:
+ 163:../../bos/core/b_timer.c **** 
+ 164:../../bos/core/b_timer.c **** /**
+ 165:../../bos/core/b_timer.c ****  * \}
+ 166:../../bos/core/b_timer.c ****  */
+ 167:../../bos/core/b_timer.c **** 
+ 168:../../bos/core/b_timer.c **** /**
+ 169:../../bos/core/b_timer.c ****  * \addtogroup TIMER_Exported_Functions
+ 170:../../bos/core/b_timer.c ****  * \{
+ 171:../../bos/core/b_timer.c ****  */
+ 172:../../bos/core/b_timer.c **** 
+ 173:../../bos/core/b_timer.c **** bTimerId_t bTimerCreate(bTimerFunc_t func, bTimerType_t type, void *argument, bTimerAttr_t *attr)
+ 174:../../bos/core/b_timer.c **** {
+ 349              		.loc 1 174 1 is_stmt 1 view -0
+ 350              		.cfi_startproc
+ 351              		.loc 1 174 1 is_stmt 0 view .LVU106
+ 352 0000 F30F1EFA 		endbr64
+ 175:../../bos/core/b_timer.c ****     if (attr == NULL || func == NULL)
+ 353              		.loc 1 175 5 is_stmt 1 view .LVU107
+ 354              		.loc 1 175 8 is_stmt 0 view .LVU108
+ 355 0004 4885C9   		testq	%rcx, %rcx
+ 356 0007 745F     		je	.L30
+ 357 0009 4885FF   		testq	%rdi, %rdi
+GAS LISTING /tmp/cciSkYxW.s 			page 15
+
+
+ 358 000c 745A     		je	.L30
+ 359              	.LBB62:
+ 360              	.LBB63:
+ 112:../../bos/core/b_timer.c ****     {
+ 361              		.loc 1 112 5 view .LVU109
+ 362 000e 488B0500 		movq	bTimerListHead(%rip), %rax
+ 362      000000
+ 363 0015 4C8D0500 		leaq	bTimerListHead(%rip), %r8
+ 363      000000
+ 364              	.LBE63:
+ 365              	.LBE62:
+ 174:../../bos/core/b_timer.c ****     if (attr == NULL || func == NULL)
+ 366              		.loc 1 174 1 view .LVU110
+ 367 001c 53       		pushq	%rbx
+ 368              	.LCFI23:
+ 369              		.cfi_def_cfa_offset 16
+ 370              		.cfi_offset 3, -16
+ 371 001d 4889CB   		movq	%rcx, %rbx
+ 176:../../bos/core/b_timer.c ****     {
+ 177:../../bos/core/b_timer.c ****         return NULL;
+ 178:../../bos/core/b_timer.c ****     }
+ 179:../../bos/core/b_timer.c ****     if (_bTimerFind(attr) != NULL)
+ 372              		.loc 1 179 5 is_stmt 1 view .LVU111
+ 373              	.LVL31:
+ 374              	.LBB65:
+ 375              	.LBI62:
+ 108:../../bos/core/b_timer.c **** {
+ 376              		.loc 1 108 22 view .LVU112
+ 377              	.LBB64:
+ 110:../../bos/core/b_timer.c ****     bTimerAttr_t     *pattr = NULL;
+ 378              		.loc 1 110 5 view .LVU113
+ 111:../../bos/core/b_timer.c ****     list_for_each(pos, &bTimerListHead)
+ 379              		.loc 1 111 5 view .LVU114
+ 112:../../bos/core/b_timer.c ****     {
+ 380              		.loc 1 112 5 view .LVU115
+ 112:../../bos/core/b_timer.c ****     {
+ 381              		.loc 1 112 5 discriminator 1 view .LVU116
+ 382 0020 4C39C0   		cmpq	%r8, %rax
+ 383 0023 741C     		je	.L25
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 384              		.loc 1 114 9 view .LVU117
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 385              		.loc 1 114 15 is_stmt 0 view .LVU118
+ 386 0025 488D48E0 		leaq	-32(%rax), %rcx
+ 387              	.LVL32:
+ 115:../../bos/core/b_timer.c ****         {
+ 388              		.loc 1 115 9 is_stmt 1 view .LVU119
+ 115:../../bos/core/b_timer.c ****         {
+ 389              		.loc 1 115 12 is_stmt 0 view .LVU120
+ 390 0029 4839CB   		cmpq	%rcx, %rbx
+ 391 002c 750B     		jne	.L26
+ 392 002e EB2C     		jmp	.L23
+ 393              	.LVL33:
+ 394              		.p2align 4,,10
+ 395              		.p2align 3
+ 396              	.L28:
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+GAS LISTING /tmp/cciSkYxW.s 			page 16
+
+
+ 397              		.loc 1 114 9 is_stmt 1 view .LVU121
+ 115:../../bos/core/b_timer.c ****         {
+ 398              		.loc 1 115 9 view .LVU122
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 399              		.loc 1 114 15 is_stmt 0 view .LVU123
+ 400 0030 488D48E0 		leaq	-32(%rax), %rcx
+ 401              	.LVL34:
+ 115:../../bos/core/b_timer.c ****         {
+ 402              		.loc 1 115 12 view .LVU124
+ 403 0034 4839CB   		cmpq	%rcx, %rbx
+ 404 0037 7420     		je	.L29
+ 405              	.L26:
+ 119:../../bos/core/b_timer.c ****     }
+ 406              		.loc 1 119 9 is_stmt 1 view .LVU125
+ 407              	.LVL35:
+ 112:../../bos/core/b_timer.c ****     {
+ 408              		.loc 1 112 5 discriminator 2 view .LVU126
+ 409 0039 488B00   		movq	(%rax), %rax
+ 410              	.LVL36:
+ 112:../../bos/core/b_timer.c ****     {
+ 411              		.loc 1 112 5 discriminator 1 view .LVU127
+ 412 003c 4C39C0   		cmpq	%r8, %rax
+ 413 003f 75EF     		jne	.L28
+ 414              	.L25:
+ 415              	.LVL37:
+ 121:../../bos/core/b_timer.c **** }
+ 416              		.loc 1 121 5 view .LVU128
+ 121:../../bos/core/b_timer.c **** }
+ 417              		.loc 1 121 5 is_stmt 0 view .LVU129
+ 418              	.LBE64:
+ 419              	.LBE65:
+ 180:../../bos/core/b_timer.c ****     {
+ 181:../../bos/core/b_timer.c ****         return attr;
+ 182:../../bos/core/b_timer.c ****     }
+ 183:../../bos/core/b_timer.c ****     attr->func   = func;
+ 420              		.loc 1 183 5 is_stmt 1 view .LVU130
+ 184:../../bos/core/b_timer.c ****     attr->arg    = argument;
+ 185:../../bos/core/b_timer.c ****     attr->type   = type;
+ 186:../../bos/core/b_timer.c ****     attr->enable = 0;
+ 187:../../bos/core/b_timer.c ****     if (bTimerTaskId == NULL)
+ 421              		.loc 1 187 8 is_stmt 0 view .LVU131
+ 422 0041 48833D00 		cmpq	$0, bTimerTaskId(%rip)
+ 422      00000000 
+ 183:../../bos/core/b_timer.c ****     attr->arg    = argument;
+ 423              		.loc 1 183 18 view .LVU132
+ 424 0049 48893B   		movq	%rdi, (%rbx)
+ 184:../../bos/core/b_timer.c ****     attr->arg    = argument;
+ 425              		.loc 1 184 5 is_stmt 1 view .LVU133
+ 184:../../bos/core/b_timer.c ****     attr->arg    = argument;
+ 426              		.loc 1 184 18 is_stmt 0 view .LVU134
+ 427 004c 48895308 		movq	%rdx, 8(%rbx)
+ 185:../../bos/core/b_timer.c ****     attr->enable = 0;
+ 428              		.loc 1 185 5 is_stmt 1 view .LVU135
+ 185:../../bos/core/b_timer.c ****     attr->enable = 0;
+ 429              		.loc 1 185 18 is_stmt 0 view .LVU136
+ 430 0050 89731C   		movl	%esi, 28(%rbx)
+ 186:../../bos/core/b_timer.c ****     if (bTimerTaskId == NULL)
+GAS LISTING /tmp/cciSkYxW.s 			page 17
+
+
+ 431              		.loc 1 186 5 is_stmt 1 view .LVU137
+ 186:../../bos/core/b_timer.c ****     if (bTimerTaskId == NULL)
+ 432              		.loc 1 186 18 is_stmt 0 view .LVU138
+ 433 0053 C6431000 		movb	$0, 16(%rbx)
+ 434              		.loc 1 187 5 is_stmt 1 view .LVU139
+ 435              		.loc 1 187 8 is_stmt 0 view .LVU140
+ 436 0057 7412     		je	.L35
+ 437              	.LVL38:
+ 438              	.L29:
+ 181:../../bos/core/b_timer.c ****     }
+ 439              		.loc 1 181 16 view .LVU141
+ 440 0059 4889D9   		movq	%rbx, %rcx
+ 441              	.L23:
+ 188:../../bos/core/b_timer.c ****     {
+ 189:../../bos/core/b_timer.c ****         bTimerTaskId = bTaskCreate("timer", _bTimerTaskFunc, NULL, &bTimerTaskAttr);
+ 190:../../bos/core/b_timer.c ****     }
+ 191:../../bos/core/b_timer.c ****     return attr;
+ 192:../../bos/core/b_timer.c **** }
+ 442              		.loc 1 192 1 view .LVU142
+ 443 005c 4889C8   		movq	%rcx, %rax
+ 444 005f 5B       		popq	%rbx
+ 445              	.LCFI24:
+ 446              		.cfi_def_cfa_offset 8
+ 447              	.LVL39:
+ 448              		.loc 1 192 1 view .LVU143
+ 449 0060 C3       		ret
+ 450              	.LVL40:
+ 451              		.p2align 4,,10
+ 452 0061 0F1F8000 		.p2align 3
+ 452      000000
+ 453              	.L30:
+ 454              		.cfi_restore 3
+ 455              		.loc 1 192 1 view .LVU144
+ 456 0068 31C0     		xorl	%eax, %eax
+ 457 006a C3       		ret
+ 458              	.LVL41:
+ 459              	.L35:
+ 460              	.LCFI25:
+ 461              		.cfi_def_cfa_offset 16
+ 462              		.cfi_offset 3, -16
+ 189:../../bos/core/b_timer.c ****     }
+ 463              		.loc 1 189 9 is_stmt 1 view .LVU145
+ 189:../../bos/core/b_timer.c ****     }
+ 464              		.loc 1 189 24 is_stmt 0 view .LVU146
+ 465 006b 488D0D00 		leaq	bTimerTaskAttr(%rip), %rcx
+ 465      000000
+ 466 0072 31D2     		xorl	%edx, %edx
+ 467              	.LVL42:
+ 189:../../bos/core/b_timer.c ****     }
+ 468              		.loc 1 189 24 view .LVU147
+ 469 0074 488D3500 		leaq	_bTimerTaskFunc(%rip), %rsi
+ 469      000000
+ 470              	.LVL43:
+ 189:../../bos/core/b_timer.c ****     }
+ 471              		.loc 1 189 24 view .LVU148
+ 472 007b 488D3D00 		leaq	.LC0(%rip), %rdi
+ 472      000000
+GAS LISTING /tmp/cciSkYxW.s 			page 18
+
+
+ 473              	.LVL44:
+ 189:../../bos/core/b_timer.c ****     }
+ 474              		.loc 1 189 24 view .LVU149
+ 475 0082 E8000000 		call	bTaskCreate@PLT
+ 475      00
+ 476              	.LVL45:
+ 189:../../bos/core/b_timer.c ****     }
+ 477              		.loc 1 189 22 discriminator 1 view .LVU150
+ 478 0087 48890500 		movq	%rax, bTimerTaskId(%rip)
+ 478      000000
+ 479 008e EBC9     		jmp	.L29
+ 480              		.cfi_endproc
+ 481              	.LFE30:
+ 483              		.section	.text.bTimerStart,"ax",@progbits
+ 484              		.p2align 4
+ 485              		.globl	bTimerStart
+ 487              	bTimerStart:
+ 488              	.LVL46:
+ 489              	.LFB31:
+ 193:../../bos/core/b_timer.c **** 
+ 194:../../bos/core/b_timer.c **** int bTimerStart(bTimerId_t id, uint32_t ms)
+ 195:../../bos/core/b_timer.c **** {
+ 490              		.loc 1 195 1 is_stmt 1 view -0
+ 491              		.cfi_startproc
+ 492              		.loc 1 195 1 is_stmt 0 view .LVU152
+ 493 0000 F30F1EFA 		endbr64
+ 196:../../bos/core/b_timer.c ****     bTimerAttr_t *pattr = NULL;
+ 494              		.loc 1 196 5 is_stmt 1 view .LVU153
+ 495              	.LVL47:
+ 197:../../bos/core/b_timer.c ****     if (id == NULL || ms == 0)
+ 496              		.loc 1 197 5 view .LVU154
+ 497              		.loc 1 197 8 is_stmt 0 view .LVU155
+ 498 0004 4885FF   		testq	%rdi, %rdi
+ 499 0007 747D     		je	.L41
+ 500 0009 85F6     		testl	%esi, %esi
+ 501 000b 7479     		je	.L41
+ 195:../../bos/core/b_timer.c ****     bTimerAttr_t *pattr = NULL;
+ 502              		.loc 1 195 1 view .LVU156
+ 503 000d 55       		pushq	%rbp
+ 504              	.LCFI26:
+ 505              		.cfi_def_cfa_offset 16
+ 506              		.cfi_offset 6, -16
+ 507              	.LBB66:
+ 508              	.LBB67:
+ 112:../../bos/core/b_timer.c ****     {
+ 509              		.loc 1 112 5 view .LVU157
+ 510 000e 488D2D00 		leaq	bTimerListHead(%rip), %rbp
+ 510      000000
+ 511              	.LBE67:
+ 512              	.LBE66:
+ 195:../../bos/core/b_timer.c ****     bTimerAttr_t *pattr = NULL;
+ 513              		.loc 1 195 1 view .LVU158
+ 514 0015 53       		pushq	%rbx
+ 515              	.LCFI27:
+ 516              		.cfi_def_cfa_offset 24
+ 517              		.cfi_offset 3, -24
+ 518 0016 4889FB   		movq	%rdi, %rbx
+GAS LISTING /tmp/cciSkYxW.s 			page 19
+
+
+ 198:../../bos/core/b_timer.c ****     {
+ 199:../../bos/core/b_timer.c ****         return -1;
+ 200:../../bos/core/b_timer.c ****     }
+ 201:../../bos/core/b_timer.c ****     pattr = _bTimerFind(id);
+ 519              		.loc 1 201 5 is_stmt 1 view .LVU159
+ 520              	.LVL48:
+ 521              	.LBB71:
+ 522              	.LBI66:
+ 108:../../bos/core/b_timer.c **** {
+ 523              		.loc 1 108 22 view .LVU160
+ 524              	.LBB68:
+ 110:../../bos/core/b_timer.c ****     bTimerAttr_t     *pattr = NULL;
+ 525              		.loc 1 110 5 view .LVU161
+ 111:../../bos/core/b_timer.c ****     list_for_each(pos, &bTimerListHead)
+ 526              		.loc 1 111 5 view .LVU162
+ 112:../../bos/core/b_timer.c ****     {
+ 527              		.loc 1 112 5 view .LVU163
+ 528              	.LBE68:
+ 529              	.LBE71:
+ 195:../../bos/core/b_timer.c ****     bTimerAttr_t *pattr = NULL;
+ 530              		.loc 1 195 1 is_stmt 0 view .LVU164
+ 531 0019 4883EC08 		subq	$8, %rsp
+ 532              	.LCFI28:
+ 533              		.cfi_def_cfa_offset 32
+ 534              	.LBB72:
+ 535              	.LBB69:
+ 112:../../bos/core/b_timer.c ****     {
+ 536              		.loc 1 112 5 view .LVU165
+ 537 001d 488B0500 		movq	bTimerListHead(%rip), %rax
+ 537      000000
+ 538              	.LVL49:
+ 112:../../bos/core/b_timer.c ****     {
+ 539              		.loc 1 112 5 is_stmt 1 discriminator 1 view .LVU166
+ 540 0024 4839E8   		cmpq	%rbp, %rax
+ 541 0027 750F     		jne	.L40
+ 542 0029 EB25     		jmp	.L38
+ 543              	.LVL50:
+ 544 002b 0F1F4400 		.p2align 4,,10
+ 544      00
+ 545              		.p2align 3
+ 546              	.L49:
+ 119:../../bos/core/b_timer.c ****     }
+ 547              		.loc 1 119 9 view .LVU167
+ 112:../../bos/core/b_timer.c ****     {
+ 548              		.loc 1 112 5 discriminator 2 view .LVU168
+ 549 0030 488B00   		movq	(%rax), %rax
+ 550              	.LVL51:
+ 112:../../bos/core/b_timer.c ****     {
+ 551              		.loc 1 112 5 discriminator 1 view .LVU169
+ 552 0033 4839E8   		cmpq	%rbp, %rax
+ 553 0036 7418     		je	.L38
+ 554              	.L40:
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 555              		.loc 1 114 9 view .LVU170
+ 556              	.LVL52:
+ 115:../../bos/core/b_timer.c ****         {
+ 557              		.loc 1 115 9 view .LVU171
+GAS LISTING /tmp/cciSkYxW.s 			page 20
+
+
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 558              		.loc 1 114 15 is_stmt 0 view .LVU172
+ 559 0038 488D50E0 		leaq	-32(%rax), %rdx
+ 560              	.LVL53:
+ 115:../../bos/core/b_timer.c ****         {
+ 561              		.loc 1 115 12 view .LVU173
+ 562 003c 4839D3   		cmpq	%rdx, %rbx
+ 563 003f 75EF     		jne	.L49
+ 115:../../bos/core/b_timer.c ****         {
+ 564              		.loc 1 115 12 view .LVU174
+ 565              	.LBE69:
+ 566              	.LBE72:
+ 202:../../bos/core/b_timer.c ****     if (pattr)
+ 203:../../bos/core/b_timer.c ****     {
+ 204:../../bos/core/b_timer.c ****         return -1;
+ 205:../../bos/core/b_timer.c ****     }
+ 206:../../bos/core/b_timer.c ****     pattr         = (bTimerAttr_t *)id;
+ 207:../../bos/core/b_timer.c ****     pattr->cycle  = ms;
+ 208:../../bos/core/b_timer.c ****     pattr->tick   = bHalGetSysTick();
+ 209:../../bos/core/b_timer.c ****     pattr->enable = 1;
+ 210:../../bos/core/b_timer.c ****     list_add(&pattr->list, &bTimerListHead);
+ 211:../../bos/core/b_timer.c ****     return 0;
+ 212:../../bos/core/b_timer.c **** }
+ 567              		.loc 1 212 1 view .LVU175
+ 568 0041 4883C408 		addq	$8, %rsp
+ 569              	.LCFI29:
+ 570              		.cfi_remember_state
+ 571              		.cfi_def_cfa_offset 24
+ 199:../../bos/core/b_timer.c ****     }
+ 572              		.loc 1 199 16 view .LVU176
+ 573 0045 B8FFFFFF 		movl	$-1, %eax
+ 573      FF
+ 574              	.LVL54:
+ 575              		.loc 1 212 1 view .LVU177
+ 576 004a 5B       		popq	%rbx
+ 577              	.LCFI30:
+ 578              		.cfi_def_cfa_offset 16
+ 579              	.LVL55:
+ 580              		.loc 1 212 1 view .LVU178
+ 581 004b 5D       		popq	%rbp
+ 582              	.LCFI31:
+ 583              		.cfi_def_cfa_offset 8
+ 584 004c C3       		ret
+ 585              	.LVL56:
+ 586 004d 0F1F00   		.p2align 4,,10
+ 587              		.p2align 3
+ 588              	.L38:
+ 589              	.LCFI32:
+ 590              		.cfi_restore_state
+ 591              	.LBB73:
+ 592              	.LBB70:
+ 121:../../bos/core/b_timer.c **** }
+ 593              		.loc 1 121 5 is_stmt 1 view .LVU179
+ 121:../../bos/core/b_timer.c **** }
+ 594              		.loc 1 121 5 is_stmt 0 view .LVU180
+ 595              	.LBE70:
+ 596              	.LBE73:
+GAS LISTING /tmp/cciSkYxW.s 			page 21
+
+
+ 202:../../bos/core/b_timer.c ****     if (pattr)
+ 597              		.loc 1 202 5 is_stmt 1 view .LVU181
+ 206:../../bos/core/b_timer.c ****     pattr->cycle  = ms;
+ 598              		.loc 1 206 5 view .LVU182
+ 207:../../bos/core/b_timer.c ****     pattr->tick   = bHalGetSysTick();
+ 599              		.loc 1 207 5 view .LVU183
+ 207:../../bos/core/b_timer.c ****     pattr->tick   = bHalGetSysTick();
+ 600              		.loc 1 207 19 is_stmt 0 view .LVU184
+ 601 0050 897318   		movl	%esi, 24(%rbx)
+ 208:../../bos/core/b_timer.c ****     pattr->enable = 1;
+ 602              		.loc 1 208 5 is_stmt 1 view .LVU185
+ 208:../../bos/core/b_timer.c ****     pattr->enable = 1;
+ 603              		.loc 1 208 21 is_stmt 0 view .LVU186
+ 604 0053 E8000000 		call	bHalGetSysTick@PLT
+ 604      00
+ 605              	.LVL57:
+ 606              	.LBB74:
+ 607              	.LBB75:
+ 109:../../bos/utils/inc/b_util_list.h **** }
+ 608              		.loc 2 109 5 view .LVU187
+ 609 0058 488B1500 		movq	bTimerListHead(%rip), %rdx
+ 609      000000
+ 610              	.LBE75:
+ 611              	.LBE74:
+ 209:../../bos/core/b_timer.c ****     list_add(&pattr->list, &bTimerListHead);
+ 612              		.loc 1 209 19 view .LVU188
+ 613 005f C6431001 		movb	$1, 16(%rbx)
+ 208:../../bos/core/b_timer.c ****     pattr->enable = 1;
+ 614              		.loc 1 208 19 discriminator 1 view .LVU189
+ 615 0063 894314   		movl	%eax, 20(%rbx)
+ 209:../../bos/core/b_timer.c ****     list_add(&pattr->list, &bTimerListHead);
+ 616              		.loc 1 209 5 is_stmt 1 view .LVU190
+ 210:../../bos/core/b_timer.c ****     return 0;
+ 617              		.loc 1 210 5 view .LVU191
+ 618 0066 488D4320 		leaq	32(%rbx), %rax
+ 619              	.LVL58:
+ 620              	.LBB82:
+ 621              	.LBI74:
+ 107:../../bos/utils/inc/b_util_list.h **** {
+ 622              		.loc 2 107 26 view .LVU192
+ 623              	.LBB80:
+ 109:../../bos/utils/inc/b_util_list.h **** }
+ 624              		.loc 2 109 5 view .LVU193
+ 625              	.LBB76:
+ 626              	.LBI76:
+  90:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+ 627              		.loc 2 90 26 view .LVU194
+ 628              	.LBB77:
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 629              		.loc 2 93 5 view .LVU195
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 630              		.loc 2 93 19 is_stmt 0 view .LVU196
+ 631 006a 48894208 		movq	%rax, 8(%rdx)
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 632              		.loc 2 94 5 is_stmt 1 view .LVU197
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 633              		.loc 2 96 5 is_stmt 0 view .LVU198
+GAS LISTING /tmp/cciSkYxW.s 			page 22
+
+
+ 634 006e 48890500 		movq	%rax, bTimerListHead(%rip)
+ 634      000000
+ 635              	.LBE77:
+ 636              	.LBE76:
+ 637              	.LBE80:
+ 638              	.LBE82:
+ 211:../../bos/core/b_timer.c **** }
+ 639              		.loc 1 211 12 view .LVU199
+ 640 0075 31C0     		xorl	%eax, %eax
+ 641              	.LVL59:
+ 642              	.LBB83:
+ 643              	.LBB81:
+ 644              	.LBB79:
+ 645              	.LBB78:
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 646              		.loc 2 94 19 view .LVU200
+ 647 0077 48895320 		movq	%rdx, 32(%rbx)
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 648              		.loc 2 95 5 is_stmt 1 view .LVU201
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 649              		.loc 2 95 19 is_stmt 0 view .LVU202
+ 650 007b 48896B28 		movq	%rbp, 40(%rbx)
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 651              		.loc 2 96 5 is_stmt 1 view .LVU203
+ 652              	.LVL60:
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 653              		.loc 2 96 5 is_stmt 0 view .LVU204
+ 654              	.LBE78:
+ 655              	.LBE79:
+ 656              	.LBE81:
+ 657              	.LBE83:
+ 211:../../bos/core/b_timer.c **** }
+ 658              		.loc 1 211 5 is_stmt 1 view .LVU205
+ 659              		.loc 1 212 1 is_stmt 0 view .LVU206
+ 660 007f 4883C408 		addq	$8, %rsp
+ 661              	.LCFI33:
+ 662              		.cfi_def_cfa_offset 24
+ 663 0083 5B       		popq	%rbx
+ 664              	.LCFI34:
+ 665              		.cfi_def_cfa_offset 16
+ 666              	.LVL61:
+ 667              		.loc 1 212 1 view .LVU207
+ 668 0084 5D       		popq	%rbp
+ 669              	.LCFI35:
+ 670              		.cfi_def_cfa_offset 8
+ 671              	.LVL62:
+ 672              		.loc 1 212 1 view .LVU208
+ 673 0085 C3       		ret
+ 674              	.LVL63:
+ 675              	.L41:
+ 676              		.cfi_restore 3
+ 677              		.cfi_restore 6
+ 199:../../bos/core/b_timer.c ****     }
+ 678              		.loc 1 199 16 view .LVU209
+ 679 0086 B8FFFFFF 		movl	$-1, %eax
+ 679      FF
+ 680              		.loc 1 212 1 view .LVU210
+GAS LISTING /tmp/cciSkYxW.s 			page 23
+
+
+ 681 008b C3       		ret
+ 682              		.cfi_endproc
+ 683              	.LFE31:
+ 685              		.section	.text.bTimerStop,"ax",@progbits
+ 686              		.p2align 4
+ 687              		.globl	bTimerStop
+ 689              	bTimerStop:
+ 690              	.LVL64:
+ 691              	.LFB32:
+ 213:../../bos/core/b_timer.c **** 
+ 214:../../bos/core/b_timer.c **** int bTimerStop(bTimerId_t id)
+ 215:../../bos/core/b_timer.c **** {
+ 692              		.loc 1 215 1 is_stmt 1 view -0
+ 693              		.cfi_startproc
+ 694              		.loc 1 215 1 is_stmt 0 view .LVU212
+ 695 0000 F30F1EFA 		endbr64
+ 216:../../bos/core/b_timer.c ****     bTimerAttr_t *pattr = NULL;
+ 696              		.loc 1 216 5 is_stmt 1 view .LVU213
+ 697              	.LVL65:
+ 217:../../bos/core/b_timer.c ****     if (id == NULL)
+ 698              		.loc 1 217 5 view .LVU214
+ 699              		.loc 1 217 8 is_stmt 0 view .LVU215
+ 700 0004 4885FF   		testq	%rdi, %rdi
+ 701 0007 7447     		je	.L56
+ 218:../../bos/core/b_timer.c ****     {
+ 219:../../bos/core/b_timer.c ****         return -1;
+ 220:../../bos/core/b_timer.c ****     }
+ 221:../../bos/core/b_timer.c ****     pattr = _bTimerFind(id);
+ 702              		.loc 1 221 5 is_stmt 1 view .LVU216
+ 703              	.LVL66:
+ 704              	.LBB84:
+ 705              	.LBI84:
+ 108:../../bos/core/b_timer.c **** {
+ 706              		.loc 1 108 22 view .LVU217
+ 707              	.LBB85:
+ 110:../../bos/core/b_timer.c ****     bTimerAttr_t     *pattr = NULL;
+ 708              		.loc 1 110 5 view .LVU218
+ 111:../../bos/core/b_timer.c ****     list_for_each(pos, &bTimerListHead)
+ 709              		.loc 1 111 5 view .LVU219
+ 112:../../bos/core/b_timer.c ****     {
+ 710              		.loc 1 112 5 view .LVU220
+ 711 0009 488B0500 		movq	bTimerListHead(%rip), %rax
+ 711      000000
+ 712              	.LVL67:
+ 112:../../bos/core/b_timer.c ****     {
+ 713              		.loc 1 112 5 discriminator 1 view .LVU221
+ 112:../../bos/core/b_timer.c ****     {
+ 714              		.loc 1 112 5 is_stmt 0 view .LVU222
+ 715 0010 488D0D00 		leaq	bTimerListHead(%rip), %rcx
+ 715      000000
+ 112:../../bos/core/b_timer.c ****     {
+ 716              		.loc 1 112 5 discriminator 1 view .LVU223
+ 717 0017 4839C8   		cmpq	%rcx, %rax
+ 718 001a 750C     		jne	.L54
+ 719 001c EB32     		jmp	.L56
+ 720              	.LVL68:
+ 721 001e 6690     		.p2align 4,,10
+GAS LISTING /tmp/cciSkYxW.s 			page 24
+
+
+ 722              		.p2align 3
+ 723              	.L57:
+ 119:../../bos/core/b_timer.c ****     }
+ 724              		.loc 1 119 9 is_stmt 1 view .LVU224
+ 112:../../bos/core/b_timer.c ****     {
+ 725              		.loc 1 112 5 discriminator 2 view .LVU225
+ 726 0020 488B00   		movq	(%rax), %rax
+ 727              	.LVL69:
+ 112:../../bos/core/b_timer.c ****     {
+ 728              		.loc 1 112 5 discriminator 1 view .LVU226
+ 729 0023 4839C8   		cmpq	%rcx, %rax
+ 730 0026 7428     		je	.L56
+ 731              	.L54:
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 732              		.loc 1 114 9 view .LVU227
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 733              		.loc 1 114 15 is_stmt 0 view .LVU228
+ 734 0028 488D50E0 		leaq	-32(%rax), %rdx
+ 735              	.LVL70:
+ 115:../../bos/core/b_timer.c ****         {
+ 736              		.loc 1 115 9 is_stmt 1 view .LVU229
+ 115:../../bos/core/b_timer.c ****         {
+ 737              		.loc 1 115 12 is_stmt 0 view .LVU230
+ 738 002c 4839D7   		cmpq	%rdx, %rdi
+ 739 002f 75EF     		jne	.L57
+ 740              	.LVL71:
+ 115:../../bos/core/b_timer.c ****         {
+ 741              		.loc 1 115 12 view .LVU231
+ 742              	.LBE85:
+ 743              	.LBE84:
+ 222:../../bos/core/b_timer.c ****     if (pattr == NULL)
+ 223:../../bos/core/b_timer.c ****     {
+ 224:../../bos/core/b_timer.c ****         return -1;
+ 225:../../bos/core/b_timer.c ****     }
+ 226:../../bos/core/b_timer.c ****     pattr->enable = 0;
+ 744              		.loc 1 226 5 is_stmt 1 view .LVU232
+ 227:../../bos/core/b_timer.c ****     __list_del(pattr->list.prev, pattr->list.next);
+ 745              		.loc 1 227 5 is_stmt 0 view .LVU233
+ 746 0031 488B4228 		movq	40(%rdx), %rax
+ 747 0035 488B4A20 		movq	32(%rdx), %rcx
+ 226:../../bos/core/b_timer.c ****     __list_del(pattr->list.prev, pattr->list.next);
+ 748              		.loc 1 226 19 view .LVU234
+ 749 0039 C6421000 		movb	$0, 16(%rdx)
+ 750              		.loc 1 227 5 is_stmt 1 view .LVU235
+ 751              	.LVL72:
+ 752              	.LBB86:
+ 753              	.LBI86:
+ 132:../../bos/utils/inc/b_util_list.h **** {
+ 754              		.loc 2 132 26 view .LVU236
+ 755              	.LBB87:
+ 134:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 756              		.loc 2 134 5 view .LVU237
+ 134:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 757              		.loc 2 134 16 is_stmt 0 view .LVU238
+ 758 003d 48894108 		movq	%rax, 8(%rcx)
+ 135:../../bos/utils/inc/b_util_list.h **** }
+ 759              		.loc 2 135 5 is_stmt 1 view .LVU239
+GAS LISTING /tmp/cciSkYxW.s 			page 25
+
+
+ 760 0041 488908   		movq	%rcx, (%rax)
+ 761              	.LVL73:
+ 135:../../bos/utils/inc/b_util_list.h **** }
+ 762              		.loc 2 135 5 is_stmt 0 view .LVU240
+ 763              	.LBE87:
+ 764              	.LBE86:
+ 228:../../bos/core/b_timer.c ****     return 0;
+ 765              		.loc 1 228 5 is_stmt 1 view .LVU241
+ 766              		.loc 1 228 12 is_stmt 0 view .LVU242
+ 767 0044 31C0     		xorl	%eax, %eax
+ 768 0046 C3       		ret
+ 769              	.LVL74:
+ 770 0047 660F1F84 		.p2align 4,,10
+ 770      00000000 
+ 770      00
+ 771              		.p2align 3
+ 772              	.L56:
+ 219:../../bos/core/b_timer.c ****     }
+ 773              		.loc 1 219 16 view .LVU243
+ 774 0050 B8FFFFFF 		movl	$-1, %eax
+ 774      FF
+ 775              	.LVL75:
+ 229:../../bos/core/b_timer.c **** }
+ 776              		.loc 1 229 1 view .LVU244
+ 777 0055 C3       		ret
+ 778              		.cfi_endproc
+ 779              	.LFE32:
+ 781              		.section	.text.bTimerIsRunning,"ax",@progbits
+ 782              		.p2align 4
+ 783              		.globl	bTimerIsRunning
+ 785              	bTimerIsRunning:
+ 786              	.LVL76:
+ 787              	.LFB33:
+ 230:../../bos/core/b_timer.c **** 
+ 231:../../bos/core/b_timer.c **** uint32_t bTimerIsRunning(bTimerId_t id)
+ 232:../../bos/core/b_timer.c **** {
+ 788              		.loc 1 232 1 is_stmt 1 view -0
+ 789              		.cfi_startproc
+ 790              		.loc 1 232 1 is_stmt 0 view .LVU246
+ 791 0000 F30F1EFA 		endbr64
+ 233:../../bos/core/b_timer.c ****     bTimerAttr_t *pattr = NULL;
+ 792              		.loc 1 233 5 is_stmt 1 view .LVU247
+ 793              	.LVL77:
+ 234:../../bos/core/b_timer.c ****     if (id == NULL)
+ 794              		.loc 1 234 5 view .LVU248
+ 795              		.loc 1 234 8 is_stmt 0 view .LVU249
+ 796 0004 4885FF   		testq	%rdi, %rdi
+ 797 0007 7437     		je	.L64
+ 235:../../bos/core/b_timer.c ****     {
+ 236:../../bos/core/b_timer.c ****         return 0;
+ 237:../../bos/core/b_timer.c ****     }
+ 238:../../bos/core/b_timer.c ****     pattr = _bTimerFind(id);
+ 798              		.loc 1 238 5 is_stmt 1 view .LVU250
+ 799              	.LVL78:
+ 800              	.LBB88:
+ 801              	.LBI88:
+ 108:../../bos/core/b_timer.c **** {
+GAS LISTING /tmp/cciSkYxW.s 			page 26
+
+
+ 802              		.loc 1 108 22 view .LVU251
+ 803              	.LBB89:
+ 110:../../bos/core/b_timer.c ****     bTimerAttr_t     *pattr = NULL;
+ 804              		.loc 1 110 5 view .LVU252
+ 111:../../bos/core/b_timer.c ****     list_for_each(pos, &bTimerListHead)
+ 805              		.loc 1 111 5 view .LVU253
+ 112:../../bos/core/b_timer.c ****     {
+ 806              		.loc 1 112 5 view .LVU254
+ 807 0009 488B0500 		movq	bTimerListHead(%rip), %rax
+ 807      000000
+ 808              	.LVL79:
+ 112:../../bos/core/b_timer.c ****     {
+ 809              		.loc 1 112 5 discriminator 1 view .LVU255
+ 112:../../bos/core/b_timer.c ****     {
+ 810              		.loc 1 112 5 is_stmt 0 view .LVU256
+ 811 0010 488D0D00 		leaq	bTimerListHead(%rip), %rcx
+ 811      000000
+ 112:../../bos/core/b_timer.c ****     {
+ 812              		.loc 1 112 5 discriminator 1 view .LVU257
+ 813 0017 4839C8   		cmpq	%rcx, %rax
+ 814 001a 750C     		jne	.L62
+ 815 001c EB22     		jmp	.L64
+ 816              	.LVL80:
+ 817 001e 6690     		.p2align 4,,10
+ 818              		.p2align 3
+ 819              	.L65:
+ 119:../../bos/core/b_timer.c ****     }
+ 820              		.loc 1 119 9 is_stmt 1 view .LVU258
+ 112:../../bos/core/b_timer.c ****     {
+ 821              		.loc 1 112 5 discriminator 2 view .LVU259
+ 822 0020 488B00   		movq	(%rax), %rax
+ 823              	.LVL81:
+ 112:../../bos/core/b_timer.c ****     {
+ 824              		.loc 1 112 5 discriminator 1 view .LVU260
+ 825 0023 4839C8   		cmpq	%rcx, %rax
+ 826 0026 7418     		je	.L64
+ 827              	.L62:
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 828              		.loc 1 114 9 view .LVU261
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 829              		.loc 1 114 15 is_stmt 0 view .LVU262
+ 830 0028 488D50E0 		leaq	-32(%rax), %rdx
+ 831              	.LVL82:
+ 115:../../bos/core/b_timer.c ****         {
+ 832              		.loc 1 115 9 is_stmt 1 view .LVU263
+ 115:../../bos/core/b_timer.c ****         {
+ 833              		.loc 1 115 12 is_stmt 0 view .LVU264
+ 834 002c 4839D7   		cmpq	%rdx, %rdi
+ 835 002f 75EF     		jne	.L65
+ 836              	.LVL83:
+ 115:../../bos/core/b_timer.c ****         {
+ 837              		.loc 1 115 12 view .LVU265
+ 838              	.LBE89:
+ 839              	.LBE88:
+ 239:../../bos/core/b_timer.c ****     if (pattr == NULL)
+ 240:../../bos/core/b_timer.c ****     {
+ 241:../../bos/core/b_timer.c ****         return 0;
+GAS LISTING /tmp/cciSkYxW.s 			page 27
+
+
+ 242:../../bos/core/b_timer.c ****     }
+ 243:../../bos/core/b_timer.c ****     return (pattr->enable == 1);
+ 840              		.loc 1 243 5 is_stmt 1 view .LVU266
+ 841              		.loc 1 243 27 is_stmt 0 view .LVU267
+ 842 0031 31C0     		xorl	%eax, %eax
+ 843 0033 807A1001 		cmpb	$1, 16(%rdx)
+ 844 0037 0F94C0   		sete	%al
+ 845 003a C3       		ret
+ 846              	.LVL84:
+ 847 003b 0F1F4400 		.p2align 4,,10
+ 847      00
+ 848              		.p2align 3
+ 849              	.L64:
+ 236:../../bos/core/b_timer.c ****     }
+ 850              		.loc 1 236 16 view .LVU268
+ 851 0040 31C0     		xorl	%eax, %eax
+ 852              	.LVL85:
+ 244:../../bos/core/b_timer.c **** }
+ 853              		.loc 1 244 1 view .LVU269
+ 854 0042 C3       		ret
+ 855              		.cfi_endproc
+ 856              	.LFE33:
+ 858              		.section	.text.bTimerDelete,"ax",@progbits
+ 859              		.p2align 4
+ 860              		.globl	bTimerDelete
+ 862              	bTimerDelete:
+ 863              	.LVL86:
+ 864              	.LFB34:
+ 245:../../bos/core/b_timer.c **** 
+ 246:../../bos/core/b_timer.c **** int bTimerDelete(bTimerId_t id)
+ 247:../../bos/core/b_timer.c **** {
+ 865              		.loc 1 247 1 is_stmt 1 view -0
+ 866              		.cfi_startproc
+ 867              		.loc 1 247 1 is_stmt 0 view .LVU271
+ 868 0000 F30F1EFA 		endbr64
+ 248:../../bos/core/b_timer.c ****     bTimerAttr_t *pattr = NULL;
+ 869              		.loc 1 248 5 is_stmt 1 view .LVU272
+ 870              	.LVL87:
+ 249:../../bos/core/b_timer.c ****     if (id == NULL)
+ 871              		.loc 1 249 5 view .LVU273
+ 872              		.loc 1 249 8 is_stmt 0 view .LVU274
+ 873 0004 4885FF   		testq	%rdi, %rdi
+ 874 0007 743F     		je	.L72
+ 250:../../bos/core/b_timer.c ****     {
+ 251:../../bos/core/b_timer.c ****         return -1;
+ 252:../../bos/core/b_timer.c ****     }
+ 253:../../bos/core/b_timer.c ****     pattr = _bTimerFind(id);
+ 875              		.loc 1 253 5 is_stmt 1 view .LVU275
+ 876              	.LVL88:
+ 877              	.LBB90:
+ 878              	.LBI90:
+ 108:../../bos/core/b_timer.c **** {
+ 879              		.loc 1 108 22 view .LVU276
+ 880              	.LBB91:
+ 110:../../bos/core/b_timer.c ****     bTimerAttr_t     *pattr = NULL;
+ 881              		.loc 1 110 5 view .LVU277
+ 111:../../bos/core/b_timer.c ****     list_for_each(pos, &bTimerListHead)
+GAS LISTING /tmp/cciSkYxW.s 			page 28
+
+
+ 882              		.loc 1 111 5 view .LVU278
+ 112:../../bos/core/b_timer.c ****     {
+ 883              		.loc 1 112 5 view .LVU279
+ 884 0009 488B0500 		movq	bTimerListHead(%rip), %rax
+ 884      000000
+ 885              	.LVL89:
+ 112:../../bos/core/b_timer.c ****     {
+ 886              		.loc 1 112 5 discriminator 1 view .LVU280
+ 112:../../bos/core/b_timer.c ****     {
+ 887              		.loc 1 112 5 is_stmt 0 view .LVU281
+ 888 0010 488D0D00 		leaq	bTimerListHead(%rip), %rcx
+ 888      000000
+ 112:../../bos/core/b_timer.c ****     {
+ 889              		.loc 1 112 5 discriminator 1 view .LVU282
+ 890 0017 4839C8   		cmpq	%rcx, %rax
+ 891 001a 750C     		jne	.L70
+ 892 001c EB2A     		jmp	.L72
+ 893              	.LVL90:
+ 894 001e 6690     		.p2align 4,,10
+ 895              		.p2align 3
+ 896              	.L73:
+ 119:../../bos/core/b_timer.c ****     }
+ 897              		.loc 1 119 9 is_stmt 1 view .LVU283
+ 112:../../bos/core/b_timer.c ****     {
+ 898              		.loc 1 112 5 discriminator 2 view .LVU284
+ 899 0020 488B00   		movq	(%rax), %rax
+ 900              	.LVL91:
+ 112:../../bos/core/b_timer.c ****     {
+ 901              		.loc 1 112 5 discriminator 1 view .LVU285
+ 902 0023 4839C8   		cmpq	%rcx, %rax
+ 903 0026 7420     		je	.L72
+ 904              	.L70:
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 905              		.loc 1 114 9 view .LVU286
+ 114:../../bos/core/b_timer.c ****         if (pattr == ((bTimerAttr_t *)id))
+ 906              		.loc 1 114 15 is_stmt 0 view .LVU287
+ 907 0028 488D50E0 		leaq	-32(%rax), %rdx
+ 908              	.LVL92:
+ 115:../../bos/core/b_timer.c ****         {
+ 909              		.loc 1 115 9 is_stmt 1 view .LVU288
+ 115:../../bos/core/b_timer.c ****         {
+ 910              		.loc 1 115 12 is_stmt 0 view .LVU289
+ 911 002c 4839D7   		cmpq	%rdx, %rdi
+ 912 002f 75EF     		jne	.L73
+ 913              	.LVL93:
+ 115:../../bos/core/b_timer.c ****         {
+ 914              		.loc 1 115 12 view .LVU290
+ 915              	.LBE91:
+ 916              	.LBE90:
+ 254:../../bos/core/b_timer.c ****     if (pattr == NULL)
+ 255:../../bos/core/b_timer.c ****     {
+ 256:../../bos/core/b_timer.c ****         return -1;
+ 257:../../bos/core/b_timer.c ****     }
+ 258:../../bos/core/b_timer.c ****     __list_del(pattr->list.prev, pattr->list.next);
+ 917              		.loc 1 258 5 is_stmt 1 view .LVU291
+ 918 0031 488B4228 		movq	40(%rdx), %rax
+ 919              	.LVL94:
+GAS LISTING /tmp/cciSkYxW.s 			page 29
+
+
+ 920              		.loc 1 258 5 is_stmt 0 view .LVU292
+ 921 0035 488B4A20 		movq	32(%rdx), %rcx
+ 922              	.LVL95:
+ 923              	.LBB92:
+ 924              	.LBI92:
+ 132:../../bos/utils/inc/b_util_list.h **** {
+ 925              		.loc 2 132 26 is_stmt 1 view .LVU293
+ 926              	.LBB93:
+ 134:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 927              		.loc 2 134 5 view .LVU294
+ 134:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 928              		.loc 2 134 16 is_stmt 0 view .LVU295
+ 929 0039 48894108 		movq	%rax, 8(%rcx)
+ 135:../../bos/utils/inc/b_util_list.h **** }
+ 930              		.loc 2 135 5 is_stmt 1 view .LVU296
+ 931 003d 488908   		movq	%rcx, (%rax)
+ 932              	.LVL96:
+ 135:../../bos/utils/inc/b_util_list.h **** }
+ 933              		.loc 2 135 5 is_stmt 0 view .LVU297
+ 934              	.LBE93:
+ 935              	.LBE92:
+ 259:../../bos/core/b_timer.c ****     return 0;
+ 936              		.loc 1 259 5 is_stmt 1 view .LVU298
+ 937              		.loc 1 259 12 is_stmt 0 view .LVU299
+ 938 0040 31C0     		xorl	%eax, %eax
+ 939 0042 C3       		ret
+ 940              	.LVL97:
+ 941              		.p2align 4,,10
+ 942 0043 0F1F4400 		.p2align 3
+ 942      00
+ 943              	.L72:
+ 251:../../bos/core/b_timer.c ****     }
+ 944              		.loc 1 251 16 view .LVU300
+ 945 0048 B8FFFFFF 		movl	$-1, %eax
+ 945      FF
+ 946              	.LVL98:
+ 260:../../bos/core/b_timer.c **** }
+ 947              		.loc 1 260 1 view .LVU301
+ 948 004d C3       		ret
+ 949              		.cfi_endproc
+ 950              	.LFE34:
+ 952              		.section	.bss.bTimerTaskAttr,"aw",@nobits
+ 953              		.align 32
+ 956              	bTimerTaskAttr:
+ 957 0000 00000000 		.zero	64
+ 957      00000000 
+ 957      00000000 
+ 957      00000000 
+ 957      00000000 
+ 958              		.section	.bss.bTimerTaskId,"aw",@nobits
+ 959              		.align 8
+ 962              	bTimerTaskId:
+ 963 0000 00000000 		.zero	8
+ 963      00000000 
+ 964              		.section	.data.rel.local.bTimerListHead,"aw"
+ 965              		.align 16
+ 968              	bTimerListHead:
+GAS LISTING /tmp/cciSkYxW.s 			page 30
+
+
+ 969 0000 00000000 		.quad	bTimerListHead
+ 969      00000000 
+ 970 0008 00000000 		.quad	bTimerListHead
+ 970      00000000 
+ 971              		.text
+ 972              	.Letext0:
+ 973              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 974              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"
+ 975              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 976              		.file 6 "../../bos/core/inc/b_timer.h"
+ 977              		.file 7 "../../bos/thirdparty/pt/lc-switch.h"
+ 978              		.file 8 "../../bos/thirdparty/pt/pt.h"
+ 979              		.file 9 "../../bos/core/inc/b_task.h"
+ 980              		.file 10 "../../bos/hal/inc/b_hal.h"
+ 4463              		.section	.note.gnu.property,"a"
+ 4464              		.align 8
+ 4465 0000 04000000 		.long	1f - 0f
+ 4466 0004 10000000 		.long	4f - 1f
+ 4467 0008 05000000 		.long	5
+ 4468              	0:
+ 4469 000c 474E5500 		.string	"GNU"
+ 4470              	1:
+ 4471              		.align 8
+ 4472 0010 020000C0 		.long	0xc0000002
+ 4473 0014 04000000 		.long	3f - 2f
+ 4474              	2:
+ 4475 0018 03000000 		.long	0x3
+ 4476              	3:
+ 4477 001c 00000000 		.align 8
+ 4478              	4:
+GAS LISTING /tmp/cciSkYxW.s 			page 31
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_timer.c
+     /tmp/cciSkYxW.s:9      .text._bTimerTaskFunc:0000000000000000 _bTimerTaskFunc
+     /tmp/cciSkYxW.s:968    .data.rel.local.bTimerListHead:0000000000000000 bTimerListHead
+     /tmp/cciSkYxW.s:346    .text.bTimerCreate:0000000000000000 bTimerCreate
+     /tmp/cciSkYxW.s:962    .bss.bTimerTaskId:0000000000000000 bTimerTaskId
+     /tmp/cciSkYxW.s:956    .bss.bTimerTaskAttr:0000000000000000 bTimerTaskAttr
+     /tmp/cciSkYxW.s:487    .text.bTimerStart:0000000000000000 bTimerStart
+     /tmp/cciSkYxW.s:689    .text.bTimerStop:0000000000000000 bTimerStop
+     /tmp/cciSkYxW.s:785    .text.bTimerIsRunning:0000000000000000 bTimerIsRunning
+     /tmp/cciSkYxW.s:862    .text.bTimerDelete:0000000000000000 bTimerDelete
+     /tmp/cciSkYxW.s:340    .rodata.bTimerCreate.str1.1:0000000000000000 .LC0
+
+UNDEFINED SYMBOLS
+bHalGetSysTick
+bTaskCreate

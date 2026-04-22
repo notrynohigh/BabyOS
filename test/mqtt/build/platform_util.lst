@@ -1,0 +1,457 @@
+GAS LISTING /tmp/ccPZn7kg.s 			page 1
+
+
+   1              		.file	"platform_util.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c"
+   5              		.section	.text.mbedtls_platform_zeroize,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	mbedtls_platform_zeroize
+   9              	mbedtls_platform_zeroize:
+  10              	.LVL0:
+  11              	.LFB71:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** /*
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * Common and shared functions used by multiple modules in the Mbed TLS
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * library.
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *  Copyright The Mbed TLS Contributors
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  */
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** /*
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * Ensure gmtime_r is available even with -std=c99; must be defined before
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * mbedtls_config.h, which pulls in glibc's features.h. Harmless on other platforms
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * except OpenBSD, where it stops us accessing explicit_bzero.
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  */
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if !defined(_POSIX_C_SOURCE) && !defined(__OpenBSD__)
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #define _POSIX_C_SOURCE 200112L
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if !defined(_GNU_SOURCE)
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** /* Clang requires this to get support for explicit_bzero */
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #define _GNU_SOURCE
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #include "common.h"
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform_util.h"
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/threading.h"
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #include <stddef.h>
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #ifndef __STDC_WANT_LIB_EXT1__
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #define __STDC_WANT_LIB_EXT1__ 1 /* Ask for the C11 gmtime_s() and memset_s() if available */
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #include <string.h>
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(_WIN32)
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #include <windows.h>
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** // Detect platforms known to support explicit_bzero()
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__GLIBC__) && (__GLIBC__ >= 2) && (__GLIBC_MINOR__ >= 25)
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #define MBEDTLS_PLATFORM_HAS_EXPLICIT_BZERO 1
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #elif (defined(__FreeBSD__) && (__FreeBSD_version >= 1100037)) || defined(__OpenBSD__)
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #define MBEDTLS_PLATFORM_HAS_EXPLICIT_BZERO 1
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if !defined(MBEDTLS_PLATFORM_ZEROIZE_ALT)
+GAS LISTING /tmp/ccPZn7kg.s 			page 2
+
+
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #undef HAVE_MEMORY_SANITIZER
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__has_feature)
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if __has_feature(memory_sanitizer)
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #include <sanitizer/msan_interface.h>
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #define HAVE_MEMORY_SANITIZER
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** /*
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * Where possible, we try to detect the presence of a platform-provided
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * secure memset, such as explicit_bzero(), that is safe against being optimized
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * out, and use that.
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * For other platforms, we provide an implementation that aims not to be
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * optimized out by the compiler.
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * This implementation for mbedtls_platform_zeroize() was inspired from Colin
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * Percival's blog article at:
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * http://www.daemonology.net/blog/2014-09-04-how-to-zero-a-buffer.html
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * It uses a volatile function pointer to the standard memset(). Because the
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * pointer is volatile the compiler expects it to change at
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * any time and will not optimize out the call that could potentially perform
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * other operations on the input buffer instead of just setting it to 0.
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * Nevertheless, as pointed out by davidtgoldblatt on Hacker News
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * (refer to http://www.daemonology.net/blog/2014-09-05-erratum.html for
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * details), optimizations of the following form are still possible:
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * if (memset_func != memset)
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *     memset_func(buf, 0, len);
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  *
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * Note that it is extremely difficult to guarantee that
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * the memset() call will not be optimized out by aggressive compilers
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * in a portable way. For this reason, Mbed TLS also provides the configuration
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * option MBEDTLS_PLATFORM_ZEROIZE_ALT, which allows users to configure
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * mbedtls_platform_zeroize() to use a suitable implementation for their
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  * platform and needs.
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****  */
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if !defined(MBEDTLS_PLATFORM_HAS_EXPLICIT_BZERO) && !(defined(__STDC_LIB_EXT1__) && \
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     !defined(__IAR_SYSTEMS_ICC__)) \
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     && !defined(_WIN32)
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** static void *(*const volatile memset_func)(void *, int, size_t) = memset;
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** void mbedtls_platform_zeroize(void *buf, size_t len)
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** {
+  12              		.loc 1 95 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 95 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     if (len > 0) {
+  16              		.loc 1 96 5 is_stmt 1 view .LVU2
+  17              		.loc 1 96 8 is_stmt 0 view .LVU3
+  18 0004 4885F6   		testq	%rsi, %rsi
+  19 0007 7507     		jne	.L11
+GAS LISTING /tmp/ccPZn7kg.s 			page 3
+
+
+  20 0009 C3       		ret
+  21 000a 660F1F44 		.p2align 4,,10
+  21      0000
+  22              		.p2align 3
+  23              	.L11:
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     if (len > 0) {
+  24              		.loc 1 95 1 view .LVU4
+  25 0010 53       		pushq	%rbx
+  26              	.LCFI0:
+  27              		.cfi_def_cfa_offset 16
+  28              		.cfi_offset 3, -16
+  29              	.LBB12:
+  30              	.LBB13:
+  31              	.LBB14:
+  32              	.LBB15:
+  33              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+GAS LISTING /tmp/ccPZn7kg.s 			page 4
+
+
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+  60:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  61:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  62:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  63:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_MISC
+  64:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # include <bits/strings_fortified.h>
+  65:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  66:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** void __explicit_bzero_chk (void *__dest, size_t __len, size_t __destlen)
+  67:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   __THROW __nonnull ((1)) __fortified_attr_access (__write_only__, 1, 2);
+  68:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  69:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void
+  70:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (explicit_bzero (void *__dest, size_t __len))
+  71:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  72:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   __explicit_bzero_chk (__dest, __len, __glibc_objsize0 (__dest));
+  34              		.loc 2 72 3 discriminator 1 view .LVU5
+  35 0011 48C7C2FF 		movq	$-1, %rdx
+  35      FFFFFF
+  36 0018 4889FB   		movq	%rdi, %rbx
+  37              	.LVL1:
+  38              		.loc 2 72 3 discriminator 1 view .LVU6
+  39              	.LBE15:
+  40              	.LBE14:
+  41              	.LBE13:
+  42              	.LBI12:
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** {
+  43              		.loc 1 94 6 is_stmt 1 view .LVU7
+  44              	.LBB18:
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(MBEDTLS_PLATFORM_HAS_EXPLICIT_BZERO)
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         explicit_bzero(buf, len);
+  45              		.loc 1 98 9 view .LVU8
+  46              	.LBB17:
+  47              	.LBI14:
+  70:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  48              		.loc 2 70 1 view .LVU9
+  49              	.LBB16:
+  50              		.loc 2 72 3 view .LVU10
+  51              		.loc 2 72 3 is_stmt 0 discriminator 1 view .LVU11
+  52 001b E8000000 		call	__explicit_bzero_chk@PLT
+  52      00
+  53              	.LVL2:
+GAS LISTING /tmp/ccPZn7kg.s 			page 5
+
+
+  54              		.loc 2 72 3 discriminator 1 view .LVU12
+  55              	.LBE16:
+  56              	.LBE17:
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(HAVE_MEMORY_SANITIZER)
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         /* You'd think that Msan would recognize explicit_bzero() as
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****          * equivalent to bzero(), but it actually doesn't on several
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****          * platforms, including Linux (Ubuntu 20.04).
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****          * https://github.com/google/sanitizers/issues/1507
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****          * https://github.com/openssh/openssh-portable/commit/74433a19bb6f4cef607680fa4d1d7d81ca382
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****          */
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         __msan_unpoison(buf, len);
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #elif defined(__STDC_LIB_EXT1__) && !defined(__IAR_SYSTEMS_ICC__)
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         memset_s(buf, len, 0, len);
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #elif defined(_WIN32)
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         SecureZeroMemory(buf, len);
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #else
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         memset_func(buf, 0, len);
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__GNUC__)
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         /* For clang and recent gcc, pretend that we have some assembly that reads the
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****          * zero'd memory as an additional protection against being optimised away. */
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__clang__) || (__GNUC__ >= 10)
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__clang__)
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #pragma clang diagnostic push
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #pragma clang diagnostic ignored "-Wvla"
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #elif defined(MBEDTLS_COMPILER_IS_GCC)
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #pragma GCC diagnostic push
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #pragma GCC diagnostic ignored "-Wvla"
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         asm volatile ("" : : "m" (*(char (*)[len]) buf) :);
+  57              		.loc 1 127 9 is_stmt 1 view .LVU13
+  58              		.loc 1 127 9 is_stmt 0 view .LVU14
+  59              	.LVL3:
+  60              		.loc 1 127 9 view .LVU15
+  61              	.LBE18:
+  62              	.LBE12:
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__clang__)
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #pragma clang diagnostic pop
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #elif defined(MBEDTLS_COMPILER_IS_GCC)
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #pragma GCC diagnostic pop
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     }
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** }
+  63              		.loc 1 136 1 view .LVU16
+  64 0020 5B       		popq	%rbx
+  65              	.LCFI1:
+  66              		.cfi_def_cfa_offset 8
+  67              	.LVL4:
+  68              		.loc 1 136 1 view .LVU17
+  69 0021 C3       		ret
+  70              		.cfi_endproc
+  71              	.LFE71:
+  73              		.section	.text.mbedtls_zeroize_and_free,"ax",@progbits
+GAS LISTING /tmp/ccPZn7kg.s 			page 6
+
+
+  74              		.p2align 4
+  75              		.globl	mbedtls_zeroize_and_free
+  77              	mbedtls_zeroize_and_free:
+  78              	.LVL5:
+  79              	.LFB72:
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif /* MBEDTLS_PLATFORM_ZEROIZE_ALT */
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** void mbedtls_zeroize_and_free(void *buf, size_t len)
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** {
+  80              		.loc 1 140 1 is_stmt 1 view -0
+  81              		.cfi_startproc
+  82              		.loc 1 140 1 is_stmt 0 view .LVU19
+  83 0000 F30F1EFA 		endbr64
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     if (buf != NULL) {
+  84              		.loc 1 141 5 is_stmt 1 view .LVU20
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****         mbedtls_platform_zeroize(buf, len);
+  85              		.loc 1 142 9 view .LVU21
+  86              	.LVL6:
+  87              	.LBB25:
+  88              	.LBI25:
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** {
+  89              		.loc 1 94 6 view .LVU22
+  90              	.LBB26:
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(MBEDTLS_PLATFORM_HAS_EXPLICIT_BZERO)
+  91              		.loc 1 96 5 view .LVU23
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(MBEDTLS_PLATFORM_HAS_EXPLICIT_BZERO)
+  92              		.loc 1 96 8 is_stmt 0 view .LVU24
+  93 0004 4885FF   		testq	%rdi, %rdi
+  94 0007 7405     		je	.L21
+  95 0009 4885F6   		testq	%rsi, %rsi
+  96 000c 750A     		jne	.L24
+  97              	.L21:
+  98              	.LVL7:
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(MBEDTLS_PLATFORM_HAS_EXPLICIT_BZERO)
+  99              		.loc 1 96 8 view .LVU25
+ 100              	.LBE26:
+ 101              	.LBE25:
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     }
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     mbedtls_free(buf);
+ 102              		.loc 1 145 5 is_stmt 1 view .LVU26
+ 103 000e E9000000 		jmp	mbedtls_free@PLT
+ 103      00
+ 104              	.LVL8:
+ 105              		.p2align 4,,10
+ 106 0013 0F1F4400 		.p2align 3
+ 106      00
+ 107              	.L24:
+ 108              	.LBB37:
+ 109              	.LBB35:
+ 110              	.LBB27:
+ 111              	.LBI27:
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** {
+ 112              		.loc 1 94 6 view .LVU27
+ 113              	.LBB28:
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(HAVE_MEMORY_SANITIZER)
+ 114              		.loc 1 98 9 view .LVU28
+GAS LISTING /tmp/ccPZn7kg.s 			page 7
+
+
+ 115              	.LBB29:
+ 116              	.LBI29:
+  70:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+ 117              		.loc 2 70 1 view .LVU29
+ 118              	.LBB30:
+ 119              		.loc 2 72 3 view .LVU30
+ 120              	.LBE30:
+ 121              	.LBE29:
+ 122              	.LBE28:
+ 123              	.LBE27:
+ 124              	.LBE35:
+ 125              	.LBE37:
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c ****     if (buf != NULL) {
+ 126              		.loc 1 140 1 is_stmt 0 view .LVU31
+ 127 0018 4883EC18 		subq	$24, %rsp
+ 128              	.LCFI2:
+ 129              		.cfi_def_cfa_offset 32
+ 130              	.LBB38:
+ 131              	.LBB36:
+ 132              	.LBB34:
+ 133              	.LBB33:
+ 134              	.LBB32:
+ 135              	.LBB31:
+ 136              		.loc 2 72 3 discriminator 1 view .LVU32
+ 137 001c 48C7C2FF 		movq	$-1, %rdx
+ 137      FFFFFF
+ 138 0023 48897C24 		movq	%rdi, 8(%rsp)
+ 138      08
+ 139 0028 E8000000 		call	__explicit_bzero_chk@PLT
+ 139      00
+ 140              	.LVL9:
+ 141              		.loc 2 72 3 discriminator 1 view .LVU33
+ 142              	.LBE31:
+ 143              	.LBE32:
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__clang__)
+ 144              		.loc 1 127 9 is_stmt 1 view .LVU34
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__clang__)
+ 145              		.loc 1 127 9 is_stmt 0 view .LVU35
+ 146 002d 488B7C24 		movq	8(%rsp), %rdi
+ 146      08
+ 147              	.LVL10:
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(__clang__)
+ 148              		.loc 1 127 9 view .LVU36
+ 149              	.LBE33:
+ 150              	.LBE34:
+ 151              	.LBE36:
+ 152              	.LBE38:
+ 153              		.loc 1 145 5 is_stmt 1 view .LVU37
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** }
+ 154              		.loc 1 146 1 is_stmt 0 view .LVU38
+ 155 0032 4883C418 		addq	$24, %rsp
+ 156              	.LCFI3:
+ 157              		.cfi_def_cfa_offset 8
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** }
+ 158              		.loc 1 145 5 view .LVU39
+ 159 0036 E9000000 		jmp	mbedtls_free@PLT
+ 159      00
+GAS LISTING /tmp/ccPZn7kg.s 			page 8
+
+
+ 160              	.LVL11:
+ 161              		.cfi_endproc
+ 162              	.LFE72:
+ 164              		.text
+ 165              	.Letext0:
+ 166              		.file 3 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+ 167              		.file 4 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1253              		.section	.note.gnu.property,"a"
+ 1254              		.align 8
+ 1255 0000 04000000 		.long	1f - 0f
+ 1256 0004 10000000 		.long	4f - 1f
+ 1257 0008 05000000 		.long	5
+ 1258              	0:
+ 1259 000c 474E5500 		.string	"GNU"
+ 1260              	1:
+ 1261              		.align 8
+ 1262 0010 020000C0 		.long	0xc0000002
+ 1263 0014 04000000 		.long	3f - 2f
+ 1264              	2:
+ 1265 0018 03000000 		.long	0x3
+ 1266              	3:
+ 1267 001c 00000000 		.align 8
+ 1268              	4:
+GAS LISTING /tmp/ccPZn7kg.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 platform_util.c
+     /tmp/ccPZn7kg.s:9      .text.mbedtls_platform_zeroize:0000000000000000 mbedtls_platform_zeroize
+     /tmp/ccPZn7kg.s:77     .text.mbedtls_zeroize_and_free:0000000000000000 mbedtls_zeroize_and_free
+
+UNDEFINED SYMBOLS
+__explicit_bzero_chk
+mbedtls_free

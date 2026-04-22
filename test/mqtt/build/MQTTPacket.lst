@@ -1,0 +1,3417 @@
+GAS LISTING /tmp/cc3YwPWP.s 			page 1
+
+
+   1              		.file	"MQTTPacket.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mqtt-pack/MQTTPacket.c"
+   5              		.section	.text.MQTTPacket_encode,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	MQTTPacket_encode
+   9              	MQTTPacket_encode:
+  10              	.LVL0:
+  11              	.LFB20:
+   1:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /*******************************************************************************
+   2:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Copyright (c) 2014 IBM Corp.
+   3:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  *
+   4:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * All rights reserved. This program and the accompanying materials
+   5:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  *
+   8:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * The Eclipse Public License is available at
+   9:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * and the Eclipse Distribution License is available at
+  11:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  *
+  13:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Contributors:
+  14:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  *    Sergio R. Caprile - non-blocking packet read functions for stream transport
+  16:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  *******************************************************************************/
+  17:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  18:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** #include "StackTrace.h"
+  19:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** #include "MQTTPacket.h"
+  20:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  21:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** #include <string.h>
+  22:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  23:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+  24:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Encodes the message length according to the MQTT algorithm
+  25:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param buf the buffer into which the encoded data is written
+  26:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param length the length to be encoded
+  27:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return the number of bytes written to buffer
+  28:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+  29:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int MQTTPacket_encode(unsigned char* buf, int length)
+  30:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+  12              		.loc 1 30 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 30 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  31:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = 0;
+  16              		.loc 1 31 2 is_stmt 1 view .LVU2
+  17              	.LVL1:
+  32:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  33:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_ENTRY;
+  18              		.loc 1 33 12 view .LVU3
+  34:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+  19              		.loc 1 34 2 view .LVU4
+  20              	.LBB24:
+  35:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		char d = length % 128;
+  21              		.loc 1 36 3 view .LVU5
+  22              		.loc 1 36 19 is_stmt 0 view .LVU6
+GAS LISTING /tmp/cc3YwPWP.s 			page 2
+
+
+  23 0004 89F2     		movl	%esi, %edx
+  24 0006 C1FA1F   		sarl	$31, %edx
+  25 0009 C1EA19   		shrl	$25, %edx
+  26 000c 8D0416   		leal	(%rsi,%rdx), %eax
+  27 000f 83E07F   		andl	$127, %eax
+  28              		.loc 1 36 8 view .LVU7
+  29 0012 29D0     		subl	%edx, %eax
+  30              	.LVL2:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+  31              		.loc 1 37 3 is_stmt 1 view .LVU8
+  38:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (length > 0)
+  32              		.loc 1 39 3 view .LVU9
+  33              		.loc 1 39 6 is_stmt 0 view .LVU10
+  34 0014 BA010000 		movl	$1, %edx
+  34      00
+  35 0019 83FE7F   		cmpl	$127, %esi
+  36 001c 7E3A     		jle	.L4
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+  37              		.loc 1 37 10 view .LVU11
+  38 001e C1FE07   		sarl	$7, %esi
+  39              	.LVL3:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+  40              		.loc 1 37 10 view .LVU12
+  41 0021 BA010000 		movl	$1, %edx
+  41      00
+  42              	.LVL4:
+  43 0026 662E0F1F 		.p2align 4,,10
+  43      84000000 
+  43      0000
+  44              		.p2align 3
+  45              	.L3:
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+  46              		.loc 1 40 4 is_stmt 1 view .LVU13
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		buf[rc++] = d;
+  47              		.loc 1 41 3 view .LVU14
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+  48              		.loc 1 40 6 is_stmt 0 view .LVU15
+  49 0030 83C880   		orl	$-128, %eax
+  50              	.LVL5:
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+  51              		.loc 1 40 6 view .LVU16
+  52 0033 4189F0   		movl	%esi, %r8d
+  53 0036 4889D1   		movq	%rdx, %rcx
+  54 0039 884417FF 		movb	%al, -1(%rdi,%rdx)
+  55              	.LBE24:
+  42:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+  56              		.loc 1 42 18 is_stmt 1 view .LVU17
+  33:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+  57              		.loc 1 33 12 view .LVU18
+  34:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+  58              		.loc 1 34 2 view .LVU19
+  59              	.LBB25:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+  60              		.loc 1 36 3 view .LVU20
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+  61              		.loc 1 36 8 is_stmt 0 view .LVU21
+GAS LISTING /tmp/cc3YwPWP.s 			page 3
+
+
+  62 003d 89F0     		movl	%esi, %eax
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+  63              		.loc 1 39 6 view .LVU22
+  64 003f 4883C201 		addq	$1, %rdx
+  65              	.LVL6:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+  66              		.loc 1 37 10 view .LVU23
+  67 0043 C1FE07   		sarl	$7, %esi
+  68              	.LVL7:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+  69              		.loc 1 36 8 view .LVU24
+  70 0046 83E07F   		andl	$127, %eax
+  71              	.LVL8:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+  72              		.loc 1 37 3 is_stmt 1 view .LVU25
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+  73              		.loc 1 39 3 view .LVU26
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+  74              		.loc 1 39 6 is_stmt 0 view .LVU27
+  75 0049 4183F87F 		cmpl	$127, %r8d
+  76 004d 7FE1     		jg	.L3
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+  77              		.loc 1 41 9 view .LVU28
+  78 004f 8D5101   		leal	1(%rcx), %edx
+  79 0052 4863C9   		movslq	%ecx, %rcx
+  80              	.LVL9:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+  81              		.loc 1 41 6 view .LVU29
+  82 0055 4801CF   		addq	%rcx, %rdi
+  83              	.LVL10:
+  84              	.L4:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+  85              		.loc 1 41 3 is_stmt 1 view .LVU30
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+  86              		.loc 1 41 13 is_stmt 0 view .LVU31
+  87 0058 8807     		movb	%al, (%rdi)
+  88              	.LBE25:
+  89              		.loc 1 42 18 is_stmt 1 view .LVU32
+  43:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+  90              		.loc 1 43 18 view .LVU33
+  44:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+  91              		.loc 1 44 2 view .LVU34
+  45:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+  92              		.loc 1 45 1 is_stmt 0 view .LVU35
+  93 005a 89D0     		movl	%edx, %eax
+  94              	.LVL11:
+  95              		.loc 1 45 1 view .LVU36
+  96 005c C3       		ret
+  97              		.cfi_endproc
+  98              	.LFE20:
+ 100              		.section	.text.MQTTPacket_decode,"ax",@progbits
+ 101              		.p2align 4
+ 102              		.globl	MQTTPacket_decode
+ 104              	MQTTPacket_decode:
+ 105              	.LVL12:
+ 106              	.LFB21:
+  46:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+GAS LISTING /tmp/cc3YwPWP.s 			page 4
+
+
+  47:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  48:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+  49:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Decodes the message length according to the MQTT algorithm
+  50:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param getcharfn pointer to function to read the next character from the data source
+  51:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param value the decoded length returned
+  52:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return the number of bytes read from the socket
+  53:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+  54:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int MQTTPacket_decode(int (*getcharfn)(unsigned char*, int), int* value)
+  55:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 107              		.loc 1 55 1 is_stmt 1 view -0
+ 108              		.cfi_startproc
+ 109              		.loc 1 55 1 is_stmt 0 view .LVU38
+ 110 0000 F30F1EFA 		endbr64
+ 111 0004 4156     		pushq	%r14
+ 112              	.LCFI0:
+ 113              		.cfi_def_cfa_offset 16
+ 114              		.cfi_offset 14, -16
+  56:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	unsigned char c;
+  57:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int multiplier = 1;
+ 115              		.loc 1 57 6 view .LVU39
+ 116 0006 41BE0100 		movl	$1, %r14d
+ 116      0000
+  55:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	unsigned char c;
+ 117              		.loc 1 55 1 view .LVU40
+ 118 000c 4155     		pushq	%r13
+ 119              	.LCFI1:
+ 120              		.cfi_def_cfa_offset 24
+ 121              		.cfi_offset 13, -24
+ 122 000e 4154     		pushq	%r12
+ 123              	.LCFI2:
+ 124              		.cfi_def_cfa_offset 32
+ 125              		.cfi_offset 12, -32
+ 126 0010 4989FC   		movq	%rdi, %r12
+ 127 0013 55       		pushq	%rbp
+ 128              	.LCFI3:
+ 129              		.cfi_def_cfa_offset 40
+ 130              		.cfi_offset 6, -40
+ 131 0014 4889F5   		movq	%rsi, %rbp
+ 132 0017 53       		pushq	%rbx
+ 133              	.LCFI4:
+ 134              		.cfi_def_cfa_offset 48
+ 135              		.cfi_offset 3, -48
+  58:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 0;
+ 136              		.loc 1 58 6 view .LVU41
+ 137 0018 31DB     		xorl	%ebx, %ebx
+  55:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	unsigned char c;
+ 138              		.loc 1 55 1 view .LVU42
+ 139 001a 4883EC10 		subq	$16, %rsp
+ 140              	.LCFI5:
+ 141              		.cfi_def_cfa_offset 64
+  55:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	unsigned char c;
+ 142              		.loc 1 55 1 view .LVU43
+ 143 001e 64488B04 		movq	%fs:40, %rax
+ 143      25280000 
+ 143      00
+ 144 0027 48894424 		movq	%rax, 8(%rsp)
+ 144      08
+GAS LISTING /tmp/cc3YwPWP.s 			page 5
+
+
+ 145 002c 31C0     		xorl	%eax, %eax
+  56:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	unsigned char c;
+ 146              		.loc 1 56 2 is_stmt 1 view .LVU44
+  57:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 0;
+ 147              		.loc 1 57 2 view .LVU45
+ 148              	.LVL13:
+ 149              		.loc 1 58 2 view .LVU46
+  59:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** #define MAX_NO_OF_REMAINING_LENGTH_BYTES 4
+  60:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  61:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_ENTRY;
+ 150              		.loc 1 61 12 view .LVU47
+  62:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*value = 0;
+ 151              		.loc 1 62 2 view .LVU48
+ 152              		.loc 1 62 9 is_stmt 0 view .LVU49
+ 153 002e C7060000 		movl	$0, (%rsi)
+ 153      0000
+ 154              	.LBB28:
+  63:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+  64:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+  65:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		int rc = MQTTPACKET_READ_ERROR;
+  66:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (++len > MAX_NO_OF_REMAINING_LENGTH_BYTES)
+  68:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+  69:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			rc = MQTTPACKET_READ_ERROR;	/* bad data */
+  70:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+  71:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		}
+  72:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rc = (*getcharfn)(&c, 1);
+ 155              		.loc 1 72 9 view .LVU50
+ 156 0034 4C8D6C24 		leaq	7(%rsp), %r13
+ 156      07
+ 157              	.LVL14:
+ 158              	.L11:
+ 159              		.loc 1 72 9 view .LVU51
+ 160              	.LBE28:
+  63:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+ 161              		.loc 1 63 2 is_stmt 1 view .LVU52
+ 162              	.LBB29:
+  65:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 163              		.loc 1 65 3 view .LVU53
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 164              		.loc 1 67 3 view .LVU54
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 165              		.loc 1 67 6 is_stmt 0 view .LVU55
+ 166 0039 83C301   		addl	$1, %ebx
+ 167              	.LVL15:
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 168              		.loc 1 67 6 view .LVU56
+ 169 003c 83FB05   		cmpl	$5, %ebx
+ 170 003f 742F     		je	.L8
+ 171              		.loc 1 72 3 is_stmt 1 view .LVU57
+ 172              		.loc 1 72 9 is_stmt 0 view .LVU58
+ 173 0041 BE010000 		movl	$1, %esi
+ 173      00
+ 174 0046 4C89EF   		movq	%r13, %rdi
+ 175 0049 41FFD4   		call	*%r12
+ 176              	.LVL16:
+  73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (rc != 1)
+GAS LISTING /tmp/cc3YwPWP.s 			page 6
+
+
+ 177              		.loc 1 73 3 is_stmt 1 view .LVU59
+ 178              		.loc 1 73 6 is_stmt 0 view .LVU60
+ 179 004c 83F801   		cmpl	$1, %eax
+ 180 004f 751F     		jne	.L8
+  74:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*value += (c & 127) * multiplier;
+ 181              		.loc 1 75 3 is_stmt 1 view .LVU61
+ 182              		.loc 1 75 16 is_stmt 0 view .LVU62
+ 183 0051 0FB65424 		movzbl	7(%rsp), %edx
+ 183      07
+ 184 0056 89D0     		movl	%edx, %eax
+ 185              	.LVL17:
+ 186              		.loc 1 75 16 view .LVU63
+ 187 0058 83E07F   		andl	$127, %eax
+ 188              		.loc 1 75 23 view .LVU64
+ 189 005b 410FAFC6 		imull	%r14d, %eax
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 190              		.loc 1 76 14 view .LVU65
+ 191 005f 41C1E607 		sall	$7, %r14d
+ 192              	.LVL18:
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 193              		.loc 1 75 10 view .LVU66
+ 194 0063 014500   		addl	%eax, 0(%rbp)
+ 195              		.loc 1 76 3 is_stmt 1 view .LVU67
+ 196              	.LVL19:
+ 197              		.loc 1 76 3 is_stmt 0 view .LVU68
+ 198              	.LBE29:
+  77:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 199              		.loc 1 77 21 is_stmt 1 view .LVU69
+ 200 0066 84D2     		testb	%dl, %dl
+ 201 0068 78CF     		js	.L11
+ 202              	.L9:
+ 203              	.LVL20:
+ 204 006a 660F1F44 		.p2align 4,,10
+ 204      0000
+ 205              		.p2align 3
+ 206              	.L8:
+  78:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+  79:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(len);
+  80:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return len;
+  81:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 207              		.loc 1 81 1 is_stmt 0 view .LVU70
+ 208 0070 488B4424 		movq	8(%rsp), %rax
+ 208      08
+ 209 0075 64482B04 		subq	%fs:40, %rax
+ 209      25280000 
+ 209      00
+ 210 007e 750F     		jne	.L18
+ 211 0080 4883C410 		addq	$16, %rsp
+ 212              	.LCFI6:
+ 213              		.cfi_remember_state
+ 214              		.cfi_def_cfa_offset 48
+ 215 0084 89D8     		movl	%ebx, %eax
+ 216 0086 5B       		popq	%rbx
+ 217              	.LCFI7:
+ 218              		.cfi_def_cfa_offset 40
+ 219              	.LVL21:
+GAS LISTING /tmp/cc3YwPWP.s 			page 7
+
+
+ 220              		.loc 1 81 1 view .LVU71
+ 221 0087 5D       		popq	%rbp
+ 222              	.LCFI8:
+ 223              		.cfi_def_cfa_offset 32
+ 224              	.LVL22:
+ 225              		.loc 1 81 1 view .LVU72
+ 226 0088 415C     		popq	%r12
+ 227              	.LCFI9:
+ 228              		.cfi_def_cfa_offset 24
+ 229              	.LVL23:
+ 230              		.loc 1 81 1 view .LVU73
+ 231 008a 415D     		popq	%r13
+ 232              	.LCFI10:
+ 233              		.cfi_def_cfa_offset 16
+ 234 008c 415E     		popq	%r14
+ 235              	.LCFI11:
+ 236              		.cfi_def_cfa_offset 8
+ 237              	.LVL24:
+ 238              		.loc 1 81 1 view .LVU74
+ 239 008e C3       		ret
+ 240              	.LVL25:
+ 241              	.L18:
+ 242              	.LCFI12:
+ 243              		.cfi_restore_state
+ 244              		.loc 1 81 1 view .LVU75
+ 245 008f E8000000 		call	__stack_chk_fail@PLT
+ 245      00
+ 246              	.LVL26:
+ 247              		.cfi_endproc
+ 248              	.LFE21:
+ 250              		.section	.text.MQTTPacket_len,"ax",@progbits
+ 251              		.p2align 4
+ 252              		.globl	MQTTPacket_len
+ 254              	MQTTPacket_len:
+ 255              	.LVL27:
+ 256              	.LFB22:
+  82:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  83:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  84:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int MQTTPacket_len(int rem_len)
+  85:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 257              		.loc 1 85 1 is_stmt 1 view -0
+ 258              		.cfi_startproc
+ 259              		.loc 1 85 1 is_stmt 0 view .LVU77
+ 260 0000 F30F1EFA 		endbr64
+  86:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	rem_len += 1; /* header byte */
+ 261              		.loc 1 86 2 is_stmt 1 view .LVU78
+ 262              		.loc 1 86 10 is_stmt 0 view .LVU79
+ 263 0004 8D4701   		leal	1(%rdi), %eax
+ 264              	.LVL28:
+  87:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+  88:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	/* now remaining_length field */
+  89:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if (rem_len < 128)
+ 265              		.loc 1 89 2 is_stmt 1 view .LVU80
+ 266              		.loc 1 89 5 is_stmt 0 view .LVU81
+ 267 0007 83F87F   		cmpl	$127, %eax
+ 268 000a 7F04     		jg	.L20
+  90:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rem_len += 1;
+GAS LISTING /tmp/cc3YwPWP.s 			page 8
+
+
+ 269              		.loc 1 90 3 is_stmt 1 view .LVU82
+ 270              		.loc 1 90 11 is_stmt 0 view .LVU83
+ 271 000c 8D4702   		leal	2(%rdi), %eax
+ 272              	.LVL29:
+ 273              		.loc 1 90 11 view .LVU84
+ 274 000f C3       		ret
+ 275              		.p2align 4,,10
+ 276              		.p2align 3
+ 277              	.L20:
+  91:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	else if (rem_len < 16384)
+ 278              		.loc 1 91 7 is_stmt 1 view .LVU85
+ 279              		.loc 1 91 10 is_stmt 0 view .LVU86
+ 280 0010 3DFF3F00 		cmpl	$16383, %eax
+ 280      00
+ 281 0015 7F09     		jg	.L22
+  92:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rem_len += 2;
+ 282              		.loc 1 92 3 is_stmt 1 view .LVU87
+ 283              		.loc 1 92 11 is_stmt 0 view .LVU88
+ 284 0017 8D4703   		leal	3(%rdi), %eax
+ 285              	.LVL30:
+ 286              		.loc 1 92 11 view .LVU89
+ 287 001a C3       		ret
+ 288 001b 0F1F4400 		.p2align 4,,10
+ 288      00
+ 289              		.p2align 3
+ 290              	.L22:
+  93:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	else if (rem_len < 2097151)
+ 291              		.loc 1 93 7 is_stmt 1 view .LVU90
+  94:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rem_len += 3;
+ 292              		.loc 1 94 11 is_stmt 0 view .LVU91
+ 293 0020 3DFEFF1F 		cmpl	$2097150, %eax
+ 293      00
+ 294 0025 0F9FC0   		setg	%al
+ 295              	.LVL31:
+ 296              		.loc 1 94 11 view .LVU92
+ 297 0028 0FB6C0   		movzbl	%al, %eax
+ 298 002b 8D443804 		leal	4(%rax,%rdi), %eax
+  95:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	else
+  96:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rem_len += 4;
+  97:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rem_len;
+  98:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 299              		.loc 1 98 1 view .LVU93
+ 300 002f C3       		ret
+ 301              		.cfi_endproc
+ 302              	.LFE22:
+ 304              		.section	.text.bufchar,"ax",@progbits
+ 305              		.p2align 4
+ 306              		.globl	bufchar
+ 308              	bufchar:
+ 309              	.LVL32:
+ 310              	.LFB23:
+  99:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 100:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 101:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** static unsigned char* bufptr;
+ 102:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 103:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int bufchar(unsigned char* c, int count)
+ 104:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+GAS LISTING /tmp/cc3YwPWP.s 			page 9
+
+
+ 311              		.loc 1 104 1 is_stmt 1 view -0
+ 312              		.cfi_startproc
+ 313              		.loc 1 104 1 is_stmt 0 view .LVU95
+ 314 0000 F30F1EFA 		endbr64
+ 105:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int i;
+ 315              		.loc 1 105 2 is_stmt 1 view .LVU96
+ 106:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	for (i = 0; i < count; ++i)
+ 316              		.loc 1 107 2 view .LVU97
+ 317              	.LVL33:
+ 318              		.loc 1 107 16 discriminator 1 view .LVU98
+ 104:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int i;
+ 319              		.loc 1 104 1 is_stmt 0 view .LVU99
+ 320 0004 89F0     		movl	%esi, %eax
+ 321              		.loc 1 107 16 discriminator 1 view .LVU100
+ 322 0006 85F6     		testl	%esi, %esi
+ 323 0008 7E30     		jle	.L25
+ 324 000a 488B3500 		movq	bufptr(%rip), %rsi
+ 324      000000
+ 325              	.LVL34:
+ 326              		.loc 1 107 16 discriminator 1 view .LVU101
+ 327 0011 4C63C0   		movslq	%eax, %r8
+ 328 0014 4889F2   		movq	%rsi, %rdx
+ 329 0017 4901F0   		addq	%rsi, %r8
+ 330              	.LVL35:
+ 331 001a 660F1F44 		.p2align 4,,10
+ 331      0000
+ 332              		.p2align 3
+ 333              	.L26:
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 334              		.loc 1 108 3 is_stmt 1 view .LVU102
+ 335              		.loc 1 108 8 is_stmt 0 view .LVU103
+ 336 0020 0FB60A   		movzbl	(%rdx), %ecx
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 337              		.loc 1 107 16 discriminator 1 view .LVU104
+ 338 0023 4883C201 		addq	$1, %rdx
+ 339              		.loc 1 108 6 view .LVU105
+ 340 0027 880F     		movb	%cl, (%rdi)
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 341              		.loc 1 107 25 is_stmt 1 discriminator 3 view .LVU106
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 342              		.loc 1 107 16 discriminator 1 view .LVU107
+ 343 0029 4C39C2   		cmpq	%r8, %rdx
+ 344 002c 75F2     		jne	.L26
+ 345 002e 89C2     		movl	%eax, %edx
+ 346 0030 4801D6   		addq	%rdx, %rsi
+ 347 0033 48893500 		movq	%rsi, bufptr(%rip)
+ 347      000000
+ 348              	.L25:
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 349              		.loc 1 109 2 view .LVU108
+ 110:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 350              		.loc 1 110 1 is_stmt 0 view .LVU109
+ 351 003a C3       		ret
+ 352              		.cfi_endproc
+ 353              	.LFE23:
+ 355              		.section	.text.MQTTPacket_decodeBuf,"ax",@progbits
+GAS LISTING /tmp/cc3YwPWP.s 			page 10
+
+
+ 356              		.p2align 4
+ 357              		.globl	MQTTPacket_decodeBuf
+ 359              	MQTTPacket_decodeBuf:
+ 360              	.LVL36:
+ 361              	.LFB24:
+ 111:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 112:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 113:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int MQTTPacket_decodeBuf(unsigned char* buf, int* value)
+ 114:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 362              		.loc 1 114 1 is_stmt 1 view -0
+ 363              		.cfi_startproc
+ 364              		.loc 1 114 1 is_stmt 0 view .LVU111
+ 365 0000 F30F1EFA 		endbr64
+ 115:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	bufptr = buf;
+ 366              		.loc 1 115 2 is_stmt 1 view .LVU112
+ 367              	.LBB35:
+ 368              	.LBB36:
+  62:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+ 369              		.loc 1 62 9 is_stmt 0 view .LVU113
+ 370 0004 C7060000 		movl	$0, (%rsi)
+ 370      0000
+ 371              	.LBB37:
+ 372              	.LBB38:
+ 373              	.LBB39:
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 374              		.loc 1 108 8 view .LVU114
+ 375 000a 0FB607   		movzbl	(%rdi), %eax
+ 376              	.LBE39:
+ 377              	.LBE38:
+ 378              	.LBE37:
+ 379              	.LBE36:
+ 380              	.LBE35:
+ 114:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	bufptr = buf;
+ 381              		.loc 1 114 1 view .LVU115
+ 382 000d 4889F2   		movq	%rsi, %rdx
+ 383              		.loc 1 115 9 view .LVU116
+ 384 0010 48893D00 		movq	%rdi, bufptr(%rip)
+ 384      000000
+ 116:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return MQTTPacket_decode(bufchar, value);
+ 385              		.loc 1 116 2 is_stmt 1 view .LVU117
+ 386              	.LVL37:
+ 387              	.LBB63:
+ 388              	.LBI35:
+  54:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 389              		.loc 1 54 5 view .LVU118
+ 390              	.LBB61:
+  56:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int multiplier = 1;
+ 391              		.loc 1 56 2 view .LVU119
+  57:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 0;
+ 392              		.loc 1 57 2 view .LVU120
+  58:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** #define MAX_NO_OF_REMAINING_LENGTH_BYTES 4
+ 393              		.loc 1 58 2 view .LVU121
+  61:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*value = 0;
+ 394              		.loc 1 61 12 view .LVU122
+  62:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+ 395              		.loc 1 62 2 view .LVU123
+  63:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+GAS LISTING /tmp/cc3YwPWP.s 			page 11
+
+
+ 396              		.loc 1 63 2 view .LVU124
+ 397              	.LBB56:
+  65:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 398              		.loc 1 65 3 view .LVU125
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 399              		.loc 1 67 3 view .LVU126
+ 400              	.LBB48:
+ 401              	.LBB40:
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 402              		.loc 1 107 16 discriminator 1 view .LVU127
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 403              		.loc 1 108 3 view .LVU128
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 404              		.loc 1 107 25 discriminator 3 view .LVU129
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 405              		.loc 1 107 16 discriminator 1 view .LVU130
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 406              		.loc 1 109 2 view .LVU131
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 407              		.loc 1 109 2 is_stmt 0 view .LVU132
+ 408              	.LBE40:
+ 409              	.LBE48:
+  73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 410              		.loc 1 73 3 is_stmt 1 view .LVU133
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 411              		.loc 1 75 3 view .LVU134
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 412              		.loc 1 75 16 is_stmt 0 view .LVU135
+ 413 0017 89C1     		movl	%eax, %ecx
+ 414 0019 83E17F   		andl	$127, %ecx
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 415              		.loc 1 75 10 view .LVU136
+ 416 001c 890E     		movl	%ecx, (%rsi)
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 417              		.loc 1 76 3 is_stmt 1 view .LVU137
+ 418              	.LVL38:
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 419              		.loc 1 76 3 is_stmt 0 view .LVU138
+ 420              	.LBE56:
+  77:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 421              		.loc 1 77 21 is_stmt 1 view .LVU139
+ 422 001e 84C0     		testb	%al, %al
+ 423 0020 7955     		jns	.L29
+ 424              	.LVL39:
+  63:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 425              		.loc 1 63 2 view .LVU140
+ 426              	.LBB57:
+  65:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 427              		.loc 1 65 3 view .LVU141
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 428              		.loc 1 67 3 view .LVU142
+ 429              	.LBB49:
+ 430              	.LBB41:
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 431              		.loc 1 107 16 discriminator 1 view .LVU143
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 432              		.loc 1 108 3 view .LVU144
+GAS LISTING /tmp/cc3YwPWP.s 			page 12
+
+
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 433              		.loc 1 108 8 is_stmt 0 view .LVU145
+ 434 0022 0FB67701 		movzbl	1(%rdi), %esi
+ 435              	.LVL40:
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 436              		.loc 1 107 25 is_stmt 1 discriminator 3 view .LVU146
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 437              		.loc 1 107 16 discriminator 1 view .LVU147
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 438              		.loc 1 109 2 view .LVU148
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 439              		.loc 1 109 2 is_stmt 0 view .LVU149
+ 440              	.LBE41:
+ 441              	.LBE49:
+  73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 442              		.loc 1 73 3 is_stmt 1 view .LVU150
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 443              		.loc 1 75 3 view .LVU151
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 444              		.loc 1 75 16 is_stmt 0 view .LVU152
+ 445 0026 89F0     		movl	%esi, %eax
+ 446 0028 83E07F   		andl	$127, %eax
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 447              		.loc 1 75 23 view .LVU153
+ 448 002b C1E007   		sall	$7, %eax
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 449              		.loc 1 75 10 view .LVU154
+ 450 002e 01C8     		addl	%ecx, %eax
+ 451 0030 8902     		movl	%eax, (%rdx)
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 452              		.loc 1 76 3 is_stmt 1 view .LVU155
+ 453              	.LVL41:
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 454              		.loc 1 76 3 is_stmt 0 view .LVU156
+ 455              	.LBE57:
+  77:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 456              		.loc 1 77 21 is_stmt 1 view .LVU157
+ 457 0032 4084F6   		testb	%sil, %sil
+ 458 0035 794B     		jns	.L35
+ 459              	.LVL42:
+  63:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 460              		.loc 1 63 2 view .LVU158
+ 461              	.LBB58:
+  65:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 462              		.loc 1 65 3 view .LVU159
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 463              		.loc 1 67 3 view .LVU160
+ 464              	.LBB50:
+ 465              	.LBB42:
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 466              		.loc 1 107 16 discriminator 1 view .LVU161
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 467              		.loc 1 108 3 view .LVU162
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 468              		.loc 1 108 8 is_stmt 0 view .LVU163
+ 469 0037 0FB67702 		movzbl	2(%rdi), %esi
+ 470              	.LVL43:
+GAS LISTING /tmp/cc3YwPWP.s 			page 13
+
+
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 471              		.loc 1 107 25 is_stmt 1 discriminator 3 view .LVU164
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 472              		.loc 1 107 16 discriminator 1 view .LVU165
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 473              		.loc 1 109 2 view .LVU166
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 474              		.loc 1 109 2 is_stmt 0 view .LVU167
+ 475              	.LBE42:
+ 476              	.LBE50:
+  73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 477              		.loc 1 73 3 is_stmt 1 view .LVU168
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 478              		.loc 1 75 3 view .LVU169
+ 479              	.LBB51:
+ 480              	.LBB43:
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 481              		.loc 1 108 15 is_stmt 0 view .LVU170
+ 482 003b 4C8D4703 		leaq	3(%rdi), %r8
+ 483              	.LBE43:
+ 484              	.LBE51:
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 485              		.loc 1 75 16 view .LVU171
+ 486 003f 89F1     		movl	%esi, %ecx
+ 487 0041 83E17F   		andl	$127, %ecx
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 488              		.loc 1 75 23 view .LVU172
+ 489 0044 C1E10E   		sall	$14, %ecx
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 490              		.loc 1 75 10 view .LVU173
+ 491 0047 01C1     		addl	%eax, %ecx
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 492              		.loc 1 67 6 view .LVU174
+ 493 0049 B8030000 		movl	$3, %eax
+ 493      00
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 494              		.loc 1 75 10 view .LVU175
+ 495 004e 890A     		movl	%ecx, (%rdx)
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 496              		.loc 1 76 3 is_stmt 1 view .LVU176
+ 497              	.LVL44:
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 498              		.loc 1 76 3 is_stmt 0 view .LVU177
+ 499              	.LBE58:
+  77:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 500              		.loc 1 77 21 is_stmt 1 view .LVU178
+ 501 0050 4084F6   		testb	%sil, %sil
+ 502 0053 791A     		jns	.L33
+ 503              	.LVL45:
+  63:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 504              		.loc 1 63 2 view .LVU179
+ 505              	.LBB59:
+  65:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 506              		.loc 1 65 3 view .LVU180
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 507              		.loc 1 67 3 view .LVU181
+ 508              	.LBB52:
+GAS LISTING /tmp/cc3YwPWP.s 			page 14
+
+
+ 509              	.LBB44:
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 510              		.loc 1 107 16 discriminator 1 view .LVU182
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 511              		.loc 1 108 3 view .LVU183
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 512              		.loc 1 108 8 is_stmt 0 view .LVU184
+ 513 0055 0FBE4703 		movsbl	3(%rdi), %eax
+ 514              	.LVL46:
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 515              		.loc 1 107 25 is_stmt 1 discriminator 3 view .LVU185
+ 107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
+ 516              		.loc 1 107 16 discriminator 1 view .LVU186
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 517              		.loc 1 109 2 view .LVU187
+ 109:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 518              		.loc 1 109 2 is_stmt 0 view .LVU188
+ 519              	.LBE44:
+ 520              	.LBE52:
+  73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 521              		.loc 1 73 3 is_stmt 1 view .LVU189
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 522              		.loc 1 75 3 view .LVU190
+ 523              	.LBB53:
+ 524              	.LBB45:
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 525              		.loc 1 108 15 is_stmt 0 view .LVU191
+ 526 0059 4C8D4704 		leaq	4(%rdi), %r8
+ 527              	.LBE45:
+ 528              	.LBE53:
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 529              		.loc 1 75 16 view .LVU192
+ 530 005d 89C6     		movl	%eax, %esi
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 531              		.loc 1 67 6 view .LVU193
+ 532 005f C1E81F   		shrl	$31, %eax
+ 533              	.LVL47:
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 534              		.loc 1 75 16 view .LVU194
+ 535 0062 83E67F   		andl	$127, %esi
+ 536              	.LVL48:
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 537              		.loc 1 67 6 view .LVU195
+ 538 0065 83C004   		addl	$4, %eax
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 539              		.loc 1 75 23 view .LVU196
+ 540 0068 C1E615   		sall	$21, %esi
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 541              		.loc 1 75 10 view .LVU197
+ 542 006b 01F1     		addl	%esi, %ecx
+ 543 006d 890A     		movl	%ecx, (%rdx)
+ 544              	.LVL49:
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 545              		.loc 1 76 3 is_stmt 1 view .LVU198
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 546              		.loc 1 76 3 is_stmt 0 view .LVU199
+ 547              	.LBE59:
+GAS LISTING /tmp/cc3YwPWP.s 			page 15
+
+
+  77:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 548              		.loc 1 77 21 is_stmt 1 view .LVU200
+ 549              	.L33:
+  77:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 550              		.loc 1 77 21 is_stmt 0 view .LVU201
+ 551 006f 4C890500 		movq	%r8, bufptr(%rip)
+ 551      000000
+  79:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return len;
+ 552              		.loc 1 79 19 is_stmt 1 view .LVU202
+  80:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 553              		.loc 1 80 2 view .LVU203
+ 554              	.LVL50:
+  80:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 555              		.loc 1 80 2 is_stmt 0 view .LVU204
+ 556              	.LBE61:
+ 557              	.LBE63:
+ 117:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 558              		.loc 1 117 1 view .LVU205
+ 559 0076 C3       		ret
+ 560              	.LVL51:
+ 561              	.L29:
+ 562              	.LBB64:
+ 563              	.LBB62:
+ 564              	.LBB60:
+ 565              	.LBB54:
+ 566              	.LBB46:
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 567              		.loc 1 108 15 view .LVU206
+ 568 0077 4C8D4701 		leaq	1(%rdi), %r8
+ 569              	.LBE46:
+ 570              	.LBE54:
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 571              		.loc 1 67 6 view .LVU207
+ 572 007b B8010000 		movl	$1, %eax
+ 572      00
+ 573              	.LVL52:
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 574              		.loc 1 67 6 view .LVU208
+ 575 0080 EBED     		jmp	.L33
+ 576              	.LVL53:
+ 577              	.L35:
+ 578              	.LBB55:
+ 579              	.LBB47:
+ 108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
+ 580              		.loc 1 108 15 view .LVU209
+ 581 0082 4C8D4702 		leaq	2(%rdi), %r8
+ 582              	.LBE47:
+ 583              	.LBE55:
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 584              		.loc 1 67 6 view .LVU210
+ 585 0086 B8020000 		movl	$2, %eax
+ 585      00
+ 586 008b EBE2     		jmp	.L33
+ 587              	.LBE60:
+ 588              	.LBE62:
+ 589              	.LBE64:
+ 590              		.cfi_endproc
+GAS LISTING /tmp/cc3YwPWP.s 			page 16
+
+
+ 591              	.LFE24:
+ 593              		.section	.text.readInt,"ax",@progbits
+ 594              		.p2align 4
+ 595              		.globl	readInt
+ 597              	readInt:
+ 598              	.LVL54:
+ 599              	.LFB25:
+ 118:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 119:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 120:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 121:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Calculates an integer from two bytes read from the input buffer
+ 122:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param pptr pointer to the input buffer - incremented by the number of bytes used & returned
+ 123:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return the integer value calculated
+ 124:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 125:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int readInt(unsigned char** pptr)
+ 126:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 600              		.loc 1 126 1 is_stmt 1 view -0
+ 601              		.cfi_startproc
+ 602              		.loc 1 126 1 is_stmt 0 view .LVU212
+ 603 0000 F30F1EFA 		endbr64
+ 127:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	unsigned char* ptr = *pptr;
+ 604              		.loc 1 127 2 is_stmt 1 view .LVU213
+ 605              		.loc 1 127 17 is_stmt 0 view .LVU214
+ 606 0004 488B17   		movq	(%rdi), %rdx
+ 607              	.LVL55:
+ 128:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*(*ptr) + (*(ptr+1));
+ 608              		.loc 1 128 2 is_stmt 1 view .LVU215
+ 609              		.loc 1 128 17 is_stmt 0 view .LVU216
+ 610 0007 0FB602   		movzbl	(%rdx), %eax
+ 611              		.loc 1 128 26 view .LVU217
+ 612 000a 0FB64A01 		movzbl	1(%rdx), %ecx
+ 129:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += 2;
+ 613              		.loc 1 129 8 view .LVU218
+ 614 000e 4883C202 		addq	$2, %rdx
+ 615              	.LVL56:
+ 616              		.loc 1 129 8 view .LVU219
+ 617 0012 488917   		movq	%rdx, (%rdi)
+ 618              	.LVL57:
+ 128:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*(*ptr) + (*(ptr+1));
+ 619              		.loc 1 128 15 view .LVU220
+ 620 0015 C1E008   		sall	$8, %eax
+ 128:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*(*ptr) + (*(ptr+1));
+ 621              		.loc 1 128 6 view .LVU221
+ 622 0018 01C8     		addl	%ecx, %eax
+ 623              	.LVL58:
+ 624              		.loc 1 129 2 is_stmt 1 view .LVU222
+ 130:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return len;
+ 625              		.loc 1 130 2 view .LVU223
+ 131:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 626              		.loc 1 131 1 is_stmt 0 view .LVU224
+ 627 001a C3       		ret
+ 628              		.cfi_endproc
+ 629              	.LFE25:
+ 631              		.section	.text.readChar,"ax",@progbits
+ 632              		.p2align 4
+ 633              		.globl	readChar
+ 635              	readChar:
+GAS LISTING /tmp/cc3YwPWP.s 			page 17
+
+
+ 636              	.LVL59:
+ 637              	.LFB26:
+ 132:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 133:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 134:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 135:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Reads one character from the input buffer.
+ 136:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param pptr pointer to the input buffer - incremented by the number of bytes used & returned
+ 137:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return the character read
+ 138:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 139:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** char readChar(unsigned char** pptr)
+ 140:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 638              		.loc 1 140 1 is_stmt 1 view -0
+ 639              		.cfi_startproc
+ 640              		.loc 1 140 1 is_stmt 0 view .LVU226
+ 641 0000 F30F1EFA 		endbr64
+ 141:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	char c = **pptr;
+ 642              		.loc 1 141 2 is_stmt 1 view .LVU227
+ 643              		.loc 1 141 12 is_stmt 0 view .LVU228
+ 644 0004 488B07   		movq	(%rdi), %rax
+ 645              		.loc 1 141 7 view .LVU229
+ 646 0007 0FB610   		movzbl	(%rax), %edx
+ 647              	.LVL60:
+ 142:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 648              		.loc 1 142 2 is_stmt 1 view .LVU230
+ 649              		.loc 1 142 9 is_stmt 0 view .LVU231
+ 650 000a 4883C001 		addq	$1, %rax
+ 651 000e 488907   		movq	%rax, (%rdi)
+ 143:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return c;
+ 652              		.loc 1 143 2 is_stmt 1 view .LVU232
+ 144:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 653              		.loc 1 144 1 is_stmt 0 view .LVU233
+ 654 0011 89D0     		movl	%edx, %eax
+ 655 0013 C3       		ret
+ 656              		.cfi_endproc
+ 657              	.LFE26:
+ 659              		.section	.text.writeChar,"ax",@progbits
+ 660              		.p2align 4
+ 661              		.globl	writeChar
+ 663              	writeChar:
+ 664              	.LVL61:
+ 665              	.LFB27:
+ 145:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 146:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 147:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 148:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Writes one character to an output buffer.
+ 149:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param pptr pointer to the output buffer - incremented by the number of bytes used & returned
+ 150:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param c the character to write
+ 151:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 152:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** void writeChar(unsigned char** pptr, char c)
+ 153:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 666              		.loc 1 153 1 is_stmt 1 view -0
+ 667              		.cfi_startproc
+ 668              		.loc 1 153 1 is_stmt 0 view .LVU235
+ 669 0000 F30F1EFA 		endbr64
+ 154:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = c;
+ 670              		.loc 1 154 2 is_stmt 1 view .LVU236
+ 671              		.loc 1 154 3 is_stmt 0 view .LVU237
+GAS LISTING /tmp/cc3YwPWP.s 			page 18
+
+
+ 672 0004 488B07   		movq	(%rdi), %rax
+ 673              		.loc 1 154 9 view .LVU238
+ 674 0007 408830   		movb	%sil, (%rax)
+ 155:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 675              		.loc 1 155 2 is_stmt 1 view .LVU239
+ 676              		.loc 1 155 9 is_stmt 0 view .LVU240
+ 677 000a 48830701 		addq	$1, (%rdi)
+ 156:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 678              		.loc 1 156 1 view .LVU241
+ 679 000e C3       		ret
+ 680              		.cfi_endproc
+ 681              	.LFE27:
+ 683              		.section	.text.writeInt,"ax",@progbits
+ 684              		.p2align 4
+ 685              		.globl	writeInt
+ 687              	writeInt:
+ 688              	.LVL62:
+ 689              	.LFB28:
+ 157:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 158:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 159:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 160:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Writes an integer as 2 bytes to an output buffer.
+ 161:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param pptr pointer to the output buffer - incremented by the number of bytes used & returned
+ 162:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param anInt the integer to write
+ 163:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 164:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** void writeInt(unsigned char** pptr, int anInt)
+ 165:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 690              		.loc 1 165 1 is_stmt 1 view -0
+ 691              		.cfi_startproc
+ 692              		.loc 1 165 1 is_stmt 0 view .LVU243
+ 693 0000 F30F1EFA 		endbr64
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt / 256);
+ 694              		.loc 1 166 2 is_stmt 1 view .LVU244
+ 695              		.loc 1 166 33 is_stmt 0 view .LVU245
+ 696 0004 85F6     		testl	%esi, %esi
+ 697 0006 8D86FF00 		leal	255(%rsi), %eax
+ 697      0000
+ 698              		.loc 1 166 3 view .LVU246
+ 699 000c 488B17   		movq	(%rdi), %rdx
+ 700              		.loc 1 166 33 view .LVU247
+ 701 000f 0F49C6   		cmovns	%esi, %eax
+ 702              		.loc 1 166 11 view .LVU248
+ 703 0012 8822     		movb	%ah, (%rdx)
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 704              		.loc 1 167 2 is_stmt 1 view .LVU249
+ 705              		.loc 1 167 3 is_stmt 0 view .LVU250
+ 706 0014 488B17   		movq	(%rdi), %rdx
+ 707              		.loc 1 167 9 view .LVU251
+ 708 0017 488D4201 		leaq	1(%rdx), %rax
+ 709 001b 488907   		movq	%rax, (%rdi)
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 710              		.loc 1 168 2 is_stmt 1 view .LVU252
+ 711              		.loc 1 168 33 is_stmt 0 view .LVU253
+ 712 001e 89F0     		movl	%esi, %eax
+ 713 0020 C1F81F   		sarl	$31, %eax
+ 714 0023 C1E818   		shrl	$24, %eax
+ 715 0026 01C6     		addl	%eax, %esi
+GAS LISTING /tmp/cc3YwPWP.s 			page 19
+
+
+ 716              	.LVL63:
+ 717              		.loc 1 168 33 view .LVU254
+ 718 0028 400FB6F6 		movzbl	%sil, %esi
+ 719 002c 29C6     		subl	%eax, %esi
+ 720              		.loc 1 168 11 view .LVU255
+ 721 002e 40887201 		movb	%sil, 1(%rdx)
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 722              		.loc 1 169 2 is_stmt 1 view .LVU256
+ 723              		.loc 1 169 9 is_stmt 0 view .LVU257
+ 724 0032 48830701 		addq	$1, (%rdi)
+ 170:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 725              		.loc 1 170 1 view .LVU258
+ 726 0036 C3       		ret
+ 727              		.cfi_endproc
+ 728              	.LFE28:
+ 730              		.section	.text.writeCString,"ax",@progbits
+ 731              		.p2align 4
+ 732              		.globl	writeCString
+ 734              	writeCString:
+ 735              	.LVL64:
+ 736              	.LFB29:
+ 171:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 172:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 173:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 174:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Writes a "UTF" string to an output buffer.  Converts C string to length-delimited.
+ 175:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param pptr pointer to the output buffer - incremented by the number of bytes used & returned
+ 176:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param string the C string to write
+ 177:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 178:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** void writeCString(unsigned char** pptr, const char* string)
+ 179:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 737              		.loc 1 179 1 is_stmt 1 view -0
+ 738              		.cfi_startproc
+ 739              		.loc 1 179 1 is_stmt 0 view .LVU260
+ 740 0000 F30F1EFA 		endbr64
+ 180:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = strlen(string);
+ 741              		.loc 1 180 2 is_stmt 1 view .LVU261
+ 179:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = strlen(string);
+ 742              		.loc 1 179 1 is_stmt 0 view .LVU262
+ 743 0004 4154     		pushq	%r12
+ 744              	.LCFI13:
+ 745              		.cfi_def_cfa_offset 16
+ 746              		.cfi_offset 12, -16
+ 747 0006 4989F4   		movq	%rsi, %r12
+ 748 0009 55       		pushq	%rbp
+ 749              	.LCFI14:
+ 750              		.cfi_def_cfa_offset 24
+ 751              		.cfi_offset 6, -24
+ 752 000a 4889FD   		movq	%rdi, %rbp
+ 753              		.loc 1 180 12 view .LVU263
+ 754 000d 4889F7   		movq	%rsi, %rdi
+ 755              	.LVL65:
+ 179:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = strlen(string);
+ 756              		.loc 1 179 1 view .LVU264
+ 757 0010 53       		pushq	%rbx
+ 758              	.LCFI15:
+ 759              		.cfi_def_cfa_offset 32
+ 760              		.cfi_offset 3, -32
+GAS LISTING /tmp/cc3YwPWP.s 			page 20
+
+
+ 761              		.loc 1 180 12 view .LVU265
+ 762 0011 E8000000 		call	strlen@PLT
+ 762      00
+ 763              	.LVL66:
+ 181:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	writeInt(pptr, len);
+ 764              		.loc 1 181 2 is_stmt 1 view .LVU266
+ 765              	.LBB69:
+ 766              	.LBI69:
+ 164:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 767              		.loc 1 164 6 view .LVU267
+ 768              	.LBB70:
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 769              		.loc 1 166 2 view .LVU268
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 770              		.loc 1 166 3 is_stmt 0 view .LVU269
+ 771 0016 488B4D00 		movq	0(%rbp), %rcx
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 772              		.loc 1 166 33 view .LVU270
+ 773 001a 85C0     		testl	%eax, %eax
+ 774 001c 8D90FF00 		leal	255(%rax), %edx
+ 774      0000
+ 775 0022 0F49D0   		cmovns	%eax, %edx
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 776              		.loc 1 166 11 view .LVU271
+ 777 0025 8831     		movb	%dh, (%rcx)
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 778              		.loc 1 167 2 is_stmt 1 view .LVU272
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 779              		.loc 1 168 33 is_stmt 0 view .LVU273
+ 780 0027 89C1     		movl	%eax, %ecx
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 781              		.loc 1 167 3 view .LVU274
+ 782 0029 488B7500 		movq	0(%rbp), %rsi
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 783              		.loc 1 168 33 view .LVU275
+ 784 002d C1F91F   		sarl	$31, %ecx
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 785              		.loc 1 167 9 view .LVU276
+ 786 0030 488D5601 		leaq	1(%rsi), %rdx
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 787              		.loc 1 168 33 view .LVU277
+ 788 0034 C1E918   		shrl	$24, %ecx
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 789              		.loc 1 167 9 view .LVU278
+ 790 0037 48895500 		movq	%rdx, 0(%rbp)
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 791              		.loc 1 168 2 is_stmt 1 view .LVU279
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 792              		.loc 1 168 33 is_stmt 0 view .LVU280
+ 793 003b 8D1401   		leal	(%rcx,%rax), %edx
+ 794 003e 0FB6D2   		movzbl	%dl, %edx
+ 795 0041 29CA     		subl	%ecx, %edx
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 796              		.loc 1 168 11 view .LVU281
+ 797 0043 885601   		movb	%dl, 1(%rsi)
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 798              		.loc 1 169 2 is_stmt 1 view .LVU282
+GAS LISTING /tmp/cc3YwPWP.s 			page 21
+
+
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 799              		.loc 1 169 9 is_stmt 0 view .LVU283
+ 800 0046 488B5D00 		movq	0(%rbp), %rbx
+ 801              	.LBE70:
+ 802              	.LBE69:
+ 803              	.LBB73:
+ 804              	.LBB74:
+ 805              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+ 806              		.loc 2 29 10 discriminator 1 view .LVU284
+ 807 004a 4C89E6   		movq	%r12, %rsi
+ 808              	.LBE74:
+ 809              	.LBE73:
+ 810              	.LBB76:
+ 811              	.LBB71:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 812              		.loc 1 169 9 view .LVU285
+ 813 004d 488D7B01 		leaq	1(%rbx), %rdi
+ 814              	.LBE71:
+ 815              	.LBE76:
+ 182:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	memcpy(*pptr, string, len);
+ 816              		.loc 1 182 2 view .LVU286
+ 817 0051 4863D8   		movslq	%eax, %rbx
+ 818              	.LBB77:
+ 819              	.LBB72:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 820              		.loc 1 169 9 view .LVU287
+ 821 0054 48897D00 		movq	%rdi, 0(%rbp)
+ 822              	.LVL67:
+GAS LISTING /tmp/cc3YwPWP.s 			page 22
+
+
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 823              		.loc 1 169 9 view .LVU288
+ 824              	.LBE72:
+ 825              	.LBE77:
+ 826              		.loc 1 182 2 is_stmt 1 view .LVU289
+ 827              	.LBB78:
+ 828              	.LBI73:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 829              		.loc 2 26 1 view .LVU290
+ 830              	.LBB75:
+ 831              		.loc 2 29 3 view .LVU291
+ 832              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU292
+ 833 0058 4889DA   		movq	%rbx, %rdx
+ 834 005b E8000000 		call	memcpy@PLT
+ 834      00
+ 835              	.LVL68:
+ 836              		.loc 2 29 10 discriminator 1 view .LVU293
+ 837              	.LBE75:
+ 838              	.LBE78:
+ 183:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += len;
+ 839              		.loc 1 183 2 is_stmt 1 view .LVU294
+ 840              		.loc 1 183 8 is_stmt 0 view .LVU295
+ 841 0060 48015D00 		addq	%rbx, 0(%rbp)
+ 184:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 842              		.loc 1 184 1 view .LVU296
+ 843 0064 5B       		popq	%rbx
+ 844              	.LCFI16:
+ 845              		.cfi_def_cfa_offset 24
+ 846              	.LVL69:
+ 847              		.loc 1 184 1 view .LVU297
+ 848 0065 5D       		popq	%rbp
+ 849              	.LCFI17:
+ 850              		.cfi_def_cfa_offset 16
+ 851              	.LVL70:
+ 852              		.loc 1 184 1 view .LVU298
+ 853 0066 415C     		popq	%r12
+ 854              	.LCFI18:
+ 855              		.cfi_def_cfa_offset 8
+ 856              	.LVL71:
+ 857              		.loc 1 184 1 view .LVU299
+ 858 0068 C3       		ret
+ 859              		.cfi_endproc
+ 860              	.LFE29:
+ 862              		.section	.text.getLenStringLen,"ax",@progbits
+ 863              		.p2align 4
+ 864              		.globl	getLenStringLen
+ 866              	getLenStringLen:
+ 867              	.LVL72:
+ 868              	.LFB30:
+ 185:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 186:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 187:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int getLenStringLen(char* ptr)
+ 188:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 869              		.loc 1 188 1 is_stmt 1 view -0
+ 870              		.cfi_startproc
+ 871              		.loc 1 188 1 is_stmt 0 view .LVU301
+ 872 0000 F30F1EFA 		endbr64
+GAS LISTING /tmp/cc3YwPWP.s 			page 23
+
+
+ 189:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*((unsigned char)(*ptr)) + (unsigned char)(*(ptr+1));
+ 873              		.loc 1 189 2 is_stmt 1 view .LVU302
+ 874              	.LVL73:
+ 190:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return len;
+ 875              		.loc 1 190 2 view .LVU303
+ 189:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*((unsigned char)(*ptr)) + (unsigned char)(*(ptr+1));
+ 876              		.loc 1 189 17 is_stmt 0 view .LVU304
+ 877 0004 0FB607   		movzbl	(%rdi), %eax
+ 189:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*((unsigned char)(*ptr)) + (unsigned char)(*(ptr+1));
+ 878              		.loc 1 189 42 view .LVU305
+ 879 0007 0FB65701 		movzbl	1(%rdi), %edx
+ 189:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*((unsigned char)(*ptr)) + (unsigned char)(*(ptr+1));
+ 880              		.loc 1 189 15 view .LVU306
+ 881 000b C1E008   		sall	$8, %eax
+ 189:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*((unsigned char)(*ptr)) + (unsigned char)(*(ptr+1));
+ 882              		.loc 1 189 6 view .LVU307
+ 883 000e 01D0     		addl	%edx, %eax
+ 884              	.LVL74:
+ 191:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 885              		.loc 1 191 1 view .LVU308
+ 886 0010 C3       		ret
+ 887              		.cfi_endproc
+ 888              	.LFE30:
+ 890              		.section	.text.writeMQTTString,"ax",@progbits
+ 891              		.p2align 4
+ 892              		.globl	writeMQTTString
+ 894              	writeMQTTString:
+ 895              	.LVL75:
+ 896              	.LFB31:
+ 192:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 193:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 194:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** void writeMQTTString(unsigned char** pptr, MQTTString mqttstring)
+ 195:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 897              		.loc 1 195 1 is_stmt 1 view -0
+ 898              		.cfi_startproc
+ 899              		.loc 1 195 1 is_stmt 0 view .LVU310
+ 900 0000 F30F1EFA 		endbr64
+ 901 0004 4154     		pushq	%r12
+ 902              	.LCFI19:
+ 903              		.cfi_def_cfa_offset 16
+ 904              		.cfi_offset 12, -16
+ 905 0006 55       		pushq	%rbp
+ 906              	.LCFI20:
+ 907              		.cfi_def_cfa_offset 24
+ 908              		.cfi_offset 6, -24
+ 909 0007 4889FD   		movq	%rdi, %rbp
+ 910 000a 53       		pushq	%rbx
+ 911              	.LCFI21:
+ 912              		.cfi_def_cfa_offset 32
+ 913              		.cfi_offset 3, -32
+ 914 000b 8B442428 		movl	40(%rsp), %eax
+ 915 000f 4C8B6424 		movq	32(%rsp), %r12
+ 915      20
+ 916              	.LVL76:
+ 196:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if (mqttstring.lenstring.len > 0)
+ 917              		.loc 1 196 2 is_stmt 1 view .LVU311
+ 918              	.LBB91:
+GAS LISTING /tmp/cc3YwPWP.s 			page 24
+
+
+ 919              	.LBB92:
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 920              		.loc 1 166 3 is_stmt 0 view .LVU312
+ 921 0014 488B1F   		movq	(%rdi), %rbx
+ 922              	.LBE92:
+ 923              	.LBE91:
+ 924              		.loc 1 196 5 view .LVU313
+ 925 0017 85C0     		testl	%eax, %eax
+ 926 0019 0F8F9100 		jg	.L48
+ 926      0000
+ 197:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 198:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		writeInt(pptr, mqttstring.lenstring.len);
+ 199:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		memcpy(*pptr, mqttstring.lenstring.data, mqttstring.lenstring.len);
+ 200:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*pptr += mqttstring.lenstring.len;
+ 201:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 202:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	else if (mqttstring.cstring)
+ 927              		.loc 1 202 7 is_stmt 1 view .LVU314
+ 928              		.loc 1 202 10 is_stmt 0 view .LVU315
+ 929 001f 4D85E4   		testq	%r12, %r12
+ 930 0022 7464     		je	.L46
+ 203:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		writeCString(pptr, mqttstring.cstring);
+ 931              		.loc 1 203 3 is_stmt 1 view .LVU316
+ 932              	.LVL77:
+ 933              	.LBB97:
+ 934              	.LBI97:
+ 178:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 935              		.loc 1 178 6 view .LVU317
+ 936              	.LBB98:
+ 180:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	writeInt(pptr, len);
+ 937              		.loc 1 180 2 view .LVU318
+ 180:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	writeInt(pptr, len);
+ 938              		.loc 1 180 12 is_stmt 0 view .LVU319
+ 939 0024 4C89E7   		movq	%r12, %rdi
+ 940              	.LVL78:
+ 180:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	writeInt(pptr, len);
+ 941              		.loc 1 180 12 view .LVU320
+ 942 0027 E8000000 		call	strlen@PLT
+ 942      00
+ 943              	.LVL79:
+ 181:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	memcpy(*pptr, string, len);
+ 944              		.loc 1 181 2 is_stmt 1 view .LVU321
+ 945              	.LBB99:
+ 946              	.LBI99:
+ 164:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 947              		.loc 1 164 6 view .LVU322
+ 948              	.LBB100:
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 949              		.loc 1 166 2 view .LVU323
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 950              		.loc 1 166 33 is_stmt 0 view .LVU324
+ 951 002c 85C0     		testl	%eax, %eax
+ 952 002e 8D90FF00 		leal	255(%rax), %edx
+ 952      0000
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 953              		.loc 1 168 33 view .LVU325
+ 954 0034 89C1     		movl	%eax, %ecx
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+GAS LISTING /tmp/cc3YwPWP.s 			page 25
+
+
+ 955              		.loc 1 166 33 view .LVU326
+ 956 0036 0F49D0   		cmovns	%eax, %edx
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 957              		.loc 1 168 33 view .LVU327
+ 958 0039 C1F91F   		sarl	$31, %ecx
+ 959 003c C1E918   		shrl	$24, %ecx
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 960              		.loc 1 166 11 view .LVU328
+ 961 003f 8833     		movb	%dh, (%rbx)
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 962              		.loc 1 167 2 is_stmt 1 view .LVU329
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 963              		.loc 1 167 3 is_stmt 0 view .LVU330
+ 964 0041 488B7500 		movq	0(%rbp), %rsi
+ 965              	.LBE100:
+ 966              	.LBE99:
+ 182:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += len;
+ 967              		.loc 1 182 2 view .LVU331
+ 968 0045 4863D8   		movslq	%eax, %rbx
+ 969              	.LBB104:
+ 970              	.LBB101:
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 971              		.loc 1 167 9 view .LVU332
+ 972 0048 488D5601 		leaq	1(%rsi), %rdx
+ 973 004c 48895500 		movq	%rdx, 0(%rbp)
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 974              		.loc 1 168 2 is_stmt 1 view .LVU333
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 975              		.loc 1 168 33 is_stmt 0 view .LVU334
+ 976 0050 8D1401   		leal	(%rcx,%rax), %edx
+ 977 0053 0FB6D2   		movzbl	%dl, %edx
+ 978 0056 29CA     		subl	%ecx, %edx
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 979              		.loc 1 168 11 view .LVU335
+ 980 0058 885601   		movb	%dl, 1(%rsi)
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 981              		.loc 1 169 2 is_stmt 1 view .LVU336
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 982              		.loc 1 169 9 is_stmt 0 view .LVU337
+ 983 005b 488B7500 		movq	0(%rbp), %rsi
+ 984              	.LBE101:
+ 985              	.LBE104:
+ 986              	.LBB105:
+ 987              	.LBB106:
+ 988              		.loc 2 29 10 discriminator 1 view .LVU338
+ 989 005f 4889DA   		movq	%rbx, %rdx
+ 990              	.LBE106:
+ 991              	.LBE105:
+ 992              	.LBB109:
+ 993              	.LBB102:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 994              		.loc 1 169 9 view .LVU339
+ 995 0062 488D7E01 		leaq	1(%rsi), %rdi
+ 996              	.LBE102:
+ 997              	.LBE109:
+ 998              	.LBB110:
+ 999              	.LBB107:
+GAS LISTING /tmp/cc3YwPWP.s 			page 26
+
+
+ 1000              		.loc 2 29 10 discriminator 1 view .LVU340
+ 1001 0066 4C89E6   		movq	%r12, %rsi
+ 1002              	.LBE107:
+ 1003              	.LBE110:
+ 1004              	.LBB111:
+ 1005              	.LBB103:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1006              		.loc 1 169 9 view .LVU341
+ 1007 0069 48897D00 		movq	%rdi, 0(%rbp)
+ 1008              	.LVL80:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1009              		.loc 1 169 9 view .LVU342
+ 1010              	.LBE103:
+ 1011              	.LBE111:
+ 182:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += len;
+ 1012              		.loc 1 182 2 is_stmt 1 view .LVU343
+ 1013              	.LBB112:
+ 1014              	.LBI105:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1015              		.loc 2 26 1 view .LVU344
+ 1016              	.LBB108:
+ 1017              		.loc 2 29 3 view .LVU345
+ 1018              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU346
+ 1019 006d E8000000 		call	memcpy@PLT
+ 1019      00
+ 1020              	.LVL81:
+ 1021              		.loc 2 29 10 discriminator 1 view .LVU347
+ 1022              	.LBE108:
+ 1023              	.LBE112:
+ 183:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1024              		.loc 1 183 2 is_stmt 1 view .LVU348
+ 183:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1025              		.loc 1 183 8 is_stmt 0 view .LVU349
+ 1026 0072 488B4500 		movq	0(%rbp), %rax
+ 1027 0076 4801D8   		addq	%rbx, %rax
+ 1028              	.LVL82:
+ 183:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1029              		.loc 1 183 8 view .LVU350
+ 1030              	.LBE98:
+ 1031              	.LBE97:
+ 200:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 1032              		.loc 1 200 9 view .LVU351
+ 1033 0079 48894500 		movq	%rax, 0(%rbp)
+ 204:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	else
+ 205:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		writeInt(pptr, 0);
+ 206:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1034              		.loc 1 206 1 view .LVU352
+ 1035 007d 5B       		popq	%rbx
+ 1036              	.LCFI22:
+ 1037              		.cfi_remember_state
+ 1038              		.cfi_def_cfa_offset 24
+ 1039 007e 5D       		popq	%rbp
+ 1040              	.LCFI23:
+ 1041              		.cfi_def_cfa_offset 16
+ 1042              	.LVL83:
+ 1043              		.loc 1 206 1 view .LVU353
+ 1044 007f 415C     		popq	%r12
+GAS LISTING /tmp/cc3YwPWP.s 			page 27
+
+
+ 1045              	.LCFI24:
+ 1046              		.cfi_def_cfa_offset 8
+ 1047              	.LVL84:
+ 1048              		.loc 1 206 1 view .LVU354
+ 1049 0081 C3       		ret
+ 1050              	.LVL85:
+ 1051              		.p2align 4,,10
+ 1052 0082 660F1F44 		.p2align 3
+ 1052      0000
+ 1053              	.L46:
+ 1054              	.LCFI25:
+ 1055              		.cfi_restore_state
+ 205:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1056              		.loc 1 205 3 is_stmt 1 view .LVU355
+ 1057              	.LBB113:
+ 1058              	.LBI113:
+ 164:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1059              		.loc 1 164 6 view .LVU356
+ 1060              	.LBB114:
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 1061              		.loc 1 166 2 view .LVU357
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 1062              		.loc 1 166 9 is_stmt 0 view .LVU358
+ 1063 0088 C60300   		movb	$0, (%rbx)
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 1064              		.loc 1 167 2 is_stmt 1 view .LVU359
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 1065              		.loc 1 167 3 is_stmt 0 view .LVU360
+ 1066 008b 488B07   		movq	(%rdi), %rax
+ 1067              	.LVL86:
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 1068              		.loc 1 167 9 view .LVU361
+ 1069 008e 488D5001 		leaq	1(%rax), %rdx
+ 1070 0092 488917   		movq	%rdx, (%rdi)
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 1071              		.loc 1 168 2 is_stmt 1 view .LVU362
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 1072              		.loc 1 168 9 is_stmt 0 view .LVU363
+ 1073 0095 C6400100 		movb	$0, 1(%rax)
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1074              		.loc 1 169 2 is_stmt 1 view .LVU364
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1075              		.loc 1 169 9 is_stmt 0 view .LVU365
+ 1076 0099 488B07   		movq	(%rdi), %rax
+ 1077 009c 4883C001 		addq	$1, %rax
+ 1078              	.LVL87:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1079              		.loc 1 169 9 view .LVU366
+ 1080              	.LBE114:
+ 1081              	.LBE113:
+ 200:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 1082              		.loc 1 200 9 view .LVU367
+ 1083 00a0 48894500 		movq	%rax, 0(%rbp)
+ 1084              		.loc 1 206 1 view .LVU368
+ 1085 00a4 5B       		popq	%rbx
+ 1086              	.LCFI26:
+ 1087              		.cfi_remember_state
+GAS LISTING /tmp/cc3YwPWP.s 			page 28
+
+
+ 1088              		.cfi_def_cfa_offset 24
+ 1089 00a5 5D       		popq	%rbp
+ 1090              	.LCFI27:
+ 1091              		.cfi_def_cfa_offset 16
+ 1092 00a6 415C     		popq	%r12
+ 1093              	.LCFI28:
+ 1094              		.cfi_def_cfa_offset 8
+ 1095              	.LVL88:
+ 1096              		.loc 1 206 1 view .LVU369
+ 1097 00a8 C3       		ret
+ 1098              	.LVL89:
+ 1099 00a9 0F1F8000 		.p2align 4,,10
+ 1099      000000
+ 1100              		.p2align 3
+ 1101              	.L48:
+ 1102              	.LCFI29:
+ 1103              		.cfi_restore_state
+ 198:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		memcpy(*pptr, mqttstring.lenstring.data, mqttstring.lenstring.len);
+ 1104              		.loc 1 198 3 is_stmt 1 view .LVU370
+ 1105              	.LBB115:
+ 1106              	.LBI91:
+ 164:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1107              		.loc 1 164 6 view .LVU371
+ 1108              	.LBB93:
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 1109              		.loc 1 166 2 view .LVU372
+ 166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 1110              		.loc 1 166 11 is_stmt 0 view .LVU373
+ 1111 00b0 8823     		movb	%ah, (%rbx)
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 1112              		.loc 1 167 2 is_stmt 1 view .LVU374
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 1113              		.loc 1 167 3 is_stmt 0 view .LVU375
+ 1114 00b2 488B17   		movq	(%rdi), %rdx
+ 1115              	.LBE93:
+ 1116              	.LBE115:
+ 199:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*pptr += mqttstring.lenstring.len;
+ 1117              		.loc 1 199 3 view .LVU376
+ 1118 00b5 4863D8   		movslq	%eax, %rbx
+ 1119              	.LBB116:
+ 1120              	.LBB94:
+ 167:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = (unsigned char)(anInt % 256);
+ 1121              		.loc 1 167 9 view .LVU377
+ 1122 00b8 488D4A01 		leaq	1(%rdx), %rcx
+ 1123 00bc 48890F   		movq	%rcx, (%rdi)
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 1124              		.loc 1 168 2 is_stmt 1 view .LVU378
+ 168:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
+ 1125              		.loc 1 168 11 is_stmt 0 view .LVU379
+ 1126 00bf 884201   		movb	%al, 1(%rdx)
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1127              		.loc 1 169 2 is_stmt 1 view .LVU380
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1128              		.loc 1 169 9 is_stmt 0 view .LVU381
+ 1129 00c2 488B37   		movq	(%rdi), %rsi
+ 1130              	.LBE94:
+ 1131              	.LBE116:
+GAS LISTING /tmp/cc3YwPWP.s 			page 29
+
+
+ 1132              	.LBB117:
+ 1133              	.LBB118:
+ 1134              		.loc 2 29 10 discriminator 1 view .LVU382
+ 1135 00c5 4889DA   		movq	%rbx, %rdx
+ 1136              	.LBE118:
+ 1137              	.LBE117:
+ 1138              	.LBB121:
+ 1139              	.LBB95:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1140              		.loc 1 169 9 view .LVU383
+ 1141 00c8 488D7E01 		leaq	1(%rsi), %rdi
+ 1142              	.LVL90:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1143              		.loc 1 169 9 view .LVU384
+ 1144              	.LBE95:
+ 1145              	.LBE121:
+ 1146              	.LBB122:
+ 1147              	.LBB119:
+ 1148              		.loc 2 29 10 discriminator 1 view .LVU385
+ 1149 00cc 488B7424 		movq	48(%rsp), %rsi
+ 1149      30
+ 1150              	.LBE119:
+ 1151              	.LBE122:
+ 1152              	.LBB123:
+ 1153              	.LBB96:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1154              		.loc 1 169 9 view .LVU386
+ 1155 00d1 48897D00 		movq	%rdi, 0(%rbp)
+ 1156              	.LVL91:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1157              		.loc 1 169 9 view .LVU387
+ 1158              	.LBE96:
+ 1159              	.LBE123:
+ 199:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*pptr += mqttstring.lenstring.len;
+ 1160              		.loc 1 199 3 is_stmt 1 view .LVU388
+ 1161              	.LBB124:
+ 1162              	.LBI117:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 1163              		.loc 2 26 1 view .LVU389
+ 1164              	.LBB120:
+ 1165              		.loc 2 29 3 view .LVU390
+ 1166              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU391
+ 1167 00d5 E8000000 		call	memcpy@PLT
+ 1167      00
+ 1168              	.LVL92:
+ 1169              		.loc 2 29 10 discriminator 1 view .LVU392
+ 1170              	.LBE120:
+ 1171              	.LBE124:
+ 200:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 1172              		.loc 1 200 3 is_stmt 1 view .LVU393
+ 200:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 1173              		.loc 1 200 9 is_stmt 0 view .LVU394
+ 1174 00da 488B4500 		movq	0(%rbp), %rax
+ 1175 00de 4801D8   		addq	%rbx, %rax
+ 1176 00e1 48894500 		movq	%rax, 0(%rbp)
+ 1177              		.loc 1 206 1 view .LVU395
+ 1178 00e5 5B       		popq	%rbx
+GAS LISTING /tmp/cc3YwPWP.s 			page 30
+
+
+ 1179              	.LCFI30:
+ 1180              		.cfi_def_cfa_offset 24
+ 1181 00e6 5D       		popq	%rbp
+ 1182              	.LCFI31:
+ 1183              		.cfi_def_cfa_offset 16
+ 1184              	.LVL93:
+ 1185              		.loc 1 206 1 view .LVU396
+ 1186 00e7 415C     		popq	%r12
+ 1187              	.LCFI32:
+ 1188              		.cfi_def_cfa_offset 8
+ 1189              	.LVL94:
+ 1190              		.loc 1 206 1 view .LVU397
+ 1191 00e9 C3       		ret
+ 1192              		.cfi_endproc
+ 1193              	.LFE31:
+ 1195              		.section	.text.readMQTTLenString,"ax",@progbits
+ 1196              		.p2align 4
+ 1197              		.globl	readMQTTLenString
+ 1199              	readMQTTLenString:
+ 1200              	.LVL95:
+ 1201              	.LFB32:
+ 207:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 208:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 209:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 210:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param mqttstring the MQTTString structure into which the data is to be read
+ 211:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param pptr pointer to the output buffer - incremented by the number of bytes used & returned
+ 212:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param enddata pointer to the end of the data: do not read beyond
+ 213:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return 1 if successful, 0 if not
+ 214:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 215:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int readMQTTLenString(MQTTString* mqttstring, unsigned char** pptr, unsigned char* enddata)
+ 216:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1202              		.loc 1 216 1 is_stmt 1 view -0
+ 1203              		.cfi_startproc
+ 1204              		.loc 1 216 1 is_stmt 0 view .LVU399
+ 1205 0000 F30F1EFA 		endbr64
+ 217:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = 0;
+ 1206              		.loc 1 217 2 is_stmt 1 view .LVU400
+ 1207              	.LVL96:
+ 218:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 219:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_ENTRY;
+ 1208              		.loc 1 219 12 view .LVU401
+ 220:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	/* the first two bytes are the length of the string */
+ 221:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if (enddata - (*pptr) > 1) /* enough length to read the integer? */
+ 1209              		.loc 1 221 2 view .LVU402
+ 1210              		.loc 1 221 17 is_stmt 0 view .LVU403
+ 1211 0004 488B0E   		movq	(%rsi), %rcx
+ 1212              		.loc 1 221 14 view .LVU404
+ 1213 0007 4889D0   		movq	%rdx, %rax
+ 1214 000a 4829C8   		subq	%rcx, %rax
+ 1215              		.loc 1 221 5 view .LVU405
+ 1216 000d 4883F801 		cmpq	$1, %rax
+ 1217 0011 7E22     		jle	.L52
+ 222:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 223:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		mqttstring->lenstring.len = readInt(pptr); /* increments pptr to point past length */
+ 1218              		.loc 1 223 3 is_stmt 1 view .LVU406
+ 1219              	.LVL97:
+ 1220              	.LBB125:
+GAS LISTING /tmp/cc3YwPWP.s 			page 31
+
+
+ 1221              	.LBI125:
+ 125:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1222              		.loc 1 125 5 view .LVU407
+ 1223              	.LBB126:
+ 127:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*(*ptr) + (*(ptr+1));
+ 1224              		.loc 1 127 2 view .LVU408
+ 128:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += 2;
+ 1225              		.loc 1 128 2 view .LVU409
+ 128:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += 2;
+ 1226              		.loc 1 128 17 is_stmt 0 view .LVU410
+ 1227 0013 0FB601   		movzbl	(%rcx), %eax
+ 128:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += 2;
+ 1228              		.loc 1 128 26 view .LVU411
+ 1229 0016 440FB641 		movzbl	1(%rcx), %r8d
+ 1229      01
+ 129:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return len;
+ 1230              		.loc 1 129 8 view .LVU412
+ 1231 001b 4883C102 		addq	$2, %rcx
+ 1232              	.LVL98:
+ 129:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return len;
+ 1233              		.loc 1 129 8 view .LVU413
+ 1234 001f 48890E   		movq	%rcx, (%rsi)
+ 1235              	.LVL99:
+ 128:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += 2;
+ 1236              		.loc 1 128 15 view .LVU414
+ 1237 0022 C1E008   		sall	$8, %eax
+ 128:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	*pptr += 2;
+ 1238              		.loc 1 128 6 view .LVU415
+ 1239 0025 4401C0   		addl	%r8d, %eax
+ 1240              	.LVL100:
+ 129:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return len;
+ 1241              		.loc 1 129 2 is_stmt 1 view .LVU416
+ 130:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1242              		.loc 1 130 2 view .LVU417
+ 130:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1243              		.loc 1 130 2 is_stmt 0 view .LVU418
+ 1244              	.LBE126:
+ 1245              	.LBE125:
+ 1246              		.loc 1 223 29 discriminator 1 view .LVU419
+ 1247 0028 894708   		movl	%eax, 8(%rdi)
+ 224:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (&(*pptr)[mqttstring->lenstring.len] <= enddata)
+ 1248              		.loc 1 224 3 is_stmt 1 view .LVU420
+ 1249              		.loc 1 224 37 is_stmt 0 view .LVU421
+ 1250 002b 4898     		cltq
+ 1251              		.loc 1 224 7 view .LVU422
+ 1252 002d 4801C8   		addq	%rcx, %rax
+ 1253              		.loc 1 224 6 view .LVU423
+ 1254 0030 4839C2   		cmpq	%rax, %rdx
+ 1255 0033 730B     		jnb	.L53
+ 1256              	.L52:
+ 225:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 226:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			mqttstring->lenstring.data = (char*)*pptr;
+ 227:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			*pptr += mqttstring->lenstring.len;
+ 228:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			rc = 1;
+ 229:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		}
+ 230:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 231:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	mqttstring->cstring = NULL;
+GAS LISTING /tmp/cc3YwPWP.s 			page 32
+
+
+ 1257              		.loc 1 231 22 view .LVU424
+ 1258 0035 48C70700 		movq	$0, (%rdi)
+ 1258      000000
+ 217:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 1259              		.loc 1 217 6 view .LVU425
+ 1260 003c 31C0     		xorl	%eax, %eax
+ 1261              	.LVL101:
+ 1262              		.loc 1 231 2 is_stmt 1 view .LVU426
+ 232:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 1263              		.loc 1 232 18 view .LVU427
+ 233:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 1264              		.loc 1 233 2 view .LVU428
+ 234:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1265              		.loc 1 234 1 is_stmt 0 view .LVU429
+ 1266 003e C3       		ret
+ 1267              	.LVL102:
+ 1268 003f 90       		.p2align 4,,10
+ 1269              		.p2align 3
+ 1270              	.L53:
+ 226:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			*pptr += mqttstring->lenstring.len;
+ 1271              		.loc 1 226 4 is_stmt 1 view .LVU430
+ 226:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			*pptr += mqttstring->lenstring.len;
+ 1272              		.loc 1 226 31 is_stmt 0 view .LVU431
+ 1273 0040 48894F10 		movq	%rcx, 16(%rdi)
+ 227:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			rc = 1;
+ 1274              		.loc 1 227 4 is_stmt 1 view .LVU432
+ 227:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			rc = 1;
+ 1275              		.loc 1 227 10 is_stmt 0 view .LVU433
+ 1276 0044 488906   		movq	%rax, (%rsi)
+ 228:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		}
+ 1277              		.loc 1 228 4 is_stmt 1 view .LVU434
+ 1278              	.LVL103:
+ 228:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		}
+ 1279              		.loc 1 228 7 is_stmt 0 view .LVU435
+ 1280 0047 B8010000 		movl	$1, %eax
+ 1280      00
+ 1281              	.LVL104:
+ 231:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 1282              		.loc 1 231 2 is_stmt 1 view .LVU436
+ 231:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 1283              		.loc 1 231 22 is_stmt 0 view .LVU437
+ 1284 004c 48C70700 		movq	$0, (%rdi)
+ 1284      000000
+ 232:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 1285              		.loc 1 232 18 is_stmt 1 view .LVU438
+ 233:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1286              		.loc 1 233 2 view .LVU439
+ 1287              		.loc 1 234 1 is_stmt 0 view .LVU440
+ 1288 0053 C3       		ret
+ 1289              		.cfi_endproc
+ 1290              	.LFE32:
+ 1292              		.section	.text.MQTTstrlen,"ax",@progbits
+ 1293              		.p2align 4
+ 1294              		.globl	MQTTstrlen
+ 1296              	MQTTstrlen:
+ 1297              	.LFB33:
+ 235:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+GAS LISTING /tmp/cc3YwPWP.s 			page 33
+
+
+ 236:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 237:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 238:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Return the length of the MQTTstring - C string if there is one, otherwise the length delimited s
+ 239:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param mqttstring the string to return the length of
+ 240:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return the length of the string
+ 241:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 242:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int MQTTstrlen(MQTTString mqttstring)
+ 243:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1298              		.loc 1 243 1 is_stmt 1 view -0
+ 1299              		.cfi_startproc
+ 1300 0000 F30F1EFA 		endbr64
+ 1301 0004 4883EC08 		subq	$8, %rsp
+ 1302              	.LCFI33:
+ 1303              		.cfi_def_cfa_offset 16
+ 1304 0008 488B7C24 		movq	16(%rsp), %rdi
+ 1304      10
+ 1305              	.LVL105:
+ 244:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = 0;
+ 1306              		.loc 1 244 2 view .LVU442
+ 245:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 246:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if (mqttstring.cstring)
+ 1307              		.loc 1 246 2 view .LVU443
+ 1308              		.loc 1 246 5 is_stmt 0 view .LVU444
+ 1309 000d 4885FF   		testq	%rdi, %rdi
+ 1310 0010 740E     		je	.L55
+ 247:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rc = strlen(mqttstring.cstring);
+ 1311              		.loc 1 247 3 is_stmt 1 view .LVU445
+ 1312              		.loc 1 247 8 is_stmt 0 view .LVU446
+ 1313 0012 E8000000 		call	strlen@PLT
+ 1313      00
+ 1314              	.LVL106:
+ 248:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	else
+ 249:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rc = mqttstring.lenstring.len;
+ 250:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 251:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1315              		.loc 1 251 1 view .LVU447
+ 1316 0017 4883C408 		addq	$8, %rsp
+ 1317              	.LCFI34:
+ 1318              		.cfi_remember_state
+ 1319              		.cfi_def_cfa_offset 8
+ 1320 001b C3       		ret
+ 1321              	.LVL107:
+ 1322 001c 0F1F4000 		.p2align 4,,10
+ 1323              		.p2align 3
+ 1324              	.L55:
+ 1325              	.LCFI35:
+ 1326              		.cfi_restore_state
+ 249:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 1327              		.loc 1 249 3 is_stmt 1 view .LVU448
+ 249:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 1328              		.loc 1 249 6 is_stmt 0 view .LVU449
+ 1329 0020 8B442418 		movl	24(%rsp), %eax
+ 1330              	.LVL108:
+ 250:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1331              		.loc 1 250 2 is_stmt 1 view .LVU450
+ 1332              		.loc 1 251 1 is_stmt 0 view .LVU451
+ 1333 0024 4883C408 		addq	$8, %rsp
+GAS LISTING /tmp/cc3YwPWP.s 			page 34
+
+
+ 1334              	.LCFI36:
+ 1335              		.cfi_def_cfa_offset 8
+ 1336 0028 C3       		ret
+ 1337              		.cfi_endproc
+ 1338              	.LFE33:
+ 1340              		.section	.text.MQTTPacket_equals,"ax",@progbits
+ 1341              		.p2align 4
+ 1342              		.globl	MQTTPacket_equals
+ 1344              	MQTTPacket_equals:
+ 1345              	.LVL109:
+ 1346              	.LFB34:
+ 252:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 253:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 254:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 255:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Compares an MQTTString to a C string
+ 256:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param a the MQTTString to compare
+ 257:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param bptr the C string to compare
+ 258:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return boolean - equal or not
+ 259:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 260:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int MQTTPacket_equals(MQTTString* a, char* bptr)
+ 261:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1347              		.loc 1 261 1 is_stmt 1 view -0
+ 1348              		.cfi_startproc
+ 1349              		.loc 1 261 1 is_stmt 0 view .LVU453
+ 1350 0000 F30F1EFA 		endbr64
+ 262:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int alen = 0,
+ 1351              		.loc 1 262 2 is_stmt 1 view .LVU454
+ 1352              	.LVL110:
+ 263:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		blen = 0;
+ 264:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	char *aptr;
+ 1353              		.loc 1 264 2 view .LVU455
+ 265:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	
+ 266:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if (a->cstring)
+ 1354              		.loc 1 266 2 view .LVU456
+ 261:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int alen = 0,
+ 1355              		.loc 1 261 1 is_stmt 0 view .LVU457
+ 1356 0004 4154     		pushq	%r12
+ 1357              	.LCFI37:
+ 1358              		.cfi_def_cfa_offset 16
+ 1359              		.cfi_offset 12, -16
+ 1360 0006 55       		pushq	%rbp
+ 1361              	.LCFI38:
+ 1362              		.cfi_def_cfa_offset 24
+ 1363              		.cfi_offset 6, -24
+ 1364 0007 4889F5   		movq	%rsi, %rbp
+ 1365 000a 53       		pushq	%rbx
+ 1366              	.LCFI39:
+ 1367              		.cfi_def_cfa_offset 32
+ 1368              		.cfi_offset 3, -32
+ 1369              		.loc 1 266 7 view .LVU458
+ 1370 000b 4C8B27   		movq	(%rdi), %r12
+ 1371              		.loc 1 266 5 view .LVU459
+ 1372 000e 4D85E4   		testq	%r12, %r12
+ 1373 0011 743D     		je	.L59
+ 267:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 268:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		aptr = a->cstring;
+ 1374              		.loc 1 268 3 is_stmt 1 view .LVU460
+GAS LISTING /tmp/cc3YwPWP.s 			page 35
+
+
+ 1375              	.LVL111:
+ 269:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		alen = strlen(a->cstring);
+ 1376              		.loc 1 269 3 view .LVU461
+ 1377              		.loc 1 269 10 is_stmt 0 view .LVU462
+ 1378 0013 4C89E7   		movq	%r12, %rdi
+ 1379              	.LVL112:
+ 1380              		.loc 1 269 10 view .LVU463
+ 1381 0016 E8000000 		call	strlen@PLT
+ 1381      00
+ 1382              	.LVL113:
+ 1383              		.loc 1 269 8 discriminator 1 view .LVU464
+ 1384 001b 89C3     		movl	%eax, %ebx
+ 1385              	.LVL114:
+ 1386              	.L60:
+ 270:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 271:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	else
+ 272:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 273:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		aptr = a->lenstring.data;
+ 274:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		alen = a->lenstring.len;
+ 275:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 276:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	blen = strlen(bptr);
+ 1387              		.loc 1 276 2 is_stmt 1 view .LVU465
+ 1388              		.loc 1 276 9 is_stmt 0 view .LVU466
+ 1389 001d 4889EF   		movq	%rbp, %rdi
+ 1390 0020 E8000000 		call	strlen@PLT
+ 1390      00
+ 1391              	.LVL115:
+ 1392 0025 4889C2   		movq	%rax, %rdx
+ 1393              	.LVL116:
+ 277:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	
+ 278:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return (alen == blen) && (strncmp(aptr, bptr, alen) == 0);
+ 1394              		.loc 1 278 2 is_stmt 1 view .LVU467
+ 1395              		.loc 1 278 24 is_stmt 0 discriminator 4 view .LVU468
+ 1396 0028 31C0     		xorl	%eax, %eax
+ 1397              		.loc 1 278 24 view .LVU469
+ 1398 002a 39D3     		cmpl	%edx, %ebx
+ 1399 002c 7516     		jne	.L58
+ 1400              		.loc 1 278 28 discriminator 1 view .LVU470
+ 1401 002e 4863D3   		movslq	%ebx, %rdx
+ 1402              	.LVL117:
+ 1403              		.loc 1 278 28 discriminator 1 view .LVU471
+ 1404 0031 4889EE   		movq	%rbp, %rsi
+ 1405 0034 4C89E7   		movq	%r12, %rdi
+ 1406 0037 E8000000 		call	strncmp@PLT
+ 1406      00
+ 1407              	.LVL118:
+ 1408              		.loc 1 278 24 discriminator 1 view .LVU472
+ 1409 003c 85C0     		testl	%eax, %eax
+ 1410 003e 0F94C0   		sete	%al
+ 1411 0041 0FB6C0   		movzbl	%al, %eax
+ 1412              	.L58:
+ 279:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1413              		.loc 1 279 1 view .LVU473
+ 1414 0044 5B       		popq	%rbx
+ 1415              	.LCFI40:
+ 1416              		.cfi_remember_state
+ 1417              		.cfi_def_cfa_offset 24
+GAS LISTING /tmp/cc3YwPWP.s 			page 36
+
+
+ 1418              	.LVL119:
+ 1419              		.loc 1 279 1 view .LVU474
+ 1420 0045 5D       		popq	%rbp
+ 1421              	.LCFI41:
+ 1422              		.cfi_def_cfa_offset 16
+ 1423              	.LVL120:
+ 1424              		.loc 1 279 1 view .LVU475
+ 1425 0046 415C     		popq	%r12
+ 1426              	.LCFI42:
+ 1427              		.cfi_def_cfa_offset 8
+ 1428              	.LVL121:
+ 1429              		.loc 1 279 1 view .LVU476
+ 1430 0048 C3       		ret
+ 1431              	.LVL122:
+ 1432 0049 0F1F8000 		.p2align 4,,10
+ 1432      000000
+ 1433              		.p2align 3
+ 1434              	.L59:
+ 1435              	.LCFI43:
+ 1436              		.cfi_restore_state
+ 273:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		alen = a->lenstring.len;
+ 1437              		.loc 1 273 3 is_stmt 1 view .LVU477
+ 273:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		alen = a->lenstring.len;
+ 1438              		.loc 1 273 8 is_stmt 0 view .LVU478
+ 1439 0050 4C8B6710 		movq	16(%rdi), %r12
+ 1440              	.LVL123:
+ 274:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 1441              		.loc 1 274 3 is_stmt 1 view .LVU479
+ 274:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 1442              		.loc 1 274 8 is_stmt 0 view .LVU480
+ 1443 0054 8B5F08   		movl	8(%rdi), %ebx
+ 1444              	.LVL124:
+ 274:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 1445              		.loc 1 274 8 view .LVU481
+ 1446 0057 EBC4     		jmp	.L60
+ 1447              		.cfi_endproc
+ 1448              	.LFE34:
+ 1450              		.section	.text.MQTTPacket_read,"ax",@progbits
+ 1451              		.p2align 4
+ 1452              		.globl	MQTTPacket_read
+ 1454              	MQTTPacket_read:
+ 1455              	.LVL125:
+ 1456              	.LFB35:
+ 280:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 281:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 282:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 283:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Helper function to read packet data from some source into a buffer
+ 284:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param buf the buffer into which the packet will be serialized
+ 285:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param buflen the length in bytes of the supplied buffer
+ 286:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param getfn pointer to a function which will read any number of bytes from the needed source
+ 287:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return integer MQTT packet type, or -1 on error
+ 288:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @note  the whole message must fit into the caller's buffer
+ 289:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 290:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int MQTTPacket_read(unsigned char* buf, int buflen, int (*getfn)(unsigned char*, int))
+ 291:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1457              		.loc 1 291 1 is_stmt 1 view -0
+ 1458              		.cfi_startproc
+GAS LISTING /tmp/cc3YwPWP.s 			page 37
+
+
+ 1459              		.loc 1 291 1 is_stmt 0 view .LVU483
+ 1460 0000 F30F1EFA 		endbr64
+ 1461 0004 4157     		pushq	%r15
+ 1462              	.LCFI44:
+ 1463              		.cfi_def_cfa_offset 16
+ 1464              		.cfi_offset 15, -16
+ 1465 0006 41BF0500 		movl	$5, %r15d
+ 1465      0000
+ 1466 000c 4156     		pushq	%r14
+ 1467              	.LCFI45:
+ 1468              		.cfi_def_cfa_offset 24
+ 1469              		.cfi_offset 14, -24
+ 1470 000e 4155     		pushq	%r13
+ 1471              	.LCFI46:
+ 1472              		.cfi_def_cfa_offset 32
+ 1473              		.cfi_offset 13, -32
+ 1474 0010 4531ED   		xorl	%r13d, %r13d
+ 1475 0013 4154     		pushq	%r12
+ 1476              	.LCFI47:
+ 1477              		.cfi_def_cfa_offset 40
+ 1478              		.cfi_offset 12, -40
+ 1479 0015 4989FC   		movq	%rdi, %r12
+ 1480 0018 55       		pushq	%rbp
+ 1481              	.LCFI48:
+ 1482              		.cfi_def_cfa_offset 48
+ 1483              		.cfi_offset 6, -48
+ 1484 0019 89F5     		movl	%esi, %ebp
+ 292:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = -1;
+ 293:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	MQTTHeader header = {0};
+ 294:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 0;
+ 295:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rem_len = 0;
+ 296:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 297:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	/* 1. read the header byte.  This has the packet type in it */
+ 298:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if ((*getfn)(buf, 1) != 1)
+ 1485              		.loc 1 298 7 view .LVU484
+ 1486 001b BE010000 		movl	$1, %esi
+ 1486      00
+ 1487              	.LVL126:
+ 291:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = -1;
+ 1488              		.loc 1 291 1 view .LVU485
+ 1489 0020 53       		pushq	%rbx
+ 1490              	.LCFI49:
+ 1491              		.cfi_def_cfa_offset 56
+ 1492              		.cfi_offset 3, -56
+ 1493 0021 4889D3   		movq	%rdx, %rbx
+ 1494 0024 4883EC28 		subq	$40, %rsp
+ 1495              	.LCFI50:
+ 1496              		.cfi_def_cfa_offset 96
+ 291:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = -1;
+ 1497              		.loc 1 291 1 view .LVU486
+ 1498 0028 64488B04 		movq	%fs:40, %rax
+ 1498      25280000 
+ 1498      00
+ 1499 0031 48894424 		movq	%rax, 24(%rsp)
+ 1499      18
+ 1500 0036 31C0     		xorl	%eax, %eax
+ 292:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = -1;
+GAS LISTING /tmp/cc3YwPWP.s 			page 38
+
+
+ 1501              		.loc 1 292 2 is_stmt 1 view .LVU487
+ 1502              	.LVL127:
+ 293:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 0;
+ 1503              		.loc 1 293 2 view .LVU488
+ 294:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rem_len = 0;
+ 1504              		.loc 1 294 2 view .LVU489
+ 295:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 1505              		.loc 1 295 2 view .LVU490
+ 1506              		.loc 1 298 2 view .LVU491
+ 1507              		.loc 1 298 7 is_stmt 0 view .LVU492
+ 1508 0038 FFD2     		call	*%rdx
+ 1509              	.LVL128:
+ 1510              		.loc 1 298 7 view .LVU493
+ 1511 003a 4189C6   		movl	%eax, %r14d
+ 1512              	.LBB133:
+ 1513              	.LBB134:
+ 1514              	.LBB135:
+  72:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (rc != 1)
+ 1515              		.loc 1 72 9 view .LVU494
+ 1516 003d 488D4424 		leaq	23(%rsp), %rax
+ 1516      17
+ 1517 0042 48894424 		movq	%rax, 8(%rsp)
+ 1517      08
+ 1518              	.LBE135:
+ 1519              	.LBE134:
+ 1520              	.LBE133:
+ 1521              		.loc 1 298 5 discriminator 1 view .LVU495
+ 1522 0047 4183FE01 		cmpl	$1, %r14d
+ 1523 004b 0F85D600 		jne	.L70
+ 1523      0000
+ 1524              	.LVL129:
+ 1525              	.L65:
+ 1526              	.LBB138:
+ 1527              	.LBB137:
+  63:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 1528              		.loc 1 63 2 is_stmt 1 view .LVU496
+ 1529              	.LBB136:
+  65:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 1530              		.loc 1 65 3 view .LVU497
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 1531              		.loc 1 67 3 view .LVU498
+  67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
+ 1532              		.loc 1 67 6 is_stmt 0 view .LVU499
+ 1533 0051 4183EF01 		subl	$1, %r15d
+ 1534 0055 7431     		je	.L68
+  72:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (rc != 1)
+ 1535              		.loc 1 72 3 is_stmt 1 view .LVU500
+  72:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (rc != 1)
+ 1536              		.loc 1 72 9 is_stmt 0 view .LVU501
+ 1537 0057 488B7C24 		movq	8(%rsp), %rdi
+ 1537      08
+ 1538 005c BE010000 		movl	$1, %esi
+ 1538      00
+ 1539 0061 FFD3     		call	*%rbx
+ 1540              	.LVL130:
+  73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1541              		.loc 1 73 3 is_stmt 1 view .LVU502
+GAS LISTING /tmp/cc3YwPWP.s 			page 39
+
+
+  73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1542              		.loc 1 73 6 is_stmt 0 view .LVU503
+ 1543 0063 83F801   		cmpl	$1, %eax
+ 1544 0066 7520     		jne	.L68
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 1545              		.loc 1 75 3 is_stmt 1 view .LVU504
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 1546              		.loc 1 75 16 is_stmt 0 view .LVU505
+ 1547 0068 0FB64C24 		movzbl	23(%rsp), %ecx
+ 1547      17
+ 1548 006d 89C8     		movl	%ecx, %eax
+ 1549              	.LVL131:
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 1550              		.loc 1 75 16 view .LVU506
+ 1551 006f 83E07F   		andl	$127, %eax
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 1552              		.loc 1 75 23 view .LVU507
+ 1553 0072 410FAFC6 		imull	%r14d, %eax
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 1554              		.loc 1 76 14 view .LVU508
+ 1555 0076 41C1E607 		sall	$7, %r14d
+ 1556              	.LVL132:
+  75:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		multiplier *= 128;
+ 1557              		.loc 1 75 10 view .LVU509
+ 1558 007a 4101C5   		addl	%eax, %r13d
+ 1559              	.LVL133:
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 1560              		.loc 1 76 3 is_stmt 1 view .LVU510
+  76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 1561              		.loc 1 76 3 is_stmt 0 view .LVU511
+ 1562              	.LBE136:
+  77:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 1563              		.loc 1 77 21 is_stmt 1 view .LVU512
+ 1564 007d 84C9     		testb	%cl, %cl
+ 1565 007f 78D0     		js	.L65
+ 1566              	.LVL134:
+ 1567              		.p2align 4,,10
+ 1568 0081 0F1F8000 		.p2align 3
+ 1568      000000
+ 1569              	.L68:
+  79:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return len;
+ 1570              		.loc 1 79 19 view .LVU513
+  80:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1571              		.loc 1 80 2 view .LVU514
+  80:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1572              		.loc 1 80 2 is_stmt 0 view .LVU515
+ 1573              	.LBE137:
+ 1574              	.LBE138:
+ 299:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		goto exit;
+ 300:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 301:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	len = 1;
+ 302:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	/* 2. read the remaining length.  This is variable in itself */
+ 303:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	MQTTPacket_decode(getfn, &rem_len);
+ 304:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	len += MQTTPacket_encode(buf + 1, rem_len); /* put the original remaining length back into the buf
+ 1575              		.loc 1 304 2 is_stmt 1 view .LVU516
+ 1576              	.LBB139:
+ 1577              	.LBI139:
+GAS LISTING /tmp/cc3YwPWP.s 			page 40
+
+
+  29:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1578              		.loc 1 29 5 view .LVU517
+ 1579              	.LBB140:
+  31:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 1580              		.loc 1 31 2 view .LVU518
+  33:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+ 1581              		.loc 1 33 12 view .LVU519
+  34:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 1582              		.loc 1 34 2 view .LVU520
+ 1583              	.LBB141:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 1584              		.loc 1 36 3 view .LVU521
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 1585              		.loc 1 36 19 is_stmt 0 view .LVU522
+ 1586 0088 4489EA   		movl	%r13d, %edx
+ 1587 008b C1FA1F   		sarl	$31, %edx
+ 1588 008e C1EA19   		shrl	$25, %edx
+ 1589 0091 418D4415 		leal	0(%r13,%rdx), %eax
+ 1589      00
+ 1590 0096 83E07F   		andl	$127, %eax
+ 1591 0099 29D0     		subl	%edx, %eax
+ 1592              	.LVL135:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 1593              		.loc 1 37 3 is_stmt 1 view .LVU523
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 1594              		.loc 1 39 3 view .LVU524
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 1595              		.loc 1 39 6 is_stmt 0 view .LVU525
+ 1596 009b 4183FD7F 		cmpl	$127, %r13d
+ 1597 009f 7F3F     		jg	.L69
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 1598              		.loc 1 41 3 is_stmt 1 view .LVU526
+ 1599              	.LVL136:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 1600              		.loc 1 41 13 is_stmt 0 view .LVU527
+ 1601 00a1 41884424 		movb	%al, 1(%r12)
+ 1601      01
+ 1602              	.LBE141:
+  42:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 1603              		.loc 1 42 18 is_stmt 1 view .LVU528
+  43:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 1604              		.loc 1 43 18 view .LVU529
+  44:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1605              		.loc 1 44 2 view .LVU530
+ 1606              	.LVL137:
+  44:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1607              		.loc 1 44 2 is_stmt 0 view .LVU531
+ 1608              	.LBE140:
+ 1609              	.LBE139:
+ 305:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 306:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	/* 3. read the rest of the buffer using a callback to supply the rest of the data */
+ 307:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if((rem_len + len) > buflen)
+ 1610              		.loc 1 307 2 is_stmt 1 view .LVU532
+ 1611              		.loc 1 307 14 is_stmt 0 view .LVU533
+ 1612 00a6 418D4502 		leal	2(%r13), %eax
+ 1613              		.loc 1 307 4 view .LVU534
+ 1614 00aa 39E8     		cmpl	%ebp, %eax
+GAS LISTING /tmp/cc3YwPWP.s 			page 41
+
+
+ 1615 00ac 7F79     		jg	.L70
+ 308:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		goto exit;
+ 309:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if (rem_len && ((*getfn)(buf + len, rem_len) != rem_len))
+ 1616              		.loc 1 309 2 is_stmt 1 view .LVU535
+ 1617              		.loc 1 309 5 is_stmt 0 view .LVU536
+ 1618 00ae 4585ED   		testl	%r13d, %r13d
+ 1619 00b1 757B     		jne	.L77
+ 1620              	.L74:
+ 310:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		goto exit;
+ 311:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 312:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	header.byte = buf[0];
+ 1621              		.loc 1 312 2 is_stmt 1 view .LVU537
+ 1622              		.loc 1 312 14 is_stmt 0 view .LVU538
+ 1623 00b3 410FB604 		movzbl	(%r12), %eax
+ 1623      24
+ 1624              	.LVL138:
+ 313:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	rc = header.bits.type;
+ 1625              		.loc 1 313 2 is_stmt 1 view .LVU539
+ 1626              		.loc 1 313 5 is_stmt 0 view .LVU540
+ 1627 00b8 C1E804   		shrl	$4, %eax
+ 1628              	.LVL139:
+ 1629              	.L66:
+ 1630              	.L64:
+ 314:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 315:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 316:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1631              		.loc 1 316 1 view .LVU541
+ 1632 00bb 488B5424 		movq	24(%rsp), %rdx
+ 1632      18
+ 1633 00c0 64482B14 		subq	%fs:40, %rdx
+ 1633      25280000 
+ 1633      00
+ 1634 00c9 0F857F00 		jne	.L87
+ 1634      0000
+ 1635 00cf 4883C428 		addq	$40, %rsp
+ 1636              	.LCFI51:
+ 1637              		.cfi_remember_state
+ 1638              		.cfi_def_cfa_offset 56
+ 1639 00d3 5B       		popq	%rbx
+ 1640              	.LCFI52:
+ 1641              		.cfi_def_cfa_offset 48
+ 1642              	.LVL140:
+ 1643              		.loc 1 316 1 view .LVU542
+ 1644 00d4 5D       		popq	%rbp
+ 1645              	.LCFI53:
+ 1646              		.cfi_def_cfa_offset 40
+ 1647              	.LVL141:
+ 1648              		.loc 1 316 1 view .LVU543
+ 1649 00d5 415C     		popq	%r12
+ 1650              	.LCFI54:
+ 1651              		.cfi_def_cfa_offset 32
+ 1652              	.LVL142:
+ 1653              		.loc 1 316 1 view .LVU544
+ 1654 00d7 415D     		popq	%r13
+ 1655              	.LCFI55:
+ 1656              		.cfi_def_cfa_offset 24
+ 1657 00d9 415E     		popq	%r14
+GAS LISTING /tmp/cc3YwPWP.s 			page 42
+
+
+ 1658              	.LCFI56:
+ 1659              		.cfi_def_cfa_offset 16
+ 1660 00db 415F     		popq	%r15
+ 1661              	.LCFI57:
+ 1662              		.cfi_def_cfa_offset 8
+ 1663 00dd C3       		ret
+ 1664              	.LVL143:
+ 1665 00de 6690     		.p2align 4,,10
+ 1666              		.p2align 3
+ 1667              	.L69:
+ 1668              	.LCFI58:
+ 1669              		.cfi_restore_state
+ 1670              	.LBB149:
+ 1671              	.LBB146:
+ 1672              	.LBB142:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 1673              		.loc 1 37 10 view .LVU545
+ 1674 00e0 4489E9   		movl	%r13d, %ecx
+ 1675 00e3 BA010000 		movl	$1, %edx
+ 1675      00
+ 1676 00e8 C1F907   		sarl	$7, %ecx
+ 1677              	.LVL144:
+ 1678 00eb 0F1F4400 		.p2align 4,,10
+ 1678      00
+ 1679              		.p2align 3
+ 1680              	.L72:
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		buf[rc++] = d;
+ 1681              		.loc 1 40 4 is_stmt 1 view .LVU546
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 1682              		.loc 1 41 3 view .LVU547
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 1683              		.loc 1 36 19 is_stmt 0 view .LVU548
+ 1684 00f0 89CF     		movl	%ecx, %edi
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		buf[rc++] = d;
+ 1685              		.loc 1 40 6 view .LVU549
+ 1686 00f2 83C880   		orl	$-128, %eax
+ 1687              	.LVL145:
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		buf[rc++] = d;
+ 1688              		.loc 1 40 6 view .LVU550
+ 1689 00f5 4189C8   		movl	%ecx, %r8d
+ 1690 00f8 4889D6   		movq	%rdx, %rsi
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 1691              		.loc 1 36 19 view .LVU551
+ 1692 00fb 83E77F   		andl	$127, %edi
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		buf[rc++] = d;
+ 1693              		.loc 1 40 6 view .LVU552
+ 1694 00fe 41880414 		movb	%al, (%r12,%rdx)
+ 1695              	.LBE142:
+  42:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 1696              		.loc 1 42 18 is_stmt 1 view .LVU553
+  33:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+ 1697              		.loc 1 33 12 view .LVU554
+  34:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 1698              		.loc 1 34 2 view .LVU555
+ 1699              	.LBB143:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 1700              		.loc 1 36 3 view .LVU556
+GAS LISTING /tmp/cc3YwPWP.s 			page 43
+
+
+ 1701              	.LVL146:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 1702              		.loc 1 37 10 is_stmt 0 view .LVU557
+ 1703 0102 C1F907   		sarl	$7, %ecx
+ 1704              	.LVL147:
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 1705              		.loc 1 39 6 view .LVU558
+ 1706 0105 4883C201 		addq	$1, %rdx
+ 1707              	.LVL148:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 1708              		.loc 1 36 8 view .LVU559
+ 1709 0109 89F8     		movl	%edi, %eax
+ 1710              	.LVL149:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 1711              		.loc 1 37 3 is_stmt 1 view .LVU560
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 1712              		.loc 1 39 3 view .LVU561
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 1713              		.loc 1 39 6 is_stmt 0 view .LVU562
+ 1714 010b 4183F87F 		cmpl	$127, %r8d
+ 1715 010f 7FDF     		jg	.L72
+ 1716              	.LBE143:
+ 1717              	.LBE146:
+ 1718              	.LBE149:
+ 304:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 1719              		.loc 1 304 6 discriminator 1 view .LVU563
+ 1720 0111 8D4602   		leal	2(%rsi), %eax
+ 1721              	.LBB150:
+ 1722              	.LBB147:
+ 1723              	.LBB144:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 1724              		.loc 1 41 3 is_stmt 1 view .LVU564
+ 1725              	.LVL150:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 1726              		.loc 1 41 9 is_stmt 0 view .LVU565
+ 1727 0114 83C601   		addl	$1, %esi
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 1728              		.loc 1 41 6 view .LVU566
+ 1729 0117 4863F6   		movslq	%esi, %rsi
+ 1730              	.LBE144:
+ 1731              	.LBE147:
+ 1732              	.LBE150:
+ 307:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		goto exit;
+ 1733              		.loc 1 307 14 view .LVU567
+ 1734 011a 418D5405 		leal	0(%r13,%rax), %edx
+ 1734      00
+ 1735              	.LBB151:
+ 1736              	.LBB148:
+ 1737              	.LBB145:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 1738              		.loc 1 41 13 view .LVU568
+ 1739 011f 41883C34 		movb	%dil, (%r12,%rsi)
+ 1740              	.LBE145:
+  42:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 1741              		.loc 1 42 18 is_stmt 1 view .LVU569
+  43:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 1742              		.loc 1 43 18 view .LVU570
+GAS LISTING /tmp/cc3YwPWP.s 			page 44
+
+
+  44:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1743              		.loc 1 44 2 view .LVU571
+ 1744              	.LVL151:
+  44:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1745              		.loc 1 44 2 is_stmt 0 view .LVU572
+ 1746              	.LBE148:
+ 1747              	.LBE151:
+ 307:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		goto exit;
+ 1748              		.loc 1 307 2 is_stmt 1 view .LVU573
+ 307:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		goto exit;
+ 1749              		.loc 1 307 4 is_stmt 0 view .LVU574
+ 1750 0123 39EA     		cmpl	%ebp, %edx
+ 1751 0125 7E11     		jle	.L73
+ 1752              	.LVL152:
+ 1753              	.L70:
+ 292:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	MQTTHeader header = {0};
+ 1754              		.loc 1 292 6 view .LVU575
+ 1755 0127 B8FFFFFF 		movl	$-1, %eax
+ 1755      FF
+ 1756 012c EB8D     		jmp	.L64
+ 1757              	.LVL153:
+ 1758              	.L77:
+ 292:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	MQTTHeader header = {0};
+ 1759              		.loc 1 292 6 view .LVU576
+ 1760 012e B8020000 		movl	$2, %eax
+ 1760      00
+ 1761              		.p2align 4,,10
+ 1762 0133 0F1F4400 		.p2align 3
+ 1762      00
+ 1763              	.L73:
+ 309:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		goto exit;
+ 1764              		.loc 1 309 19 discriminator 1 view .LVU577
+ 1765 0138 4898     		cltq
+ 1766 013a 4489EE   		movl	%r13d, %esi
+ 1767 013d 498D3C04 		leaq	(%r12,%rax), %rdi
+ 1768 0141 FFD3     		call	*%rbx
+ 1769              	.LVL154:
+ 309:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		goto exit;
+ 1770              		.loc 1 309 14 discriminator 1 view .LVU578
+ 1771 0143 4439E8   		cmpl	%r13d, %eax
+ 1772 0146 0F8467FF 		je	.L74
+ 1772      FFFF
+ 1773 014c EBD9     		jmp	.L70
+ 1774              	.LVL155:
+ 1775              	.L87:
+ 1776              		.loc 1 316 1 view .LVU579
+ 1777 014e E8000000 		call	__stack_chk_fail@PLT
+ 1777      00
+ 1778              	.LVL156:
+ 1779              		.cfi_endproc
+ 1780              	.LFE35:
+ 1782              		.section	.text.MQTTPacket_readnb,"ax",@progbits
+ 1783              		.p2align 4
+ 1784              		.globl	MQTTPacket_readnb
+ 1786              	MQTTPacket_readnb:
+ 1787              	.LVL157:
+ 1788              	.LFB37:
+GAS LISTING /tmp/cc3YwPWP.s 			page 45
+
+
+ 317:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 318:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 319:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Decodes the message length according to the MQTT algorithm, non-blocking
+ 320:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param trp pointer to a transport structure holding what is needed to solve getting data from it
+ 321:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param value the decoded length returned
+ 322:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return integer the number of bytes read from the socket, 0 for call again, or -1 on error
+ 323:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 324:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** static int MQTTPacket_decodenb(MQTTTransport *trp)
+ 325:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 326:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	unsigned char c;
+ 327:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = MQTTPACKET_READ_ERROR;
+ 328:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 329:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_ENTRY;
+ 330:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if(trp->len == 0){		/* initialize on first call */
+ 331:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier = 1;
+ 332:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len = 0;
+ 333:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 334:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do {
+ 335:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		int frc;
+ 336:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (trp->len >= MAX_NO_OF_REMAINING_LENGTH_BYTES)
+ 337:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 338:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if ((frc=(*trp->getfn)(trp->sck, &c, 1)) == -1)
+ 339:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 340:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (frc == 0){
+ 341:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			rc = 0;
+ 342:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 343:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		}
+ 344:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		++(trp->len);
+ 345:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len += (c & 127) * trp->multiplier;
+ 346:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier *= 128;
+ 347:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 348:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	rc = trp->len;
+ 349:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 350:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 351:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 352:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 353:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 354:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** /**
+ 355:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * Helper function to read packet data from some source into a buffer, non-blocking
+ 356:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param buf the buffer into which the packet will be serialized
+ 357:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param buflen the length in bytes of the supplied buffer
+ 358:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @param trp pointer to a transport structure holding what is needed to solve getting data from it
+ 359:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @return integer MQTT packet type, 0 for call again, or -1 on error
+ 360:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  * @note  the whole message must fit into the caller's buffer
+ 361:../../bos/thirdparty/mqtt-pack/MQTTPacket.c ****  */
+ 362:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int MQTTPacket_readnb(unsigned char* buf, int buflen, MQTTTransport *trp)
+ 363:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1789              		.loc 1 363 1 is_stmt 1 view -0
+ 1790              		.cfi_startproc
+ 1791              		.loc 1 363 1 is_stmt 0 view .LVU581
+ 1792 0000 F30F1EFA 		endbr64
+ 1793 0004 4155     		pushq	%r13
+ 1794              	.LCFI59:
+ 1795              		.cfi_def_cfa_offset 16
+ 1796              		.cfi_offset 13, -16
+ 1797 0006 4189F5   		movl	%esi, %r13d
+ 1798 0009 4154     		pushq	%r12
+GAS LISTING /tmp/cc3YwPWP.s 			page 46
+
+
+ 1799              	.LCFI60:
+ 1800              		.cfi_def_cfa_offset 24
+ 1801              		.cfi_offset 12, -24
+ 1802 000b 55       		pushq	%rbp
+ 1803              	.LCFI61:
+ 1804              		.cfi_def_cfa_offset 32
+ 1805              		.cfi_offset 6, -32
+ 1806 000c 4889FD   		movq	%rdi, %rbp
+ 1807 000f 53       		pushq	%rbx
+ 1808              	.LCFI62:
+ 1809              		.cfi_def_cfa_offset 40
+ 1810              		.cfi_offset 3, -40
+ 1811 0010 4889D3   		movq	%rdx, %rbx
+ 1812 0013 4883EC18 		subq	$24, %rsp
+ 1813              	.LCFI63:
+ 1814              		.cfi_def_cfa_offset 64
+ 1815              		.loc 1 363 1 view .LVU582
+ 1816 0017 64488B04 		movq	%fs:40, %rax
+ 1816      25280000 
+ 1816      00
+ 1817 0020 48894424 		movq	%rax, 8(%rsp)
+ 1817      08
+ 1818 0025 31C0     		xorl	%eax, %eax
+ 364:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = -1, frc;
+ 1819              		.loc 1 364 2 is_stmt 1 view .LVU583
+ 1820              	.LVL158:
+ 365:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	MQTTHeader header = {0};
+ 1821              		.loc 1 365 2 view .LVU584
+ 366:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 367:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	switch(trp->state){
+ 1822              		.loc 1 367 2 view .LVU585
+ 1823              		.loc 1 367 12 is_stmt 0 view .LVU586
+ 1824 0027 0FB6421C 		movzbl	28(%rdx), %eax
+ 1825              		.loc 1 367 2 view .LVU587
+ 1826 002b 3C01     		cmpb	$1, %al
+ 1827 002d 0F842D01 		je	.L89
+ 1827      0000
+ 1828 0033 3C02     		cmpb	$2, %al
+ 1829 0035 0F84C500 		je	.L90
+ 1829      0000
+ 1830 003b 84C0     		testb	%al, %al
+ 1831 003d 7404     		je	.L91
+ 368:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	default:
+ 369:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->state = 0;
+ 1832              		.loc 1 369 3 is_stmt 1 view .LVU588
+ 1833              		.loc 1 369 14 is_stmt 0 view .LVU589
+ 1834 003f C6421C00 		movb	$0, 28(%rdx)
+ 1835              	.L91:
+ 370:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/*FALLTHROUGH*/
+ 371:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	case 0:
+ 372:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* read the header byte.  This has the packet type in it */
+ 373:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if ((frc=(*trp->getfn)(trp->sck, buf, 1)) == -1)
+ 1836              		.loc 1 373 3 is_stmt 1 view .LVU590
+ 1837              		.loc 1 373 13 is_stmt 0 view .LVU591
+ 1838 0043 488B7B08 		movq	8(%rbx), %rdi
+ 1839              	.LVL159:
+ 1840              		.loc 1 373 13 view .LVU592
+GAS LISTING /tmp/cc3YwPWP.s 			page 47
+
+
+ 1841 0047 BA010000 		movl	$1, %edx
+ 1841      00
+ 1842              	.LVL160:
+ 1843              		.loc 1 373 13 view .LVU593
+ 1844 004c 4889EE   		movq	%rbp, %rsi
+ 1845              	.LVL161:
+ 1846              		.loc 1 373 13 view .LVU594
+ 1847 004f FF13     		call	*(%rbx)
+ 1848              	.LVL162:
+ 1849              		.loc 1 373 6 discriminator 1 view .LVU595
+ 1850 0051 83F8FF   		cmpl	$-1, %eax
+ 1851 0054 747A     		je	.L101
+ 374:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 375:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (frc == 0)
+ 1852              		.loc 1 375 3 is_stmt 1 view .LVU596
+ 1853              		.loc 1 375 6 is_stmt 0 view .LVU597
+ 1854 0056 85C0     		testl	%eax, %eax
+ 1855 0058 0F84FA00 		je	.L106
+ 1855      0000
+ 376:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			return 0;
+ 377:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->len = 0;
+ 1856              		.loc 1 377 3 is_stmt 1 view .LVU598
+ 378:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		++trp->state;
+ 1857              		.loc 1 378 3 is_stmt 0 view .LVU599
+ 1858 005e 80431C01 		addb	$1, 28(%rbx)
+ 377:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		++trp->state;
+ 1859              		.loc 1 377 12 view .LVU600
+ 1860 0062 C7431800 		movl	$0, 24(%rbx)
+ 1860      000000
+ 1861              		.loc 1 378 3 is_stmt 1 view .LVU601
+ 379:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/*FALLTHROUGH*/
+ 380:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* read the remaining length.  This is variable in itself */
+ 381:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	case 1:
+ 382:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if((frc=MQTTPacket_decodenb(trp)) == MQTTPACKET_READ_ERROR)
+ 1862              		.loc 1 382 3 view .LVU602
+ 1863              	.LVL163:
+ 1864              	.LBB158:
+ 1865              	.LBI158:
+ 324:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 1866              		.loc 1 324 12 view .LVU603
+ 1867              	.LBB159:
+ 326:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = MQTTPACKET_READ_ERROR;
+ 1868              		.loc 1 326 2 view .LVU604
+ 327:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 1869              		.loc 1 327 2 view .LVU605
+ 329:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if(trp->len == 0){		/* initialize on first call */
+ 1870              		.loc 1 329 12 view .LVU606
+ 330:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier = 1;
+ 1871              		.loc 1 330 2 view .LVU607
+ 1872              	.L98:
+ 331:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len = 0;
+ 1873              		.loc 1 331 3 view .LVU608
+ 332:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 1874              		.loc 1 332 3 view .LVU609
+ 331:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len = 0;
+ 1875              		.loc 1 331 19 is_stmt 0 view .LVU610
+ 1876 0069 48C74310 		movq	$1, 16(%rbx)
+GAS LISTING /tmp/cc3YwPWP.s 			page 48
+
+
+ 1876      01000000 
+ 1877 0071 31C0     		xorl	%eax, %eax
+ 1878              	.L99:
+ 1879              	.LBB160:
+ 338:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1880              		.loc 1 338 13 view .LVU611
+ 1881 0073 4C8D6424 		leaq	7(%rsp), %r12
+ 1881      07
+ 1882 0078 EB4C     		jmp	.L104
+ 1883 007a 660F1F44 		.p2align 4,,10
+ 1883      0000
+ 1884              		.p2align 3
+ 1885              	.L141:
+ 338:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1886              		.loc 1 338 3 is_stmt 1 view .LVU612
+ 338:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1887              		.loc 1 338 13 is_stmt 0 view .LVU613
+ 1888 0080 488B7B08 		movq	8(%rbx), %rdi
+ 1889 0084 BA010000 		movl	$1, %edx
+ 1889      00
+ 1890 0089 4C89E6   		movq	%r12, %rsi
+ 1891 008c FF13     		call	*(%rbx)
+ 1892              	.LVL164:
+ 338:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1893              		.loc 1 338 6 discriminator 1 view .LVU614
+ 1894 008e 83F8FF   		cmpl	$-1, %eax
+ 1895 0091 743D     		je	.L101
+ 340:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			rc = 0;
+ 1896              		.loc 1 340 3 is_stmt 1 view .LVU615
+ 340:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			rc = 0;
+ 1897              		.loc 1 340 6 is_stmt 0 view .LVU616
+ 1898 0093 85C0     		testl	%eax, %eax
+ 1899 0095 0F84BD00 		je	.L106
+ 1899      0000
+ 344:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len += (c & 127) * trp->multiplier;
+ 1900              		.loc 1 344 3 is_stmt 1 view .LVU617
+ 345:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier *= 128;
+ 1901              		.loc 1 345 22 is_stmt 0 view .LVU618
+ 1902 009b 0FB67424 		movzbl	7(%rsp), %esi
+ 1902      07
+ 345:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier *= 128;
+ 1903              		.loc 1 345 34 view .LVU619
+ 1904 00a0 8B5310   		movl	16(%rbx), %edx
+ 344:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len += (c & 127) * trp->multiplier;
+ 1905              		.loc 1 344 3 view .LVU620
+ 1906 00a3 8B4318   		movl	24(%rbx), %eax
+ 1907              	.LVL165:
+ 345:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier *= 128;
+ 1908              		.loc 1 345 22 view .LVU621
+ 1909 00a6 89F1     		movl	%esi, %ecx
+ 1910 00a8 83E17F   		andl	$127, %ecx
+ 344:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len += (c & 127) * trp->multiplier;
+ 1911              		.loc 1 344 3 view .LVU622
+ 1912 00ab 83C001   		addl	$1, %eax
+ 345:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier *= 128;
+ 1913              		.loc 1 345 29 view .LVU623
+ 1914 00ae 0FAFCA   		imull	%edx, %ecx
+GAS LISTING /tmp/cc3YwPWP.s 			page 49
+
+
+ 346:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 1915              		.loc 1 346 19 view .LVU624
+ 1916 00b1 C1E207   		sall	$7, %edx
+ 345:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier *= 128;
+ 1917              		.loc 1 345 16 view .LVU625
+ 1918 00b4 014B14   		addl	%ecx, 20(%rbx)
+ 344:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len += (c & 127) * trp->multiplier;
+ 1919              		.loc 1 344 3 view .LVU626
+ 1920 00b7 894318   		movl	%eax, 24(%rbx)
+ 345:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier *= 128;
+ 1921              		.loc 1 345 3 is_stmt 1 view .LVU627
+ 346:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 1922              		.loc 1 346 3 view .LVU628
+ 346:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
+ 1923              		.loc 1 346 19 is_stmt 0 view .LVU629
+ 1924 00ba 895310   		movl	%edx, 16(%rbx)
+ 1925              	.LBE160:
+ 347:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	rc = trp->len;
+ 1926              		.loc 1 347 21 is_stmt 1 view .LVU630
+ 1927 00bd 4084F6   		testb	%sil, %sil
+ 1928 00c0 0F89AA00 		jns	.L140
+ 1928      0000
+ 1929              	.LVL166:
+ 1930              	.L104:
+ 334:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		int frc;
+ 1931              		.loc 1 334 2 view .LVU631
+ 1932              	.LBB161:
+ 335:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (trp->len >= MAX_NO_OF_REMAINING_LENGTH_BYTES)
+ 1933              		.loc 1 335 3 view .LVU632
+ 336:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1934              		.loc 1 336 3 view .LVU633
+ 336:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1935              		.loc 1 336 6 is_stmt 0 view .LVU634
+ 1936 00c6 83F803   		cmpl	$3, %eax
+ 1937 00c9 7EB5     		jle	.L141
+ 1938              	.LVL167:
+ 1939 00cb 0F1F4400 		.p2align 4,,10
+ 1939      00
+ 1940              		.p2align 3
+ 1941              	.L101:
+ 336:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 1942              		.loc 1 336 6 view .LVU635
+ 1943              	.LBE161:
+ 1944              	.LBE159:
+ 1945              	.LBE158:
+ 364:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	MQTTHeader header = {0};
+ 1946              		.loc 1 364 6 view .LVU636
+ 1947 00d0 B8FFFFFF 		movl	$-1, %eax
+ 1947      FF
+ 1948              	.LVL168:
+ 1949              	.L95:
+ 383:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 384:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if(frc == 0)
+ 385:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			return 0;
+ 386:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->len = 1 + MQTTPacket_encode(buf + 1, trp->rem_len); /* put the original remaining length bac
+ 387:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if((trp->rem_len + trp->len) > buflen)
+ 388:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+GAS LISTING /tmp/cc3YwPWP.s 			page 50
+
+
+ 389:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		++trp->state;
+ 390:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/*FALLTHROUGH*/
+ 391:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	case 2:
+ 392:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if(trp->rem_len){
+ 393:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			/* read the rest of the buffer using a callback to supply the rest of the data */
+ 394:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			if ((frc=(*trp->getfn)(trp->sck, buf + trp->len, trp->rem_len)) == -1)
+ 395:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				goto exit;
+ 396:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			if (frc == 0)
+ 397:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				return 0;
+ 398:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			trp->rem_len -= frc;
+ 399:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			trp->len += frc;
+ 400:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			if(trp->rem_len)
+ 401:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				return 0;
+ 402:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		}
+ 403:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		header.byte = buf[0];
+ 404:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rc = header.bits.type;
+ 405:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		break;
+ 406:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 407:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 408:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
+ 409:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	trp->state = 0;
+ 1950              		.loc 1 409 2 is_stmt 1 view .LVU637
+ 1951              		.loc 1 409 13 is_stmt 0 view .LVU638
+ 1952 00d5 C6431C00 		movb	$0, 28(%rbx)
+ 410:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 1953              		.loc 1 410 2 is_stmt 1 view .LVU639
+ 1954              	.LVL169:
+ 1955              	.L88:
+ 411:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 1956              		.loc 1 411 1 is_stmt 0 view .LVU640
+ 1957 00d9 488B5424 		movq	8(%rsp), %rdx
+ 1957      08
+ 1958 00de 64482B14 		subq	%fs:40, %rdx
+ 1958      25280000 
+ 1958      00
+ 1959 00e7 0F850B01 		jne	.L142
+ 1959      0000
+ 1960 00ed 4883C418 		addq	$24, %rsp
+ 1961              	.LCFI64:
+ 1962              		.cfi_remember_state
+ 1963              		.cfi_def_cfa_offset 40
+ 1964 00f1 5B       		popq	%rbx
+ 1965              	.LCFI65:
+ 1966              		.cfi_def_cfa_offset 32
+ 1967              	.LVL170:
+ 1968              		.loc 1 411 1 view .LVU641
+ 1969 00f2 5D       		popq	%rbp
+ 1970              	.LCFI66:
+ 1971              		.cfi_def_cfa_offset 24
+ 1972              	.LVL171:
+ 1973              		.loc 1 411 1 view .LVU642
+ 1974 00f3 415C     		popq	%r12
+ 1975              	.LCFI67:
+ 1976              		.cfi_def_cfa_offset 16
+ 1977 00f5 415D     		popq	%r13
+ 1978              	.LCFI68:
+ 1979              		.cfi_def_cfa_offset 8
+GAS LISTING /tmp/cc3YwPWP.s 			page 51
+
+
+ 1980              	.LVL172:
+ 1981              		.loc 1 411 1 view .LVU643
+ 1982 00f7 C3       		ret
+ 1983              	.LVL173:
+ 1984 00f8 0F1F8400 		.p2align 4,,10
+ 1984      00000000 
+ 1985              		.p2align 3
+ 1986              	.L90:
+ 1987              	.LCFI69:
+ 1988              		.cfi_restore_state
+ 392:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			/* read the rest of the buffer using a callback to supply the rest of the data */
+ 1989              		.loc 1 392 9 view .LVU644
+ 1990 0100 8B4214   		movl	20(%rdx), %eax
+ 1991              	.LVL174:
+ 1992              	.L93:
+ 392:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			/* read the rest of the buffer using a callback to supply the rest of the data */
+ 1993              		.loc 1 392 3 is_stmt 1 view .LVU645
+ 392:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			/* read the rest of the buffer using a callback to supply the rest of the data */
+ 1994              		.loc 1 392 5 is_stmt 0 view .LVU646
+ 1995 0103 85C0     		testl	%eax, %eax
+ 1996 0105 7443     		je	.L112
+ 394:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				goto exit;
+ 1997              		.loc 1 394 4 is_stmt 1 view .LVU647
+ 394:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				goto exit;
+ 1998              		.loc 1 394 46 is_stmt 0 view .LVU648
+ 1999 0107 48637318 		movslq	24(%rbx), %rsi
+ 394:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				goto exit;
+ 2000              		.loc 1 394 14 view .LVU649
+ 2001 010b 488B7B08 		movq	8(%rbx), %rdi
+ 2002 010f 89C2     		movl	%eax, %edx
+ 2003 0111 4801EE   		addq	%rbp, %rsi
+ 2004 0114 FF13     		call	*(%rbx)
+ 2005              	.LVL175:
+ 394:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				goto exit;
+ 2006              		.loc 1 394 7 discriminator 1 view .LVU650
+ 2007 0116 83F8FF   		cmpl	$-1, %eax
+ 2008 0119 74B5     		je	.L101
+ 396:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				return 0;
+ 2009              		.loc 1 396 4 is_stmt 1 view .LVU651
+ 396:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				return 0;
+ 2010              		.loc 1 396 7 is_stmt 0 view .LVU652
+ 2011 011b 85C0     		testl	%eax, %eax
+ 2012 011d 7439     		je	.L106
+ 398:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			trp->len += frc;
+ 2013              		.loc 1 398 7 view .LVU653
+ 2014 011f F30F7E53 		movq	20(%rbx), %xmm2
+ 2014      14
+ 2015 0124 660F6ED8 		movd	%eax, %xmm3
+ 2016 0128 660F70C3 		pshufd	$0xe0, %xmm3, %xmm0
+ 2016      E0
+ 398:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			trp->len += frc;
+ 2017              		.loc 1 398 4 is_stmt 1 view .LVU654
+ 398:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			trp->len += frc;
+ 2018              		.loc 1 398 17 is_stmt 0 view .LVU655
+ 2019 012d 660F6FCA 		movdqa	%xmm2, %xmm1
+ 2020 0131 660FFAC8 		psubd	%xmm0, %xmm1
+ 399:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			if(trp->rem_len)
+GAS LISTING /tmp/cc3YwPWP.s 			page 52
+
+
+ 2021              		.loc 1 399 4 is_stmt 1 view .LVU656
+ 399:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			if(trp->rem_len)
+ 2022              		.loc 1 399 13 is_stmt 0 view .LVU657
+ 2023 0135 660FFEC2 		paddd	%xmm2, %xmm0
+ 400:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				return 0;
+ 2024              		.loc 1 400 6 view .LVU658
+ 2025 0139 660F7EC8 		movd	%xmm1, %eax
+ 2026              	.LVL176:
+ 398:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			trp->len += frc;
+ 2027              		.loc 1 398 17 view .LVU659
+ 2028 013d F30F10C1 		movss	%xmm1, %xmm0
+ 2029 0141 660FD643 		movq	%xmm0, 20(%rbx)
+ 2029      14
+ 400:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				return 0;
+ 2030              		.loc 1 400 4 is_stmt 1 view .LVU660
+ 400:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 				return 0;
+ 2031              		.loc 1 400 6 is_stmt 0 view .LVU661
+ 2032 0146 85C0     		testl	%eax, %eax
+ 2033 0148 750E     		jne	.L106
+ 2034              	.LVL177:
+ 2035              	.L112:
+ 403:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rc = header.bits.type;
+ 2036              		.loc 1 403 3 is_stmt 1 view .LVU662
+ 403:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rc = header.bits.type;
+ 2037              		.loc 1 403 15 is_stmt 0 view .LVU663
+ 2038 014a 0FB64500 		movzbl	0(%rbp), %eax
+ 2039              	.LVL178:
+ 404:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		break;
+ 2040              		.loc 1 404 3 is_stmt 1 view .LVU664
+ 404:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		break;
+ 2041              		.loc 1 404 6 is_stmt 0 view .LVU665
+ 2042 014e C1E804   		shrl	$4, %eax
+ 2043              	.LVL179:
+ 405:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
+ 2044              		.loc 1 405 3 is_stmt 1 view .LVU666
+ 2045 0151 EB82     		jmp	.L95
+ 2046              	.LVL180:
+ 2047              		.p2align 4,,10
+ 2048 0153 0F1F4400 		.p2align 3
+ 2048      00
+ 2049              	.L106:
+ 376:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->len = 0;
+ 2050              		.loc 1 376 11 is_stmt 0 view .LVU667
+ 2051 0158 31C0     		xorl	%eax, %eax
+ 2052 015a E97AFFFF 		jmp	.L88
+ 2052      FF
+ 2053              	.LVL181:
+ 2054 015f 90       		.p2align 4,,10
+ 2055              		.p2align 3
+ 2056              	.L89:
+ 382:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 2057              		.loc 1 382 3 is_stmt 1 view .LVU668
+ 2058              	.LBB163:
+ 324:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 2059              		.loc 1 324 12 view .LVU669
+ 2060              	.LBB162:
+ 326:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = MQTTPACKET_READ_ERROR;
+GAS LISTING /tmp/cc3YwPWP.s 			page 53
+
+
+ 2061              		.loc 1 326 2 view .LVU670
+ 327:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 2062              		.loc 1 327 2 view .LVU671
+ 329:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if(trp->len == 0){		/* initialize on first call */
+ 2063              		.loc 1 329 12 view .LVU672
+ 330:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier = 1;
+ 2064              		.loc 1 330 2 view .LVU673
+ 330:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier = 1;
+ 2065              		.loc 1 330 8 is_stmt 0 view .LVU674
+ 2066 0160 8B4218   		movl	24(%rdx), %eax
+ 330:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier = 1;
+ 2067              		.loc 1 330 4 view .LVU675
+ 2068 0163 85C0     		testl	%eax, %eax
+ 2069 0165 0F8508FF 		jne	.L99
+ 2069      FFFF
+ 2070 016b E9F9FEFF 		jmp	.L98
+ 2070      FF
+ 2071              	.LVL182:
+ 2072              		.p2align 4,,10
+ 2073              		.p2align 3
+ 2074              	.L140:
+ 2075              	.L105:
+ 350:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 2076              		.loc 1 350 18 is_stmt 1 view .LVU676
+ 351:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 2077              		.loc 1 351 2 view .LVU677
+ 351:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 2078              		.loc 1 351 2 is_stmt 0 view .LVU678
+ 2079              	.LBE162:
+ 2080              	.LBE163:
+ 382:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 2081              		.loc 1 382 5 discriminator 1 view .LVU679
+ 2082 0170 83F8FF   		cmpl	$-1, %eax
+ 2083 0173 0F8457FF 		je	.L101
+ 2083      FFFF
+ 384:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			return 0;
+ 2084              		.loc 1 384 3 is_stmt 1 view .LVU680
+ 384:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			return 0;
+ 2085              		.loc 1 384 5 is_stmt 0 view .LVU681
+ 2086 0179 85C0     		testl	%eax, %eax
+ 2087 017b 74DB     		je	.L106
+ 386:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if((trp->rem_len + trp->len) > buflen)
+ 2088              		.loc 1 386 3 is_stmt 1 view .LVU682
+ 386:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if((trp->rem_len + trp->len) > buflen)
+ 2089              		.loc 1 386 18 is_stmt 0 view .LVU683
+ 2090 017d 8B5314   		movl	20(%rbx), %edx
+ 2091              	.LVL183:
+ 2092              	.LBB164:
+ 2093              	.LBI164:
+  29:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
+ 2094              		.loc 1 29 5 is_stmt 1 view .LVU684
+ 2095              	.LBB165:
+  31:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
+ 2096              		.loc 1 31 2 view .LVU685
+  33:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+ 2097              		.loc 1 33 12 view .LVU686
+  34:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+GAS LISTING /tmp/cc3YwPWP.s 			page 54
+
+
+ 2098              		.loc 1 34 2 view .LVU687
+ 2099              	.LBB166:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 2100              		.loc 1 36 3 view .LVU688
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 2101              		.loc 1 36 19 is_stmt 0 view .LVU689
+ 2102 0180 89D1     		movl	%edx, %ecx
+ 2103 0182 C1F91F   		sarl	$31, %ecx
+ 2104 0185 C1E919   		shrl	$25, %ecx
+ 2105 0188 8D040A   		leal	(%rdx,%rcx), %eax
+ 2106              	.LVL184:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 2107              		.loc 1 36 19 view .LVU690
+ 2108 018b 83E07F   		andl	$127, %eax
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 2109              		.loc 1 36 8 view .LVU691
+ 2110 018e 29C8     		subl	%ecx, %eax
+ 2111              	.LVL185:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 2112              		.loc 1 37 3 is_stmt 1 view .LVU692
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 2113              		.loc 1 39 3 view .LVU693
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 2114              		.loc 1 39 6 is_stmt 0 view .LVU694
+ 2115 0190 83FA7F   		cmpl	$127, %edx
+ 2116 0193 7F2B     		jg	.L107
+ 2117 0195 B9010000 		movl	$1, %ecx
+ 2117      00
+ 2118 019a BA020000 		movl	$2, %edx
+ 2118      00
+ 2119              	.LVL186:
+ 2120 019f 90       		.p2align 4,,10
+ 2121              		.p2align 3
+ 2122              	.L110:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 2123              		.loc 1 41 3 is_stmt 1 view .LVU695
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 2124              		.loc 1 41 13 is_stmt 0 view .LVU696
+ 2125 01a0 88440D00 		movb	%al, 0(%rbp,%rcx)
+ 2126              	.LBE166:
+  42:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 2127              		.loc 1 42 18 is_stmt 1 view .LVU697
+  43:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
+ 2128              		.loc 1 43 18 view .LVU698
+  44:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 2129              		.loc 1 44 2 view .LVU699
+ 2130              	.LVL187:
+  44:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
+ 2131              		.loc 1 44 2 is_stmt 0 view .LVU700
+ 2132              	.LBE165:
+ 2133              	.LBE164:
+ 387:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 2134              		.loc 1 387 10 view .LVU701
+ 2135 01a4 8B4314   		movl	20(%rbx), %eax
+ 386:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if((trp->rem_len + trp->len) > buflen)
+ 2136              		.loc 1 386 12 discriminator 1 view .LVU702
+ 2137 01a7 895318   		movl	%edx, 24(%rbx)
+GAS LISTING /tmp/cc3YwPWP.s 			page 55
+
+
+ 387:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 2138              		.loc 1 387 3 is_stmt 1 view .LVU703
+ 387:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 2139              		.loc 1 387 20 is_stmt 0 view .LVU704
+ 2140 01aa 01C2     		addl	%eax, %edx
+ 387:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
+ 2141              		.loc 1 387 5 view .LVU705
+ 2142 01ac 4439EA   		cmpl	%r13d, %edx
+ 2143 01af 0F8F1BFF 		jg	.L101
+ 2143      FFFF
+ 389:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/*FALLTHROUGH*/
+ 2144              		.loc 1 389 3 is_stmt 1 view .LVU706
+ 2145 01b5 80431C01 		addb	$1, 28(%rbx)
+ 2146 01b9 E945FFFF 		jmp	.L93
+ 2146      FF
+ 2147              	.LVL188:
+ 2148 01be 6690     		.p2align 4,,10
+ 2149              		.p2align 3
+ 2150              	.L107:
+ 2151              	.LBB172:
+ 2152              	.LBB170:
+ 2153              	.LBB167:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 2154              		.loc 1 37 10 is_stmt 0 view .LVU707
+ 2155 01c0 C1FA07   		sarl	$7, %edx
+ 2156              	.LVL189:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 2157              		.loc 1 37 10 view .LVU708
+ 2158 01c3 BE010000 		movl	$1, %esi
+ 2158      00
+ 2159              	.LVL190:
+ 2160 01c8 0F1F8400 		.p2align 4,,10
+ 2160      00000000 
+ 2161              		.p2align 3
+ 2162              	.L109:
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		buf[rc++] = d;
+ 2163              		.loc 1 40 4 is_stmt 1 view .LVU709
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 2164              		.loc 1 41 3 view .LVU710
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		buf[rc++] = d;
+ 2165              		.loc 1 40 6 is_stmt 0 view .LVU711
+ 2166 01d0 83C880   		orl	$-128, %eax
+ 2167              	.LVL191:
+  40:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		buf[rc++] = d;
+ 2168              		.loc 1 40 6 view .LVU712
+ 2169 01d3 89D7     		movl	%edx, %edi
+ 2170 01d5 4889F1   		movq	%rsi, %rcx
+ 2171 01d8 88443500 		movb	%al, 0(%rbp,%rsi)
+ 2172              	.LBE167:
+  42:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	FUNC_EXIT_RC(rc);
+ 2173              		.loc 1 42 18 is_stmt 1 view .LVU713
+  33:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
+ 2174              		.loc 1 33 12 view .LVU714
+  34:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
+ 2175              		.loc 1 34 2 view .LVU715
+ 2176              	.LBB168:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+GAS LISTING /tmp/cc3YwPWP.s 			page 56
+
+
+ 2177              		.loc 1 36 3 view .LVU716
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 2178              		.loc 1 36 8 is_stmt 0 view .LVU717
+ 2179 01dc 89D0     		movl	%edx, %eax
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 2180              		.loc 1 39 6 view .LVU718
+ 2181 01de 4883C601 		addq	$1, %rsi
+ 2182              	.LVL192:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 2183              		.loc 1 37 10 view .LVU719
+ 2184 01e2 C1FA07   		sarl	$7, %edx
+ 2185              	.LVL193:
+  36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
+ 2186              		.loc 1 36 8 view .LVU720
+ 2187 01e5 83E07F   		andl	$127, %eax
+ 2188              	.LVL194:
+  37:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		/* if there are more digits to encode, set the top bit of this digit */
+ 2189              		.loc 1 37 3 is_stmt 1 view .LVU721
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 2190              		.loc 1 39 3 view .LVU722
+  39:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			d |= 0x80;
+ 2191              		.loc 1 39 6 is_stmt 0 view .LVU723
+ 2192 01e8 83FF7F   		cmpl	$127, %edi
+ 2193 01eb 7FE3     		jg	.L109
+ 2194              	.LBE168:
+ 2195              	.LBE170:
+ 2196              	.LBE172:
+ 386:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if((trp->rem_len + trp->len) > buflen)
+ 2197              		.loc 1 386 16 discriminator 1 view .LVU724
+ 2198 01ed 8D5102   		leal	2(%rcx), %edx
+ 2199              	.LVL195:
+ 2200              	.LBB173:
+ 2201              	.LBB171:
+ 2202              	.LBB169:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 2203              		.loc 1 41 9 view .LVU725
+ 2204 01f0 83C101   		addl	$1, %ecx
+ 2205              	.LVL196:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 2206              		.loc 1 41 9 view .LVU726
+ 2207 01f3 4863C9   		movslq	%ecx, %rcx
+ 2208 01f6 EBA8     		jmp	.L110
+ 2209              	.LVL197:
+ 2210              	.L142:
+  41:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while (length > 0);
+ 2211              		.loc 1 41 9 view .LVU727
+ 2212              	.LBE169:
+ 2213              	.LBE171:
+ 2214              	.LBE173:
+ 2215              		.loc 1 411 1 view .LVU728
+ 2216 01f8 E8000000 		call	__stack_chk_fail@PLT
+ 2216      00
+ 2217              	.LVL198:
+ 2218              		.cfi_endproc
+ 2219              	.LFE37:
+ 2221              		.section	.bss.bufptr,"aw",@nobits
+ 2222              		.align 8
+GAS LISTING /tmp/cc3YwPWP.s 			page 57
+
+
+ 2225              	bufptr:
+ 2226 0000 00000000 		.zero	8
+ 2226      00000000 
+ 2227              		.text
+ 2228              	.Letext0:
+ 2229              		.file 3 "../../bos/thirdparty/mqtt-pack/MQTTPacket.h"
+ 2230              		.file 4 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 2231              		.file 5 "/usr/include/string.h"
+ 2232              		.file 6 "<built-in>"
+ 8526              		.section	.note.gnu.property,"a"
+ 8527              		.align 8
+ 8528 0000 04000000 		.long	1f - 0f
+ 8529 0004 10000000 		.long	4f - 1f
+ 8530 0008 05000000 		.long	5
+ 8531              	0:
+ 8532 000c 474E5500 		.string	"GNU"
+ 8533              	1:
+ 8534              		.align 8
+ 8535 0010 020000C0 		.long	0xc0000002
+ 8536 0014 04000000 		.long	3f - 2f
+ 8537              	2:
+ 8538 0018 03000000 		.long	0x3
+ 8539              	3:
+ 8540 001c 00000000 		.align 8
+ 8541              	4:
+GAS LISTING /tmp/cc3YwPWP.s 			page 58
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 MQTTPacket.c
+     /tmp/cc3YwPWP.s:9      .text.MQTTPacket_encode:0000000000000000 MQTTPacket_encode
+     /tmp/cc3YwPWP.s:104    .text.MQTTPacket_decode:0000000000000000 MQTTPacket_decode
+     /tmp/cc3YwPWP.s:254    .text.MQTTPacket_len:0000000000000000 MQTTPacket_len
+     /tmp/cc3YwPWP.s:308    .text.bufchar:0000000000000000 bufchar
+     /tmp/cc3YwPWP.s:2225   .bss.bufptr:0000000000000000 bufptr
+     /tmp/cc3YwPWP.s:359    .text.MQTTPacket_decodeBuf:0000000000000000 MQTTPacket_decodeBuf
+     /tmp/cc3YwPWP.s:597    .text.readInt:0000000000000000 readInt
+     /tmp/cc3YwPWP.s:635    .text.readChar:0000000000000000 readChar
+     /tmp/cc3YwPWP.s:663    .text.writeChar:0000000000000000 writeChar
+     /tmp/cc3YwPWP.s:687    .text.writeInt:0000000000000000 writeInt
+     /tmp/cc3YwPWP.s:734    .text.writeCString:0000000000000000 writeCString
+     /tmp/cc3YwPWP.s:866    .text.getLenStringLen:0000000000000000 getLenStringLen
+     /tmp/cc3YwPWP.s:894    .text.writeMQTTString:0000000000000000 writeMQTTString
+     /tmp/cc3YwPWP.s:1199   .text.readMQTTLenString:0000000000000000 readMQTTLenString
+     /tmp/cc3YwPWP.s:1296   .text.MQTTstrlen:0000000000000000 MQTTstrlen
+     /tmp/cc3YwPWP.s:1344   .text.MQTTPacket_equals:0000000000000000 MQTTPacket_equals
+     /tmp/cc3YwPWP.s:1454   .text.MQTTPacket_read:0000000000000000 MQTTPacket_read
+     /tmp/cc3YwPWP.s:1786   .text.MQTTPacket_readnb:0000000000000000 MQTTPacket_readnb
+
+UNDEFINED SYMBOLS
+__stack_chk_fail
+strlen
+memcpy
+strncmp

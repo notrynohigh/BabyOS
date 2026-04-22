@@ -1,0 +1,1138 @@
+GAS LISTING /tmp/ccnAe8LL.s 			page 1
+
+
+   1              		.file	"pk_ecc.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c"
+   5              		.section	.text.unlikely.mbedtls_pk_ecc_set_group,"ax",@progbits
+   6              	.LCOLDB0:
+   7              		.section	.text.mbedtls_pk_ecc_set_group,"ax",@progbits
+   8              	.LHOTB0:
+   9              		.p2align 4
+  10              		.section	.text.unlikely.mbedtls_pk_ecc_set_group
+  11              	.Ltext_cold0:
+  12              		.section	.text.mbedtls_pk_ecc_set_group
+  13              		.globl	mbedtls_pk_ecc_set_group
+  15              	mbedtls_pk_ecc_set_group:
+  16              	.LVL0:
+  17              	.LFB37:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** /*
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *  ECC setters for PK.
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *  Copyright The Mbed TLS Contributors
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  */
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #include "common.h"
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h"
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h"
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ecp.h"
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #include "pk_internal.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_C) && defined(MBEDTLS_PK_HAVE_ECC_KEYS)
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** int mbedtls_pk_ecc_set_group(mbedtls_pk_context *pk, mbedtls_ecp_group_id grp_id)
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** {
+  18              		.loc 1 18 1 view -0
+  19              		.cfi_startproc
+  20              		.loc 1 18 1 is_stmt 0 view .LVU1
+  21 0000 F30F1EFA 		endbr64
+  22 0004 4155     		pushq	%r13
+  23              	.LCFI0:
+  24              		.cfi_def_cfa_offset 16
+  25              		.cfi_offset 13, -16
+  26 0006 4531ED   		xorl	%r13d, %r13d
+  27 0009 4154     		pushq	%r12
+  28              	.LCFI1:
+  29              		.cfi_def_cfa_offset 24
+  30              		.cfi_offset 12, -24
+  31 000b 55       		pushq	%rbp
+  32              	.LCFI2:
+  33              		.cfi_def_cfa_offset 32
+  34              		.cfi_offset 6, -32
+  35 000c 89F5     		movl	%esi, %ebp
+  36 000e 53       		pushq	%rbx
+  37              	.LCFI3:
+  38              		.cfi_def_cfa_offset 40
+  39              		.cfi_offset 3, -40
+  40 000f 4889FB   		movq	%rdi, %rbx
+GAS LISTING /tmp/ccnAe8LL.s 			page 2
+
+
+  41 0012 4883EC28 		subq	$40, %rsp
+  42              	.LCFI4:
+  43              		.cfi_def_cfa_offset 80
+  44 0016 F30F6F07 		movdqu	(%rdi), %xmm0
+  45              		.loc 1 18 1 view .LVU2
+  46 001a 64488B04 		movq	%fs:40, %rax
+  46      25280000 
+  46      00
+  47 0023 48894424 		movq	%rax, 24(%rsp)
+  47      18
+  48 0028 31C0     		xorl	%eax, %eax
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     size_t ec_bits;
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_ecc_family_t ec_family = mbedtls_ecc_group_to_psa(grp_id, &ec_bits);
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* group may already be initialized; if so, make sure IDs match */
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if ((pk->ec_family != 0 && pk->ec_family != ec_family) ||
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         (pk->ec_bits != 0 && pk->ec_bits != ec_bits)) {
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         return MBEDTLS_ERR_PK_KEY_INVALID_FORMAT;
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* set group */
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     pk->ec_family = ec_family;
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     pk->ec_bits = ec_bits;
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return 0;
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair *ecp = mbedtls_pk_ec_rw(*pk);
+  49              		.loc 1 35 5 is_stmt 1 view .LVU3
+  50              	.LBB12:
+  51              	.LBB13:
+  52              		.file 2 "../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h"
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** /**
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * \file pk_internal.h
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * \brief Public Key abstraction layer: internal (i.e. library only) functions
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  *        and definitions.
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  */
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** /*
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  *  Copyright The Mbed TLS Contributors
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  */
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #ifndef MBEDTLS_PK_INTERNAL_H
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define MBEDTLS_PK_INTERNAL_H
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** 
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h"
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** 
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #if defined(MBEDTLS_PK_HAVE_ECC_KEYS)
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ecp.h"
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #endif
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** 
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #if defined(MBEDTLS_PSA_CRYPTO_CLIENT)
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #include "thirdparty/mbedtls/bos_mbedtls/psa/crypto.h"
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** 
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #include "psa_util_internal.h"
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PSA_PK_TO_MBEDTLS_ERR(status) psa_pk_status_to_mbedtls(status)
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PSA_PK_RSA_TO_MBEDTLS_ERR(status) PSA_TO_MBEDTLS_ERR_LIST(status,     \
+GAS LISTING /tmp/ccnAe8LL.s 			page 3
+
+
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****                                                                   psa_to_pk_rsa_errors,            
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****                                                                   psa_pk_status_to_mbedtls)
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PSA_PK_ECDSA_TO_MBEDTLS_ERR(status) PSA_TO_MBEDTLS_ERR_LIST(status,   \
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****                                                                     psa_to_pk_ecdsa_errors,        
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****                                                                     psa_pk_status_to_mbedtls)
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #endif /* MBEDTLS_PSA_CRYPTO_CLIENT */
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** 
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** /* Headers/footers for PEM files */
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_BEGIN_PUBLIC_KEY    "-----BEGIN PUBLIC KEY-----"
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_END_PUBLIC_KEY      "-----END PUBLIC KEY-----"
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_BEGIN_PRIVATE_KEY_RSA   "-----BEGIN RSA PRIVATE KEY-----"
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_END_PRIVATE_KEY_RSA     "-----END RSA PRIVATE KEY-----"
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_BEGIN_PUBLIC_KEY_RSA     "-----BEGIN RSA PUBLIC KEY-----"
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_END_PUBLIC_KEY_RSA     "-----END RSA PUBLIC KEY-----"
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_BEGIN_PRIVATE_KEY_EC    "-----BEGIN EC PRIVATE KEY-----"
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_END_PRIVATE_KEY_EC      "-----END EC PRIVATE KEY-----"
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_BEGIN_PRIVATE_KEY_PKCS8 "-----BEGIN PRIVATE KEY-----"
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_END_PRIVATE_KEY_PKCS8   "-----END PRIVATE KEY-----"
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_BEGIN_ENCRYPTED_PRIVATE_KEY_PKCS8 "-----BEGIN ENCRYPTED PRIVATE KEY-----"
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #define PEM_END_ENCRYPTED_PRIVATE_KEY_PKCS8   "-----END ENCRYPTED PRIVATE KEY-----"
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** 
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** #if defined(MBEDTLS_PK_HAVE_ECC_KEYS) && !defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** /**
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * Public function mbedtls_pk_ec() can be used to get direct access to the
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * wrapped ecp_keypair structure pointed to the pk_ctx. However this is not
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * ideal because it bypasses the PK module on the control of its internal
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * structure (pk_context) fields.
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * For backward compatibility we keep mbedtls_pk_ec() when ECP_C is defined, but
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * we provide 2 very similar functions when only ECP_LIGHT is enabled and not
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * ECP_C.
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * These variants embed the "ro" or "rw" keywords in their name to make the
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * usage of the returned pointer explicit. Of course the returned value is
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  * const or non-const accordingly.
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****  */
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** static inline const mbedtls_ecp_keypair *mbedtls_pk_ec_ro(const mbedtls_pk_context pk)
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** {
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****     switch (mbedtls_pk_get_type(&pk)) {
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY_DH:
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECDSA:
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****             return (const mbedtls_ecp_keypair *) (pk).MBEDTLS_PRIVATE(pk_ctx);
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         default:
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****             return NULL;
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****     }
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** }
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** 
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** static inline mbedtls_ecp_keypair *mbedtls_pk_ec_rw(const mbedtls_pk_context pk)
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** {
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****     switch (mbedtls_pk_get_type(&pk)) {
+  53              		.loc 2 74 13 is_stmt 0 view .LVU4
+  54 002a 4989E4   		movq	%rsp, %r12
+  55 002d 4C89E7   		movq	%r12, %rdi
+  56              	.LVL1:
+  57              		.loc 2 74 13 view .LVU5
+  58 0030 0F290424 		movaps	%xmm0, (%rsp)
+  59              	.LBE13:
+  60              	.LBI12:
+GAS LISTING /tmp/ccnAe8LL.s 			page 4
+
+
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** {
+  61              		.loc 2 72 36 is_stmt 1 view .LVU6
+  62              	.LBB14:
+  63              		.loc 2 74 5 view .LVU7
+  64              		.loc 2 74 13 is_stmt 0 view .LVU8
+  65 0034 E8000000 		call	mbedtls_pk_get_type@PLT
+  65      00
+  66              	.LVL2:
+  67              		.loc 2 74 5 discriminator 1 view .LVU9
+  68 0039 83E802   		subl	$2, %eax
+  69 003c 83F802   		cmpl	$2, %eax
+  70 003f 7705     		ja	.L2
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY_DH:
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECDSA:
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****             return (mbedtls_ecp_keypair *) (pk).MBEDTLS_PRIVATE(pk_ctx);
+  71              		.loc 2 78 13 is_stmt 1 view .LVU10
+  72              		.loc 2 78 20 is_stmt 0 view .LVU11
+  73 0041 4C8B6C24 		movq	8(%rsp), %r13
+  73      08
+  74              	.L2:
+  75              	.LVL3:
+  76              		.loc 2 78 20 view .LVU12
+  77              	.LBE14:
+  78              	.LBE12:
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* grp may already be initialized; if so, make sure IDs match */
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (mbedtls_pk_ec_ro(*pk)->grp.id != MBEDTLS_ECP_DP_NONE &&
+  79              		.loc 1 38 5 is_stmt 1 view .LVU13
+  80 0046 F30F6F0B 		movdqu	(%rbx), %xmm1
+  81              	.LBB15:
+  82              	.LBB16:
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+  83              		.loc 2 62 13 is_stmt 0 view .LVU14
+  84 004a 4C89E7   		movq	%r12, %rdi
+  85 004d 0F290C24 		movaps	%xmm1, (%rsp)
+  86              	.LBE16:
+  87              	.LBI15:
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** {
+  88              		.loc 2 60 42 is_stmt 1 view .LVU15
+  89              	.LBB17:
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+  90              		.loc 2 62 5 view .LVU16
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+  91              		.loc 2 62 13 is_stmt 0 view .LVU17
+  92 0051 E8000000 		call	mbedtls_pk_get_type@PLT
+  92      00
+  93              	.LVL4:
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+  94              		.loc 2 62 5 discriminator 1 view .LVU18
+  95 0056 83E802   		subl	$2, %eax
+  96 0059 83F802   		cmpl	$2, %eax
+  97 005c 0F870000 		ja	.L6
+  97      0000
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         default:
+  98              		.loc 2 66 13 is_stmt 1 view .LVU19
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         default:
+GAS LISTING /tmp/ccnAe8LL.s 			page 5
+
+
+  99              		.loc 2 66 20 is_stmt 0 view .LVU20
+ 100 0062 488B4424 		movq	8(%rsp), %rax
+ 100      08
+ 101              	.LBE17:
+ 102              	.LBE15:
+ 103              		.loc 1 38 8 discriminator 1 view .LVU21
+ 104 0067 8B00     		movl	(%rax), %eax
+ 105 0069 85C0     		testl	%eax, %eax
+ 106 006b 7425     		je	.L7
+ 107              	.LBB18:
+ 108              	.LBI18:
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** {
+ 109              		.loc 2 60 42 is_stmt 1 view .LVU22
+ 110              	.LBB19:
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+ 111              		.loc 2 62 5 view .LVU23
+ 112 006d F30F6F13 		movdqu	(%rbx), %xmm2
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+ 113              		.loc 2 62 13 is_stmt 0 view .LVU24
+ 114 0071 4C89E7   		movq	%r12, %rdi
+ 115 0074 0F291424 		movaps	%xmm2, (%rsp)
+ 116 0078 E8000000 		call	mbedtls_pk_get_type@PLT
+ 116      00
+ 117              	.LVL5:
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+ 118              		.loc 2 62 5 discriminator 1 view .LVU25
+ 119 007d 83E802   		subl	$2, %eax
+ 120 0080 83F802   		cmpl	$2, %eax
+ 121 0083 0F870000 		ja	.L6
+ 121      0000
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         default:
+ 122              		.loc 2 66 13 is_stmt 1 view .LVU26
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         default:
+ 123              		.loc 2 66 20 is_stmt 0 view .LVU27
+ 124 0089 488B4424 		movq	8(%rsp), %rax
+ 124      08
+ 125              	.LBE19:
+ 126              	.LBE18:
+ 127              		.loc 1 38 62 discriminator 1 view .LVU28
+ 128 008e 3928     		cmpl	%ebp, (%rax)
+ 129 0090 7524     		jne	.L14
+ 130              	.L7:
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         mbedtls_pk_ec_ro(*pk)->grp.id != grp_id) {
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         return MBEDTLS_ERR_PK_KEY_INVALID_FORMAT;
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* set group */
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return mbedtls_ecp_group_load(&(ecp->grp), grp_id);
+ 131              		.loc 1 44 5 is_stmt 1 view .LVU29
+ 132              		.loc 1 44 12 is_stmt 0 view .LVU30
+ 133 0092 488B4424 		movq	24(%rsp), %rax
+ 133      18
+ 134 0097 64482B04 		subq	%fs:40, %rax
+ 134      25280000 
+ 134      00
+ 135 00a0 7534     		jne	.L10
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+GAS LISTING /tmp/ccnAe8LL.s 			page 6
+
+
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** }
+ 136              		.loc 1 46 1 view .LVU31
+ 137 00a2 4883C428 		addq	$40, %rsp
+ 138              	.LCFI5:
+ 139              		.cfi_remember_state
+ 140              		.cfi_def_cfa_offset 40
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 141              		.loc 1 44 12 view .LVU32
+ 142 00a6 89EE     		movl	%ebp, %esi
+ 143 00a8 4C89EF   		movq	%r13, %rdi
+ 144              		.loc 1 46 1 view .LVU33
+ 145 00ab 5B       		popq	%rbx
+ 146              	.LCFI6:
+ 147              		.cfi_def_cfa_offset 32
+ 148              	.LVL6:
+ 149              		.loc 1 46 1 view .LVU34
+ 150 00ac 5D       		popq	%rbp
+ 151              	.LCFI7:
+ 152              		.cfi_def_cfa_offset 24
+ 153              	.LVL7:
+ 154              		.loc 1 46 1 view .LVU35
+ 155 00ad 415C     		popq	%r12
+ 156              	.LCFI8:
+ 157              		.cfi_def_cfa_offset 16
+ 158 00af 415D     		popq	%r13
+ 159              	.LCFI9:
+ 160              		.cfi_def_cfa_offset 8
+ 161              	.LVL8:
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 162              		.loc 1 44 12 view .LVU36
+ 163 00b1 E9000000 		jmp	mbedtls_ecp_group_load@PLT
+ 163      00
+ 164              	.LVL9:
+ 165              	.L14:
+ 166              	.LCFI10:
+ 167              		.cfi_restore_state
+ 168              		.loc 1 46 1 view .LVU37
+ 169 00b6 488B4424 		movq	24(%rsp), %rax
+ 169      18
+ 170 00bb 64482B04 		subq	%fs:40, %rax
+ 170      25280000 
+ 170      00
+ 171 00c4 7510     		jne	.L10
+ 172 00c6 4883C428 		addq	$40, %rsp
+ 173              	.LCFI11:
+ 174              		.cfi_remember_state
+ 175              		.cfi_def_cfa_offset 40
+ 176 00ca B800C3FF 		movl	$-15616, %eax
+ 176      FF
+ 177 00cf 5B       		popq	%rbx
+ 178              	.LCFI12:
+ 179              		.cfi_def_cfa_offset 32
+ 180              	.LVL10:
+ 181              		.loc 1 46 1 view .LVU38
+ 182 00d0 5D       		popq	%rbp
+ 183              	.LCFI13:
+ 184              		.cfi_def_cfa_offset 24
+GAS LISTING /tmp/ccnAe8LL.s 			page 7
+
+
+ 185              	.LVL11:
+ 186              		.loc 1 46 1 view .LVU39
+ 187 00d1 415C     		popq	%r12
+ 188              	.LCFI14:
+ 189              		.cfi_def_cfa_offset 16
+ 190 00d3 415D     		popq	%r13
+ 191              	.LCFI15:
+ 192              		.cfi_def_cfa_offset 8
+ 193              	.LVL12:
+ 194              		.loc 1 46 1 view .LVU40
+ 195 00d5 C3       		ret
+ 196              	.LVL13:
+ 197              	.L10:
+ 198              	.LCFI16:
+ 199              		.cfi_restore_state
+ 200              		.loc 1 46 1 view .LVU41
+ 201 00d6 E8000000 		call	__stack_chk_fail@PLT
+ 201      00
+ 202              	.LVL14:
+ 203              		.cfi_endproc
+ 204              		.section	.text.unlikely.mbedtls_pk_ecc_set_group
+ 205              		.cfi_startproc
+ 207              	mbedtls_pk_ecc_set_group.cold:
+ 208              	.LFSB37:
+ 209              	.L6:
+ 210              	.LCFI17:
+ 211              		.cfi_def_cfa_offset 80
+ 212              		.cfi_offset 3, -40
+ 213              		.cfi_offset 6, -32
+ 214              		.cfi_offset 12, -24
+ 215              		.cfi_offset 13, -16
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         mbedtls_pk_ec_ro(*pk)->grp.id != grp_id) {
+ 216              		.loc 1 39 35 discriminator 1 view -0
+ 217 0000 8B042500 		movl	0, %eax
+ 217      000000
+ 218 0007 0F0B     		ud2
+ 219              		.cfi_endproc
+ 220              	.LFE37:
+ 221              		.section	.text.mbedtls_pk_ecc_set_group
+ 223              		.section	.text.unlikely.mbedtls_pk_ecc_set_group
+ 225              	.LCOLDE0:
+ 226              		.section	.text.mbedtls_pk_ecc_set_group
+ 227              	.LHOTE0:
+ 228              		.section	.text.unlikely.mbedtls_pk_ecc_set_key,"ax",@progbits
+ 229              	.LCOLDB1:
+ 230              		.section	.text.mbedtls_pk_ecc_set_key,"ax",@progbits
+ 231              	.LHOTB1:
+ 232              		.p2align 4
+ 233              		.globl	mbedtls_pk_ecc_set_key
+ 235              	mbedtls_pk_ecc_set_key:
+ 236              	.LVL15:
+ 237              	.LFB38:
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** int mbedtls_pk_ecc_set_key(mbedtls_pk_context *pk, unsigned char *key, size_t key_len)
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** {
+ 238              		.loc 1 49 1 is_stmt 1 view -0
+ 239              		.cfi_startproc
+GAS LISTING /tmp/ccnAe8LL.s 			page 8
+
+
+ 240              		.loc 1 49 1 is_stmt 0 view .LVU44
+ 241 0000 F30F1EFA 		endbr64
+ 242 0004 55       		pushq	%rbp
+ 243              	.LCFI18:
+ 244              		.cfi_def_cfa_offset 16
+ 245              		.cfi_offset 6, -16
+ 246 0005 4889D5   		movq	%rdx, %rbp
+ 247 0008 53       		pushq	%rbx
+ 248              	.LCFI19:
+ 249              		.cfi_def_cfa_offset 24
+ 250              		.cfi_offset 3, -24
+ 251 0009 4889F3   		movq	%rsi, %rbx
+ 252 000c 4883EC28 		subq	$40, %rsp
+ 253              	.LCFI20:
+ 254              		.cfi_def_cfa_offset 64
+ 255 0010 F30F6F07 		movdqu	(%rdi), %xmm0
+ 256              		.loc 1 49 1 view .LVU45
+ 257 0014 64488B04 		movq	%fs:40, %rax
+ 257      25280000 
+ 257      00
+ 258 001d 48894424 		movq	%rax, 24(%rsp)
+ 258      18
+ 259 0022 31C0     		xorl	%eax, %eax
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_key_usage_t flags;
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_status_t status;
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_set_key_type(&attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(pk->ec_family));
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (pk->ec_family == PSA_ECC_FAMILY_MONTGOMERY) {
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         /* Do not set algorithm here because Montgomery keys cannot do ECDSA and
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****          * the PK module cannot do ECDH. When the key will be used in TLS for
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****          * ECDH, it will be exported and then re-imported with proper flags
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****          * and algorithm. */
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         flags = PSA_KEY_USAGE_EXPORT;
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     } else {
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         psa_set_key_algorithm(&attributes,
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                               MBEDTLS_PK_PSA_ALG_ECDSA_MAYBE_DET(PSA_ALG_ANY_HASH));
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         flags = PSA_KEY_USAGE_SIGN_HASH | PSA_KEY_USAGE_SIGN_MESSAGE |
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                 PSA_KEY_USAGE_EXPORT;
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_set_key_usage_flags(&attributes, flags);
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     status = psa_import_key(&attributes, key, key_len, &pk->priv_id);
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return psa_pk_status_to_mbedtls(status);
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair *eck = mbedtls_pk_ec_rw(*pk);
+ 260              		.loc 1 75 5 is_stmt 1 view .LVU46
+ 261              	.LBB20:
+ 262              	.LBI20:
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h **** {
+ 263              		.loc 2 72 36 view .LVU47
+ 264              	.LBB21:
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+ 265              		.loc 2 74 5 view .LVU48
+GAS LISTING /tmp/ccnAe8LL.s 			page 9
+
+
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+ 266              		.loc 2 74 13 is_stmt 0 view .LVU49
+ 267 0024 4889E7   		movq	%rsp, %rdi
+ 268              	.LVL16:
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+ 269              		.loc 2 74 13 view .LVU50
+ 270 0027 0F290424 		movaps	%xmm0, (%rsp)
+ 271 002b E8000000 		call	mbedtls_pk_get_type@PLT
+ 271      00
+ 272              	.LVL17:
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_internal.h ****         case MBEDTLS_PK_ECKEY:
+ 273              		.loc 2 74 5 discriminator 1 view .LVU51
+ 274 0030 83E802   		subl	$2, %eax
+ 275 0033 83F802   		cmpl	$2, %eax
+ 276 0036 0F870000 		ja	.L16
+ 276      0000
+ 277              		.loc 2 78 13 is_stmt 1 view .LVU52
+ 278              		.loc 2 78 20 is_stmt 0 view .LVU53
+ 279 003c 488B7424 		movq	8(%rsp), %rsi
+ 279      08
+ 280              	.LVL18:
+ 281              		.loc 2 78 20 view .LVU54
+ 282              	.LBE21:
+ 283              	.LBE20:
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     int ret = mbedtls_ecp_read_key(eck->grp.id, eck, key, key_len);
+ 284              		.loc 1 76 5 is_stmt 1 view .LVU55
+ 285              		.loc 1 76 15 is_stmt 0 view .LVU56
+ 286 0041 4889DA   		movq	%rbx, %rdx
+ 287 0044 4889E9   		movq	%rbp, %rcx
+ 288 0047 8B3E     		movl	(%rsi), %edi
+ 289 0049 E8000000 		call	mbedtls_ecp_read_key@PLT
+ 289      00
+ 290              	.LVL19:
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (ret != 0) {
+ 291              		.loc 1 77 5 is_stmt 1 view .LVU57
+ 292              	.LBB22:
+ 293              	.LBB23:
+ 294              		.file 3 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h"
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \file error.h
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \brief Error to string translation
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /*
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *  Copyright The Mbed TLS Contributors
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #ifndef MBEDTLS_ERROR_H
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERROR_H
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/build_info.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #include <stddef.h>
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Error code layout.
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+GAS LISTING /tmp/ccnAe8LL.s 			page 10
+
+
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Currently we try to keep all error codes within the negative space of 16
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * bits signed integers to support all platforms (-0x0001 - -0x7FFF). In
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * addition we'd like to give two layers of information on the error if
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * possible.
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * For that purpose the error codes are segmented in the following manner:
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 16 bit error code bit-segmentation
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 1 bit  - Unused (sign bit)
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 3 bits - High level module ID
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 5 bits - Module-dependent error code
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * 7 bits - Low level module errors
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * For historical reasons, low-level error codes are divided in even and odd,
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * even codes were assigned first, and -1 is reserved for other errors.
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Low-level module errors (0x0002-0x007E, 0x0001-0x007F)
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Module   Nr  Codes assigned
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ERROR     2  0x006E          0x0001
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * MPI       7  0x0002-0x0010
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * GCM       3  0x0012-0x0016   0x0013-0x0013
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * THREADING 3  0x001A-0x001E
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * AES       5  0x0020-0x0022   0x0021-0x0025
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CAMELLIA  3  0x0024-0x0026   0x0027-0x0027
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * BASE64    2  0x002A-0x002C
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * OID       1  0x002E-0x002E   0x000B-0x000B
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PADLOCK   1  0x0030-0x0030
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * DES       2  0x0032-0x0032   0x0033-0x0033
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CTR_DBRG  4  0x0034-0x003A
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ENTROPY   3  0x003C-0x0040   0x003D-0x003F
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * NET      13  0x0042-0x0052   0x0043-0x0049
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ARIA      4  0x0058-0x005E
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ASN1      7  0x0060-0x006C
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CMAC      1  0x007A-0x007A
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PBKDF2    1  0x007C-0x007C
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * HMAC_DRBG 4                  0x0003-0x0009
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CCM       3                  0x000D-0x0011
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * MD5       1                  0x002F-0x002F
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * RIPEMD160 1                  0x0031-0x0031
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SHA1      1                  0x0035-0x0035 0x0073-0x0073
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SHA256    1                  0x0037-0x0037 0x0074-0x0074
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SHA512    1                  0x0039-0x0039 0x0075-0x0075
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SHA-3     1                  0x0076-0x0076
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CHACHA20  3                  0x0051-0x0055
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * POLY1305  3                  0x0057-0x005B
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CHACHAPOLY 2 0x0054-0x0056
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PLATFORM  2  0x0070-0x0072
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * LMS       5  0x0011-0x0019
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * High-level module nr (3 bits - 0x0...-0x7...)
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Name      ID  Nr of Errors
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PEM       1   9
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PKCS#12   1   4 (Started from top)
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * X509      2   20
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PKCS5     2   4 (Started from top)
+GAS LISTING /tmp/ccnAe8LL.s 			page 11
+
+
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * DHM       3   11
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PK        3   15 (Started from top)
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * RSA       4   11
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * ECP       4   10 (Started from top)
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * MD        5   5
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * HKDF      5   1 (Started from top)
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * PKCS7     5   12 (Started from 0x5300)
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SSL       5   2 (Started from 0x5F00)
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * CIPHER    6   8 (Started from 0x6080)
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SSL       6   22 (Started from top, plus 0x6000)
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * SSL       7   20 (Started from 0x7000, gaps at
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *                   0x7380, 0x7900-0x7980, 0x7A80-0x7E80)
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * Module dependent error code (5 bits 0x.00.-0x.F8.)
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #ifdef __cplusplus
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** extern "C" {
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #endif
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /** Generic error */
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERR_ERROR_GENERIC_ERROR       -0x0001
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /** This is a bug in the library */
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED -0x006E
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /** Hardware accelerator failed */
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERR_PLATFORM_HW_ACCEL_FAILED     -0x0070
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /** The requested feature is not supported by the platform */
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED -0x0072
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \brief Combines a high-level and low-level error code together.
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        Wrapper macro for mbedtls_error_add(). See that function for
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        more details.
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #define MBEDTLS_ERROR_ADD(high, low) \
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     mbedtls_error_add(high, low, __FILE__, __LINE__)
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #if defined(MBEDTLS_TEST_HOOKS)
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \brief Testing hook called before adding/combining two error codes together.
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        Only used when invasive testing is enabled via MBEDTLS_TEST_HOOKS.
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** extern void (*mbedtls_test_hook_error_add)(int, int, const char *, int);
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #endif
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** /**
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \brief Combines a high-level and low-level error code together.
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        This function can be called directly however it is usually
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        called via the #MBEDTLS_ERROR_ADD macro.
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        While a value of zero is not a negative error code, it is still an
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        error code (that denotes success) and can be combined with both a
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        negative error code or another value of zero.
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+GAS LISTING /tmp/ccnAe8LL.s 			page 12
+
+
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \note  When invasive testing is enabled via #MBEDTLS_TEST_HOOKS, also try to
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *        call \link mbedtls_test_hook_error_add \endlink.
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  *
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \param high      high-level error code. See error.h for more details.
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \param low       low-level error code. See error.h for more details.
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \param file      file where this error code addition occurred.
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  * \param line      line where this error code addition occurred.
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****  */
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** static inline int mbedtls_error_add(int high, int low,
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****                                     const char *file, int line)
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** {
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #if defined(MBEDTLS_TEST_HOOKS)
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     if (*mbedtls_test_hook_error_add != NULL) {
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****         (*mbedtls_test_hook_error_add)(high, low, file, line);
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     }
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** #endif
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     (void) file;
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     (void) line;
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h **** 
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h ****     return high + low;
+ 295              		.loc 3 153 17 is_stmt 0 view .LVU58
+ 296 004e 8D9000C3 		leal	-15616(%rax), %edx
+ 296      FFFF
+ 297 0054 85C0     		testl	%eax, %eax
+ 298 0056 0F45C2   		cmovne	%edx, %eax
+ 299              	.LVL20:
+ 300              		.loc 3 153 17 view .LVU59
+ 301              	.LBE23:
+ 302              	.LBE22:
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PK_KEY_INVALID_FORMAT, ret);
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return 0;
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** }
+ 303              		.loc 1 82 1 view .LVU60
+ 304 0059 488B5424 		movq	24(%rsp), %rdx
+ 304      18
+ 305 005e 64482B14 		subq	%fs:40, %rdx
+ 305      25280000 
+ 305      00
+ 306              	.LVL21:
+ 307              		.loc 1 82 1 view .LVU61
+ 308 0067 7507     		jne	.L23
+ 309 0069 4883C428 		addq	$40, %rsp
+ 310              	.LCFI21:
+ 311              		.cfi_remember_state
+ 312              		.cfi_def_cfa_offset 24
+ 313 006d 5B       		popq	%rbx
+ 314              	.LCFI22:
+ 315              		.cfi_def_cfa_offset 16
+ 316              	.LVL22:
+ 317              		.loc 1 82 1 view .LVU62
+ 318 006e 5D       		popq	%rbp
+ 319              	.LCFI23:
+ 320              		.cfi_def_cfa_offset 8
+ 321              	.LVL23:
+ 322              		.loc 1 82 1 view .LVU63
+GAS LISTING /tmp/ccnAe8LL.s 			page 13
+
+
+ 323 006f C3       		ret
+ 324              	.LVL24:
+ 325              	.L23:
+ 326              	.LCFI24:
+ 327              		.cfi_restore_state
+ 328              		.loc 1 82 1 view .LVU64
+ 329 0070 E8000000 		call	__stack_chk_fail@PLT
+ 329      00
+ 330              	.LVL25:
+ 331              		.loc 1 82 1 view .LVU65
+ 332              		.cfi_endproc
+ 333              		.section	.text.unlikely.mbedtls_pk_ecc_set_key
+ 334              		.cfi_startproc
+ 336              	mbedtls_pk_ecc_set_key.cold:
+ 337              	.LFSB38:
+ 338              	.L16:
+ 339              	.LCFI25:
+ 340              		.cfi_def_cfa_offset 64
+ 341              		.cfi_offset 3, -24
+ 342              		.cfi_offset 6, -16
+ 343              	.LVL26:
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (ret != 0) {
+ 344              		.loc 1 76 5 is_stmt 1 view -0
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (ret != 0) {
+ 345              		.loc 1 76 15 is_stmt 0 view .LVU67
+ 346 0000 8B042500 		movl	0, %eax
+ 346      000000
+ 347 0007 0F0B     		ud2
+ 348              		.cfi_endproc
+ 349              	.LFE38:
+ 350              		.section	.text.mbedtls_pk_ecc_set_key
+ 352              		.section	.text.unlikely.mbedtls_pk_ecc_set_key
+ 354              	.LCOLDE1:
+ 355              		.section	.text.mbedtls_pk_ecc_set_key
+ 356              	.LHOTE1:
+ 357              		.section	.text.mbedtls_pk_ecc_set_pubkey_from_prv,"ax",@progbits
+ 358              		.p2align 4
+ 359              		.globl	mbedtls_pk_ecc_set_pubkey_from_prv
+ 361              	mbedtls_pk_ecc_set_pubkey_from_prv:
+ 362              	.LVL27:
+ 363              	.LFB39:
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** int mbedtls_pk_ecc_set_pubkey_from_prv(mbedtls_pk_context *pk,
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                        const unsigned char *prv, size_t prv_len,
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                        int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** {
+ 364              		.loc 1 87 1 is_stmt 1 view -0
+ 365              		.cfi_startproc
+ 366              		.loc 1 87 1 is_stmt 0 view .LVU69
+ 367 0000 F30F1EFA 		endbr64
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) f_rng;
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) p_rng;
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) prv;
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) prv_len;
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_status_t status;
+GAS LISTING /tmp/ccnAe8LL.s 			page 14
+
+
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     status = psa_export_public_key(pk->priv_id, pk->pub_raw, sizeof(pk->pub_raw),
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                    &pk->pub_raw_len);
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return psa_pk_status_to_mbedtls(status);
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #elif defined(MBEDTLS_USE_PSA_CRYPTO) /* && !MBEDTLS_PK_USE_PSA_EC_DATA */
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) f_rng;
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) p_rng;
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_status_t status;
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair *eck = (mbedtls_ecp_keypair *) pk->pk_ctx;
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     size_t curve_bits;
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_ecc_family_t curve = mbedtls_ecc_group_to_psa(eck->grp.id, &curve_bits);
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* Import private key into PSA, from serialized input */
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_key_attributes_t key_attr = PSA_KEY_ATTRIBUTES_INIT;
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_set_key_type(&key_attr, PSA_KEY_TYPE_ECC_KEY_PAIR(curve));
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_set_key_usage_flags(&key_attr, PSA_KEY_USAGE_EXPORT);
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     status = psa_import_key(&key_attr, prv, prv_len, &key_id);
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (status != PSA_SUCCESS) {
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         return psa_pk_status_to_mbedtls(status);
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* Export public key from PSA */
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     unsigned char pub[MBEDTLS_PSA_MAX_EC_PUBKEY_LENGTH];
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     size_t pub_len;
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     status = psa_export_public_key(key_id, pub, sizeof(pub), &pub_len);
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_status_t destruction_status = psa_destroy_key(key_id);
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (status != PSA_SUCCESS) {
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         return psa_pk_status_to_mbedtls(status);
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     } else if (destruction_status != PSA_SUCCESS) {
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         return psa_pk_status_to_mbedtls(destruction_status);
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* Load serialized public key into ecp_keypair structure */
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return mbedtls_ecp_point_read_binary(&eck->grp, &eck->Q, pub, pub_len);
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) prv;
+ 368              		.loc 1 136 5 is_stmt 1 view .LVU70
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) prv_len;
+ 369              		.loc 1 137 5 view .LVU71
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair *eck = (mbedtls_ecp_keypair *) pk->pk_ctx;
+ 370              		.loc 1 139 5 view .LVU72
+ 371              		.loc 1 139 26 is_stmt 0 view .LVU73
+ 372 0004 488B7F08 		movq	8(%rdi), %rdi
+ 373              	.LVL28:
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return mbedtls_ecp_mul(&eck->grp, &eck->Q, &eck->d, &eck->grp.G, f_rng, p_rng);
+ 374              		.loc 1 140 5 is_stmt 1 view .LVU74
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 375              		.loc 1 87 1 is_stmt 0 view .LVU75
+ 376 0008 4889C8   		movq	%rcx, %rax
+ 377              		.loc 1 140 12 view .LVU76
+GAS LISTING /tmp/ccnAe8LL.s 			page 15
+
+
+ 378 000b 4D89C1   		movq	%r8, %r9
+ 379 000e 4989C0   		movq	%rax, %r8
+ 380              	.LVL29:
+ 381              		.loc 1 140 57 view .LVU77
+ 382 0011 488D4F38 		leaq	56(%rdi), %rcx
+ 383              	.LVL30:
+ 384              		.loc 1 140 48 view .LVU78
+ 385 0015 488D97C0 		leaq	192(%rdi), %rdx
+ 385      000000
+ 386              	.LVL31:
+ 387              		.loc 1 140 12 view .LVU79
+ 388 001c 488DB7D0 		leaq	208(%rdi), %rsi
+ 388      000000
+ 389              	.LVL32:
+ 390              		.loc 1 140 12 view .LVU80
+ 391 0023 E9000000 		jmp	mbedtls_ecp_mul@PLT
+ 391      00
+ 392              	.LVL33:
+ 393              		.loc 1 140 12 view .LVU81
+ 394              		.cfi_endproc
+ 395              	.LFE39:
+ 397              		.section	.text.mbedtls_pk_ecc_set_pubkey,"ax",@progbits
+ 398              		.p2align 4
+ 399              		.globl	mbedtls_pk_ecc_set_pubkey
+ 401              	mbedtls_pk_ecc_set_pubkey:
+ 402              	.LVL34:
+ 403              	.LFB40:
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** }
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** /*
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * Set the public key: fallback using ECP_LIGHT in the USE_PSA_EC_DATA case.
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * Normally, when MBEDTLS_PK_USE_PSA_EC_DATA is enabled, we only use PSA
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * functions to handle keys. However, currently psa_import_key() does not
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * support compressed points. In case that support was explicitly requested,
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * this fallback uses ECP functions to get the job done. This is the reason
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * why MBEDTLS_PK_PARSE_EC_COMPRESSED auto-enables MBEDTLS_ECP_LIGHT.
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * [in/out] pk: in: must have the group set, see mbedtls_pk_ecc_set_group().
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *              out: will have the public key set.
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * [in] pub, pub_len: the public key as an ECPoint,
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *                    in any format supported by ECP.
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * Return:
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * - 0 on success;
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * - MBEDTLS_ERR_ECP_FEATURE_UNAVAILABLE if the format is potentially valid
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  *   but not supported;
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  * - another error code otherwise.
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****  */
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** static int pk_ecc_set_pubkey_psa_ecp_fallback(mbedtls_pk_context *pk,
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                               const unsigned char *pub,
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                               size_t pub_len)
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** {
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if !defined(MBEDTLS_PK_PARSE_EC_COMPRESSED)
+GAS LISTING /tmp/ccnAe8LL.s 			page 16
+
+
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) pk;
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) pub;
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     (void) pub_len;
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return MBEDTLS_ERR_ECP_FEATURE_UNAVAILABLE;
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #else /* MBEDTLS_PK_PARSE_EC_COMPRESSED */
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair ecp_key;
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_group_id ecp_group_id;
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     int ret;
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     ecp_group_id = mbedtls_ecc_group_from_psa(pk->ec_family, pk->ec_bits);
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair_init(&ecp_key);
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     ret = mbedtls_ecp_group_load(&(ecp_key.grp), ecp_group_id);
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (ret != 0) {
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         goto exit;
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     ret = mbedtls_ecp_point_read_binary(&(ecp_key.grp), &ecp_key.Q,
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                         pub, pub_len);
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (ret != 0) {
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         goto exit;
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     ret = mbedtls_ecp_point_write_binary(&(ecp_key.grp), &ecp_key.Q,
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                          MBEDTLS_ECP_PF_UNCOMPRESSED,
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                          &pk->pub_raw_len, pk->pub_raw,
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                                          sizeof(pk->pub_raw));
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** exit:
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair_free(&ecp_key);
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return ret;
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #endif /* MBEDTLS_PK_PARSE_EC_COMPRESSED */
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** }
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** int mbedtls_pk_ecc_set_pubkey(mbedtls_pk_context *pk, const unsigned char *pub, size_t pub_len)
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** {
+ 404              		.loc 1 205 1 is_stmt 1 view -0
+ 405              		.cfi_startproc
+ 406              		.loc 1 205 1 is_stmt 0 view .LVU83
+ 407 0000 F30F1EFA 		endbr64
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* Load the key */
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (!PSA_ECC_FAMILY_IS_WEIERSTRASS(pk->ec_family) || *pub == 0x04) {
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         /* Format directly supported by PSA:
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****          * - non-Weierstrass curves that only have one format;
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****          * - uncompressed format for Weierstrass curves. */
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         if (pub_len > sizeof(pk->pub_raw)) {
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****             return MBEDTLS_ERR_PK_BUFFER_TOO_SMALL;
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         }
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         memcpy(pk->pub_raw, pub, pub_len);
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         pk->pub_raw_len = pub_len;
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     } else {
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         /* Other format, try the fallback */
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         int ret = pk_ecc_set_pubkey_psa_ecp_fallback(pk, pub, pub_len);
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         if (ret != 0) {
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****             return ret;
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         }
+GAS LISTING /tmp/ccnAe8LL.s 			page 17
+
+
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     /* Validate the key by trying to import it */
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_key_attributes_t key_attrs = PSA_KEY_ATTRIBUTES_INIT;
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_set_key_usage_flags(&key_attrs, 0);
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_set_key_type(&key_attrs, PSA_KEY_TYPE_ECC_PUBLIC_KEY(pk->ec_family));
+ 232:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     psa_set_key_bits(&key_attrs, pk->ec_bits);
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 234:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if ((psa_import_key(&key_attrs, pk->pub_raw, pk->pub_raw_len,
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****                         &key_id) != PSA_SUCCESS) ||
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         (psa_destroy_key(key_id) != PSA_SUCCESS)) {
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         return MBEDTLS_ERR_PK_INVALID_PUBKEY;
+ 238:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return 0;
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     int ret;
+ 408              		.loc 1 244 5 is_stmt 1 view .LVU84
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair *ec_key = (mbedtls_ecp_keypair *) pk->pk_ctx;
+ 409              		.loc 1 245 5 view .LVU85
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 410              		.loc 1 205 1 is_stmt 0 view .LVU86
+ 411 0004 55       		pushq	%rbp
+ 412              	.LCFI26:
+ 413              		.cfi_def_cfa_offset 16
+ 414              		.cfi_offset 6, -16
+ 415 0005 4889D1   		movq	%rdx, %rcx
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     ret = mbedtls_ecp_point_read_binary(&ec_key->grp, &ec_key->Q, pub, pub_len);
+ 416              		.loc 1 246 11 view .LVU87
+ 417 0008 4889F2   		movq	%rsi, %rdx
+ 418              	.LVL35:
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 419              		.loc 1 205 1 view .LVU88
+ 420 000b 53       		pushq	%rbx
+ 421              	.LCFI27:
+ 422              		.cfi_def_cfa_offset 24
+ 423              		.cfi_offset 3, -24
+ 424 000c 4883EC08 		subq	$8, %rsp
+ 425              	.LCFI28:
+ 426              		.cfi_def_cfa_offset 32
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     mbedtls_ecp_keypair *ec_key = (mbedtls_ecp_keypair *) pk->pk_ctx;
+ 427              		.loc 1 245 26 view .LVU89
+ 428 0010 488B5F08 		movq	8(%rdi), %rbx
+ 429              	.LVL36:
+ 430              		.loc 1 246 5 is_stmt 1 view .LVU90
+ 431              		.loc 1 246 11 is_stmt 0 view .LVU91
+ 432 0014 488DABD0 		leaq	208(%rbx), %rbp
+ 432      000000
+ 433 001b 4889DF   		movq	%rbx, %rdi
+ 434              	.LVL37:
+ 435              		.loc 1 246 11 view .LVU92
+ 436 001e 4889EE   		movq	%rbp, %rsi
+ 437              	.LVL38:
+GAS LISTING /tmp/ccnAe8LL.s 			page 18
+
+
+ 438              		.loc 1 246 11 view .LVU93
+ 439 0021 E8000000 		call	mbedtls_ecp_point_read_binary@PLT
+ 439      00
+ 440              	.LVL39:
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     if (ret != 0) {
+ 441              		.loc 1 247 5 is_stmt 1 view .LVU94
+ 442              		.loc 1 247 8 is_stmt 0 view .LVU95
+ 443 0026 85C0     		testl	%eax, %eax
+ 444 0028 740E     		je	.L28
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****         return ret;
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     }
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c ****     return mbedtls_ecp_check_pubkey(&ec_key->grp, &ec_key->Q);
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 252:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 253:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** }
+ 445              		.loc 1 253 1 view .LVU96
+ 446 002a 4883C408 		addq	$8, %rsp
+ 447              	.LCFI29:
+ 448              		.cfi_remember_state
+ 449              		.cfi_def_cfa_offset 24
+ 450 002e 5B       		popq	%rbx
+ 451              	.LCFI30:
+ 452              		.cfi_def_cfa_offset 16
+ 453              	.LVL40:
+ 454              		.loc 1 253 1 view .LVU97
+ 455 002f 5D       		popq	%rbp
+ 456              	.LCFI31:
+ 457              		.cfi_def_cfa_offset 8
+ 458              	.LVL41:
+ 459              		.loc 1 253 1 view .LVU98
+ 460 0030 C3       		ret
+ 461              	.LVL42:
+ 462              		.p2align 4,,10
+ 463 0031 0F1F8000 		.p2align 3
+ 463      000000
+ 464              	.L28:
+ 465              	.LCFI32:
+ 466              		.cfi_restore_state
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 467              		.loc 1 250 5 is_stmt 1 view .LVU99
+ 468              		.loc 1 253 1 is_stmt 0 view .LVU100
+ 469 0038 4883C408 		addq	$8, %rsp
+ 470              	.LCFI33:
+ 471              		.cfi_def_cfa_offset 24
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 472              		.loc 1 250 12 view .LVU101
+ 473 003c 4889EE   		movq	%rbp, %rsi
+ 474 003f 4889DF   		movq	%rbx, %rdi
+ 475              		.loc 1 253 1 view .LVU102
+ 476 0042 5B       		popq	%rbx
+ 477              	.LCFI34:
+ 478              		.cfi_def_cfa_offset 16
+ 479              	.LVL43:
+ 480              		.loc 1 253 1 view .LVU103
+ 481 0043 5D       		popq	%rbp
+ 482              	.LCFI35:
+ 483              		.cfi_def_cfa_offset 8
+GAS LISTING /tmp/ccnAe8LL.s 			page 19
+
+
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 484              		.loc 1 250 12 view .LVU104
+ 485 0044 E9000000 		jmp	mbedtls_ecp_check_pubkey@PLT
+ 485      00
+ 486              	.LVL44:
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_ecc.c **** 
+ 487              		.loc 1 250 12 view .LVU105
+ 488              		.cfi_endproc
+ 489              	.LFE40:
+ 491              		.text
+ 492              	.Letext0:
+ 493              		.section	.text.unlikely.mbedtls_pk_ecc_set_group
+ 494              	.Letext_cold0:
+ 495              		.file 4 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 496              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 497              		.file 6 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 498              		.file 7 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/bignum.h"
+ 499              		.file 8 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ecp.h"
+ 500              		.file 9 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h"
+ 3250              		.section	.note.gnu.property,"a"
+ 3251              		.align 8
+ 3252 0000 04000000 		.long	1f - 0f
+ 3253 0004 10000000 		.long	4f - 1f
+ 3254 0008 05000000 		.long	5
+ 3255              	0:
+ 3256 000c 474E5500 		.string	"GNU"
+ 3257              	1:
+ 3258              		.align 8
+ 3259 0010 020000C0 		.long	0xc0000002
+ 3260 0014 04000000 		.long	3f - 2f
+ 3261              	2:
+ 3262 0018 03000000 		.long	0x3
+ 3263              	3:
+ 3264 001c 00000000 		.align 8
+ 3265              	4:
+GAS LISTING /tmp/ccnAe8LL.s 			page 20
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 pk_ecc.c
+     /tmp/ccnAe8LL.s:15     .text.mbedtls_pk_ecc_set_group:0000000000000000 mbedtls_pk_ecc_set_group
+     /tmp/ccnAe8LL.s:207    .text.unlikely.mbedtls_pk_ecc_set_group:0000000000000000 mbedtls_pk_ecc_set_group.cold
+     /tmp/ccnAe8LL.s:235    .text.mbedtls_pk_ecc_set_key:0000000000000000 mbedtls_pk_ecc_set_key
+     /tmp/ccnAe8LL.s:336    .text.unlikely.mbedtls_pk_ecc_set_key:0000000000000000 mbedtls_pk_ecc_set_key.cold
+     /tmp/ccnAe8LL.s:361    .text.mbedtls_pk_ecc_set_pubkey_from_prv:0000000000000000 mbedtls_pk_ecc_set_pubkey_from_prv
+     /tmp/ccnAe8LL.s:401    .text.mbedtls_pk_ecc_set_pubkey:0000000000000000 mbedtls_pk_ecc_set_pubkey
+
+UNDEFINED SYMBOLS
+mbedtls_pk_get_type
+mbedtls_ecp_group_load
+__stack_chk_fail
+mbedtls_ecp_read_key
+mbedtls_ecp_mul
+mbedtls_ecp_point_read_binary
+mbedtls_ecp_check_pubkey

@@ -1,0 +1,1609 @@
+GAS LISTING /tmp/ccLZuulq.s 			page 1
+
+
+   1              		.file	"MQTTFormat.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mqtt-pack/MQTTFormat.c"
+   5              		.section	.text.MQTTPacket_getName,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	MQTTPacket_getName
+   9              	MQTTPacket_getName:
+  10              	.LVL0:
+  11              	.LFB20:
+   1:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** /*******************************************************************************
+   2:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  * Copyright (c) 2014 IBM Corp.
+   3:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  *
+   4:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  * All rights reserved. This program and the accompanying materials
+   5:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  *
+   8:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  * The Eclipse Public License is available at
+   9:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  * and the Eclipse Distribution License is available at
+  11:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  *
+  13:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  * Contributors:
+  14:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:../../bos/thirdparty/mqtt-pack/MQTTFormat.c ****  *******************************************************************************/
+  16:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  17:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** #include "StackTrace.h"
+  18:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** #include "MQTTPacket.h"
+  19:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  20:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** #include <string.h>
+  21:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  22:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  23:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** const char* MQTTPacket_names[] =
+  24:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+  25:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	"RESERVED", "CONNECT", "CONNACK", "PUBLISH", "PUBACK", "PUBREC", "PUBREL",
+  26:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	"PUBCOMP", "SUBSCRIBE", "SUBACK", "UNSUBSCRIBE", "UNSUBACK",
+  27:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	"PINGREQ", "PINGRESP", "DISCONNECT"
+  28:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** };
+  29:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  30:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  31:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** const char* MQTTPacket_getName(unsigned short packetid)
+  32:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+  12              		.loc 1 32 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 32 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  33:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return MQTTPacket_names[packetid];
+  16              		.loc 1 33 2 is_stmt 1 view .LVU2
+  17              		.loc 1 33 25 is_stmt 0 view .LVU3
+  18 0004 0FB7FF   		movzwl	%di, %edi
+  19              		.loc 1 33 25 discriminator 1 view .LVU4
+  20 0007 488D0500 		leaq	MQTTPacket_names(%rip), %rax
+  20      000000
+  21 000e 488B04F8 		movq	(%rax,%rdi,8), %rax
+  34:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+  22              		.loc 1 34 1 view .LVU5
+  23 0012 C3       		ret
+GAS LISTING /tmp/ccLZuulq.s 			page 2
+
+
+  24              		.cfi_endproc
+  25              	.LFE20:
+  27              		.section	.rodata.MQTTStringFormat_connect.str1.8,"aMS",@progbits,1
+  28              		.align 8
+  29              	.LC0:
+  30 0000 434F4E4E 		.string	"CONNECT MQTT version %d, client id %.*s, clean session %d, keep alive %d"
+  30      45435420 
+  30      4D515454 
+  30      20766572 
+  30      73696F6E 
+  31 0049 00000000 		.align 8
+  31      000000
+  32              	.LC1:
+  33 0050 2C207769 		.string	", will QoS %d, will retain %d, will topic %.*s, will message %.*s"
+  33      6C6C2051 
+  33      6F532025 
+  33      642C2077 
+  33      696C6C20 
+  34              		.section	.rodata.MQTTStringFormat_connect.str1.1,"aMS",@progbits,1
+  35              	.LC2:
+  36 0000 2C207573 		.string	", user name %.*s"
+  36      6572206E 
+  36      616D6520 
+  36      252E2A73 
+  36      00
+  37              	.LC3:
+  38 0011 2C207061 		.string	", password %.*s"
+  38      7373776F 
+  38      72642025 
+  38      2E2A7300 
+  39              		.section	.text.MQTTStringFormat_connect,"ax",@progbits
+  40              		.p2align 4
+  41              		.globl	MQTTStringFormat_connect
+  43              	MQTTStringFormat_connect:
+  44              	.LVL1:
+  45              	.LFB21:
+  35:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  36:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  37:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** int MQTTStringFormat_connect(char* strbuf, int strbuflen, MQTTPacket_connectData* data)
+  38:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+  46              		.loc 1 38 1 is_stmt 1 view -0
+  47              		.cfi_startproc
+  48              		.loc 1 38 1 is_stmt 0 view .LVU7
+  49 0000 F30F1EFA 		endbr64
+  39:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = 0;
+  50              		.loc 1 39 2 is_stmt 1 view .LVU8
+  51              	.LVL2:
+  40:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  41:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	strindex = snprintf(strbuf, strbuflen,
+  52              		.loc 1 41 2 view .LVU9
+  38:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = 0;
+  53              		.loc 1 38 1 is_stmt 0 view .LVU10
+  54 0004 4155     		pushq	%r13
+  55              	.LCFI0:
+  56              		.cfi_def_cfa_offset 16
+  57              		.cfi_offset 13, -16
+  58 0006 4863F6   		movslq	%esi, %rsi
+GAS LISTING /tmp/ccLZuulq.s 			page 3
+
+
+  38:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = 0;
+  59              		.loc 1 38 1 view .LVU11
+  60 0009 4989FD   		movq	%rdi, %r13
+  61              	.LVL3:
+  62              	.LBB24:
+  63              	.LBB25:
+  64              		.file 2 "/usr/include/x86_64-linux-gnu/bits/stdio2.h"
+   1:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** /* Checking macros for stdio functions.
+   2:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   3:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    This file is part of the GNU C Library.
+   4:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+   5:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is free software; you can redistribute it and/or
+   6:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    modify it under the terms of the GNU Lesser General Public
+   7:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License as published by the Free Software Foundation; either
+   8:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    version 2.1 of the License, or (at your option) any later version.
+   9:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  10:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  11:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  12:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  13:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Lesser General Public License for more details.
+  14:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  15:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    You should have received a copy of the GNU Lesser General Public
+  16:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License along with the GNU C Library; if not, see
+  17:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    <https://www.gnu.org/licenses/>.  */
+  18:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  19:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _BITS_STDIO2_H
+  20:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #define _BITS_STDIO2_H 1
+  21:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  22:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _STDIO_H
+  23:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # error "Never include <bits/stdio2.h> directly; use <stdio.h> instead."
+  24:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  25:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  26:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifdef __va_arg_pack
+  27:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  28:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (sprintf (char *__restrict __s, const char *__restrict __fmt, ...))
+  29:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  30:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+  31:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				  __glibc_objsize (__s), __fmt,
+  32:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				  __va_arg_pack ());
+  33:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  34:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #elif !defined __cplusplus
+  35:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # define sprintf(str, ...) \
+  36:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   __builtin___sprintf_chk (str, __USE_FORTIFY_LEVEL - 1,		      \
+  37:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 			   __glibc_objsize (str), __VA_ARGS__)
+  38:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  39:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  41:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (vsprintf (char *__restrict __s, const char *__restrict __fmt,
+  42:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 __gnuc_va_list __ap))
+  43:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  44:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___vsprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+  45:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt, __ap);
+  46:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  47:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  48:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #if defined __USE_ISOC99 || defined __USE_UNIX98
+  49:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # ifdef __va_arg_pack
+  50:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+GAS LISTING /tmp/ccLZuulq.s 			page 4
+
+
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (snprintf (char *__restrict __s, size_t __n,
+  52:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+  53:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  54:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+  65              		.loc 2 54 10 discriminator 1 view .LVU12
+  66 000c 4C8D0500 		leaq	.LC0(%rip), %r8
+  66      000000
+  67              	.LBE25:
+  68              	.LBE24:
+  38:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = 0;
+  69              		.loc 1 38 1 view .LVU13
+  70 0013 4154     		pushq	%r12
+  71              	.LCFI1:
+  72              		.cfi_def_cfa_offset 24
+  73              		.cfi_offset 12, -24
+  74              	.LBB31:
+  75              	.LBB26:
+  76              		.loc 2 54 10 discriminator 1 view .LVU14
+  77 0015 48C7C1FF 		movq	$-1, %rcx
+  77      FFFFFF
+  78              	.LBE26:
+  79              	.LBE31:
+  38:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = 0;
+  80              		.loc 1 38 1 view .LVU15
+  81 001c 4989F4   		movq	%rsi, %r12
+  82              	.LVL4:
+  83              	.LBB32:
+  84              	.LBI24:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+  85              		.loc 2 51 1 is_stmt 1 view .LVU16
+  86              	.LBB27:
+  87              		.loc 2 54 3 view .LVU17
+  88              	.LBE27:
+  89              	.LBE32:
+  38:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = 0;
+  90              		.loc 1 38 1 is_stmt 0 view .LVU18
+  91 001f 55       		pushq	%rbp
+  92              	.LCFI2:
+  93              		.cfi_def_cfa_offset 32
+  94              		.cfi_offset 6, -32
+  95 0020 53       		pushq	%rbx
+  96              	.LCFI3:
+  97              		.cfi_def_cfa_offset 40
+  98              		.cfi_offset 3, -40
+  99 0021 4889D3   		movq	%rdx, %rbx
+ 100 0024 4883EC08 		subq	$8, %rsp
+ 101              	.LCFI4:
+ 102              		.cfi_def_cfa_offset 48
+ 103              		.loc 1 41 13 view .LVU19
+ 104 0028 0FB74228 		movzwl	40(%rdx), %eax
+ 105              	.LBB33:
+ 106              	.LBB28:
+ 107              		.loc 2 54 10 discriminator 1 view .LVU20
+ 108 002c 50       		pushq	%rax
+ 109              	.LCFI5:
+ 110              		.cfi_def_cfa_offset 56
+ 111              	.LBE28:
+GAS LISTING /tmp/ccLZuulq.s 			page 5
+
+
+ 112              	.LBE33:
+ 113              		.loc 1 41 13 view .LVU21
+ 114 002d 0FB6422A 		movzbl	42(%rdx), %eax
+ 115              	.LBB34:
+ 116              	.LBB29:
+ 117              		.loc 2 54 10 discriminator 1 view .LVU22
+ 118 0031 50       		pushq	%rax
+ 119              	.LCFI6:
+ 120              		.cfi_def_cfa_offset 64
+ 121 0032 8B4218   		movl	24(%rdx), %eax
+ 122 0035 FF7220   		pushq	32(%rdx)
+ 123              	.LCFI7:
+ 124              		.cfi_def_cfa_offset 72
+ 125 0038 50       		pushq	%rax
+ 126              	.LCFI8:
+ 127              		.cfi_def_cfa_offset 80
+ 128 0039 31C0     		xorl	%eax, %eax
+ 129 003b 440FB64A 		movzbl	8(%rdx), %r9d
+ 129      08
+ 130 0040 BA020000 		movl	$2, %edx
+ 130      00
+ 131              	.LVL5:
+ 132              		.loc 2 54 10 discriminator 1 view .LVU23
+ 133 0045 E8000000 		call	__snprintf_chk@PLT
+ 133      00
+ 134              	.LVL6:
+ 135              		.loc 2 54 10 discriminator 1 view .LVU24
+ 136              	.LBE29:
+ 137              	.LBE34:
+  42:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 			"CONNECT MQTT version %d, client id %.*s, clean session %d, keep alive %d",
+  43:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 			(int)data->MQTTVersion, data->clientID.lenstring.len, data->clientID.lenstring.data,
+  44:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 			(int)data->cleansession, data->keepAliveInterval);
+  45:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	if (data->willFlag)
+ 138              		.loc 1 45 5 view .LVU25
+ 139 004a 4883C420 		addq	$32, %rsp
+ 140              	.LCFI9:
+ 141              		.cfi_def_cfa_offset 48
+ 142 004e 807B2B00 		cmpb	$0, 43(%rbx)
+ 143              	.LBB35:
+ 144              	.LBB30:
+ 145              		.loc 2 54 10 discriminator 1 view .LVU26
+ 146 0052 89C5     		movl	%eax, %ebp
+ 147              	.LVL7:
+ 148              		.loc 2 54 10 discriminator 1 view .LVU27
+ 149              	.LBE30:
+ 150              	.LBE35:
+ 151              		.loc 1 45 2 is_stmt 1 view .LVU28
+ 152              		.loc 1 45 5 is_stmt 0 view .LVU29
+ 153 0054 0F85C600 		jne	.L14
+ 153      0000
+ 154              	.LVL8:
+ 155              	.L4:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+  47:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+  48:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				data->will.qos, data->will.retained,
+  49:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				data->will.topicName.lenstring.len, data->will.topicName.lenstring.data,
+  50:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				data->will.message.lenstring.len, data->will.message.lenstring.data);
+GAS LISTING /tmp/ccLZuulq.s 			page 6
+
+
+  51:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	if (data->username.lenstring.data && data->username.lenstring.len > 0)
+ 156              		.loc 1 51 2 is_stmt 1 view .LVU30
+ 157              		.loc 1 51 30 is_stmt 0 view .LVU31
+ 158 005a 488B8380 		movq	128(%rbx), %rax
+ 158      000000
+ 159              		.loc 1 51 5 view .LVU32
+ 160 0061 4885C0   		testq	%rax, %rax
+ 161 0064 7409     		je	.L5
+ 162              		.loc 1 51 63 discriminator 1 view .LVU33
+ 163 0066 448B4B78 		movl	120(%rbx), %r9d
+ 164              		.loc 1 51 36 discriminator 1 view .LVU34
+ 165 006a 4585C9   		testl	%r9d, %r9d
+ 166 006d 7F71     		jg	.L15
+ 167              	.L5:
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+  53:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+  54:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	if (data->password.lenstring.data && data->password.lenstring.len > 0)
+ 168              		.loc 1 54 2 is_stmt 1 view .LVU35
+ 169              		.loc 1 54 30 is_stmt 0 view .LVU36
+ 170 006f 488B8398 		movq	152(%rbx), %rax
+ 170      000000
+ 171              		.loc 1 54 5 view .LVU37
+ 172 0076 4885C0   		testq	%rax, %rax
+ 173 0079 740C     		je	.L3
+ 174              		.loc 1 54 63 discriminator 1 view .LVU38
+ 175 007b 448B8B90 		movl	144(%rbx), %r9d
+ 175      000000
+ 176              		.loc 1 54 36 discriminator 1 view .LVU39
+ 177 0082 4585C9   		testl	%r9d, %r9d
+ 178 0085 7F11     		jg	.L16
+ 179              	.L3:
+  55:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+  56:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", password %.*s", data->password.lenstring.len, data->password.lenstring.data);
+  57:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return strindex;
+  58:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+ 180              		.loc 1 58 1 view .LVU40
+ 181 0087 4883C408 		addq	$8, %rsp
+ 182              	.LCFI10:
+ 183              		.cfi_remember_state
+ 184              		.cfi_def_cfa_offset 40
+ 185 008b 89E8     		movl	%ebp, %eax
+ 186 008d 5B       		popq	%rbx
+ 187              	.LCFI11:
+ 188              		.cfi_def_cfa_offset 32
+ 189              	.LVL9:
+ 190              		.loc 1 58 1 view .LVU41
+ 191 008e 5D       		popq	%rbp
+ 192              	.LCFI12:
+ 193              		.cfi_def_cfa_offset 24
+ 194              	.LVL10:
+ 195              		.loc 1 58 1 view .LVU42
+ 196 008f 415C     		popq	%r12
+ 197              	.LCFI13:
+ 198              		.cfi_def_cfa_offset 16
+ 199              	.LVL11:
+ 200              		.loc 1 58 1 view .LVU43
+ 201 0091 415D     		popq	%r13
+GAS LISTING /tmp/ccLZuulq.s 			page 7
+
+
+ 202              	.LCFI14:
+ 203              		.cfi_def_cfa_offset 8
+ 204              	.LVL12:
+ 205              		.loc 1 58 1 view .LVU44
+ 206 0093 C3       		ret
+ 207              	.LVL13:
+ 208              		.p2align 4,,10
+ 209 0094 0F1F4000 		.p2align 3
+ 210              	.L16:
+ 211              	.LCFI15:
+ 212              		.cfi_restore_state
+  55:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+ 213              		.loc 1 55 3 is_stmt 1 view .LVU45
+ 214              	.LBB36:
+ 215              	.LBI36:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 216              		.loc 2 51 1 view .LVU46
+ 217              	.LBB37:
+ 218              		.loc 2 54 3 view .LVU47
+ 219              		.loc 2 54 10 is_stmt 0 discriminator 1 view .LVU48
+ 220 0098 4883EC08 		subq	$8, %rsp
+ 221              	.LCFI16:
+ 222              		.cfi_def_cfa_offset 56
+ 223              	.LBE37:
+ 224              	.LBE36:
+  55:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+ 225              		.loc 1 55 53 view .LVU49
+ 226 009c 4129EC   		subl	%ebp, %r12d
+ 227              	.LVL14:
+  55:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+ 228              		.loc 1 55 15 view .LVU50
+ 229 009f 4863D5   		movslq	%ebp, %rdx
+ 230              	.LBB40:
+ 231              	.LBB38:
+ 232              		.loc 2 54 10 discriminator 1 view .LVU51
+ 233 00a2 48C7C1FF 		movq	$-1, %rcx
+ 233      FFFFFF
+ 234 00a9 50       		pushq	%rax
+ 235              	.LCFI17:
+ 236              		.cfi_def_cfa_offset 64
+ 237              	.LBE38:
+ 238              	.LBE40:
+  55:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+ 239              		.loc 1 55 15 view .LVU52
+ 240 00aa 498D7C15 		leaq	0(%r13,%rdx), %rdi
+ 240      00
+ 241              	.LVL15:
+  55:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+ 242              		.loc 1 55 15 view .LVU53
+ 243 00af 4963F4   		movslq	%r12d, %rsi
+ 244              	.LVL16:
+ 245              	.LBB41:
+ 246              	.LBB39:
+ 247              		.loc 2 54 10 discriminator 1 view .LVU54
+ 248 00b2 BA020000 		movl	$2, %edx
+ 248      00
+ 249 00b7 4C8D0500 		leaq	.LC3(%rip), %r8
+GAS LISTING /tmp/ccLZuulq.s 			page 8
+
+
+ 249      000000
+ 250 00be 31C0     		xorl	%eax, %eax
+ 251 00c0 E8000000 		call	__snprintf_chk@PLT
+ 251      00
+ 252              	.LVL17:
+ 253              		.loc 2 54 10 discriminator 1 view .LVU55
+ 254              	.LBE39:
+ 255              	.LBE41:
+  55:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+ 256              		.loc 1 55 12 discriminator 1 view .LVU56
+ 257 00c5 01C5     		addl	%eax, %ebp
+ 258              	.LVL18:
+  55:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(&strbuf[strindex], strbuflen - strindex,
+ 259              		.loc 1 55 12 discriminator 1 view .LVU57
+ 260 00c7 58       		popq	%rax
+ 261              	.LCFI18:
+ 262              		.cfi_def_cfa_offset 56
+ 263 00c8 5A       		popq	%rdx
+ 264              	.LCFI19:
+ 265              		.cfi_def_cfa_offset 48
+  57:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+ 266              		.loc 1 57 2 is_stmt 1 view .LVU58
+ 267              		.loc 1 58 1 is_stmt 0 view .LVU59
+ 268 00c9 4883C408 		addq	$8, %rsp
+ 269              	.LCFI20:
+ 270              		.cfi_remember_state
+ 271              		.cfi_def_cfa_offset 40
+ 272 00cd 89E8     		movl	%ebp, %eax
+ 273 00cf 5B       		popq	%rbx
+ 274              	.LCFI21:
+ 275              		.cfi_def_cfa_offset 32
+ 276              	.LVL19:
+ 277              		.loc 1 58 1 view .LVU60
+ 278 00d0 5D       		popq	%rbp
+ 279              	.LCFI22:
+ 280              		.cfi_def_cfa_offset 24
+ 281              	.LVL20:
+ 282              		.loc 1 58 1 view .LVU61
+ 283 00d1 415C     		popq	%r12
+ 284              	.LCFI23:
+ 285              		.cfi_def_cfa_offset 16
+ 286 00d3 415D     		popq	%r13
+ 287              	.LCFI24:
+ 288              		.cfi_def_cfa_offset 8
+ 289              	.LVL21:
+ 290              		.loc 1 58 1 view .LVU62
+ 291 00d5 C3       		ret
+ 292              	.LVL22:
+ 293 00d6 662E0F1F 		.p2align 4,,10
+ 293      84000000 
+ 293      0000
+ 294              		.p2align 3
+ 295              	.L15:
+ 296              	.LCFI25:
+ 297              		.cfi_restore_state
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 298              		.loc 1 52 3 is_stmt 1 view .LVU63
+GAS LISTING /tmp/ccLZuulq.s 			page 9
+
+
+ 299              	.LBB42:
+ 300              	.LBI42:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 301              		.loc 2 51 1 view .LVU64
+ 302              	.LBB43:
+ 303              		.loc 2 54 3 view .LVU65
+ 304              		.loc 2 54 10 is_stmt 0 discriminator 1 view .LVU66
+ 305 00e0 4883EC08 		subq	$8, %rsp
+ 306              	.LCFI26:
+ 307              		.cfi_def_cfa_offset 56
+ 308              	.LBE43:
+ 309              	.LBE42:
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 310              		.loc 1 52 53 view .LVU67
+ 311 00e4 4489E6   		movl	%r12d, %esi
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 312              		.loc 1 52 15 view .LVU68
+ 313 00e7 4863FD   		movslq	%ebp, %rdi
+ 314              	.LBB47:
+ 315              	.LBB44:
+ 316              		.loc 2 54 10 discriminator 1 view .LVU69
+ 317 00ea BA020000 		movl	$2, %edx
+ 317      00
+ 318 00ef 50       		pushq	%rax
+ 319              	.LCFI27:
+ 320              		.cfi_def_cfa_offset 64
+ 321              	.LBE44:
+ 322              	.LBE47:
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 323              		.loc 1 52 53 view .LVU70
+ 324 00f0 29EE     		subl	%ebp, %esi
+ 325              	.LBB48:
+ 326              	.LBB45:
+ 327              		.loc 2 54 10 discriminator 1 view .LVU71
+ 328 00f2 48C7C1FF 		movq	$-1, %rcx
+ 328      FFFFFF
+ 329              	.LBE45:
+ 330              	.LBE48:
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 331              		.loc 1 52 15 view .LVU72
+ 332 00f9 4C01EF   		addq	%r13, %rdi
+ 333              	.LVL23:
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 334              		.loc 1 52 15 view .LVU73
+ 335 00fc 4863F6   		movslq	%esi, %rsi
+ 336              	.LVL24:
+ 337              	.LBB49:
+ 338              	.LBB46:
+ 339              		.loc 2 54 10 discriminator 1 view .LVU74
+ 340 00ff 4C8D0500 		leaq	.LC2(%rip), %r8
+ 340      000000
+ 341 0106 31C0     		xorl	%eax, %eax
+ 342 0108 E8000000 		call	__snprintf_chk@PLT
+ 342      00
+ 343              	.LVL25:
+ 344              		.loc 2 54 10 discriminator 1 view .LVU75
+ 345              	.LBE46:
+GAS LISTING /tmp/ccLZuulq.s 			page 10
+
+
+ 346              	.LBE49:
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 347              		.loc 1 52 12 discriminator 1 view .LVU76
+ 348 010d 59       		popq	%rcx
+ 349              	.LCFI28:
+ 350              		.cfi_def_cfa_offset 56
+ 351 010e 5E       		popq	%rsi
+ 352              	.LCFI29:
+ 353              		.cfi_def_cfa_offset 48
+ 354 010f 01C5     		addl	%eax, %ebp
+ 355              	.LVL26:
+  52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
+ 356              		.loc 1 52 12 discriminator 1 view .LVU77
+ 357 0111 E959FFFF 		jmp	.L5
+ 357      FF
+ 358              	.LVL27:
+ 359 0116 662E0F1F 		.p2align 4,,10
+ 359      84000000 
+ 359      0000
+ 360              		.p2align 3
+ 361              	.L14:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 362              		.loc 1 46 3 is_stmt 1 view .LVU78
+ 363              	.LBB50:
+ 364              	.LBI50:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 365              		.loc 2 51 1 view .LVU79
+ 366              	.LBB51:
+ 367              		.loc 2 54 3 view .LVU80
+ 368              	.LBE51:
+ 369              	.LBE50:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 370              		.loc 1 46 53 is_stmt 0 view .LVU81
+ 371 0120 4489E6   		movl	%r12d, %esi
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 372              		.loc 1 46 15 view .LVU82
+ 373 0123 4863F8   		movslq	%eax, %rdi
+ 374              	.LBB57:
+ 375              	.LBB52:
+ 376              		.loc 2 54 10 discriminator 1 view .LVU83
+ 377 0126 4883EC08 		subq	$8, %rsp
+ 378              	.LCFI30:
+ 379              		.cfi_def_cfa_offset 56
+ 380 012a FF7360   		pushq	96(%rbx)
+ 381              	.LCFI31:
+ 382              		.cfi_def_cfa_offset 64
+ 383              	.LBE52:
+ 384              	.LBE57:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 385              		.loc 1 46 53 view .LVU84
+ 386 012d 29C6     		subl	%eax, %esi
+ 387              	.LBB58:
+ 388              	.LBB53:
+ 389              		.loc 2 54 10 discriminator 1 view .LVU85
+ 390 012f 8B4358   		movl	88(%rbx), %eax
+ 391              	.LVL28:
+ 392              		.loc 2 54 10 discriminator 1 view .LVU86
+GAS LISTING /tmp/ccLZuulq.s 			page 11
+
+
+ 393              	.LBE53:
+ 394              	.LBE58:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 395              		.loc 1 46 15 view .LVU87
+ 396 0132 4C01EF   		addq	%r13, %rdi
+ 397              	.LVL29:
+ 398              	.LBB59:
+ 399              	.LBB54:
+ 400              		.loc 2 54 10 discriminator 1 view .LVU88
+ 401 0135 4C8D0500 		leaq	.LC1(%rip), %r8
+ 401      000000
+ 402              	.LBE54:
+ 403              	.LBE59:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 404              		.loc 1 46 15 view .LVU89
+ 405 013c 4863F6   		movslq	%esi, %rsi
+ 406              	.LVL30:
+ 407              	.LBB60:
+ 408              	.LBB55:
+ 409              		.loc 2 54 10 discriminator 1 view .LVU90
+ 410 013f 48C7C1FF 		movq	$-1, %rcx
+ 410      FFFFFF
+ 411 0146 BA020000 		movl	$2, %edx
+ 411      00
+ 412 014b 50       		pushq	%rax
+ 413              	.LCFI32:
+ 414              		.cfi_def_cfa_offset 72
+ 415 014c 8B4340   		movl	64(%rbx), %eax
+ 416 014f FF7348   		pushq	72(%rbx)
+ 417              	.LCFI33:
+ 418              		.cfi_def_cfa_offset 80
+ 419 0152 50       		pushq	%rax
+ 420              	.LCFI34:
+ 421              		.cfi_def_cfa_offset 88
+ 422              	.LBE55:
+ 423              	.LBE60:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 424              		.loc 1 46 15 view .LVU91
+ 425 0153 0FB64368 		movzbl	104(%rbx), %eax
+ 426              	.LBB61:
+ 427              	.LBB56:
+ 428              		.loc 2 54 10 discriminator 1 view .LVU92
+ 429 0157 50       		pushq	%rax
+ 430              	.LCFI35:
+ 431              		.cfi_def_cfa_offset 96
+ 432 0158 440FBE4B 		movsbl	105(%rbx), %r9d
+ 432      69
+ 433 015d 31C0     		xorl	%eax, %eax
+ 434 015f E8000000 		call	__snprintf_chk@PLT
+ 434      00
+ 435              	.LVL31:
+ 436              		.loc 2 54 10 discriminator 1 view .LVU93
+ 437              	.LBE56:
+ 438              	.LBE61:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 439              		.loc 1 46 12 discriminator 1 view .LVU94
+ 440 0164 4883C430 		addq	$48, %rsp
+GAS LISTING /tmp/ccLZuulq.s 			page 12
+
+
+ 441              	.LCFI36:
+ 442              		.cfi_def_cfa_offset 48
+ 443 0168 01C5     		addl	%eax, %ebp
+ 444              	.LVL32:
+  46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
+ 445              		.loc 1 46 12 discriminator 1 view .LVU95
+ 446 016a E9EBFEFF 		jmp	.L4
+ 446      FF
+ 447              		.cfi_endproc
+ 448              	.LFE21:
+ 450              		.section	.rodata.MQTTStringFormat_connack.str1.8,"aMS",@progbits,1
+ 451              		.align 8
+ 452              	.LC4:
+ 453 0000 434F4E4E 		.string	"CONNACK session present %d, rc %d"
+ 453      41434B20 
+ 453      73657373 
+ 453      696F6E20 
+ 453      70726573 
+ 454              		.section	.text.MQTTStringFormat_connack,"ax",@progbits
+ 455              		.p2align 4
+ 456              		.globl	MQTTStringFormat_connack
+ 458              	MQTTStringFormat_connack:
+ 459              	.LVL33:
+ 460              	.LFB22:
+  59:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  60:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  61:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** int MQTTStringFormat_connack(char* strbuf, int strbuflen, unsigned char connack_rc, unsigned char s
+  62:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+ 461              		.loc 1 62 1 is_stmt 1 view -0
+ 462              		.cfi_startproc
+ 463              		.loc 1 62 1 is_stmt 0 view .LVU97
+ 464 0000 F30F1EFA 		endbr64
+  63:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "CONNACK session present %d, rc %d", sessionPresent, co
+ 465              		.loc 1 63 2 is_stmt 1 view .LVU98
+ 466              	.LVL34:
+ 467              	.LBB62:
+ 468              	.LBI62:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 469              		.loc 2 51 1 view .LVU99
+ 470              	.LBB63:
+ 471              		.loc 2 54 3 view .LVU100
+ 472              	.LBE63:
+ 473              	.LBE62:
+  62:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "CONNACK session present %d, rc %d", sessionPresent, co
+ 474              		.loc 1 62 1 is_stmt 0 view .LVU101
+ 475 0004 4883EC10 		subq	$16, %rsp
+ 476              	.LCFI37:
+ 477              		.cfi_def_cfa_offset 24
+ 478              		.loc 1 63 17 view .LVU102
+ 479 0008 0FB6D2   		movzbl	%dl, %edx
+ 480              	.LBB66:
+ 481              	.LBB64:
+ 482              		.loc 2 54 10 discriminator 1 view .LVU103
+ 483 000b 440FB6C9 		movzbl	%cl, %r9d
+ 484              	.LBE64:
+ 485              	.LBE66:
+ 486              		.loc 1 63 17 view .LVU104
+GAS LISTING /tmp/ccLZuulq.s 			page 13
+
+
+ 487 000f 4863F6   		movslq	%esi, %rsi
+ 488              	.LVL35:
+ 489              	.LBB67:
+ 490              	.LBB65:
+ 491              		.loc 2 54 10 discriminator 1 view .LVU105
+ 492 0012 52       		pushq	%rdx
+ 493              	.LCFI38:
+ 494              		.cfi_def_cfa_offset 32
+ 495 0013 4C8D0500 		leaq	.LC4(%rip), %r8
+ 495      000000
+ 496 001a BA020000 		movl	$2, %edx
+ 496      00
+ 497              	.LVL36:
+ 498              		.loc 2 54 10 discriminator 1 view .LVU106
+ 499 001f 31C0     		xorl	%eax, %eax
+ 500 0021 48C7C1FF 		movq	$-1, %rcx
+ 500      FFFFFF
+ 501              	.LVL37:
+ 502              		.loc 2 54 10 discriminator 1 view .LVU107
+ 503 0028 E8000000 		call	__snprintf_chk@PLT
+ 503      00
+ 504              	.LVL38:
+ 505              		.loc 2 54 10 discriminator 1 view .LVU108
+ 506              	.LBE65:
+ 507              	.LBE67:
+  64:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return strindex;
+ 508              		.loc 1 64 2 is_stmt 1 view .LVU109
+  65:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+ 509              		.loc 1 65 1 is_stmt 0 view .LVU110
+ 510 002d 4883C418 		addq	$24, %rsp
+ 511              	.LCFI39:
+ 512              		.cfi_def_cfa_offset 8
+ 513 0031 C3       		ret
+ 514              		.cfi_endproc
+ 515              	.LFE22:
+ 517              		.section	.rodata.MQTTStringFormat_publish.str1.8,"aMS",@progbits,1
+ 518              		.align 8
+ 519              	.LC5:
+ 520 0000 5055424C 		.string	"PUBLISH dup %d, QoS %d, retained %d, packet id %d, topic %.*s, payload length %d, payload
+ 520      49534820 
+ 520      64757020 
+ 520      25642C20 
+ 520      516F5320 
+ 521              		.section	.text.MQTTStringFormat_publish,"ax",@progbits
+ 522              		.p2align 4
+ 523              		.globl	MQTTStringFormat_publish
+ 525              	MQTTStringFormat_publish:
+ 526              	.LVL39:
+ 527              	.LFB23:
+  66:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  67:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  68:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** int MQTTStringFormat_publish(char* strbuf, int strbuflen, unsigned char dup, int qos, unsigned char
+  69:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		unsigned short packetid, MQTTString topicName, unsigned char* payload, int payloadlen)
+  70:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+ 528              		.loc 1 70 1 is_stmt 1 view -0
+ 529              		.cfi_startproc
+ 530              		.loc 1 70 1 is_stmt 0 view .LVU112
+GAS LISTING /tmp/ccLZuulq.s 			page 14
+
+
+ 531 0000 F30F1EFA 		endbr64
+  71:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen,
+ 532              		.loc 1 71 2 is_stmt 1 view .LVU113
+ 533              	.LVL40:
+ 534              	.LBB68:
+ 535              	.LBI68:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 536              		.loc 2 51 1 view .LVU114
+ 537              	.LBB69:
+ 538              		.loc 2 54 3 view .LVU115
+ 539              	.LBE69:
+ 540              	.LBE68:
+  70:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen,
+ 541              		.loc 1 70 1 is_stmt 0 view .LVU116
+ 542 0004 4883EC08 		subq	$8, %rsp
+ 543              	.LCFI40:
+ 544              		.cfi_def_cfa_offset 16
+  70:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen,
+ 545              		.loc 1 70 1 view .LVU117
+ 546 0008 4189CA   		movl	%ecx, %r10d
+ 547              		.loc 1 71 17 view .LVU118
+ 548 000b B8140000 		movl	$20, %eax
+ 548      00
+ 549 0010 450FB7C9 		movzwl	%r9w, %r9d
+  70:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen,
+ 550              		.loc 1 70 1 view .LVU119
+ 551 0014 8B4C2430 		movl	48(%rsp), %ecx
+ 552              	.LVL41:
+ 553              	.LBB74:
+ 554              	.LBB70:
+ 555              		.loc 2 54 10 discriminator 1 view .LVU120
+ 556 0018 FF742428 		pushq	40(%rsp)
+ 557              	.LCFI41:
+ 558              		.cfi_def_cfa_offset 24
+ 559              	.LBE70:
+ 560              	.LBE74:
+ 561              		.loc 1 71 17 view .LVU121
+ 562 001c 450FB6C0 		movzbl	%r8b, %r8d
+ 563              		.loc 1 71 17 view .LVU122
+ 564 0020 4863F6   		movslq	%esi, %rsi
+ 565              	.LVL42:
+ 566              		.loc 1 71 17 view .LVU123
+ 567 0023 39C1     		cmpl	%eax, %ecx
+ 568 0025 0F4EC1   		cmovle	%ecx, %eax
+ 569              	.LBB75:
+ 570              	.LBB71:
+ 571              		.loc 2 54 10 discriminator 1 view .LVU124
+ 572 0028 50       		pushq	%rax
+ 573              	.LCFI42:
+ 574              		.cfi_def_cfa_offset 32
+ 575 0029 51       		pushq	%rcx
+ 576              	.LCFI43:
+ 577              		.cfi_def_cfa_offset 40
+ 578              	.LBE71:
+ 579              	.LBE75:
+ 580              		.loc 1 71 17 view .LVU125
+ 581 002a B9140000 		movl	$20, %ecx
+GAS LISTING /tmp/ccLZuulq.s 			page 15
+
+
+ 581      00
+ 582              	.LBB76:
+ 583              	.LBB72:
+ 584              		.loc 2 54 10 discriminator 1 view .LVU126
+ 585 002f FF742438 		pushq	56(%rsp)
+ 586              	.LCFI44:
+ 587              		.cfi_def_cfa_offset 48
+ 588              	.LBE72:
+ 589              	.LBE76:
+ 590              		.loc 1 71 17 view .LVU127
+ 591 0033 8B442438 		movl	56(%rsp), %eax
+ 592 0037 39C8     		cmpl	%ecx, %eax
+ 593 0039 0F4FC1   		cmovg	%ecx, %eax
+ 594              	.LBB77:
+ 595              	.LBB73:
+ 596              		.loc 2 54 10 discriminator 1 view .LVU128
+ 597 003c 48C7C1FF 		movq	$-1, %rcx
+ 597      FFFFFF
+ 598 0043 50       		pushq	%rax
+ 599              	.LCFI45:
+ 600              		.cfi_def_cfa_offset 56
+ 601 0044 31C0     		xorl	%eax, %eax
+ 602 0046 4151     		pushq	%r9
+ 603              	.LCFI46:
+ 604              		.cfi_def_cfa_offset 64
+ 605 0048 440FB6CA 		movzbl	%dl, %r9d
+ 606              	.LVL43:
+ 607              		.loc 2 54 10 discriminator 1 view .LVU129
+ 608 004c BA020000 		movl	$2, %edx
+ 608      00
+ 609              	.LVL44:
+ 610              		.loc 2 54 10 discriminator 1 view .LVU130
+ 611 0051 4150     		pushq	%r8
+ 612              	.LCFI47:
+ 613              		.cfi_def_cfa_offset 72
+ 614 0053 4C8D0500 		leaq	.LC5(%rip), %r8
+ 614      000000
+ 615              	.LVL45:
+ 616              		.loc 2 54 10 discriminator 1 view .LVU131
+ 617 005a 4152     		pushq	%r10
+ 618              	.LCFI48:
+ 619              		.cfi_def_cfa_offset 80
+ 620 005c E8000000 		call	__snprintf_chk@PLT
+ 620      00
+ 621              	.LVL46:
+ 622              		.loc 2 54 10 discriminator 1 view .LVU132
+ 623              	.LBE73:
+ 624              	.LBE77:
+  72:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				"PUBLISH dup %d, QoS %d, retained %d, packet id %d, topic %.*s, payload length %d, payload %.*s
+  73:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				dup, qos, retained, packetid,
+  74:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				(topicName.lenstring.len < 20) ? topicName.lenstring.len : 20, topicName.lenstring.data,
+  75:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				payloadlen, (payloadlen < 20) ? payloadlen : 20, payload);
+  76:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return strindex;
+ 625              		.loc 1 76 2 is_stmt 1 view .LVU133
+  77:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+ 626              		.loc 1 77 1 is_stmt 0 view .LVU134
+ 627 0061 4883C448 		addq	$72, %rsp
+GAS LISTING /tmp/ccLZuulq.s 			page 16
+
+
+ 628              	.LCFI49:
+ 629              		.cfi_def_cfa_offset 8
+ 630 0065 C3       		ret
+ 631              		.cfi_endproc
+ 632              	.LFE23:
+ 634              		.section	.rodata.MQTTStringFormat_ack.str1.1,"aMS",@progbits,1
+ 635              	.LC6:
+ 636 0000 25732C20 		.string	"%s, packet id %d"
+ 636      7061636B 
+ 636      65742069 
+ 636      64202564 
+ 636      00
+ 637              	.LC7:
+ 638 0011 2C206475 		.string	", dup %d"
+ 638      70202564 
+ 638      00
+ 639              		.section	.text.MQTTStringFormat_ack,"ax",@progbits
+ 640              		.p2align 4
+ 641              		.globl	MQTTStringFormat_ack
+ 643              	MQTTStringFormat_ack:
+ 644              	.LVL47:
+ 645              	.LFB24:
+  78:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  79:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  80:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** int MQTTStringFormat_ack(char* strbuf, int strbuflen, unsigned char packettype, unsigned char dup, 
+  81:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+ 646              		.loc 1 81 1 is_stmt 1 view -0
+ 647              		.cfi_startproc
+ 648              		.loc 1 81 1 is_stmt 0 view .LVU136
+ 649 0000 F30F1EFA 		endbr64
+  82:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
+ 650              		.loc 1 82 2 is_stmt 1 view .LVU137
+  81:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
+ 651              		.loc 1 81 1 is_stmt 0 view .LVU138
+ 652 0004 4155     		pushq	%r13
+ 653              	.LCFI50:
+ 654              		.cfi_def_cfa_offset 16
+ 655              		.cfi_offset 13, -16
+ 656              		.loc 1 82 17 view .LVU139
+ 657 0006 450FB7C0 		movzwl	%r8w, %r8d
+ 658              		.loc 1 82 17 view .LVU140
+ 659 000a 0FB6D2   		movzbl	%dl, %edx
+ 660              	.LBB78:
+ 661              	.LBB79:
+ 662              		.loc 2 54 10 discriminator 1 view .LVU141
+ 663 000d 488D0500 		leaq	MQTTPacket_names(%rip), %rax
+ 663      000000
+ 664              	.LBE79:
+ 665              	.LBE78:
+  81:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
+ 666              		.loc 1 81 1 view .LVU142
+ 667 0014 4154     		pushq	%r12
+ 668              	.LCFI51:
+ 669              		.cfi_def_cfa_offset 24
+ 670              		.cfi_offset 12, -24
+ 671 0016 4863F6   		movslq	%esi, %rsi
+  81:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
+GAS LISTING /tmp/ccLZuulq.s 			page 17
+
+
+ 672              		.loc 1 81 1 view .LVU143
+ 673 0019 4189CD   		movl	%ecx, %r13d
+ 674              	.LBB83:
+ 675              	.LBB80:
+ 676              		.loc 2 54 10 discriminator 1 view .LVU144
+ 677 001c 48C7C1FF 		movq	$-1, %rcx
+ 677      FFFFFF
+ 678              	.LVL48:
+ 679              		.loc 2 54 10 discriminator 1 view .LVU145
+ 680              	.LBE80:
+ 681              	.LBE83:
+  81:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
+ 682              		.loc 1 81 1 view .LVU146
+ 683 0023 55       		pushq	%rbp
+ 684              	.LCFI52:
+ 685              		.cfi_def_cfa_offset 32
+ 686              		.cfi_offset 6, -32
+ 687 0024 4989FC   		movq	%rdi, %r12
+ 688              	.LVL49:
+  81:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
+ 689              		.loc 1 81 1 view .LVU147
+ 690 0027 53       		pushq	%rbx
+ 691              	.LCFI53:
+ 692              		.cfi_def_cfa_offset 40
+ 693              		.cfi_offset 3, -40
+ 694 0028 4889F3   		movq	%rsi, %rbx
+ 695              	.LVL50:
+ 696              	.LBB84:
+ 697              	.LBI78:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 698              		.loc 2 51 1 is_stmt 1 view .LVU148
+ 699              	.LBB81:
+ 700              		.loc 2 54 3 view .LVU149
+ 701              	.LBE81:
+ 702              	.LBE84:
+  81:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
+ 703              		.loc 1 81 1 is_stmt 0 view .LVU150
+ 704 002b 4883EC10 		subq	$16, %rsp
+ 705              	.LCFI54:
+ 706              		.cfi_def_cfa_offset 56
+ 707              	.LBB85:
+ 708              	.LBB82:
+ 709              		.loc 2 54 10 discriminator 1 view .LVU151
+ 710 002f 4C8B0CD0 		movq	(%rax,%rdx,8), %r9
+ 711 0033 BA020000 		movl	$2, %edx
+ 711      00
+ 712              	.LVL51:
+ 713              		.loc 2 54 10 discriminator 1 view .LVU152
+ 714 0038 31C0     		xorl	%eax, %eax
+ 715 003a 4150     		pushq	%r8
+ 716              	.LCFI55:
+ 717              		.cfi_def_cfa_offset 64
+ 718 003c 4C8D0500 		leaq	.LC6(%rip), %r8
+ 718      000000
+ 719              	.LVL52:
+ 720              		.loc 2 54 10 discriminator 1 view .LVU153
+ 721 0043 E8000000 		call	__snprintf_chk@PLT
+GAS LISTING /tmp/ccLZuulq.s 			page 18
+
+
+ 721      00
+ 722              	.LVL53:
+ 723              		.loc 2 54 10 discriminator 1 view .LVU154
+ 724 0048 89C5     		movl	%eax, %ebp
+ 725              	.LVL54:
+ 726              		.loc 2 54 10 discriminator 1 view .LVU155
+ 727              	.LBE82:
+ 728              	.LBE85:
+  83:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	if (dup)
+ 729              		.loc 1 83 2 is_stmt 1 view .LVU156
+ 730              		.loc 1 83 5 is_stmt 0 view .LVU157
+ 731 004a 58       		popq	%rax
+ 732              	.LCFI56:
+ 733              		.cfi_def_cfa_offset 56
+ 734              	.LVL55:
+ 735              		.loc 1 83 5 view .LVU158
+ 736 004b 5A       		popq	%rdx
+ 737              	.LCFI57:
+ 738              		.cfi_def_cfa_offset 48
+ 739 004c 4584ED   		testb	%r13b, %r13b
+ 740 004f 750F     		jne	.L24
+  84:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+  85:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return strindex;
+  86:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+ 741              		.loc 1 86 1 view .LVU159
+ 742 0051 4883C408 		addq	$8, %rsp
+ 743              	.LCFI58:
+ 744              		.cfi_remember_state
+ 745              		.cfi_def_cfa_offset 40
+ 746 0055 89E8     		movl	%ebp, %eax
+ 747 0057 5B       		popq	%rbx
+ 748              	.LCFI59:
+ 749              		.cfi_def_cfa_offset 32
+ 750              	.LVL56:
+ 751              		.loc 1 86 1 view .LVU160
+ 752 0058 5D       		popq	%rbp
+ 753              	.LCFI60:
+ 754              		.cfi_def_cfa_offset 24
+ 755              	.LVL57:
+ 756              		.loc 1 86 1 view .LVU161
+ 757 0059 415C     		popq	%r12
+ 758              	.LCFI61:
+ 759              		.cfi_def_cfa_offset 16
+ 760              	.LVL58:
+ 761              		.loc 1 86 1 view .LVU162
+ 762 005b 415D     		popq	%r13
+ 763              	.LCFI62:
+ 764              		.cfi_def_cfa_offset 8
+ 765              	.LVL59:
+ 766              		.loc 1 86 1 view .LVU163
+ 767 005d C3       		ret
+ 768              	.LVL60:
+ 769 005e 6690     		.p2align 4,,10
+ 770              		.p2align 3
+ 771              	.L24:
+ 772              	.LCFI63:
+ 773              		.cfi_restore_state
+GAS LISTING /tmp/ccLZuulq.s 			page 19
+
+
+  84:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 774              		.loc 1 84 3 is_stmt 1 view .LVU164
+ 775              	.LBB86:
+ 776              	.LBI86:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 777              		.loc 2 51 1 view .LVU165
+ 778              	.LBB87:
+ 779              		.loc 2 54 3 view .LVU166
+ 780              	.LBE87:
+ 781              	.LBE86:
+  84:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 782              		.loc 1 84 53 is_stmt 0 view .LVU167
+ 783 0060 29EB     		subl	%ebp, %ebx
+ 784              	.LVL61:
+  84:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 785              		.loc 1 84 15 view .LVU168
+ 786 0062 4863C5   		movslq	%ebp, %rax
+ 787              	.LBB90:
+ 788              	.LBB88:
+ 789              		.loc 2 54 10 discriminator 1 view .LVU169
+ 790 0065 450FB6CD 		movzbl	%r13b, %r9d
+ 791 0069 48C7C1FF 		movq	$-1, %rcx
+ 791      FFFFFF
+ 792              	.LBE88:
+ 793              	.LBE90:
+  84:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 794              		.loc 1 84 15 view .LVU170
+ 795 0070 498D3C04 		leaq	(%r12,%rax), %rdi
+ 796              	.LVL62:
+  84:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 797              		.loc 1 84 15 view .LVU171
+ 798 0074 4863F3   		movslq	%ebx, %rsi
+ 799              	.LVL63:
+ 800              	.LBB91:
+ 801              	.LBB89:
+ 802              		.loc 2 54 10 discriminator 1 view .LVU172
+ 803 0077 BA020000 		movl	$2, %edx
+ 803      00
+ 804 007c 31C0     		xorl	%eax, %eax
+ 805 007e 4C8D0500 		leaq	.LC7(%rip), %r8
+ 805      000000
+ 806 0085 E8000000 		call	__snprintf_chk@PLT
+ 806      00
+ 807              	.LVL64:
+ 808              		.loc 2 54 10 discriminator 1 view .LVU173
+ 809              	.LBE89:
+ 810              	.LBE91:
+ 811              		.loc 1 86 1 view .LVU174
+ 812 008a 4883C408 		addq	$8, %rsp
+ 813              	.LCFI64:
+ 814              		.cfi_def_cfa_offset 40
+  84:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
+ 815              		.loc 1 84 12 discriminator 1 view .LVU175
+ 816 008e 01C5     		addl	%eax, %ebp
+ 817              	.LVL65:
+  85:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+ 818              		.loc 1 85 2 is_stmt 1 view .LVU176
+GAS LISTING /tmp/ccLZuulq.s 			page 20
+
+
+ 819              		.loc 1 86 1 is_stmt 0 view .LVU177
+ 820 0090 5B       		popq	%rbx
+ 821              	.LCFI65:
+ 822              		.cfi_def_cfa_offset 32
+ 823 0091 89E8     		movl	%ebp, %eax
+ 824 0093 5D       		popq	%rbp
+ 825              	.LCFI66:
+ 826              		.cfi_def_cfa_offset 24
+ 827              	.LVL66:
+ 828              		.loc 1 86 1 view .LVU178
+ 829 0094 415C     		popq	%r12
+ 830              	.LCFI67:
+ 831              		.cfi_def_cfa_offset 16
+ 832              	.LVL67:
+ 833              		.loc 1 86 1 view .LVU179
+ 834 0096 415D     		popq	%r13
+ 835              	.LCFI68:
+ 836              		.cfi_def_cfa_offset 8
+ 837 0098 C3       		ret
+ 838              		.cfi_endproc
+ 839              	.LFE24:
+ 841              		.section	.rodata.MQTTStringFormat_subscribe.str1.8,"aMS",@progbits,1
+ 842              		.align 8
+ 843              	.LC8:
+ 844 0000 53554253 		.string	"SUBSCRIBE dup %d, packet id %d count %d topic %.*s qos %d"
+ 844      43524942 
+ 844      45206475 
+ 844      70202564 
+ 844      2C207061 
+ 845              		.section	.text.MQTTStringFormat_subscribe,"ax",@progbits
+ 846              		.p2align 4
+ 847              		.globl	MQTTStringFormat_subscribe
+ 849              	MQTTStringFormat_subscribe:
+ 850              	.LVL68:
+ 851              	.LFB25:
+  87:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  88:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  89:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** int MQTTStringFormat_subscribe(char* strbuf, int strbuflen, unsigned char dup, unsigned short packe
+  90:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		MQTTString topicFilters[], int requestedQoSs[])
+  91:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+ 852              		.loc 1 91 1 is_stmt 1 view -0
+ 853              		.cfi_startproc
+ 854              		.loc 1 91 1 is_stmt 0 view .LVU181
+ 855 0000 F30F1EFA 		endbr64
+  92:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 856              		.loc 1 92 2 is_stmt 1 view .LVU182
+ 857              	.LVL69:
+ 858              	.LBB92:
+ 859              	.LBI92:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 860              		.loc 2 51 1 view .LVU183
+ 861              	.LBB93:
+ 862              		.loc 2 54 3 view .LVU184
+ 863              	.LBE93:
+ 864              	.LBE92:
+  91:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 865              		.loc 1 91 1 is_stmt 0 view .LVU185
+GAS LISTING /tmp/ccLZuulq.s 			page 21
+
+
+ 866 0004 4883EC10 		subq	$16, %rsp
+ 867              	.LCFI69:
+ 868              		.cfi_def_cfa_offset 24
+ 869              		.loc 1 92 9 view .LVU186
+ 870 0008 0FB7C9   		movzwl	%cx, %ecx
+ 871              		.loc 1 92 9 view .LVU187
+ 872 000b 4863F6   		movslq	%esi, %rsi
+ 873              	.LVL70:
+ 874              	.LBB95:
+ 875              	.LBB94:
+ 876              		.loc 2 54 10 discriminator 1 view .LVU188
+ 877 000e 488B4424 		movq	24(%rsp), %rax
+ 877      18
+ 878 0013 8B00     		movl	(%rax), %eax
+ 879 0015 50       		pushq	%rax
+ 880              	.LCFI70:
+ 881              		.cfi_def_cfa_offset 32
+ 882 0016 41FF7110 		pushq	16(%r9)
+ 883              	.LCFI71:
+ 884              		.cfi_def_cfa_offset 40
+ 885 001a 418B4108 		movl	8(%r9), %eax
+ 886 001e 440FB6CA 		movzbl	%dl, %r9d
+ 887              	.LVL71:
+ 888              		.loc 2 54 10 discriminator 1 view .LVU189
+ 889 0022 BA020000 		movl	$2, %edx
+ 889      00
+ 890              	.LVL72:
+ 891              		.loc 2 54 10 discriminator 1 view .LVU190
+ 892 0027 50       		pushq	%rax
+ 893              	.LCFI72:
+ 894              		.cfi_def_cfa_offset 48
+ 895 0028 31C0     		xorl	%eax, %eax
+ 896 002a 4150     		pushq	%r8
+ 897              	.LCFI73:
+ 898              		.cfi_def_cfa_offset 56
+ 899 002c 4C8D0500 		leaq	.LC8(%rip), %r8
+ 899      000000
+ 900              	.LVL73:
+ 901              		.loc 2 54 10 discriminator 1 view .LVU191
+ 902 0033 51       		pushq	%rcx
+ 903              	.LCFI74:
+ 904              		.cfi_def_cfa_offset 64
+ 905 0034 48C7C1FF 		movq	$-1, %rcx
+ 905      FFFFFF
+ 906              	.LVL74:
+ 907              		.loc 2 54 10 discriminator 1 view .LVU192
+ 908 003b E8000000 		call	__snprintf_chk@PLT
+ 908      00
+ 909              	.LVL75:
+ 910              		.loc 2 54 10 discriminator 1 view .LVU193
+ 911              	.LBE94:
+ 912              	.LBE95:
+  93:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		"SUBSCRIBE dup %d, packet id %d count %d topic %.*s qos %d",
+  94:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		dup, packetid, count,
+  95:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		topicFilters[0].lenstring.len, topicFilters[0].lenstring.data,
+  96:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		requestedQoSs[0]);
+  97:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+GAS LISTING /tmp/ccLZuulq.s 			page 22
+
+
+ 913              		.loc 1 97 1 view .LVU194
+ 914 0040 4883C438 		addq	$56, %rsp
+ 915              	.LCFI75:
+ 916              		.cfi_def_cfa_offset 8
+ 917 0044 C3       		ret
+ 918              		.cfi_endproc
+ 919              	.LFE25:
+ 921              		.section	.rodata.MQTTStringFormat_suback.str1.8,"aMS",@progbits,1
+ 922              		.align 8
+ 923              	.LC9:
+ 924 0000 53554241 		.string	"SUBACK packet id %d count %d granted qos %d"
+ 924      434B2070 
+ 924      61636B65 
+ 924      74206964 
+ 924      20256420 
+ 925              		.section	.text.MQTTStringFormat_suback,"ax",@progbits
+ 926              		.p2align 4
+ 927              		.globl	MQTTStringFormat_suback
+ 929              	MQTTStringFormat_suback:
+ 930              	.LVL76:
+ 931              	.LFB26:
+  98:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+  99:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+ 100:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** int MQTTStringFormat_suback(char* strbuf, int strbuflen, unsigned short packetid, int count, int* g
+ 101:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+ 932              		.loc 1 101 1 is_stmt 1 view -0
+ 933              		.cfi_startproc
+ 934              		.loc 1 101 1 is_stmt 0 view .LVU196
+ 935 0000 F30F1EFA 		endbr64
+ 102:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 936              		.loc 1 102 2 is_stmt 1 view .LVU197
+ 937              	.LVL77:
+ 938              	.LBB96:
+ 939              	.LBI96:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 940              		.loc 2 51 1 view .LVU198
+ 941              	.LBB97:
+ 942              		.loc 2 54 3 view .LVU199
+ 943              	.LBE97:
+ 944              	.LBE96:
+ 101:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 945              		.loc 1 101 1 is_stmt 0 view .LVU200
+ 946 0004 4883EC08 		subq	$8, %rsp
+ 947              	.LCFI76:
+ 948              		.cfi_def_cfa_offset 16
+ 949              	.LBB100:
+ 950              	.LBB98:
+ 951              		.loc 2 54 10 discriminator 1 view .LVU201
+ 952 0008 418B00   		movl	(%r8), %eax
+ 953 000b 440FB7CA 		movzwl	%dx, %r9d
+ 954              	.LBE98:
+ 955              	.LBE100:
+ 956              		.loc 1 102 9 view .LVU202
+ 957 000f 4863F6   		movslq	%esi, %rsi
+ 958              	.LVL78:
+ 959              	.LBB101:
+ 960              	.LBB99:
+GAS LISTING /tmp/ccLZuulq.s 			page 23
+
+
+ 961              		.loc 2 54 10 discriminator 1 view .LVU203
+ 962 0012 4C8D0500 		leaq	.LC9(%rip), %r8
+ 962      000000
+ 963              	.LVL79:
+ 964              		.loc 2 54 10 discriminator 1 view .LVU204
+ 965 0019 BA020000 		movl	$2, %edx
+ 965      00
+ 966              	.LVL80:
+ 967              		.loc 2 54 10 discriminator 1 view .LVU205
+ 968 001e 50       		pushq	%rax
+ 969              	.LCFI77:
+ 970              		.cfi_def_cfa_offset 24
+ 971 001f 31C0     		xorl	%eax, %eax
+ 972 0021 51       		pushq	%rcx
+ 973              	.LCFI78:
+ 974              		.cfi_def_cfa_offset 32
+ 975 0022 48C7C1FF 		movq	$-1, %rcx
+ 975      FFFFFF
+ 976              	.LVL81:
+ 977              		.loc 2 54 10 discriminator 1 view .LVU206
+ 978 0029 E8000000 		call	__snprintf_chk@PLT
+ 978      00
+ 979              	.LVL82:
+ 980              		.loc 2 54 10 discriminator 1 view .LVU207
+ 981              	.LBE99:
+ 982              	.LBE101:
+ 103:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		"SUBACK packet id %d count %d granted qos %d", packetid, count, grantedQoSs[0]);
+ 104:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+ 983              		.loc 1 104 1 view .LVU208
+ 984 002e 4883C418 		addq	$24, %rsp
+ 985              	.LCFI79:
+ 986              		.cfi_def_cfa_offset 8
+ 987 0032 C3       		ret
+ 988              		.cfi_endproc
+ 989              	.LFE26:
+ 991              		.section	.rodata.MQTTStringFormat_unsubscribe.str1.8,"aMS",@progbits,1
+ 992              		.align 8
+ 993              	.LC10:
+ 994 0000 554E5355 		.string	"UNSUBSCRIBE dup %d, packet id %d count %d topic %.*s"
+ 994      42534352 
+ 994      49424520 
+ 994      64757020 
+ 994      25642C20 
+ 995              		.section	.text.MQTTStringFormat_unsubscribe,"ax",@progbits
+ 996              		.p2align 4
+ 997              		.globl	MQTTStringFormat_unsubscribe
+ 999              	MQTTStringFormat_unsubscribe:
+ 1000              	.LVL83:
+ 1001              	.LFB27:
+ 105:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+ 106:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 
+ 107:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** int MQTTStringFormat_unsubscribe(char* strbuf, int strbuflen, unsigned char dup, unsigned short pac
+ 108:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		int count, MQTTString topicFilters[])
+ 109:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** {
+ 1002              		.loc 1 109 1 is_stmt 1 view -0
+ 1003              		.cfi_startproc
+ 1004              		.loc 1 109 1 is_stmt 0 view .LVU210
+GAS LISTING /tmp/ccLZuulq.s 			page 24
+
+
+ 1005 0000 F30F1EFA 		endbr64
+ 110:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 1006              		.loc 1 110 2 is_stmt 1 view .LVU211
+ 1007              	.LVL84:
+ 1008              	.LBB102:
+ 1009              	.LBI102:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 1010              		.loc 2 51 1 view .LVU212
+ 1011              	.LBB103:
+ 1012              		.loc 2 54 3 view .LVU213
+ 1013              	.LBE103:
+ 1014              	.LBE102:
+ 109:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
+ 1015              		.loc 1 109 1 is_stmt 0 view .LVU214
+ 1016 0004 4883EC08 		subq	$8, %rsp
+ 1017              	.LCFI80:
+ 1018              		.cfi_def_cfa_offset 16
+ 1019              	.LBB107:
+ 1020              	.LBB104:
+ 1021              		.loc 2 54 10 discriminator 1 view .LVU215
+ 1022 0008 41FF7110 		pushq	16(%r9)
+ 1023              	.LCFI81:
+ 1024              		.cfi_def_cfa_offset 24
+ 1025 000c 418B4108 		movl	8(%r9), %eax
+ 1026              	.LBE104:
+ 1027              	.LBE107:
+ 1028              		.loc 1 110 9 view .LVU216
+ 1029 0010 0FB7C9   		movzwl	%cx, %ecx
+ 1030              	.LBB108:
+ 1031              	.LBB105:
+ 1032              		.loc 2 54 10 discriminator 1 view .LVU217
+ 1033 0013 440FB6CA 		movzbl	%dl, %r9d
+ 1034              	.LVL85:
+ 1035              		.loc 2 54 10 discriminator 1 view .LVU218
+ 1036              	.LBE105:
+ 1037              	.LBE108:
+ 1038              		.loc 1 110 9 view .LVU219
+ 1039 0017 4863F6   		movslq	%esi, %rsi
+ 1040              	.LVL86:
+ 1041              	.LBB109:
+ 1042              	.LBB106:
+ 1043              		.loc 2 54 10 discriminator 1 view .LVU220
+ 1044 001a BA020000 		movl	$2, %edx
+ 1044      00
+ 1045              	.LVL87:
+ 1046              		.loc 2 54 10 discriminator 1 view .LVU221
+ 1047 001f 50       		pushq	%rax
+ 1048              	.LCFI82:
+ 1049              		.cfi_def_cfa_offset 32
+ 1050 0020 31C0     		xorl	%eax, %eax
+ 1051 0022 4150     		pushq	%r8
+ 1052              	.LCFI83:
+ 1053              		.cfi_def_cfa_offset 40
+ 1054 0024 4C8D0500 		leaq	.LC10(%rip), %r8
+ 1054      000000
+ 1055              	.LVL88:
+ 1056              		.loc 2 54 10 discriminator 1 view .LVU222
+GAS LISTING /tmp/ccLZuulq.s 			page 25
+
+
+ 1057 002b 51       		pushq	%rcx
+ 1058              	.LCFI84:
+ 1059              		.cfi_def_cfa_offset 48
+ 1060 002c 48C7C1FF 		movq	$-1, %rcx
+ 1060      FFFFFF
+ 1061              	.LVL89:
+ 1062              		.loc 2 54 10 discriminator 1 view .LVU223
+ 1063 0033 E8000000 		call	__snprintf_chk@PLT
+ 1063      00
+ 1064              	.LVL90:
+ 1065              		.loc 2 54 10 discriminator 1 view .LVU224
+ 1066              	.LBE106:
+ 1067              	.LBE109:
+ 111:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 					"UNSUBSCRIBE dup %d, packet id %d count %d topic %.*s",
+ 112:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 					dup, packetid, count,
+ 113:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 					topicFilters[0].lenstring.len, topicFilters[0].lenstring.data);
+ 114:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
+ 1068              		.loc 1 114 1 view .LVU225
+ 1069 0038 4883C428 		addq	$40, %rsp
+ 1070              	.LCFI85:
+ 1071              		.cfi_def_cfa_offset 8
+ 1072 003c C3       		ret
+ 1073              		.cfi_endproc
+ 1074              	.LFE27:
+ 1076              		.globl	MQTTPacket_names
+ 1077              		.section	.rodata.str1.1,"aMS",@progbits,1
+ 1078              	.LC11:
+ 1079 0000 52455345 		.string	"RESERVED"
+ 1079      52564544 
+ 1079      00
+ 1080              	.LC12:
+ 1081 0009 434F4E4E 		.string	"CONNECT"
+ 1081      45435400 
+ 1082              	.LC13:
+ 1083 0011 434F4E4E 		.string	"CONNACK"
+ 1083      41434B00 
+ 1084              	.LC14:
+ 1085 0019 5055424C 		.string	"PUBLISH"
+ 1085      49534800 
+ 1086              	.LC15:
+ 1087 0021 50554241 		.string	"PUBACK"
+ 1087      434B00
+ 1088              	.LC16:
+ 1089 0028 50554252 		.string	"PUBREC"
+ 1089      454300
+ 1090              	.LC17:
+ 1091 002f 50554252 		.string	"PUBREL"
+ 1091      454C00
+ 1092              	.LC18:
+ 1093 0036 50554243 		.string	"PUBCOMP"
+ 1093      4F4D5000 
+ 1094              	.LC19:
+ 1095 003e 53554253 		.string	"SUBSCRIBE"
+ 1095      43524942 
+ 1095      4500
+ 1096              	.LC20:
+ 1097 0048 53554241 		.string	"SUBACK"
+GAS LISTING /tmp/ccLZuulq.s 			page 26
+
+
+ 1097      434B00
+ 1098              	.LC21:
+ 1099 004f 554E5355 		.string	"UNSUBSCRIBE"
+ 1099      42534352 
+ 1099      49424500 
+ 1100              	.LC22:
+ 1101 005b 554E5355 		.string	"UNSUBACK"
+ 1101      4241434B 
+ 1101      00
+ 1102              	.LC23:
+ 1103 0064 50494E47 		.string	"PINGREQ"
+ 1103      52455100 
+ 1104              	.LC24:
+ 1105 006c 50494E47 		.string	"PINGRESP"
+ 1105      52455350 
+ 1105      00
+ 1106              	.LC25:
+ 1107 0075 44495343 		.string	"DISCONNECT"
+ 1107      4F4E4E45 
+ 1107      435400
+ 1108              		.section	.data.rel.local.MQTTPacket_names,"aw"
+ 1109              		.align 32
+ 1112              	MQTTPacket_names:
+ 1113 0000 00000000 		.quad	.LC11
+ 1113      00000000 
+ 1114 0008 00000000 		.quad	.LC12
+ 1114      00000000 
+ 1115 0010 00000000 		.quad	.LC13
+ 1115      00000000 
+ 1116 0018 00000000 		.quad	.LC14
+ 1116      00000000 
+ 1117 0020 00000000 		.quad	.LC15
+ 1117      00000000 
+ 1118 0028 00000000 		.quad	.LC16
+ 1118      00000000 
+ 1119 0030 00000000 		.quad	.LC17
+ 1119      00000000 
+ 1120 0038 00000000 		.quad	.LC18
+ 1120      00000000 
+ 1121 0040 00000000 		.quad	.LC19
+ 1121      00000000 
+ 1122 0048 00000000 		.quad	.LC20
+ 1122      00000000 
+ 1123 0050 00000000 		.quad	.LC21
+ 1123      00000000 
+ 1124 0058 00000000 		.quad	.LC22
+ 1124      00000000 
+ 1125 0060 00000000 		.quad	.LC23
+ 1125      00000000 
+ 1126 0068 00000000 		.quad	.LC24
+ 1126      00000000 
+ 1127 0070 00000000 		.quad	.LC25
+ 1127      00000000 
+ 1128              		.text
+ 1129              	.Letext0:
+ 1130              		.file 3 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1131              		.file 4 "../../bos/thirdparty/mqtt-pack/MQTTPacket.h"
+GAS LISTING /tmp/ccLZuulq.s 			page 27
+
+
+ 1132              		.file 5 "../../bos/thirdparty/mqtt-pack/MQTTConnect.h"
+ 1133              		.file 6 "<built-in>"
+ 5835              		.section	.note.gnu.property,"a"
+ 5836              		.align 8
+ 5837 0000 04000000 		.long	1f - 0f
+ 5838 0004 10000000 		.long	4f - 1f
+ 5839 0008 05000000 		.long	5
+ 5840              	0:
+ 5841 000c 474E5500 		.string	"GNU"
+ 5842              	1:
+ 5843              		.align 8
+ 5844 0010 020000C0 		.long	0xc0000002
+ 5845 0014 04000000 		.long	3f - 2f
+ 5846              	2:
+ 5847 0018 03000000 		.long	0x3
+ 5848              	3:
+ 5849 001c 00000000 		.align 8
+ 5850              	4:
+GAS LISTING /tmp/ccLZuulq.s 			page 28
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 MQTTFormat.c
+     /tmp/ccLZuulq.s:9      .text.MQTTPacket_getName:0000000000000000 MQTTPacket_getName
+     /tmp/ccLZuulq.s:1112   .data.rel.local.MQTTPacket_names:0000000000000000 MQTTPacket_names
+     /tmp/ccLZuulq.s:43     .text.MQTTStringFormat_connect:0000000000000000 MQTTStringFormat_connect
+     /tmp/ccLZuulq.s:458    .text.MQTTStringFormat_connack:0000000000000000 MQTTStringFormat_connack
+     /tmp/ccLZuulq.s:525    .text.MQTTStringFormat_publish:0000000000000000 MQTTStringFormat_publish
+     /tmp/ccLZuulq.s:643    .text.MQTTStringFormat_ack:0000000000000000 MQTTStringFormat_ack
+     /tmp/ccLZuulq.s:849    .text.MQTTStringFormat_subscribe:0000000000000000 MQTTStringFormat_subscribe
+     /tmp/ccLZuulq.s:929    .text.MQTTStringFormat_suback:0000000000000000 MQTTStringFormat_suback
+     /tmp/ccLZuulq.s:999    .text.MQTTStringFormat_unsubscribe:0000000000000000 MQTTStringFormat_unsubscribe
+     /tmp/ccLZuulq.s:29     .rodata.MQTTStringFormat_connect.str1.8:0000000000000000 .LC0
+     /tmp/ccLZuulq.s:37     .rodata.MQTTStringFormat_connect.str1.1:0000000000000011 .LC3
+     /tmp/ccLZuulq.s:35     .rodata.MQTTStringFormat_connect.str1.1:0000000000000000 .LC2
+     /tmp/ccLZuulq.s:32     .rodata.MQTTStringFormat_connect.str1.8:0000000000000050 .LC1
+     /tmp/ccLZuulq.s:452    .rodata.MQTTStringFormat_connack.str1.8:0000000000000000 .LC4
+     /tmp/ccLZuulq.s:519    .rodata.MQTTStringFormat_publish.str1.8:0000000000000000 .LC5
+     /tmp/ccLZuulq.s:635    .rodata.MQTTStringFormat_ack.str1.1:0000000000000000 .LC6
+     /tmp/ccLZuulq.s:637    .rodata.MQTTStringFormat_ack.str1.1:0000000000000011 .LC7
+     /tmp/ccLZuulq.s:843    .rodata.MQTTStringFormat_subscribe.str1.8:0000000000000000 .LC8
+     /tmp/ccLZuulq.s:923    .rodata.MQTTStringFormat_suback.str1.8:0000000000000000 .LC9
+     /tmp/ccLZuulq.s:993    .rodata.MQTTStringFormat_unsubscribe.str1.8:0000000000000000 .LC10
+
+UNDEFINED SYMBOLS
+__snprintf_chk

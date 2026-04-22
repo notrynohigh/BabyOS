@@ -1,0 +1,2895 @@
+GAS LISTING /tmp/ccz6yoUB.s 			page 1
+
+
+   1              		.file	"pk_wrap.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c"
+   5              		.section	.text.rsa_can_do,"ax",@progbits
+   6              		.p2align 4
+   8              	rsa_can_do:
+   9              	.LVL0:
+  10              	.LFB105:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /*
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  *  Public Key abstraction layer: wrapper functions
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  *  Copyright The Mbed TLS Contributors
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  */
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "common.h"
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform_util.h"
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_C)
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "pk_wrap.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "pk_internal.h"
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/error.h"
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/psa_util.h"
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /* Even if RSA not activated, for the sake of RSA-alt */
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/rsa.h"
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_ECP_C)
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ecp.h"
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_ECDSA_C)
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/ecdsa.h"
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "psa_util_internal.h"
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/psa/crypto.h"
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/psa_util.h"
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_RSA_C)
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "pkwrite.h"
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "rsa_internal.h"
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_CAN_ECDSA_SOME)
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/asn1write.h"
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/asn1.h"
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif  /* MBEDTLS_USE_PSA_CRYPTO */
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include <limits.h>
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include <stdint.h>
+GAS LISTING /tmp/ccz6yoUB.s 			page 2
+
+
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #include <string.h>
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_RSA_C)
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_can_do(mbedtls_pk_type_t type)
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+  11              		.loc 1 53 1 view -0
+  12              		.cfi_startproc
+  13              		.loc 1 53 1 is_stmt 0 view .LVU1
+  14 0000 F30F1EFA 		endbr64
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return type == MBEDTLS_PK_RSA ||
+  15              		.loc 1 54 5 is_stmt 1 view .LVU2
+  16              		.loc 1 54 17 is_stmt 0 view .LVU3
+  17 0004 83FF01   		cmpl	$1, %edi
+  18 0007 0F94C0   		sete	%al
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****            type == MBEDTLS_PK_RSASSA_PSS;
+  19              		.loc 1 55 17 view .LVU4
+  20 000a 83FF06   		cmpl	$6, %edi
+  21 000d 0F94C2   		sete	%dl
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return type == MBEDTLS_PK_RSA ||
+  22              		.loc 1 54 35 view .LVU5
+  23 0010 09D0     		orl	%edx, %eax
+  24 0012 0FB6C0   		movzbl	%al, %eax
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+  25              		.loc 1 56 1 view .LVU6
+  26 0015 C3       		ret
+  27              		.cfi_endproc
+  28              	.LFE105:
+  30              		.section	.rodata.rsa_debug.str1.1,"aMS",@progbits,1
+  31              	.LC0:
+  32 0000 7273612E 		.string	"rsa.N"
+  32      4E00
+  33              	.LC1:
+  34 0006 7273612E 		.string	"rsa.E"
+  34      4500
+  35              		.section	.text.rsa_debug,"ax",@progbits
+  36              		.p2align 4
+  38              	rsa_debug:
+  39              	.LVL1:
+  40              	.LFB114:
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static size_t rsa_get_bitlen(mbedtls_pk_context *pk)
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     const mbedtls_rsa_context *rsa = (const mbedtls_rsa_context *) pk->pk_ctx;
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_rsa_get_bitlen(rsa);
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_verify_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            const unsigned char *hash, size_t hash_len,
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            const unsigned char *sig, size_t sig_len)
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int key_len;
+GAS LISTING /tmp/ccz6yoUB.s 			page 3
+
+
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char buf[MBEDTLS_PK_RSA_PUB_DER_MAX_BYTES];
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char *p = buf + sizeof(buf);
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_alg_md;
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t rsa_len = mbedtls_rsa_get_len(rsa);
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if SIZE_MAX > UINT_MAX
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (md_alg == MBEDTLS_MD_NONE && UINT_MAX < hash_len) {
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (mbedtls_rsa_get_padding_mode(rsa) == MBEDTLS_RSA_PKCS_V21) {
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_alg_md = PSA_ALG_RSA_PSS(mbedtls_md_psa_alg_from_type(md_alg));
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     } else {
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_alg_md = PSA_ALG_RSA_PKCS1V15_SIGN(mbedtls_md_psa_alg_from_type(md_alg));
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_len < rsa_len) {
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_VERIFY_FAILED;
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     key_len = mbedtls_rsa_write_pubkey(rsa, buf, &p);
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (key_len <= 0) {
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_VERIFY_HASH);
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_algorithm(&attributes, psa_alg_md);
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_type(&attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY);
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_import_key(&attributes,
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             buf + sizeof(buf) - key_len, key_len,
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             &key_id);
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_verify_hash(key_id, psa_alg_md, hash, hash_len,
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              sig, sig_len);
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_RSA_TO_MBEDTLS_ERR(status);
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = 0;
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** cleanup:
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_destroy_key(key_id);
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret == 0 && status != PSA_SUCCESS) {
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_verify_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            const unsigned char *hash, size_t hash_len,
+GAS LISTING /tmp/ccz6yoUB.s 			page 4
+
+
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            const unsigned char *sig, size_t sig_len)
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t rsa_len = mbedtls_rsa_get_len(rsa);
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if SIZE_MAX > UINT_MAX
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (md_alg == MBEDTLS_MD_NONE && UINT_MAX < hash_len) {
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_len < rsa_len) {
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_VERIFY_FAILED;
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if ((ret = mbedtls_rsa_pkcs1_verify(rsa, md_alg,
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                         (unsigned int) hash_len,
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                         hash, sig)) != 0) {
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     /* The buffer contains a valid signature followed by extra data.
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****      * We have a special error code for that so that so that callers can
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****      * use mbedtls_pk_verify() to check "Does the buffer start with a
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****      * valid signature?" and not just "Does the buffer contain a valid
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****      * signature?". */
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_len > rsa_len) {
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_SIG_LEN_MISMATCH;
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return 0;
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** int  mbedtls_pk_psa_rsa_sign_ext(psa_algorithm_t alg,
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                  mbedtls_rsa_context *rsa_ctx,
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                  const unsigned char *hash, size_t hash_len,
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                  unsigned char *sig, size_t sig_size,
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                  size_t *sig_len)
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int key_len;
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char *buf = NULL;
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char *p;
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     buf = mbedtls_calloc(1, MBEDTLS_PK_RSA_PRV_DER_MAX_BYTES);
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (buf == NULL) {
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_ALLOC_FAILED;
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     p = buf + MBEDTLS_PK_RSA_PRV_DER_MAX_BYTES;
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     *sig_len = mbedtls_rsa_get_len(rsa_ctx);
+GAS LISTING /tmp/ccz6yoUB.s 			page 5
+
+
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_size < *sig_len) {
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_free(buf);
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BUFFER_TOO_SMALL;
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     key_len = mbedtls_rsa_write_key(rsa_ctx, buf, &p);
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (key_len <= 0) {
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_free(buf);
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_SIGN_HASH);
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_algorithm(&attributes, alg);
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_type(&attributes, PSA_KEY_TYPE_RSA_KEY_PAIR);
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_import_key(&attributes,
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             buf + MBEDTLS_PK_RSA_PRV_DER_MAX_BYTES - key_len, key_len,
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             &key_id);
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_sign_hash(key_id, alg, hash, hash_len,
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            sig, sig_size, sig_len);
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_RSA_TO_MBEDTLS_ERR(status);
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = 0;
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** cleanup:
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(buf);
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_destroy_key(key_id);
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret == 0 && status != PSA_SUCCESS) {
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_sign_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                          const unsigned char *hash, size_t hash_len,
+ 232:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                          unsigned char *sig, size_t sig_size, size_t *sig_len,
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                          int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+ 234:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) f_rng);
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) p_rng);
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 238:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_md_alg;
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_md_alg = mbedtls_md_psa_alg_from_type(md_alg);
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (psa_md_alg == 0) {
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_alg;
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (mbedtls_rsa_get_padding_mode(mbedtls_pk_rsa(*pk)) == MBEDTLS_RSA_PKCS_V21) {
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_alg = PSA_ALG_RSA_PSS(psa_md_alg);
+GAS LISTING /tmp/ccz6yoUB.s 			page 6
+
+
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     } else {
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_alg = PSA_ALG_RSA_PKCS1V15_SIGN(psa_md_alg);
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_pk_psa_rsa_sign_ext(psa_alg, pk->pk_ctx, hash, hash_len,
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                        sig, sig_size, sig_len);
+ 252:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 253:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
+ 254:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_sign_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+ 255:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                          const unsigned char *hash, size_t hash_len,
+ 256:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                          unsigned char *sig, size_t sig_size, size_t *sig_len,
+ 257:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                          int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 260:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if SIZE_MAX > UINT_MAX
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (md_alg == MBEDTLS_MD_NONE && UINT_MAX < hash_len) {
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 265:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif
+ 266:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     *sig_len = mbedtls_rsa_get_len(rsa);
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_size < *sig_len) {
+ 269:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BUFFER_TOO_SMALL;
+ 270:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 271:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_rsa_pkcs1_sign(rsa, f_rng, p_rng,
+ 273:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   md_alg, (unsigned int) hash_len,
+ 274:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   hash, sig);
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 276:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 277:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 278:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+ 279:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_decrypt_wrap(mbedtls_pk_context *pk,
+ 280:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             const unsigned char *input, size_t ilen,
+ 281:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             unsigned char *output, size_t *olen, size_t osize,
+ 282:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 284:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 285:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 286:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+ 287:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+ 288:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_md_alg, decrypt_alg;
+ 289:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 290:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int key_len;
+ 291:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char buf[MBEDTLS_PK_RSA_PRV_DER_MAX_BYTES];
+ 292:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char *p = buf + sizeof(buf);
+ 293:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 294:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) f_rng);
+ 295:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) p_rng);
+ 296:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 297:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ilen != mbedtls_rsa_get_len(rsa)) {
+ 298:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 300:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     key_len = mbedtls_rsa_write_key(rsa, buf, &p);
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (key_len <= 0) {
+GAS LISTING /tmp/ccz6yoUB.s 			page 7
+
+
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 305:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 306:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_type(&attributes, PSA_KEY_TYPE_RSA_KEY_PAIR);
+ 307:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_DECRYPT);
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (mbedtls_rsa_get_padding_mode(rsa) == MBEDTLS_RSA_PKCS_V21) {
+ 309:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_md_alg = mbedtls_md_psa_alg_from_type((mbedtls_md_type_t) mbedtls_rsa_get_md_alg(rsa));
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         decrypt_alg = PSA_ALG_RSA_OAEP(psa_md_alg);
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     } else {
+ 312:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         decrypt_alg = PSA_ALG_RSA_PKCS1V15_CRYPT;
+ 313:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_algorithm(&attributes, decrypt_alg);
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_import_key(&attributes,
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             buf + sizeof(buf) - key_len, key_len,
+ 318:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             &key_id);
+ 319:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 320:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 321:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 323:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_asymmetric_decrypt(key_id, decrypt_alg,
+ 325:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     input, ilen,
+ 326:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     NULL, 0,
+ 327:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     output, osize, olen);
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_RSA_TO_MBEDTLS_ERR(status);
+ 330:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 331:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 332:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 333:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = 0;
+ 334:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 335:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** cleanup:
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_platform_zeroize(buf, sizeof(buf));
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_destroy_key(key_id);
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret == 0 && status != PSA_SUCCESS) {
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 341:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 342:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 343:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 344:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
+ 345:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_decrypt_wrap(mbedtls_pk_context *pk,
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             const unsigned char *input, size_t ilen,
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             unsigned char *output, size_t *olen, size_t osize,
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 351:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ilen != mbedtls_rsa_get_len(rsa)) {
+ 353:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 354:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 355:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_rsa_pkcs1_decrypt(rsa, f_rng, p_rng,
+ 357:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      olen, input, output, osize);
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 359:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+GAS LISTING /tmp/ccz6yoUB.s 			page 8
+
+
+ 360:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 361:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+ 362:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_encrypt_wrap(mbedtls_pk_context *pk,
+ 363:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             const unsigned char *input, size_t ilen,
+ 364:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             unsigned char *output, size_t *olen, size_t osize,
+ 365:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+ 366:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 367:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 368:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 369:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+ 370:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+ 371:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_md_alg, psa_encrypt_alg;
+ 372:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 373:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int key_len;
+ 374:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char buf[MBEDTLS_PK_RSA_PUB_DER_MAX_BYTES];
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char *p = buf + sizeof(buf);
+ 376:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 377:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) f_rng);
+ 378:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) p_rng);
+ 379:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 380:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (mbedtls_rsa_get_len(rsa) > osize) {
+ 381:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_OUTPUT_TOO_LARGE;
+ 382:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 383:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 384:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     key_len = mbedtls_rsa_write_pubkey(rsa, buf, &p);
+ 385:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (key_len <= 0) {
+ 386:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 387:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 388:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 389:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_ENCRYPT);
+ 390:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (mbedtls_rsa_get_padding_mode(rsa) == MBEDTLS_RSA_PKCS_V21) {
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_md_alg = mbedtls_md_psa_alg_from_type((mbedtls_md_type_t) mbedtls_rsa_get_md_alg(rsa));
+ 392:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_encrypt_alg = PSA_ALG_RSA_OAEP(psa_md_alg);
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     } else {
+ 394:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         psa_encrypt_alg = PSA_ALG_RSA_PKCS1V15_CRYPT;
+ 395:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 396:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_algorithm(&attributes, psa_encrypt_alg);
+ 397:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_type(&attributes, PSA_KEY_TYPE_RSA_PUBLIC_KEY);
+ 398:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 399:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_import_key(&attributes,
+ 400:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             buf + sizeof(buf) - key_len, key_len,
+ 401:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             &key_id);
+ 402:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 403:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 404:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 405:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_asymmetric_encrypt(key_id, psa_encrypt_alg,
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     input, ilen,
+ 409:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     NULL, 0,
+ 410:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     output, osize, olen);
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_RSA_TO_MBEDTLS_ERR(status);
+ 413:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 414:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 416:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = 0;
+GAS LISTING /tmp/ccz6yoUB.s 			page 9
+
+
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 418:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** cleanup:
+ 419:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_destroy_key(key_id);
+ 420:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret == 0 && status != PSA_SUCCESS) {
+ 421:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 422:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 423:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 426:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
+ 427:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_encrypt_wrap(mbedtls_pk_context *pk,
+ 428:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             const unsigned char *input, size_t ilen,
+ 429:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             unsigned char *output, size_t *olen, size_t osize,
+ 430:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+ 431:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 432:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 433:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     *olen = mbedtls_rsa_get_len(rsa);
+ 434:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 435:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (*olen > osize) {
+ 436:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_OUTPUT_TOO_LARGE;
+ 437:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 438:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_rsa_pkcs1_encrypt(rsa, f_rng, p_rng,
+ 440:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      ilen, input, output);
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 442:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 443:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 444:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int rsa_check_pair_wrap(mbedtls_pk_context *pub, mbedtls_pk_context *prv,
+ 445:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                int (*f_rng)(void *, unsigned char *, size_t),
+ 446:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                void *p_rng)
+ 447:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 448:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) f_rng;
+ 449:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) p_rng;
+ 450:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_rsa_check_pub_priv((const mbedtls_rsa_context *) pub->pk_ctx,
+ 451:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_rsa_context *) prv->pk_ctx);
+ 452:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 453:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 454:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void *rsa_alloc_wrap(void)
+ 455:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 456:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_rsa_context));
+ 457:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 458:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ctx != NULL) {
+ 459:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_rsa_init((mbedtls_rsa_context *) ctx);
+ 460:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 461:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 462:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ctx;
+ 463:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 464:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 465:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void rsa_free_wrap(void *ctx)
+ 466:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 467:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_free((mbedtls_rsa_context *) ctx);
+ 468:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(ctx);
+ 469:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 470:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 471:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void rsa_debug(mbedtls_pk_context *pk, mbedtls_pk_debug_item *items)
+ 472:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+  41              		.loc 1 472 1 is_stmt 1 view -0
+GAS LISTING /tmp/ccz6yoUB.s 			page 10
+
+
+  42              		.cfi_startproc
+  43              		.loc 1 472 1 is_stmt 0 view .LVU8
+  44 0000 F30F1EFA 		endbr64
+ 473:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_RSA_ALT)
+ 474:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     /* Not supported */
+ 475:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) pk;
+ 476:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) items;
+ 477:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else
+ 478:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+  45              		.loc 1 478 5 is_stmt 1 view .LVU9
+  46              		.loc 1 478 26 is_stmt 0 view .LVU10
+  47 0004 488B4708 		movq	8(%rdi), %rax
+  48              	.LVL2:
+ 479:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 480:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->type = MBEDTLS_PK_DEBUG_MPI;
+  49              		.loc 1 480 5 is_stmt 1 view .LVU11
+ 481:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->name = "rsa.N";
+  50              		.loc 1 481 17 is_stmt 0 view .LVU12
+  51 0008 488D0D00 		leaq	.LC0(%rip), %rcx
+  51      000000
+ 480:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->name = "rsa.N";
+  52              		.loc 1 480 17 view .LVU13
+  53 000f C7060100 		movl	$1, (%rsi)
+  53      0000
+  54              		.loc 1 481 5 is_stmt 1 view .LVU14
+  55              		.loc 1 481 17 is_stmt 0 view .LVU15
+  56 0015 48894E08 		movq	%rcx, 8(%rsi)
+ 482:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->value = &(rsa->N);
+  57              		.loc 1 482 5 is_stmt 1 view .LVU16
+  58              		.loc 1 482 20 is_stmt 0 view .LVU17
+  59 0019 488D5010 		leaq	16(%rax), %rdx
+ 483:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 484:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items++;
+ 485:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 486:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->type = MBEDTLS_PK_DEBUG_MPI;
+ 487:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->name = "rsa.E";
+ 488:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->value = &(rsa->E);
+  60              		.loc 1 488 20 view .LVU18
+  61 001d 4883C020 		addq	$32, %rax
+  62              	.LVL3:
+ 486:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->name = "rsa.E";
+  63              		.loc 1 486 17 view .LVU19
+  64 0021 C7461801 		movl	$1, 24(%rsi)
+  64      000000
+ 482:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->value = &(rsa->N);
+  65              		.loc 1 482 20 view .LVU20
+  66 0028 48895610 		movq	%rdx, 16(%rsi)
+ 484:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+  67              		.loc 1 484 5 is_stmt 1 view .LVU21
+  68              	.LVL4:
+ 486:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->name = "rsa.E";
+  69              		.loc 1 486 5 view .LVU22
+ 487:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->value = &(rsa->E);
+  70              		.loc 1 487 5 view .LVU23
+ 487:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->value = &(rsa->E);
+  71              		.loc 1 487 17 is_stmt 0 view .LVU24
+  72 002c 488D1500 		leaq	.LC1(%rip), %rdx
+GAS LISTING /tmp/ccz6yoUB.s 			page 11
+
+
+  72      000000
+  73 0033 48895620 		movq	%rdx, 32(%rsi)
+  74              		.loc 1 488 5 is_stmt 1 view .LVU25
+  75              		.loc 1 488 20 is_stmt 0 view .LVU26
+  76 0037 48894628 		movq	%rax, 40(%rsi)
+ 489:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif
+ 490:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+  77              		.loc 1 490 1 view .LVU27
+  78 003b C3       		ret
+  79              		.cfi_endproc
+  80              	.LFE114:
+  82              		.section	.text.eckey_can_do,"ax",@progbits
+  83              		.p2align 4
+  85              	eckey_can_do:
+  86              	.LVL5:
+  87              	.LFB115:
+ 491:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 492:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** const mbedtls_pk_info_t mbedtls_rsa_info = {
+ 493:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .type = MBEDTLS_PK_RSA,
+ 494:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .name = "RSA",
+ 495:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .get_bitlen = rsa_get_bitlen,
+ 496:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .can_do = rsa_can_do,
+ 497:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .verify_func = rsa_verify_wrap,
+ 498:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .sign_func = rsa_sign_wrap,
+ 499:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_ECP_RESTARTABLE)
+ 500:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .verify_rs_func = NULL,
+ 501:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .sign_rs_func = NULL,
+ 502:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .rs_alloc_func = NULL,
+ 503:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .rs_free_func = NULL,
+ 504:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
+ 505:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .decrypt_func = rsa_decrypt_wrap,
+ 506:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .encrypt_func = rsa_encrypt_wrap,
+ 507:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .check_pair_func = rsa_check_pair_wrap,
+ 508:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_alloc_func = rsa_alloc_wrap,
+ 509:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_free_func = rsa_free_wrap,
+ 510:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .debug_func = rsa_debug,
+ 511:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** };
+ 512:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_RSA_C */
+ 513:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 514:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_HAVE_ECC_KEYS)
+ 515:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /*
+ 516:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * Generic EC key
+ 517:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  */
+ 518:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int eckey_can_do(mbedtls_pk_type_t type)
+ 519:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+  88              		.loc 1 519 1 is_stmt 1 view -0
+  89              		.cfi_startproc
+  90              		.loc 1 519 1 is_stmt 0 view .LVU29
+  91 0000 F30F1EFA 		endbr64
+ 520:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return type == MBEDTLS_PK_ECKEY ||
+  92              		.loc 1 520 5 is_stmt 1 view .LVU30
+ 521:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****            type == MBEDTLS_PK_ECKEY_DH ||
+  93              		.loc 1 521 40 is_stmt 0 view .LVU31
+  94 0004 83EF02   		subl	$2, %edi
+  95              	.LVL6:
+  96              		.loc 1 521 40 view .LVU32
+  97 0007 31C0     		xorl	%eax, %eax
+GAS LISTING /tmp/ccz6yoUB.s 			page 12
+
+
+  98 0009 83FF02   		cmpl	$2, %edi
+  99 000c 0F96C0   		setbe	%al
+ 522:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****            type == MBEDTLS_PK_ECDSA;
+ 523:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 100              		.loc 1 523 1 view .LVU33
+ 101 000f C3       		ret
+ 102              		.cfi_endproc
+ 103              	.LFE115:
+ 105              		.section	.text.eckey_get_bitlen,"ax",@progbits
+ 106              		.p2align 4
+ 108              	eckey_get_bitlen:
+ 109              	.LVL7:
+ 110              	.LFB116:
+ 524:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 525:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static size_t eckey_get_bitlen(mbedtls_pk_context *pk)
+ 526:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 111              		.loc 1 526 1 is_stmt 1 view -0
+ 112              		.cfi_startproc
+ 113              		.loc 1 526 1 is_stmt 0 view .LVU35
+ 114 0000 F30F1EFA 		endbr64
+ 527:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 528:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return pk->ec_bits;
+ 529:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 530:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair *ecp = (mbedtls_ecp_keypair *) pk->pk_ctx;
+ 115              		.loc 1 530 5 is_stmt 1 view .LVU36
+ 116              	.LVL8:
+ 531:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ecp->grp.pbits;
+ 117              		.loc 1 531 5 view .LVU37
+ 118              		.loc 1 531 20 is_stmt 0 view .LVU38
+ 119 0004 488B4708 		movq	8(%rdi), %rax
+ 120              		.loc 1 531 20 discriminator 1 view .LVU39
+ 121 0008 488B4078 		movq	120(%rax), %rax
+ 532:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 533:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 122              		.loc 1 533 1 view .LVU40
+ 123 000c C3       		ret
+ 124              		.cfi_endproc
+ 125              	.LFE116:
+ 127              		.section	.rodata.eckey_debug.str1.1,"aMS",@progbits,1
+ 128              	.LC2:
+ 129 0000 65636B65 		.string	"eckey.Q"
+ 129      792E5100 
+ 130              		.section	.text.eckey_debug,"ax",@progbits
+ 131              		.p2align 4
+ 133              	eckey_debug:
+ 134              	.LVL9:
+ 135              	.LFB122:
+ 534:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 535:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_CAN_ECDSA_VERIFY)
+ 536:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+ 537:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /* Common helper for ECDSA verify using PSA functions. */
+ 538:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_verify_psa(unsigned char *key, size_t key_len,
+ 539:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             psa_ecc_family_t curve, size_t curve_bits,
+ 540:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             const unsigned char *hash, size_t hash_len,
+ 541:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             const unsigned char *sig, size_t sig_len)
+ 542:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 543:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+GAS LISTING /tmp/ccz6yoUB.s 			page 13
+
+
+ 544:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+ 545:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+ 546:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_sig_md = PSA_ALG_ECDSA_ANY;
+ 547:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t signature_len = PSA_ECDSA_SIGNATURE_SIZE(curve_bits);
+ 548:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t converted_sig_len;
+ 549:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char extracted_sig[PSA_VENDOR_ECDSA_SIGNATURE_MAX_SIZE];
+ 550:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char *p;
+ 551:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 552:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 553:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (curve == 0) {
+ 554:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 555:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 556:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 557:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_type(&attributes, PSA_KEY_TYPE_ECC_PUBLIC_KEY(curve));
+ 558:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_VERIFY_HASH);
+ 559:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_algorithm(&attributes, psa_sig_md);
+ 560:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 561:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_import_key(&attributes, key, key_len, &key_id);
+ 562:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 563:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 564:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 565:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 566:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 567:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (signature_len > sizeof(extracted_sig)) {
+ 568:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 569:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 570:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 571:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 572:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     p = (unsigned char *) sig;
+ 573:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = mbedtls_ecdsa_der_to_raw(curve_bits, p, sig_len, extracted_sig,
+ 574:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                    sizeof(extracted_sig), &converted_sig_len);
+ 575:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+ 576:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 577:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 578:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 579:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (converted_sig_len != signature_len) {
+ 580:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 581:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 582:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 583:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 584:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_verify_hash(key_id, psa_sig_md, hash, hash_len,
+ 585:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              extracted_sig, signature_len);
+ 586:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 587:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_ECDSA_TO_MBEDTLS_ERR(status);
+ 588:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 589:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 590:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 591:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = 0;
+ 592:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 593:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** cleanup:
+ 594:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_destroy_key(key_id);
+ 595:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret == 0 && status != PSA_SUCCESS) {
+ 596:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 597:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 598:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 599:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 600:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+GAS LISTING /tmp/ccz6yoUB.s 			page 14
+
+
+ 601:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 602:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_opaque_verify_wrap(mbedtls_pk_context *pk,
+ 603:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     mbedtls_md_type_t md_alg,
+ 604:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     const unsigned char *hash, size_t hash_len,
+ 605:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                     const unsigned char *sig, size_t sig_len)
+ 606:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 607:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) md_alg;
+ 608:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char key[MBEDTLS_PK_MAX_EC_PUBKEY_RAW_LEN];
+ 609:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t key_len;
+ 610:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t key_attr = PSA_KEY_ATTRIBUTES_INIT;
+ 611:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_ecc_family_t curve;
+ 612:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t curve_bits;
+ 613:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 614:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 615:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_get_key_attributes(pk->priv_id, &key_attr);
+ 616:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 617:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return PSA_PK_ECDSA_TO_MBEDTLS_ERR(status);
+ 618:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 619:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     curve = PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(&key_attr));
+ 620:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     curve_bits = psa_get_key_bits(&key_attr);
+ 621:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_reset_key_attributes(&key_attr);
+ 622:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 623:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_export_public_key(pk->priv_id, key, sizeof(key), &key_len);
+ 624:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 625:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return PSA_PK_ECDSA_TO_MBEDTLS_ERR(status);
+ 626:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 627:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 628:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ecdsa_verify_psa(key, key_len, curve, curve_bits,
+ 629:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             hash, hash_len, sig, sig_len);
+ 630:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 631:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 632:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 633:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_verify_wrap(mbedtls_pk_context *pk,
+ 634:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              mbedtls_md_type_t md_alg,
+ 635:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              const unsigned char *hash, size_t hash_len,
+ 636:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              const unsigned char *sig, size_t sig_len)
+ 637:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 638:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) md_alg;
+ 639:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_ecc_family_t curve = pk->ec_family;
+ 640:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t curve_bits = pk->ec_bits;
+ 641:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 642:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ecdsa_verify_psa(pk->pub_raw, pk->pub_raw_len, curve, curve_bits,
+ 643:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             hash, hash_len, sig, sig_len);
+ 644:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 645:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 646:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_verify_wrap(mbedtls_pk_context *pk,
+ 647:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              mbedtls_md_type_t md_alg,
+ 648:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              const unsigned char *hash, size_t hash_len,
+ 649:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              const unsigned char *sig, size_t sig_len)
+ 650:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 651:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) md_alg;
+ 652:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 653:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair *ctx = pk->pk_ctx;
+ 654:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char key[MBEDTLS_PSA_MAX_EC_PUBKEY_LENGTH];
+ 655:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t key_len;
+ 656:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t curve_bits;
+ 657:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_ecc_family_t curve = mbedtls_ecc_group_to_psa(ctx->grp.id, &curve_bits);
+GAS LISTING /tmp/ccz6yoUB.s 			page 15
+
+
+ 658:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 659:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = mbedtls_ecp_point_write_binary(&ctx->grp, &ctx->Q,
+ 660:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          MBEDTLS_ECP_PF_UNCOMPRESSED,
+ 661:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          &key_len, key, sizeof(key));
+ 662:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+ 663:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+ 664:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 665:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 666:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ecdsa_verify_psa(key, key_len, curve, curve_bits,
+ 667:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                             hash, hash_len, sig, sig_len);
+ 668:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 669:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 670:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
+ 671:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_verify_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+ 672:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              const unsigned char *hash, size_t hash_len,
+ 673:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                              const unsigned char *sig, size_t sig_len)
+ 674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 675:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 676:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) md_alg);
+ 677:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 678:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = mbedtls_ecdsa_read_signature((mbedtls_ecdsa_context *) pk->pk_ctx,
+ 679:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                        hash, hash_len, sig, sig_len);
+ 680:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 681:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret == MBEDTLS_ERR_ECP_SIG_LEN_MISMATCH) {
+ 682:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_SIG_LEN_MISMATCH;
+ 683:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 684:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 685:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 686:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 687:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 688:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_CAN_ECDSA_VERIFY */
+ 689:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 690:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_CAN_ECDSA_SIGN)
+ 691:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+ 692:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /* Common helper for ECDSA sign using PSA functions.
+ 693:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * Instead of extracting key's properties in order to check which kind of ECDSA
+ 694:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * signature it supports, we try both deterministic and non-deterministic.
+ 695:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  */
+ 696:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_sign_psa(mbedtls_svc_key_id_t key_id, mbedtls_md_type_t md_alg,
+ 697:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                           const unsigned char *hash, size_t hash_len,
+ 698:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                           unsigned char *sig, size_t sig_size, size_t *sig_len)
+ 699:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 700:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 701:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 702:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t key_attr = PSA_KEY_ATTRIBUTES_INIT;
+ 703:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t key_bits = 0;
+ 704:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 705:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_get_key_attributes(key_id, &key_attr);
+ 706:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 707:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return PSA_PK_ECDSA_TO_MBEDTLS_ERR(status);
+ 708:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 709:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     key_bits = psa_get_key_bits(&key_attr);
+ 710:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_reset_key_attributes(&key_attr);
+ 711:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 712:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_sign_hash(key_id,
+ 713:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            PSA_ALG_DETERMINISTIC_ECDSA(mbedtls_md_psa_alg_from_type(md_alg)),
+ 714:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            hash, hash_len, sig, sig_size, sig_len);
+GAS LISTING /tmp/ccz6yoUB.s 			page 16
+
+
+ 715:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status == PSA_SUCCESS) {
+ 716:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto done;
+ 717:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     } else if (status != PSA_ERROR_NOT_PERMITTED) {
+ 718:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return PSA_PK_ECDSA_TO_MBEDTLS_ERR(status);
+ 719:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 720:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 721:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_sign_hash(key_id,
+ 722:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            PSA_ALG_ECDSA(mbedtls_md_psa_alg_from_type(md_alg)),
+ 723:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            hash, hash_len, sig, sig_size, sig_len);
+ 724:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 725:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return PSA_PK_ECDSA_TO_MBEDTLS_ERR(status);
+ 726:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 727:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 728:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** done:
+ 729:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = mbedtls_ecdsa_raw_to_der(key_bits, sig, *sig_len, sig, sig_size, sig_len);
+ 730:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 731:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 732:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 733:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 734:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_opaque_sign_wrap(mbedtls_pk_context *pk,
+ 735:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   mbedtls_md_type_t md_alg,
+ 736:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   const unsigned char *hash, size_t hash_len,
+ 737:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   unsigned char *sig, size_t sig_size,
+ 738:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   size_t *sig_len,
+ 739:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   int (*f_rng)(void *, unsigned char *, size_t),
+ 740:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   void *p_rng)
+ 741:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 742:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) f_rng);
+ 743:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) p_rng);
+ 744:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 745:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ecdsa_sign_psa(pk->priv_id, md_alg, hash, hash_len, sig, sig_size,
+ 746:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                           sig_len);
+ 747:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 748:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 749:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 750:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /* When PK_USE_PSA_EC_DATA is defined opaque and non-opaque keys end up
+ 751:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * using the same function. */
+ 752:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #define ecdsa_sign_wrap     ecdsa_opaque_sign_wrap
+ 753:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 754:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_sign_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+ 755:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            const unsigned char *hash, size_t hash_len,
+ 756:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            unsigned char *sig, size_t sig_size, size_t *sig_len,
+ 757:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+ 758:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 759:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 760:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+ 761:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 762:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair *ctx = pk->pk_ctx;
+ 763:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+ 764:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     unsigned char buf[MBEDTLS_PSA_MAX_EC_KEY_PAIR_LENGTH];
+ 765:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t curve_bits;
+ 766:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_ecc_family_t curve =
+ 767:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_ecc_group_to_psa(ctx->grp.id, &curve_bits);
+ 768:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t key_len = PSA_BITS_TO_BYTES(curve_bits);
+ 769:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_hash = mbedtls_md_psa_alg_from_type(md_alg);
+ 770:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_algorithm_t psa_sig_md = MBEDTLS_PK_PSA_ALG_ECDSA_MAYBE_DET(psa_hash);
+ 771:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) f_rng);
+GAS LISTING /tmp/ccz6yoUB.s 			page 17
+
+
+ 772:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) p_rng);
+ 773:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 774:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (curve == 0) {
+ 775:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 776:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 777:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 778:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (key_len > sizeof(buf)) {
+ 779:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 780:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 781:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = mbedtls_mpi_write_binary(&ctx->d, buf, key_len);
+ 782:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+ 783:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 784:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 785:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 786:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_type(&attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(curve));
+ 787:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_SIGN_HASH);
+ 788:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_algorithm(&attributes, psa_sig_md);
+ 789:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 790:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_import_key(&attributes, buf, key_len, &key_id);
+ 791:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+ 792:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 793:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         goto cleanup;
+ 794:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 795:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 796:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = ecdsa_sign_psa(key_id, md_alg, hash, hash_len, sig, sig_size, sig_len);
+ 797:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 798:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** cleanup:
+ 799:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_platform_zeroize(buf, sizeof(buf));
+ 800:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_destroy_key(key_id);
+ 801:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret == 0 && status != PSA_SUCCESS) {
+ 802:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 803:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 804:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 805:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 806:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 807:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 808:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
+ 809:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_sign_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+ 810:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            const unsigned char *hash, size_t hash_len,
+ 811:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            unsigned char *sig, size_t sig_size, size_t *sig_len,
+ 812:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                            int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
+ 813:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 814:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_ecdsa_write_signature((mbedtls_ecdsa_context *) pk->pk_ctx,
+ 815:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          md_alg, hash, hash_len,
+ 816:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          sig, sig_size, sig_len,
+ 817:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          f_rng, p_rng);
+ 818:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 819:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 820:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_CAN_ECDSA_SIGN */
+ 821:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 822:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_ECP_RESTARTABLE)
+ 823:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /* Forward declarations */
+ 824:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_verify_rs_wrap(mbedtls_pk_context *ctx, mbedtls_md_type_t md_alg,
+ 825:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                 const unsigned char *hash, size_t hash_len,
+ 826:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                 const unsigned char *sig, size_t sig_len,
+ 827:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                 void *rs_ctx);
+ 828:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+GAS LISTING /tmp/ccz6yoUB.s 			page 18
+
+
+ 829:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_sign_rs_wrap(mbedtls_pk_context *ctx, mbedtls_md_type_t md_alg,
+ 830:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                               const unsigned char *hash, size_t hash_len,
+ 831:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                               unsigned char *sig, size_t sig_size, size_t *sig_len,
+ 832:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                               int (*f_rng)(void *, unsigned char *, size_t), void *p_rng,
+ 833:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                               void *rs_ctx);
+ 834:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 835:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /*
+ 836:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * Restart context for ECDSA operations with ECKEY context
+ 837:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  *
+ 838:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * We need to store an actual ECDSA context, as we need to pass the same to
+ 839:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * the underlying ecdsa function, so we can't create it on the fly every time.
+ 840:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  */
+ 841:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** typedef struct {
+ 842:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecdsa_restart_ctx ecdsa_rs;
+ 843:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecdsa_context ecdsa_ctx;
+ 844:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** } eckey_restart_ctx;
+ 845:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 846:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void *eckey_rs_alloc(void)
+ 847:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 848:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     eckey_restart_ctx *rs_ctx;
+ 849:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 850:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(eckey_restart_ctx));
+ 851:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 852:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ctx != NULL) {
+ 853:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         rs_ctx = ctx;
+ 854:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_ecdsa_restart_init(&rs_ctx->ecdsa_rs);
+ 855:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_ecdsa_init(&rs_ctx->ecdsa_ctx);
+ 856:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 857:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 858:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ctx;
+ 859:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 860:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 861:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void eckey_rs_free(void *ctx)
+ 862:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 863:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     eckey_restart_ctx *rs_ctx;
+ 864:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 865:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ctx == NULL) {
+ 866:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return;
+ 867:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 868:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 869:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     rs_ctx = ctx;
+ 870:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecdsa_restart_free(&rs_ctx->ecdsa_rs);
+ 871:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecdsa_free(&rs_ctx->ecdsa_ctx);
+ 872:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 873:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(ctx);
+ 874:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 875:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 876:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int eckey_verify_rs_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+ 877:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                 const unsigned char *hash, size_t hash_len,
+ 878:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                 const unsigned char *sig, size_t sig_len,
+ 879:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                 void *rs_ctx)
+ 880:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 881:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 882:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     eckey_restart_ctx *rs = rs_ctx;
+ 883:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 884:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     /* Should never happen */
+ 885:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (rs == NULL) {
+GAS LISTING /tmp/ccz6yoUB.s 			page 19
+
+
+ 886:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 887:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 888:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 889:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     /* set up our own sub-context if needed (that is, on first run) */
+ 890:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (rs->ecdsa_ctx.grp.pbits == 0) {
+ 891:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         MBEDTLS_MPI_CHK(mbedtls_ecdsa_from_keypair(&rs->ecdsa_ctx, pk->pk_ctx));
+ 892:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 893:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 894:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     MBEDTLS_MPI_CHK(ecdsa_verify_rs_wrap(pk,
+ 895:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          md_alg, hash, hash_len,
+ 896:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          sig, sig_len, &rs->ecdsa_rs));
+ 897:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 898:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** cleanup:
+ 899:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 900:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 901:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 902:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int eckey_sign_rs_wrap(mbedtls_pk_context *pk, mbedtls_md_type_t md_alg,
+ 903:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                               const unsigned char *hash, size_t hash_len,
+ 904:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                               unsigned char *sig, size_t sig_size, size_t *sig_len,
+ 905:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                               int (*f_rng)(void *, unsigned char *, size_t), void *p_rng,
+ 906:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                               void *rs_ctx)
+ 907:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 908:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 909:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     eckey_restart_ctx *rs = rs_ctx;
+ 910:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 911:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     /* Should never happen */
+ 912:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (rs == NULL) {
+ 913:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 914:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 915:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 916:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     /* set up our own sub-context if needed (that is, on first run) */
+ 917:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (rs->ecdsa_ctx.grp.pbits == 0) {
+ 918:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         MBEDTLS_MPI_CHK(mbedtls_ecdsa_from_keypair(&rs->ecdsa_ctx, pk->pk_ctx));
+ 919:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 920:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 921:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     MBEDTLS_MPI_CHK(ecdsa_sign_rs_wrap(pk, md_alg,
+ 922:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                        hash, hash_len, sig, sig_size, sig_len,
+ 923:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                        f_rng, p_rng, &rs->ecdsa_rs));
+ 924:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 925:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** cleanup:
+ 926:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ret;
+ 927:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 928:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
+ 929:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 930:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+ 931:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+ 932:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int eckey_check_pair_psa(mbedtls_pk_context *pub, mbedtls_pk_context *prv)
+ 933:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 934:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 935:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 936:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     uint8_t prv_key_buf[MBEDTLS_PSA_MAX_EC_PUBKEY_LENGTH];
+ 937:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t prv_key_len;
+ 938:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = prv->priv_id;
+ 939:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 940:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_export_public_key(key_id, prv_key_buf, sizeof(prv_key_buf),
+ 941:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                    &prv_key_len);
+ 942:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = PSA_PK_TO_MBEDTLS_ERR(status);
+GAS LISTING /tmp/ccz6yoUB.s 			page 20
+
+
+ 943:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+ 944:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+ 945:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 946:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 947:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (memcmp(prv_key_buf, pub->pub_raw, pub->pub_raw_len) != 0) {
+ 948:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 949:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 950:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 951:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return 0;
+ 952:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 953:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 954:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int eckey_check_pair_psa(mbedtls_pk_context *pub, mbedtls_pk_context *prv)
+ 955:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 956:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+ 957:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 958:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     uint8_t prv_key_buf[MBEDTLS_PSA_MAX_EC_PUBKEY_LENGTH];
+ 959:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t prv_key_len;
+ 960:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t destruction_status;
+ 961:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
+ 962:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_key_attributes_t key_attr = PSA_KEY_ATTRIBUTES_INIT;
+ 963:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     uint8_t pub_key_buf[MBEDTLS_PSA_MAX_EC_PUBKEY_LENGTH];
+ 964:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t pub_key_len;
+ 965:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t curve_bits;
+ 966:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     const psa_ecc_family_t curve =
+ 967:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_ecc_group_to_psa(mbedtls_pk_ec_ro(*prv)->grp.id, &curve_bits);
+ 968:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     const size_t curve_bytes = PSA_BITS_TO_BYTES(curve_bits);
+ 969:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 970:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (curve == 0) {
+ 971:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 972:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 973:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 974:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_type(&key_attr, PSA_KEY_TYPE_ECC_KEY_PAIR(curve));
+ 975:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_set_key_usage_flags(&key_attr, PSA_KEY_USAGE_EXPORT);
+ 976:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 977:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = mbedtls_mpi_write_binary(&mbedtls_pk_ec_ro(*prv)->d,
+ 978:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                    prv_key_buf, curve_bytes);
+ 979:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+ 980:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_platform_zeroize(prv_key_buf, sizeof(prv_key_buf));
+ 981:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+ 982:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 983:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 984:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_import_key(&key_attr, prv_key_buf, curve_bytes, &key_id);
+ 985:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_platform_zeroize(prv_key_buf, sizeof(prv_key_buf));
+ 986:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 987:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+ 988:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+ 989:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 990:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 991:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     // From now on prv_key_buf is used to store the public key of prv.
+ 992:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_export_public_key(key_id, prv_key_buf, sizeof(prv_key_buf),
+ 993:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                    &prv_key_len);
+ 994:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = PSA_PK_TO_MBEDTLS_ERR(status);
+ 995:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     destruction_status = psa_destroy_key(key_id);
+ 996:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+ 997:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+ 998:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     } else if (destruction_status != PSA_SUCCESS) {
+ 999:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return PSA_PK_TO_MBEDTLS_ERR(destruction_status);
+GAS LISTING /tmp/ccz6yoUB.s 			page 21
+
+
+1000:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+1001:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1002:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = mbedtls_ecp_point_write_binary(&mbedtls_pk_ec_rw(*pub)->grp,
+1003:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          &mbedtls_pk_ec_rw(*pub)->Q,
+1004:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          MBEDTLS_ECP_PF_UNCOMPRESSED,
+1005:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          &pub_key_len, pub_key_buf,
+1006:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          sizeof(pub_key_buf));
+1007:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+1008:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+1009:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+1010:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1011:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (memcmp(prv_key_buf, pub_key_buf, curve_bytes) != 0) {
+1012:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+1013:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+1014:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1015:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return 0;
+1016:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+1017:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1018:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1019:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int eckey_check_pair_wrap(mbedtls_pk_context *pub, mbedtls_pk_context *prv,
+1020:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                  int (*f_rng)(void *, unsigned char *, size_t),
+1021:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                  void *p_rng)
+1022:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+1023:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) f_rng;
+1024:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) p_rng;
+1025:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return eckey_check_pair_psa(pub, prv);
+1026:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+1027:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_USE_PSA_CRYPTO */
+1028:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int eckey_check_pair_wrap(mbedtls_pk_context *pub, mbedtls_pk_context *prv,
+1029:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                  int (*f_rng)(void *, unsigned char *, size_t),
+1030:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                  void *p_rng)
+1031:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+1032:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_ecp_check_pub_priv((const mbedtls_ecp_keypair *) pub->pk_ctx,
+1033:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_ecp_keypair *) prv->pk_ctx,
+1034:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       f_rng, p_rng);
+1035:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+1036:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+1037:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1038:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_USE_PSA_CRYPTO)
+1039:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+1040:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /* When PK_USE_PSA_EC_DATA is defined opaque and non-opaque keys end up
+1041:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * using the same function. */
+1042:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #define ecdsa_opaque_check_pair_wrap    eckey_check_pair_wrap
+1043:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1044:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_opaque_check_pair_wrap(mbedtls_pk_context *pub,
+1045:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                         mbedtls_pk_context *prv,
+1046:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                         int (*f_rng)(void *, unsigned char *, size_t),
+1047:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                         void *p_rng)
+1048:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+1049:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     psa_status_t status;
+1050:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     uint8_t exp_pub_key[MBEDTLS_PK_MAX_EC_PUBKEY_RAW_LEN];
+1051:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t exp_pub_key_len = 0;
+1052:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     uint8_t pub_key[MBEDTLS_PK_MAX_EC_PUBKEY_RAW_LEN];
+1053:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t pub_key_len = 0;
+1054:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret;
+1055:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) f_rng;
+1056:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) p_rng;
+GAS LISTING /tmp/ccz6yoUB.s 			page 22
+
+
+1057:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1058:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     status = psa_export_public_key(prv->priv_id, exp_pub_key, sizeof(exp_pub_key),
+1059:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                    &exp_pub_key_len);
+1060:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (status != PSA_SUCCESS) {
+1061:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         ret = psa_pk_status_to_mbedtls(status);
+1062:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+1063:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+1064:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ret = mbedtls_ecp_point_write_binary(&(mbedtls_pk_ec_ro(*pub)->grp),
+1065:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          &(mbedtls_pk_ec_ro(*pub)->Q),
+1066:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          MBEDTLS_ECP_PF_UNCOMPRESSED,
+1067:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          &pub_key_len, pub_key, sizeof(pub_key));
+1068:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ret != 0) {
+1069:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return ret;
+1070:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+1071:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if ((exp_pub_key_len != pub_key_len) ||
+1072:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         memcmp(exp_pub_key, pub_key, exp_pub_key_len)) {
+1073:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+1074:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+1075:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return 0;
+1076:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+1077:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1078:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+1079:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1080:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if !defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+1081:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void *eckey_alloc_wrap(void)
+1082:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+1083:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_ecp_keypair));
+1084:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1085:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (ctx != NULL) {
+1086:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_ecp_keypair_init(ctx);
+1087:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+1088:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1089:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return ctx;
+1090:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+1091:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1092:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void eckey_free_wrap(void *ctx)
+1093:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+1094:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair_free((mbedtls_ecp_keypair *) ctx);
+1095:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(ctx);
+1096:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+1097:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1098:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1099:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static void eckey_debug(mbedtls_pk_context *pk, mbedtls_pk_debug_item *items)
+1100:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 136              		.loc 1 1100 1 is_stmt 1 view -0
+ 137              		.cfi_startproc
+ 138              		.loc 1 1100 1 is_stmt 0 view .LVU42
+ 139 0000 F30F1EFA 		endbr64
+1101:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+1102:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->type = MBEDTLS_PK_DEBUG_PSA_EC;
+1103:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->name = "eckey.Q";
+1104:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->value = pk;
+1105:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1106:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair *ecp = (mbedtls_ecp_keypair *) pk->pk_ctx;
+ 140              		.loc 1 1106 5 is_stmt 1 view .LVU43
+ 141              		.loc 1 1106 26 is_stmt 0 view .LVU44
+ 142 0004 488B4708 		movq	8(%rdi), %rax
+GAS LISTING /tmp/ccz6yoUB.s 			page 23
+
+
+ 143              	.LVL10:
+1107:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->type = MBEDTLS_PK_DEBUG_ECP;
+ 144              		.loc 1 1107 5 is_stmt 1 view .LVU45
+1108:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->name = "eckey.Q";
+ 145              		.loc 1 1108 17 is_stmt 0 view .LVU46
+ 146 0008 488D1500 		leaq	.LC2(%rip), %rdx
+ 146      000000
+1107:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->type = MBEDTLS_PK_DEBUG_ECP;
+ 147              		.loc 1 1107 17 view .LVU47
+ 148 000f C7060200 		movl	$2, (%rsi)
+ 148      0000
+ 149              		.loc 1 1108 5 is_stmt 1 view .LVU48
+ 150              		.loc 1 1108 17 is_stmt 0 view .LVU49
+ 151 0015 48895608 		movq	%rdx, 8(%rsi)
+1109:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     items->value = &(ecp->Q);
+ 152              		.loc 1 1109 5 is_stmt 1 view .LVU50
+ 153              		.loc 1 1109 20 is_stmt 0 view .LVU51
+ 154 0019 4805D000 		addq	$208, %rax
+ 154      0000
+ 155              	.LVL11:
+ 156              		.loc 1 1109 20 view .LVU52
+ 157 001f 48894610 		movq	%rax, 16(%rsi)
+1110:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1111:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 158              		.loc 1 1111 1 view .LVU53
+ 159 0023 C3       		ret
+ 160              		.cfi_endproc
+ 161              	.LFE122:
+ 163              		.section	.text.eckeydh_can_do,"ax",@progbits
+ 164              		.p2align 4
+ 166              	eckeydh_can_do:
+ 167              	.LVL12:
+ 168              	.LFB123:
+1112:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1113:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** const mbedtls_pk_info_t mbedtls_eckey_info = {
+1114:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .type = MBEDTLS_PK_ECKEY,
+1115:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .name = "EC",
+1116:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .get_bitlen = eckey_get_bitlen,
+1117:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .can_do = eckey_can_do,
+1118:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_CAN_ECDSA_VERIFY)
+1119:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .verify_func = ecdsa_verify_wrap,   /* Compatible key structures */
+1120:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_CAN_ECDSA_VERIFY */
+1121:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .verify_func = NULL,
+1122:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_CAN_ECDSA_VERIFY */
+1123:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_CAN_ECDSA_SIGN)
+1124:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .sign_func = ecdsa_sign_wrap,   /* Compatible key structures */
+1125:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_CAN_ECDSA_VERIFY */
+1126:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .sign_func = NULL,
+1127:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_CAN_ECDSA_VERIFY */
+1128:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_ECP_RESTARTABLE)
+1129:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .verify_rs_func = eckey_verify_rs_wrap,
+1130:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .sign_rs_func = eckey_sign_rs_wrap,
+1131:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .rs_alloc_func = eckey_rs_alloc,
+1132:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .rs_free_func = eckey_rs_free,
+1133:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
+1134:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .decrypt_func = NULL,
+1135:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .encrypt_func = NULL,
+GAS LISTING /tmp/ccz6yoUB.s 			page 24
+
+
+1136:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .check_pair_func = eckey_check_pair_wrap,
+1137:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+1138:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_alloc_func = NULL,
+1139:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_free_func = NULL,
+1140:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1141:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_alloc_func = eckey_alloc_wrap,
+1142:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_free_func = eckey_free_wrap,
+1143:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1144:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .debug_func = eckey_debug,
+1145:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** };
+1146:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1147:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** /*
+1148:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  * EC key restricted to ECDH
+1149:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****  */
+1150:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int eckeydh_can_do(mbedtls_pk_type_t type)
+1151:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 169              		.loc 1 1151 1 is_stmt 1 view -0
+ 170              		.cfi_startproc
+ 171              		.loc 1 1151 1 is_stmt 0 view .LVU55
+ 172 0000 F30F1EFA 		endbr64
+1152:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return type == MBEDTLS_PK_ECKEY ||
+ 173              		.loc 1 1152 5 is_stmt 1 view .LVU56
+ 174              		.loc 1 1152 37 is_stmt 0 view .LVU57
+ 175 0004 83EF02   		subl	$2, %edi
+ 176              	.LVL13:
+ 177              		.loc 1 1152 37 view .LVU58
+ 178 0007 31C0     		xorl	%eax, %eax
+ 179 0009 83FF01   		cmpl	$1, %edi
+ 180 000c 0F96C0   		setbe	%al
+1153:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****            type == MBEDTLS_PK_ECKEY_DH;
+1154:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 181              		.loc 1 1154 1 view .LVU59
+ 182 000f C3       		ret
+ 183              		.cfi_endproc
+ 184              	.LFE123:
+ 186              		.section	.text.ecdsa_can_do,"ax",@progbits
+ 187              		.p2align 4
+ 189              	ecdsa_can_do:
+ 190              	.LVL14:
+ 191              	.LFB124:
+1155:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1156:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** const mbedtls_pk_info_t mbedtls_eckeydh_info = {
+1157:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .type = MBEDTLS_PK_ECKEY_DH,
+1158:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .name = "EC_DH",
+1159:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .get_bitlen = eckey_get_bitlen,         /* Same underlying key structure */
+1160:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .can_do = eckeydh_can_do,
+1161:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .verify_func = NULL,
+1162:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .sign_func = NULL,
+1163:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_ECP_RESTARTABLE)
+1164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .verify_rs_func = NULL,
+1165:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .sign_rs_func = NULL,
+1166:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_ECDSA_C && MBEDTLS_ECP_RESTARTABLE */
+1167:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .decrypt_func = NULL,
+1168:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .encrypt_func = NULL,
+1169:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .check_pair_func = eckey_check_pair_wrap,
+1170:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_USE_PSA_EC_DATA)
+1171:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_alloc_func = NULL,
+GAS LISTING /tmp/ccz6yoUB.s 			page 25
+
+
+1172:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_free_func = NULL,
+1173:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #else /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1174:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_alloc_func = eckey_alloc_wrap,   /* Same underlying key structure */
+1175:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .ctx_free_func = eckey_free_wrap,    /* Same underlying key structure */
+1176:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+1177:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     .debug_func = eckey_debug,            /* Same underlying key structure */
+1178:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** };
+1179:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+1180:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #if defined(MBEDTLS_PK_CAN_ECDSA_SOME)
+1181:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** static int ecdsa_can_do(mbedtls_pk_type_t type)
+1182:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** {
+ 192              		.loc 1 1182 1 is_stmt 1 view -0
+ 193              		.cfi_startproc
+ 194              		.loc 1 1182 1 is_stmt 0 view .LVU61
+ 195 0000 F30F1EFA 		endbr64
+1183:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return type == MBEDTLS_PK_ECDSA;
+ 196              		.loc 1 1183 5 is_stmt 1 view .LVU62
+ 197              		.loc 1 1183 17 is_stmt 0 view .LVU63
+ 198 0004 31C0     		xorl	%eax, %eax
+ 199 0006 83FF04   		cmpl	$4, %edi
+ 200 0009 0F94C0   		sete	%al
+1184:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 201              		.loc 1 1184 1 view .LVU64
+ 202 000c C3       		ret
+ 203              		.cfi_endproc
+ 204              	.LFE124:
+ 206              		.section	.text.rsa_free_wrap,"ax",@progbits
+ 207              		.p2align 4
+ 209              	rsa_free_wrap:
+ 210              	.LVL15:
+ 211              	.LFB113:
+ 466:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_free((mbedtls_rsa_context *) ctx);
+ 212              		.loc 1 466 1 is_stmt 1 view -0
+ 213              		.cfi_startproc
+ 466:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_free((mbedtls_rsa_context *) ctx);
+ 214              		.loc 1 466 1 is_stmt 0 view .LVU66
+ 215 0000 F30F1EFA 		endbr64
+ 467:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(ctx);
+ 216              		.loc 1 467 5 is_stmt 1 view .LVU67
+ 466:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_free((mbedtls_rsa_context *) ctx);
+ 217              		.loc 1 466 1 is_stmt 0 view .LVU68
+ 218 0004 53       		pushq	%rbx
+ 219              	.LCFI0:
+ 220              		.cfi_def_cfa_offset 16
+ 221              		.cfi_offset 3, -16
+ 466:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_free((mbedtls_rsa_context *) ctx);
+ 222              		.loc 1 466 1 view .LVU69
+ 223 0005 4889FB   		movq	%rdi, %rbx
+ 467:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(ctx);
+ 224              		.loc 1 467 5 view .LVU70
+ 225 0008 E8000000 		call	mbedtls_rsa_free@PLT
+ 225      00
+ 226              	.LVL16:
+ 468:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 227              		.loc 1 468 5 is_stmt 1 view .LVU71
+ 228 000d 4889DF   		movq	%rbx, %rdi
+ 469:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+GAS LISTING /tmp/ccz6yoUB.s 			page 26
+
+
+ 229              		.loc 1 469 1 is_stmt 0 view .LVU72
+ 230 0010 5B       		popq	%rbx
+ 231              	.LCFI1:
+ 232              		.cfi_def_cfa_offset 8
+ 233              	.LVL17:
+ 468:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 234              		.loc 1 468 5 view .LVU73
+ 235 0011 E9000000 		jmp	mbedtls_free@PLT
+ 235      00
+ 236              	.LVL18:
+ 468:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 237              		.loc 1 468 5 view .LVU74
+ 238              		.cfi_endproc
+ 239              	.LFE113:
+ 241              		.section	.text.rsa_alloc_wrap,"ax",@progbits
+ 242              		.p2align 4
+ 244              	rsa_alloc_wrap:
+ 245              	.LFB112:
+ 455:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_rsa_context));
+ 246              		.loc 1 455 1 is_stmt 1 view -0
+ 247              		.cfi_startproc
+ 248 0000 F30F1EFA 		endbr64
+ 456:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 249              		.loc 1 456 5 view .LVU76
+ 455:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_rsa_context));
+ 250              		.loc 1 455 1 is_stmt 0 view .LVU77
+ 251 0004 53       		pushq	%rbx
+ 252              	.LCFI2:
+ 253              		.cfi_def_cfa_offset 16
+ 254              		.cfi_offset 3, -16
+ 456:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 255              		.loc 1 456 17 view .LVU78
+ 256 0005 BEE80000 		movl	$232, %esi
+ 256      00
+ 257 000a BF010000 		movl	$1, %edi
+ 257      00
+ 258 000f E8000000 		call	mbedtls_calloc@PLT
+ 258      00
+ 259              	.LVL19:
+ 260 0014 4889C3   		movq	%rax, %rbx
+ 261              	.LVL20:
+ 458:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_rsa_init((mbedtls_rsa_context *) ctx);
+ 262              		.loc 1 458 5 is_stmt 1 view .LVU79
+ 458:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_rsa_init((mbedtls_rsa_context *) ctx);
+ 263              		.loc 1 458 8 is_stmt 0 view .LVU80
+ 264 0017 4885C0   		testq	%rax, %rax
+ 265 001a 7408     		je	.L11
+ 459:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 266              		.loc 1 459 9 is_stmt 1 view .LVU81
+ 267 001c 4889C7   		movq	%rax, %rdi
+ 268 001f E8000000 		call	mbedtls_rsa_init@PLT
+ 268      00
+ 269              	.LVL21:
+ 462:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 270              		.loc 1 462 5 view .LVU82
+ 271              	.L11:
+ 463:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+GAS LISTING /tmp/ccz6yoUB.s 			page 27
+
+
+ 272              		.loc 1 463 1 is_stmt 0 view .LVU83
+ 273 0024 4889D8   		movq	%rbx, %rax
+ 274 0027 5B       		popq	%rbx
+ 275              	.LCFI3:
+ 276              		.cfi_def_cfa_offset 8
+ 277              	.LVL22:
+ 463:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 278              		.loc 1 463 1 view .LVU84
+ 279 0028 C3       		ret
+ 280              		.cfi_endproc
+ 281              	.LFE112:
+ 283              		.section	.text.rsa_check_pair_wrap,"ax",@progbits
+ 284              		.p2align 4
+ 286              	rsa_check_pair_wrap:
+ 287              	.LVL23:
+ 288              	.LFB111:
+ 447:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) f_rng;
+ 289              		.loc 1 447 1 is_stmt 1 view -0
+ 290              		.cfi_startproc
+ 447:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) f_rng;
+ 291              		.loc 1 447 1 is_stmt 0 view .LVU86
+ 292 0000 F30F1EFA 		endbr64
+ 448:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     (void) p_rng;
+ 293              		.loc 1 448 5 is_stmt 1 view .LVU87
+ 449:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_rsa_check_pub_priv((const mbedtls_rsa_context *) pub->pk_ctx,
+ 294              		.loc 1 449 5 view .LVU88
+ 450:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_rsa_context *) prv->pk_ctx);
+ 295              		.loc 1 450 5 view .LVU89
+ 450:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_rsa_context *) prv->pk_ctx);
+ 296              		.loc 1 450 12 is_stmt 0 view .LVU90
+ 297 0004 488B7608 		movq	8(%rsi), %rsi
+ 298              	.LVL24:
+ 450:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_rsa_context *) prv->pk_ctx);
+ 299              		.loc 1 450 12 view .LVU91
+ 300 0008 488B7F08 		movq	8(%rdi), %rdi
+ 301              	.LVL25:
+ 450:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_rsa_context *) prv->pk_ctx);
+ 302              		.loc 1 450 12 view .LVU92
+ 303 000c E9000000 		jmp	mbedtls_rsa_check_pub_priv@PLT
+ 303      00
+ 304              	.LVL26:
+ 450:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_rsa_context *) prv->pk_ctx);
+ 305              		.loc 1 450 12 view .LVU93
+ 306              		.cfi_endproc
+ 307              	.LFE111:
+ 309              		.section	.text.rsa_encrypt_wrap,"ax",@progbits
+ 310              		.p2align 4
+ 312              	rsa_encrypt_wrap:
+ 313              	.LVL27:
+ 314              	.LFB110:
+ 431:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 315              		.loc 1 431 1 is_stmt 1 view -0
+ 316              		.cfi_startproc
+ 431:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 317              		.loc 1 431 1 is_stmt 0 view .LVU95
+ 318 0000 F30F1EFA 		endbr64
+ 432:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     *olen = mbedtls_rsa_get_len(rsa);
+GAS LISTING /tmp/ccz6yoUB.s 			page 28
+
+
+ 319              		.loc 1 432 5 is_stmt 1 view .LVU96
+ 431:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 320              		.loc 1 431 1 is_stmt 0 view .LVU97
+ 321 0004 4157     		pushq	%r15
+ 322              	.LCFI4:
+ 323              		.cfi_def_cfa_offset 16
+ 324              		.cfi_offset 15, -16
+ 325 0006 4156     		pushq	%r14
+ 326              	.LCFI5:
+ 327              		.cfi_def_cfa_offset 24
+ 328              		.cfi_offset 14, -24
+ 329 0008 4155     		pushq	%r13
+ 330              	.LCFI6:
+ 331              		.cfi_def_cfa_offset 32
+ 332              		.cfi_offset 13, -32
+ 333 000a 4989CD   		movq	%rcx, %r13
+ 334 000d 4154     		pushq	%r12
+ 335              	.LCFI7:
+ 336              		.cfi_def_cfa_offset 40
+ 337              		.cfi_offset 12, -40
+ 338 000f 4989F4   		movq	%rsi, %r12
+ 339 0012 55       		pushq	%rbp
+ 340              	.LCFI8:
+ 341              		.cfi_def_cfa_offset 48
+ 342              		.cfi_offset 6, -48
+ 343 0013 4C89C5   		movq	%r8, %rbp
+ 344 0016 53       		pushq	%rbx
+ 345              	.LCFI9:
+ 346              		.cfi_def_cfa_offset 56
+ 347              		.cfi_offset 3, -56
+ 348 0017 4C89CB   		movq	%r9, %rbx
+ 349 001a 4883EC18 		subq	$24, %rsp
+ 350              	.LCFI10:
+ 351              		.cfi_def_cfa_offset 80
+ 432:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     *olen = mbedtls_rsa_get_len(rsa);
+ 352              		.loc 1 432 26 view .LVU98
+ 353 001e 488B7F08 		movq	8(%rdi), %rdi
+ 354              	.LVL28:
+ 433:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 355              		.loc 1 433 5 is_stmt 1 view .LVU99
+ 431:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 356              		.loc 1 431 1 is_stmt 0 view .LVU100
+ 357 0022 4C8B7424 		movq	80(%rsp), %r14
+ 357      50
+ 358 0027 4C8B7C24 		movq	88(%rsp), %r15
+ 358      58
+ 359 002c 48891424 		movq	%rdx, (%rsp)
+ 433:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 360              		.loc 1 433 13 view .LVU101
+ 361 0030 48897C24 		movq	%rdi, 8(%rsp)
+ 361      08
+ 362 0035 E8000000 		call	mbedtls_rsa_get_len@PLT
+ 362      00
+ 363              	.LVL29:
+ 433:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 364              		.loc 1 433 11 discriminator 1 view .LVU102
+ 365 003a 48894500 		movq	%rax, 0(%rbp)
+GAS LISTING /tmp/ccz6yoUB.s 			page 29
+
+
+ 435:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_OUTPUT_TOO_LARGE;
+ 366              		.loc 1 435 5 is_stmt 1 view .LVU103
+ 435:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_OUTPUT_TOO_LARGE;
+ 367              		.loc 1 435 8 is_stmt 0 view .LVU104
+ 368 003e 4839C3   		cmpq	%rax, %rbx
+ 369 0041 722D     		jb	.L19
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      ilen, input, output);
+ 370              		.loc 1 439 5 is_stmt 1 view .LVU105
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      ilen, input, output);
+ 371              		.loc 1 439 12 is_stmt 0 view .LVU106
+ 372 0043 488B0C24 		movq	(%rsp), %rcx
+ 373 0047 488B7C24 		movq	8(%rsp), %rdi
+ 373      08
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 374              		.loc 1 441 1 view .LVU107
+ 375 004c 4883C418 		addq	$24, %rsp
+ 376              	.LCFI11:
+ 377              		.cfi_remember_state
+ 378              		.cfi_def_cfa_offset 56
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      ilen, input, output);
+ 379              		.loc 1 439 12 view .LVU108
+ 380 0050 4D89E9   		movq	%r13, %r9
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 381              		.loc 1 441 1 view .LVU109
+ 382 0053 5B       		popq	%rbx
+ 383              	.LCFI12:
+ 384              		.cfi_def_cfa_offset 48
+ 385              	.LVL30:
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      ilen, input, output);
+ 386              		.loc 1 439 12 view .LVU110
+ 387 0054 4D89E0   		movq	%r12, %r8
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 388              		.loc 1 441 1 view .LVU111
+ 389 0057 5D       		popq	%rbp
+ 390              	.LCFI13:
+ 391              		.cfi_def_cfa_offset 40
+ 392              	.LVL31:
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      ilen, input, output);
+ 393              		.loc 1 439 12 view .LVU112
+ 394 0058 4C89FA   		movq	%r15, %rdx
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 395              		.loc 1 441 1 view .LVU113
+ 396 005b 415C     		popq	%r12
+ 397              	.LCFI14:
+ 398              		.cfi_def_cfa_offset 32
+ 399              	.LVL32:
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      ilen, input, output);
+ 400              		.loc 1 439 12 view .LVU114
+ 401 005d 4C89F6   		movq	%r14, %rsi
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 402              		.loc 1 441 1 view .LVU115
+ 403 0060 415D     		popq	%r13
+ 404              	.LCFI15:
+ 405              		.cfi_def_cfa_offset 24
+ 406              	.LVL33:
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 407              		.loc 1 441 1 view .LVU116
+GAS LISTING /tmp/ccz6yoUB.s 			page 30
+
+
+ 408 0062 415E     		popq	%r14
+ 409              	.LCFI16:
+ 410              		.cfi_def_cfa_offset 16
+ 411 0064 415F     		popq	%r15
+ 412              	.LCFI17:
+ 413              		.cfi_def_cfa_offset 8
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      ilen, input, output);
+ 414              		.loc 1 439 12 view .LVU117
+ 415 0066 E9000000 		jmp	mbedtls_rsa_pkcs1_encrypt@PLT
+ 415      00
+ 416              	.LVL34:
+ 417 006b 0F1F4400 		.p2align 4,,10
+ 417      00
+ 418              		.p2align 3
+ 419              	.L19:
+ 420              	.LCFI18:
+ 421              		.cfi_restore_state
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 422              		.loc 1 441 1 view .LVU118
+ 423 0070 4883C418 		addq	$24, %rsp
+ 424              	.LCFI19:
+ 425              		.cfi_def_cfa_offset 56
+ 426 0074 B800BCFF 		movl	$-17408, %eax
+ 426      FF
+ 427 0079 5B       		popq	%rbx
+ 428              	.LCFI20:
+ 429              		.cfi_def_cfa_offset 48
+ 430              	.LVL35:
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 431              		.loc 1 441 1 view .LVU119
+ 432 007a 5D       		popq	%rbp
+ 433              	.LCFI21:
+ 434              		.cfi_def_cfa_offset 40
+ 435              	.LVL36:
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 436              		.loc 1 441 1 view .LVU120
+ 437 007b 415C     		popq	%r12
+ 438              	.LCFI22:
+ 439              		.cfi_def_cfa_offset 32
+ 440              	.LVL37:
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 441              		.loc 1 441 1 view .LVU121
+ 442 007d 415D     		popq	%r13
+ 443              	.LCFI23:
+ 444              		.cfi_def_cfa_offset 24
+ 445              	.LVL38:
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 446              		.loc 1 441 1 view .LVU122
+ 447 007f 415E     		popq	%r14
+ 448              	.LCFI24:
+ 449              		.cfi_def_cfa_offset 16
+ 450 0081 415F     		popq	%r15
+ 451              	.LCFI25:
+ 452              		.cfi_def_cfa_offset 8
+ 453 0083 C3       		ret
+ 454              		.cfi_endproc
+ 455              	.LFE110:
+GAS LISTING /tmp/ccz6yoUB.s 			page 31
+
+
+ 457              		.section	.text.rsa_decrypt_wrap,"ax",@progbits
+ 458              		.p2align 4
+ 460              	rsa_decrypt_wrap:
+ 461              	.LVL39:
+ 462              	.LFB109:
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 463              		.loc 1 349 1 is_stmt 1 view -0
+ 464              		.cfi_startproc
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 465              		.loc 1 349 1 is_stmt 0 view .LVU124
+ 466 0000 F30F1EFA 		endbr64
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 467              		.loc 1 350 5 is_stmt 1 view .LVU125
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 468              		.loc 1 349 1 is_stmt 0 view .LVU126
+ 469 0004 4157     		pushq	%r15
+ 470              	.LCFI26:
+ 471              		.cfi_def_cfa_offset 16
+ 472              		.cfi_offset 15, -16
+ 473 0006 4156     		pushq	%r14
+ 474              	.LCFI27:
+ 475              		.cfi_def_cfa_offset 24
+ 476              		.cfi_offset 14, -24
+ 477 0008 4D89CE   		movq	%r9, %r14
+ 478 000b 4155     		pushq	%r13
+ 479              	.LCFI28:
+ 480              		.cfi_def_cfa_offset 32
+ 481              		.cfi_offset 13, -32
+ 482 000d 4989CD   		movq	%rcx, %r13
+ 483 0010 4154     		pushq	%r12
+ 484              	.LCFI29:
+ 485              		.cfi_def_cfa_offset 40
+ 486              		.cfi_offset 12, -40
+ 487 0012 4989F4   		movq	%rsi, %r12
+ 488 0015 55       		pushq	%rbp
+ 489              	.LCFI30:
+ 490              		.cfi_def_cfa_offset 48
+ 491              		.cfi_offset 6, -48
+ 492 0016 4C89C5   		movq	%r8, %rbp
+ 493 0019 53       		pushq	%rbx
+ 494              	.LCFI31:
+ 495              		.cfi_def_cfa_offset 56
+ 496              		.cfi_offset 3, -56
+ 497 001a 4889D3   		movq	%rdx, %rbx
+ 498 001d 4883EC18 		subq	$24, %rsp
+ 499              	.LCFI32:
+ 500              		.cfi_def_cfa_offset 80
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 501              		.loc 1 350 26 view .LVU127
+ 502 0021 488B7F08 		movq	8(%rdi), %rdi
+ 503              	.LVL40:
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 504              		.loc 1 352 5 is_stmt 1 view .LVU128
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 505              		.loc 1 349 1 is_stmt 0 view .LVU129
+ 506 0025 488B5424 		movq	88(%rsp), %rdx
+ 506      58
+GAS LISTING /tmp/ccz6yoUB.s 			page 32
+
+
+ 507              	.LVL41:
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 508              		.loc 1 349 1 view .LVU130
+ 509 002a 4C8B7C24 		movq	80(%rsp), %r15
+ 509      50
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 510              		.loc 1 352 17 view .LVU131
+ 511 002f 48893C24 		movq	%rdi, (%rsp)
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 512              		.loc 1 349 1 view .LVU132
+ 513 0033 48895424 		movq	%rdx, 8(%rsp)
+ 513      08
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 514              		.loc 1 352 17 view .LVU133
+ 515 0038 E8000000 		call	mbedtls_rsa_get_len@PLT
+ 515      00
+ 516              	.LVL42:
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 517              		.loc 1 352 8 discriminator 1 view .LVU134
+ 518 003d 4839D8   		cmpq	%rbx, %rax
+ 519 0040 752E     		jne	.L22
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      olen, input, output, osize);
+ 520              		.loc 1 356 5 is_stmt 1 view .LVU135
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      olen, input, output, osize);
+ 521              		.loc 1 356 12 is_stmt 0 view .LVU136
+ 522 0042 4C897424 		movq	%r14, 80(%rsp)
+ 522      50
+ 523              	.LVL43:
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      olen, input, output, osize);
+ 524              		.loc 1 356 12 view .LVU137
+ 525 0047 488B5424 		movq	8(%rsp), %rdx
+ 525      08
+ 526 004c 4D89E9   		movq	%r13, %r9
+ 527 004f 4D89E0   		movq	%r12, %r8
+ 528 0052 488B3C24 		movq	(%rsp), %rdi
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 529              		.loc 1 358 1 view .LVU138
+ 530 0056 4883C418 		addq	$24, %rsp
+ 531              	.LCFI33:
+ 532              		.cfi_remember_state
+ 533              		.cfi_def_cfa_offset 56
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      olen, input, output, osize);
+ 534              		.loc 1 356 12 view .LVU139
+ 535 005a 4889E9   		movq	%rbp, %rcx
+ 536 005d 4C89FE   		movq	%r15, %rsi
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 537              		.loc 1 358 1 view .LVU140
+ 538 0060 5B       		popq	%rbx
+ 539              	.LCFI34:
+ 540              		.cfi_def_cfa_offset 48
+ 541              	.LVL44:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 542              		.loc 1 358 1 view .LVU141
+ 543 0061 5D       		popq	%rbp
+ 544              	.LCFI35:
+ 545              		.cfi_def_cfa_offset 40
+ 546              	.LVL45:
+GAS LISTING /tmp/ccz6yoUB.s 			page 33
+
+
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 547              		.loc 1 358 1 view .LVU142
+ 548 0062 415C     		popq	%r12
+ 549              	.LCFI36:
+ 550              		.cfi_def_cfa_offset 32
+ 551              	.LVL46:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 552              		.loc 1 358 1 view .LVU143
+ 553 0064 415D     		popq	%r13
+ 554              	.LCFI37:
+ 555              		.cfi_def_cfa_offset 24
+ 556              	.LVL47:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 557              		.loc 1 358 1 view .LVU144
+ 558 0066 415E     		popq	%r14
+ 559              	.LCFI38:
+ 560              		.cfi_def_cfa_offset 16
+ 561              	.LVL48:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 562              		.loc 1 358 1 view .LVU145
+ 563 0068 415F     		popq	%r15
+ 564              	.LCFI39:
+ 565              		.cfi_def_cfa_offset 8
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                      olen, input, output, osize);
+ 566              		.loc 1 356 12 view .LVU146
+ 567 006a E9000000 		jmp	mbedtls_rsa_pkcs1_decrypt@PLT
+ 567      00
+ 568              	.LVL49:
+ 569 006f 90       		.p2align 4,,10
+ 570              		.p2align 3
+ 571              	.L22:
+ 572              	.LCFI40:
+ 573              		.cfi_restore_state
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 574              		.loc 1 358 1 view .LVU147
+ 575 0070 4883C418 		addq	$24, %rsp
+ 576              	.LCFI41:
+ 577              		.cfi_def_cfa_offset 56
+ 578 0074 B880BFFF 		movl	$-16512, %eax
+ 578      FF
+ 579 0079 5B       		popq	%rbx
+ 580              	.LCFI42:
+ 581              		.cfi_def_cfa_offset 48
+ 582              	.LVL50:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 583              		.loc 1 358 1 view .LVU148
+ 584 007a 5D       		popq	%rbp
+ 585              	.LCFI43:
+ 586              		.cfi_def_cfa_offset 40
+ 587              	.LVL51:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 588              		.loc 1 358 1 view .LVU149
+ 589 007b 415C     		popq	%r12
+ 590              	.LCFI44:
+ 591              		.cfi_def_cfa_offset 32
+ 592              	.LVL52:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+GAS LISTING /tmp/ccz6yoUB.s 			page 34
+
+
+ 593              		.loc 1 358 1 view .LVU150
+ 594 007d 415D     		popq	%r13
+ 595              	.LCFI45:
+ 596              		.cfi_def_cfa_offset 24
+ 597              	.LVL53:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 598              		.loc 1 358 1 view .LVU151
+ 599 007f 415E     		popq	%r14
+ 600              	.LCFI46:
+ 601              		.cfi_def_cfa_offset 16
+ 602              	.LVL54:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 603              		.loc 1 358 1 view .LVU152
+ 604 0081 415F     		popq	%r15
+ 605              	.LCFI47:
+ 606              		.cfi_def_cfa_offset 8
+ 607 0083 C3       		ret
+ 608              		.cfi_endproc
+ 609              	.LFE109:
+ 611              		.section	.text.rsa_sign_wrap,"ax",@progbits
+ 612              		.p2align 4
+ 614              	rsa_sign_wrap:
+ 615              	.LVL55:
+ 616              	.LFB108:
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 617              		.loc 1 258 1 is_stmt 1 view -0
+ 618              		.cfi_startproc
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 619              		.loc 1 258 1 is_stmt 0 view .LVU154
+ 620 0000 F30F1EFA 		endbr64
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 621              		.loc 1 259 5 is_stmt 1 view .LVU155
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 622              		.loc 1 258 1 is_stmt 0 view .LVU156
+ 623 0004 4157     		pushq	%r15
+ 624              	.LCFI48:
+ 625              		.cfi_def_cfa_offset 16
+ 626              		.cfi_offset 15, -16
+ 627 0006 4989CF   		movq	%rcx, %r15
+ 628 0009 4156     		pushq	%r14
+ 629              	.LCFI49:
+ 630              		.cfi_def_cfa_offset 24
+ 631              		.cfi_offset 14, -24
+ 632 000b 4155     		pushq	%r13
+ 633              	.LCFI50:
+ 634              		.cfi_def_cfa_offset 32
+ 635              		.cfi_offset 13, -32
+ 636 000d 4154     		pushq	%r12
+ 637              	.LCFI51:
+ 638              		.cfi_def_cfa_offset 40
+ 639              		.cfi_offset 12, -40
+ 640 000f 55       		pushq	%rbp
+ 641              	.LCFI52:
+ 642              		.cfi_def_cfa_offset 48
+ 643              		.cfi_offset 6, -48
+ 644 0010 4C89CD   		movq	%r9, %rbp
+ 645 0013 53       		pushq	%rbx
+GAS LISTING /tmp/ccz6yoUB.s 			page 35
+
+
+ 646              	.LCFI53:
+ 647              		.cfi_def_cfa_offset 56
+ 648              		.cfi_offset 3, -56
+ 649 0014 89F3     		movl	%esi, %ebx
+ 650 0016 4883EC28 		subq	$40, %rsp
+ 651              	.LCFI54:
+ 652              		.cfi_def_cfa_offset 96
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 653              		.loc 1 259 26 view .LVU157
+ 654 001a 488B7F08 		movq	8(%rdi), %rdi
+ 655              	.LVL56:
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 656              		.loc 1 262 5 is_stmt 1 view .LVU158
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 657              		.loc 1 258 1 is_stmt 0 view .LVU159
+ 658 001e 4C8B6424 		movq	96(%rsp), %r12
+ 658      60
+ 659 0023 4C8B6C24 		movq	104(%rsp), %r13
+ 659      68
+ 660 0028 48895424 		movq	%rdx, 8(%rsp)
+ 660      08
+ 661 002d 4C8B7424 		movq	112(%rsp), %r14
+ 661      70
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 662              		.loc 1 262 8 view .LVU160
+ 663 0032 85F6     		testl	%esi, %esi
+ 664 0034 7509     		jne	.L29
+ 665 0036 4889C8   		movq	%rcx, %rax
+ 666 0039 48C1E820 		shrq	$32, %rax
+ 667 003d 7551     		jne	.L27
+ 668              	.L29:
+ 669 003f 4C894424 		movq	%r8, 24(%rsp)
+ 669      18
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_size < *sig_len) {
+ 670              		.loc 1 267 5 is_stmt 1 view .LVU161
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_size < *sig_len) {
+ 671              		.loc 1 267 16 is_stmt 0 view .LVU162
+ 672 0044 48897C24 		movq	%rdi, 16(%rsp)
+ 672      10
+ 673 0049 E8000000 		call	mbedtls_rsa_get_len@PLT
+ 673      00
+ 674              	.LVL57:
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     if (sig_size < *sig_len) {
+ 675              		.loc 1 267 14 discriminator 1 view .LVU163
+ 676 004e 49890424 		movq	%rax, (%r12)
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BUFFER_TOO_SMALL;
+ 677              		.loc 1 268 5 is_stmt 1 view .LVU164
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BUFFER_TOO_SMALL;
+ 678              		.loc 1 268 8 is_stmt 0 view .LVU165
+ 679 0052 4839C5   		cmpq	%rax, %rbp
+ 680 0055 7251     		jb	.L28
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   md_alg, (unsigned int) hash_len,
+ 681              		.loc 1 272 5 is_stmt 1 view .LVU166
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   md_alg, (unsigned int) hash_len,
+ 682              		.loc 1 272 12 is_stmt 0 view .LVU167
+ 683 0057 4C8B4424 		movq	24(%rsp), %r8
+ 683      18
+GAS LISTING /tmp/ccz6yoUB.s 			page 36
+
+
+ 684 005c 4C8B4C24 		movq	8(%rsp), %r9
+ 684      08
+ 685 0061 89D9     		movl	%ebx, %ecx
+ 686 0063 4C89F2   		movq	%r14, %rdx
+ 687 0066 488B7C24 		movq	16(%rsp), %rdi
+ 687      10
+ 688 006b 4C89EE   		movq	%r13, %rsi
+ 689 006e 4C894424 		movq	%r8, 96(%rsp)
+ 689      60
+ 690              	.LVL58:
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 691              		.loc 1 275 1 view .LVU168
+ 692 0073 4883C428 		addq	$40, %rsp
+ 693              	.LCFI55:
+ 694              		.cfi_remember_state
+ 695              		.cfi_def_cfa_offset 56
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   md_alg, (unsigned int) hash_len,
+ 696              		.loc 1 272 12 view .LVU169
+ 697 0077 4589F8   		movl	%r15d, %r8d
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 698              		.loc 1 275 1 view .LVU170
+ 699 007a 5B       		popq	%rbx
+ 700              	.LCFI56:
+ 701              		.cfi_def_cfa_offset 48
+ 702              	.LVL59:
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 703              		.loc 1 275 1 view .LVU171
+ 704 007b 5D       		popq	%rbp
+ 705              	.LCFI57:
+ 706              		.cfi_def_cfa_offset 40
+ 707              	.LVL60:
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 708              		.loc 1 275 1 view .LVU172
+ 709 007c 415C     		popq	%r12
+ 710              	.LCFI58:
+ 711              		.cfi_def_cfa_offset 32
+ 712 007e 415D     		popq	%r13
+ 713              	.LCFI59:
+ 714              		.cfi_def_cfa_offset 24
+ 715 0080 415E     		popq	%r14
+ 716              	.LCFI60:
+ 717              		.cfi_def_cfa_offset 16
+ 718 0082 415F     		popq	%r15
+ 719              	.LCFI61:
+ 720              		.cfi_def_cfa_offset 8
+ 721              	.LVL61:
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                   md_alg, (unsigned int) hash_len,
+ 722              		.loc 1 272 12 view .LVU173
+ 723 0084 E9000000 		jmp	mbedtls_rsa_pkcs1_sign@PLT
+ 723      00
+ 724              	.LVL62:
+ 725 0089 0F1F8000 		.p2align 4,,10
+ 725      000000
+ 726              		.p2align 3
+ 727              	.L27:
+ 728              	.LCFI62:
+ 729              		.cfi_restore_state
+GAS LISTING /tmp/ccz6yoUB.s 			page 37
+
+
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 730              		.loc 1 263 16 view .LVU174
+ 731 0090 B880C1FF 		movl	$-16000, %eax
+ 731      FF
+ 732              	.LVL63:
+ 733              	.L24:
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 734              		.loc 1 275 1 view .LVU175
+ 735 0095 4883C428 		addq	$40, %rsp
+ 736              	.LCFI63:
+ 737              		.cfi_remember_state
+ 738              		.cfi_def_cfa_offset 56
+ 739 0099 5B       		popq	%rbx
+ 740              	.LCFI64:
+ 741              		.cfi_def_cfa_offset 48
+ 742              	.LVL64:
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 743              		.loc 1 275 1 view .LVU176
+ 744 009a 5D       		popq	%rbp
+ 745              	.LCFI65:
+ 746              		.cfi_def_cfa_offset 40
+ 747              	.LVL65:
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 748              		.loc 1 275 1 view .LVU177
+ 749 009b 415C     		popq	%r12
+ 750              	.LCFI66:
+ 751              		.cfi_def_cfa_offset 32
+ 752 009d 415D     		popq	%r13
+ 753              	.LCFI67:
+ 754              		.cfi_def_cfa_offset 24
+ 755 009f 415E     		popq	%r14
+ 756              	.LCFI68:
+ 757              		.cfi_def_cfa_offset 16
+ 758 00a1 415F     		popq	%r15
+ 759              	.LCFI69:
+ 760              		.cfi_def_cfa_offset 8
+ 761              	.LVL66:
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 762              		.loc 1 275 1 view .LVU178
+ 763 00a3 C3       		ret
+ 764              	.LVL67:
+ 765              		.p2align 4,,10
+ 766 00a4 0F1F4000 		.p2align 3
+ 767              	.L28:
+ 768              	.LCFI70:
+ 769              		.cfi_restore_state
+ 269:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 770              		.loc 1 269 16 view .LVU179
+ 771 00a8 B880C7FF 		movl	$-14464, %eax
+ 771      FF
+ 772 00ad EBE6     		jmp	.L24
+ 773              		.cfi_endproc
+ 774              	.LFE108:
+ 776              		.section	.text.rsa_verify_wrap,"ax",@progbits
+ 777              		.p2align 4
+ 779              	rsa_verify_wrap:
+ 780              	.LVL68:
+GAS LISTING /tmp/ccz6yoUB.s 			page 38
+
+
+ 781              	.LFB107:
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 782              		.loc 1 133 1 is_stmt 1 view -0
+ 783              		.cfi_startproc
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 784              		.loc 1 133 1 is_stmt 0 view .LVU181
+ 785 0000 F30F1EFA 		endbr64
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_rsa_context *rsa = (mbedtls_rsa_context *) pk->pk_ctx;
+ 786              		.loc 1 134 5 is_stmt 1 view .LVU182
+ 787              	.LVL69:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t rsa_len = mbedtls_rsa_get_len(rsa);
+ 788              		.loc 1 135 5 view .LVU183
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 789              		.loc 1 133 1 is_stmt 0 view .LVU184
+ 790 0004 4157     		pushq	%r15
+ 791              	.LCFI71:
+ 792              		.cfi_def_cfa_offset 16
+ 793              		.cfi_offset 15, -16
+ 794 0006 4D89C7   		movq	%r8, %r15
+ 795 0009 4156     		pushq	%r14
+ 796              	.LCFI72:
+ 797              		.cfi_def_cfa_offset 24
+ 798              		.cfi_offset 14, -24
+ 799 000b 4989D6   		movq	%rdx, %r14
+ 800 000e 4155     		pushq	%r13
+ 801              	.LCFI73:
+ 802              		.cfi_def_cfa_offset 32
+ 803              		.cfi_offset 13, -32
+ 804 0010 4154     		pushq	%r12
+ 805              	.LCFI74:
+ 806              		.cfi_def_cfa_offset 40
+ 807              		.cfi_offset 12, -40
+ 808 0012 4D89CC   		movq	%r9, %r12
+ 809 0015 55       		pushq	%rbp
+ 810              	.LCFI75:
+ 811              		.cfi_def_cfa_offset 48
+ 812              		.cfi_offset 6, -48
+ 813 0016 89F5     		movl	%esi, %ebp
+ 814 0018 53       		pushq	%rbx
+ 815              	.LCFI76:
+ 816              		.cfi_def_cfa_offset 56
+ 817              		.cfi_offset 3, -56
+ 818 0019 4889CB   		movq	%rcx, %rbx
+ 819 001c 4883EC18 		subq	$24, %rsp
+ 820              	.LCFI77:
+ 821              		.cfi_def_cfa_offset 80
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     size_t rsa_len = mbedtls_rsa_get_len(rsa);
+ 822              		.loc 1 135 26 view .LVU185
+ 823 0020 488B7F08 		movq	8(%rdi), %rdi
+ 824              	.LVL70:
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 825              		.loc 1 136 5 is_stmt 1 view .LVU186
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 826              		.loc 1 136 22 is_stmt 0 view .LVU187
+ 827 0024 48897C24 		movq	%rdi, 8(%rsp)
+ 827      08
+ 828 0029 E8000000 		call	mbedtls_rsa_get_len@PLT
+GAS LISTING /tmp/ccz6yoUB.s 			page 39
+
+
+ 828      00
+ 829              	.LVL71:
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 830              		.loc 1 139 8 view .LVU188
+ 831 002e 85ED     		testl	%ebp, %ebp
+ 832 0030 488B7C24 		movq	8(%rsp), %rdi
+ 832      08
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 833              		.loc 1 136 22 view .LVU189
+ 834 0035 4989C5   		movq	%rax, %r13
+ 835              	.LVL72:
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 836              		.loc 1 139 5 is_stmt 1 view .LVU190
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 837              		.loc 1 139 8 is_stmt 0 view .LVU191
+ 838 0038 7509     		jne	.L40
+ 839 003a 4889D8   		movq	%rbx, %rax
+ 840              	.LVL73:
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_BAD_INPUT_DATA;
+ 841              		.loc 1 139 8 view .LVU192
+ 842 003d 48C1E820 		shrq	$32, %rax
+ 843 0041 7535     		jne	.L37
+ 844              	.L40:
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_VERIFY_FAILED;
+ 845              		.loc 1 144 5 is_stmt 1 view .LVU193
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_RSA_VERIFY_FAILED;
+ 846              		.loc 1 144 8 is_stmt 0 view .LVU194
+ 847 0043 4D39EC   		cmpq	%r13, %r12
+ 848 0046 7238     		jb	.L38
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                         (unsigned int) hash_len,
+ 849              		.loc 1 148 5 is_stmt 1 view .LVU195
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                         (unsigned int) hash_len,
+ 850              		.loc 1 148 16 is_stmt 0 view .LVU196
+ 851 0048 4D89F8   		movq	%r15, %r8
+ 852 004b 4C89F1   		movq	%r14, %rcx
+ 853 004e 89DA     		movl	%ebx, %edx
+ 854 0050 89EE     		movl	%ebp, %esi
+ 855 0052 E8000000 		call	mbedtls_rsa_pkcs1_verify@PLT
+ 855      00
+ 856              	.LVL74:
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                         (unsigned int) hash_len,
+ 857              		.loc 1 148 8 discriminator 1 view .LVU197
+ 858 0057 85C0     		testl	%eax, %eax
+ 859 0059 750B     		jne	.L34
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_SIG_LEN_MISMATCH;
+ 860              		.loc 1 159 5 is_stmt 1 view .LVU198
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 861              		.loc 1 160 16 is_stmt 0 view .LVU199
+ 862 005b 4D39E5   		cmpq	%r12, %r13
+ 863 005e BA00C7FF 		movl	$-14592, %edx
+ 863      FF
+ 864 0063 0F42C2   		cmovb	%edx, %eax
+ 865              	.LVL75:
+ 866              	.L34:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 867              		.loc 1 164 1 view .LVU200
+ 868 0066 4883C418 		addq	$24, %rsp
+GAS LISTING /tmp/ccz6yoUB.s 			page 40
+
+
+ 869              	.LCFI78:
+ 870              		.cfi_remember_state
+ 871              		.cfi_def_cfa_offset 56
+ 872 006a 5B       		popq	%rbx
+ 873              	.LCFI79:
+ 874              		.cfi_def_cfa_offset 48
+ 875              	.LVL76:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 876              		.loc 1 164 1 view .LVU201
+ 877 006b 5D       		popq	%rbp
+ 878              	.LCFI80:
+ 879              		.cfi_def_cfa_offset 40
+ 880              	.LVL77:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 881              		.loc 1 164 1 view .LVU202
+ 882 006c 415C     		popq	%r12
+ 883              	.LCFI81:
+ 884              		.cfi_def_cfa_offset 32
+ 885              	.LVL78:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 886              		.loc 1 164 1 view .LVU203
+ 887 006e 415D     		popq	%r13
+ 888              	.LCFI82:
+ 889              		.cfi_def_cfa_offset 24
+ 890              	.LVL79:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 891              		.loc 1 164 1 view .LVU204
+ 892 0070 415E     		popq	%r14
+ 893              	.LCFI83:
+ 894              		.cfi_def_cfa_offset 16
+ 895              	.LVL80:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 896              		.loc 1 164 1 view .LVU205
+ 897 0072 415F     		popq	%r15
+ 898              	.LCFI84:
+ 899              		.cfi_def_cfa_offset 8
+ 900              	.LVL81:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 901              		.loc 1 164 1 view .LVU206
+ 902 0074 C3       		ret
+ 903              	.LVL82:
+ 904              		.p2align 4,,10
+ 905 0075 0F1F00   		.p2align 3
+ 906              	.L37:
+ 907              	.LCFI85:
+ 908              		.cfi_restore_state
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 909              		.loc 1 140 16 view .LVU207
+ 910 0078 B880C1FF 		movl	$-16000, %eax
+ 910      FF
+ 911 007d EBE7     		jmp	.L34
+ 912 007f 90       		.p2align 4,,10
+ 913              		.p2align 3
+ 914              	.L38:
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 915              		.loc 1 145 16 view .LVU208
+ 916 0080 B880BCFF 		movl	$-17280, %eax
+GAS LISTING /tmp/ccz6yoUB.s 			page 41
+
+
+ 916      FF
+ 917 0085 EBDF     		jmp	.L34
+ 918              		.cfi_endproc
+ 919              	.LFE107:
+ 921              		.section	.text.rsa_get_bitlen,"ax",@progbits
+ 922              		.p2align 4
+ 924              	rsa_get_bitlen:
+ 925              	.LVL83:
+ 926              	.LFB106:
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     const mbedtls_rsa_context *rsa = (const mbedtls_rsa_context *) pk->pk_ctx;
+ 927              		.loc 1 59 1 is_stmt 1 view -0
+ 928              		.cfi_startproc
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     const mbedtls_rsa_context *rsa = (const mbedtls_rsa_context *) pk->pk_ctx;
+ 929              		.loc 1 59 1 is_stmt 0 view .LVU210
+ 930 0000 F30F1EFA 		endbr64
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_rsa_get_bitlen(rsa);
+ 931              		.loc 1 60 5 is_stmt 1 view .LVU211
+ 932              	.LVL84:
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 933              		.loc 1 61 5 view .LVU212
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 934              		.loc 1 61 12 is_stmt 0 view .LVU213
+ 935 0004 488B7F08 		movq	8(%rdi), %rdi
+ 936              	.LVL85:
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 937              		.loc 1 61 12 view .LVU214
+ 938 0008 E9000000 		jmp	mbedtls_rsa_get_bitlen@PLT
+ 938      00
+ 939              	.LVL86:
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 940              		.loc 1 61 12 view .LVU215
+ 941              		.cfi_endproc
+ 942              	.LFE106:
+ 944              		.section	.text.eckey_free_wrap,"ax",@progbits
+ 945              		.p2align 4
+ 947              	eckey_free_wrap:
+ 948              	.LVL87:
+ 949              	.LFB121:
+1093:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair_free((mbedtls_ecp_keypair *) ctx);
+ 950              		.loc 1 1093 1 is_stmt 1 view -0
+ 951              		.cfi_startproc
+1093:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair_free((mbedtls_ecp_keypair *) ctx);
+ 952              		.loc 1 1093 1 is_stmt 0 view .LVU217
+ 953 0000 F30F1EFA 		endbr64
+1094:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(ctx);
+ 954              		.loc 1 1094 5 is_stmt 1 view .LVU218
+1093:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair_free((mbedtls_ecp_keypair *) ctx);
+ 955              		.loc 1 1093 1 is_stmt 0 view .LVU219
+ 956 0004 53       		pushq	%rbx
+ 957              	.LCFI86:
+ 958              		.cfi_def_cfa_offset 16
+ 959              		.cfi_offset 3, -16
+1093:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_ecp_keypair_free((mbedtls_ecp_keypair *) ctx);
+ 960              		.loc 1 1093 1 view .LVU220
+ 961 0005 4889FB   		movq	%rdi, %rbx
+1094:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     mbedtls_free(ctx);
+ 962              		.loc 1 1094 5 view .LVU221
+GAS LISTING /tmp/ccz6yoUB.s 			page 42
+
+
+ 963 0008 E8000000 		call	mbedtls_ecp_keypair_free@PLT
+ 963      00
+ 964              	.LVL88:
+1095:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 965              		.loc 1 1095 5 is_stmt 1 view .LVU222
+ 966 000d 4889DF   		movq	%rbx, %rdi
+1096:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_PK_USE_PSA_EC_DATA */
+ 967              		.loc 1 1096 1 is_stmt 0 view .LVU223
+ 968 0010 5B       		popq	%rbx
+ 969              	.LCFI87:
+ 970              		.cfi_def_cfa_offset 8
+ 971              	.LVL89:
+1095:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 972              		.loc 1 1095 5 view .LVU224
+ 973 0011 E9000000 		jmp	mbedtls_free@PLT
+ 973      00
+ 974              	.LVL90:
+1095:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 975              		.loc 1 1095 5 view .LVU225
+ 976              		.cfi_endproc
+ 977              	.LFE121:
+ 979              		.section	.text.eckey_alloc_wrap,"ax",@progbits
+ 980              		.p2align 4
+ 982              	eckey_alloc_wrap:
+ 983              	.LFB120:
+1082:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_ecp_keypair));
+ 984              		.loc 1 1082 1 is_stmt 1 view -0
+ 985              		.cfi_startproc
+ 986 0000 F30F1EFA 		endbr64
+1083:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 987              		.loc 1 1083 5 view .LVU227
+1082:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     void *ctx = mbedtls_calloc(1, sizeof(mbedtls_ecp_keypair));
+ 988              		.loc 1 1082 1 is_stmt 0 view .LVU228
+ 989 0004 53       		pushq	%rbx
+ 990              	.LCFI88:
+ 991              		.cfi_def_cfa_offset 16
+ 992              		.cfi_offset 3, -16
+1083:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 993              		.loc 1 1083 17 view .LVU229
+ 994 0005 BE000100 		movl	$256, %esi
+ 994      00
+ 995 000a BF010000 		movl	$1, %edi
+ 995      00
+ 996 000f E8000000 		call	mbedtls_calloc@PLT
+ 996      00
+ 997              	.LVL91:
+ 998 0014 4889C3   		movq	%rax, %rbx
+ 999              	.LVL92:
+1085:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_ecp_keypair_init(ctx);
+ 1000              		.loc 1 1085 5 is_stmt 1 view .LVU230
+1085:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         mbedtls_ecp_keypair_init(ctx);
+ 1001              		.loc 1 1085 8 is_stmt 0 view .LVU231
+ 1002 0017 4885C0   		testq	%rax, %rax
+ 1003 001a 7408     		je	.L48
+1086:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 1004              		.loc 1 1086 9 is_stmt 1 view .LVU232
+ 1005 001c 4889C7   		movq	%rax, %rdi
+GAS LISTING /tmp/ccz6yoUB.s 			page 43
+
+
+ 1006 001f E8000000 		call	mbedtls_ecp_keypair_init@PLT
+ 1006      00
+ 1007              	.LVL93:
+1089:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** }
+ 1008              		.loc 1 1089 5 view .LVU233
+ 1009              	.L48:
+1090:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 1010              		.loc 1 1090 1 is_stmt 0 view .LVU234
+ 1011 0024 4889D8   		movq	%rbx, %rax
+ 1012 0027 5B       		popq	%rbx
+ 1013              	.LCFI89:
+ 1014              		.cfi_def_cfa_offset 8
+ 1015              	.LVL94:
+1090:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 1016              		.loc 1 1090 1 view .LVU235
+ 1017 0028 C3       		ret
+ 1018              		.cfi_endproc
+ 1019              	.LFE120:
+ 1021              		.section	.text.eckey_check_pair_wrap,"ax",@progbits
+ 1022              		.p2align 4
+ 1024              	eckey_check_pair_wrap:
+ 1025              	.LVL95:
+ 1026              	.LFB119:
+1031:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_ecp_check_pub_priv((const mbedtls_ecp_keypair *) pub->pk_ctx,
+ 1027              		.loc 1 1031 1 is_stmt 1 view -0
+ 1028              		.cfi_startproc
+1031:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_ecp_check_pub_priv((const mbedtls_ecp_keypair *) pub->pk_ctx,
+ 1029              		.loc 1 1031 1 is_stmt 0 view .LVU237
+ 1030 0000 F30F1EFA 		endbr64
+1032:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_ecp_keypair *) prv->pk_ctx,
+ 1031              		.loc 1 1032 5 is_stmt 1 view .LVU238
+1032:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_ecp_keypair *) prv->pk_ctx,
+ 1032              		.loc 1 1032 12 is_stmt 0 view .LVU239
+ 1033 0004 488B7608 		movq	8(%rsi), %rsi
+ 1034              	.LVL96:
+1032:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_ecp_keypair *) prv->pk_ctx,
+ 1035              		.loc 1 1032 12 view .LVU240
+ 1036 0008 488B7F08 		movq	8(%rdi), %rdi
+ 1037              	.LVL97:
+1032:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_ecp_keypair *) prv->pk_ctx,
+ 1038              		.loc 1 1032 12 view .LVU241
+ 1039 000c E9000000 		jmp	mbedtls_ecp_check_pub_priv@PLT
+ 1039      00
+ 1040              	.LVL98:
+1032:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                       (const mbedtls_ecp_keypair *) prv->pk_ctx,
+ 1041              		.loc 1 1032 12 view .LVU242
+ 1042              		.cfi_endproc
+ 1043              	.LFE119:
+ 1045              		.section	.text.ecdsa_sign_wrap,"ax",@progbits
+ 1046              		.p2align 4
+ 1048              	ecdsa_sign_wrap:
+ 1049              	.LVL99:
+ 1050              	.LFB118:
+ 813:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_ecdsa_write_signature((mbedtls_ecdsa_context *) pk->pk_ctx,
+ 1051              		.loc 1 813 1 is_stmt 1 view -0
+ 1052              		.cfi_startproc
+ 813:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     return mbedtls_ecdsa_write_signature((mbedtls_ecdsa_context *) pk->pk_ctx,
+GAS LISTING /tmp/ccz6yoUB.s 			page 44
+
+
+ 1053              		.loc 1 813 1 is_stmt 0 view .LVU244
+ 1054 0000 F30F1EFA 		endbr64
+ 814:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          md_alg, hash, hash_len,
+ 1055              		.loc 1 814 5 is_stmt 1 view .LVU245
+ 814:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          md_alg, hash, hash_len,
+ 1056              		.loc 1 814 12 is_stmt 0 view .LVU246
+ 1057 0004 488B7F08 		movq	8(%rdi), %rdi
+ 1058              	.LVL100:
+ 814:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          md_alg, hash, hash_len,
+ 1059              		.loc 1 814 12 view .LVU247
+ 1060 0008 E9000000 		jmp	mbedtls_ecdsa_write_signature@PLT
+ 1060      00
+ 1061              	.LVL101:
+ 814:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                          md_alg, hash, hash_len,
+ 1062              		.loc 1 814 12 view .LVU248
+ 1063              		.cfi_endproc
+ 1064              	.LFE118:
+ 1066              		.section	.text.ecdsa_verify_wrap,"ax",@progbits
+ 1067              		.p2align 4
+ 1069              	ecdsa_verify_wrap:
+ 1070              	.LVL102:
+ 1071              	.LFB117:
+ 674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 1072              		.loc 1 674 1 is_stmt 1 view -0
+ 1073              		.cfi_startproc
+ 674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 1074              		.loc 1 674 1 is_stmt 0 view .LVU250
+ 1075 0000 F30F1EFA 		endbr64
+ 675:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     ((void) md_alg);
+ 1076              		.loc 1 675 5 is_stmt 1 view .LVU251
+ 1077              	.LVL103:
+ 676:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** 
+ 1078              		.loc 1 676 5 view .LVU252
+ 678:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                        hash, hash_len, sig, sig_len);
+ 1079              		.loc 1 678 5 view .LVU253
+ 674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 1080              		.loc 1 674 1 is_stmt 0 view .LVU254
+ 1081 0004 4883EC08 		subq	$8, %rsp
+ 1082              	.LCFI90:
+ 1083              		.cfi_def_cfa_offset 16
+ 678:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                        hash, hash_len, sig, sig_len);
+ 1084              		.loc 1 678 11 view .LVU255
+ 1085 0008 488B7F08 		movq	8(%rdi), %rdi
+ 1086              	.LVL104:
+ 674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 1087              		.loc 1 674 1 view .LVU256
+ 1088 000c 4889D6   		movq	%rdx, %rsi
+ 1089              	.LVL105:
+ 674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 1090              		.loc 1 674 1 view .LVU257
+ 1091 000f 4889CA   		movq	%rcx, %rdx
+ 1092              	.LVL106:
+ 674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+ 1093              		.loc 1 674 1 view .LVU258
+ 1094 0012 4C89C1   		movq	%r8, %rcx
+ 1095              	.LVL107:
+ 674:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+GAS LISTING /tmp/ccz6yoUB.s 			page 45
+
+
+ 1096              		.loc 1 674 1 view .LVU259
+ 1097 0015 4D89C8   		movq	%r9, %r8
+ 1098              	.LVL108:
+ 678:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****                                        hash, hash_len, sig, sig_len);
+ 1099              		.loc 1 678 11 view .LVU260
+ 1100 0018 E8000000 		call	mbedtls_ecdsa_read_signature@PLT
+ 1100      00
+ 1101              	.LVL109:
+ 681:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_SIG_LEN_MISMATCH;
+ 1102              		.loc 1 681 5 is_stmt 1 view .LVU261
+ 681:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****         return MBEDTLS_ERR_PK_SIG_LEN_MISMATCH;
+ 1103              		.loc 1 681 8 is_stmt 0 view .LVU262
+ 1104 001d 3D00B4FF 		cmpl	$-19456, %eax
+ 1104      FF
+ 1105 0022 7405     		je	.L60
+ 1106              	.LVL110:
+ 1107              	.L56:
+ 686:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c **** #endif /* MBEDTLS_USE_PSA_CRYPTO */
+ 1108              		.loc 1 686 1 view .LVU263
+ 1109 0024 4883C408 		addq	$8, %rsp
+ 1110              	.LCFI91:
+ 1111              		.cfi_remember_state
+ 1112              		.cfi_def_cfa_offset 8
+ 1113 0028 C3       		ret
+ 1114              	.LVL111:
+ 1115              	.L60:
+ 1116              	.LCFI92:
+ 1117              		.cfi_restore_state
+ 682:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 1118              		.loc 1 682 16 view .LVU264
+ 1119 0029 B800C7FF 		movl	$-14592, %eax
+ 1119      FF
+ 1120              	.LVL112:
+ 682:../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.c ****     }
+ 1121              		.loc 1 682 16 view .LVU265
+ 1122 002e EBF4     		jmp	.L56
+ 1123              		.cfi_endproc
+ 1124              	.LFE117:
+ 1126              		.globl	mbedtls_ecdsa_info
+ 1127              		.section	.rodata.str1.1,"aMS",@progbits,1
+ 1128              	.LC3:
+ 1129 0000 45434453 		.string	"ECDSA"
+ 1129      4100
+ 1130              		.section	.data.rel.ro.local.mbedtls_ecdsa_info,"aw"
+ 1131              		.align 32
+ 1134              	mbedtls_ecdsa_info:
+ 1135 0000 04000000 		.long	4
+ 1136 0004 00000000 		.zero	4
+ 1137 0008 00000000 		.quad	.LC3
+ 1137      00000000 
+ 1138 0010 00000000 		.quad	eckey_get_bitlen
+ 1138      00000000 
+ 1139 0018 00000000 		.quad	ecdsa_can_do
+ 1139      00000000 
+ 1140 0020 00000000 		.quad	ecdsa_verify_wrap
+ 1140      00000000 
+ 1141 0028 00000000 		.quad	ecdsa_sign_wrap
+GAS LISTING /tmp/ccz6yoUB.s 			page 46
+
+
+ 1141      00000000 
+ 1142 0030 00000000 		.quad	0
+ 1142      00000000 
+ 1143 0038 00000000 		.quad	0
+ 1143      00000000 
+ 1144 0040 00000000 		.quad	eckey_check_pair_wrap
+ 1144      00000000 
+ 1145 0048 00000000 		.quad	eckey_alloc_wrap
+ 1145      00000000 
+ 1146 0050 00000000 		.quad	eckey_free_wrap
+ 1146      00000000 
+ 1147 0058 00000000 		.quad	eckey_debug
+ 1147      00000000 
+ 1148              		.globl	mbedtls_eckeydh_info
+ 1149              		.section	.rodata.str1.1
+ 1150              	.LC4:
+ 1151 0006 45435F44 		.string	"EC_DH"
+ 1151      4800
+ 1152              		.section	.data.rel.ro.local.mbedtls_eckeydh_info,"aw"
+ 1153              		.align 32
+ 1156              	mbedtls_eckeydh_info:
+ 1157 0000 03000000 		.long	3
+ 1158 0004 00000000 		.zero	4
+ 1159 0008 00000000 		.quad	.LC4
+ 1159      00000000 
+ 1160 0010 00000000 		.quad	eckey_get_bitlen
+ 1160      00000000 
+ 1161 0018 00000000 		.quad	eckeydh_can_do
+ 1161      00000000 
+ 1162 0020 00000000 		.quad	0
+ 1162      00000000 
+ 1163 0028 00000000 		.quad	0
+ 1163      00000000 
+ 1164 0030 00000000 		.quad	0
+ 1164      00000000 
+ 1165 0038 00000000 		.quad	0
+ 1165      00000000 
+ 1166 0040 00000000 		.quad	eckey_check_pair_wrap
+ 1166      00000000 
+ 1167 0048 00000000 		.quad	eckey_alloc_wrap
+ 1167      00000000 
+ 1168 0050 00000000 		.quad	eckey_free_wrap
+ 1168      00000000 
+ 1169 0058 00000000 		.quad	eckey_debug
+ 1169      00000000 
+ 1170              		.globl	mbedtls_eckey_info
+ 1171              		.section	.rodata.str1.1
+ 1172              	.LC5:
+ 1173 000c 454300   		.string	"EC"
+ 1174              		.section	.data.rel.ro.local.mbedtls_eckey_info,"aw"
+ 1175              		.align 32
+ 1178              	mbedtls_eckey_info:
+ 1179 0000 02000000 		.long	2
+ 1180 0004 00000000 		.zero	4
+ 1181 0008 00000000 		.quad	.LC5
+ 1181      00000000 
+ 1182 0010 00000000 		.quad	eckey_get_bitlen
+GAS LISTING /tmp/ccz6yoUB.s 			page 47
+
+
+ 1182      00000000 
+ 1183 0018 00000000 		.quad	eckey_can_do
+ 1183      00000000 
+ 1184 0020 00000000 		.quad	ecdsa_verify_wrap
+ 1184      00000000 
+ 1185 0028 00000000 		.quad	ecdsa_sign_wrap
+ 1185      00000000 
+ 1186 0030 00000000 		.quad	0
+ 1186      00000000 
+ 1187 0038 00000000 		.quad	0
+ 1187      00000000 
+ 1188 0040 00000000 		.quad	eckey_check_pair_wrap
+ 1188      00000000 
+ 1189 0048 00000000 		.quad	eckey_alloc_wrap
+ 1189      00000000 
+ 1190 0050 00000000 		.quad	eckey_free_wrap
+ 1190      00000000 
+ 1191 0058 00000000 		.quad	eckey_debug
+ 1191      00000000 
+ 1192              		.globl	mbedtls_rsa_info
+ 1193              		.section	.rodata.str1.1
+ 1194              	.LC6:
+ 1195 000f 52534100 		.string	"RSA"
+ 1196              		.section	.data.rel.ro.local.mbedtls_rsa_info,"aw"
+ 1197              		.align 32
+ 1200              	mbedtls_rsa_info:
+ 1201 0000 01000000 		.long	1
+ 1202 0004 00000000 		.zero	4
+ 1203 0008 00000000 		.quad	.LC6
+ 1203      00000000 
+ 1204 0010 00000000 		.quad	rsa_get_bitlen
+ 1204      00000000 
+ 1205 0018 00000000 		.quad	rsa_can_do
+ 1205      00000000 
+ 1206 0020 00000000 		.quad	rsa_verify_wrap
+ 1206      00000000 
+ 1207 0028 00000000 		.quad	rsa_sign_wrap
+ 1207      00000000 
+ 1208 0030 00000000 		.quad	rsa_decrypt_wrap
+ 1208      00000000 
+ 1209 0038 00000000 		.quad	rsa_encrypt_wrap
+ 1209      00000000 
+ 1210 0040 00000000 		.quad	rsa_check_pair_wrap
+ 1210      00000000 
+ 1211 0048 00000000 		.quad	rsa_alloc_wrap
+ 1211      00000000 
+ 1212 0050 00000000 		.quad	rsa_free_wrap
+ 1212      00000000 
+ 1213 0058 00000000 		.quad	rsa_debug
+ 1213      00000000 
+ 1214              		.text
+ 1215              	.Letext0:
+ 1216              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1217              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1218              		.file 4 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1219              		.file 5 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/md.h"
+ 1220              		.file 6 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/bignum.h"
+GAS LISTING /tmp/ccz6yoUB.s 			page 48
+
+
+ 1221              		.file 7 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/rsa.h"
+ 1222              		.file 8 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ecp.h"
+ 1223              		.file 9 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ecdsa.h"
+ 1224              		.file 10 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/pk.h"
+ 1225              		.file 11 "../../bos/thirdparty/mbedtls/bos_mbedtls/pk_wrap.h"
+ 1226              		.file 12 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+ 7461              		.section	.note.gnu.property,"a"
+ 7462              		.align 8
+ 7463 0000 04000000 		.long	1f - 0f
+ 7464 0004 10000000 		.long	4f - 1f
+ 7465 0008 05000000 		.long	5
+ 7466              	0:
+ 7467 000c 474E5500 		.string	"GNU"
+ 7468              	1:
+ 7469              		.align 8
+ 7470 0010 020000C0 		.long	0xc0000002
+ 7471 0014 04000000 		.long	3f - 2f
+ 7472              	2:
+ 7473 0018 03000000 		.long	0x3
+ 7474              	3:
+ 7475 001c 00000000 		.align 8
+ 7476              	4:
+GAS LISTING /tmp/ccz6yoUB.s 			page 49
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 pk_wrap.c
+     /tmp/ccz6yoUB.s:8      .text.rsa_can_do:0000000000000000 rsa_can_do
+     /tmp/ccz6yoUB.s:38     .text.rsa_debug:0000000000000000 rsa_debug
+     /tmp/ccz6yoUB.s:85     .text.eckey_can_do:0000000000000000 eckey_can_do
+     /tmp/ccz6yoUB.s:108    .text.eckey_get_bitlen:0000000000000000 eckey_get_bitlen
+     /tmp/ccz6yoUB.s:133    .text.eckey_debug:0000000000000000 eckey_debug
+     /tmp/ccz6yoUB.s:166    .text.eckeydh_can_do:0000000000000000 eckeydh_can_do
+     /tmp/ccz6yoUB.s:189    .text.ecdsa_can_do:0000000000000000 ecdsa_can_do
+     /tmp/ccz6yoUB.s:209    .text.rsa_free_wrap:0000000000000000 rsa_free_wrap
+     /tmp/ccz6yoUB.s:244    .text.rsa_alloc_wrap:0000000000000000 rsa_alloc_wrap
+     /tmp/ccz6yoUB.s:286    .text.rsa_check_pair_wrap:0000000000000000 rsa_check_pair_wrap
+     /tmp/ccz6yoUB.s:312    .text.rsa_encrypt_wrap:0000000000000000 rsa_encrypt_wrap
+     /tmp/ccz6yoUB.s:460    .text.rsa_decrypt_wrap:0000000000000000 rsa_decrypt_wrap
+     /tmp/ccz6yoUB.s:614    .text.rsa_sign_wrap:0000000000000000 rsa_sign_wrap
+     /tmp/ccz6yoUB.s:779    .text.rsa_verify_wrap:0000000000000000 rsa_verify_wrap
+     /tmp/ccz6yoUB.s:924    .text.rsa_get_bitlen:0000000000000000 rsa_get_bitlen
+     /tmp/ccz6yoUB.s:947    .text.eckey_free_wrap:0000000000000000 eckey_free_wrap
+     /tmp/ccz6yoUB.s:982    .text.eckey_alloc_wrap:0000000000000000 eckey_alloc_wrap
+     /tmp/ccz6yoUB.s:1024   .text.eckey_check_pair_wrap:0000000000000000 eckey_check_pair_wrap
+     /tmp/ccz6yoUB.s:1048   .text.ecdsa_sign_wrap:0000000000000000 ecdsa_sign_wrap
+     /tmp/ccz6yoUB.s:1069   .text.ecdsa_verify_wrap:0000000000000000 ecdsa_verify_wrap
+     /tmp/ccz6yoUB.s:1134   .data.rel.ro.local.mbedtls_ecdsa_info:0000000000000000 mbedtls_ecdsa_info
+     /tmp/ccz6yoUB.s:1156   .data.rel.ro.local.mbedtls_eckeydh_info:0000000000000000 mbedtls_eckeydh_info
+     /tmp/ccz6yoUB.s:1178   .data.rel.ro.local.mbedtls_eckey_info:0000000000000000 mbedtls_eckey_info
+     /tmp/ccz6yoUB.s:1200   .data.rel.ro.local.mbedtls_rsa_info:0000000000000000 mbedtls_rsa_info
+     /tmp/ccz6yoUB.s:31     .rodata.rsa_debug.str1.1:0000000000000000 .LC0
+     /tmp/ccz6yoUB.s:33     .rodata.rsa_debug.str1.1:0000000000000006 .LC1
+     /tmp/ccz6yoUB.s:128    .rodata.eckey_debug.str1.1:0000000000000000 .LC2
+
+UNDEFINED SYMBOLS
+mbedtls_rsa_free
+mbedtls_free
+mbedtls_calloc
+mbedtls_rsa_init
+mbedtls_rsa_check_pub_priv
+mbedtls_rsa_get_len
+mbedtls_rsa_pkcs1_encrypt
+mbedtls_rsa_pkcs1_decrypt
+mbedtls_rsa_pkcs1_sign
+mbedtls_rsa_pkcs1_verify
+mbedtls_rsa_get_bitlen
+mbedtls_ecp_keypair_free
+mbedtls_ecp_keypair_init
+mbedtls_ecp_check_pub_priv
+mbedtls_ecdsa_write_signature
+mbedtls_ecdsa_read_signature

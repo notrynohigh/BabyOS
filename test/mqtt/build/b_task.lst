@@ -1,0 +1,1285 @@
+GAS LISTING /tmp/ccxuwAz9.s 			page 1
+
+
+   1              		.file	"b_task.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/core/b_task.c"
+   5              		.section	.text._bTaskCore,"ax",@progbits
+   6              		.p2align 4
+   8              	_bTaskCore:
+   9              	.LFB29:
+   1:../../bos/core/b_task.c **** /**
+   2:../../bos/core/b_task.c ****  *!
+   3:../../bos/core/b_task.c ****  * \file        b_task.c
+   4:../../bos/core/b_task.c ****  * \version     v0.0.1
+   5:../../bos/core/b_task.c ****  * \date        2019/06/05
+   6:../../bos/core/b_task.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/core/b_task.c ****  *******************************************************************************
+   8:../../bos/core/b_task.c ****  * @attention
+   9:../../bos/core/b_task.c ****  *
+  10:../../bos/core/b_task.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/core/b_task.c ****  *
+  12:../../bos/core/b_task.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/core/b_task.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/core/b_task.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/core/b_task.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/core/b_task.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/core/b_task.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/core/b_task.c ****  *
+  19:../../bos/core/b_task.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/core/b_task.c ****  * copies or substantial portions of the Software.
+  21:../../bos/core/b_task.c ****  *
+  22:../../bos/core/b_task.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/core/b_task.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/core/b_task.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/core/b_task.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/core/b_task.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/core/b_task.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/core/b_task.c ****  * SOFTWARE.
+  29:../../bos/core/b_task.c ****  *******************************************************************************
+  30:../../bos/core/b_task.c ****  */
+  31:../../bos/core/b_task.c **** 
+  32:../../bos/core/b_task.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/core/b_task.c **** #include "core/inc/b_task.h"
+  34:../../bos/core/b_task.c **** 
+  35:../../bos/core/b_task.c **** #include "b_section.h"
+  36:../../bos/core/b_task.c **** 
+  37:../../bos/core/b_task.c **** /**
+  38:../../bos/core/b_task.c ****  * \addtogroup BABYOS
+  39:../../bos/core/b_task.c ****  * \{
+  40:../../bos/core/b_task.c ****  */
+  41:../../bos/core/b_task.c **** 
+  42:../../bos/core/b_task.c **** /**
+  43:../../bos/core/b_task.c ****  * \addtogroup CORE
+  44:../../bos/core/b_task.c ****  * \{
+  45:../../bos/core/b_task.c ****  */
+  46:../../bos/core/b_task.c **** 
+  47:../../bos/core/b_task.c **** /**
+  48:../../bos/core/b_task.c ****  * \addtogroup TASK
+  49:../../bos/core/b_task.c ****  * \{
+GAS LISTING /tmp/ccxuwAz9.s 			page 2
+
+
+  50:../../bos/core/b_task.c ****  */
+  51:../../bos/core/b_task.c **** 
+  52:../../bos/core/b_task.c **** /**
+  53:../../bos/core/b_task.c ****  * \defgroup TASK_Private_TypesDefinitions
+  54:../../bos/core/b_task.c ****  * \{
+  55:../../bos/core/b_task.c ****  */
+  56:../../bos/core/b_task.c **** 
+  57:../../bos/core/b_task.c **** /**
+  58:../../bos/core/b_task.c ****  * \}
+  59:../../bos/core/b_task.c ****  */
+  60:../../bos/core/b_task.c **** 
+  61:../../bos/core/b_task.c **** /**
+  62:../../bos/core/b_task.c ****  * \defgroup TASK_Private_Defines
+  63:../../bos/core/b_task.c ****  * \{
+  64:../../bos/core/b_task.c ****  */
+  65:../../bos/core/b_task.c **** #define B_TASK_DEFAULT_NAME "NULL"
+  66:../../bos/core/b_task.c **** /**
+  67:../../bos/core/b_task.c ****  * \}
+  68:../../bos/core/b_task.c ****  */
+  69:../../bos/core/b_task.c **** 
+  70:../../bos/core/b_task.c **** /**
+  71:../../bos/core/b_task.c ****  * \defgroup TASK_Private_Macros
+  72:../../bos/core/b_task.c ****  * \{
+  73:../../bos/core/b_task.c ****  */
+  74:../../bos/core/b_task.c **** 
+  75:../../bos/core/b_task.c **** /**
+  76:../../bos/core/b_task.c ****  * \}
+  77:../../bos/core/b_task.c ****  */
+  78:../../bos/core/b_task.c **** 
+  79:../../bos/core/b_task.c **** /**
+  80:../../bos/core/b_task.c ****  * \defgroup TASK_Private_Variables
+  81:../../bos/core/b_task.c ****  * \{
+  82:../../bos/core/b_task.c ****  */
+  83:../../bos/core/b_task.c **** 
+  84:../../bos/core/b_task.c **** static LIST_HEAD(bTaskListHead);
+  85:../../bos/core/b_task.c **** static bTaskAttr_t *pCurrentTaskAttr = NULL;
+  86:../../bos/core/b_task.c **** /**
+  87:../../bos/core/b_task.c ****  * \}
+  88:../../bos/core/b_task.c ****  */
+  89:../../bos/core/b_task.c **** 
+  90:../../bos/core/b_task.c **** /**
+  91:../../bos/core/b_task.c ****  * \defgroup TASK_Private_FunctionPrototypes
+  92:../../bos/core/b_task.c ****  * \{
+  93:../../bos/core/b_task.c ****  */
+  94:../../bos/core/b_task.c **** 
+  95:../../bos/core/b_task.c **** /**
+  96:../../bos/core/b_task.c ****  * \}
+  97:../../bos/core/b_task.c ****  */
+  98:../../bos/core/b_task.c **** 
+  99:../../bos/core/b_task.c **** /**
+ 100:../../bos/core/b_task.c ****  * \defgroup TASK_Private_Functions
+ 101:../../bos/core/b_task.c ****  * \{
+ 102:../../bos/core/b_task.c ****  */
+ 103:../../bos/core/b_task.c **** 
+ 104:../../bos/core/b_task.c **** static bTaskAttr_t *_bTaskFind(bTaskId_t id)
+ 105:../../bos/core/b_task.c **** {
+ 106:../../bos/core/b_task.c ****     struct list_head *pos   = NULL;
+GAS LISTING /tmp/ccxuwAz9.s 			page 3
+
+
+ 107:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
+ 108:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
+ 109:../../bos/core/b_task.c ****     {
+ 110:../../bos/core/b_task.c ****         pattr = list_entry(pos, bTaskAttr_t, list);
+ 111:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 112:../../bos/core/b_task.c ****         {
+ 113:../../bos/core/b_task.c ****             break;
+ 114:../../bos/core/b_task.c ****         }
+ 115:../../bos/core/b_task.c ****         pattr = NULL;
+ 116:../../bos/core/b_task.c ****     }
+ 117:../../bos/core/b_task.c ****     return pattr;
+ 118:../../bos/core/b_task.c **** }
+ 119:../../bos/core/b_task.c **** 
+ 120:../../bos/core/b_task.c **** static void _bTaskCore()
+ 121:../../bos/core/b_task.c **** {
+  10              		.loc 1 121 1 view -0
+  11              		.cfi_startproc
+  12 0000 F30F1EFA 		endbr64
+ 122:../../bos/core/b_task.c ****     struct list_head *pos   = NULL;
+  13              		.loc 1 122 5 view .LVU1
+  14              	.LVL0:
+ 123:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
+  15              		.loc 1 123 5 view .LVU2
+ 124:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
+  16              		.loc 1 124 5 view .LVU3
+ 121:../../bos/core/b_task.c ****     struct list_head *pos   = NULL;
+  17              		.loc 1 121 1 is_stmt 0 view .LVU4
+  18 0004 55       		pushq	%rbp
+  19              	.LCFI0:
+  20              		.cfi_def_cfa_offset 16
+  21              		.cfi_offset 6, -16
+  22              		.loc 1 124 5 view .LVU5
+  23 0005 488D2D00 		leaq	bTaskListHead(%rip), %rbp
+  23      000000
+ 121:../../bos/core/b_task.c ****     struct list_head *pos   = NULL;
+  24              		.loc 1 121 1 view .LVU6
+  25 000c 53       		pushq	%rbx
+  26              	.LCFI1:
+  27              		.cfi_def_cfa_offset 24
+  28              		.cfi_offset 3, -24
+  29 000d 4883EC08 		subq	$8, %rsp
+  30              	.LCFI2:
+  31              		.cfi_def_cfa_offset 32
+  32              		.loc 1 124 5 view .LVU7
+  33 0011 488B1D00 		movq	bTaskListHead(%rip), %rbx
+  33      000000
+  34              	.LVL1:
+  35              		.loc 1 124 5 is_stmt 1 discriminator 1 view .LVU8
+  36 0018 4839EB   		cmpq	%rbp, %rbx
+  37 001b 742F     		je	.L1
+  38              	.LVL2:
+  39 001d 0F1F00   		.p2align 4,,10
+  40              		.p2align 3
+  41              	.L4:
+ 125:../../bos/core/b_task.c ****     {
+ 126:../../bos/core/b_task.c ****         pattr = list_entry(pos, bTaskAttr_t, list);
+  42              		.loc 1 126 9 view .LVU9
+GAS LISTING /tmp/ccxuwAz9.s 			page 4
+
+
+ 127:../../bos/core/b_task.c ****         if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
+  43              		.loc 1 127 9 view .LVU10
+  44              		.loc 1 127 35 is_stmt 0 discriminator 1 view .LVU11
+  45 0020 488B43D8 		movq	-40(%rbx), %rax
+  46              		.loc 1 127 27 discriminator 1 view .LVU12
+  47 0024 4885C0   		testq	%rax, %rax
+  48 0027 741B     		je	.L3
+  49              		.loc 1 127 50 discriminator 2 view .LVU13
+  50 0029 807BE801 		cmpb	$1, -24(%rbx)
+  51 002d 7515     		jne	.L3
+ 128:../../bos/core/b_task.c ****         {
+ 129:../../bos/core/b_task.c ****             pCurrentTaskAttr = pattr;
+  52              		.loc 1 129 13 is_stmt 1 view .LVU14
+ 126:../../bos/core/b_task.c ****         if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
+  53              		.loc 1 126 15 is_stmt 0 view .LVU15
+  54 002f 488D53D0 		leaq	-48(%rbx), %rdx
+  55              	.LVL3:
+ 130:../../bos/core/b_task.c ****             pattr->func(&pattr->task_pt, pattr->arg);
+  56              		.loc 1 130 13 view .LVU16
+  57 0033 488B73E0 		movq	-32(%rbx), %rsi
+  58 0037 488D7BEC 		leaq	-20(%rbx), %rdi
+ 126:../../bos/core/b_task.c ****         if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
+  59              		.loc 1 126 15 view .LVU17
+  60 003b 48891500 		movq	%rdx, pCurrentTaskAttr(%rip)
+  60      000000
+  61              		.loc 1 130 13 is_stmt 1 view .LVU18
+  62 0042 FFD0     		call	*%rax
+  63              	.LVL4:
+  64              	.L3:
+ 124:../../bos/core/b_task.c ****     {
+  65              		.loc 1 124 5 discriminator 2 view .LVU19
+  66 0044 488B1B   		movq	(%rbx), %rbx
+  67              	.LVL5:
+ 124:../../bos/core/b_task.c ****     {
+  68              		.loc 1 124 5 discriminator 1 view .LVU20
+  69 0047 4839EB   		cmpq	%rbp, %rbx
+  70 004a 75D4     		jne	.L4
+  71              	.LVL6:
+  72              	.L1:
+ 131:../../bos/core/b_task.c ****         }
+ 132:../../bos/core/b_task.c ****     }
+ 133:../../bos/core/b_task.c **** }
+  73              		.loc 1 133 1 is_stmt 0 view .LVU21
+  74 004c 4883C408 		addq	$8, %rsp
+  75              	.LCFI3:
+  76              		.cfi_def_cfa_offset 24
+  77 0050 5B       		popq	%rbx
+  78              	.LCFI4:
+  79              		.cfi_def_cfa_offset 16
+  80              	.LVL7:
+  81              		.loc 1 133 1 view .LVU22
+  82 0051 5D       		popq	%rbp
+  83              	.LCFI5:
+  84              		.cfi_def_cfa_offset 8
+  85 0052 C3       		ret
+  86              		.cfi_endproc
+  87              	.LFE29:
+GAS LISTING /tmp/ccxuwAz9.s 			page 5
+
+
+  89              		.section	.rodata.bTaskCreate.str1.1,"aMS",@progbits,1
+  90              	.LC0:
+  91 0000 4E554C4C 		.string	"NULL"
+  91      00
+  92              		.section	.text.bTaskCreate,"ax",@progbits
+  93              		.p2align 4
+  94              		.globl	bTaskCreate
+  96              	bTaskCreate:
+  97              	.LVL8:
+  98              	.LFB30:
+ 134:../../bos/core/b_task.c **** 
+ 135:../../bos/core/b_task.c **** #ifdef BSECTION_NEED_PRAGMA
+ 136:../../bos/core/b_task.c **** #pragma section bos_polling
+ 137:../../bos/core/b_task.c **** #endif
+ 138:../../bos/core/b_task.c **** BOS_REG_POLLING_FUNC(_bTaskCore);
+ 139:../../bos/core/b_task.c **** #ifdef BSECTION_NEED_PRAGMA
+ 140:../../bos/core/b_task.c **** #pragma section
+ 141:../../bos/core/b_task.c **** #endif
+ 142:../../bos/core/b_task.c **** /**
+ 143:../../bos/core/b_task.c ****  * \}
+ 144:../../bos/core/b_task.c ****  */
+ 145:../../bos/core/b_task.c **** 
+ 146:../../bos/core/b_task.c **** /**
+ 147:../../bos/core/b_task.c ****  * \addtogroup TASK_Exported_Functions
+ 148:../../bos/core/b_task.c ****  * \{
+ 149:../../bos/core/b_task.c ****  */
+ 150:../../bos/core/b_task.c **** 
+ 151:../../bos/core/b_task.c **** bTaskId_t bTaskCreate(const char *name, bTaskFunc_t func, void *argument, bTaskAttr_t *attr)
+ 152:../../bos/core/b_task.c **** {
+  99              		.loc 1 152 1 is_stmt 1 view -0
+ 100              		.cfi_startproc
+ 101              		.loc 1 152 1 is_stmt 0 view .LVU24
+ 102 0000 F30F1EFA 		endbr64
+ 153:../../bos/core/b_task.c ****     if (attr == NULL || func == NULL)
+ 103              		.loc 1 153 5 is_stmt 1 view .LVU25
+ 152:../../bos/core/b_task.c ****     if (attr == NULL || func == NULL)
+ 104              		.loc 1 152 1 is_stmt 0 view .LVU26
+ 105 0004 4989F9   		movq	%rdi, %r9
+ 106              		.loc 1 153 8 view .LVU27
+ 107 0007 4885C9   		testq	%rcx, %rcx
+ 108 000a 0F849000 		je	.L18
+ 108      0000
+ 109 0010 4885F6   		testq	%rsi, %rsi
+ 110 0013 0F848700 		je	.L18
+ 110      0000
+ 154:../../bos/core/b_task.c ****     {
+ 155:../../bos/core/b_task.c ****         return NULL;
+ 156:../../bos/core/b_task.c ****     }
+ 157:../../bos/core/b_task.c ****     if (_bTaskFind(attr) != NULL)
+ 111              		.loc 1 157 5 is_stmt 1 view .LVU28
+ 112              	.LVL9:
+ 113              	.LBB24:
+ 114              	.LBI24:
+ 104:../../bos/core/b_task.c **** {
+ 115              		.loc 1 104 21 view .LVU29
+ 116              	.LBB25:
+ 106:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
+GAS LISTING /tmp/ccxuwAz9.s 			page 6
+
+
+ 117              		.loc 1 106 5 view .LVU30
+ 107:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
+ 118              		.loc 1 107 5 view .LVU31
+ 108:../../bos/core/b_task.c ****     {
+ 119              		.loc 1 108 5 view .LVU32
+ 120 0019 4C8B1500 		movq	bTaskListHead(%rip), %r10
+ 120      000000
+ 121              	.LVL10:
+ 108:../../bos/core/b_task.c ****     {
+ 122              		.loc 1 108 5 discriminator 1 view .LVU33
+ 108:../../bos/core/b_task.c ****     {
+ 123              		.loc 1 108 5 is_stmt 0 view .LVU34
+ 124 0020 4C8D0500 		leaq	bTaskListHead(%rip), %r8
+ 124      000000
+ 108:../../bos/core/b_task.c ****     {
+ 125              		.loc 1 108 5 discriminator 1 view .LVU35
+ 126 0027 4D39C2   		cmpq	%r8, %r10
+ 127 002a 7425     		je	.L13
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 128              		.loc 1 110 9 is_stmt 1 view .LVU36
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 129              		.loc 1 110 15 is_stmt 0 view .LVU37
+ 130 002c 498D42D0 		leaq	-48(%r10), %rax
+ 131              	.LVL11:
+ 111:../../bos/core/b_task.c ****         {
+ 132              		.loc 1 111 9 is_stmt 1 view .LVU38
+ 111:../../bos/core/b_task.c ****         {
+ 133              		.loc 1 111 12 is_stmt 0 view .LVU39
+ 134 0030 4839C1   		cmpq	%rax, %rcx
+ 135 0033 746D     		je	.L11
+ 108:../../bos/core/b_task.c ****     {
+ 136              		.loc 1 108 5 view .LVU40
+ 137 0035 4C89D0   		movq	%r10, %rax
+ 138              	.LVL12:
+ 108:../../bos/core/b_task.c ****     {
+ 139              		.loc 1 108 5 view .LVU41
+ 140 0038 EB0F     		jmp	.L14
+ 141              	.LVL13:
+ 142 003a 660F1F44 		.p2align 4,,10
+ 142      0000
+ 143              		.p2align 3
+ 144              	.L16:
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 145              		.loc 1 110 9 is_stmt 1 view .LVU42
+ 111:../../bos/core/b_task.c ****         {
+ 146              		.loc 1 111 9 view .LVU43
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 147              		.loc 1 110 15 is_stmt 0 view .LVU44
+ 148 0040 488D78D0 		leaq	-48(%rax), %rdi
+ 149              	.LVL14:
+ 111:../../bos/core/b_task.c ****         {
+ 150              		.loc 1 111 12 view .LVU45
+ 151 0044 4839F9   		cmpq	%rdi, %rcx
+ 152 0047 7451     		je	.L15
+ 153              	.LVL15:
+ 154              	.L14:
+ 115:../../bos/core/b_task.c ****     }
+GAS LISTING /tmp/ccxuwAz9.s 			page 7
+
+
+ 155              		.loc 1 115 9 is_stmt 1 view .LVU46
+ 108:../../bos/core/b_task.c ****     {
+ 156              		.loc 1 108 5 discriminator 2 view .LVU47
+ 157 0049 488B00   		movq	(%rax), %rax
+ 158              	.LVL16:
+ 108:../../bos/core/b_task.c ****     {
+ 159              		.loc 1 108 5 discriminator 1 view .LVU48
+ 160 004c 4C39C0   		cmpq	%r8, %rax
+ 161 004f 75EF     		jne	.L16
+ 162              	.LVL17:
+ 163              	.L13:
+ 117:../../bos/core/b_task.c **** }
+ 164              		.loc 1 117 5 view .LVU49
+ 117:../../bos/core/b_task.c **** }
+ 165              		.loc 1 117 5 is_stmt 0 view .LVU50
+ 166              	.LBE25:
+ 167              	.LBE24:
+ 158:../../bos/core/b_task.c ****     {
+ 159:../../bos/core/b_task.c ****         return attr;
+ 160:../../bos/core/b_task.c ****     }
+ 161:../../bos/core/b_task.c ****     attr->name         = (name == NULL) ? B_TASK_DEFAULT_NAME : name;
+ 168              		.loc 1 161 5 is_stmt 1 view .LVU51
+ 169              		.loc 1 161 63 is_stmt 0 discriminator 2 view .LVU52
+ 170 0051 4D85C9   		testq	%r9, %r9
+ 171 0054 488D0500 		leaq	.LC0(%rip), %rax
+ 171      000000
+ 162:../../bos/core/b_task.c ****     attr->func         = func;
+ 172              		.loc 1 162 24 view .LVU53
+ 173 005b 48897108 		movq	%rsi, 8(%rcx)
+ 161:../../bos/core/b_task.c ****     attr->func         = func;
+ 174              		.loc 1 161 63 discriminator 2 view .LVU54
+ 175 005f 4C0F44C8 		cmove	%rax, %r9
+ 176              	.LVL18:
+ 163:../../bos/core/b_task.c ****     attr->arg          = argument;
+ 164:../../bos/core/b_task.c ****     attr->enable       = 1;
+ 165:../../bos/core/b_task.c ****     attr->task_pt.init = 0;
+ 166:../../bos/core/b_task.c ****     PT_INIT(&attr->task_pt);
+ 177              		.loc 1 166 5 view .LVU55
+ 178 0063 31C0     		xorl	%eax, %eax
+ 163:../../bos/core/b_task.c ****     attr->arg          = argument;
+ 179              		.loc 1 163 24 view .LVU56
+ 180 0065 48895110 		movq	%rdx, 16(%rcx)
+ 181              		.loc 1 166 5 view .LVU57
+ 182 0069 6689411C 		movw	%ax, 28(%rcx)
+ 167:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 183              		.loc 1 167 5 view .LVU58
+ 184 006d 488D4130 		leaq	48(%rcx), %rax
+ 161:../../bos/core/b_task.c ****     attr->func         = func;
+ 185              		.loc 1 161 24 discriminator 4 view .LVU59
+ 186 0071 4C8909   		movq	%r9, (%rcx)
+ 162:../../bos/core/b_task.c ****     attr->arg          = argument;
+ 187              		.loc 1 162 5 is_stmt 1 view .LVU60
+ 163:../../bos/core/b_task.c ****     attr->arg          = argument;
+ 188              		.loc 1 163 5 view .LVU61
+ 164:../../bos/core/b_task.c ****     attr->task_pt.init = 0;
+ 189              		.loc 1 164 5 view .LVU62
+ 164:../../bos/core/b_task.c ****     attr->task_pt.init = 0;
+GAS LISTING /tmp/ccxuwAz9.s 			page 8
+
+
+ 190              		.loc 1 164 24 is_stmt 0 view .LVU63
+ 191 0074 C6411801 		movb	$1, 24(%rcx)
+ 165:../../bos/core/b_task.c ****     PT_INIT(&attr->task_pt);
+ 192              		.loc 1 165 5 is_stmt 1 view .LVU64
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 193              		.loc 1 166 5 view .LVU65
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 194              		.loc 1 166 5 view .LVU66
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 195              		.loc 1 166 5 view .LVU67
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 196              		.loc 1 166 5 view .LVU68
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 197              		.loc 1 166 5 view .LVU69
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 198              		.loc 1 166 5 view .LVU70
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 199              		.loc 1 166 5 view .LVU71
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 200              		.loc 1 166 5 view .LVU72
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 201              		.loc 1 166 5 view .LVU73
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 202              		.loc 1 166 5 view .LVU74
+ 203 0078 48C74120 		movq	$0, 32(%rcx)
+ 203      00000000 
+ 204 0080 C7412800 		movl	$0, 40(%rcx)
+ 204      000000
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 205              		.loc 1 166 5 view .LVU75
+ 166:../../bos/core/b_task.c ****     list_add(&attr->list, &bTaskListHead);
+ 206              		.loc 1 166 5 view .LVU76
+ 207              		.loc 1 167 5 view .LVU77
+ 208              	.LVL19:
+ 209              	.LBB26:
+ 210              	.LBI26:
+ 211              		.file 2 "../../bos/utils/inc/b_util_list.h"
+   1:../../bos/utils/inc/b_util_list.h **** /**
+   2:../../bos/utils/inc/b_util_list.h ****  *!
+   3:../../bos/utils/inc/b_util_list.h ****  * \file        b_util_list.h
+   4:../../bos/utils/inc/b_util_list.h ****  * \version     v0.0.1
+   5:../../bos/utils/inc/b_util_list.h ****  * \date        2019/12/23
+   6:../../bos/utils/inc/b_util_list.h ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+   8:../../bos/utils/inc/b_util_list.h ****  * @attention
+   9:../../bos/utils/inc/b_util_list.h ****  *
+  10:../../bos/utils/inc/b_util_list.h ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/inc/b_util_list.h ****  *
+  12:../../bos/utils/inc/b_util_list.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/inc/b_util_list.h ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/inc/b_util_list.h ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/inc/b_util_list.h ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/inc/b_util_list.h ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/inc/b_util_list.h ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/inc/b_util_list.h ****  *
+  19:../../bos/utils/inc/b_util_list.h ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/inc/b_util_list.h ****  * copies or substantial portions of the Software.
+GAS LISTING /tmp/ccxuwAz9.s 			page 9
+
+
+  21:../../bos/utils/inc/b_util_list.h ****  *
+  22:../../bos/utils/inc/b_util_list.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/inc/b_util_list.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/inc/b_util_list.h ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/inc/b_util_list.h ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/inc/b_util_list.h ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/inc/b_util_list.h ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/inc/b_util_list.h ****  * SOFTWARE.
+  29:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+  30:../../bos/utils/inc/b_util_list.h ****  */
+  31:../../bos/utils/inc/b_util_list.h **** #ifndef __B_UTIL_LIST_H__
+  32:../../bos/utils/inc/b_util_list.h **** #define __B_UTIL_LIST_H__
+  33:../../bos/utils/inc/b_util_list.h **** 
+  34:../../bos/utils/inc/b_util_list.h **** #ifdef __cplusplus
+  35:../../bos/utils/inc/b_util_list.h **** extern "C" {
+  36:../../bos/utils/inc/b_util_list.h **** #endif
+  37:../../bos/utils/inc/b_util_list.h **** 
+  38:../../bos/utils/inc/b_util_list.h **** /*Includes ----------------------------------------------*/
+  39:../../bos/utils/inc/b_util_list.h **** #include "b_type.h"
+  40:../../bos/utils/inc/b_util_list.h **** /**
+  41:../../bos/utils/inc/b_util_list.h ****  * \addtogroup B_UTILS
+  42:../../bos/utils/inc/b_util_list.h ****  * \{
+  43:../../bos/utils/inc/b_util_list.h ****  */
+  44:../../bos/utils/inc/b_util_list.h **** 
+  45:../../bos/utils/inc/b_util_list.h **** /**
+  46:../../bos/utils/inc/b_util_list.h ****  * \addtogroup LIST
+  47:../../bos/utils/inc/b_util_list.h ****  * \{
+  48:../../bos/utils/inc/b_util_list.h ****  */
+  49:../../bos/utils/inc/b_util_list.h **** 
+  50:../../bos/utils/inc/b_util_list.h **** struct list_head
+  51:../../bos/utils/inc/b_util_list.h **** {
+  52:../../bos/utils/inc/b_util_list.h ****     struct list_head *next, *prev;
+  53:../../bos/utils/inc/b_util_list.h **** };
+  54:../../bos/utils/inc/b_util_list.h **** 
+  55:../../bos/utils/inc/b_util_list.h **** #define WRITE_ONCE(var, val) (var) = (val)
+  56:../../bos/utils/inc/b_util_list.h **** 
+  57:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD_INIT(name) \
+  58:../../bos/utils/inc/b_util_list.h ****     {                        \
+  59:../../bos/utils/inc/b_util_list.h ****         &(name), &(name)     \
+  60:../../bos/utils/inc/b_util_list.h ****     }
+  61:../../bos/utils/inc/b_util_list.h **** 
+  62:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD(name) struct list_head name = LIST_HEAD_INIT(name)
+  63:../../bos/utils/inc/b_util_list.h **** 
+  64:../../bos/utils/inc/b_util_list.h **** #define INIT_LIST_HEAD(ptr)  \
+  65:../../bos/utils/inc/b_util_list.h ****     do                       \
+  66:../../bos/utils/inc/b_util_list.h ****     {                        \
+  67:../../bos/utils/inc/b_util_list.h ****         (ptr)->next = (ptr); \
+  68:../../bos/utils/inc/b_util_list.h ****         (ptr)->prev = (ptr); \
+  69:../../bos/utils/inc/b_util_list.h ****     } while (0)
+  70:../../bos/utils/inc/b_util_list.h **** 
+  71:../../bos/utils/inc/b_util_list.h **** /**
+  72:../../bos/utils/inc/b_util_list.h ****  * list_entry - get the struct for this entry
+  73:../../bos/utils/inc/b_util_list.h ****  * @ptr: the &struct list_head pointer.
+  74:../../bos/utils/inc/b_util_list.h ****  * @type: the type of the struct this is embedded in.
+  75:../../bos/utils/inc/b_util_list.h ****  * @member: the name of the list_struct within the struct.
+  76:../../bos/utils/inc/b_util_list.h ****  */
+  77:../../bos/utils/inc/b_util_list.h **** #define list_entry(ptr, type, member) \
+GAS LISTING /tmp/ccxuwAz9.s 			page 10
+
+
+  78:../../bos/utils/inc/b_util_list.h ****     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
+  79:../../bos/utils/inc/b_util_list.h **** 
+  80:../../bos/utils/inc/b_util_list.h **** #define list_first_entry(ptr, type, member) list_entry((ptr)->next, type, member)
+  81:../../bos/utils/inc/b_util_list.h **** 
+  82:../../bos/utils/inc/b_util_list.h **** #define list_next_entry(pos, type, member) list_entry((pos)->member.next, type, member)
+  83:../../bos/utils/inc/b_util_list.h **** 
+  84:../../bos/utils/inc/b_util_list.h **** /*
+  85:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry between two known consecutive entries.
+  86:../../bos/utils/inc/b_util_list.h ****  *
+  87:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+  88:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+  89:../../bos/utils/inc/b_util_list.h ****  */
+  90:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_add(struct list_head *newItem, struct list_head *prev,
+  91:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+  92:../../bos/utils/inc/b_util_list.h **** {
+  93:../../bos/utils/inc/b_util_list.h ****     next->prev    = newItem;
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+  95:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+  96:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+  97:../../bos/utils/inc/b_util_list.h **** }
+  98:../../bos/utils/inc/b_util_list.h **** 
+  99:../../bos/utils/inc/b_util_list.h **** /**
+ 100:../../bos/utils/inc/b_util_list.h ****  * list_add - add a new entry
+ 101:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 102:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it after
+ 103:../../bos/utils/inc/b_util_list.h ****  *
+ 104:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry after the specified head.
+ 105:../../bos/utils/inc/b_util_list.h ****  * This is good for implementing stacks.
+ 106:../../bos/utils/inc/b_util_list.h ****  */
+ 107:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add(struct list_head *newItem, struct list_head *head)
+ 212              		.loc 2 107 26 view .LVU78
+ 108:../../bos/utils/inc/b_util_list.h **** {
+ 109:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head, head->next);
+ 213              		.loc 2 109 5 view .LVU79
+ 214              	.LBB27:
+ 215              	.LBI27:
+  90:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+ 216              		.loc 2 90 26 view .LVU80
+ 217              	.LBB28:
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 218              		.loc 2 93 5 view .LVU81
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 219              		.loc 2 96 5 is_stmt 0 view .LVU82
+ 220 0087 48890500 		movq	%rax, bTaskListHead(%rip)
+ 220      000000
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 221              		.loc 2 93 19 view .LVU83
+ 222 008e 49894208 		movq	%rax, 8(%r10)
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 223              		.loc 2 94 5 is_stmt 1 view .LVU84
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 224              		.loc 2 94 19 is_stmt 0 view .LVU85
+ 225 0092 4C895130 		movq	%r10, 48(%rcx)
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 226              		.loc 2 95 5 is_stmt 1 view .LVU86
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 227              		.loc 2 95 19 is_stmt 0 view .LVU87
+GAS LISTING /tmp/ccxuwAz9.s 			page 11
+
+
+ 228 0096 4C894138 		movq	%r8, 56(%rcx)
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 229              		.loc 2 96 5 is_stmt 1 view .LVU88
+ 230              	.LVL20:
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 231              		.loc 2 96 5 is_stmt 0 view .LVU89
+ 232              	.LBE28:
+ 233              	.LBE27:
+ 234              	.LBE26:
+ 168:../../bos/core/b_task.c ****     return attr;
+ 235              		.loc 1 168 5 is_stmt 1 view .LVU90
+ 236              	.L15:
+ 159:../../bos/core/b_task.c ****     }
+ 237              		.loc 1 159 16 is_stmt 0 view .LVU91
+ 238 009a 4889C8   		movq	%rcx, %rax
+ 239 009d C3       		ret
+ 240              	.LVL21:
+ 241 009e 6690     		.p2align 4,,10
+ 242              		.p2align 3
+ 243              	.L18:
+ 155:../../bos/core/b_task.c ****     }
+ 244              		.loc 1 155 16 view .LVU92
+ 245 00a0 31C0     		xorl	%eax, %eax
+ 246              	.L11:
+ 169:../../bos/core/b_task.c **** }
+ 247              		.loc 1 169 1 view .LVU93
+ 248 00a2 C3       		ret
+ 249              		.cfi_endproc
+ 250              	.LFE30:
+ 252              		.section	.text.bTaskRemove,"ax",@progbits
+ 253              		.p2align 4
+ 254              		.globl	bTaskRemove
+ 256              	bTaskRemove:
+ 257              	.LVL22:
+ 258              	.LFB31:
+ 170:../../bos/core/b_task.c **** 
+ 171:../../bos/core/b_task.c **** /// 销毁任务
+ 172:../../bos/core/b_task.c **** void bTaskRemove(bTaskId_t id)
+ 173:../../bos/core/b_task.c **** {
+ 259              		.loc 1 173 1 is_stmt 1 view -0
+ 260              		.cfi_startproc
+ 261              		.loc 1 173 1 is_stmt 0 view .LVU95
+ 262 0000 F30F1EFA 		endbr64
+ 174:../../bos/core/b_task.c ****     bTaskAttr_t *pattr = NULL;
+ 263              		.loc 1 174 5 is_stmt 1 view .LVU96
+ 264              	.LVL23:
+ 175:../../bos/core/b_task.c ****     if (id == NULL)
+ 265              		.loc 1 175 5 view .LVU97
+ 266              		.loc 1 175 8 is_stmt 0 view .LVU98
+ 267 0004 4885FF   		testq	%rdi, %rdi
+ 268 0007 744B     		je	.L20
+ 176:../../bos/core/b_task.c ****     {
+ 177:../../bos/core/b_task.c ****         return;
+ 178:../../bos/core/b_task.c ****     }
+ 179:../../bos/core/b_task.c ****     pattr = _bTaskFind(id);
+ 269              		.loc 1 179 5 is_stmt 1 view .LVU99
+ 270              	.LVL24:
+GAS LISTING /tmp/ccxuwAz9.s 			page 12
+
+
+ 271              	.LBB29:
+ 272              	.LBI29:
+ 104:../../bos/core/b_task.c **** {
+ 273              		.loc 1 104 21 view .LVU100
+ 274              	.LBB30:
+ 106:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
+ 275              		.loc 1 106 5 view .LVU101
+ 107:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
+ 276              		.loc 1 107 5 view .LVU102
+ 108:../../bos/core/b_task.c ****     {
+ 277              		.loc 1 108 5 view .LVU103
+ 278 0009 488B0500 		movq	bTaskListHead(%rip), %rax
+ 278      000000
+ 279              	.LVL25:
+ 108:../../bos/core/b_task.c ****     {
+ 280              		.loc 1 108 5 discriminator 1 view .LVU104
+ 108:../../bos/core/b_task.c ****     {
+ 281              		.loc 1 108 5 is_stmt 0 view .LVU105
+ 282 0010 488D0D00 		leaq	bTaskListHead(%rip), %rcx
+ 282      000000
+ 108:../../bos/core/b_task.c ****     {
+ 283              		.loc 1 108 5 discriminator 1 view .LVU106
+ 284 0017 4839C8   		cmpq	%rcx, %rax
+ 285 001a 750C     		jne	.L24
+ 286 001c C3       		ret
+ 287              	.LVL26:
+ 288 001d 0F1F00   		.p2align 4,,10
+ 289              		.p2align 3
+ 290              	.L29:
+ 115:../../bos/core/b_task.c ****     }
+ 291              		.loc 1 115 9 is_stmt 1 view .LVU107
+ 108:../../bos/core/b_task.c ****     {
+ 292              		.loc 1 108 5 discriminator 2 view .LVU108
+ 293 0020 488B00   		movq	(%rax), %rax
+ 294              	.LVL27:
+ 108:../../bos/core/b_task.c ****     {
+ 295              		.loc 1 108 5 discriminator 1 view .LVU109
+ 296 0023 4839C8   		cmpq	%rcx, %rax
+ 297 0026 7430     		je	.L28
+ 298              	.L24:
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 299              		.loc 1 110 9 view .LVU110
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 300              		.loc 1 110 15 is_stmt 0 view .LVU111
+ 301 0028 488D50D0 		leaq	-48(%rax), %rdx
+ 302              	.LVL28:
+ 111:../../bos/core/b_task.c ****         {
+ 303              		.loc 1 111 9 is_stmt 1 view .LVU112
+ 111:../../bos/core/b_task.c ****         {
+ 304              		.loc 1 111 12 is_stmt 0 view .LVU113
+ 305 002c 4839D7   		cmpq	%rdx, %rdi
+ 306 002f 75EF     		jne	.L29
+ 307              	.LVL29:
+ 111:../../bos/core/b_task.c ****         {
+ 308              		.loc 1 111 12 view .LVU114
+ 309              	.LBE30:
+ 310              	.LBE29:
+GAS LISTING /tmp/ccxuwAz9.s 			page 13
+
+
+ 180:../../bos/core/b_task.c ****     if (pattr != NULL)
+ 181:../../bos/core/b_task.c ****     {
+ 182:../../bos/core/b_task.c ****         __list_del(pattr->list.prev, pattr->list.next);
+ 311              		.loc 1 182 9 is_stmt 1 view .LVU115
+ 312 0031 488B4A30 		movq	48(%rdx), %rcx
+ 313 0035 488B4238 		movq	56(%rdx), %rax
+ 314              	.LVL30:
+ 315              	.LBB32:
+ 316              	.LBI32:
+ 110:../../bos/utils/inc/b_util_list.h **** }
+ 111:../../bos/utils/inc/b_util_list.h **** 
+ 112:../../bos/utils/inc/b_util_list.h **** /**
+ 113:../../bos/utils/inc/b_util_list.h ****  * list_add_tail - add a new entry
+ 114:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 115:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it before
+ 116:../../bos/utils/inc/b_util_list.h ****  *
+ 117:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry before the specified head.
+ 118:../../bos/utils/inc/b_util_list.h ****  * This is useful for implementing queues.
+ 119:../../bos/utils/inc/b_util_list.h ****  */
+ 120:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add_tail(struct list_head *newItem, struct list_head *head)
+ 121:../../bos/utils/inc/b_util_list.h **** {
+ 122:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head->prev, head);
+ 123:../../bos/utils/inc/b_util_list.h **** }
+ 124:../../bos/utils/inc/b_util_list.h **** 
+ 125:../../bos/utils/inc/b_util_list.h **** /*
+ 126:../../bos/utils/inc/b_util_list.h ****  * Delete a list entry by making the prev/next entries
+ 127:../../bos/utils/inc/b_util_list.h ****  * point to each other.
+ 128:../../bos/utils/inc/b_util_list.h ****  *
+ 129:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+ 130:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+ 131:../../bos/utils/inc/b_util_list.h ****  */
+ 132:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_del(struct list_head *prev, struct list_head *next)
+ 317              		.loc 2 132 26 view .LVU116
+ 318              	.LBB33:
+ 133:../../bos/utils/inc/b_util_list.h **** {
+ 134:../../bos/utils/inc/b_util_list.h ****     next->prev = prev;
+ 319              		.loc 2 134 5 view .LVU117
+ 320              		.loc 2 134 16 is_stmt 0 view .LVU118
+ 321 0039 48894108 		movq	%rax, 8(%rcx)
+ 135:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 322              		.loc 2 135 5 is_stmt 1 view .LVU119
+ 323 003d 488908   		movq	%rcx, (%rax)
+ 324              	.LVL31:
+ 325              		.loc 2 135 5 is_stmt 0 view .LVU120
+ 326              	.LBE33:
+ 327              	.LBE32:
+ 183:../../bos/core/b_task.c ****         pattr->arg    = NULL;
+ 328              		.loc 1 183 9 is_stmt 1 view .LVU121
+ 329              		.loc 1 183 23 is_stmt 0 view .LVU122
+ 330 0040 48C74210 		movq	$0, 16(%rdx)
+ 330      00000000 
+ 184:../../bos/core/b_task.c ****         pattr->enable = 0;
+ 331              		.loc 1 184 9 is_stmt 1 view .LVU123
+ 332              		.loc 1 184 23 is_stmt 0 view .LVU124
+ 333 0048 C6421800 		movb	$0, 24(%rdx)
+ 185:../../bos/core/b_task.c ****         pattr->func   = NULL;
+ 334              		.loc 1 185 9 is_stmt 1 view .LVU125
+GAS LISTING /tmp/ccxuwAz9.s 			page 14
+
+
+ 335              		.loc 1 185 23 is_stmt 0 view .LVU126
+ 336 004c 48C74208 		movq	$0, 8(%rdx)
+ 336      00000000 
+ 337              	.L20:
+ 186:../../bos/core/b_task.c ****     }
+ 187:../../bos/core/b_task.c **** }
+ 338              		.loc 1 187 1 view .LVU127
+ 339 0054 C3       		ret
+ 340              	.LVL32:
+ 341              		.p2align 4,,10
+ 342 0055 0F1F00   		.p2align 3
+ 343              	.L28:
+ 344              	.LBB34:
+ 345              	.LBB31:
+ 346              		.loc 1 187 1 view .LVU128
+ 347 0058 C3       		ret
+ 348              	.LBE31:
+ 349              	.LBE34:
+ 350              		.cfi_endproc
+ 351              	.LFE31:
+ 353              		.section	.text.bTaskSuspend,"ax",@progbits
+ 354              		.p2align 4
+ 355              		.globl	bTaskSuspend
+ 357              	bTaskSuspend:
+ 358              	.LVL33:
+ 359              	.LFB32:
+ 188:../../bos/core/b_task.c **** 
+ 189:../../bos/core/b_task.c **** /// 暂停任务
+ 190:../../bos/core/b_task.c **** void bTaskSuspend(bTaskId_t id)
+ 191:../../bos/core/b_task.c **** {
+ 360              		.loc 1 191 1 is_stmt 1 view -0
+ 361              		.cfi_startproc
+ 362              		.loc 1 191 1 is_stmt 0 view .LVU130
+ 363 0000 F30F1EFA 		endbr64
+ 192:../../bos/core/b_task.c ****     bTaskAttr_t *pattr = NULL;
+ 364              		.loc 1 192 5 is_stmt 1 view .LVU131
+ 365              	.LVL34:
+ 193:../../bos/core/b_task.c ****     if (id == NULL)
+ 366              		.loc 1 193 5 view .LVU132
+ 367              		.loc 1 193 8 is_stmt 0 view .LVU133
+ 368 0004 4885FF   		testq	%rdi, %rdi
+ 369 0007 742C     		je	.L30
+ 194:../../bos/core/b_task.c ****     {
+ 195:../../bos/core/b_task.c ****         return;
+ 196:../../bos/core/b_task.c ****     }
+ 197:../../bos/core/b_task.c ****     pattr = _bTaskFind(id);
+ 370              		.loc 1 197 5 is_stmt 1 view .LVU134
+ 371              	.LVL35:
+ 372              	.LBB35:
+ 373              	.LBI35:
+ 104:../../bos/core/b_task.c **** {
+ 374              		.loc 1 104 21 view .LVU135
+ 375              	.LBB36:
+ 106:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
+ 376              		.loc 1 106 5 view .LVU136
+ 107:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
+ 377              		.loc 1 107 5 view .LVU137
+GAS LISTING /tmp/ccxuwAz9.s 			page 15
+
+
+ 108:../../bos/core/b_task.c ****     {
+ 378              		.loc 1 108 5 view .LVU138
+ 379 0009 488B0500 		movq	bTaskListHead(%rip), %rax
+ 379      000000
+ 380              	.LVL36:
+ 108:../../bos/core/b_task.c ****     {
+ 381              		.loc 1 108 5 discriminator 1 view .LVU139
+ 108:../../bos/core/b_task.c ****     {
+ 382              		.loc 1 108 5 is_stmt 0 view .LVU140
+ 383 0010 488D0D00 		leaq	bTaskListHead(%rip), %rcx
+ 383      000000
+ 108:../../bos/core/b_task.c ****     {
+ 384              		.loc 1 108 5 discriminator 1 view .LVU141
+ 385 0017 4839C8   		cmpq	%rcx, %rax
+ 386 001a 750C     		jne	.L34
+ 387 001c C3       		ret
+ 388              	.LVL37:
+ 389 001d 0F1F00   		.p2align 4,,10
+ 390              		.p2align 3
+ 391              	.L39:
+ 115:../../bos/core/b_task.c ****     }
+ 392              		.loc 1 115 9 is_stmt 1 view .LVU142
+ 108:../../bos/core/b_task.c ****     {
+ 393              		.loc 1 108 5 discriminator 2 view .LVU143
+ 394 0020 488B00   		movq	(%rax), %rax
+ 395              	.LVL38:
+ 108:../../bos/core/b_task.c ****     {
+ 396              		.loc 1 108 5 discriminator 1 view .LVU144
+ 397 0023 4839C8   		cmpq	%rcx, %rax
+ 398 0026 7418     		je	.L38
+ 399              	.L34:
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 400              		.loc 1 110 9 view .LVU145
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 401              		.loc 1 110 15 is_stmt 0 view .LVU146
+ 402 0028 488D50D0 		leaq	-48(%rax), %rdx
+ 403              	.LVL39:
+ 111:../../bos/core/b_task.c ****         {
+ 404              		.loc 1 111 9 is_stmt 1 view .LVU147
+ 111:../../bos/core/b_task.c ****         {
+ 405              		.loc 1 111 12 is_stmt 0 view .LVU148
+ 406 002c 4839D7   		cmpq	%rdx, %rdi
+ 407 002f 75EF     		jne	.L39
+ 408              	.LVL40:
+ 111:../../bos/core/b_task.c ****         {
+ 409              		.loc 1 111 12 view .LVU149
+ 410              	.LBE36:
+ 411              	.LBE35:
+ 198:../../bos/core/b_task.c ****     if (pattr != NULL)
+ 199:../../bos/core/b_task.c ****     {
+ 200:../../bos/core/b_task.c ****         pattr->enable = 0;
+ 412              		.loc 1 200 9 is_stmt 1 view .LVU150
+ 413              		.loc 1 200 23 is_stmt 0 view .LVU151
+ 414 0031 C6421800 		movb	$0, 24(%rdx)
+ 415              	.L30:
+ 201:../../bos/core/b_task.c ****     }
+ 202:../../bos/core/b_task.c **** }
+GAS LISTING /tmp/ccxuwAz9.s 			page 16
+
+
+ 416              		.loc 1 202 1 view .LVU152
+ 417 0035 C3       		ret
+ 418              	.LVL41:
+ 419 0036 662E0F1F 		.p2align 4,,10
+ 419      84000000 
+ 419      0000
+ 420              		.p2align 3
+ 421              	.L38:
+ 422              	.LBB38:
+ 423              	.LBB37:
+ 424              		.loc 1 202 1 view .LVU153
+ 425 0040 C3       		ret
+ 426              	.LBE37:
+ 427              	.LBE38:
+ 428              		.cfi_endproc
+ 429              	.LFE32:
+ 431              		.section	.text.bTaskResume,"ax",@progbits
+ 432              		.p2align 4
+ 433              		.globl	bTaskResume
+ 435              	bTaskResume:
+ 436              	.LVL42:
+ 437              	.LFB33:
+ 203:../../bos/core/b_task.c **** 
+ 204:../../bos/core/b_task.c **** /// 恢复任务
+ 205:../../bos/core/b_task.c **** void bTaskResume(bTaskId_t id)
+ 206:../../bos/core/b_task.c **** {
+ 438              		.loc 1 206 1 is_stmt 1 view -0
+ 439              		.cfi_startproc
+ 440              		.loc 1 206 1 is_stmt 0 view .LVU155
+ 441 0000 F30F1EFA 		endbr64
+ 207:../../bos/core/b_task.c ****     bTaskAttr_t *pattr = NULL;
+ 442              		.loc 1 207 5 is_stmt 1 view .LVU156
+ 443              	.LVL43:
+ 208:../../bos/core/b_task.c ****     if (id == NULL)
+ 444              		.loc 1 208 5 view .LVU157
+ 445              		.loc 1 208 8 is_stmt 0 view .LVU158
+ 446 0004 4885FF   		testq	%rdi, %rdi
+ 447 0007 742C     		je	.L40
+ 209:../../bos/core/b_task.c ****     {
+ 210:../../bos/core/b_task.c ****         return;
+ 211:../../bos/core/b_task.c ****     }
+ 212:../../bos/core/b_task.c ****     pattr = _bTaskFind(id);
+ 448              		.loc 1 212 5 is_stmt 1 view .LVU159
+ 449              	.LVL44:
+ 450              	.LBB39:
+ 451              	.LBI39:
+ 104:../../bos/core/b_task.c **** {
+ 452              		.loc 1 104 21 view .LVU160
+ 453              	.LBB40:
+ 106:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
+ 454              		.loc 1 106 5 view .LVU161
+ 107:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
+ 455              		.loc 1 107 5 view .LVU162
+ 108:../../bos/core/b_task.c ****     {
+ 456              		.loc 1 108 5 view .LVU163
+ 457 0009 488B0500 		movq	bTaskListHead(%rip), %rax
+ 457      000000
+GAS LISTING /tmp/ccxuwAz9.s 			page 17
+
+
+ 458              	.LVL45:
+ 108:../../bos/core/b_task.c ****     {
+ 459              		.loc 1 108 5 discriminator 1 view .LVU164
+ 108:../../bos/core/b_task.c ****     {
+ 460              		.loc 1 108 5 is_stmt 0 view .LVU165
+ 461 0010 488D0D00 		leaq	bTaskListHead(%rip), %rcx
+ 461      000000
+ 108:../../bos/core/b_task.c ****     {
+ 462              		.loc 1 108 5 discriminator 1 view .LVU166
+ 463 0017 4839C8   		cmpq	%rcx, %rax
+ 464 001a 750C     		jne	.L44
+ 465 001c C3       		ret
+ 466              	.LVL46:
+ 467 001d 0F1F00   		.p2align 4,,10
+ 468              		.p2align 3
+ 469              	.L49:
+ 115:../../bos/core/b_task.c ****     }
+ 470              		.loc 1 115 9 is_stmt 1 view .LVU167
+ 108:../../bos/core/b_task.c ****     {
+ 471              		.loc 1 108 5 discriminator 2 view .LVU168
+ 472 0020 488B00   		movq	(%rax), %rax
+ 473              	.LVL47:
+ 108:../../bos/core/b_task.c ****     {
+ 474              		.loc 1 108 5 discriminator 1 view .LVU169
+ 475 0023 4839C8   		cmpq	%rcx, %rax
+ 476 0026 7418     		je	.L48
+ 477              	.L44:
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 478              		.loc 1 110 9 view .LVU170
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 479              		.loc 1 110 15 is_stmt 0 view .LVU171
+ 480 0028 488D50D0 		leaq	-48(%rax), %rdx
+ 481              	.LVL48:
+ 111:../../bos/core/b_task.c ****         {
+ 482              		.loc 1 111 9 is_stmt 1 view .LVU172
+ 111:../../bos/core/b_task.c ****         {
+ 483              		.loc 1 111 12 is_stmt 0 view .LVU173
+ 484 002c 4839D7   		cmpq	%rdx, %rdi
+ 485 002f 75EF     		jne	.L49
+ 486              	.LVL49:
+ 111:../../bos/core/b_task.c ****         {
+ 487              		.loc 1 111 12 view .LVU174
+ 488              	.LBE40:
+ 489              	.LBE39:
+ 213:../../bos/core/b_task.c ****     if (pattr != NULL)
+ 214:../../bos/core/b_task.c ****     {
+ 215:../../bos/core/b_task.c ****         pattr->enable = 1;
+ 490              		.loc 1 215 9 is_stmt 1 view .LVU175
+ 491              		.loc 1 215 23 is_stmt 0 view .LVU176
+ 492 0031 C6421801 		movb	$1, 24(%rdx)
+ 493              	.L40:
+ 216:../../bos/core/b_task.c ****     }
+ 217:../../bos/core/b_task.c **** }
+ 494              		.loc 1 217 1 view .LVU177
+ 495 0035 C3       		ret
+ 496              	.LVL50:
+ 497 0036 662E0F1F 		.p2align 4,,10
+GAS LISTING /tmp/ccxuwAz9.s 			page 18
+
+
+ 497      84000000 
+ 497      0000
+ 498              		.p2align 3
+ 499              	.L48:
+ 500              	.LBB42:
+ 501              	.LBB41:
+ 502              		.loc 1 217 1 view .LVU178
+ 503 0040 C3       		ret
+ 504              	.LBE41:
+ 505              	.LBE42:
+ 506              		.cfi_endproc
+ 507              	.LFE33:
+ 509              		.section	.text.bTaskGetName,"ax",@progbits
+ 510              		.p2align 4
+ 511              		.globl	bTaskGetName
+ 513              	bTaskGetName:
+ 514              	.LVL51:
+ 515              	.LFB34:
+ 218:../../bos/core/b_task.c **** 
+ 219:../../bos/core/b_task.c **** /// 获取id对应的任务名。id为NULL表示获取当前任务
+ 220:../../bos/core/b_task.c **** const char *bTaskGetName(bTaskId_t id)
+ 221:../../bos/core/b_task.c **** {
+ 516              		.loc 1 221 1 is_stmt 1 view -0
+ 517              		.cfi_startproc
+ 518              		.loc 1 221 1 is_stmt 0 view .LVU180
+ 519 0000 F30F1EFA 		endbr64
+ 222:../../bos/core/b_task.c ****     bTaskAttr_t *pattr = NULL;
+ 520              		.loc 1 222 5 is_stmt 1 view .LVU181
+ 521              	.LVL52:
+ 223:../../bos/core/b_task.c ****     if (id == NULL && pCurrentTaskAttr != NULL)
+ 522              		.loc 1 223 5 view .LVU182
+ 523              		.loc 1 223 8 is_stmt 0 view .LVU183
+ 524 0004 4885FF   		testq	%rdi, %rdi
+ 525 0007 7447     		je	.L59
+ 224:../../bos/core/b_task.c ****     {
+ 225:../../bos/core/b_task.c ****         return pCurrentTaskAttr->name;
+ 226:../../bos/core/b_task.c ****     }
+ 227:../../bos/core/b_task.c ****     pattr = _bTaskFind(id);
+ 526              		.loc 1 227 5 is_stmt 1 view .LVU184
+ 527              	.LVL53:
+ 528              	.LBB43:
+ 529              	.LBI43:
+ 104:../../bos/core/b_task.c **** {
+ 530              		.loc 1 104 21 view .LVU185
+ 531              	.LBB44:
+ 106:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
+ 532              		.loc 1 106 5 view .LVU186
+ 107:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
+ 533              		.loc 1 107 5 view .LVU187
+ 108:../../bos/core/b_task.c ****     {
+ 534              		.loc 1 108 5 view .LVU188
+ 535 0009 488B0500 		movq	bTaskListHead(%rip), %rax
+ 535      000000
+ 536              	.LVL54:
+ 108:../../bos/core/b_task.c ****     {
+ 537              		.loc 1 108 5 discriminator 1 view .LVU189
+ 108:../../bos/core/b_task.c ****     {
+GAS LISTING /tmp/ccxuwAz9.s 			page 19
+
+
+ 538              		.loc 1 108 5 is_stmt 0 view .LVU190
+ 539 0010 488D0D00 		leaq	bTaskListHead(%rip), %rcx
+ 539      000000
+ 108:../../bos/core/b_task.c ****     {
+ 540              		.loc 1 108 5 discriminator 1 view .LVU191
+ 541 0017 4839C8   		cmpq	%rcx, %rax
+ 542 001a 750C     		jne	.L57
+ 543 001c EB22     		jmp	.L58
+ 544              	.LVL55:
+ 545 001e 6690     		.p2align 4,,10
+ 546              		.p2align 3
+ 547              	.L56:
+ 115:../../bos/core/b_task.c ****     }
+ 548              		.loc 1 115 9 is_stmt 1 view .LVU192
+ 108:../../bos/core/b_task.c ****     {
+ 549              		.loc 1 108 5 discriminator 2 view .LVU193
+ 550 0020 488B00   		movq	(%rax), %rax
+ 551              	.LVL56:
+ 108:../../bos/core/b_task.c ****     {
+ 552              		.loc 1 108 5 discriminator 1 view .LVU194
+ 553 0023 4839C8   		cmpq	%rcx, %rax
+ 554 0026 7418     		je	.L58
+ 555              	.L57:
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 556              		.loc 1 110 9 view .LVU195
+ 110:../../bos/core/b_task.c ****         if (pattr == ((bTaskAttr_t *)id))
+ 557              		.loc 1 110 15 is_stmt 0 view .LVU196
+ 558 0028 488D50D0 		leaq	-48(%rax), %rdx
+ 559              	.LVL57:
+ 111:../../bos/core/b_task.c ****         {
+ 560              		.loc 1 111 9 is_stmt 1 view .LVU197
+ 111:../../bos/core/b_task.c ****         {
+ 561              		.loc 1 111 12 is_stmt 0 view .LVU198
+ 562 002c 4839D7   		cmpq	%rdx, %rdi
+ 563 002f 75EF     		jne	.L56
+ 564              	.LVL58:
+ 565              	.L55:
+ 111:../../bos/core/b_task.c ****         {
+ 566              		.loc 1 111 12 view .LVU199
+ 567              	.LBE44:
+ 568              	.LBE43:
+ 228:../../bos/core/b_task.c ****     if (pattr == NULL)
+ 229:../../bos/core/b_task.c ****     {
+ 230:../../bos/core/b_task.c ****         return NULL;
+ 231:../../bos/core/b_task.c ****     }
+ 232:../../bos/core/b_task.c ****     return pattr->name;
+ 569              		.loc 1 232 5 is_stmt 1 view .LVU200
+ 570              		.loc 1 232 17 is_stmt 0 view .LVU201
+ 571 0031 488B12   		movq	(%rdx), %rdx
+ 572              	.L50:
+ 233:../../bos/core/b_task.c **** }
+ 573              		.loc 1 233 1 view .LVU202
+ 574 0034 4889D0   		movq	%rdx, %rax
+ 575 0037 C3       		ret
+ 576              	.LVL59:
+ 577 0038 0F1F8400 		.p2align 4,,10
+ 577      00000000 
+GAS LISTING /tmp/ccxuwAz9.s 			page 20
+
+
+ 578              		.p2align 3
+ 579              	.L58:
+ 230:../../bos/core/b_task.c ****     }
+ 580              		.loc 1 230 16 view .LVU203
+ 581 0040 31D2     		xorl	%edx, %edx
+ 582              	.LVL60:
+ 583              		.loc 1 233 1 view .LVU204
+ 584 0042 4889D0   		movq	%rdx, %rax
+ 585 0045 C3       		ret
+ 586              	.LVL61:
+ 587 0046 662E0F1F 		.p2align 4,,10
+ 587      84000000 
+ 587      0000
+ 588              		.p2align 3
+ 589              	.L59:
+ 223:../../bos/core/b_task.c ****     {
+ 590              		.loc 1 223 40 discriminator 1 view .LVU205
+ 591 0050 488B1500 		movq	pCurrentTaskAttr(%rip), %rdx
+ 591      000000
+ 223:../../bos/core/b_task.c ****     {
+ 592              		.loc 1 223 20 discriminator 1 view .LVU206
+ 593 0057 4885D2   		testq	%rdx, %rdx
+ 594 005a 75D5     		jne	.L55
+ 227:../../bos/core/b_task.c ****     if (pattr == NULL)
+ 595              		.loc 1 227 5 is_stmt 1 view .LVU207
+ 596              	.LVL62:
+ 597              	.LBB46:
+ 104:../../bos/core/b_task.c **** {
+ 598              		.loc 1 104 21 view .LVU208
+ 599              	.LBB45:
+ 106:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
+ 600              		.loc 1 106 5 view .LVU209
+ 107:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
+ 601              		.loc 1 107 5 view .LVU210
+ 108:../../bos/core/b_task.c ****     {
+ 602              		.loc 1 108 5 view .LVU211
+ 603 005c 488B0500 		movq	bTaskListHead(%rip), %rax
+ 603      000000
+ 604              	.LVL63:
+ 108:../../bos/core/b_task.c ****     {
+ 605              		.loc 1 108 5 discriminator 1 view .LVU212
+ 108:../../bos/core/b_task.c ****     {
+ 606              		.loc 1 108 5 is_stmt 0 view .LVU213
+ 607 0063 488D0D00 		leaq	bTaskListHead(%rip), %rcx
+ 607      000000
+ 108:../../bos/core/b_task.c ****     {
+ 608              		.loc 1 108 5 discriminator 1 view .LVU214
+ 609 006a 4839C8   		cmpq	%rcx, %rax
+ 610 006d 75B1     		jne	.L56
+ 611 006f EBC3     		jmp	.L50
+ 612              	.LBE45:
+ 613              	.LBE46:
+ 614              		.cfi_endproc
+ 615              	.LFE34:
+ 617              		.section	.text.bTaskGetId,"ax",@progbits
+ 618              		.p2align 4
+ 619              		.globl	bTaskGetId
+GAS LISTING /tmp/ccxuwAz9.s 			page 21
+
+
+ 621              	bTaskGetId:
+ 622              	.LFB35:
+ 234:../../bos/core/b_task.c **** 
+ 235:../../bos/core/b_task.c **** /// 获取当前运行任务的id
+ 236:../../bos/core/b_task.c **** bTaskId_t bTaskGetId()
+ 237:../../bos/core/b_task.c **** {
+ 623              		.loc 1 237 1 is_stmt 1 view -0
+ 624              		.cfi_startproc
+ 625 0000 F30F1EFA 		endbr64
+ 238:../../bos/core/b_task.c ****     return pCurrentTaskAttr;
+ 626              		.loc 1 238 5 view .LVU216
+ 239:../../bos/core/b_task.c **** }
+ 627              		.loc 1 239 1 is_stmt 0 view .LVU217
+ 628 0004 488B0500 		movq	pCurrentTaskAttr(%rip), %rax
+ 628      000000
+ 629 000b C3       		ret
+ 630              		.cfi_endproc
+ 631              	.LFE35:
+ 633              		.globl	polling_bTaskCore
+ 634              		.section	.bos_polling,"aw"
+ 635              		.align 8
+ 638              	polling_bTaskCore:
+ 639 0000 00000000 		.quad	_bTaskCore
+ 639      00000000 
+ 640              		.section	.bss.pCurrentTaskAttr,"aw",@nobits
+ 641              		.align 8
+ 644              	pCurrentTaskAttr:
+ 645 0000 00000000 		.zero	8
+ 645      00000000 
+ 646              		.section	.data.rel.local.bTaskListHead,"aw"
+ 647              		.align 16
+ 650              	bTaskListHead:
+ 651 0000 00000000 		.quad	bTaskListHead
+ 651      00000000 
+ 652 0008 00000000 		.quad	bTaskListHead
+ 652      00000000 
+ 653              		.text
+ 654              	.Letext0:
+ 655              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 656              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"
+ 657              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 658              		.file 6 "../../bos/thirdparty/pt/lc-switch.h"
+ 659              		.file 7 "../../bos/thirdparty/pt/pt.h"
+ 660              		.file 8 "../../bos/core/inc/b_task.h"
+ 661              		.file 9 "../../bos/b_section.h"
+ 3053              		.section	.note.gnu.property,"a"
+ 3054              		.align 8
+ 3055 0000 04000000 		.long	1f - 0f
+ 3056 0004 10000000 		.long	4f - 1f
+ 3057 0008 05000000 		.long	5
+ 3058              	0:
+ 3059 000c 474E5500 		.string	"GNU"
+ 3060              	1:
+ 3061              		.align 8
+ 3062 0010 020000C0 		.long	0xc0000002
+ 3063 0014 04000000 		.long	3f - 2f
+ 3064              	2:
+GAS LISTING /tmp/ccxuwAz9.s 			page 22
+
+
+ 3065 0018 03000000 		.long	0x3
+ 3066              	3:
+ 3067 001c 00000000 		.align 8
+ 3068              	4:
+GAS LISTING /tmp/ccxuwAz9.s 			page 23
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_task.c
+     /tmp/ccxuwAz9.s:8      .text._bTaskCore:0000000000000000 _bTaskCore
+     /tmp/ccxuwAz9.s:650    .data.rel.local.bTaskListHead:0000000000000000 bTaskListHead
+     /tmp/ccxuwAz9.s:644    .bss.pCurrentTaskAttr:0000000000000000 pCurrentTaskAttr
+     /tmp/ccxuwAz9.s:96     .text.bTaskCreate:0000000000000000 bTaskCreate
+     /tmp/ccxuwAz9.s:256    .text.bTaskRemove:0000000000000000 bTaskRemove
+     /tmp/ccxuwAz9.s:357    .text.bTaskSuspend:0000000000000000 bTaskSuspend
+     /tmp/ccxuwAz9.s:435    .text.bTaskResume:0000000000000000 bTaskResume
+     /tmp/ccxuwAz9.s:513    .text.bTaskGetName:0000000000000000 bTaskGetName
+     /tmp/ccxuwAz9.s:621    .text.bTaskGetId:0000000000000000 bTaskGetId
+     /tmp/ccxuwAz9.s:638    .bos_polling:0000000000000000 polling_bTaskCore
+     /tmp/ccxuwAz9.s:90     .rodata.bTaskCreate.str1.1:0000000000000000 .LC0
+
+NO UNDEFINED SYMBOLS

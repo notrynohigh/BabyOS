@@ -1,0 +1,3198 @@
+GAS LISTING /tmp/ccYsy7PJ.s 			page 1
+
+
+   1              		.file	"base64.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c"
+   5              		.section	.text.mbedtls_ct_base64_enc_char,"ax",@progbits
+   6              		.p2align 4
+   8              	mbedtls_ct_base64_enc_char:
+   9              	.LVL0:
+  10              	.LFB51:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** /*
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  *  RFC 1521 base64 encoding/decoding
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  *  Copyright The Mbed TLS Contributors
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  */
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #include <limits.h>
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #include "common.h"
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #if defined(MBEDTLS_BASE64_C)
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/base64.h"
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #include "base64_internal.h"
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #include "constant_time_internal.h"
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #include <stdint.h>
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #if defined(MBEDTLS_SELF_TEST)
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #include <string.h>
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** #endif /* MBEDTLS_SELF_TEST */
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** MBEDTLS_STATIC_TESTABLE
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** unsigned char mbedtls_ct_base64_enc_char(unsigned char value)
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** {
+  11              		.loc 1 27 1 view -0
+  12              		.cfi_startproc
+  13              	.LBB66:
+  14              	.LBB67:
+  15              		.file 2 "../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h"
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /**
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *  Constant-time functions
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *  Copyright The Mbed TLS Contributors
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  */
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #ifndef MBEDTLS_CONSTANT_TIME_IMPL_H
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CONSTANT_TIME_IMPL_H
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #include <stddef.h>
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #include "common.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_BIGNUM_C)
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/bignum.h"
+GAS LISTING /tmp/ccYsy7PJ.s 			page 2
+
+
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /*
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * To improve readability of constant_time_internal.h, the static inline
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * definitions are here, and constant_time_internal.h has only the declarations.
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * This results in duplicate declarations of the form:
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *     static inline void f();         // from constant_time_internal.h
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *     static inline void f() { ... }  // from constant_time_impl.h
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * when constant_time_internal.h is included.
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * This appears to behave as if the declaration-without-definition was not present
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * (except for warnings if gcc -Wredundant-decls or similar is used).
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * Disable -Wredundant-decls so that gcc does not warn about this. This is re-enabled
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * at the bottom of this file.
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  */
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_COMPILER_IS_GCC) && (__GNUC__ > 4)
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     #pragma GCC diagnostic push
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     #pragma GCC diagnostic ignored "-Wredundant-decls"
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /* Disable asm under Memsan because it confuses Memsan and generates false errors.
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * We also disable under Valgrind by default, because it's more useful
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * for Valgrind to test the plain C implementation. MBEDTLS_TEST_CONSTANT_FLOW_ASM //no-check-names
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * may be set to permit building asm under Valgrind.
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  */
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_TEST_CONSTANT_FLOW_MEMSAN) || \
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     (defined(MBEDTLS_TEST_CONSTANT_FLOW_VALGRIND) && !defined(MBEDTLS_TEST_CONSTANT_FLOW_ASM)) //no
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CT_NO_ASM
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(__has_feature)
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if __has_feature(memory_sanitizer)
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CT_NO_ASM
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /* armcc5 --gnu defines __GNUC__ but doesn't support GNU's extended asm */
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_HAVE_ASM) && defined(__GNUC__) && (!defined(__ARMCC_VERSION) || \
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     __ARMCC_VERSION >= 6000000) && !defined(MBEDTLS_CT_NO_ASM)
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CT_ASM
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if (defined(__arm__) || defined(__thumb__) || defined(__thumb2__))
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CT_ARM_ASM
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(__aarch64__)
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CT_AARCH64_ASM
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(__amd64__) || defined(__x86_64__)
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CT_X86_64_ASM
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(__i386__)
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CT_X86_ASM
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define MBEDTLS_CT_SIZE (sizeof(mbedtls_ct_uint_t) * 8)
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /* ============================================================================
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * Core const-time primitives
+GAS LISTING /tmp/ccYsy7PJ.s 			page 3
+
+
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  */
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /* Ensure that the compiler cannot know the value of x (i.e., cannot optimise
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * based on its value) after this function is called.
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * If we are not using assembly, this will be fairly inefficient, so its use
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * should be minimised.
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  */
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if !defined(MBEDTLS_CT_ASM)
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** extern volatile mbedtls_ct_uint_t mbedtls_ct_zero;
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /**
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * \brief   Ensure that a value cannot be known at compile time.
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * \param x        The value to hide from the compiler.
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * \return         The same value that was passed in, such that the compiler
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *                 cannot prove its value (even for calls of the form
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *                 x = mbedtls_ct_compiler_opaque(1), x will be unknown).
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * \note           This is mainly used in constructing mbedtls_ct_condition_t
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *                 values and performing operations over them, to ensure that
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *                 there is no way for the compiler to ever know anything about
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *                 the value of an mbedtls_ct_condition_t.
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  */
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline mbedtls_ct_uint_t mbedtls_ct_compiler_opaque(mbedtls_ct_uint_t x)
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_CT_ASM)
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("" : [x] "+r" (x) :);
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return x;
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #else
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return x ^ mbedtls_ct_zero;
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** }
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /*
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * Selecting unified syntax is needed for gcc, and harmless on clang.
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * This is needed because on Thumb 1, condition flags are always set, so
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * e.g. "negs" is supported but "neg" is not (on Thumb 2, both exist).
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * Under Thumb 1 unified syntax, only the "negs" form is accepted, and
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * under divided syntax, only the "neg" form is accepted. clang only
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * supports unified syntax.
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * On Thumb 2 and Arm, both compilers are happy with the "s" suffix,
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * although we don't actually care about setting the flags.
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * For old versions of gcc (see #8516 for details), restore divided
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * syntax afterwards - otherwise old versions of gcc seem to apply
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * unified syntax globally, which breaks other asm code.
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  */
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_COMPILER_IS_GCC) && defined(__thumb__) && !defined(__thumb2__) && \
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     (__GNUC__ < 11) && !defined(__ARM_ARCH_2__)
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define RESTORE_ASM_SYNTAX  ".syntax divided                      \n\t"
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #else
+GAS LISTING /tmp/ccYsy7PJ.s 			page 4
+
+
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #define RESTORE_ASM_SYNTAX
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** /* Convert a number into a condition in constant time. */
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline mbedtls_ct_condition_t mbedtls_ct_bool(mbedtls_ct_uint_t x)
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /*
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * Define mask-generation code that, as far as possible, will not use branches or conditional i
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      *
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * For some platforms / type sizes, we define assembly to assure this.
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      *
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * Otherwise, we define a plain C fallback which (in May 2023) does not get optimised into
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * conditional instructions or branches by trunk clang, gcc, or MSVC v19.
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      */
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_CT_AARCH64_ASM) && (defined(MBEDTLS_CT_SIZE_32) || defined(MBEDTLS_CT_SIZE_64))
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     mbedtls_ct_uint_t s;
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("neg %x[s], %x[x]                               \n\t"
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "orr %x[x], %x[s], %x[x]                        \n\t"
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "asr %x[x], %x[x], 63                           \n\t"
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [s] "=&r" (s),
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [x] "+&r" (x)
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) x;
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_ARM_ASM) && defined(MBEDTLS_CT_SIZE_32)
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     uint32_t s;
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile (".syntax unified                                \n\t"
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "negs %[s], %[x]                                \n\t"
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "orrs %[x], %[x], %[s]                          \n\t"
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "asrs %[x], %[x], #31                           \n\t"
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   RESTORE_ASM_SYNTAX
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [s] "=&l" (s),
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [x] "+&l" (x)
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "cc" /* clobbers flag bits */
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) x;
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_X86_64_ASM) && (defined(MBEDTLS_CT_SIZE_32) || defined(MBEDTLS_CT_SIZE_64)
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     uint64_t s;
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("mov  %[x], %[s]                                \n\t"
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "neg  %[s]                                      \n\t"
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "or   %[x], %[s]                                \n\t"
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "sar  $63, %[s]                                 \n\t"
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [s] "=&a" (s)
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [x] "D" (x)
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) s;
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_X86_ASM) && defined(MBEDTLS_CT_SIZE_32)
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     uint32_t s;
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("mov %[x], %[s]                                 \n\t"
+GAS LISTING /tmp/ccYsy7PJ.s 			page 5
+
+
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "neg %[s]                                       \n\t"
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "or %[s], %[x]                                  \n\t"
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "sar $31, %[x]                                  \n\t"
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [s] "=&c" (s),
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [x] "+&a" (x)
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) x;
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #else
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const mbedtls_ct_uint_t xo = mbedtls_ct_compiler_opaque(x);
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(_MSC_VER)
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* MSVC has a warning about unary minus on unsigned, but this is
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * well-defined and precisely what we want to do here */
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #pragma warning( push )
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #pragma warning( disable : 4146 )
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     // y is negative (i.e., top bit set) iff x is non-zero
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     mbedtls_ct_int_t y = (-xo) | -(xo >> 1);
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     // extract only the sign bit of y so that y == 1 (if x is non-zero) or 0 (if x is zero)
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     y = (((mbedtls_ct_uint_t) y) >> (MBEDTLS_CT_SIZE - 1));
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     // -y has all bits set (if x is non-zero), or all bits clear (if x is zero)
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) (-y);
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(_MSC_VER)
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #pragma warning( pop )
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** }
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline mbedtls_ct_uint_t mbedtls_ct_if(mbedtls_ct_condition_t condition,
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                               mbedtls_ct_uint_t if1,
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                               mbedtls_ct_uint_t if0)
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_CT_AARCH64_ASM) && (defined(MBEDTLS_CT_SIZE_32) || defined(MBEDTLS_CT_SIZE_64))
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("and %x[if1], %x[if1], %x[condition]            \n\t"
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "mvn %x[condition], %x[condition]               \n\t"
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "and %x[condition], %x[condition], %x[if0]      \n\t"
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "orr %x[condition], %x[if1], %x[condition]"
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [condition] "+&r" (condition),
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if1] "+&r" (if1)
+ 232:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if0] "r" (if0)
+ 234:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_uint_t) condition;
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_ARM_ASM) && defined(MBEDTLS_CT_SIZE_32)
+ 238:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile (".syntax unified                                \n\t"
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "ands %[if1], %[if1], %[condition]              \n\t"
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "mvns %[condition], %[condition]                \n\t"
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "ands %[condition], %[condition], %[if0]        \n\t"
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "orrs %[condition], %[if1], %[condition]        \n\t"
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   RESTORE_ASM_SYNTAX
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+GAS LISTING /tmp/ccYsy7PJ.s 			page 6
+
+
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [condition] "+&l" (condition),
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if1] "+&l" (if1)
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if0] "l" (if0)
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "cc"
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 252:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_uint_t) condition;
+ 253:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_X86_64_ASM) && (defined(MBEDTLS_CT_SIZE_32) || defined(MBEDTLS_CT_SIZE_64)
+ 254:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("and  %[condition], %[if1]                      \n\t"
+ 255:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "not  %[condition]                              \n\t"
+ 256:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "and  %[condition], %[if0]                      \n\t"
+ 257:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "or   %[if1], %[if0]                            \n\t"
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [condition] "+&D" (condition),
+ 260:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if1] "+&S" (if1),
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if0] "+&a" (if0)
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 265:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return if0;
+ 266:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_X86_ASM) && defined(MBEDTLS_CT_SIZE_32)
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("and %[condition], %[if1]                       \n\t"
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "not %[condition]                               \n\t"
+ 269:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "and %[if0], %[condition]                       \n\t"
+ 270:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "or %[condition], %[if1]                        \n\t"
+ 271:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [condition] "+&c" (condition),
+ 273:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if1] "+&a" (if1)
+ 274:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if0] "b" (if0)
+ 276:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 277:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 278:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return if1;
+ 279:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #else
+ 280:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     mbedtls_ct_condition_t not_cond =
+ 281:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         (mbedtls_ct_condition_t) (~mbedtls_ct_compiler_opaque(condition));
+ 282:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_uint_t) ((condition & if1) | (not_cond & if0));
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 284:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** }
+ 285:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 286:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline mbedtls_ct_condition_t mbedtls_ct_uint_lt(mbedtls_ct_uint_t x, mbedtls_ct_uint_t y)
+ 287:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 288:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_CT_AARCH64_ASM) && (defined(MBEDTLS_CT_SIZE_32) || defined(MBEDTLS_CT_SIZE_64))
+ 289:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     uint64_t s1;
+ 290:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("eor     %x[s1], %x[y], %x[x]                   \n\t"
+ 291:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "sub     %x[x], %x[x], %x[y]                    \n\t"
+ 292:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "bic     %x[x], %x[x], %x[s1]                   \n\t"
+ 293:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "and     %x[s1], %x[s1], %x[y]                  \n\t"
+ 294:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "orr     %x[s1], %x[x], %x[s1]                  \n\t"
+ 295:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "asr     %x[x], %x[s1], 63"
+ 296:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 297:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [s1] "=&r" (s1),
+ 298:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [x] "+&r" (x)
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 300:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [y] "r" (y)
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+GAS LISTING /tmp/ccYsy7PJ.s 			page 7
+
+
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) x;
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_ARM_ASM) && defined(MBEDTLS_CT_SIZE_32)
+ 305:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     uint32_t s1;
+ 306:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile (
+ 307:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         ".syntax unified                                          \n\t"
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(__thumb__) && !defined(__thumb2__)
+ 309:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "movs     %[s1], %[x]                                     \n\t"
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "eors     %[s1], %[s1], %[y]                              \n\t"
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #else
+ 312:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "eors     %[s1], %[x], %[y]                               \n\t"
+ 313:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "subs    %[x], %[x], %[y]                                 \n\t"
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "bics    %[x], %[x], %[s1]                                \n\t"
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "ands    %[y], %[s1], %[y]                                \n\t"
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "orrs    %[x], %[x], %[y]                                 \n\t"
+ 318:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "asrs    %[x], %[x], #31                                  \n\t"
+ 319:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         RESTORE_ASM_SYNTAX
+ 320:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         :
+ 321:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         [s1] "=&l" (s1),
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         [x] "+&l" (x),
+ 323:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         [y] "+&l" (y)
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         :
+ 325:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         :
+ 326:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "cc"
+ 327:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         );
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) x;
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_X86_64_ASM) && (defined(MBEDTLS_CT_SIZE_32) || defined(MBEDTLS_CT_SIZE_64)
+ 330:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     uint64_t s;
+ 331:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("mov %[x], %[s]                                 \n\t"
+ 332:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "xor %[y], %[s]                                 \n\t"
+ 333:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "sub %[y], %[x]                                 \n\t"
+ 334:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "and %[s], %[y]                                 \n\t"
+ 335:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "not %[s]                                       \n\t"
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "and %[s], %[x]                                 \n\t"
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "or %[y], %[x]                                  \n\t"
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "sar $63, %[x]                                  \n\t"
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [s] "=&a" (s),
+ 341:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [x] "+&D" (x),
+ 342:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [y] "+&S" (y)
+ 343:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 344:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 345:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) x;
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #elif defined(MBEDTLS_CT_X86_ASM) && defined(MBEDTLS_CT_SIZE_32)
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     uint32_t s;
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("mov %[x], %[s]                                 \n\t"
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "xor %[y], %[s]                                 \n\t"
+ 351:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "sub %[y], %[x]                                 \n\t"
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "and %[s], %[y]                                 \n\t"
+ 353:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "not %[s]                                       \n\t"
+ 354:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "and %[s], %[x]                                 \n\t"
+ 355:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "or  %[y], %[x]                                 \n\t"
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "sar $31, %[x]                                  \n\t"
+ 357:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [s] "=&b" (s),
+GAS LISTING /tmp/ccYsy7PJ.s 			page 8
+
+
+ 359:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [x] "+&a" (x),
+ 360:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [y] "+&c" (y)
+ 361:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 362:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
+ 363:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
+ 364:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) x;
+ 365:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #else
+ 366:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* Ensure that the compiler cannot optimise the following operations over x and y,
+ 367:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * even if it knows the value of x and y.
+ 368:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      */
+ 369:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const mbedtls_ct_uint_t xo = mbedtls_ct_compiler_opaque(x);
+ 370:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const mbedtls_ct_uint_t yo = mbedtls_ct_compiler_opaque(y);
+ 371:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /*
+ 372:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * Check if the most significant bits (MSB) of the operands are different.
+ 373:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * cond is true iff the MSBs differ.
+ 374:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      */
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     mbedtls_ct_condition_t cond = mbedtls_ct_bool((xo ^ yo) >> (MBEDTLS_CT_SIZE - 1));
+ 376:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 377:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /*
+ 378:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * If the MSB are the same then the difference x-y will be negative (and
+ 379:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * have its MSB set to 1 during conversion to unsigned) if and only if x<y.
+ 380:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      *
+ 381:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * If the MSB are different, then the operand with the MSB of 1 is the
+ 382:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * bigger. (That is if y has MSB of 1, then x<y is true and it is false if
+ 383:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * the MSB of y is 0.)
+ 384:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      */
+ 385:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 386:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     // Select either y, or x - y
+ 387:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     mbedtls_ct_uint_t ret = mbedtls_ct_if(cond, yo, (mbedtls_ct_uint_t) (xo - yo));
+ 388:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 389:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     // Extract only the MSB of ret
+ 390:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     ret = ret >> (MBEDTLS_CT_SIZE - 1);
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 392:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     // Convert to a condition (i.e., all bits set iff non-zero)
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return mbedtls_ct_bool(ret);
+ 394:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 395:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** }
+ 396:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 397:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline mbedtls_ct_condition_t mbedtls_ct_uint_ne(mbedtls_ct_uint_t x, mbedtls_ct_uint_t y)
+ 398:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 399:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* diff = 0 if x == y, non-zero otherwise */
+ 400:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const mbedtls_ct_uint_t diff = mbedtls_ct_compiler_opaque(x) ^ mbedtls_ct_compiler_opaque(y);
+ 401:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 402:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* all ones if x != y, 0 otherwise */
+ 403:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return mbedtls_ct_bool(diff);
+ 404:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** }
+ 405:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline unsigned char mbedtls_ct_uchar_in_range_if(unsigned char low,
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char c,
+ 409:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char t)
+ 410:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char co = (unsigned char) mbedtls_ct_compiler_opaque(c);
+  16              		.loc 2 411 46 is_stmt 0 view .LVU1
+  17 0000 400FB6CF 		movzbl	%dil, %ecx
+  18              	.LBE67:
+  19              	.LBE66:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 9
+
+
+  20              		.loc 1 27 1 view .LVU2
+  21 0004 89F8     		movl	%edi, %eax
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned char digit = 0;
+  22              		.loc 1 28 5 is_stmt 1 view .LVU3
+  23              	.LVL1:
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     /* For each range of values, if value is in that range, mask digit with
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      * the corresponding value. Since value can only be in a single range,
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      * only at most one masking will change digit. */
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     digit |= mbedtls_ct_uchar_in_range_if(0, 25, value, 'A' + value);
+  24              		.loc 1 32 5 view .LVU4
+  25              	.LBB85:
+  26              	.LBI66:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+  27              		.loc 2 406 29 view .LVU5
+  28              	.LBB78:
+  29              		.loc 2 411 5 view .LVU6
+  30              	.LBB68:
+  31              	.LBI68:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+  32              		.loc 2 100 33 view .LVU7
+  33              	.LBB69:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  34              		.loc 2 106 5 view .LVU8
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  35              		.loc 2 106 14 is_stmt 0 view .LVU9
+  36 0006 488B3D00 		movq	mbedtls_ct_zero(%rip), %rdi
+  36      000000
+  37              	.LVL2:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  38              		.loc 2 106 14 view .LVU10
+  39              	.LBE69:
+  40              	.LBE68:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+  41              		.loc 2 412 5 is_stmt 1 view .LVU11
+  42              	.LBB71:
+  43              	.LBI71:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+  44              		.loc 2 100 33 view .LVU12
+  45              	.LBB72:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  46              		.loc 2 106 5 view .LVU13
+  47              	.LBE72:
+  48              	.LBE71:
+  49              	.LBE78:
+  50              	.LBE85:
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned char digit = 0;
+  51              		.loc 1 27 1 is_stmt 0 view .LVU14
+  52 000d 53       		pushq	%rbx
+  53              	.LCFI0:
+  54              		.cfi_def_cfa_offset 16
+  55              		.cfi_offset 3, -16
+  56              	.LBB86:
+  57              	.LBB79:
+  58              	.LBB75:
+  59              	.LBB73:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  60              		.loc 2 106 14 view .LVU15
+GAS LISTING /tmp/ccYsy7PJ.s 			page 10
+
+
+  61 000e 488B3500 		movq	mbedtls_ct_zero(%rip), %rsi
+  61      000000
+  62              	.LVL3:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  63              		.loc 2 106 14 view .LVU16
+  64              	.LBE73:
+  65              	.LBE75:
+ 413:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 414:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* low_mask is: 0 if low <= c, 0x...ff if low > c */
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     unsigned low_mask = ((unsigned) co - low) >> 8;
+  66              		.loc 2 415 5 is_stmt 1 view .LVU17
+ 416:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     unsigned high_mask = ((unsigned) high - co) >> 8;
+  67              		.loc 2 417 5 view .LVU18
+ 418:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 419:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (unsigned char) (~(low_mask | high_mask)) & to;
+  68              		.loc 2 419 5 view .LVU19
+  69              		.loc 2 419 5 is_stmt 0 view .LVU20
+  70              	.LBE79:
+  71              	.LBE86:
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     digit |= mbedtls_ct_uchar_in_range_if(26, 51, value, 'a' + value - 26);
+  72              		.loc 1 33 5 is_stmt 1 view .LVU21
+  73              	.LBB87:
+  74              	.LBI87:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+  75              		.loc 2 406 29 view .LVU22
+  76              	.LBB88:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+  77              		.loc 2 411 5 view .LVU23
+  78              	.LBB89:
+  79              	.LBI89:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+  80              		.loc 2 100 33 view .LVU24
+  81              	.LBB90:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  82              		.loc 2 106 5 view .LVU25
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  83              		.loc 2 106 14 is_stmt 0 view .LVU26
+  84 0015 4C8B0D00 		movq	mbedtls_ct_zero(%rip), %r9
+  84      000000
+  85              	.LVL4:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  86              		.loc 2 106 14 view .LVU27
+  87              	.LBE90:
+  88              	.LBE89:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+  89              		.loc 2 412 5 is_stmt 1 view .LVU28
+  90              	.LBB92:
+  91              	.LBI92:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+  92              		.loc 2 100 33 view .LVU29
+  93              	.LBB93:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+  94              		.loc 2 106 5 view .LVU30
+  95              	.LBE93:
+  96              	.LBE92:
+  97              	.LBE88:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 11
+
+
+  98              	.LBE87:
+  99              	.LBB106:
+ 100              	.LBB107:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 101              		.loc 2 417 43 is_stmt 0 view .LVU31
+ 102 001c BA3D0000 		movl	$61, %edx
+ 102      00
+ 103              	.LBE107:
+ 104              	.LBE106:
+ 105              	.LBB126:
+ 106              	.LBB99:
+ 107              	.LBB96:
+ 108              	.LBB94:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 109              		.loc 2 106 14 view .LVU32
+ 110 0021 4C8B0500 		movq	mbedtls_ct_zero(%rip), %r8
+ 110      000000
+ 111              	.LVL5:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 112              		.loc 2 106 14 view .LVU33
+ 113              	.LBE94:
+ 114              	.LBE96:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 115              		.loc 2 415 5 is_stmt 1 view .LVU34
+ 116              	.LBE99:
+ 117              	.LBE126:
+ 118              	.LBB127:
+ 119              	.LBB120:
+ 120              	.LBB108:
+ 121              	.LBB109:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 122              		.loc 2 106 14 is_stmt 0 view .LVU35
+ 123 0028 4C8B1500 		movq	mbedtls_ct_zero(%rip), %r10
+ 123      000000
+ 124              	.LBE109:
+ 125              	.LBE108:
+ 126              	.LBE120:
+ 127              	.LBE127:
+ 128              	.LBB128:
+ 129              	.LBB80:
+ 130              	.LBB76:
+ 131              	.LBB70:
+ 132 002f 4831CF   		xorq	%rcx, %rdi
+ 133              	.LVL6:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 134              		.loc 2 106 14 view .LVU36
+ 135              	.LBE70:
+ 136              	.LBE76:
+ 137              	.LBE80:
+ 138              	.LBE128:
+ 139              	.LBB129:
+ 140              	.LBB121:
+ 141              	.LBB112:
+ 142              	.LBB113:
+ 143 0032 4C8B1D00 		movq	mbedtls_ct_zero(%rip), %r11
+ 143      000000
+ 144              	.LBE113:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 12
+
+
+ 145              	.LBE112:
+ 146              	.LBE121:
+ 147              	.LBE129:
+ 148              	.LBB130:
+ 149              	.LBB100:
+ 150              	.LBB97:
+ 151              	.LBB91:
+ 152 0039 4931C9   		xorq	%rcx, %r9
+ 153              	.LVL7:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 154              		.loc 2 106 14 view .LVU37
+ 155              	.LBE91:
+ 156              	.LBE97:
+ 157              	.LBE100:
+ 158              	.LBE130:
+ 159              	.LBB131:
+ 160              	.LBB81:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 161              		.loc 2 415 26 view .LVU38
+ 162 003c 400FB6FF 		movzbl	%dil, %edi
+ 163              	.LVL8:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 164              		.loc 2 415 26 view .LVU39
+ 165              	.LBE81:
+ 166              	.LBE131:
+ 167              	.LBB132:
+ 168              	.LBB122:
+ 169              	.LBB116:
+ 170              	.LBB110:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 171              		.loc 2 106 14 view .LVU40
+ 172 0040 4931CA   		xorq	%rcx, %r10
+ 173              	.LBE110:
+ 174              	.LBE116:
+ 175              	.LBE122:
+ 176              	.LBE132:
+ 177              	.LBB133:
+ 178              	.LBB101:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 179              		.loc 2 415 26 view .LVU41
+ 180 0043 450FB6C9 		movzbl	%r9b, %r9d
+ 181              	.LVL9:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 182              		.loc 2 417 5 is_stmt 1 view .LVU42
+ 183              		.loc 2 419 5 view .LVU43
+ 184              		.loc 2 419 5 is_stmt 0 view .LVU44
+ 185              	.LBE101:
+ 186              	.LBE133:
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     digit |= mbedtls_ct_uchar_in_range_if(52, 61, value, '0' + value - 52);
+ 187              		.loc 1 34 5 is_stmt 1 view .LVU45
+ 188              	.LBB134:
+ 189              	.LBI106:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 190              		.loc 2 406 29 view .LVU46
+ 191              	.LBB123:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 192              		.loc 2 411 5 view .LVU47
+GAS LISTING /tmp/ccYsy7PJ.s 			page 13
+
+
+ 193              	.LBB117:
+ 194              	.LBI108:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 195              		.loc 2 100 33 view .LVU48
+ 196              	.LBB111:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 197              		.loc 2 106 5 view .LVU49
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 198              		.loc 2 106 5 is_stmt 0 view .LVU50
+ 199              	.LBE111:
+ 200              	.LBE117:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 201              		.loc 2 412 5 is_stmt 1 view .LVU51
+ 202              	.LBB118:
+ 203              	.LBI112:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 204              		.loc 2 100 33 view .LVU52
+ 205              	.LBB114:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 206              		.loc 2 106 5 view .LVU53
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 207              		.loc 2 106 5 is_stmt 0 view .LVU54
+ 208              	.LBE114:
+ 209              	.LBE118:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 210              		.loc 2 415 5 is_stmt 1 view .LVU55
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 211              		.loc 2 415 26 is_stmt 0 view .LVU56
+ 212 0047 450FB6D2 		movzbl	%r10b, %r10d
+ 213              	.LVL10:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 214              		.loc 2 417 5 is_stmt 1 view .LVU57
+ 215              		.loc 2 419 5 view .LVU58
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 216              		.loc 2 417 43 is_stmt 0 view .LVU59
+ 217 004b 4429D2   		subl	%r10d, %edx
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 218              		.loc 2 415 40 view .LVU60
+ 219 004e 418D5ACC 		leal	-52(%r10), %ebx
+ 220              	.LBE123:
+ 221              	.LBE134:
+ 222              		.loc 1 34 70 view .LVU61
+ 223 0052 448D50FC 		leal	-4(%rax), %r10d
+ 224              	.LBB135:
+ 225              	.LBB124:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 226              		.loc 2 417 14 view .LVU62
+ 227 0056 C1EA08   		shrl	$8, %edx
+ 228              	.LBB119:
+ 229              	.LBB115:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 230              		.loc 2 106 14 view .LVU63
+ 231 0059 4531DA   		xorl	%r11d, %r10d
+ 232              	.LBE115:
+ 233              	.LBE119:
+ 234              		.loc 2 419 40 view .LVU64
+ 235 005c 08FA     		orb	%bh, %dl
+GAS LISTING /tmp/ccYsy7PJ.s 			page 14
+
+
+ 236              	.LBE124:
+ 237              	.LBE135:
+ 238              	.LBB136:
+ 239              	.LBB102:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 240              		.loc 2 415 40 view .LVU65
+ 241 005e 418D59E6 		leal	-26(%r9), %ebx
+ 242              	.LBE102:
+ 243              	.LBE136:
+ 244              	.LBB137:
+ 245              	.LBB125:
+ 246              		.loc 2 419 12 view .LVU66
+ 247 0062 F7D2     		notl	%edx
+ 248              		.loc 2 419 54 view .LVU67
+ 249 0064 4121D2   		andl	%edx, %r10d
+ 250              	.LBE125:
+ 251              	.LBE137:
+ 252              	.LBB138:
+ 253              	.LBB103:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 254              		.loc 2 417 43 view .LVU68
+ 255 0067 BA330000 		movl	$51, %edx
+ 255      00
+ 256 006c 4429CA   		subl	%r9d, %edx
+ 257              	.LBE103:
+ 258              	.LBE138:
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     digit |= mbedtls_ct_uchar_in_range_if(52, 61, value, '0' + value - 52);
+ 259              		.loc 1 33 70 view .LVU69
+ 260 006f 448D4847 		leal	71(%rax), %r9d
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     digit |= mbedtls_ct_uchar_in_range_if(26, 51, value, 'a' + value - 26);
+ 261              		.loc 1 32 61 view .LVU70
+ 262 0073 83C041   		addl	$65, %eax
+ 263              	.LBB139:
+ 264              	.LBB104:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 265              		.loc 2 417 14 view .LVU71
+ 266 0076 C1EA08   		shrl	$8, %edx
+ 267              	.LBB98:
+ 268              	.LBB95:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 269              		.loc 2 106 14 view .LVU72
+ 270 0079 4531C8   		xorl	%r9d, %r8d
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 271              		.loc 2 106 14 view .LVU73
+ 272              	.LBE95:
+ 273              	.LBE98:
+ 274              	.LBE104:
+ 275              	.LBE139:
+ 276              	.LBB140:
+ 277              	.LBB82:
+ 278              	.LBB77:
+ 279              	.LBB74:
+ 280 007c 31F0     		xorl	%esi, %eax
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 281              		.loc 2 106 14 view .LVU74
+ 282              	.LBE74:
+ 283              	.LBE77:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 15
+
+
+ 284              	.LBE82:
+ 285              	.LBE140:
+ 286              	.LBB141:
+ 287              	.LBB105:
+ 288              		.loc 2 419 40 view .LVU75
+ 289 007e 08FA     		orb	%bh, %dl
+ 290              		.loc 2 419 12 view .LVU76
+ 291 0080 F7D2     		notl	%edx
+ 292              		.loc 2 419 54 view .LVU77
+ 293 0082 4421C2   		andl	%r8d, %edx
+ 294              	.LBE105:
+ 295              	.LBE141:
+ 296              		.loc 1 34 11 discriminator 1 view .LVU78
+ 297 0085 4589D0   		movl	%r10d, %r8d
+ 298 0088 4109D0   		orl	%edx, %r8d
+ 299              	.LBB142:
+ 300              	.LBB83:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 301              		.loc 2 417 43 view .LVU79
+ 302 008b BA190000 		movl	$25, %edx
+ 302      00
+ 303 0090 29FA     		subl	%edi, %edx
+ 304              	.LBE83:
+ 305              	.LBE142:
+ 306              		.loc 1 34 11 discriminator 1 view .LVU80
+ 307 0092 4489C6   		movl	%r8d, %esi
+ 308              	.LBB143:
+ 309              	.LBB84:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 310              		.loc 2 417 14 view .LVU81
+ 311 0095 C1EA08   		shrl	$8, %edx
+ 312              		.loc 2 419 12 view .LVU82
+ 313 0098 F7D2     		notl	%edx
+ 314              		.loc 2 419 54 view .LVU83
+ 315 009a 21D0     		andl	%edx, %eax
+ 316              	.LBE84:
+ 317              	.LBE143:
+ 318              	.LBB144:
+ 319              	.LBB145:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 320              		.loc 2 417 43 view .LVU84
+ 321 009c BA3E0000 		movl	$62, %edx
+ 321      00
+ 322              	.LBE145:
+ 323              	.LBE144:
+ 324              		.loc 1 34 11 discriminator 1 view .LVU85
+ 325 00a1 09C6     		orl	%eax, %esi
+ 326              	.LVL11:
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     digit |= mbedtls_ct_uchar_in_range_if(62, 62, value, '+');
+ 327              		.loc 1 35 5 is_stmt 1 view .LVU86
+ 328              	.LBB157:
+ 329              	.LBI144:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 330              		.loc 2 406 29 view .LVU87
+ 331              	.LBB156:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 332              		.loc 2 411 5 view .LVU88
+GAS LISTING /tmp/ccYsy7PJ.s 			page 16
+
+
+ 333              	.LBB146:
+ 334              	.LBI146:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 335              		.loc 2 100 33 view .LVU89
+ 336              	.LBB147:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 337              		.loc 2 106 5 view .LVU90
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 338              		.loc 2 106 14 is_stmt 0 view .LVU91
+ 339 00a3 488B0500 		movq	mbedtls_ct_zero(%rip), %rax
+ 339      000000
+ 340              	.LVL12:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 341              		.loc 2 106 14 view .LVU92
+ 342              	.LBE147:
+ 343              	.LBE146:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 344              		.loc 2 412 5 is_stmt 1 view .LVU93
+ 345              	.LBB149:
+ 346              	.LBI149:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 347              		.loc 2 100 33 view .LVU94
+ 348              	.LBB150:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 349              		.loc 2 106 5 view .LVU95
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 350              		.loc 2 106 14 is_stmt 0 view .LVU96
+ 351 00aa 488B3D00 		movq	mbedtls_ct_zero(%rip), %rdi
+ 351      000000
+ 352              	.LVL13:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 353              		.loc 2 106 14 view .LVU97
+ 354              	.LBE150:
+ 355              	.LBE149:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 356              		.loc 2 415 5 is_stmt 1 view .LVU98
+ 357              	.LBB153:
+ 358              	.LBB148:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 359              		.loc 2 106 14 is_stmt 0 view .LVU99
+ 360 00b1 4831C8   		xorq	%rcx, %rax
+ 361              	.LVL14:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 362              		.loc 2 106 14 view .LVU100
+ 363              	.LBE148:
+ 364              	.LBE153:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 365              		.loc 2 415 26 view .LVU101
+ 366 00b4 0FB6C0   		movzbl	%al, %eax
+ 367              	.LVL15:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 368              		.loc 2 417 5 is_stmt 1 view .LVU102
+ 369              		.loc 2 419 5 view .LVU103
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 370              		.loc 2 417 43 is_stmt 0 view .LVU104
+ 371 00b7 29C2     		subl	%eax, %edx
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+GAS LISTING /tmp/ccYsy7PJ.s 			page 17
+
+
+ 372              		.loc 2 415 40 view .LVU105
+ 373 00b9 8D58C2   		leal	-62(%rax), %ebx
+ 374              	.LBB154:
+ 375              	.LBB151:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 376              		.loc 2 106 14 view .LVU106
+ 377 00bc 4889F8   		movq	%rdi, %rax
+ 378              	.LBE151:
+ 379              	.LBE154:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 380              		.loc 2 417 14 view .LVU107
+ 381 00bf C1EA08   		shrl	$8, %edx
+ 382              	.LBB155:
+ 383              	.LBB152:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 384              		.loc 2 106 14 view .LVU108
+ 385 00c2 4883F02B 		xorq	$43, %rax
+ 386              	.LBE152:
+ 387              	.LBE155:
+ 388              		.loc 2 419 40 view .LVU109
+ 389 00c6 08FA     		orb	%bh, %dl
+ 390              		.loc 2 419 12 view .LVU110
+ 391 00c8 F7D2     		notl	%edx
+ 392              		.loc 2 419 54 view .LVU111
+ 393 00ca 21C2     		andl	%eax, %edx
+ 394              	.LBE156:
+ 395              	.LBE157:
+ 396              	.LBB158:
+ 397              	.LBB159:
+ 398              	.LBB160:
+ 399              	.LBB161:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 400              		.loc 2 106 14 view .LVU112
+ 401 00cc 488B0500 		movq	mbedtls_ct_zero(%rip), %rax
+ 401      000000
+ 402              	.LBE161:
+ 403              	.LBE160:
+ 404              	.LBE159:
+ 405              	.LBE158:
+ 406              		.loc 1 35 11 discriminator 1 view .LVU113
+ 407 00d3 09F2     		orl	%esi, %edx
+ 408              	.LVL16:
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     digit |= mbedtls_ct_uchar_in_range_if(63, 63, value, '/');
+ 409              		.loc 1 36 5 is_stmt 1 view .LVU114
+ 410              	.LBB173:
+ 411              	.LBI158:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 412              		.loc 2 406 29 view .LVU115
+ 413              	.LBB170:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 414              		.loc 2 411 5 view .LVU116
+ 415              	.LBB164:
+ 416              	.LBI160:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 417              		.loc 2 100 33 view .LVU117
+ 418              	.LBB162:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+GAS LISTING /tmp/ccYsy7PJ.s 			page 18
+
+
+ 419              		.loc 2 106 5 view .LVU118
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 420              		.loc 2 106 5 is_stmt 0 view .LVU119
+ 421              	.LBE162:
+ 422              	.LBE164:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 423              		.loc 2 412 5 is_stmt 1 view .LVU120
+ 424              	.LBB165:
+ 425              	.LBI165:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 426              		.loc 2 100 33 view .LVU121
+ 427              	.LBB166:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 428              		.loc 2 106 5 view .LVU122
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 429              		.loc 2 106 14 is_stmt 0 view .LVU123
+ 430 00d5 488B3500 		movq	mbedtls_ct_zero(%rip), %rsi
+ 430      000000
+ 431              	.LVL17:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 432              		.loc 2 106 14 view .LVU124
+ 433              	.LBE166:
+ 434              	.LBE165:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 435              		.loc 2 415 5 is_stmt 1 view .LVU125
+ 436              	.LBB168:
+ 437              	.LBB163:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 438              		.loc 2 106 14 is_stmt 0 view .LVU126
+ 439 00dc 4831C1   		xorq	%rax, %rcx
+ 440              	.LVL18:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 441              		.loc 2 106 14 view .LVU127
+ 442              	.LBE163:
+ 443              	.LBE168:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 444              		.loc 2 417 43 view .LVU128
+ 445 00df B83F0000 		movl	$63, %eax
+ 445      00
+ 446              	.LVL19:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 447              		.loc 2 415 26 view .LVU129
+ 448 00e4 0FB6C9   		movzbl	%cl, %ecx
+ 449              	.LVL20:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 450              		.loc 2 417 5 is_stmt 1 view .LVU130
+ 451              		.loc 2 419 5 view .LVU131
+ 452              		.loc 2 419 5 is_stmt 0 view .LVU132
+ 453              	.LBE170:
+ 454              	.LBE173:
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     return digit;
+ 455              		.loc 1 37 5 is_stmt 1 view .LVU133
+ 456              	.LBB174:
+ 457              	.LBB171:
+ 458              	.LBB169:
+ 459              	.LBB167:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+GAS LISTING /tmp/ccYsy7PJ.s 			page 19
+
+
+ 460              		.loc 2 106 14 is_stmt 0 view .LVU134
+ 461 00e7 4883F62F 		xorq	$47, %rsi
+ 462              	.LVL21:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 463              		.loc 2 106 14 view .LVU135
+ 464              	.LBE167:
+ 465              	.LBE169:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 466              		.loc 2 417 43 view .LVU136
+ 467 00eb 29C8     		subl	%ecx, %eax
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 468              		.loc 2 415 40 view .LVU137
+ 469 00ed 8D59C1   		leal	-63(%rcx), %ebx
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 470              		.loc 2 417 14 view .LVU138
+ 471 00f0 C1E808   		shrl	$8, %eax
+ 472              		.loc 2 419 40 view .LVU139
+ 473 00f3 08F8     		orb	%bh, %al
+ 474              	.LBE171:
+ 475              	.LBE174:
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** }
+ 476              		.loc 1 38 1 view .LVU140
+ 477 00f5 5B       		popq	%rbx
+ 478              	.LCFI1:
+ 479              		.cfi_def_cfa_offset 8
+ 480              	.LBB175:
+ 481              	.LBB172:
+ 482              		.loc 2 419 12 view .LVU141
+ 483 00f6 F7D0     		notl	%eax
+ 484              		.loc 2 419 54 view .LVU142
+ 485 00f8 21F0     		andl	%esi, %eax
+ 486              	.LBE172:
+ 487              	.LBE175:
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     return digit;
+ 488              		.loc 1 36 11 discriminator 1 view .LVU143
+ 489 00fa 09D0     		orl	%edx, %eax
+ 490              		.loc 1 38 1 view .LVU144
+ 491 00fc C3       		ret
+ 492              		.cfi_endproc
+ 493              	.LFE51:
+ 495              		.section	.text.mbedtls_ct_base64_dec_value,"ax",@progbits
+ 496              		.p2align 4
+ 498              	mbedtls_ct_base64_dec_value:
+ 499              	.LVL22:
+ 500              	.LFB52:
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** MBEDTLS_STATIC_TESTABLE
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** signed char mbedtls_ct_base64_dec_value(unsigned char c)
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** {
+ 501              		.loc 1 42 1 is_stmt 1 view -0
+ 502              		.cfi_startproc
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned char val = 0;
+ 503              		.loc 1 43 5 view .LVU146
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     /* For each range of digits, if c is in that range, mask val with
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      * the corresponding value. Since c can only be in a single range,
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      * only at most one masking will change val. Set val to one plus
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      * the desired value so that it stays 0 if c is in none of the ranges. */
+GAS LISTING /tmp/ccYsy7PJ.s 			page 20
+
+
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     val |= mbedtls_ct_uchar_in_range_if('A', 'Z', c, c - 'A' +  0 + 1);
+ 504              		.loc 1 48 5 view .LVU147
+ 505              	.LBB176:
+ 506              	.LBI176:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 507              		.loc 2 406 29 view .LVU148
+ 508              	.LBB177:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 509              		.loc 2 411 5 view .LVU149
+ 510              	.LBB178:
+ 511              	.LBB179:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 512              		.loc 2 106 14 is_stmt 0 view .LVU150
+ 513 0000 4C8B0D00 		movq	mbedtls_ct_zero(%rip), %r9
+ 513      000000
+ 514              	.LBE179:
+ 515              	.LBE178:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 516              		.loc 2 411 46 view .LVU151
+ 517 0007 400FB6CF 		movzbl	%dil, %ecx
+ 518              	.LVL23:
+ 519              	.LBB182:
+ 520              	.LBI178:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 521              		.loc 2 100 33 is_stmt 1 view .LVU152
+ 522              	.LBB180:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 523              		.loc 2 106 5 view .LVU153
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 524              		.loc 2 106 5 is_stmt 0 view .LVU154
+ 525              	.LBE180:
+ 526              	.LBE182:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 527              		.loc 2 412 5 is_stmt 1 view .LVU155
+ 528              	.LBE177:
+ 529              	.LBE176:
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned char val = 0;
+ 530              		.loc 1 42 1 is_stmt 0 view .LVU156
+ 531 000b 89FA     		movl	%edi, %edx
+ 532              	.LVL24:
+ 533              	.LBB200:
+ 534              	.LBB190:
+ 535              	.LBB183:
+ 536              	.LBI183:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 537              		.loc 2 100 33 is_stmt 1 view .LVU157
+ 538              	.LBB184:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 539              		.loc 2 106 5 view .LVU158
+ 540              	.LBE184:
+ 541              	.LBE183:
+ 542              	.LBE190:
+ 543              	.LBE200:
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned char val = 0;
+ 544              		.loc 1 42 1 is_stmt 0 view .LVU159
+ 545 000d 53       		pushq	%rbx
+ 546              	.LCFI2:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 21
+
+
+ 547              		.cfi_def_cfa_offset 16
+ 548              		.cfi_offset 3, -16
+ 549              	.LBB201:
+ 550              	.LBB191:
+ 551              	.LBB187:
+ 552              	.LBB185:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 553              		.loc 2 106 14 view .LVU160
+ 554 000e 4C8B0500 		movq	mbedtls_ct_zero(%rip), %r8
+ 554      000000
+ 555              	.LVL25:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 556              		.loc 2 106 14 view .LVU161
+ 557              	.LBE185:
+ 558              	.LBE187:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 559              		.loc 2 415 5 is_stmt 1 view .LVU162
+ 560              	.LBE191:
+ 561              	.LBE201:
+ 562              	.LBB202:
+ 563              	.LBB203:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 564              		.loc 2 417 43 is_stmt 0 view .LVU163
+ 565 0015 B87A0000 		movl	$122, %eax
+ 565      00
+ 566              	.LBE203:
+ 567              	.LBE202:
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     val |= mbedtls_ct_uchar_in_range_if('a', 'z', c, c - 'a' + 26 + 1);
+ 568              		.loc 1 49 67 view .LVU164
+ 569 001a 8D72BA   		leal	-70(%rdx), %esi
+ 570              	.LBB223:
+ 571              	.LBB216:
+ 572              	.LBB204:
+ 573              	.LBB205:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 574              		.loc 2 106 14 view .LVU165
+ 575 001d 488B3D00 		movq	mbedtls_ct_zero(%rip), %rdi
+ 575      000000
+ 576              	.LVL26:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 577              		.loc 2 106 14 view .LVU166
+ 578              	.LBE205:
+ 579              	.LBE204:
+ 580              	.LBB208:
+ 581              	.LBB209:
+ 582 0024 4C8B1500 		movq	mbedtls_ct_zero(%rip), %r10
+ 582      000000
+ 583              	.LBE209:
+ 584              	.LBE208:
+ 585              	.LBE216:
+ 586              	.LBE223:
+ 587              	.LBB224:
+ 588              	.LBB192:
+ 589              	.LBB188:
+ 590              	.LBB181:
+ 591 002b 4931C9   		xorq	%rcx, %r9
+ 592              	.LVL27:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 22
+
+
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 593              		.loc 2 106 14 view .LVU167
+ 594              	.LBE181:
+ 595              	.LBE188:
+ 596              	.LBE192:
+ 597              	.LBE224:
+ 598              	.LBB225:
+ 599              	.LBB217:
+ 600              	.LBB212:
+ 601              	.LBB206:
+ 602 002e 4831CF   		xorq	%rcx, %rdi
+ 603              	.LBE206:
+ 604              	.LBE212:
+ 605              	.LBE217:
+ 606              	.LBE225:
+ 607              	.LBB226:
+ 608              	.LBB193:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 609              		.loc 2 415 26 view .LVU168
+ 610 0031 450FB6C9 		movzbl	%r9b, %r9d
+ 611              	.LVL28:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 612              		.loc 2 417 5 is_stmt 1 view .LVU169
+ 613              		.loc 2 419 5 view .LVU170
+ 614              		.loc 2 419 5 is_stmt 0 view .LVU171
+ 615              	.LBE193:
+ 616              	.LBE226:
+ 617              		.loc 1 49 5 is_stmt 1 view .LVU172
+ 618              	.LBB227:
+ 619              	.LBI202:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 620              		.loc 2 406 29 view .LVU173
+ 621              	.LBB218:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 622              		.loc 2 411 5 view .LVU174
+ 623              	.LBB213:
+ 624              	.LBI204:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 625              		.loc 2 100 33 view .LVU175
+ 626              	.LBB207:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 627              		.loc 2 106 5 view .LVU176
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 628              		.loc 2 106 5 is_stmt 0 view .LVU177
+ 629              	.LBE207:
+ 630              	.LBE213:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 631              		.loc 2 412 5 is_stmt 1 view .LVU178
+ 632              	.LBB214:
+ 633              	.LBI208:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 634              		.loc 2 100 33 view .LVU179
+ 635              	.LBB210:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 636              		.loc 2 106 5 view .LVU180
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 637              		.loc 2 106 5 is_stmt 0 view .LVU181
+GAS LISTING /tmp/ccYsy7PJ.s 			page 23
+
+
+ 638              	.LBE210:
+ 639              	.LBE214:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 640              		.loc 2 415 5 is_stmt 1 view .LVU182
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 641              		.loc 2 415 26 is_stmt 0 view .LVU183
+ 642 0035 400FB6FF 		movzbl	%dil, %edi
+ 643              	.LVL29:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 644              		.loc 2 417 5 is_stmt 1 view .LVU184
+ 645              		.loc 2 419 5 view .LVU185
+ 646              	.LBB215:
+ 647              	.LBB211:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 648              		.loc 2 106 14 is_stmt 0 view .LVU186
+ 649 0039 4431D6   		xorl	%r10d, %esi
+ 650              	.LBE211:
+ 651              	.LBE215:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 652              		.loc 2 417 43 view .LVU187
+ 653 003c 29F8     		subl	%edi, %eax
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 654              		.loc 2 415 40 view .LVU188
+ 655 003e 8D5F9F   		leal	-97(%rdi), %ebx
+ 656              	.LBE218:
+ 657              	.LBE227:
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     val |= mbedtls_ct_uchar_in_range_if('a', 'z', c, c - 'a' + 26 + 1);
+ 658              		.loc 1 48 67 view .LVU189
+ 659 0041 8D7AC0   		leal	-64(%rdx), %edi
+ 660              	.LBB228:
+ 661              	.LBB219:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 662              		.loc 2 417 14 view .LVU190
+ 663 0044 C1E808   		shrl	$8, %eax
+ 664              	.LBE219:
+ 665              	.LBE228:
+ 666              	.LBB229:
+ 667              	.LBB194:
+ 668              	.LBB189:
+ 669              	.LBB186:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 670              		.loc 2 106 14 view .LVU191
+ 671 0047 4431C7   		xorl	%r8d, %edi
+ 672              	.LBE186:
+ 673              	.LBE189:
+ 674              	.LBE194:
+ 675              	.LBE229:
+ 676              	.LBB230:
+ 677              	.LBB231:
+ 678              	.LBB232:
+ 679              	.LBB233:
+ 680 004a 4C8B0500 		movq	mbedtls_ct_zero(%rip), %r8
+ 680      000000
+ 681              	.LVL30:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 682              		.loc 2 106 14 view .LVU192
+ 683              	.LBE233:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 24
+
+
+ 684              	.LBE232:
+ 685              	.LBE231:
+ 686              	.LBE230:
+ 687              	.LBB252:
+ 688              	.LBB220:
+ 689              		.loc 2 419 40 view .LVU193
+ 690 0051 08F8     		orb	%bh, %al
+ 691              	.LBE220:
+ 692              	.LBE252:
+ 693              	.LBB253:
+ 694              	.LBB195:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 695              		.loc 2 415 40 view .LVU194
+ 696 0053 418D59BF 		leal	-65(%r9), %ebx
+ 697              	.LBE195:
+ 698              	.LBE253:
+ 699              	.LBB254:
+ 700              	.LBB221:
+ 701              		.loc 2 419 12 view .LVU195
+ 702 0057 F7D0     		notl	%eax
+ 703              	.LBE221:
+ 704              	.LBE254:
+ 705              	.LBB255:
+ 706              	.LBB244:
+ 707              	.LBB236:
+ 708              	.LBB234:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 709              		.loc 2 106 14 view .LVU196
+ 710 0059 4931C8   		xorq	%rcx, %r8
+ 711              	.LBE234:
+ 712              	.LBE236:
+ 713              	.LBE244:
+ 714              	.LBE255:
+ 715              	.LBB256:
+ 716              	.LBB222:
+ 717              		.loc 2 419 54 view .LVU197
+ 718 005c 21C6     		andl	%eax, %esi
+ 719              	.LBE222:
+ 720              	.LBE256:
+ 721              	.LBB257:
+ 722              	.LBB196:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 723              		.loc 2 417 43 view .LVU198
+ 724 005e B85A0000 		movl	$90, %eax
+ 724      00
+ 725              	.LBE196:
+ 726              	.LBE257:
+ 727              	.LBB258:
+ 728              	.LBB245:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 729              		.loc 2 415 26 view .LVU199
+ 730 0063 450FB6C0 		movzbl	%r8b, %r8d
+ 731              	.LBE245:
+ 732              	.LBE258:
+ 733              	.LBB259:
+ 734              	.LBB197:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+GAS LISTING /tmp/ccYsy7PJ.s 			page 25
+
+
+ 735              		.loc 2 417 43 view .LVU200
+ 736 0067 4429C8   		subl	%r9d, %eax
+ 737              	.LBE197:
+ 738              	.LBE259:
+ 739              	.LBB260:
+ 740              	.LBB246:
+ 741              	.LBB237:
+ 742              	.LBB238:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 743              		.loc 2 106 14 view .LVU201
+ 744 006a 4C8B0D00 		movq	mbedtls_ct_zero(%rip), %r9
+ 744      000000
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 745              		.loc 2 106 14 view .LVU202
+ 746              	.LBE238:
+ 747              	.LBE237:
+ 748              	.LBE246:
+ 749              	.LBE260:
+ 750              	.LBB261:
+ 751              	.LBB198:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 752              		.loc 2 417 14 view .LVU203
+ 753 0071 C1E808   		shrl	$8, %eax
+ 754              		.loc 2 419 40 view .LVU204
+ 755 0074 08F8     		orb	%bh, %al
+ 756              		.loc 2 419 40 view .LVU205
+ 757              	.LBE198:
+ 758              	.LBE261:
+ 759              	.LBB262:
+ 760              	.LBB247:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 761              		.loc 2 415 40 view .LVU206
+ 762 0076 418D58D0 		leal	-48(%r8), %ebx
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 763              		.loc 2 415 40 view .LVU207
+ 764              	.LBE247:
+ 765              	.LBE262:
+ 766              	.LBB263:
+ 767              	.LBB199:
+ 768              		.loc 2 419 12 view .LVU208
+ 769 007a F7D0     		notl	%eax
+ 770              		.loc 2 419 54 view .LVU209
+ 771 007c 21F8     		andl	%edi, %eax
+ 772              	.LBE199:
+ 773              	.LBE263:
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     val |= mbedtls_ct_uchar_in_range_if('0', '9', c, c - '0' + 52 + 1);
+ 774              		.loc 1 50 67 view .LVU210
+ 775 007e 8D7A05   		leal	5(%rdx), %edi
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     val |= mbedtls_ct_uchar_in_range_if('0', '9', c, c - '0' + 52 + 1);
+ 776              		.loc 1 49 9 discriminator 1 view .LVU211
+ 777 0081 09C6     		orl	%eax, %esi
+ 778              	.LVL31:
+ 779              		.loc 1 50 5 is_stmt 1 view .LVU212
+ 780              	.LBB264:
+ 781              	.LBI230:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 782              		.loc 2 406 29 view .LVU213
+GAS LISTING /tmp/ccYsy7PJ.s 			page 26
+
+
+ 783              	.LBB248:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 784              		.loc 2 411 5 view .LVU214
+ 785              	.LBB241:
+ 786              	.LBI232:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 787              		.loc 2 100 33 view .LVU215
+ 788              	.LBB235:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 789              		.loc 2 106 5 view .LVU216
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 790              		.loc 2 106 5 is_stmt 0 view .LVU217
+ 791              	.LBE235:
+ 792              	.LBE241:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 793              		.loc 2 412 5 is_stmt 1 view .LVU218
+ 794              	.LBB242:
+ 795              	.LBI237:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 796              		.loc 2 100 33 view .LVU219
+ 797              	.LBB239:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 798              		.loc 2 106 5 view .LVU220
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 799              		.loc 2 106 5 is_stmt 0 view .LVU221
+ 800              	.LBE239:
+ 801              	.LBE242:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 802              		.loc 2 415 5 is_stmt 1 view .LVU222
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 803              		.loc 2 417 5 view .LVU223
+ 804              		.loc 2 419 5 view .LVU224
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 805              		.loc 2 417 43 is_stmt 0 view .LVU225
+ 806 0083 B8390000 		movl	$57, %eax
+ 806      00
+ 807              	.LBB243:
+ 808              	.LBB240:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 809              		.loc 2 106 14 view .LVU226
+ 810 0088 4431CF   		xorl	%r9d, %edi
+ 811              	.LBE240:
+ 812              	.LBE243:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 813              		.loc 2 417 43 view .LVU227
+ 814 008b 4429C0   		subl	%r8d, %eax
+ 815              	.LBE248:
+ 816              	.LBE264:
+ 817              	.LBB265:
+ 818              	.LBB266:
+ 819              	.LBB267:
+ 820              	.LBB268:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 821              		.loc 2 106 14 view .LVU228
+ 822 008e 4C8B0500 		movq	mbedtls_ct_zero(%rip), %r8
+ 822      000000
+ 823              	.LBE268:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 27
+
+
+ 824              	.LBE267:
+ 825              	.LBB271:
+ 826              	.LBB272:
+ 827 0095 4C8B0D00 		movq	mbedtls_ct_zero(%rip), %r9
+ 827      000000
+ 828              	.LBE272:
+ 829              	.LBE271:
+ 830              	.LBE266:
+ 831              	.LBE265:
+ 832              	.LBB284:
+ 833              	.LBB249:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 834              		.loc 2 417 14 view .LVU229
+ 835 009c C1E808   		shrl	$8, %eax
+ 836              		.loc 2 419 40 view .LVU230
+ 837 009f 08F8     		orb	%bh, %al
+ 838              	.LBE249:
+ 839              	.LBE284:
+ 840              	.LBB285:
+ 841              	.LBB279:
+ 842              	.LBB275:
+ 843              	.LBB269:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 844              		.loc 2 106 14 view .LVU231
+ 845 00a1 4931C8   		xorq	%rcx, %r8
+ 846              	.LBE269:
+ 847              	.LBE275:
+ 848              	.LBE279:
+ 849              	.LBE285:
+ 850              	.LBB286:
+ 851              	.LBB250:
+ 852              		.loc 2 419 12 view .LVU232
+ 853 00a4 F7D0     		notl	%eax
+ 854              	.LBE250:
+ 855              	.LBE286:
+ 856              	.LBB287:
+ 857              	.LBB280:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 858              		.loc 2 415 26 view .LVU233
+ 859 00a6 450FB6C0 		movzbl	%r8b, %r8d
+ 860              	.LBE280:
+ 861              	.LBE287:
+ 862              	.LBB288:
+ 863              	.LBB251:
+ 864              		.loc 2 419 54 view .LVU234
+ 865 00aa 21C7     		andl	%eax, %edi
+ 866              	.LBE251:
+ 867              	.LBE288:
+ 868              	.LBB289:
+ 869              	.LBB281:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 870              		.loc 2 417 43 view .LVU235
+ 871 00ac B82B0000 		movl	$43, %eax
+ 871      00
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 872              		.loc 2 415 40 view .LVU236
+ 873 00b1 418D58D5 		leal	-43(%r8), %ebx
+GAS LISTING /tmp/ccYsy7PJ.s 			page 28
+
+
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 874              		.loc 2 417 43 view .LVU237
+ 875 00b5 4429C0   		subl	%r8d, %eax
+ 876              	.LBE281:
+ 877              	.LBE289:
+ 878              		.loc 1 50 9 discriminator 1 view .LVU238
+ 879 00b8 09F7     		orl	%esi, %edi
+ 880              	.LVL32:
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     val |= mbedtls_ct_uchar_in_range_if('+', '+', c, c - '+' + 62 + 1);
+ 881              		.loc 1 51 5 is_stmt 1 view .LVU239
+ 882              	.LBB290:
+ 883              	.LBI265:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 884              		.loc 2 406 29 view .LVU240
+ 885              	.LBB282:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 886              		.loc 2 411 5 view .LVU241
+ 887              	.LBB276:
+ 888              	.LBI267:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 889              		.loc 2 100 33 view .LVU242
+ 890              	.LBB270:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 891              		.loc 2 106 5 view .LVU243
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 892              		.loc 2 106 5 is_stmt 0 view .LVU244
+ 893              	.LBE270:
+ 894              	.LBE276:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 895              		.loc 2 412 5 is_stmt 1 view .LVU245
+ 896              	.LBB277:
+ 897              	.LBI271:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 898              		.loc 2 100 33 view .LVU246
+ 899              	.LBB273:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 900              		.loc 2 106 5 view .LVU247
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 901              		.loc 2 106 5 is_stmt 0 view .LVU248
+ 902              	.LBE273:
+ 903              	.LBE277:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 904              		.loc 2 415 5 is_stmt 1 view .LVU249
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 905              		.loc 2 417 5 view .LVU250
+ 906              		.loc 2 419 5 view .LVU251
+ 907              		.loc 2 419 5 is_stmt 0 view .LVU252
+ 908              	.LBE282:
+ 909              	.LBE290:
+ 910              		.loc 1 51 67 view .LVU253
+ 911 00ba 8D7214   		leal	20(%rdx), %esi
+ 912              	.LBB291:
+ 913              	.LBB283:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 914              		.loc 2 417 14 view .LVU254
+ 915 00bd C1E808   		shrl	$8, %eax
+ 916              	.LBB278:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 29
+
+
+ 917              	.LBB274:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 918              		.loc 2 106 14 view .LVU255
+ 919 00c0 4431CE   		xorl	%r9d, %esi
+ 920              	.LBE274:
+ 921              	.LBE278:
+ 922              		.loc 2 419 40 view .LVU256
+ 923 00c3 08F8     		orb	%bh, %al
+ 924              		.loc 2 419 12 view .LVU257
+ 925 00c5 F7D0     		notl	%eax
+ 926              		.loc 2 419 54 view .LVU258
+ 927 00c7 21C6     		andl	%eax, %esi
+ 928              	.LBE283:
+ 929              	.LBE291:
+ 930              	.LBB292:
+ 931              	.LBB293:
+ 932              	.LBB294:
+ 933              	.LBB295:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 934              		.loc 2 106 14 view .LVU259
+ 935 00c9 488B0500 		movq	mbedtls_ct_zero(%rip), %rax
+ 935      000000
+ 936              	.LBE295:
+ 937              	.LBE294:
+ 938              	.LBE293:
+ 939              	.LBE292:
+ 940              		.loc 1 51 9 discriminator 1 view .LVU260
+ 941 00d0 09FE     		orl	%edi, %esi
+ 942              	.LVL33:
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     val |= mbedtls_ct_uchar_in_range_if('/', '/', c, c - '/' + 63 + 1);
+ 943              		.loc 1 52 5 is_stmt 1 view .LVU261
+ 944              	.LBB308:
+ 945              	.LBI292:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                          unsigned char high,
+ 946              		.loc 2 406 29 view .LVU262
+ 947              	.LBB304:
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     const unsigned char to = (unsigned char) mbedtls_ct_compiler_opaque(t);
+ 948              		.loc 2 411 5 view .LVU263
+ 949              	.LBB298:
+ 950              	.LBI294:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 951              		.loc 2 100 33 view .LVU264
+ 952              	.LBB296:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 953              		.loc 2 106 5 view .LVU265
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 954              		.loc 2 106 5 is_stmt 0 view .LVU266
+ 955              	.LBE296:
+ 956              	.LBE298:
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 957              		.loc 2 412 5 is_stmt 1 view .LVU267
+ 958              	.LBB299:
+ 959              	.LBI299:
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
+ 960              		.loc 2 100 33 view .LVU268
+ 961              	.LBB300:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+GAS LISTING /tmp/ccYsy7PJ.s 			page 30
+
+
+ 962              		.loc 2 106 5 view .LVU269
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 963              		.loc 2 106 14 is_stmt 0 view .LVU270
+ 964 00d2 488B3D00 		movq	mbedtls_ct_zero(%rip), %rdi
+ 964      000000
+ 965              	.LVL34:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 966              		.loc 2 106 14 view .LVU271
+ 967              	.LBE300:
+ 968              	.LBE299:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 969              		.loc 2 415 5 is_stmt 1 view .LVU272
+ 970              	.LBB302:
+ 971              	.LBB297:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 972              		.loc 2 106 14 is_stmt 0 view .LVU273
+ 973 00d9 4831C8   		xorq	%rcx, %rax
+ 974              	.LVL35:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 975              		.loc 2 106 14 view .LVU274
+ 976              	.LBE297:
+ 977              	.LBE302:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 978              		.loc 2 417 43 view .LVU275
+ 979 00dc B92F0000 		movl	$47, %ecx
+ 979      00
+ 980              	.LVL36:
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 981              		.loc 2 415 26 view .LVU276
+ 982 00e1 0FB6C0   		movzbl	%al, %eax
+ 983              	.LVL37:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 984              		.loc 2 417 5 is_stmt 1 view .LVU277
+ 985              		.loc 2 419 5 view .LVU278
+ 986              		.loc 2 419 5 is_stmt 0 view .LVU279
+ 987              	.LBE304:
+ 988              	.LBE308:
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     /* At this point, val is 0 if c is an invalid digit and v+1 if c is
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      * a digit with the value v. */
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     return val - 1;
+ 989              		.loc 1 55 5 is_stmt 1 view .LVU280
+ 990              	.LBB309:
+ 991              	.LBB305:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 992              		.loc 2 417 43 is_stmt 0 view .LVU281
+ 993 00e4 29C1     		subl	%eax, %ecx
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* high_mask is: 0 if c <= high, 0x...ff if c > high */
+ 994              		.loc 2 415 40 view .LVU282
+ 995 00e6 8D58D1   		leal	-47(%rax), %ebx
+ 996              	.LBE305:
+ 997              	.LBE309:
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     /* At this point, val is 0 if c is an invalid digit and v+1 if c is
+ 998              		.loc 1 52 67 view .LVU283
+ 999 00e9 8D4211   		leal	17(%rdx), %eax
+ 1000              	.LVL38:
+ 1001              	.LBB310:
+ 1002              	.LBB306:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 31
+
+
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
+ 1003              		.loc 2 417 14 view .LVU284
+ 1004 00ec C1E908   		shrl	$8, %ecx
+ 1005              	.LBB303:
+ 1006              	.LBB301:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
+ 1007              		.loc 2 106 14 view .LVU285
+ 1008 00ef 31F8     		xorl	%edi, %eax
+ 1009              	.LBE301:
+ 1010              	.LBE303:
+ 1011              		.loc 2 419 40 view .LVU286
+ 1012 00f1 08F9     		orb	%bh, %cl
+ 1013              	.LBE306:
+ 1014              	.LBE310:
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** }
+ 1015              		.loc 1 56 1 view .LVU287
+ 1016 00f3 5B       		popq	%rbx
+ 1017              	.LCFI3:
+ 1018              		.cfi_def_cfa_offset 8
+ 1019              	.LVL39:
+ 1020              	.LBB311:
+ 1021              	.LBB307:
+ 1022              		.loc 2 419 12 view .LVU288
+ 1023 00f4 F7D1     		notl	%ecx
+ 1024              		.loc 2 419 54 view .LVU289
+ 1025 00f6 21C8     		andl	%ecx, %eax
+ 1026              	.LBE307:
+ 1027              	.LBE311:
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     /* At this point, val is 0 if c is an invalid digit and v+1 if c is
+ 1028              		.loc 1 52 9 discriminator 1 view .LVU290
+ 1029 00f8 09F0     		orl	%esi, %eax
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** }
+ 1030              		.loc 1 55 16 view .LVU291
+ 1031 00fa 83E801   		subl	$1, %eax
+ 1032              		.loc 1 56 1 view .LVU292
+ 1033 00fd C3       		ret
+ 1034              		.cfi_endproc
+ 1035              	.LFE52:
+ 1037              		.section	.text.mbedtls_base64_encode,"ax",@progbits
+ 1038              		.p2align 4
+ 1039              		.globl	mbedtls_base64_encode
+ 1041              	mbedtls_base64_encode:
+ 1042              	.LVL40:
+ 1043              	.LFB53:
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** /*
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  * Encode a buffer into base64 format
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  */
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                           const unsigned char *src, size_t slen)
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** {
+ 1044              		.loc 1 63 1 is_stmt 1 view -0
+ 1045              		.cfi_startproc
+ 1046              		.loc 1 63 1 is_stmt 0 view .LVU294
+ 1047 0000 F30F1EFA 		endbr64
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     size_t i, n;
+ 1048              		.loc 1 64 5 is_stmt 1 view .LVU295
+GAS LISTING /tmp/ccYsy7PJ.s 			page 32
+
+
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     int C1, C2, C3;
+ 1049              		.loc 1 65 5 view .LVU296
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned char *p;
+ 1050              		.loc 1 66 5 view .LVU297
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     if (slen == 0) {
+ 1051              		.loc 1 68 5 view .LVU298
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     size_t i, n;
+ 1052              		.loc 1 63 1 is_stmt 0 view .LVU299
+ 1053 0004 4157     		pushq	%r15
+ 1054              	.LCFI4:
+ 1055              		.cfi_def_cfa_offset 16
+ 1056              		.cfi_offset 15, -16
+ 1057 0006 4156     		pushq	%r14
+ 1058              	.LCFI5:
+ 1059              		.cfi_def_cfa_offset 24
+ 1060              		.cfi_offset 14, -24
+ 1061 0008 4155     		pushq	%r13
+ 1062              	.LCFI6:
+ 1063              		.cfi_def_cfa_offset 32
+ 1064              		.cfi_offset 13, -32
+ 1065 000a 4154     		pushq	%r12
+ 1066              	.LCFI7:
+ 1067              		.cfi_def_cfa_offset 40
+ 1068              		.cfi_offset 12, -40
+ 1069 000c 55       		pushq	%rbp
+ 1070              	.LCFI8:
+ 1071              		.cfi_def_cfa_offset 48
+ 1072              		.cfi_offset 6, -48
+ 1073 000d 53       		pushq	%rbx
+ 1074              	.LCFI9:
+ 1075              		.cfi_def_cfa_offset 56
+ 1076              		.cfi_offset 3, -56
+ 1077 000e 4883EC20 		subq	$32, %rsp
+ 1078              	.LCFI10:
+ 1079              		.cfi_def_cfa_offset 88
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     size_t i, n;
+ 1080              		.loc 1 63 1 view .LVU300
+ 1081 0012 48897C24 		movq	%rdi, 16(%rsp)
+ 1081      10
+ 1082 0017 48895424 		movq	%rdx, 24(%rsp)
+ 1082      18
+ 1083 001c 4C894424 		movq	%r8, 8(%rsp)
+ 1083      08
+ 1084              		.loc 1 68 8 view .LVU301
+ 1085 0021 4D85C0   		testq	%r8, %r8
+ 1086 0024 0F848601 		je	.L22
+ 1086      0000
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *olen = 0;
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return 0;
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n = slen / 3 + (slen % 3 != 0);
+ 1087              		.loc 1 73 14 view .LVU302
+ 1088 002a 48BAABAA 		movabsq	$-6148914691236517205, %rdx
+ 1088      AAAAAAAA 
+ 1088      AAAA
+GAS LISTING /tmp/ccYsy7PJ.s 			page 33
+
+
+ 1089              	.LVL41:
+ 1090              		.loc 1 73 14 view .LVU303
+ 1091 0034 4C89C0   		movq	%r8, %rax
+ 1092              		.loc 1 73 5 is_stmt 1 view .LVU304
+ 1093 0037 4989CF   		movq	%rcx, %r15
+ 1094              		.loc 1 73 14 is_stmt 0 view .LVU305
+ 1095 003a 48F7E2   		mulq	%rdx
+ 1096              		.loc 1 73 30 view .LVU306
+ 1097 003d 31C0     		xorl	%eax, %eax
+ 1098              		.loc 1 73 14 view .LVU307
+ 1099 003f 4889D7   		movq	%rdx, %rdi
+ 1100              	.LVL42:
+ 1101              		.loc 1 73 26 view .LVU308
+ 1102 0042 4883E2FE 		andq	$-2, %rdx
+ 1103              		.loc 1 73 14 view .LVU309
+ 1104 0046 48D1EF   		shrq	%rdi
+ 1105              		.loc 1 73 26 view .LVU310
+ 1106 0049 488D0C3A 		leaq	(%rdx,%rdi), %rcx
+ 1107              	.LVL43:
+ 1108              		.loc 1 73 30 view .LVU311
+ 1109 004d 48394C24 		cmpq	%rcx, 8(%rsp)
+ 1109      08
+ 1110 0052 0F95C0   		setne	%al
+ 1111              		.loc 1 73 26 view .LVU312
+ 1112 0055 48890C24 		movq	%rcx, (%rsp)
+ 1113              		.loc 1 73 7 view .LVU313
+ 1114 0059 4801F8   		addq	%rdi, %rax
+ 1115              	.LVL44:
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     if (n > (SIZE_MAX - 1) / 4) {
+ 1116              		.loc 1 75 5 is_stmt 1 view .LVU314
+ 1117              		.loc 1 75 8 is_stmt 0 view .LVU315
+ 1118 005c 4889C1   		movq	%rax, %rcx
+ 1119 005f 48C1E93E 		shrq	$62, %rcx
+ 1120 0063 0F858C01 		jne	.L18
+ 1120      0000
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *olen = SIZE_MAX;
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n *= 4;
+ 1121              		.loc 1 80 5 is_stmt 1 view .LVU316
+ 1122              	.LVL45:
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     if ((dlen < n + 1) || (NULL == dst)) {
+ 1123              		.loc 1 82 5 view .LVU317
+ 1124              		.loc 1 82 24 is_stmt 0 discriminator 1 view .LVU318
+ 1125 0069 48837C24 		cmpq	$0, 16(%rsp)
+ 1125      1000
+ 1126              		.loc 1 82 19 view .LVU319
+ 1127 006f 488D0485 		leaq	1(,%rax,4), %rax
+ 1127      01000000 
+ 1128              	.LVL46:
+ 1129              		.loc 1 82 24 discriminator 1 view .LVU320
+ 1130 0077 0F847F01 		je	.L9
+ 1130      0000
+ 1131 007d 4839C6   		cmpq	%rax, %rsi
+GAS LISTING /tmp/ccYsy7PJ.s 			page 34
+
+
+ 1132 0080 0F827601 		jb	.L9
+ 1132      0000
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *olen = n + 1;
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n = (slen / 3) * 3;
+ 1133              		.loc 1 87 5 is_stmt 1 view .LVU321
+ 1134              	.LVL47:
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     for (i = 0, p = dst; i < n; i += 3) {
+ 1135              		.loc 1 89 5 view .LVU322
+ 1136              		.loc 1 89 28 discriminator 1 view .LVU323
+ 1137 0086 48837C24 		cmpq	$2, 8(%rsp)
+ 1137      0802
+ 1138 008c 0F86C600 		jbe	.L19
+ 1138      0000
+ 1139              		.loc 1 89 19 is_stmt 0 view .LVU324
+ 1140 0092 488B6C24 		movq	16(%rsp), %rbp
+ 1140      10
+ 1141              		.loc 1 89 12 view .LVU325
+ 1142 0097 4531F6   		xorl	%r14d, %r14d
+ 1143              	.LVL48:
+ 1144 009a 660F1F44 		.p2align 4,,10
+ 1144      0000
+ 1145              		.p2align 3
+ 1146              	.L14:
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C1 = *src++;
+ 1147              		.loc 1 90 9 is_stmt 1 view .LVU326
+ 1148              		.loc 1 90 14 is_stmt 0 view .LVU327
+ 1149 00a0 410FB63F 		movzbl	(%r15), %edi
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C2 = *src++;
+ 1150              		.loc 1 91 14 view .LVU328
+ 1151 00a4 410FB65F 		movzbl	1(%r15), %ebx
+ 1151      01
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C3 = *src++;
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C2 & 15) << 2) + (C3 >> 6))
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
+ 1152              		.loc 1 99 11 view .LVU329
+ 1153 00a9 4883C504 		addq	$4, %rbp
+ 1154              	.LVL49:
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C3 = *src++;
+ 1155              		.loc 1 92 18 view .LVU330
+ 1156 00ad 4983C703 		addq	$3, %r15
+ 1157              	.LVL50:
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C3 = *src++;
+ 1158              		.loc 1 92 14 view .LVU331
+ 1159 00b1 450FB667 		movzbl	-1(%r15), %r12d
+ 1159      FF
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C2 = *src++;
+ 1160              		.loc 1 90 14 view .LVU332
+ 1161 00b6 4189FD   		movl	%edi, %r13d
+GAS LISTING /tmp/ccYsy7PJ.s 			page 35
+
+
+ 1162              	.LVL51:
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C2 = *src++;
+ 1163              		.loc 1 91 9 is_stmt 1 view .LVU333
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C3 = *src++;
+ 1164              		.loc 1 92 9 view .LVU334
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+ 1165              		.loc 1 94 9 view .LVU335
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+ 1166              		.loc 1 94 47 is_stmt 0 view .LVU336
+ 1167 00b9 C1FF02   		sarl	$2, %edi
+ 1168              	.LVL52:
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+ 1169              		.loc 1 94 16 view .LVU337
+ 1170 00bc E8000000 		call	mbedtls_ct_base64_enc_char
+ 1170      00
+ 1171              	.LVL53:
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1172              		.loc 1 95 55 view .LVU338
+ 1173 00c1 4489EA   		movl	%r13d, %edx
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1174              		.loc 1 95 67 view .LVU339
+ 1175 00c4 89DF     		movl	%ebx, %edi
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1176              		.loc 1 97 55 view .LVU340
+ 1177 00c6 C1E302   		sall	$2, %ebx
+ 1178              	.LVL54:
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1179              		.loc 1 95 55 view .LVU341
+ 1180 00c9 C1E204   		sall	$4, %edx
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+ 1181              		.loc 1 94 14 discriminator 1 view .LVU342
+ 1182 00cc 8845FC   		movb	%al, -4(%rbp)
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1183              		.loc 1 95 9 is_stmt 1 view .LVU343
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1184              		.loc 1 95 67 is_stmt 0 view .LVU344
+ 1185 00cf 40C0EF04 		shrb	$4, %dil
+ 1186              	.LVL55:
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1187              		.loc 1 97 55 view .LVU345
+ 1188 00d3 83E33C   		andl	$60, %ebx
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1189              		.loc 1 95 55 view .LVU346
+ 1190 00d6 83E230   		andl	$48, %edx
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1191              		.loc 1 95 61 view .LVU347
+ 1192 00d9 01D7     		addl	%edx, %edi
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C2 & 15) << 2) + (C3 >> 6))
+ 1193              		.loc 1 96 43 view .LVU348
+ 1194 00db 400FB6FF 		movzbl	%dil, %edi
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1195              		.loc 1 95 16 view .LVU349
+ 1196 00df E8000000 		call	mbedtls_ct_base64_enc_char
+ 1196      00
+ 1197              	.LVL56:
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1198              		.loc 1 97 67 view .LVU350
+GAS LISTING /tmp/ccYsy7PJ.s 			page 36
+
+
+ 1199 00e4 4489E7   		movl	%r12d, %edi
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1200              		.loc 1 95 14 discriminator 1 view .LVU351
+ 1201 00e7 8845FD   		movb	%al, -3(%rbp)
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1202              		.loc 1 97 9 is_stmt 1 view .LVU352
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1203              		.loc 1 97 67 is_stmt 0 view .LVU353
+ 1204 00ea 40C0EF06 		shrb	$6, %dil
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1205              		.loc 1 97 61 view .LVU354
+ 1206 00ee 01DF     		addl	%ebx, %edi
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
+ 1207              		.loc 1 98 43 view .LVU355
+ 1208 00f0 400FB6FF 		movzbl	%dil, %edi
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1209              		.loc 1 97 16 view .LVU356
+ 1210 00f4 E8000000 		call	mbedtls_ct_base64_enc_char
+ 1210      00
+ 1211              	.LVL57:
+ 1212              		.loc 1 99 16 view .LVU357
+ 1213 00f9 4489E7   		movl	%r12d, %edi
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1214              		.loc 1 97 14 discriminator 1 view .LVU358
+ 1215 00fc 8845FE   		movb	%al, -2(%rbp)
+ 1216              		.loc 1 99 9 is_stmt 1 view .LVU359
+ 1217              	.LVL58:
+ 1218              		.loc 1 99 16 is_stmt 0 view .LVU360
+ 1219 00ff 83E73F   		andl	$63, %edi
+ 1220 0102 E8000000 		call	mbedtls_ct_base64_enc_char
+ 1220      00
+ 1221              	.LVL59:
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C1 = *src++;
+ 1222              		.loc 1 89 28 discriminator 1 view .LVU361
+ 1223 0107 488B0C24 		movq	(%rsp), %rcx
+ 1224              		.loc 1 99 14 discriminator 1 view .LVU362
+ 1225 010b 8845FF   		movb	%al, -1(%rbp)
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C1 = *src++;
+ 1226              		.loc 1 89 35 is_stmt 1 discriminator 3 view .LVU363
+ 1227 010e 4C89F0   		movq	%r14, %rax
+ 1228 0111 4983C603 		addq	$3, %r14
+ 1229              	.LVL60:
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C1 = *src++;
+ 1230              		.loc 1 89 28 discriminator 1 view .LVU364
+ 1231 0115 4939CE   		cmpq	%rcx, %r14
+ 1232 0118 7286     		jb	.L14
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     if (i < slen) {
+ 1233              		.loc 1 102 5 view .LVU365
+ 1234              		.loc 1 102 8 is_stmt 0 view .LVU366
+ 1235 011a 488B7424 		movq	8(%rsp), %rsi
+ 1235      08
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C1 = *src++;
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C2 = ((i + 1) < slen) ? *src++ : 0;
+ 1236              		.loc 1 104 18 view .LVU367
+ 1237 011f 4883C004 		addq	$4, %rax
+GAS LISTING /tmp/ccYsy7PJ.s 			page 37
+
+
+ 1238 0123 4989EC   		movq	%rbp, %r12
+ 1239              	.LVL61:
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C1 = *src++;
+ 1240              		.loc 1 102 8 view .LVU368
+ 1241 0126 4939F6   		cmpq	%rsi, %r14
+ 1242 0129 723C     		jb	.L13
+ 1243              	.LVL62:
+ 1244              	.L15:
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if ((i + 1) < slen) {
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = '=';
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = '=';
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     *olen = (size_t) (p - dst);
+ 1245              		.loc 1 119 5 is_stmt 1 view .LVU369
+ 1246              		.loc 1 119 25 is_stmt 0 view .LVU370
+ 1247 012b 488B7424 		movq	16(%rsp), %rsi
+ 1247      10
+ 1248 0130 4889E8   		movq	%rbp, %rax
+ 1249 0133 4829F0   		subq	%rsi, %rax
+ 1250 0136 488B7424 		movq	24(%rsp), %rsi
+ 1250      18
+ 1251 013b 488906   		movq	%rax, (%rsi)
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     *p = 0;
+ 1252              		.loc 1 120 5 is_stmt 1 view .LVU371
+ 1253              		.loc 1 120 8 is_stmt 0 view .LVU372
+ 1254 013e C6450000 		movb	$0, 0(%rbp)
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     return 0;
+ 1255              		.loc 1 122 5 is_stmt 1 view .LVU373
+ 1256              	.LVL63:
+ 1257              	.L8:
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1258              		.loc 1 70 16 is_stmt 0 view .LVU374
+ 1259 0142 31C0     		xorl	%eax, %eax
+ 1260              	.L6:
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** }
+ 1261              		.loc 1 123 1 view .LVU375
+ 1262 0144 4883C420 		addq	$32, %rsp
+ 1263              	.LCFI11:
+ 1264              		.cfi_remember_state
+ 1265              		.cfi_def_cfa_offset 56
+ 1266 0148 5B       		popq	%rbx
+ 1267              	.LCFI12:
+ 1268              		.cfi_def_cfa_offset 48
+ 1269 0149 5D       		popq	%rbp
+ 1270              	.LCFI13:
+ 1271              		.cfi_def_cfa_offset 40
+GAS LISTING /tmp/ccYsy7PJ.s 			page 38
+
+
+ 1272 014a 415C     		popq	%r12
+ 1273              	.LCFI14:
+ 1274              		.cfi_def_cfa_offset 32
+ 1275 014c 415D     		popq	%r13
+ 1276              	.LCFI15:
+ 1277              		.cfi_def_cfa_offset 24
+ 1278 014e 415E     		popq	%r14
+ 1279              	.LCFI16:
+ 1280              		.cfi_def_cfa_offset 16
+ 1281 0150 415F     		popq	%r15
+ 1282              	.LCFI17:
+ 1283              		.cfi_def_cfa_offset 8
+ 1284 0152 C3       		ret
+ 1285              	.LVL64:
+ 1286              		.p2align 4,,10
+ 1287 0153 0F1F4400 		.p2align 3
+ 1287      00
+ 1288              	.L19:
+ 1289              	.LCFI18:
+ 1290              		.cfi_restore_state
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C1 = *src++;
+ 1291              		.loc 1 89 19 view .LVU376
+ 1292 0158 4C8B6424 		movq	16(%rsp), %r12
+ 1292      10
+ 1293 015d 488B7424 		movq	8(%rsp), %rsi
+ 1293      08
+ 1294              	.LVL65:
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C1 = *src++;
+ 1295              		.loc 1 89 28 discriminator 1 view .LVU377
+ 1296 0162 B8010000 		movl	$1, %eax
+ 1296      00
+ 1297              	.LVL66:
+ 1298              	.L13:
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C2 = ((i + 1) < slen) ? *src++ : 0;
+ 1299              		.loc 1 103 9 is_stmt 1 view .LVU378
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         C2 = ((i + 1) < slen) ? *src++ : 0;
+ 1300              		.loc 1 103 14 is_stmt 0 view .LVU379
+ 1301 0167 410FB63F 		movzbl	(%r15), %edi
+ 1302 016b 89FB     		movl	%edi, %ebx
+ 1303              	.LVL67:
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 1304              		.loc 1 104 9 is_stmt 1 view .LVU380
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+ 1305              		.loc 1 106 47 is_stmt 0 view .LVU381
+ 1306 016d C1FF02   		sarl	$2, %edi
+ 1307              	.LVL68:
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1308              		.loc 1 107 54 view .LVU382
+ 1309 0170 C1E304   		sall	$4, %ebx
+ 1310              	.LVL69:
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1311              		.loc 1 107 54 view .LVU383
+ 1312 0173 83E330   		andl	$48, %ebx
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 1313              		.loc 1 104 40 view .LVU384
+ 1314 0176 4839F0   		cmpq	%rsi, %rax
+ 1315 0179 7245     		jb	.L23
+GAS LISTING /tmp/ccYsy7PJ.s 			page 39
+
+
+ 1316              	.LVL70:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+ 1317              		.loc 1 106 9 is_stmt 1 view .LVU385
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+ 1318              		.loc 1 106 16 is_stmt 0 view .LVU386
+ 1319 017b E8000000 		call	mbedtls_ct_base64_enc_char
+ 1319      00
+ 1320              	.LVL71:
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 1321              		.loc 1 108 43 view .LVU387
+ 1322 0180 0FB6FB   		movzbl	%bl, %edi
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+ 1323              		.loc 1 106 14 discriminator 1 view .LVU388
+ 1324 0183 41880424 		movb	%al, (%r12)
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1325              		.loc 1 107 9 is_stmt 1 view .LVU389
+ 1326              	.LVL72:
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1327              		.loc 1 107 16 is_stmt 0 view .LVU390
+ 1328 0187 E8000000 		call	mbedtls_ct_base64_enc_char
+ 1328      00
+ 1329              	.LVL73:
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1330              		.loc 1 107 14 discriminator 1 view .LVU391
+ 1331 018c 41884424 		movb	%al, 1(%r12)
+ 1331      01
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
+ 1332              		.loc 1 110 9 is_stmt 1 view .LVU392
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 1333              		.loc 1 113 13 view .LVU393
+ 1334              	.LVL74:
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1335              		.loc 1 107 14 is_stmt 0 discriminator 1 view .LVU394
+ 1336 0191 B83D0000 		movl	$61, %eax
+ 1336      00
+ 1337              	.LVL75:
+ 1338              	.L17:
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 1339              		.loc 1 111 18 discriminator 1 view .LVU395
+ 1340 0196 41884424 		movb	%al, 2(%r12)
+ 1340      02
+ 1341              	.LVL76:
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1342              		.loc 1 116 9 is_stmt 1 view .LVU396
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1343              		.loc 1 116 11 is_stmt 0 view .LVU397
+ 1344 019b 498D6C24 		leaq	4(%r12), %rbp
+ 1344      04
+ 1345              	.LVL77:
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1346              		.loc 1 116 14 view .LVU398
+ 1347 01a0 41C64424 		movb	$61, 3(%r12)
+ 1347      033D
+ 1348 01a6 EB83     		jmp	.L15
+ 1349              	.LVL78:
+ 1350 01a8 0F1F8400 		.p2align 4,,10
+ 1350      00000000 
+GAS LISTING /tmp/ccYsy7PJ.s 			page 40
+
+
+ 1351              		.p2align 3
+ 1352              	.L22:
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return 0;
+ 1353              		.loc 1 69 9 is_stmt 1 view .LVU399
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return 0;
+ 1354              		.loc 1 69 15 is_stmt 0 view .LVU400
+ 1355 01b0 48C70200 		movq	$0, (%rdx)
+ 1355      000000
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1356              		.loc 1 70 9 is_stmt 1 view .LVU401
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1357              		.loc 1 70 16 is_stmt 0 view .LVU402
+ 1358 01b7 EB89     		jmp	.L8
+ 1359              	.LVL79:
+ 1360 01b9 0F1F8000 		.p2align 4,,10
+ 1360      000000
+ 1361              		.p2align 3
+ 1362              	.L23:
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 1363              		.loc 1 104 33 discriminator 1 view .LVU403
+ 1364 01c0 410FB66F 		movzbl	1(%r15), %ebp
+ 1364      01
+ 1365              	.LVL80:
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+ 1366              		.loc 1 106 9 is_stmt 1 view .LVU404
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+ 1367              		.loc 1 106 16 is_stmt 0 view .LVU405
+ 1368 01c5 E8000000 		call	mbedtls_ct_base64_enc_char
+ 1368      00
+ 1369              	.LVL81:
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1370              		.loc 1 107 66 view .LVU406
+ 1371 01ca 89EF     		movl	%ebp, %edi
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+ 1372              		.loc 1 106 14 discriminator 1 view .LVU407
+ 1373 01cc 41880424 		movb	%al, (%r12)
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1374              		.loc 1 107 9 is_stmt 1 view .LVU408
+ 1375              	.LVL82:
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1376              		.loc 1 107 66 is_stmt 0 view .LVU409
+ 1377 01d0 40C0EF04 		shrb	$4, %dil
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1378              		.loc 1 107 60 view .LVU410
+ 1379 01d4 01DF     		addl	%ebx, %edi
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 1380              		.loc 1 108 43 view .LVU411
+ 1381 01d6 400FB6FF 		movzbl	%dil, %edi
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1382              		.loc 1 107 16 view .LVU412
+ 1383 01da E8000000 		call	mbedtls_ct_base64_enc_char
+ 1383      00
+ 1384              	.LVL83:
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 1385              		.loc 1 111 64 view .LVU413
+ 1386 01df 8D3CAD00 		leal	0(,%rbp,4), %edi
+ 1386      000000
+GAS LISTING /tmp/ccYsy7PJ.s 			page 41
+
+
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                                           & 0x3F);
+ 1387              		.loc 1 107 14 discriminator 1 view .LVU414
+ 1388 01e6 41884424 		movb	%al, 1(%r12)
+ 1388      01
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
+ 1389              		.loc 1 110 9 is_stmt 1 view .LVU415
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 1390              		.loc 1 111 13 view .LVU416
+ 1391              	.LVL84:
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 1392              		.loc 1 111 20 is_stmt 0 view .LVU417
+ 1393 01eb 83E73C   		andl	$60, %edi
+ 1394 01ee E8000000 		call	mbedtls_ct_base64_enc_char
+ 1394      00
+ 1395              	.LVL85:
+ 1396 01f3 EBA1     		jmp	.L17
+ 1397              	.LVL86:
+ 1398              	.L18:
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 1399              		.loc 1 111 20 view .LVU418
+ 1400 01f5 48C7C0FF 		movq	$-1, %rax
+ 1400      FFFFFF
+ 1401              	.LVL87:
+ 1402              	.L9:
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+ 1403              		.loc 1 83 15 view .LVU419
+ 1404 01fc 488B7424 		movq	24(%rsp), %rsi
+ 1404      18
+ 1405              	.LVL88:
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+ 1406              		.loc 1 83 15 view .LVU420
+ 1407 0201 488906   		movq	%rax, (%rsi)
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1408              		.loc 1 77 16 view .LVU421
+ 1409 0204 B8D6FFFF 		movl	$-42, %eax
+ 1409      FF
+ 1410 0209 E936FFFF 		jmp	.L6
+ 1410      FF
+ 1411              		.cfi_endproc
+ 1412              	.LFE53:
+ 1414              		.section	.text.mbedtls_base64_decode,"ax",@progbits
+ 1415              		.p2align 4
+ 1416              		.globl	mbedtls_base64_decode
+ 1418              	mbedtls_base64_decode:
+ 1419              	.LVL89:
+ 1420              	.LFB54:
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** /*
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  * Decode a base64-formatted buffer
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****  */
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                           const unsigned char *src, size_t slen)
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** {
+ 1421              		.loc 1 130 1 is_stmt 1 view -0
+ 1422              		.cfi_startproc
+ 1423              		.loc 1 130 1 is_stmt 0 view .LVU423
+ 1424 0000 F30F1EFA 		endbr64
+GAS LISTING /tmp/ccYsy7PJ.s 			page 42
+
+
+ 1425 0004 4157     		pushq	%r15
+ 1426              	.LCFI19:
+ 1427              		.cfi_def_cfa_offset 16
+ 1428              		.cfi_offset 15, -16
+ 1429 0006 4156     		pushq	%r14
+ 1430              	.LCFI20:
+ 1431              		.cfi_def_cfa_offset 24
+ 1432              		.cfi_offset 14, -24
+ 1433 0008 4155     		pushq	%r13
+ 1434              	.LCFI21:
+ 1435              		.cfi_def_cfa_offset 32
+ 1436              		.cfi_offset 13, -32
+ 1437 000a 4154     		pushq	%r12
+ 1438              	.LCFI22:
+ 1439              		.cfi_def_cfa_offset 40
+ 1440              		.cfi_offset 12, -40
+ 1441 000c 55       		pushq	%rbp
+ 1442              	.LCFI23:
+ 1443              		.cfi_def_cfa_offset 48
+ 1444              		.cfi_offset 6, -48
+ 1445 000d 53       		pushq	%rbx
+ 1446              	.LCFI24:
+ 1447              		.cfi_def_cfa_offset 56
+ 1448              		.cfi_offset 3, -56
+ 1449 000e 4883EC10 		subq	$16, %rsp
+ 1450              	.LCFI25:
+ 1451              		.cfi_def_cfa_offset 72
+ 1452              		.loc 1 130 1 view .LVU424
+ 1453 0012 48895424 		movq	%rdx, 8(%rsp)
+ 1453      08
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     size_t i; /* index in source */
+ 1454              		.loc 1 131 5 is_stmt 1 view .LVU425
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     size_t n; /* number of digits or trailing = in source */
+ 1455              		.loc 1 132 5 view .LVU426
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     uint32_t x; /* value accumulator */
+ 1456              		.loc 1 133 5 view .LVU427
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned accumulated_digits = 0;
+ 1457              		.loc 1 134 5 view .LVU428
+ 1458              	.LVL90:
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned equals = 0;
+ 1459              		.loc 1 135 5 view .LVU429
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     int spaces_present = 0;
+ 1460              		.loc 1 136 5 view .LVU430
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned char *p;
+ 1461              		.loc 1 137 5 view .LVU431
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     /* First pass: check for validity and get output length */
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     for (i = n = 0; i < slen; i++) {
+ 1462              		.loc 1 140 5 view .LVU432
+ 1463              		.loc 1 140 23 discriminator 1 view .LVU433
+ 1464 0017 4D85C0   		testq	%r8, %r8
+ 1465 001a 0F841602 		je	.L38
+ 1465      0000
+ 1466 0020 4989FC   		movq	%rdi, %r12
+ 1467 0023 4989F6   		movq	%rsi, %r14
+ 1468 0026 4889CD   		movq	%rcx, %rbp
+ 1469 0029 4C89C3   		movq	%r8, %rbx
+GAS LISTING /tmp/ccYsy7PJ.s 			page 43
+
+
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     int spaces_present = 0;
+ 1470              		.loc 1 135 14 is_stmt 0 view .LVU434
+ 1471 002c 4531ED   		xorl	%r13d, %r13d
+ 1472              		.loc 1 140 16 view .LVU435
+ 1473 002f 4531FF   		xorl	%r15d, %r15d
+ 1474              		.loc 1 140 12 view .LVU436
+ 1475 0032 4531DB   		xorl	%r11d, %r11d
+ 1476              	.LVL91:
+ 1477              		.p2align 4,,10
+ 1478 0035 0F1F00   		.p2align 3
+ 1479              	.L25:
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         /* Skip spaces before checking for EOL */
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         spaces_present = 0;
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         while (i < slen && src[i] == ' ') {
+ 1480              		.loc 1 143 25 is_stmt 1 view .LVU437
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         while (i < slen && src[i] == ' ') {
+ 1481              		.loc 1 142 24 is_stmt 0 view .LVU438
+ 1482 0038 31C0     		xorl	%eax, %eax
+ 1483              		.loc 1 143 25 view .LVU439
+ 1484 003a 4939DB   		cmpq	%rbx, %r11
+ 1485 003d 7217     		jb	.L36
+ 1486 003f EB1D     		jmp	.L37
+ 1487              	.LVL92:
+ 1488              		.p2align 4,,10
+ 1489 0041 0F1F8000 		.p2align 3
+ 1489      000000
+ 1490              	.L28:
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             ++i;
+ 1491              		.loc 1 144 13 is_stmt 1 view .LVU440
+ 1492 0048 4983C301 		addq	$1, %r11
+ 1493              	.LVL93:
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             spaces_present = 1;
+ 1494              		.loc 1 145 13 view .LVU441
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             ++i;
+ 1495              		.loc 1 143 25 view .LVU442
+ 1496 004c B8010000 		movl	$1, %eax
+ 1496      00
+ 1497 0051 4C39DB   		cmpq	%r11, %rbx
+ 1498 0054 747A     		je	.L27
+ 1499              	.LVL94:
+ 1500              	.L36:
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             ++i;
+ 1501              		.loc 1 143 25 is_stmt 0 discriminator 1 view .LVU443
+ 1502 0056 42807C1D 		cmpb	$32, 0(%rbp,%r11)
+ 1502      0020
+ 1503 005c 74EA     		je	.L28
+ 1504              	.L37:
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         /* Spaces at end of buffer are OK */
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (i == slen) {
+ 1505              		.loc 1 149 9 is_stmt 1 view .LVU444
+ 1506              		.loc 1 149 12 is_stmt 0 view .LVU445
+ 1507 005e 4C39DB   		cmpq	%r11, %rbx
+ 1508 0061 746D     		je	.L27
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             break;
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+GAS LISTING /tmp/ccYsy7PJ.s 			page 44
+
+
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if ((slen - i) >= 2 &&
+ 1509              		.loc 1 153 9 is_stmt 1 view .LVU446
+ 1510              		.loc 1 153 19 is_stmt 0 view .LVU447
+ 1511 0063 4889DA   		movq	%rbx, %rdx
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             src[i] == '\r' && src[i + 1] == '\n') {
+ 1512              		.loc 1 154 16 view .LVU448
+ 1513 0066 420FB67C 		movzbl	0(%rbp,%r11), %edi
+ 1513      1D00
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             src[i] == '\r' && src[i + 1] == '\n') {
+ 1514              		.loc 1 153 19 view .LVU449
+ 1515 006c 4C29DA   		subq	%r11, %rdx
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             src[i] == '\r' && src[i + 1] == '\n') {
+ 1516              		.loc 1 153 12 view .LVU450
+ 1517 006f 4883FA01 		cmpq	$1, %rdx
+ 1518 0073 740A     		je	.L29
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             src[i] == '\r' && src[i + 1] == '\n') {
+ 1519              		.loc 1 153 29 discriminator 1 view .LVU451
+ 1520 0075 4080FF0D 		cmpb	$13, %dil
+ 1521 0079 0F846901 		je	.L65
+ 1521      0000
+ 1522              	.L29:
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (src[i] == '\n') {
+ 1523              		.loc 1 158 9 is_stmt 1 view .LVU452
+ 1524              		.loc 1 158 12 is_stmt 0 view .LVU453
+ 1525 007f 4080FF0A 		cmpb	$10, %dil
+ 1526 0083 7435     		je	.L64
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         /* Space inside a line is an error */
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (spaces_present) {
+ 1527              		.loc 1 163 9 is_stmt 1 view .LVU454
+ 1528              		.loc 1 163 12 is_stmt 0 view .LVU455
+ 1529 0085 85C0     		testl	%eax, %eax
+ 1530 0087 0F854101 		jne	.L31
+ 1530      0000
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (src[i] > 127) {
+ 1531              		.loc 1 167 9 is_stmt 1 view .LVU456
+ 1532              		.loc 1 167 12 is_stmt 0 view .LVU457
+ 1533 008d 4084FF   		testb	%dil, %dil
+ 1534 0090 0F883801 		js	.L31
+ 1534      0000
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (src[i] == '=') {
+ 1535              		.loc 1 171 9 is_stmt 1 view .LVU458
+ 1536              		.loc 1 171 12 is_stmt 0 view .LVU459
+ 1537 0096 4080FF3D 		cmpb	$61, %dil
+ 1538 009a 0F842001 		je	.L66
+GAS LISTING /tmp/ccYsy7PJ.s 			page 45
+
+
+ 1538      0000
+ 1539              	.L32:
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             if (++equals > 2) {
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             if (equals != 0) {
+ 1540              		.loc 1 176 13 is_stmt 1 view .LVU460
+ 1541              		.loc 1 176 16 is_stmt 0 view .LVU461
+ 1542 00a0 4585ED   		testl	%r13d, %r13d
+ 1543 00a3 0F852501 		jne	.L31
+ 1543      0000
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             if (mbedtls_ct_base64_dec_value(src[i]) < 0) {
+ 1544              		.loc 1 179 13 is_stmt 1 view .LVU462
+ 1545              		.loc 1 179 17 is_stmt 0 view .LVU463
+ 1546 00a9 E8000000 		call	mbedtls_ct_base64_dec_value
+ 1546      00
+ 1547              	.LVL95:
+ 1548              		.loc 1 179 16 discriminator 1 view .LVU464
+ 1549 00ae 84C0     		testb	%al, %al
+ 1550 00b0 0F881801 		js	.L31
+ 1550      0000
+ 1551              	.L35:
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         n++;
+ 1552              		.loc 1 183 9 is_stmt 1 view .LVU465
+ 1553              		.loc 1 183 10 is_stmt 0 view .LVU466
+ 1554 00b6 4983C701 		addq	$1, %r15
+ 1555              	.LVL96:
+ 1556              	.L64:
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 1557              		.loc 1 154 34 view .LVU467
+ 1558 00ba 4983C301 		addq	$1, %r11
+ 1559              	.LVL97:
+ 1560              	.L30:
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         /* Skip spaces before checking for EOL */
+ 1561              		.loc 1 140 32 is_stmt 1 discriminator 2 view .LVU468
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         /* Skip spaces before checking for EOL */
+ 1562              		.loc 1 140 23 discriminator 1 view .LVU469
+ 1563 00be 4939DB   		cmpq	%rbx, %r11
+ 1564 00c1 0F8271FF 		jb	.L25
+ 1564      FFFF
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         /* Skip spaces before checking for EOL */
+ 1565              		.loc 1 140 23 is_stmt 0 discriminator 1 view .LVU470
+ 1566 00c7 4C89DB   		movq	%r11, %rbx
+ 1567              	.LVL98:
+ 1568 00ca 660F1F44 		.p2align 4,,10
+ 1568      0000
+ 1569              		.p2align 3
+ 1570              	.L27:
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     if (n == 0) {
+GAS LISTING /tmp/ccYsy7PJ.s 			page 46
+
+
+ 1571              		.loc 1 186 5 is_stmt 1 view .LVU471
+ 1572              		.loc 1 186 8 is_stmt 0 view .LVU472
+ 1573 00d0 4D85FF   		testq	%r15, %r15
+ 1574 00d3 0F845D01 		je	.L38
+ 1574      0000
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *olen = 0;
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return 0;
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     /* The following expression is to calculate the following formula without
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      * risk of integer overflow in n:
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      *     n = ( ( n * 6 ) + 7 ) >> 3;
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****      */
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n = (6 * (n >> 3)) + ((6 * (n & 0x7) + 7) >> 3);
+ 1575              		.loc 1 195 5 is_stmt 1 view .LVU473
+ 1576              		.loc 1 195 35 is_stmt 0 view .LVU474
+ 1577 00d9 4C89F8   		movq	%r15, %rax
+ 1578              		.loc 1 195 17 view .LVU475
+ 1579 00dc 49C1EF03 		shrq	$3, %r15
+ 1580              	.LVL99:
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n -= equals;
+ 1581              		.loc 1 196 7 view .LVU476
+ 1582 00e0 4489E9   		movl	%r13d, %ecx
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n -= equals;
+ 1583              		.loc 1 195 35 view .LVU477
+ 1584 00e3 83E007   		andl	$7, %eax
+ 1585              	.LVL100:
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n -= equals;
+ 1586              		.loc 1 195 12 view .LVU478
+ 1587 00e6 4B8D147F 		leaq	(%r15,%r15,2), %rdx
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n -= equals;
+ 1588              		.loc 1 195 30 view .LVU479
+ 1589 00ea 488D0440 		leaq	(%rax,%rax,2), %rax
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n -= equals;
+ 1590              		.loc 1 195 42 view .LVU480
+ 1591 00ee 488D4400 		leaq	7(%rax,%rax), %rax
+ 1591      07
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     n -= equals;
+ 1592              		.loc 1 195 47 view .LVU481
+ 1593 00f3 48C1E803 		shrq	$3, %rax
+ 1594              	.LVL101:
+ 1595              		.loc 1 196 5 is_stmt 1 view .LVU482
+ 1596 00f7 488D0450 		leaq	(%rax,%rdx,2), %rax
+ 1597              		.loc 1 196 7 is_stmt 0 view .LVU483
+ 1598 00fb 4829C8   		subq	%rcx, %rax
+ 1599              	.LVL102:
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     if (dst == NULL || dlen < n) {
+ 1600              		.loc 1 198 5 is_stmt 1 view .LVU484
+ 1601              		.loc 1 198 8 is_stmt 0 view .LVU485
+ 1602 00fe 4D85E4   		testq	%r12, %r12
+ 1603 0101 0F843701 		je	.L54
+ 1603      0000
+ 1604              		.loc 1 198 8 view .LVU486
+ 1605 0107 4939C6   		cmpq	%rax, %r14
+ 1606 010a 0F822E01 		jb	.L54
+ 1606      0000
+GAS LISTING /tmp/ccYsy7PJ.s 			page 47
+
+
+ 1607 0110 488D541D 		leaq	0(%rbp,%rbx), %rdx
+ 1607      00
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         *olen = n;
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     equals = 0;
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     for (x = 0, p = dst; i > 0; i--, src++) {
+ 1608              		.loc 1 204 19 view .LVU487
+ 1609 0115 4D89E6   		movq	%r12, %r14
+ 1610              	.LVL103:
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     for (x = 0, p = dst; i > 0; i--, src++) {
+ 1611              		.loc 1 203 12 view .LVU488
+ 1612 0118 4531FF   		xorl	%r15d, %r15d
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     unsigned equals = 0;
+ 1613              		.loc 1 134 14 view .LVU489
+ 1614 011b 4531DB   		xorl	%r11d, %r11d
+ 1615 011e 49BD0024 		movabsq	$4294976512, %r13
+ 1615      00000100 
+ 1615      0000
+ 1616              	.LVL104:
+ 1617              		.loc 1 204 12 view .LVU490
+ 1618 0128 31DB     		xorl	%ebx, %ebx
+ 1619              	.LVL105:
+ 1620              		.loc 1 204 12 view .LVU491
+ 1621 012a EB35     		jmp	.L47
+ 1622              	.LVL106:
+ 1623 012c 0F1F4000 		.p2align 4,,10
+ 1624              		.p2align 3
+ 1625              	.L69:
+ 1626              		.loc 1 204 12 view .LVU492
+ 1627 0130 490FA3C5 		btq	%rax, %r13
+ 1628 0134 7222     		jc	.L42
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '\r' || *src == '\n' || *src == ' ') {
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         x = x << 6;
+ 1629              		.loc 1 209 9 is_stmt 1 view .LVU493
+ 1630              		.loc 1 209 11 is_stmt 0 view .LVU494
+ 1631 0136 C1E306   		sall	$6, %ebx
+ 1632              	.LVL107:
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '=') {
+ 1633              		.loc 1 210 9 is_stmt 1 view .LVU495
+ 1634              	.L43:
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             ++equals;
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             x |= mbedtls_ct_base64_dec_value(*src);
+ 1635              		.loc 1 213 18 is_stmt 0 view .LVU496
+ 1636 0139 0FB6F8   		movzbl	%al, %edi
+ 1637 013c 48891424 		movq	%rdx, (%rsp)
+ 1638              		.loc 1 213 13 is_stmt 1 view .LVU497
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (++accumulated_digits == 4) {
+ 1639              		.loc 1 216 12 is_stmt 0 view .LVU498
+ 1640 0140 4183C301 		addl	$1, %r11d
+GAS LISTING /tmp/ccYsy7PJ.s 			page 48
+
+
+ 1641              	.LVL108:
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 1642              		.loc 1 213 18 view .LVU499
+ 1643 0144 E8000000 		call	mbedtls_ct_base64_dec_value
+ 1643      00
+ 1644              	.LVL109:
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 1645              		.loc 1 213 15 discriminator 1 view .LVU500
+ 1646 0149 488B1424 		movq	(%rsp), %rdx
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 1647              		.loc 1 213 18 discriminator 1 view .LVU501
+ 1648 014d 0FBEC0   		movsbl	%al, %eax
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 1649              		.loc 1 213 15 discriminator 1 view .LVU502
+ 1650 0150 09C3     		orl	%eax, %ebx
+ 1651              	.LVL110:
+ 1652              		.loc 1 216 9 is_stmt 1 view .LVU503
+ 1653              		.loc 1 216 12 is_stmt 0 view .LVU504
+ 1654 0152 4183FB04 		cmpl	$4, %r11d
+ 1655 0156 7426     		je	.L67
+ 1656              	.LVL111:
+ 1657              	.L42:
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '\r' || *src == '\n' || *src == ' ') {
+ 1658              		.loc 1 204 36 is_stmt 1 discriminator 2 view .LVU505
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '\r' || *src == '\n' || *src == ' ') {
+ 1659              		.loc 1 204 41 is_stmt 0 discriminator 2 view .LVU506
+ 1660 0158 4883C501 		addq	$1, %rbp
+ 1661              	.LVL112:
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '\r' || *src == '\n' || *src == ' ') {
+ 1662              		.loc 1 204 28 is_stmt 1 discriminator 1 view .LVU507
+ 1663 015c 4839EA   		cmpq	%rbp, %rdx
+ 1664 015f 743B     		je	.L68
+ 1665              	.LVL113:
+ 1666              	.L47:
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 1667              		.loc 1 205 9 view .LVU508
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 1668              		.loc 1 205 13 is_stmt 0 view .LVU509
+ 1669 0161 0FB64500 		movzbl	0(%rbp), %eax
+ 1670 0165 3C20     		cmpb	$32, %al
+ 1671 0167 76C7     		jbe	.L69
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '=') {
+ 1672              		.loc 1 209 9 is_stmt 1 view .LVU510
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '=') {
+ 1673              		.loc 1 209 11 is_stmt 0 view .LVU511
+ 1674 0169 C1E306   		sall	$6, %ebx
+ 1675              	.LVL114:
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             ++equals;
+ 1676              		.loc 1 210 9 is_stmt 1 view .LVU512
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             ++equals;
+ 1677              		.loc 1 210 12 is_stmt 0 view .LVU513
+ 1678 016c 3C3D     		cmpb	$61, %al
+ 1679 016e 75C9     		jne	.L43
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 1680              		.loc 1 211 13 is_stmt 1 view .LVU514
+ 1681              		.loc 1 216 12 is_stmt 0 view .LVU515
+ 1682 0170 4183C301 		addl	$1, %r11d
+GAS LISTING /tmp/ccYsy7PJ.s 			page 49
+
+
+ 1683              	.LVL115:
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         } else {
+ 1684              		.loc 1 211 13 view .LVU516
+ 1685 0174 4183C701 		addl	$1, %r15d
+ 1686              	.LVL116:
+ 1687              		.loc 1 216 9 is_stmt 1 view .LVU517
+ 1688              		.loc 1 216 12 is_stmt 0 view .LVU518
+ 1689 0178 4183FB04 		cmpl	$4, %r11d
+ 1690 017c 75DA     		jne	.L42
+ 1691              	.L67:
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             accumulated_digits = 0;
+ 1692              		.loc 1 217 13 is_stmt 1 view .LVU519
+ 1693              	.LVL117:
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = MBEDTLS_BYTE_2(x);
+ 1694              		.loc 1 218 13 view .LVU520
+ 1695              		.loc 1 218 20 is_stmt 0 view .LVU521
+ 1696 017e 89D8     		movl	%ebx, %eax
+ 1697 0180 C1E810   		shrl	$16, %eax
+ 1698 0183 418806   		movb	%al, (%r14)
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             if (equals <= 1) {
+ 1699              		.loc 1 219 13 is_stmt 1 view .LVU522
+ 1700              		.loc 1 219 16 is_stmt 0 view .LVU523
+ 1701 0186 4183FF01 		cmpl	$1, %r15d
+ 1702 018a 767C     		jbe	.L45
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '\r' || *src == '\n' || *src == ' ') {
+ 1703              		.loc 1 204 41 discriminator 2 view .LVU524
+ 1704 018c 4883C501 		addq	$1, %rbp
+ 1705              	.LVL118:
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = MBEDTLS_BYTE_2(x);
+ 1706              		.loc 1 218 15 view .LVU525
+ 1707 0190 4983C601 		addq	$1, %r14
+ 1708              	.LVL119:
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = MBEDTLS_BYTE_2(x);
+ 1709              		.loc 1 217 32 view .LVU526
+ 1710 0194 4531DB   		xorl	%r11d, %r11d
+ 1711              	.LVL120:
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '\r' || *src == '\n' || *src == ' ') {
+ 1712              		.loc 1 204 36 is_stmt 1 discriminator 2 view .LVU527
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         if (*src == '\r' || *src == '\n' || *src == ' ') {
+ 1713              		.loc 1 204 28 discriminator 1 view .LVU528
+ 1714 0197 4839EA   		cmpq	%rbp, %rdx
+ 1715 019a 75C5     		jne	.L47
+ 1716              	.L68:
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 *p++ = MBEDTLS_BYTE_1(x);
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             if (equals <= 0) {
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 *p++ = MBEDTLS_BYTE_0(x);
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     *olen = (size_t) (p - dst);
+ 1717              		.loc 1 228 5 view .LVU529
+ 1718              		.loc 1 228 25 is_stmt 0 view .LVU530
+ 1719 019c 4D29E6   		subq	%r12, %r14
+ 1720              	.LVL121:
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** 
+GAS LISTING /tmp/ccYsy7PJ.s 			page 50
+
+
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     return 0;
+ 1721              		.loc 1 230 5 is_stmt 1 view .LVU531
+ 1722              	.L48:
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return 0;
+ 1723              		.loc 1 187 15 is_stmt 0 view .LVU532
+ 1724 019f 488B4424 		movq	8(%rsp), %rax
+ 1724      08
+ 1725 01a4 4C8930   		movq	%r14, (%rax)
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c **** }
+ 1726              		.loc 1 231 1 view .LVU533
+ 1727 01a7 4883C410 		addq	$16, %rsp
+ 1728              	.LCFI26:
+ 1729              		.cfi_remember_state
+ 1730              		.cfi_def_cfa_offset 56
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1731              		.loc 1 188 16 view .LVU534
+ 1732 01ab 31C0     		xorl	%eax, %eax
+ 1733              		.loc 1 231 1 view .LVU535
+ 1734 01ad 5B       		popq	%rbx
+ 1735              	.LCFI27:
+ 1736              		.cfi_def_cfa_offset 48
+ 1737 01ae 5D       		popq	%rbp
+ 1738              	.LCFI28:
+ 1739              		.cfi_def_cfa_offset 40
+ 1740 01af 415C     		popq	%r12
+ 1741              	.LCFI29:
+ 1742              		.cfi_def_cfa_offset 32
+ 1743 01b1 415D     		popq	%r13
+ 1744              	.LCFI30:
+ 1745              		.cfi_def_cfa_offset 24
+ 1746 01b3 415E     		popq	%r14
+ 1747              	.LCFI31:
+ 1748              		.cfi_def_cfa_offset 16
+ 1749 01b5 415F     		popq	%r15
+ 1750              	.LCFI32:
+ 1751              		.cfi_def_cfa_offset 8
+ 1752 01b7 C3       		ret
+ 1753              	.LVL122:
+ 1754 01b8 0F1F8400 		.p2align 4,,10
+ 1754      00000000 
+ 1755              		.p2align 3
+ 1756              	.L66:
+ 1757              	.LCFI33:
+ 1758              		.cfi_restore_state
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 1759              		.loc 1 172 13 is_stmt 1 view .LVU536
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 1760              		.loc 1 172 16 is_stmt 0 view .LVU537
+ 1761 01c0 4183C501 		addl	$1, %r13d
+ 1762              	.LVL123:
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 1763              		.loc 1 172 16 view .LVU538
+ 1764 01c4 4183FD02 		cmpl	$2, %r13d
+ 1765 01c8 0F86E8FE 		jbe	.L35
+ 1765      FFFF
+ 1766              	.L31:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         }
+GAS LISTING /tmp/ccYsy7PJ.s 			page 51
+
+
+ 1767              		.loc 1 164 20 view .LVU539
+ 1768 01ce B8D4FFFF 		movl	$-44, %eax
+ 1768      FF
+ 1769              	.LVL124:
+ 1770              	.L24:
+ 1771              		.loc 1 231 1 view .LVU540
+ 1772 01d3 4883C410 		addq	$16, %rsp
+ 1773              	.LCFI34:
+ 1774              		.cfi_remember_state
+ 1775              		.cfi_def_cfa_offset 56
+ 1776 01d7 5B       		popq	%rbx
+ 1777              	.LCFI35:
+ 1778              		.cfi_def_cfa_offset 48
+ 1779 01d8 5D       		popq	%rbp
+ 1780              	.LCFI36:
+ 1781              		.cfi_def_cfa_offset 40
+ 1782              	.LVL125:
+ 1783              		.loc 1 231 1 view .LVU541
+ 1784 01d9 415C     		popq	%r12
+ 1785              	.LCFI37:
+ 1786              		.cfi_def_cfa_offset 32
+ 1787              	.LVL126:
+ 1788              		.loc 1 231 1 view .LVU542
+ 1789 01db 415D     		popq	%r13
+ 1790              	.LCFI38:
+ 1791              		.cfi_def_cfa_offset 24
+ 1792              	.LVL127:
+ 1793              		.loc 1 231 1 view .LVU543
+ 1794 01dd 415E     		popq	%r14
+ 1795              	.LCFI39:
+ 1796              		.cfi_def_cfa_offset 16
+ 1797              	.LVL128:
+ 1798              		.loc 1 231 1 view .LVU544
+ 1799 01df 415F     		popq	%r15
+ 1800              	.LCFI40:
+ 1801              		.cfi_def_cfa_offset 8
+ 1802 01e1 C3       		ret
+ 1803              	.LVL129:
+ 1804              		.p2align 4,,10
+ 1805 01e2 660F1F44 		.p2align 3
+ 1805      0000
+ 1806              	.L65:
+ 1807              	.LCFI41:
+ 1808              		.cfi_restore_state
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 1809              		.loc 1 154 28 view .LVU545
+ 1810 01e8 42807C1D 		cmpb	$10, 1(%rbp,%r11)
+ 1810      010A
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 1811              		.loc 1 154 34 view .LVU546
+ 1812 01ee 498D5301 		leaq	1(%r11), %rdx
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 1813              		.loc 1 154 28 view .LVU547
+ 1814 01f2 740C     		je	.L51
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+ 1815              		.loc 1 163 9 is_stmt 1 view .LVU548
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+GAS LISTING /tmp/ccYsy7PJ.s 			page 52
+
+
+ 1816              		.loc 1 163 12 is_stmt 0 view .LVU549
+ 1817 01f4 85C0     		testl	%eax, %eax
+ 1818 01f6 0F84A4FE 		je	.L32
+ 1818      FFFF
+ 1819 01fc EBD0     		jmp	.L31
+ 1820 01fe 6690     		.p2align 4,,10
+ 1821              		.p2align 3
+ 1822              	.L51:
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 1823              		.loc 1 154 34 view .LVU550
+ 1824 0200 4989D3   		movq	%rdx, %r11
+ 1825              	.LVL130:
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             continue;
+ 1826              		.loc 1 154 34 view .LVU551
+ 1827 0203 E9B6FEFF 		jmp	.L30
+ 1827      FF
+ 1828              	.LVL131:
+ 1829              	.L45:
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 1830              		.loc 1 220 17 is_stmt 1 view .LVU552
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 1831              		.loc 1 220 24 is_stmt 0 view .LVU553
+ 1832 0208 0FB6C7   		movzbl	%bh, %eax
+ 1833 020b 41884601 		movb	%al, 1(%r14)
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 *p++ = MBEDTLS_BYTE_0(x);
+ 1834              		.loc 1 222 13 is_stmt 1 view .LVU554
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****                 *p++ = MBEDTLS_BYTE_0(x);
+ 1835              		.loc 1 222 16 is_stmt 0 view .LVU555
+ 1836 020f 4585FF   		testl	%r15d, %r15d
+ 1837 0212 7510     		jne	.L70
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 1838              		.loc 1 223 17 is_stmt 1 view .LVU556
+ 1839              	.LVL132:
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 1840              		.loc 1 223 24 is_stmt 0 view .LVU557
+ 1841 0214 41885E02 		movb	%bl, 2(%r14)
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = MBEDTLS_BYTE_2(x);
+ 1842              		.loc 1 217 32 view .LVU558
+ 1843 0218 4531DB   		xorl	%r11d, %r11d
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 1844              		.loc 1 223 19 view .LVU559
+ 1845 021b 4983C603 		addq	$3, %r14
+ 1846              	.LVL133:
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 1847              		.loc 1 223 19 view .LVU560
+ 1848 021f E934FFFF 		jmp	.L42
+ 1848      FF
+ 1849              	.LVL134:
+ 1850              	.L70:
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 1851              		.loc 1 220 19 view .LVU561
+ 1852 0224 4983C602 		addq	$2, %r14
+ 1853              	.LVL135:
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             }
+ 1854              		.loc 1 220 19 view .LVU562
+ 1855 0228 41BF0100 		movl	$1, %r15d
+ 1855      0000
+GAS LISTING /tmp/ccYsy7PJ.s 			page 53
+
+
+ 1856              	.LVL136:
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****             *p++ = MBEDTLS_BYTE_2(x);
+ 1857              		.loc 1 217 32 view .LVU563
+ 1858 022e 4531DB   		xorl	%r11d, %r11d
+ 1859 0231 E922FFFF 		jmp	.L42
+ 1859      FF
+ 1860              	.LVL137:
+ 1861              	.L38:
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return 0;
+ 1862              		.loc 1 187 9 is_stmt 1 view .LVU564
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1863              		.loc 1 188 9 view .LVU565
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1864              		.loc 1 188 16 is_stmt 0 view .LVU566
+ 1865 0236 4531F6   		xorl	%r14d, %r14d
+ 1866 0239 E961FFFF 		jmp	.L48
+ 1866      FF
+ 1867              	.LVL138:
+ 1868              	.L54:
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+ 1869              		.loc 1 199 9 is_stmt 1 view .LVU567
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+ 1870              		.loc 1 199 15 is_stmt 0 view .LVU568
+ 1871 023e 488B7424 		movq	8(%rsp), %rsi
+ 1871      08
+ 1872 0243 488906   		movq	%rax, (%rsi)
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1873              		.loc 1 200 9 is_stmt 1 view .LVU569
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1874              		.loc 1 200 16 is_stmt 0 view .LVU570
+ 1875 0246 B8D6FFFF 		movl	$-42, %eax
+ 1875      FF
+ 1876              	.LVL139:
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/base64.c ****     }
+ 1877              		.loc 1 200 16 view .LVU571
+ 1878 024b EB86     		jmp	.L24
+ 1879              		.cfi_endproc
+ 1880              	.LFE54:
+ 1882              		.text
+ 1883              	.Letext0:
+ 1884              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1885              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1886              		.file 5 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1887              		.file 6 "../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_internal.h"
+ 7058              		.section	.note.gnu.property,"a"
+ 7059              		.align 8
+ 7060 0000 04000000 		.long	1f - 0f
+ 7061 0004 10000000 		.long	4f - 1f
+ 7062 0008 05000000 		.long	5
+ 7063              	0:
+ 7064 000c 474E5500 		.string	"GNU"
+ 7065              	1:
+ 7066              		.align 8
+ 7067 0010 020000C0 		.long	0xc0000002
+ 7068 0014 04000000 		.long	3f - 2f
+ 7069              	2:
+ 7070 0018 03000000 		.long	0x3
+GAS LISTING /tmp/ccYsy7PJ.s 			page 54
+
+
+ 7071              	3:
+ 7072 001c 00000000 		.align 8
+ 7073              	4:
+GAS LISTING /tmp/ccYsy7PJ.s 			page 55
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 base64.c
+     /tmp/ccYsy7PJ.s:8      .text.mbedtls_ct_base64_enc_char:0000000000000000 mbedtls_ct_base64_enc_char
+     /tmp/ccYsy7PJ.s:498    .text.mbedtls_ct_base64_dec_value:0000000000000000 mbedtls_ct_base64_dec_value
+     /tmp/ccYsy7PJ.s:1041   .text.mbedtls_base64_encode:0000000000000000 mbedtls_base64_encode
+     /tmp/ccYsy7PJ.s:1418   .text.mbedtls_base64_decode:0000000000000000 mbedtls_base64_decode
+
+UNDEFINED SYMBOLS
+mbedtls_ct_zero

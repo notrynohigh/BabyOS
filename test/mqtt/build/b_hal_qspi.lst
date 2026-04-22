@@ -1,0 +1,277 @@
+GAS LISTING /tmp/ccnVTYK8.s 			page 1
+
+
+   1              		.file	"b_hal_qspi.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_qspi.c"
+   5              		.section	.text.bMcuQSPISendCmd,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuQSPISendCmd
+   9              	bMcuQSPISendCmd:
+  10              	.LVL0:
+  11              	.LFB28:
+   1:../../bos/hal/b_hal_qspi.c **** /**
+   2:../../bos/hal/b_hal_qspi.c ****  *!
+   3:../../bos/hal/b_hal_qspi.c ****  * \file        b_hal_qspi.c
+   4:../../bos/hal/b_hal_qspi.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_qspi.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_qspi.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_qspi.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_qspi.c ****  * @attention
+   9:../../bos/hal/b_hal_qspi.c ****  *
+  10:../../bos/hal/b_hal_qspi.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_qspi.c ****  *
+  12:../../bos/hal/b_hal_qspi.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_qspi.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_qspi.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_qspi.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_qspi.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_qspi.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_qspi.c ****  *
+  19:../../bos/hal/b_hal_qspi.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_qspi.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_qspi.c ****  *
+  22:../../bos/hal/b_hal_qspi.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_qspi.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_qspi.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_qspi.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_qspi.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_qspi.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_qspi.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_qspi.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_qspi.c ****  */
+  31:../../bos/hal/b_hal_qspi.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_qspi.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_qspi.c **** /**
+  34:../../bos/hal/b_hal_qspi.c ****  * \addtogroup B_HAL
+  35:../../bos/hal/b_hal_qspi.c ****  * \{
+  36:../../bos/hal/b_hal_qspi.c ****  */
+  37:../../bos/hal/b_hal_qspi.c **** 
+  38:../../bos/hal/b_hal_qspi.c **** /**
+  39:../../bos/hal/b_hal_qspi.c ****  * \addtogroup QSPI
+  40:../../bos/hal/b_hal_qspi.c ****  * \{
+  41:../../bos/hal/b_hal_qspi.c ****  */
+  42:../../bos/hal/b_hal_qspi.c **** 
+  43:../../bos/hal/b_hal_qspi.c **** /**
+  44:../../bos/hal/b_hal_qspi.c ****  * \addtogroup QSPI_Exported_Functions
+  45:../../bos/hal/b_hal_qspi.c ****  * \{
+  46:../../bos/hal/b_hal_qspi.c ****  */
+  47:../../bos/hal/b_hal_qspi.c **** #if defined(__WEAKDEF)
+GAS LISTING /tmp/ccnVTYK8.s 			page 2
+
+
+  48:../../bos/hal/b_hal_qspi.c **** __WEAKDEF int bMcuQSPISendCmd(const bHalQSPINumber_t qspi, const bHalQSPICmdInfo_t *pcmd)
+  49:../../bos/hal/b_hal_qspi.c **** {
+  12              		.loc 1 49 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 49 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  50:../../bos/hal/b_hal_qspi.c ****     return 0;
+  16              		.loc 1 50 5 is_stmt 1 view .LVU2
+  51:../../bos/hal/b_hal_qspi.c **** }
+  17              		.loc 1 51 1 is_stmt 0 view .LVU3
+  18 0004 31C0     		xorl	%eax, %eax
+  19 0006 C3       		ret
+  20              		.cfi_endproc
+  21              	.LFE28:
+  23              		.section	.text.bMcuQSPIReceiveData,"ax",@progbits
+  24              		.p2align 4
+  25              		.weak	bMcuQSPIReceiveData
+  27              	bMcuQSPIReceiveData:
+  28              	.LFB35:
+  29              		.cfi_startproc
+  52:../../bos/hal/b_hal_qspi.c **** 
+  53:../../bos/hal/b_hal_qspi.c **** __WEAKDEF int bMcuQSPIReceiveData(const bHalQSPINumber_t qspi, uint8_t *pbuf)
+  30              		.loc 1 53 15 is_stmt 1 view -0
+  31 0000 F30F1EFA 		endbr64
+  32 0004 31C0     		xorl	%eax, %eax
+  33 0006 C3       		ret
+  34              		.cfi_endproc
+  35              	.LFE35:
+  37              		.section	.text.bMcuQSPITransmitData,"ax",@progbits
+  38              		.p2align 4
+  39              		.weak	bMcuQSPITransmitData
+  41              	bMcuQSPITransmitData:
+  42              	.LFB37:
+  43              		.cfi_startproc
+  54:../../bos/hal/b_hal_qspi.c **** {
+  55:../../bos/hal/b_hal_qspi.c ****     return 0;
+  56:../../bos/hal/b_hal_qspi.c **** }
+  57:../../bos/hal/b_hal_qspi.c **** 
+  58:../../bos/hal/b_hal_qspi.c **** __WEAKDEF int bMcuQSPITransmitData(const bHalQSPINumber_t qspi, const uint8_t *pbuf)
+  44              		.loc 1 58 15 view -0
+  45 0000 F30F1EFA 		endbr64
+  46 0004 31C0     		xorl	%eax, %eax
+  47 0006 C3       		ret
+  48              		.cfi_endproc
+  49              	.LFE37:
+  51              		.section	.text.bHalQSPISendCmd,"ax",@progbits
+  52              		.p2align 4
+  53              		.globl	bHalQSPISendCmd
+  55              	bHalQSPISendCmd:
+  56              	.LVL1:
+  57              	.LFB31:
+  59:../../bos/hal/b_hal_qspi.c **** {
+  60:../../bos/hal/b_hal_qspi.c ****     return 0;
+  61:../../bos/hal/b_hal_qspi.c **** }
+  62:../../bos/hal/b_hal_qspi.c **** #endif
+  63:../../bos/hal/b_hal_qspi.c **** //---------------------------------------------------------------------------------------
+  64:../../bos/hal/b_hal_qspi.c **** //---------------------------------------------------------------------------------------
+GAS LISTING /tmp/ccnVTYK8.s 			page 3
+
+
+  65:../../bos/hal/b_hal_qspi.c **** 
+  66:../../bos/hal/b_hal_qspi.c **** int bHalQSPISendCmd(const bHalQSPINumber_t qspi, const bHalQSPICmdInfo_t *pcmd)
+  67:../../bos/hal/b_hal_qspi.c **** {
+  58              		.loc 1 67 1 view -0
+  59              		.cfi_startproc
+  60              		.loc 1 67 1 is_stmt 0 view .LVU7
+  61 0000 F30F1EFA 		endbr64
+  68:../../bos/hal/b_hal_qspi.c ****     if (qspi > B_HAL_QSPI_1 || IS_NULL(pcmd))
+  62              		.loc 1 68 5 is_stmt 1 view .LVU8
+  63              		.loc 1 68 8 is_stmt 0 view .LVU9
+  64 0004 85FF     		testl	%edi, %edi
+  65 0006 7510     		jne	.L6
+  66 0008 4885F6   		testq	%rsi, %rsi
+  67 000b 740B     		je	.L6
+  69:../../bos/hal/b_hal_qspi.c ****     {
+  70:../../bos/hal/b_hal_qspi.c ****         return -1;
+  71:../../bos/hal/b_hal_qspi.c ****     }
+  72:../../bos/hal/b_hal_qspi.c ****     return bMcuQSPISendCmd(qspi, pcmd);
+  68              		.loc 1 72 5 is_stmt 1 view .LVU10
+  69              		.loc 1 72 12 is_stmt 0 view .LVU11
+  70 000d E9000000 		jmp	bMcuQSPISendCmd
+  70      00
+  71              	.LVL2:
+  72              		.p2align 4,,10
+  73 0012 660F1F44 		.p2align 3
+  73      0000
+  74              	.L6:
+  73:../../bos/hal/b_hal_qspi.c **** }
+  75              		.loc 1 73 1 view .LVU12
+  76 0018 B8FFFFFF 		movl	$-1, %eax
+  76      FF
+  77 001d C3       		ret
+  78              		.cfi_endproc
+  79              	.LFE31:
+  81              		.section	.text.bHalQSPIReceiveData,"ax",@progbits
+  82              		.p2align 4
+  83              		.globl	bHalQSPIReceiveData
+  85              	bHalQSPIReceiveData:
+  86              	.LVL3:
+  87              	.LFB32:
+  74:../../bos/hal/b_hal_qspi.c **** 
+  75:../../bos/hal/b_hal_qspi.c **** int bHalQSPIReceiveData(const bHalQSPINumber_t qspi, uint8_t *pbuf)
+  76:../../bos/hal/b_hal_qspi.c **** {
+  88              		.loc 1 76 1 is_stmt 1 view -0
+  89              		.cfi_startproc
+  90              		.loc 1 76 1 is_stmt 0 view .LVU14
+  91 0000 F30F1EFA 		endbr64
+  77:../../bos/hal/b_hal_qspi.c ****     if (qspi > B_HAL_QSPI_1 || IS_NULL(pbuf))
+  92              		.loc 1 77 5 is_stmt 1 view .LVU15
+  93              		.loc 1 77 8 is_stmt 0 view .LVU16
+  94 0004 85FF     		testl	%edi, %edi
+  95 0006 7510     		jne	.L8
+  96 0008 4885F6   		testq	%rsi, %rsi
+  97 000b 740B     		je	.L8
+  78:../../bos/hal/b_hal_qspi.c ****     {
+  79:../../bos/hal/b_hal_qspi.c ****         return -1;
+  80:../../bos/hal/b_hal_qspi.c ****     }
+GAS LISTING /tmp/ccnVTYK8.s 			page 4
+
+
+  81:../../bos/hal/b_hal_qspi.c ****     return bMcuQSPIReceiveData(qspi, pbuf);
+  98              		.loc 1 81 5 is_stmt 1 view .LVU17
+  99              		.loc 1 81 12 is_stmt 0 view .LVU18
+ 100 000d E9000000 		jmp	bMcuQSPIReceiveData
+ 100      00
+ 101              	.LVL4:
+ 102              		.p2align 4,,10
+ 103 0012 660F1F44 		.p2align 3
+ 103      0000
+ 104              	.L8:
+  82:../../bos/hal/b_hal_qspi.c **** }
+ 105              		.loc 1 82 1 view .LVU19
+ 106 0018 B8FFFFFF 		movl	$-1, %eax
+ 106      FF
+ 107 001d C3       		ret
+ 108              		.cfi_endproc
+ 109              	.LFE32:
+ 111              		.section	.text.bHalQSPITransmitData,"ax",@progbits
+ 112              		.p2align 4
+ 113              		.globl	bHalQSPITransmitData
+ 115              	bHalQSPITransmitData:
+ 116              	.LVL5:
+ 117              	.LFB33:
+  83:../../bos/hal/b_hal_qspi.c **** 
+  84:../../bos/hal/b_hal_qspi.c **** int bHalQSPITransmitData(const bHalQSPINumber_t qspi, const uint8_t *pbuf)
+  85:../../bos/hal/b_hal_qspi.c **** {
+ 118              		.loc 1 85 1 is_stmt 1 view -0
+ 119              		.cfi_startproc
+ 120              		.loc 1 85 1 is_stmt 0 view .LVU21
+ 121 0000 F30F1EFA 		endbr64
+  86:../../bos/hal/b_hal_qspi.c ****     if (qspi > B_HAL_QSPI_1 || IS_NULL(pbuf))
+ 122              		.loc 1 86 5 is_stmt 1 view .LVU22
+ 123              		.loc 1 86 8 is_stmt 0 view .LVU23
+ 124 0004 85FF     		testl	%edi, %edi
+ 125 0006 7510     		jne	.L10
+ 126 0008 4885F6   		testq	%rsi, %rsi
+ 127 000b 740B     		je	.L10
+  87:../../bos/hal/b_hal_qspi.c ****     {
+  88:../../bos/hal/b_hal_qspi.c ****         return -1;
+  89:../../bos/hal/b_hal_qspi.c ****     }
+  90:../../bos/hal/b_hal_qspi.c ****     return bMcuQSPITransmitData(qspi, pbuf);
+ 128              		.loc 1 90 5 is_stmt 1 view .LVU24
+ 129              		.loc 1 90 12 is_stmt 0 view .LVU25
+ 130 000d E9000000 		jmp	bMcuQSPITransmitData
+ 130      00
+ 131              	.LVL6:
+ 132              		.p2align 4,,10
+ 133 0012 660F1F44 		.p2align 3
+ 133      0000
+ 134              	.L10:
+  91:../../bos/hal/b_hal_qspi.c **** }
+ 135              		.loc 1 91 1 view .LVU26
+ 136 0018 B8FFFFFF 		movl	$-1, %eax
+ 136      FF
+ 137 001d C3       		ret
+ 138              		.cfi_endproc
+ 139              	.LFE33:
+GAS LISTING /tmp/ccnVTYK8.s 			page 5
+
+
+ 141              		.text
+ 142              	.Letext0:
+ 143              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 144              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 145              		.file 4 "../../bos/hal/inc/b_hal_qspi.h"
+ 1174              		.section	.note.gnu.property,"a"
+ 1175              		.align 8
+ 1176 0000 04000000 		.long	1f - 0f
+ 1177 0004 10000000 		.long	4f - 1f
+ 1178 0008 05000000 		.long	5
+ 1179              	0:
+ 1180 000c 474E5500 		.string	"GNU"
+ 1181              	1:
+ 1182              		.align 8
+ 1183 0010 020000C0 		.long	0xc0000002
+ 1184 0014 04000000 		.long	3f - 2f
+ 1185              	2:
+ 1186 0018 03000000 		.long	0x3
+ 1187              	3:
+ 1188 001c 00000000 		.align 8
+ 1189              	4:
+GAS LISTING /tmp/ccnVTYK8.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_qspi.c
+     /tmp/ccnVTYK8.s:9      .text.bMcuQSPISendCmd:0000000000000000 bMcuQSPISendCmd
+     /tmp/ccnVTYK8.s:27     .text.bMcuQSPIReceiveData:0000000000000000 bMcuQSPIReceiveData
+     /tmp/ccnVTYK8.s:41     .text.bMcuQSPITransmitData:0000000000000000 bMcuQSPITransmitData
+     /tmp/ccnVTYK8.s:55     .text.bHalQSPISendCmd:0000000000000000 bHalQSPISendCmd
+     /tmp/ccnVTYK8.s:85     .text.bHalQSPIReceiveData:0000000000000000 bHalQSPIReceiveData
+     /tmp/ccnVTYK8.s:115    .text.bHalQSPITransmitData:0000000000000000 bHalQSPITransmitData
+
+NO UNDEFINED SYMBOLS

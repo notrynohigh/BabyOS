@@ -1,0 +1,1305 @@
+GAS LISTING /tmp/ccuzk9kC.s 			page 1
+
+
+   1              		.file	"b_util_fifo.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/utils/b_util_fifo.c"
+   5              		.section	.text.bFIFO_Init,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	bFIFO_Init
+   9              	bFIFO_Init:
+  10              	.LVL0:
+  11              	.LFB17:
+   1:../../bos/utils/b_util_fifo.c **** /**
+   2:../../bos/utils/b_util_fifo.c ****  *!
+   3:../../bos/utils/b_util_fifo.c ****  * \file        b_util_fifo.c
+   4:../../bos/utils/b_util_fifo.c ****  * \version     v0.0.1
+   5:../../bos/utils/b_util_fifo.c ****  * \date        2019/12/23
+   6:../../bos/utils/b_util_fifo.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/b_util_fifo.c ****  *******************************************************************************
+   8:../../bos/utils/b_util_fifo.c ****  * @attention
+   9:../../bos/utils/b_util_fifo.c ****  *
+  10:../../bos/utils/b_util_fifo.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/b_util_fifo.c ****  *
+  12:../../bos/utils/b_util_fifo.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/b_util_fifo.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/b_util_fifo.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/b_util_fifo.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/b_util_fifo.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/b_util_fifo.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/b_util_fifo.c ****  *
+  19:../../bos/utils/b_util_fifo.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/b_util_fifo.c ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/b_util_fifo.c ****  *
+  22:../../bos/utils/b_util_fifo.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/b_util_fifo.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/b_util_fifo.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/b_util_fifo.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/b_util_fifo.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/b_util_fifo.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/b_util_fifo.c ****  * SOFTWARE.
+  29:../../bos/utils/b_util_fifo.c ****  *******************************************************************************
+  30:../../bos/utils/b_util_fifo.c ****  */
+  31:../../bos/utils/b_util_fifo.c **** 
+  32:../../bos/utils/b_util_fifo.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/utils/b_util_fifo.c **** #include "utils/inc/b_util_fifo.h"
+  34:../../bos/utils/b_util_fifo.c **** 
+  35:../../bos/utils/b_util_fifo.c **** #include "b_config.h"
+  36:../../bos/utils/b_util_fifo.c **** #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1
+  37:../../bos/utils/b_util_fifo.c **** #include "utils/inc/b_util_memp.h"
+  38:../../bos/utils/b_util_fifo.c **** #endif
+  39:../../bos/utils/b_util_fifo.c **** /**
+  40:../../bos/utils/b_util_fifo.c ****  * \addtogroup B_UTILS
+  41:../../bos/utils/b_util_fifo.c ****  * \{
+  42:../../bos/utils/b_util_fifo.c ****  */
+  43:../../bos/utils/b_util_fifo.c **** 
+  44:../../bos/utils/b_util_fifo.c **** /**
+  45:../../bos/utils/b_util_fifo.c ****  * \addtogroup FIFO
+  46:../../bos/utils/b_util_fifo.c ****  * \{
+  47:../../bos/utils/b_util_fifo.c ****  */
+GAS LISTING /tmp/ccuzk9kC.s 			page 2
+
+
+  48:../../bos/utils/b_util_fifo.c **** 
+  49:../../bos/utils/b_util_fifo.c **** /**
+  50:../../bos/utils/b_util_fifo.c ****  * \defgroup FIFO_Private_TypesDefinitions
+  51:../../bos/utils/b_util_fifo.c ****  * \{
+  52:../../bos/utils/b_util_fifo.c ****  */
+  53:../../bos/utils/b_util_fifo.c **** 
+  54:../../bos/utils/b_util_fifo.c **** /**
+  55:../../bos/utils/b_util_fifo.c ****  * \}
+  56:../../bos/utils/b_util_fifo.c ****  */
+  57:../../bos/utils/b_util_fifo.c **** 
+  58:../../bos/utils/b_util_fifo.c **** /**
+  59:../../bos/utils/b_util_fifo.c ****  * \defgroup FIFO_Private_Defines
+  60:../../bos/utils/b_util_fifo.c ****  * \{
+  61:../../bos/utils/b_util_fifo.c ****  */
+  62:../../bos/utils/b_util_fifo.c **** #define FIFO_LEN(w, r, s) (((w) >= (r)) ? ((w) - (r)) : ((w) + (s) - (r)))
+  63:../../bos/utils/b_util_fifo.c **** 
+  64:../../bos/utils/b_util_fifo.c **** /**
+  65:../../bos/utils/b_util_fifo.c ****  * \}
+  66:../../bos/utils/b_util_fifo.c ****  */
+  67:../../bos/utils/b_util_fifo.c **** 
+  68:../../bos/utils/b_util_fifo.c **** /**
+  69:../../bos/utils/b_util_fifo.c ****  * \addtogroup FIFO_Exported_Functions
+  70:../../bos/utils/b_util_fifo.c ****  * \{
+  71:../../bos/utils/b_util_fifo.c ****  */
+  72:../../bos/utils/b_util_fifo.c **** 
+  73:../../bos/utils/b_util_fifo.c **** int bFIFO_Init(bFIFO_Instance_t *pinstance, void *pbuf, uint16_t size)
+  74:../../bos/utils/b_util_fifo.c **** {
+  12              		.loc 1 74 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 74 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  75:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL || pbuf == NULL || size == 0)
+  16              		.loc 1 75 5 is_stmt 1 view .LVU2
+  17              		.loc 1 75 35 is_stmt 0 view .LVU3
+  18 0004 4885F6   		testq	%rsi, %rsi
+  19 0007 0F94C0   		sete	%al
+  20              		.loc 1 75 43 discriminator 1 view .LVU4
+  21 000a 6685D2   		testw	%dx, %dx
+  22 000d 0F94C1   		sete	%cl
+  23 0010 08C8     		orb	%cl, %al
+  24 0012 751C     		jne	.L3
+  25 0014 4885FF   		testq	%rdi, %rdi
+  26 0017 7417     		je	.L3
+  76:../../bos/utils/b_util_fifo.c ****     {
+  77:../../bos/utils/b_util_fifo.c ****         return -1;
+  78:../../bos/utils/b_util_fifo.c ****     }
+  79:../../bos/utils/b_util_fifo.c ****     pinstance->pbuf    = (uint8_t *)pbuf;
+  27              		.loc 1 79 5 is_stmt 1 view .LVU5
+  80:../../bos/utils/b_util_fifo.c ****     pinstance->size    = size;
+  81:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = 0;
+  28              		.loc 1 81 24 is_stmt 0 view .LVU6
+  29 0019 31C0     		xorl	%eax, %eax
+  80:../../bos/utils/b_util_fifo.c ****     pinstance->size    = size;
+  30              		.loc 1 80 24 view .LVU7
+  31 001b 66895708 		movw	%dx, 8(%rdi)
+  82:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+  32              		.loc 1 82 24 view .LVU8
+GAS LISTING /tmp/ccuzk9kC.s 			page 3
+
+
+  33 001f 31D2     		xorl	%edx, %edx
+  34              	.LVL1:
+  81:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+  35              		.loc 1 81 24 view .LVU9
+  36 0021 6689470A 		movw	%ax, 10(%rdi)
+  83:../../bos/utils/b_util_fifo.c ****     return 0;
+  37              		.loc 1 83 12 view .LVU10
+  38 0025 31C0     		xorl	%eax, %eax
+  79:../../bos/utils/b_util_fifo.c ****     pinstance->size    = size;
+  39              		.loc 1 79 24 view .LVU11
+  40 0027 488937   		movq	%rsi, (%rdi)
+  80:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = 0;
+  41              		.loc 1 80 5 is_stmt 1 view .LVU12
+  81:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+  42              		.loc 1 81 5 view .LVU13
+  82:../../bos/utils/b_util_fifo.c ****     return 0;
+  43              		.loc 1 82 5 view .LVU14
+  82:../../bos/utils/b_util_fifo.c ****     return 0;
+  44              		.loc 1 82 24 is_stmt 0 view .LVU15
+  45 002a 6689570C 		movw	%dx, 12(%rdi)
+  46              		.loc 1 83 5 is_stmt 1 view .LVU16
+  47              		.loc 1 83 12 is_stmt 0 view .LVU17
+  48 002e C3       		ret
+  49              	.LVL2:
+  50 002f 90       		.p2align 4,,10
+  51              		.p2align 3
+  52              	.L3:
+  77:../../bos/utils/b_util_fifo.c ****     }
+  53              		.loc 1 77 16 view .LVU18
+  54 0030 B8FFFFFF 		movl	$-1, %eax
+  54      FF
+  84:../../bos/utils/b_util_fifo.c **** }
+  55              		.loc 1 84 1 view .LVU19
+  56 0035 C3       		ret
+  57              		.cfi_endproc
+  58              	.LFE17:
+  60              		.section	.text.bFIFO_Deinit,"ax",@progbits
+  61              		.p2align 4
+  62              		.globl	bFIFO_Deinit
+  64              	bFIFO_Deinit:
+  65              	.LVL3:
+  66              	.LFB18:
+  85:../../bos/utils/b_util_fifo.c **** 
+  86:../../bos/utils/b_util_fifo.c **** int bFIFO_Deinit(bFIFO_Instance_t *pinstance)
+  87:../../bos/utils/b_util_fifo.c **** {
+  67              		.loc 1 87 1 is_stmt 1 view -0
+  68              		.cfi_startproc
+  69              		.loc 1 87 1 is_stmt 0 view .LVU21
+  70 0000 F30F1EFA 		endbr64
+  88:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL)
+  71              		.loc 1 88 5 is_stmt 1 view .LVU22
+  72              		.loc 1 88 8 is_stmt 0 view .LVU23
+  73 0004 4885FF   		testq	%rdi, %rdi
+  74 0007 741C     		je	.L7
+  89:../../bos/utils/b_util_fifo.c ****     {
+  90:../../bos/utils/b_util_fifo.c ****         return -1;
+  91:../../bos/utils/b_util_fifo.c ****     }
+GAS LISTING /tmp/ccuzk9kC.s 			page 4
+
+
+  92:../../bos/utils/b_util_fifo.c ****     pinstance->pbuf    = NULL;
+  75              		.loc 1 92 5 is_stmt 1 view .LVU24
+  93:../../bos/utils/b_util_fifo.c ****     pinstance->size    = 0;
+  76              		.loc 1 93 24 is_stmt 0 view .LVU25
+  77 0009 31C0     		xorl	%eax, %eax
+  94:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = 0;
+  78              		.loc 1 94 24 view .LVU26
+  79 000b 31D2     		xorl	%edx, %edx
+  95:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+  80              		.loc 1 95 24 view .LVU27
+  81 000d 31C9     		xorl	%ecx, %ecx
+  92:../../bos/utils/b_util_fifo.c ****     pinstance->size    = 0;
+  82              		.loc 1 92 24 view .LVU28
+  83 000f 48C70700 		movq	$0, (%rdi)
+  83      000000
+  93:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = 0;
+  84              		.loc 1 93 5 is_stmt 1 view .LVU29
+  93:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = 0;
+  85              		.loc 1 93 24 is_stmt 0 view .LVU30
+  86 0016 66894708 		movw	%ax, 8(%rdi)
+  94:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+  87              		.loc 1 94 5 is_stmt 1 view .LVU31
+  96:../../bos/utils/b_util_fifo.c ****     return 0;
+  88              		.loc 1 96 12 is_stmt 0 view .LVU32
+  89 001a 31C0     		xorl	%eax, %eax
+  94:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+  90              		.loc 1 94 24 view .LVU33
+  91 001c 6689570A 		movw	%dx, 10(%rdi)
+  95:../../bos/utils/b_util_fifo.c ****     return 0;
+  92              		.loc 1 95 5 is_stmt 1 view .LVU34
+  95:../../bos/utils/b_util_fifo.c ****     return 0;
+  93              		.loc 1 95 24 is_stmt 0 view .LVU35
+  94 0020 66894F0C 		movw	%cx, 12(%rdi)
+  95              		.loc 1 96 5 is_stmt 1 view .LVU36
+  96              		.loc 1 96 12 is_stmt 0 view .LVU37
+  97 0024 C3       		ret
+  98              	.L7:
+  90:../../bos/utils/b_util_fifo.c ****     }
+  99              		.loc 1 90 16 view .LVU38
+ 100 0025 B8FFFFFF 		movl	$-1, %eax
+ 100      FF
+  97:../../bos/utils/b_util_fifo.c **** }
+ 101              		.loc 1 97 1 view .LVU39
+ 102 002a C3       		ret
+ 103              		.cfi_endproc
+ 104              	.LFE18:
+ 106              		.section	.text.bFIFO_Length,"ax",@progbits
+ 107              		.p2align 4
+ 108              		.globl	bFIFO_Length
+ 110              	bFIFO_Length:
+ 111              	.LVL4:
+ 112              	.LFB19:
+  98:../../bos/utils/b_util_fifo.c **** 
+  99:../../bos/utils/b_util_fifo.c **** int bFIFO_Length(bFIFO_Instance_t *pinstance, uint16_t *plen)
+ 100:../../bos/utils/b_util_fifo.c **** {
+ 113              		.loc 1 100 1 is_stmt 1 view -0
+ 114              		.cfi_startproc
+GAS LISTING /tmp/ccuzk9kC.s 			page 5
+
+
+ 115              		.loc 1 100 1 is_stmt 0 view .LVU41
+ 116 0000 F30F1EFA 		endbr64
+ 101:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL || plen == NULL)
+ 117              		.loc 1 101 5 is_stmt 1 view .LVU42
+ 118              		.loc 1 101 8 is_stmt 0 view .LVU43
+ 119 0004 4885FF   		testq	%rdi, %rdi
+ 120 0007 7437     		je	.L12
+ 121 0009 4885F6   		testq	%rsi, %rsi
+ 122 000c 7432     		je	.L12
+ 102:../../bos/utils/b_util_fifo.c ****     {
+ 103:../../bos/utils/b_util_fifo.c ****         return -1;
+ 104:../../bos/utils/b_util_fifo.c ****     }
+ 105:../../bos/utils/b_util_fifo.c ****     *plen = FIFO_LEN(pinstance->w_index, pinstance->r_index, pinstance->size);
+ 123              		.loc 1 105 5 is_stmt 1 view .LVU44
+ 124              		.loc 1 105 13 is_stmt 0 view .LVU45
+ 125 000e 0FB7570C 		movzwl	12(%rdi), %edx
+ 126 0012 0FB7470A 		movzwl	10(%rdi), %eax
+ 127              		.loc 1 105 11 view .LVU46
+ 128 0016 6639C2   		cmpw	%ax, %dx
+ 129              		.loc 1 105 13 discriminator 1 view .LVU47
+ 130 0019 0FB7470C 		movzwl	12(%rdi), %eax
+ 131 001d 0FB7570A 		movzwl	10(%rdi), %edx
+ 132              		.loc 1 105 11 view .LVU48
+ 133 0021 720D     		jb	.L10
+ 134              		.loc 1 105 11 discriminator 2 view .LVU49
+ 135 0023 29D0     		subl	%edx, %eax
+ 136              		.loc 1 105 11 discriminator 4 view .LVU50
+ 137 0025 668906   		movw	%ax, (%rsi)
+ 106:../../bos/utils/b_util_fifo.c ****     return 0;
+ 138              		.loc 1 106 5 is_stmt 1 view .LVU51
+ 139              		.loc 1 106 12 is_stmt 0 view .LVU52
+ 140 0028 31C0     		xorl	%eax, %eax
+ 141 002a C3       		ret
+ 142 002b 0F1F4400 		.p2align 4,,10
+ 142      00
+ 143              		.p2align 3
+ 144              	.L10:
+ 105:../../bos/utils/b_util_fifo.c ****     return 0;
+ 145              		.loc 1 105 13 discriminator 2 view .LVU53
+ 146 0030 66034708 		addw	8(%rdi), %ax
+ 105:../../bos/utils/b_util_fifo.c ****     return 0;
+ 147              		.loc 1 105 11 discriminator 2 view .LVU54
+ 148 0034 29D0     		subl	%edx, %eax
+ 105:../../bos/utils/b_util_fifo.c ****     return 0;
+ 149              		.loc 1 105 11 discriminator 4 view .LVU55
+ 150 0036 668906   		movw	%ax, (%rsi)
+ 151              		.loc 1 106 5 is_stmt 1 view .LVU56
+ 152              		.loc 1 106 12 is_stmt 0 view .LVU57
+ 153 0039 31C0     		xorl	%eax, %eax
+ 154 003b C3       		ret
+ 155 003c 0F1F4000 		.p2align 4,,10
+ 156              		.p2align 3
+ 157              	.L12:
+ 103:../../bos/utils/b_util_fifo.c ****     }
+ 158              		.loc 1 103 16 view .LVU58
+ 159 0040 B8FFFFFF 		movl	$-1, %eax
+ 159      FF
+GAS LISTING /tmp/ccuzk9kC.s 			page 6
+
+
+ 107:../../bos/utils/b_util_fifo.c **** }
+ 160              		.loc 1 107 1 view .LVU59
+ 161 0045 C3       		ret
+ 162              		.cfi_endproc
+ 163              	.LFE19:
+ 165              		.section	.text.bFIFO_Flush,"ax",@progbits
+ 166              		.p2align 4
+ 167              		.globl	bFIFO_Flush
+ 169              	bFIFO_Flush:
+ 170              	.LVL5:
+ 171              	.LFB20:
+ 108:../../bos/utils/b_util_fifo.c **** 
+ 109:../../bos/utils/b_util_fifo.c **** int bFIFO_Flush(bFIFO_Instance_t *pinstance)
+ 110:../../bos/utils/b_util_fifo.c **** {
+ 172              		.loc 1 110 1 is_stmt 1 view -0
+ 173              		.cfi_startproc
+ 174              		.loc 1 110 1 is_stmt 0 view .LVU61
+ 175 0000 F30F1EFA 		endbr64
+ 111:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL)
+ 176              		.loc 1 111 5 is_stmt 1 view .LVU62
+ 177              		.loc 1 111 8 is_stmt 0 view .LVU63
+ 178 0004 4885FF   		testq	%rdi, %rdi
+ 179 0007 740F     		je	.L16
+ 112:../../bos/utils/b_util_fifo.c ****     {
+ 113:../../bos/utils/b_util_fifo.c ****         return -1;
+ 114:../../bos/utils/b_util_fifo.c ****     }
+ 115:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = pinstance->w_index = 0;
+ 180              		.loc 1 115 5 is_stmt 1 view .LVU64
+ 181              		.loc 1 115 45 is_stmt 0 view .LVU65
+ 182 0009 31C0     		xorl	%eax, %eax
+ 183              		.loc 1 115 24 view .LVU66
+ 184 000b 31D2     		xorl	%edx, %edx
+ 185              		.loc 1 115 45 view .LVU67
+ 186 000d 6689470C 		movw	%ax, 12(%rdi)
+ 116:../../bos/utils/b_util_fifo.c ****     return 0;
+ 187              		.loc 1 116 12 view .LVU68
+ 188 0011 31C0     		xorl	%eax, %eax
+ 115:../../bos/utils/b_util_fifo.c ****     return 0;
+ 189              		.loc 1 115 24 view .LVU69
+ 190 0013 6689570A 		movw	%dx, 10(%rdi)
+ 191              		.loc 1 116 5 is_stmt 1 view .LVU70
+ 192              		.loc 1 116 12 is_stmt 0 view .LVU71
+ 193 0017 C3       		ret
+ 194              	.L16:
+ 113:../../bos/utils/b_util_fifo.c ****     }
+ 195              		.loc 1 113 16 view .LVU72
+ 196 0018 B8FFFFFF 		movl	$-1, %eax
+ 196      FF
+ 117:../../bos/utils/b_util_fifo.c **** }
+ 197              		.loc 1 117 1 view .LVU73
+ 198 001d C3       		ret
+ 199              		.cfi_endproc
+ 200              	.LFE20:
+ 202              		.section	.text.bFIFO_Write,"ax",@progbits
+ 203              		.p2align 4
+ 204              		.globl	bFIFO_Write
+ 206              	bFIFO_Write:
+GAS LISTING /tmp/ccuzk9kC.s 			page 7
+
+
+ 207              	.LVL6:
+ 208              	.LFB21:
+ 118:../../bos/utils/b_util_fifo.c **** 
+ 119:../../bos/utils/b_util_fifo.c **** int bFIFO_Write(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size)
+ 120:../../bos/utils/b_util_fifo.c **** {
+ 209              		.loc 1 120 1 is_stmt 1 view -0
+ 210              		.cfi_startproc
+ 211              		.loc 1 120 1 is_stmt 0 view .LVU75
+ 212 0000 F30F1EFA 		endbr64
+ 213              		.loc 1 120 1 view .LVU76
+ 214 0004 4889F9   		movq	%rdi, %rcx
+ 121:../../bos/utils/b_util_fifo.c ****     uint16_t fifo_len, valid_len, index;
+ 215              		.loc 1 121 5 is_stmt 1 view .LVU77
+ 122:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL || pbuf == NULL)
+ 216              		.loc 1 122 5 view .LVU78
+ 120:../../bos/utils/b_util_fifo.c ****     uint16_t fifo_len, valid_len, index;
+ 217              		.loc 1 120 1 is_stmt 0 view .LVU79
+ 218 0007 4889F7   		movq	%rsi, %rdi
+ 219              	.LVL7:
+ 220              		.loc 1 122 8 view .LVU80
+ 221 000a 4885C9   		testq	%rcx, %rcx
+ 222 000d 0F84B200 		je	.L26
+ 222      0000
+ 223 0013 4885F6   		testq	%rsi, %rsi
+ 224 0016 0F84A900 		je	.L26
+ 224      0000
+ 123:../../bos/utils/b_util_fifo.c ****     {
+ 124:../../bos/utils/b_util_fifo.c ****         return -1;
+ 125:../../bos/utils/b_util_fifo.c ****     }
+ 126:../../bos/utils/b_util_fifo.c ****     if (pinstance->pbuf == NULL)
+ 225              		.loc 1 126 5 is_stmt 1 view .LVU81
+ 226              		.loc 1 126 18 is_stmt 0 view .LVU82
+ 227 001c 488B31   		movq	(%rcx), %rsi
+ 228              	.LVL8:
+ 229              		.loc 1 126 8 view .LVU83
+ 230 001f 4885F6   		testq	%rsi, %rsi
+ 231 0022 0F849D00 		je	.L26
+ 231      0000
+ 127:../../bos/utils/b_util_fifo.c ****     {
+ 128:../../bos/utils/b_util_fifo.c ****         return -1;
+ 129:../../bos/utils/b_util_fifo.c ****     }
+ 130:../../bos/utils/b_util_fifo.c ****     fifo_len  = FIFO_LEN(pinstance->w_index, pinstance->r_index, pinstance->size);
+ 232              		.loc 1 130 5 is_stmt 1 view .LVU84
+ 233              		.loc 1 130 17 is_stmt 0 view .LVU85
+ 234 0028 440FB749 		movzwl	12(%rcx), %r9d
+ 234      0C
+ 235 002d 0FB7410A 		movzwl	10(%rcx), %eax
+ 236              		.loc 1 130 17 discriminator 2 view .LVU86
+ 237 0031 440FB741 		movzwl	8(%rcx), %r8d
+ 237      08
+ 238              		.loc 1 130 15 view .LVU87
+ 239 0036 664139C1 		cmpw	%ax, %r9w
+ 240              		.loc 1 130 17 discriminator 1 view .LVU88
+ 241 003a 0FB7410C 		movzwl	12(%rcx), %eax
+ 242 003e 440FB749 		movzwl	10(%rcx), %r9d
+ 242      0A
+ 243              		.loc 1 130 15 view .LVU89
+GAS LISTING /tmp/ccuzk9kC.s 			page 8
+
+
+ 244 0043 727B     		jb	.L19
+ 245              	.L31:
+ 246              		.loc 1 130 15 discriminator 2 view .LVU90
+ 247 0045 4429C8   		subl	%r9d, %eax
+ 248              	.LVL9:
+ 131:../../bos/utils/b_util_fifo.c ****     valid_len = pinstance->size - fifo_len;
+ 249              		.loc 1 131 5 is_stmt 1 view .LVU91
+ 132:../../bos/utils/b_util_fifo.c ****     size      = (size <= valid_len) ? size : valid_len;
+ 250              		.loc 1 132 5 view .LVU92
+ 131:../../bos/utils/b_util_fifo.c ****     valid_len = pinstance->size - fifo_len;
+ 251              		.loc 1 131 15 is_stmt 0 view .LVU93
+ 252 0048 4129C0   		subl	%eax, %r8d
+ 253              	.LVL10:
+ 254              		.loc 1 132 15 view .LVU94
+ 255 004b 664139D0 		cmpw	%dx, %r8w
+ 256 004f 440F47C2 		cmova	%edx, %r8d
+ 257              	.LVL11:
+ 133:../../bos/utils/b_util_fifo.c ****     index     = 0;
+ 258              		.loc 1 133 5 is_stmt 1 view .LVU95
+ 134:../../bos/utils/b_util_fifo.c ****     while (index < size)
+ 259              		.loc 1 134 5 view .LVU96
+ 260              		.loc 1 134 18 view .LVU97
+ 261 0053 664585C0 		testw	%r8w, %r8w
+ 262 0057 7460     		je	.L21
+ 135:../../bos/utils/b_util_fifo.c ****     {
+ 136:../../bos/utils/b_util_fifo.c ****         pinstance->pbuf[pinstance->w_index] = pbuf[index];
+ 263              		.loc 1 136 9 view .LVU98
+ 264              		.loc 1 136 34 is_stmt 0 view .LVU99
+ 265 0059 0FB7410C 		movzwl	12(%rcx), %eax
+ 266              	.LVL12:
+ 267              		.loc 1 136 51 view .LVU100
+ 268 005d 0FB617   		movzbl	(%rdi), %edx
+ 269              		.loc 1 136 45 view .LVU101
+ 270 0060 881406   		movb	%dl, (%rsi,%rax)
+ 137:../../bos/utils/b_util_fifo.c ****         pinstance->w_index                  = (pinstance->w_index + 1) % pinstance->size;
+ 271              		.loc 1 137 9 is_stmt 1 view .LVU102
+ 272              		.loc 1 137 57 is_stmt 0 view .LVU103
+ 273 0063 0FB7410C 		movzwl	12(%rcx), %eax
+ 274              		.loc 1 137 83 view .LVU104
+ 275 0067 0FB77108 		movzwl	8(%rcx), %esi
+ 276              		.loc 1 137 67 view .LVU105
+ 277 006b 83C001   		addl	$1, %eax
+ 278              		.loc 1 137 72 view .LVU106
+ 279 006e 99       		cltd
+ 280 006f F7FE     		idivl	%esi
+ 281              		.loc 1 137 45 view .LVU107
+ 282 0071 6689510C 		movw	%dx, 12(%rcx)
+ 138:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 283              		.loc 1 138 9 is_stmt 1 view .LVU108
+ 284              	.LVL13:
+ 134:../../bos/utils/b_util_fifo.c ****     {
+ 285              		.loc 1 134 18 view .LVU109
+ 286 0075 664183F8 		cmpw	$1, %r8w
+ 286      01
+ 287 007a 743D     		je	.L21
+ 288 007c 418D40FE 		leal	-2(%r8), %eax
+ 289 0080 488D7701 		leaq	1(%rdi), %rsi
+GAS LISTING /tmp/ccuzk9kC.s 			page 9
+
+
+ 290 0084 0FB7C0   		movzwl	%ax, %eax
+ 291 0087 4C8D4C07 		leaq	2(%rdi,%rax), %r9
+ 291      02
+ 292              	.LVL14:
+ 293 008c 0F1F4000 		.p2align 4,,10
+ 294              		.p2align 3
+ 295              	.L23:
+ 136:../../bos/utils/b_util_fifo.c ****         pinstance->w_index                  = (pinstance->w_index + 1) % pinstance->size;
+ 296              		.loc 1 136 9 view .LVU110
+ 136:../../bos/utils/b_util_fifo.c ****         pinstance->w_index                  = (pinstance->w_index + 1) % pinstance->size;
+ 297              		.loc 1 136 51 is_stmt 0 view .LVU111
+ 298 0090 0FB63E   		movzbl	(%rsi), %edi
+ 136:../../bos/utils/b_util_fifo.c ****         pinstance->w_index                  = (pinstance->w_index + 1) % pinstance->size;
+ 299              		.loc 1 136 34 view .LVU112
+ 300 0093 0FB7410C 		movzwl	12(%rcx), %eax
+ 134:../../bos/utils/b_util_fifo.c ****     {
+ 301              		.loc 1 134 18 view .LVU113
+ 302 0097 4883C601 		addq	$1, %rsi
+ 303              	.LVL15:
+ 136:../../bos/utils/b_util_fifo.c ****         pinstance->w_index                  = (pinstance->w_index + 1) % pinstance->size;
+ 304              		.loc 1 136 45 view .LVU114
+ 305 009b 488B11   		movq	(%rcx), %rdx
+ 306 009e 40883C02 		movb	%dil, (%rdx,%rax)
+ 137:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 307              		.loc 1 137 9 is_stmt 1 view .LVU115
+ 137:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 308              		.loc 1 137 57 is_stmt 0 view .LVU116
+ 309 00a2 0FB7410C 		movzwl	12(%rcx), %eax
+ 137:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 310              		.loc 1 137 83 view .LVU117
+ 311 00a6 0FB77908 		movzwl	8(%rcx), %edi
+ 137:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 312              		.loc 1 137 67 view .LVU118
+ 313 00aa 83C001   		addl	$1, %eax
+ 137:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 314              		.loc 1 137 72 view .LVU119
+ 315 00ad 99       		cltd
+ 316 00ae F7FF     		idivl	%edi
+ 137:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 317              		.loc 1 137 45 view .LVU120
+ 318 00b0 6689510C 		movw	%dx, 12(%rcx)
+ 319              		.loc 1 138 9 is_stmt 1 view .LVU121
+ 320              	.LVL16:
+ 134:../../bos/utils/b_util_fifo.c ****     {
+ 321              		.loc 1 134 18 view .LVU122
+ 322 00b4 4C39CE   		cmpq	%r9, %rsi
+ 323 00b7 75D7     		jne	.L23
+ 324              	.L21:
+ 139:../../bos/utils/b_util_fifo.c ****     }
+ 140:../../bos/utils/b_util_fifo.c ****     return size;
+ 325              		.loc 1 140 5 view .LVU123
+ 326              		.loc 1 140 12 is_stmt 0 view .LVU124
+ 327 00b9 410FB7C0 		movzwl	%r8w, %eax
+ 328 00bd C3       		ret
+ 329              	.LVL17:
+ 330 00be 6690     		.p2align 4,,10
+ 331              		.p2align 3
+GAS LISTING /tmp/ccuzk9kC.s 			page 10
+
+
+ 332              	.L19:
+ 130:../../bos/utils/b_util_fifo.c ****     valid_len = pinstance->size - fifo_len;
+ 333              		.loc 1 130 17 discriminator 2 view .LVU125
+ 334 00c0 4401C0   		addl	%r8d, %eax
+ 335 00c3 EB80     		jmp	.L31
+ 336              	.L26:
+ 124:../../bos/utils/b_util_fifo.c ****     }
+ 337              		.loc 1 124 16 view .LVU126
+ 338 00c5 B8FFFFFF 		movl	$-1, %eax
+ 338      FF
+ 141:../../bos/utils/b_util_fifo.c **** }
+ 339              		.loc 1 141 1 view .LVU127
+ 340 00ca C3       		ret
+ 341              		.cfi_endproc
+ 342              	.LFE21:
+ 344              		.section	.text.bFIFO_Read,"ax",@progbits
+ 345              		.p2align 4
+ 346              		.globl	bFIFO_Read
+ 348              	bFIFO_Read:
+ 349              	.LVL18:
+ 350              	.LFB22:
+ 142:../../bos/utils/b_util_fifo.c **** 
+ 143:../../bos/utils/b_util_fifo.c **** int bFIFO_Read(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size)
+ 144:../../bos/utils/b_util_fifo.c **** {
+ 351              		.loc 1 144 1 is_stmt 1 view -0
+ 352              		.cfi_startproc
+ 353              		.loc 1 144 1 is_stmt 0 view .LVU129
+ 354 0000 F30F1EFA 		endbr64
+ 355              		.loc 1 144 1 view .LVU130
+ 356 0004 4889F9   		movq	%rdi, %rcx
+ 145:../../bos/utils/b_util_fifo.c ****     uint16_t fifo_len, index;
+ 357              		.loc 1 145 5 is_stmt 1 view .LVU131
+ 146:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL || pbuf == NULL)
+ 358              		.loc 1 146 5 view .LVU132
+ 144:../../bos/utils/b_util_fifo.c ****     uint16_t fifo_len, index;
+ 359              		.loc 1 144 1 is_stmt 0 view .LVU133
+ 360 0007 4889F7   		movq	%rsi, %rdi
+ 361              	.LVL19:
+ 362              		.loc 1 146 8 view .LVU134
+ 363 000a 4885C9   		testq	%rcx, %rcx
+ 364 000d 0F84B700 		je	.L41
+ 364      0000
+ 365 0013 4885F6   		testq	%rsi, %rsi
+ 366 0016 0F84AE00 		je	.L41
+ 366      0000
+ 147:../../bos/utils/b_util_fifo.c ****     {
+ 148:../../bos/utils/b_util_fifo.c ****         return -1;
+ 149:../../bos/utils/b_util_fifo.c ****     }
+ 150:../../bos/utils/b_util_fifo.c ****     if (pinstance->pbuf == NULL)
+ 367              		.loc 1 150 5 is_stmt 1 view .LVU135
+ 368              		.loc 1 150 18 is_stmt 0 view .LVU136
+ 369 001c 488B31   		movq	(%rcx), %rsi
+ 370              	.LVL20:
+ 371              		.loc 1 150 8 view .LVU137
+ 372 001f 4885F6   		testq	%rsi, %rsi
+ 373 0022 0F84A200 		je	.L41
+ 373      0000
+GAS LISTING /tmp/ccuzk9kC.s 			page 11
+
+
+ 151:../../bos/utils/b_util_fifo.c ****     {
+ 152:../../bos/utils/b_util_fifo.c ****         return -1;
+ 153:../../bos/utils/b_util_fifo.c ****     }
+ 154:../../bos/utils/b_util_fifo.c ****     fifo_len = FIFO_LEN(pinstance->w_index, pinstance->r_index, pinstance->size);
+ 374              		.loc 1 154 5 is_stmt 1 view .LVU138
+ 375              		.loc 1 154 16 is_stmt 0 view .LVU139
+ 376 0028 440FB741 		movzwl	12(%rcx), %r8d
+ 376      0C
+ 377 002d 0FB7410A 		movzwl	10(%rcx), %eax
+ 378              		.loc 1 154 14 view .LVU140
+ 379 0031 664139C0 		cmpw	%ax, %r8w
+ 380              		.loc 1 154 16 discriminator 1 view .LVU141
+ 381 0035 440FB741 		movzwl	12(%rcx), %r8d
+ 381      0C
+ 382 003a 0FB7410A 		movzwl	10(%rcx), %eax
+ 383              		.loc 1 154 14 view .LVU142
+ 384 003e 0F827C00 		jb	.L34
+ 384      0000
+ 385              	.L46:
+ 386              		.loc 1 154 14 discriminator 2 view .LVU143
+ 387 0044 4129C0   		subl	%eax, %r8d
+ 388              	.LVL21:
+ 155:../../bos/utils/b_util_fifo.c ****     size     = (size <= fifo_len) ? size : fifo_len;
+ 389              		.loc 1 155 5 is_stmt 1 view .LVU144
+ 390              		.loc 1 155 14 is_stmt 0 view .LVU145
+ 391 0047 664139D0 		cmpw	%dx, %r8w
+ 392 004b 440F47C2 		cmova	%edx, %r8d
+ 393              	.LVL22:
+ 156:../../bos/utils/b_util_fifo.c ****     index    = 0;
+ 394              		.loc 1 156 5 is_stmt 1 view .LVU146
+ 157:../../bos/utils/b_util_fifo.c ****     while (index < size)
+ 395              		.loc 1 157 5 view .LVU147
+ 396              		.loc 1 157 18 view .LVU148
+ 397 004f 664585C0 		testw	%r8w, %r8w
+ 398 0053 7464     		je	.L36
+ 158:../../bos/utils/b_util_fifo.c ****     {
+ 159:../../bos/utils/b_util_fifo.c ****         pbuf[index]        = pinstance->pbuf[pinstance->r_index];
+ 399              		.loc 1 159 9 view .LVU149
+ 400              		.loc 1 159 55 is_stmt 0 view .LVU150
+ 401 0055 0FB7410A 		movzwl	10(%rcx), %eax
+ 402              		.loc 1 159 45 view .LVU151
+ 403 0059 0FB60406 		movzbl	(%rsi,%rax), %eax
+ 404              		.loc 1 159 28 view .LVU152
+ 405 005d 8807     		movb	%al, (%rdi)
+ 160:../../bos/utils/b_util_fifo.c ****         pinstance->r_index = (pinstance->r_index + 1) % pinstance->size;
+ 406              		.loc 1 160 9 is_stmt 1 view .LVU153
+ 407              		.loc 1 160 40 is_stmt 0 view .LVU154
+ 408 005f 0FB7410A 		movzwl	10(%rcx), %eax
+ 409              		.loc 1 160 66 view .LVU155
+ 410 0063 0FB77108 		movzwl	8(%rcx), %esi
+ 411              		.loc 1 160 50 view .LVU156
+ 412 0067 83C001   		addl	$1, %eax
+ 413              		.loc 1 160 55 view .LVU157
+ 414 006a 99       		cltd
+ 415 006b F7FE     		idivl	%esi
+ 416              		.loc 1 160 28 view .LVU158
+ 417 006d 6689510A 		movw	%dx, 10(%rcx)
+GAS LISTING /tmp/ccuzk9kC.s 			page 12
+
+
+ 161:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 418              		.loc 1 161 9 is_stmt 1 view .LVU159
+ 419              	.LVL23:
+ 157:../../bos/utils/b_util_fifo.c ****     {
+ 420              		.loc 1 157 18 view .LVU160
+ 421 0071 664183F8 		cmpw	$1, %r8w
+ 421      01
+ 422 0076 7441     		je	.L36
+ 423 0078 418D40FE 		leal	-2(%r8), %eax
+ 424 007c 488D7701 		leaq	1(%rdi), %rsi
+ 425 0080 0FB7C0   		movzwl	%ax, %eax
+ 426 0083 4C8D4C07 		leaq	2(%rdi,%rax), %r9
+ 426      02
+ 427              	.LVL24:
+ 428 0088 0F1F8400 		.p2align 4,,10
+ 428      00000000 
+ 429              		.p2align 3
+ 430              	.L38:
+ 159:../../bos/utils/b_util_fifo.c ****         pinstance->r_index = (pinstance->r_index + 1) % pinstance->size;
+ 431              		.loc 1 159 9 view .LVU161
+ 159:../../bos/utils/b_util_fifo.c ****         pinstance->r_index = (pinstance->r_index + 1) % pinstance->size;
+ 432              		.loc 1 159 55 is_stmt 0 view .LVU162
+ 433 0090 0FB7410A 		movzwl	10(%rcx), %eax
+ 159:../../bos/utils/b_util_fifo.c ****         pinstance->r_index = (pinstance->r_index + 1) % pinstance->size;
+ 434              		.loc 1 159 45 view .LVU163
+ 435 0094 488B11   		movq	(%rcx), %rdx
+ 157:../../bos/utils/b_util_fifo.c ****     {
+ 436              		.loc 1 157 18 view .LVU164
+ 437 0097 4883C601 		addq	$1, %rsi
+ 438              	.LVL25:
+ 159:../../bos/utils/b_util_fifo.c ****         pinstance->r_index = (pinstance->r_index + 1) % pinstance->size;
+ 439              		.loc 1 159 45 view .LVU165
+ 440 009b 0FB60402 		movzbl	(%rdx,%rax), %eax
+ 159:../../bos/utils/b_util_fifo.c ****         pinstance->r_index = (pinstance->r_index + 1) % pinstance->size;
+ 441              		.loc 1 159 28 view .LVU166
+ 442 009f 8846FF   		movb	%al, -1(%rsi)
+ 160:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 443              		.loc 1 160 9 is_stmt 1 view .LVU167
+ 160:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 444              		.loc 1 160 40 is_stmt 0 view .LVU168
+ 445 00a2 0FB7410A 		movzwl	10(%rcx), %eax
+ 160:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 446              		.loc 1 160 66 view .LVU169
+ 447 00a6 0FB77908 		movzwl	8(%rcx), %edi
+ 160:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 448              		.loc 1 160 50 view .LVU170
+ 449 00aa 83C001   		addl	$1, %eax
+ 160:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 450              		.loc 1 160 55 view .LVU171
+ 451 00ad 99       		cltd
+ 452 00ae F7FF     		idivl	%edi
+ 160:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 453              		.loc 1 160 28 view .LVU172
+ 454 00b0 6689510A 		movw	%dx, 10(%rcx)
+ 455              		.loc 1 161 9 is_stmt 1 view .LVU173
+ 456              	.LVL26:
+ 157:../../bos/utils/b_util_fifo.c ****     {
+GAS LISTING /tmp/ccuzk9kC.s 			page 13
+
+
+ 457              		.loc 1 157 18 view .LVU174
+ 458 00b4 4C39CE   		cmpq	%r9, %rsi
+ 459 00b7 75D7     		jne	.L38
+ 460              	.L36:
+ 162:../../bos/utils/b_util_fifo.c ****     }
+ 163:../../bos/utils/b_util_fifo.c ****     return size;
+ 461              		.loc 1 163 5 view .LVU175
+ 462              		.loc 1 163 12 is_stmt 0 view .LVU176
+ 463 00b9 410FB7C0 		movzwl	%r8w, %eax
+ 464 00bd C3       		ret
+ 465              	.LVL27:
+ 466 00be 6690     		.p2align 4,,10
+ 467              		.p2align 3
+ 468              	.L34:
+ 154:../../bos/utils/b_util_fifo.c ****     size     = (size <= fifo_len) ? size : fifo_len;
+ 469              		.loc 1 154 16 discriminator 2 view .LVU177
+ 470 00c0 66440341 		addw	8(%rcx), %r8w
+ 470      08
+ 471 00c5 E97AFFFF 		jmp	.L46
+ 471      FF
+ 472              	.L41:
+ 148:../../bos/utils/b_util_fifo.c ****     }
+ 473              		.loc 1 148 16 view .LVU178
+ 474 00ca B8FFFFFF 		movl	$-1, %eax
+ 474      FF
+ 164:../../bos/utils/b_util_fifo.c **** }
+ 475              		.loc 1 164 1 view .LVU179
+ 476 00cf C3       		ret
+ 477              		.cfi_endproc
+ 478              	.LFE22:
+ 480              		.section	.text.bFIFO_Copy,"ax",@progbits
+ 481              		.p2align 4
+ 482              		.globl	bFIFO_Copy
+ 484              	bFIFO_Copy:
+ 485              	.LVL28:
+ 486              	.LFB23:
+ 165:../../bos/utils/b_util_fifo.c **** 
+ 166:../../bos/utils/b_util_fifo.c **** int bFIFO_Copy(bFIFO_Instance_t *pinstance, uint8_t *pbuf, uint16_t size)
+ 167:../../bos/utils/b_util_fifo.c **** {
+ 487              		.loc 1 167 1 is_stmt 1 view -0
+ 488              		.cfi_startproc
+ 489              		.loc 1 167 1 is_stmt 0 view .LVU181
+ 490 0000 F30F1EFA 		endbr64
+ 168:../../bos/utils/b_util_fifo.c ****     uint16_t fifo_len, index, f_index;
+ 491              		.loc 1 168 5 is_stmt 1 view .LVU182
+ 169:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL || pbuf == NULL)
+ 492              		.loc 1 169 5 view .LVU183
+ 493              		.loc 1 169 8 is_stmt 0 view .LVU184
+ 494 0004 4885FF   		testq	%rdi, %rdi
+ 495 0007 0F84AA00 		je	.L56
+ 495      0000
+ 496 000d 4885F6   		testq	%rsi, %rsi
+ 497 0010 0F84A100 		je	.L56
+ 497      0000
+ 170:../../bos/utils/b_util_fifo.c ****     {
+ 171:../../bos/utils/b_util_fifo.c ****         return -1;
+ 172:../../bos/utils/b_util_fifo.c ****     }
+GAS LISTING /tmp/ccuzk9kC.s 			page 14
+
+
+ 173:../../bos/utils/b_util_fifo.c ****     if (pinstance->pbuf == NULL)
+ 498              		.loc 1 173 5 is_stmt 1 view .LVU185
+ 499              		.loc 1 173 18 is_stmt 0 view .LVU186
+ 500 0016 488B07   		movq	(%rdi), %rax
+ 501              		.loc 1 173 8 view .LVU187
+ 502 0019 4885C0   		testq	%rax, %rax
+ 503 001c 0F849500 		je	.L56
+ 503      0000
+ 174:../../bos/utils/b_util_fifo.c ****     {
+ 175:../../bos/utils/b_util_fifo.c ****         return -1;
+ 176:../../bos/utils/b_util_fifo.c ****     }
+ 177:../../bos/utils/b_util_fifo.c ****     f_index  = pinstance->r_index;
+ 504              		.loc 1 177 5 is_stmt 1 view .LVU188
+ 505              		.loc 1 177 14 is_stmt 0 view .LVU189
+ 506 0022 0FB74F0A 		movzwl	10(%rdi), %ecx
+ 507              	.LVL29:
+ 178:../../bos/utils/b_util_fifo.c ****     fifo_len = FIFO_LEN(pinstance->w_index, pinstance->r_index, pinstance->size);
+ 508              		.loc 1 178 5 is_stmt 1 view .LVU190
+ 509              		.loc 1 178 16 is_stmt 0 view .LVU191
+ 510 0026 440FB74F 		movzwl	12(%rdi), %r9d
+ 510      0C
+ 511 002b 440FB747 		movzwl	10(%rdi), %r8d
+ 511      0A
+ 512              		.loc 1 178 14 view .LVU192
+ 513 0030 664539C1 		cmpw	%r8w, %r9w
+ 514              		.loc 1 178 16 discriminator 1 view .LVU193
+ 515 0034 440FB747 		movzwl	12(%rdi), %r8d
+ 515      0C
+ 516 0039 440FB74F 		movzwl	10(%rdi), %r9d
+ 516      0A
+ 517              		.loc 1 178 14 view .LVU194
+ 518 003e 7270     		jb	.L49
+ 519              	.L61:
+ 520              		.loc 1 178 14 discriminator 2 view .LVU195
+ 521 0040 4529C8   		subl	%r9d, %r8d
+ 522              	.LVL30:
+ 179:../../bos/utils/b_util_fifo.c ****     size     = (size <= fifo_len) ? size : fifo_len;
+ 523              		.loc 1 179 5 is_stmt 1 view .LVU196
+ 524              		.loc 1 179 14 is_stmt 0 view .LVU197
+ 525 0043 664139D0 		cmpw	%dx, %r8w
+ 526 0047 440F47C2 		cmova	%edx, %r8d
+ 527              	.LVL31:
+ 180:../../bos/utils/b_util_fifo.c ****     index    = 0;
+ 528              		.loc 1 180 5 is_stmt 1 view .LVU198
+ 181:../../bos/utils/b_util_fifo.c ****     while (index < size)
+ 529              		.loc 1 181 5 view .LVU199
+ 530              		.loc 1 181 18 view .LVU200
+ 531 004b 664585C0 		testw	%r8w, %r8w
+ 532 004f 7452     		je	.L51
+ 182:../../bos/utils/b_util_fifo.c ****     {
+ 183:../../bos/utils/b_util_fifo.c ****         pbuf[index] = pinstance->pbuf[f_index];
+ 533              		.loc 1 183 9 view .LVU201
+ 534              		.loc 1 183 38 is_stmt 0 view .LVU202
+ 535 0051 0FB7D1   		movzwl	%cx, %edx
+ 536 0054 0FB60410 		movzbl	(%rax,%rdx), %eax
+ 537              		.loc 1 183 21 view .LVU203
+ 538 0058 8806     		movb	%al, (%rsi)
+GAS LISTING /tmp/ccuzk9kC.s 			page 15
+
+
+ 184:../../bos/utils/b_util_fifo.c ****         f_index     = (f_index + 1) % pinstance->size;
+ 539              		.loc 1 184 9 is_stmt 1 view .LVU204
+ 540              		.loc 1 184 32 is_stmt 0 view .LVU205
+ 541 005a 0FB7C1   		movzwl	%cx, %eax
+ 542              		.loc 1 184 48 view .LVU206
+ 543 005d 0FB74F08 		movzwl	8(%rdi), %ecx
+ 544              	.LVL32:
+ 545              		.loc 1 184 32 view .LVU207
+ 546 0061 83C001   		addl	$1, %eax
+ 547              	.LVL33:
+ 548              		.loc 1 184 37 view .LVU208
+ 549 0064 99       		cltd
+ 550 0065 F7F9     		idivl	%ecx
+ 551              	.LVL34:
+ 185:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 552              		.loc 1 185 9 is_stmt 1 view .LVU209
+ 181:../../bos/utils/b_util_fifo.c ****     {
+ 553              		.loc 1 181 18 view .LVU210
+ 554 0067 664183F8 		cmpw	$1, %r8w
+ 554      01
+ 555 006c 7435     		je	.L51
+ 556 006e 418D40FE 		leal	-2(%r8), %eax
+ 557 0072 488D4E01 		leaq	1(%rsi), %rcx
+ 558 0076 0FB7C0   		movzwl	%ax, %eax
+ 559 0079 4C8D4C06 		leaq	2(%rsi,%rax), %r9
+ 559      02
+ 560              	.LVL35:
+ 561 007e 6690     		.p2align 4,,10
+ 562              		.p2align 3
+ 563              	.L53:
+ 183:../../bos/utils/b_util_fifo.c ****         f_index     = (f_index + 1) % pinstance->size;
+ 564              		.loc 1 183 9 view .LVU211
+ 183:../../bos/utils/b_util_fifo.c ****         f_index     = (f_index + 1) % pinstance->size;
+ 565              		.loc 1 183 38 is_stmt 0 view .LVU212
+ 566 0080 488B37   		movq	(%rdi), %rsi
+ 567 0083 0FB7C2   		movzwl	%dx, %eax
+ 184:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 568              		.loc 1 184 32 view .LVU213
+ 569 0086 83C201   		addl	$1, %edx
+ 570              	.LVL36:
+ 181:../../bos/utils/b_util_fifo.c ****     {
+ 571              		.loc 1 181 18 view .LVU214
+ 572 0089 4883C101 		addq	$1, %rcx
+ 573              	.LVL37:
+ 183:../../bos/utils/b_util_fifo.c ****         f_index     = (f_index + 1) % pinstance->size;
+ 574              		.loc 1 183 38 view .LVU215
+ 575 008d 0FB60406 		movzbl	(%rsi,%rax), %eax
+ 183:../../bos/utils/b_util_fifo.c ****         f_index     = (f_index + 1) % pinstance->size;
+ 576              		.loc 1 183 21 view .LVU216
+ 577 0091 8841FF   		movb	%al, -1(%rcx)
+ 184:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 578              		.loc 1 184 9 is_stmt 1 view .LVU217
+ 184:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 579              		.loc 1 184 32 is_stmt 0 view .LVU218
+ 580 0094 0FB7C2   		movzwl	%dx, %eax
+ 184:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 581              		.loc 1 184 48 view .LVU219
+GAS LISTING /tmp/ccuzk9kC.s 			page 16
+
+
+ 582 0097 0FB77708 		movzwl	8(%rdi), %esi
+ 184:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 583              		.loc 1 184 37 view .LVU220
+ 584 009b 99       		cltd
+ 585              	.LVL38:
+ 184:../../bos/utils/b_util_fifo.c ****         index += 1;
+ 586              		.loc 1 184 37 view .LVU221
+ 587 009c F7FE     		idivl	%esi
+ 588              	.LVL39:
+ 589              		.loc 1 185 9 is_stmt 1 view .LVU222
+ 181:../../bos/utils/b_util_fifo.c ****     {
+ 590              		.loc 1 181 18 view .LVU223
+ 591 009e 4C39C9   		cmpq	%r9, %rcx
+ 592 00a1 75DD     		jne	.L53
+ 593              	.LVL40:
+ 594              	.L51:
+ 186:../../bos/utils/b_util_fifo.c ****     }
+ 187:../../bos/utils/b_util_fifo.c ****     return size;
+ 595              		.loc 1 187 5 view .LVU224
+ 596              		.loc 1 187 12 is_stmt 0 view .LVU225
+ 597 00a3 410FB7C0 		movzwl	%r8w, %eax
+ 598 00a7 C3       		ret
+ 599              	.LVL41:
+ 600 00a8 0F1F8400 		.p2align 4,,10
+ 600      00000000 
+ 601              		.p2align 3
+ 602              	.L49:
+ 178:../../bos/utils/b_util_fifo.c ****     size     = (size <= fifo_len) ? size : fifo_len;
+ 603              		.loc 1 178 16 discriminator 2 view .LVU226
+ 604 00b0 66440347 		addw	8(%rdi), %r8w
+ 604      08
+ 605 00b5 EB89     		jmp	.L61
+ 606              	.LVL42:
+ 607              	.L56:
+ 171:../../bos/utils/b_util_fifo.c ****     }
+ 608              		.loc 1 171 16 view .LVU227
+ 609 00b7 B8FFFFFF 		movl	$-1, %eax
+ 609      FF
+ 188:../../bos/utils/b_util_fifo.c **** }
+ 610              		.loc 1 188 1 view .LVU228
+ 611 00bc C3       		ret
+ 612              		.cfi_endproc
+ 613              	.LFE23:
+ 615              		.section	.text.bFIFO_RemoveData,"ax",@progbits
+ 616              		.p2align 4
+ 617              		.globl	bFIFO_RemoveData
+ 619              	bFIFO_RemoveData:
+ 620              	.LVL43:
+ 621              	.LFB24:
+ 189:../../bos/utils/b_util_fifo.c **** 
+ 190:../../bos/utils/b_util_fifo.c **** int bFIFO_RemoveData(bFIFO_Instance_t *pinstance, uint16_t size)
+ 191:../../bos/utils/b_util_fifo.c **** {
+ 622              		.loc 1 191 1 is_stmt 1 view -0
+ 623              		.cfi_startproc
+ 624              		.loc 1 191 1 is_stmt 0 view .LVU230
+ 625 0000 F30F1EFA 		endbr64
+ 192:../../bos/utils/b_util_fifo.c ****     uint16_t fifo_len;
+GAS LISTING /tmp/ccuzk9kC.s 			page 17
+
+
+ 626              		.loc 1 192 5 is_stmt 1 view .LVU231
+ 193:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL || pinstance->pbuf == NULL)
+ 627              		.loc 1 193 5 view .LVU232
+ 191:../../bos/utils/b_util_fifo.c ****     uint16_t fifo_len;
+ 628              		.loc 1 191 1 is_stmt 0 view .LVU233
+ 629 0004 4889F9   		movq	%rdi, %rcx
+ 630              		.loc 1 193 8 view .LVU234
+ 631 0007 4885FF   		testq	%rdi, %rdi
+ 632 000a 7448     		je	.L67
+ 633              		.loc 1 193 27 discriminator 1 view .LVU235
+ 634 000c 48833F00 		cmpq	$0, (%rdi)
+ 635 0010 7442     		je	.L67
+ 194:../../bos/utils/b_util_fifo.c ****     {
+ 195:../../bos/utils/b_util_fifo.c ****         return -1;
+ 196:../../bos/utils/b_util_fifo.c ****     }
+ 197:../../bos/utils/b_util_fifo.c ****     fifo_len           = FIFO_LEN(pinstance->w_index, pinstance->r_index, pinstance->size);
+ 636              		.loc 1 197 5 is_stmt 1 view .LVU236
+ 637              		.loc 1 197 26 is_stmt 0 view .LVU237
+ 638 0012 0FB7570C 		movzwl	12(%rdi), %edx
+ 639 0016 0FB7470A 		movzwl	10(%rdi), %eax
+ 640              		.loc 1 197 26 discriminator 2 view .LVU238
+ 641 001a 0FB77F08 		movzwl	8(%rdi), %edi
+ 642              	.LVL44:
+ 643              		.loc 1 197 24 view .LVU239
+ 644 001e 6639C2   		cmpw	%ax, %dx
+ 645              		.loc 1 197 26 discriminator 1 view .LVU240
+ 646 0021 0FB7510C 		movzwl	12(%rcx), %edx
+ 647 0025 0FB7410A 		movzwl	10(%rcx), %eax
+ 648              		.loc 1 197 24 view .LVU241
+ 649 0029 7225     		jb	.L64
+ 650              	.L68:
+ 651              		.loc 1 197 24 discriminator 2 view .LVU242
+ 652 002b 29C2     		subl	%eax, %edx
+ 653              	.LVL45:
+ 198:../../bos/utils/b_util_fifo.c ****     size               = (size <= fifo_len) ? size : fifo_len;
+ 654              		.loc 1 198 5 is_stmt 1 view .LVU243
+ 199:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = (pinstance->r_index + size) % pinstance->size;
+ 655              		.loc 1 199 5 view .LVU244
+ 656              		.loc 1 199 36 is_stmt 0 view .LVU245
+ 657 002d 0FB7410A 		movzwl	10(%rcx), %eax
+ 198:../../bos/utils/b_util_fifo.c ****     size               = (size <= fifo_len) ? size : fifo_len;
+ 658              		.loc 1 198 24 view .LVU246
+ 659 0031 6639F2   		cmpw	%si, %dx
+ 660 0034 0F46F2   		cmovbe	%edx, %esi
+ 661              	.LVL46:
+ 662              		.loc 1 199 46 view .LVU247
+ 663 0037 0FB7F6   		movzwl	%si, %esi
+ 664 003a 01F0     		addl	%esi, %eax
+ 665              		.loc 1 199 54 view .LVU248
+ 666 003c 99       		cltd
+ 667              	.LVL47:
+ 668              		.loc 1 199 54 view .LVU249
+ 669 003d F7FF     		idivl	%edi
+ 670              		.loc 1 199 24 view .LVU250
+ 671 003f 6689510A 		movw	%dx, 10(%rcx)
+ 200:../../bos/utils/b_util_fifo.c ****     return size;
+ 672              		.loc 1 200 5 is_stmt 1 view .LVU251
+GAS LISTING /tmp/ccuzk9kC.s 			page 18
+
+
+ 673              	.LVL48:
+ 674              	.L62:
+ 201:../../bos/utils/b_util_fifo.c **** }
+ 675              		.loc 1 201 1 is_stmt 0 view .LVU252
+ 676 0043 89F0     		movl	%esi, %eax
+ 677 0045 C3       		ret
+ 678              	.LVL49:
+ 679 0046 662E0F1F 		.p2align 4,,10
+ 679      84000000 
+ 679      0000
+ 680              		.p2align 3
+ 681              	.L64:
+ 197:../../bos/utils/b_util_fifo.c ****     size               = (size <= fifo_len) ? size : fifo_len;
+ 682              		.loc 1 197 26 discriminator 2 view .LVU253
+ 683 0050 01FA     		addl	%edi, %edx
+ 684 0052 EBD7     		jmp	.L68
+ 685              	.L67:
+ 195:../../bos/utils/b_util_fifo.c ****     }
+ 686              		.loc 1 195 16 view .LVU254
+ 687 0054 BEFFFFFF 		movl	$-1, %esi
+ 687      FF
+ 688              	.LVL50:
+ 195:../../bos/utils/b_util_fifo.c ****     }
+ 689              		.loc 1 195 16 view .LVU255
+ 690 0059 EBE8     		jmp	.L62
+ 691              		.cfi_endproc
+ 692              	.LFE24:
+ 694              		.section	.text.bFIFO_DynCreate,"ax",@progbits
+ 695              		.p2align 4
+ 696              		.globl	bFIFO_DynCreate
+ 698              	bFIFO_DynCreate:
+ 699              	.LVL51:
+ 700              	.LFB25:
+ 202:../../bos/utils/b_util_fifo.c **** 
+ 203:../../bos/utils/b_util_fifo.c **** int bFIFO_DynCreate(bFIFO_Instance_t *pinstance, uint16_t size)
+ 204:../../bos/utils/b_util_fifo.c **** {
+ 701              		.loc 1 204 1 is_stmt 1 view -0
+ 702              		.cfi_startproc
+ 703              		.loc 1 204 1 is_stmt 0 view .LVU257
+ 704 0000 F30F1EFA 		endbr64
+ 205:../../bos/utils/b_util_fifo.c **** #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1
+ 206:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL)
+ 705              		.loc 1 206 5 is_stmt 1 view .LVU258
+ 706              		.loc 1 206 8 is_stmt 0 view .LVU259
+ 707 0004 4885FF   		testq	%rdi, %rdi
+ 708 0007 743B     		je	.L79
+ 204:../../bos/utils/b_util_fifo.c **** #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1
+ 709              		.loc 1 204 1 view .LVU260
+ 710 0009 55       		pushq	%rbp
+ 711              	.LCFI0:
+ 712              		.cfi_def_cfa_offset 16
+ 713              		.cfi_offset 6, -16
+ 714 000a 89F5     		movl	%esi, %ebp
+ 207:../../bos/utils/b_util_fifo.c ****     {
+ 208:../../bos/utils/b_util_fifo.c ****         return -1;
+ 209:../../bos/utils/b_util_fifo.c ****     }
+ 210:../../bos/utils/b_util_fifo.c ****     pinstance->pbuf = (uint8_t *)bMalloc(size);
+GAS LISTING /tmp/ccuzk9kC.s 			page 19
+
+
+ 715              		.loc 1 210 5 is_stmt 1 view .LVU261
+ 204:../../bos/utils/b_util_fifo.c **** #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1
+ 716              		.loc 1 204 1 is_stmt 0 view .LVU262
+ 717 000c 53       		pushq	%rbx
+ 718              	.LCFI1:
+ 719              		.cfi_def_cfa_offset 24
+ 720              		.cfi_offset 3, -24
+ 721 000d 4889FB   		movq	%rdi, %rbx
+ 722              		.loc 1 210 34 view .LVU263
+ 723 0010 0FB7FE   		movzwl	%si, %edi
+ 724              	.LVL52:
+ 204:../../bos/utils/b_util_fifo.c **** #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1
+ 725              		.loc 1 204 1 view .LVU264
+ 726 0013 4883EC08 		subq	$8, %rsp
+ 727              	.LCFI2:
+ 728              		.cfi_def_cfa_offset 32
+ 729              		.loc 1 210 34 view .LVU265
+ 730 0017 E8000000 		call	bMalloc@PLT
+ 730      00
+ 731              	.LVL53:
+ 732              		.loc 1 210 21 discriminator 1 view .LVU266
+ 733 001c 488903   		movq	%rax, (%rbx)
+ 211:../../bos/utils/b_util_fifo.c ****     if (pinstance->pbuf == NULL)
+ 734              		.loc 1 211 5 is_stmt 1 view .LVU267
+ 735              		.loc 1 211 8 is_stmt 0 view .LVU268
+ 736 001f 4885C0   		testq	%rax, %rax
+ 737 0022 7419     		je	.L72
+ 212:../../bos/utils/b_util_fifo.c ****     {
+ 213:../../bos/utils/b_util_fifo.c ****         return -1;
+ 214:../../bos/utils/b_util_fifo.c ****     }
+ 215:../../bos/utils/b_util_fifo.c ****     pinstance->size    = size;
+ 738              		.loc 1 215 5 is_stmt 1 view .LVU269
+ 216:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+ 739              		.loc 1 216 24 is_stmt 0 view .LVU270
+ 740 0024 31C0     		xorl	%eax, %eax
+ 217:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = 0;
+ 741              		.loc 1 217 24 view .LVU271
+ 742 0026 31D2     		xorl	%edx, %edx
+ 215:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+ 743              		.loc 1 215 24 view .LVU272
+ 744 0028 66896B08 		movw	%bp, 8(%rbx)
+ 216:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+ 745              		.loc 1 216 5 is_stmt 1 view .LVU273
+ 216:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
+ 746              		.loc 1 216 24 is_stmt 0 view .LVU274
+ 747 002c 6689430C 		movw	%ax, 12(%rbx)
+ 748              		.loc 1 217 5 is_stmt 1 view .LVU275
+ 218:../../bos/utils/b_util_fifo.c ****     return 0;
+ 749              		.loc 1 218 12 is_stmt 0 view .LVU276
+ 750 0030 31C0     		xorl	%eax, %eax
+ 217:../../bos/utils/b_util_fifo.c ****     pinstance->r_index = 0;
+ 751              		.loc 1 217 24 view .LVU277
+ 752 0032 6689530A 		movw	%dx, 10(%rbx)
+ 753              		.loc 1 218 5 is_stmt 1 view .LVU278
+ 754              	.L69:
+ 219:../../bos/utils/b_util_fifo.c **** #else
+ 220:../../bos/utils/b_util_fifo.c ****     return -1;
+GAS LISTING /tmp/ccuzk9kC.s 			page 20
+
+
+ 221:../../bos/utils/b_util_fifo.c **** #endif
+ 222:../../bos/utils/b_util_fifo.c **** }
+ 755              		.loc 1 222 1 is_stmt 0 view .LVU279
+ 756 0036 4883C408 		addq	$8, %rsp
+ 757              	.LCFI3:
+ 758              		.cfi_remember_state
+ 759              		.cfi_def_cfa_offset 24
+ 760 003a 5B       		popq	%rbx
+ 761              	.LCFI4:
+ 762              		.cfi_def_cfa_offset 16
+ 763              	.LVL54:
+ 764              		.loc 1 222 1 view .LVU280
+ 765 003b 5D       		popq	%rbp
+ 766              	.LCFI5:
+ 767              		.cfi_def_cfa_offset 8
+ 768              	.LVL55:
+ 769              		.loc 1 222 1 view .LVU281
+ 770 003c C3       		ret
+ 771              	.LVL56:
+ 772              	.L72:
+ 773              	.LCFI6:
+ 774              		.cfi_restore_state
+ 208:../../bos/utils/b_util_fifo.c ****     }
+ 775              		.loc 1 208 16 view .LVU282
+ 776 003d B8FFFFFF 		movl	$-1, %eax
+ 776      FF
+ 777 0042 EBF2     		jmp	.L69
+ 778              	.LVL57:
+ 779              	.L79:
+ 780              	.LCFI7:
+ 781              		.cfi_def_cfa_offset 8
+ 782              		.cfi_restore 3
+ 783              		.cfi_restore 6
+ 208:../../bos/utils/b_util_fifo.c ****     }
+ 784              		.loc 1 208 16 view .LVU283
+ 785 0044 83C8FF   		orl	$-1, %eax
+ 786              		.loc 1 222 1 view .LVU284
+ 787 0047 C3       		ret
+ 788              		.cfi_endproc
+ 789              	.LFE25:
+ 791              		.section	.text.bFIFO_DynDelete,"ax",@progbits
+ 792              		.p2align 4
+ 793              		.globl	bFIFO_DynDelete
+ 795              	bFIFO_DynDelete:
+ 796              	.LVL58:
+ 797              	.LFB26:
+ 223:../../bos/utils/b_util_fifo.c **** 
+ 224:../../bos/utils/b_util_fifo.c **** int bFIFO_DynDelete(bFIFO_Instance_t *pinstance)
+ 225:../../bos/utils/b_util_fifo.c **** {
+ 798              		.loc 1 225 1 is_stmt 1 view -0
+ 799              		.cfi_startproc
+ 800              		.loc 1 225 1 is_stmt 0 view .LVU286
+ 801 0000 F30F1EFA 		endbr64
+ 226:../../bos/utils/b_util_fifo.c **** #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1
+ 227:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL)
+ 802              		.loc 1 227 5 is_stmt 1 view .LVU287
+ 803              		.loc 1 227 8 is_stmt 0 view .LVU288
+GAS LISTING /tmp/ccuzk9kC.s 			page 21
+
+
+ 804 0004 4885FF   		testq	%rdi, %rdi
+ 805 0007 741C     		je	.L84
+ 225:../../bos/utils/b_util_fifo.c **** #if defined(_MEMP_ENABLE) && _MEMP_ENABLE == 1
+ 806              		.loc 1 225 1 view .LVU289
+ 807 0009 53       		pushq	%rbx
+ 808              	.LCFI8:
+ 809              		.cfi_def_cfa_offset 16
+ 810              		.cfi_offset 3, -16
+ 811 000a 4889FB   		movq	%rdi, %rbx
+ 228:../../bos/utils/b_util_fifo.c ****     {
+ 229:../../bos/utils/b_util_fifo.c ****         return -1;
+ 230:../../bos/utils/b_util_fifo.c ****     }
+ 231:../../bos/utils/b_util_fifo.c ****     if (pinstance->pbuf)
+ 812              		.loc 1 231 5 is_stmt 1 view .LVU290
+ 813              		.loc 1 231 18 is_stmt 0 view .LVU291
+ 814 000d 488B3F   		movq	(%rdi), %rdi
+ 815              	.LVL59:
+ 816              		.loc 1 231 8 view .LVU292
+ 817 0010 4885FF   		testq	%rdi, %rdi
+ 818 0013 740C     		je	.L83
+ 232:../../bos/utils/b_util_fifo.c ****     {
+ 233:../../bos/utils/b_util_fifo.c ****         bFree(pinstance->pbuf);
+ 819              		.loc 1 233 9 is_stmt 1 view .LVU293
+ 820 0015 E8000000 		call	bFree@PLT
+ 820      00
+ 821              	.LVL60:
+ 234:../../bos/utils/b_util_fifo.c ****         pinstance->pbuf = NULL;
+ 822              		.loc 1 234 9 view .LVU294
+ 823              		.loc 1 234 25 is_stmt 0 view .LVU295
+ 824 001a 48C70300 		movq	$0, (%rbx)
+ 824      000000
+ 825              	.L83:
+ 235:../../bos/utils/b_util_fifo.c ****     }
+ 236:../../bos/utils/b_util_fifo.c ****     return 0;
+ 826              		.loc 1 236 12 view .LVU296
+ 827 0021 31C0     		xorl	%eax, %eax
+ 237:../../bos/utils/b_util_fifo.c **** #else
+ 238:../../bos/utils/b_util_fifo.c ****     return -1;
+ 239:../../bos/utils/b_util_fifo.c **** #endif
+ 240:../../bos/utils/b_util_fifo.c **** }
+ 828              		.loc 1 240 1 view .LVU297
+ 829 0023 5B       		popq	%rbx
+ 830              	.LCFI9:
+ 831              		.cfi_def_cfa_offset 8
+ 832              	.LVL61:
+ 833              		.loc 1 240 1 view .LVU298
+ 834 0024 C3       		ret
+ 835              	.LVL62:
+ 836              	.L84:
+ 837              		.cfi_restore 3
+ 229:../../bos/utils/b_util_fifo.c ****     }
+ 838              		.loc 1 229 16 view .LVU299
+ 839 0025 B8FFFFFF 		movl	$-1, %eax
+ 839      FF
+ 840              		.loc 1 240 1 view .LVU300
+ 841 002a C3       		ret
+ 842              		.cfi_endproc
+GAS LISTING /tmp/ccuzk9kC.s 			page 22
+
+
+ 843              	.LFE26:
+ 845              		.text
+ 846              	.Letext0:
+ 847              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 848              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 849              		.file 4 "../../bos/utils/inc/b_util_fifo.h"
+ 850              		.file 5 "../../bos/utils/inc/b_util_memp.h"
+ 2636              		.section	.note.gnu.property,"a"
+ 2637              		.align 8
+ 2638 0000 04000000 		.long	1f - 0f
+ 2639 0004 10000000 		.long	4f - 1f
+ 2640 0008 05000000 		.long	5
+ 2641              	0:
+ 2642 000c 474E5500 		.string	"GNU"
+ 2643              	1:
+ 2644              		.align 8
+ 2645 0010 020000C0 		.long	0xc0000002
+ 2646 0014 04000000 		.long	3f - 2f
+ 2647              	2:
+ 2648 0018 03000000 		.long	0x3
+ 2649              	3:
+ 2650 001c 00000000 		.align 8
+ 2651              	4:
+GAS LISTING /tmp/ccuzk9kC.s 			page 23
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_util_fifo.c
+     /tmp/ccuzk9kC.s:9      .text.bFIFO_Init:0000000000000000 bFIFO_Init
+     /tmp/ccuzk9kC.s:64     .text.bFIFO_Deinit:0000000000000000 bFIFO_Deinit
+     /tmp/ccuzk9kC.s:110    .text.bFIFO_Length:0000000000000000 bFIFO_Length
+     /tmp/ccuzk9kC.s:169    .text.bFIFO_Flush:0000000000000000 bFIFO_Flush
+     /tmp/ccuzk9kC.s:206    .text.bFIFO_Write:0000000000000000 bFIFO_Write
+     /tmp/ccuzk9kC.s:348    .text.bFIFO_Read:0000000000000000 bFIFO_Read
+     /tmp/ccuzk9kC.s:484    .text.bFIFO_Copy:0000000000000000 bFIFO_Copy
+     /tmp/ccuzk9kC.s:619    .text.bFIFO_RemoveData:0000000000000000 bFIFO_RemoveData
+     /tmp/ccuzk9kC.s:698    .text.bFIFO_DynCreate:0000000000000000 bFIFO_DynCreate
+     /tmp/ccuzk9kC.s:795    .text.bFIFO_DynDelete:0000000000000000 bFIFO_DynDelete
+
+UNDEFINED SYMBOLS
+bMalloc
+bFree

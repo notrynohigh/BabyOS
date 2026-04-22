@@ -1,0 +1,170 @@
+GAS LISTING /tmp/cchgSBbz.s 			page 1
+
+
+   1              		.file	"b_hal_rng.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_rng.c"
+   5              		.section	.text.bMcuRNGRead,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuRNGRead
+   9              	bMcuRNGRead:
+  10              	.LFB28:
+   1:../../bos/hal/b_hal_rng.c **** /**
+   2:../../bos/hal/b_hal_rng.c ****  *!
+   3:../../bos/hal/b_hal_rng.c ****  * \file        b_hal_rng.c
+   4:../../bos/hal/b_hal_rng.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_rng.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_rng.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_rng.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_rng.c ****  * @attention
+   9:../../bos/hal/b_hal_rng.c ****  *
+  10:../../bos/hal/b_hal_rng.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_rng.c ****  *
+  12:../../bos/hal/b_hal_rng.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_rng.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_rng.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_rng.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_rng.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_rng.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_rng.c ****  *
+  19:../../bos/hal/b_hal_rng.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_rng.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_rng.c ****  *
+  22:../../bos/hal/b_hal_rng.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_rng.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_rng.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_rng.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_rng.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_rng.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_rng.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_rng.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_rng.c ****  */
+  31:../../bos/hal/b_hal_rng.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_rng.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_rng.c **** 
+  34:../../bos/hal/b_hal_rng.c **** /**
+  35:../../bos/hal/b_hal_rng.c ****  * \addtogroup B_HAL
+  36:../../bos/hal/b_hal_rng.c ****  * \{
+  37:../../bos/hal/b_hal_rng.c ****  */
+  38:../../bos/hal/b_hal_rng.c **** 
+  39:../../bos/hal/b_hal_rng.c **** /**
+  40:../../bos/hal/b_hal_rng.c ****  * \addtogroup RNG
+  41:../../bos/hal/b_hal_rng.c ****  * \{
+  42:../../bos/hal/b_hal_rng.c ****  */
+  43:../../bos/hal/b_hal_rng.c **** 
+  44:../../bos/hal/b_hal_rng.c **** /**
+  45:../../bos/hal/b_hal_rng.c ****  * \defgroup RNG_Private_Variables
+  46:../../bos/hal/b_hal_rng.c ****  * \{
+  47:../../bos/hal/b_hal_rng.c ****  */
+  48:../../bos/hal/b_hal_rng.c **** 
+GAS LISTING /tmp/cchgSBbz.s 			page 2
+
+
+  49:../../bos/hal/b_hal_rng.c **** /**
+  50:../../bos/hal/b_hal_rng.c ****  * \}
+  51:../../bos/hal/b_hal_rng.c ****  */
+  52:../../bos/hal/b_hal_rng.c **** 
+  53:../../bos/hal/b_hal_rng.c **** /**
+  54:../../bos/hal/b_hal_rng.c ****  * \addtogroup RNG_Exported_Functions
+  55:../../bos/hal/b_hal_rng.c ****  * \{
+  56:../../bos/hal/b_hal_rng.c ****  */
+  57:../../bos/hal/b_hal_rng.c **** 
+  58:../../bos/hal/b_hal_rng.c **** #if defined(__WEAKDEF)
+  59:../../bos/hal/b_hal_rng.c **** __WEAKDEF uint32_t bMcuRNGRead()
+  60:../../bos/hal/b_hal_rng.c **** {
+  11              		.loc 1 60 1 view -0
+  12              		.cfi_startproc
+  13 0000 F30F1EFA 		endbr64
+  61:../../bos/hal/b_hal_rng.c ****     srand(bHalGetSysTick());
+  14              		.loc 1 61 5 view .LVU1
+  60:../../bos/hal/b_hal_rng.c ****     srand(bHalGetSysTick());
+  15              		.loc 1 60 1 is_stmt 0 view .LVU2
+  16 0004 4883EC08 		subq	$8, %rsp
+  17              	.LCFI0:
+  18              		.cfi_def_cfa_offset 16
+  19              		.loc 1 61 5 view .LVU3
+  20 0008 E8000000 		call	bHalGetSysTick@PLT
+  20      00
+  21              	.LVL0:
+  22 000d 89C7     		movl	%eax, %edi
+  23              		.loc 1 61 5 discriminator 1 view .LVU4
+  24 000f E8000000 		call	srand@PLT
+  24      00
+  25              	.LVL1:
+  62:../../bos/hal/b_hal_rng.c ****     return rand();
+  26              		.loc 1 62 5 is_stmt 1 view .LVU5
+  63:../../bos/hal/b_hal_rng.c **** }
+  27              		.loc 1 63 1 is_stmt 0 view .LVU6
+  28 0014 4883C408 		addq	$8, %rsp
+  29              	.LCFI1:
+  30              		.cfi_def_cfa_offset 8
+  62:../../bos/hal/b_hal_rng.c ****     return rand();
+  31              		.loc 1 62 12 view .LVU7
+  32 0018 E9000000 		jmp	rand@PLT
+  32      00
+  33              	.LVL2:
+  34              		.cfi_endproc
+  35              	.LFE28:
+  37              		.section	.text.bHalRNGRead,"ax",@progbits
+  38              		.p2align 4
+  39              		.globl	bHalRNGRead
+  41              	bHalRNGRead:
+  42              	.LFB29:
+  64:../../bos/hal/b_hal_rng.c **** 
+  65:../../bos/hal/b_hal_rng.c **** #endif
+  66:../../bos/hal/b_hal_rng.c **** 
+  67:../../bos/hal/b_hal_rng.c **** //---------------------------------------------------------------------------------------
+  68:../../bos/hal/b_hal_rng.c **** //---------------------------------------------------------------------------------------
+  69:../../bos/hal/b_hal_rng.c **** 
+  70:../../bos/hal/b_hal_rng.c **** uint32_t bHalRNGRead()
+GAS LISTING /tmp/cchgSBbz.s 			page 3
+
+
+  71:../../bos/hal/b_hal_rng.c **** {
+  43              		.loc 1 71 1 is_stmt 1 view -0
+  44              		.cfi_startproc
+  45 0000 F30F1EFA 		endbr64
+  72:../../bos/hal/b_hal_rng.c **** #if defined(__WEAKDEF)
+  73:../../bos/hal/b_hal_rng.c ****     return bMcuRNGRead();
+  46              		.loc 1 73 5 view .LVU9
+  47              		.loc 1 73 12 is_stmt 0 view .LVU10
+  48 0004 E9000000 		jmp	bMcuRNGRead
+  48      00
+  49              	.LVL3:
+  50              		.cfi_endproc
+  51              	.LFE29:
+  53              		.text
+  54              	.Letext0:
+  55              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+  56              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+  57              		.file 4 "/usr/include/stdlib.h"
+  58              		.file 5 "../../bos/hal/inc/b_hal.h"
+ 492              		.section	.note.gnu.property,"a"
+ 493              		.align 8
+ 494 0000 04000000 		.long	1f - 0f
+ 495 0004 10000000 		.long	4f - 1f
+ 496 0008 05000000 		.long	5
+ 497              	0:
+ 498 000c 474E5500 		.string	"GNU"
+ 499              	1:
+ 500              		.align 8
+ 501 0010 020000C0 		.long	0xc0000002
+ 502 0014 04000000 		.long	3f - 2f
+ 503              	2:
+ 504 0018 03000000 		.long	0x3
+ 505              	3:
+ 506 001c 00000000 		.align 8
+ 507              	4:
+GAS LISTING /tmp/cchgSBbz.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_rng.c
+     /tmp/cchgSBbz.s:9      .text.bMcuRNGRead:0000000000000000 bMcuRNGRead
+     /tmp/cchgSBbz.s:41     .text.bHalRNGRead:0000000000000000 bHalRNGRead
+
+UNDEFINED SYMBOLS
+bHalGetSysTick
+srand
+rand

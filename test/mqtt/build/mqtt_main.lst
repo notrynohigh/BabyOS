@@ -1,0 +1,1056 @@
+GAS LISTING /tmp/ccwo9hOv.s 			page 1
+
+
+   1              		.file	"mqtt_main.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "mqtt_main.c"
+   5              		.section	.rodata.bMqttCallback.str1.1,"aMS",@progbits,1
+   6              	.LC0:
+   7 0000 624D7174 		.string	"bMqttEvent_Connected\r\n"
+   7      74457665 
+   7      6E745F43 
+   7      6F6E6E65 
+   7      63746564 
+   8              	.LC1:
+   9 0017 6D717474 		.string	"mqtt_main.c"
+   9      5F6D6169 
+   9      6E2E6300 
+  10              	.LC2:
+  11 0023 48656C6C 		.string	"Hello from BabyOS! Count: %d"
+  11      6F206672 
+  11      6F6D2042 
+  11      6162794F 
+  11      53212043 
+  12              	.LC3:
+  13 0040 74657374 		.string	"test_topic"
+  13      5F746F70 
+  13      696300
+  14              		.section	.rodata.bMqttCallback.str1.8,"aMS",@progbits,1
+  15              		.align 8
+  16              	.LC4:
+  17 0000 5075626C 		.string	"Publish test message: %s, ret=%d\r\n"
+  17      69736820 
+  17      74657374 
+  17      206D6573 
+  17      73616765 
+  18              		.section	.rodata.bMqttCallback.str1.1
+  19              	.LC5:
+  20 004b 624D7174 		.string	"bMqttEvent_Disconnected\r\n"
+  20      74457665 
+  20      6E745F44 
+  20      6973636F 
+  20      6E6E6563 
+  21              	.LC6:
+  22 0065 746F7069 		.string	"topic:%.*s\r\n"
+  22      633A252E 
+  22      2A730D0A 
+  22      00
+  23              	.LC7:
+  24 0072 7061796C 		.string	"payload:%.*s\r\n"
+  24      6F61643A 
+  24      252E2A73 
+  24      0D0A00
+  25              		.section	.text.bMqttCallback,"ax",@progbits
+  26              		.p2align 4
+  27              		.globl	bMqttCallback
+  29              	bMqttCallback:
+  30              	.LFB125:
+   1:mqtt_main.c   **** /**
+   2:mqtt_main.c   ****  * \file kv_main.c
+GAS LISTING /tmp/ccwo9hOv.s 			page 2
+
+
+   3:mqtt_main.c   ****  * \brief
+   4:mqtt_main.c   ****  * \version 0.1
+   5:mqtt_main.c   ****  * \date 2022-10-29
+   6:mqtt_main.c   ****  * \author notrynohigh (notrynohigh@outlook.com)
+   7:mqtt_main.c   ****  *
+   8:mqtt_main.c   ****  * Copyright (c) 2020 by notrynohigh. All Rights Reserved.
+   9:mqtt_main.c   ****  */
+  10:mqtt_main.c   **** #include <time.h>
+  11:mqtt_main.c   **** #include <string.h>
+  12:mqtt_main.c   **** 
+  13:mqtt_main.c   **** #include "../port.h"
+  14:mqtt_main.c   **** #include "b_os.h"
+  15:mqtt_main.c   **** 
+  16:mqtt_main.c   **** const static bNetCardInfo_t bNetCardInfo[] = {
+  17:mqtt_main.c   ****     [0] =
+  18:mqtt_main.c   ****         {
+  19:mqtt_main.c   ****             .dev_no    = bTESTMAC,
+  20:mqtt_main.c   ****             .priority  = 0,
+  21:mqtt_main.c   ****             .ignore_ip = 1,
+  22:mqtt_main.c   ****         },
+  23:mqtt_main.c   **** };
+  24:mqtt_main.c   **** 
+  25:mqtt_main.c   **** void bMallocFailedHook()
+  26:mqtt_main.c   **** {
+  27:mqtt_main.c   ****     b_log_e("=========================\r\n");
+  28:mqtt_main.c   **** }
+  29:mqtt_main.c   **** 
+  30:mqtt_main.c   **** // Counter for publishing test messages
+  31:mqtt_main.c   **** static int g_publish_count = 0;
+  32:mqtt_main.c   **** 
+  33:mqtt_main.c   **** void bMqttCallback(bMqttEvent_t evt, bMqttEvtParam_t *param, void *user_data)
+  34:mqtt_main.c   **** {
+  31              		.loc 1 34 1 view -0
+  32              		.cfi_startproc
+  33 0000 F30F1EFA 		endbr64
+  34 0004 4154     		pushq	%r12
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 12, -16
+  38 0006 55       		pushq	%rbp
+  39              	.LCFI1:
+  40              		.cfi_def_cfa_offset 24
+  41              		.cfi_offset 6, -24
+  42 0007 53       		pushq	%rbx
+  43              	.LCFI2:
+  44              		.cfi_def_cfa_offset 32
+  45              		.cfi_offset 3, -32
+  46 0008 4881EC90 		subq	$144, %rsp
+  46      000000
+  47              	.LCFI3:
+  48              		.cfi_def_cfa_offset 176
+  49              		.loc 1 34 1 is_stmt 0 view .LVU1
+  50 000f 64488B04 		movq	%fs:40, %rax
+  50      25280000 
+  50      00
+  51 0018 48898424 		movq	%rax, 136(%rsp)
+  51      88000000 
+GAS LISTING /tmp/ccwo9hOv.s 			page 3
+
+
+  52 0020 31C0     		xorl	%eax, %eax
+  35:mqtt_main.c   ****     switch (evt)
+  53              		.loc 1 35 5 is_stmt 1 view .LVU2
+  54 0022 83FF01   		cmpl	$1, %edi
+  55 0025 0F844501 		je	.L2
+  55      0000
+  56 002b 83FF02   		cmpl	$2, %edi
+  57 002e 0F84CC00 		je	.L3
+  57      0000
+  58 0034 85FF     		testl	%edi, %edi
+  59 0036 0F859A00 		jne	.L1
+  59      0000
+  60              	.LBB13:
+  61              	.LBI13:
+  33:mqtt_main.c   **** {
+  62              		.loc 1 33 6 view .LVU3
+  63              	.LBB14:
+  36:mqtt_main.c   ****     {
+  37:mqtt_main.c   ****         case B_MQTT_EVT_CONN:
+  38:mqtt_main.c   ****             b_log_i("bMqttEvent_Connected\r\n");
+  64              		.loc 1 38 13 view .LVU4
+  65 003c 4C8D2500 		leaq	__func__.1(%rip), %r12
+  65      000000
+  66 0043 488D2D00 		leaq	.LC1(%rip), %rbp
+  66      000000
+  67 004a B9260000 		movl	$38, %ecx
+  67      00
+  68              	.LBB15:
+  69              	.LBB16:
+  70              	.LBB17:
+  71              		.file 2 "/usr/include/x86_64-linux-gnu/bits/stdio2.h"
+   1:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** /* Checking macros for stdio functions.
+   2:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   3:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    This file is part of the GNU C Library.
+   4:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+   5:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is free software; you can redistribute it and/or
+   6:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    modify it under the terms of the GNU Lesser General Public
+   7:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License as published by the Free Software Foundation; either
+   8:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    version 2.1 of the License, or (at your option) any later version.
+   9:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  10:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  11:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  12:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  13:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Lesser General Public License for more details.
+  14:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  15:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    You should have received a copy of the GNU Lesser General Public
+  16:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License along with the GNU C Library; if not, see
+  17:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    <https://www.gnu.org/licenses/>.  */
+  18:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  19:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _BITS_STDIO2_H
+  20:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #define _BITS_STDIO2_H 1
+  21:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  22:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _STDIO_H
+  23:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # error "Never include <bits/stdio2.h> directly; use <stdio.h> instead."
+  24:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  25:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  26:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifdef __va_arg_pack
+GAS LISTING /tmp/ccwo9hOv.s 			page 4
+
+
+  27:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  28:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (sprintf (char *__restrict __s, const char *__restrict __fmt, ...))
+  29:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  30:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+  31:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				  __glibc_objsize (__s), __fmt,
+  32:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				  __va_arg_pack ());
+  33:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  34:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #elif !defined __cplusplus
+  35:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # define sprintf(str, ...) \
+  36:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   __builtin___sprintf_chk (str, __USE_FORTIFY_LEVEL - 1,		      \
+  37:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 			   __glibc_objsize (str), __VA_ARGS__)
+  38:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  39:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  41:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (vsprintf (char *__restrict __s, const char *__restrict __fmt,
+  42:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 __gnuc_va_list __ap))
+  43:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  44:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___vsprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+  45:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt, __ap);
+  46:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  47:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  48:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #if defined __USE_ISOC99 || defined __USE_UNIX98
+  49:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # ifdef __va_arg_pack
+  50:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (snprintf (char *__restrict __s, size_t __n,
+  52:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+  53:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  54:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+  72              		.loc 2 54 10 is_stmt 0 discriminator 1 view .LVU5
+  73 004f 4889E3   		movq	%rsp, %rbx
+  74              	.LBE17:
+  75              	.LBE16:
+  76              	.LBE15:
+  77              		.loc 1 38 13 view .LVU6
+  78 0052 4C8D0500 		leaq	.LC0(%rip), %r8
+  78      000000
+  79 0059 4C89E2   		movq	%r12, %rdx
+  80 005c 4889EE   		movq	%rbp, %rsi
+  81 005f E8000000 		call	bLogOut@PLT
+  81      00
+  82              	.LBB22:
+  39:mqtt_main.c   ****             // Try to publish a test message when connected
+  40:mqtt_main.c   ****             {
+  41:mqtt_main.c   ****                 char msg[128];
+  83              		.loc 1 41 17 is_stmt 1 view .LVU7
+  42:mqtt_main.c   ****                 snprintf(msg, sizeof(msg), "Hello from BabyOS! Count: %d", g_publish_count++);
+  84              		.loc 1 42 17 view .LVU8
+  85 0064 448B0D00 		movl	g_publish_count(%rip), %r9d
+  85      000000
+  86              	.LBB20:
+  87              	.LBB18:
+  88              		.loc 2 54 10 is_stmt 0 discriminator 1 view .LVU9
+  89 006b B9800000 		movl	$128, %ecx
+  89      00
+  90 0070 4889DF   		movq	%rbx, %rdi
+  91 0073 4C8D0500 		leaq	.LC2(%rip), %r8
+  91      000000
+GAS LISTING /tmp/ccwo9hOv.s 			page 5
+
+
+  92 007a BA020000 		movl	$2, %edx
+  92      00
+  93 007f BE800000 		movl	$128, %esi
+  93      00
+  94              	.LBE18:
+  95              	.LBE20:
+  96              		.loc 1 42 17 view .LVU10
+  97 0084 418D4101 		leal	1(%r9), %eax
+  98 0088 89050000 		movl	%eax, g_publish_count(%rip)
+  98      0000
+  99              	.LBB21:
+ 100              	.LBI16:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 101              		.loc 2 51 1 is_stmt 1 view .LVU11
+ 102              	.LBB19:
+ 103              		.loc 2 54 3 view .LVU12
+ 104              		.loc 2 54 10 is_stmt 0 discriminator 1 view .LVU13
+ 105 008e 31C0     		xorl	%eax, %eax
+ 106 0090 E8000000 		call	__snprintf_chk@PLT
+ 106      00
+ 107              	.LBE19:
+ 108              	.LBE21:
+  43:mqtt_main.c   ****                 int ret = bMqttSrvPublish("test_topic", (uint8_t *)msg, strlen(msg), 0);
+ 109              		.loc 1 43 17 is_stmt 1 view .LVU14
+ 110              		.loc 1 43 73 is_stmt 0 view .LVU15
+ 111 0095 4889DF   		movq	%rbx, %rdi
+ 112 0098 E8000000 		call	strlen@PLT
+ 112      00
+ 113              		.loc 1 43 27 discriminator 1 view .LVU16
+ 114 009d 31C9     		xorl	%ecx, %ecx
+ 115 009f 4889DE   		movq	%rbx, %rsi
+ 116 00a2 488D3D00 		leaq	.LC3(%rip), %rdi
+ 116      000000
+ 117 00a9 89C2     		movl	%eax, %edx
+ 118 00ab E8000000 		call	bMqttSrvPublish@PLT
+ 118      00
+  44:mqtt_main.c   ****                 b_log_i("Publish test message: %s, ret=%d\r\n", msg, ret);
+ 119              		.loc 1 44 17 is_stmt 1 view .LVU17
+ 120 00b0 4883EC08 		subq	$8, %rsp
+ 121              	.LCFI4:
+ 122              		.cfi_def_cfa_offset 184
+ 123 00b4 4989D9   		movq	%rbx, %r9
+ 124 00b7 4C89E2   		movq	%r12, %rdx
+ 125 00ba 50       		pushq	%rax
+ 126              	.LCFI5:
+ 127              		.cfi_def_cfa_offset 192
+ 128 00bb 4C8D0500 		leaq	.LC4(%rip), %r8
+ 128      000000
+ 129 00c2 B92C0000 		movl	$44, %ecx
+ 129      00
+ 130 00c7 4889EE   		movq	%rbp, %rsi
+ 131 00ca 31FF     		xorl	%edi, %edi
+ 132 00cc 31C0     		xorl	%eax, %eax
+ 133 00ce E8000000 		call	bLogOut@PLT
+ 133      00
+ 134              	.LBE22:
+  45:mqtt_main.c   ****             }
+GAS LISTING /tmp/ccwo9hOv.s 			page 6
+
+
+  46:mqtt_main.c   ****             break;
+ 135              		.loc 1 46 13 view .LVU18
+  47:mqtt_main.c   ****         case B_MQTT_EVT_DISCONN:
+  48:mqtt_main.c   ****             b_log_i("bMqttEvent_Disconnected\r\n");
+  49:mqtt_main.c   ****             break;
+  50:mqtt_main.c   ****         case B_MQTT_EVT_PUB:
+  51:mqtt_main.c   ****             b_log("topic:%.*s\r\n", param->pub.topic_len, param->pub.topic);
+  52:mqtt_main.c   ****             b_log("payload:%.*s\r\n", param->pub.payload_len, param->pub.payload);
+  53:mqtt_main.c   ****             break;
+  54:mqtt_main.c   ****         default:
+  55:mqtt_main.c   ****             break;
+  56:mqtt_main.c   ****     }
+  57:mqtt_main.c   **** }
+ 136              		.loc 1 57 1 is_stmt 0 view .LVU19
+ 137 00d3 4889DC   		movq	%rbx, %rsp
+ 138              	.LCFI6:
+ 139              		.cfi_def_cfa_offset 176
+ 140              	.L1:
+ 141              	.LBE14:
+ 142              	.LBE13:
+ 143 00d6 488B8424 		movq	136(%rsp), %rax
+ 143      88000000 
+ 144 00de 64482B04 		subq	%fs:40, %rax
+ 144      25280000 
+ 144      00
+ 145 00e7 0F85C400 		jne	.L8
+ 145      0000
+ 146 00ed 4881C490 		addq	$144, %rsp
+ 146      000000
+ 147              	.LCFI7:
+ 148              		.cfi_remember_state
+ 149              		.cfi_def_cfa_offset 32
+ 150 00f4 5B       		popq	%rbx
+ 151              	.LCFI8:
+ 152              		.cfi_def_cfa_offset 24
+ 153 00f5 5D       		popq	%rbp
+ 154              	.LCFI9:
+ 155              		.cfi_def_cfa_offset 16
+ 156 00f6 415C     		popq	%r12
+ 157              	.LCFI10:
+ 158              		.cfi_def_cfa_offset 8
+ 159 00f8 C3       		ret
+ 160 00f9 0F1F8000 		.p2align 4,,10
+ 160      000000
+ 161              		.p2align 3
+ 162              	.L3:
+ 163              	.LCFI11:
+ 164              		.cfi_restore_state
+  51:mqtt_main.c   ****             b_log("payload:%.*s\r\n", param->pub.payload_len, param->pub.payload);
+ 165              		.loc 1 51 13 view .LVU20
+ 166 0100 4883EC08 		subq	$8, %rsp
+ 167              	.LCFI12:
+ 168              		.cfi_def_cfa_offset 184
+ 169 0104 FF7608   		pushq	8(%rsi)
+ 170              	.LCFI13:
+ 171              		.cfi_def_cfa_offset 192
+ 172 0107 4C8D2500 		leaq	__func__.1(%rip), %r12
+GAS LISTING /tmp/ccwo9hOv.s 			page 7
+
+
+ 172      000000
+ 173 010e 31C0     		xorl	%eax, %eax
+ 174 0110 440FB74E 		movzwl	16(%rsi), %r9d
+ 174      10
+ 175 0115 4889F3   		movq	%rsi, %rbx
+  51:mqtt_main.c   ****             b_log("payload:%.*s\r\n", param->pub.payload_len, param->pub.payload);
+ 176              		.loc 1 51 13 is_stmt 1 view .LVU21
+ 177 0118 B9330000 		movl	$51, %ecx
+ 177      00
+ 178 011d 4C89E2   		movq	%r12, %rdx
+ 179 0120 488D2D00 		leaq	.LC1(%rip), %rbp
+ 179      000000
+ 180 0127 4C8D0500 		leaq	.LC6(%rip), %r8
+ 180      000000
+ 181 012e BF030000 		movl	$3, %edi
+ 181      00
+ 182 0133 4889EE   		movq	%rbp, %rsi
+ 183 0136 E8000000 		call	bLogOut@PLT
+ 183      00
+  52:mqtt_main.c   ****             break;
+ 184              		.loc 1 52 13 view .LVU22
+ 185 013b 58       		popq	%rax
+ 186              	.LCFI14:
+ 187              		.cfi_def_cfa_offset 184
+ 188 013c FF7318   		pushq	24(%rbx)
+ 189              	.LCFI15:
+ 190              		.cfi_def_cfa_offset 192
+ 191 013f B9340000 		movl	$52, %ecx
+ 191      00
+ 192 0144 448B4B20 		movl	32(%rbx), %r9d
+ 193 0148 4C89E2   		movq	%r12, %rdx
+ 194 014b 4C8D0500 		leaq	.LC7(%rip), %r8
+ 194      000000
+ 195 0152 31C0     		xorl	%eax, %eax
+ 196 0154 4889EE   		movq	%rbp, %rsi
+ 197 0157 BF030000 		movl	$3, %edi
+ 197      00
+ 198 015c E8000000 		call	bLogOut@PLT
+ 198      00
+  53:mqtt_main.c   ****         default:
+ 199              		.loc 1 53 13 view .LVU23
+ 200 0161 5A       		popq	%rdx
+ 201              	.LCFI16:
+ 202              		.cfi_def_cfa_offset 184
+ 203 0162 59       		popq	%rcx
+ 204              	.LCFI17:
+ 205              		.cfi_def_cfa_offset 176
+ 206              		.loc 1 57 1 is_stmt 0 view .LVU24
+ 207 0163 E96EFFFF 		jmp	.L1
+ 207      FF
+ 208 0168 0F1F8400 		.p2align 4,,10
+ 208      00000000 
+ 209              		.p2align 3
+ 210              	.L2:
+  48:mqtt_main.c   ****             break;
+ 211              		.loc 1 48 13 is_stmt 1 view .LVU25
+ 212 0170 488B8424 		movq	136(%rsp), %rax
+GAS LISTING /tmp/ccwo9hOv.s 			page 8
+
+
+ 212      88000000 
+ 213 0178 64482B04 		subq	%fs:40, %rax
+ 213      25280000 
+ 213      00
+ 214 0181 752E     		jne	.L8
+ 215              		.loc 1 57 1 is_stmt 0 view .LVU26
+ 216 0183 4881C490 		addq	$144, %rsp
+ 216      000000
+ 217              	.LCFI18:
+ 218              		.cfi_remember_state
+ 219              		.cfi_def_cfa_offset 32
+  48:mqtt_main.c   ****             break;
+ 220              		.loc 1 48 13 view .LVU27
+ 221 018a B9300000 		movl	$48, %ecx
+ 221      00
+ 222 018f 31FF     		xorl	%edi, %edi
+ 223 0191 31C0     		xorl	%eax, %eax
+ 224              		.loc 1 57 1 view .LVU28
+ 225 0193 5B       		popq	%rbx
+ 226              	.LCFI19:
+ 227              		.cfi_def_cfa_offset 24
+  48:mqtt_main.c   ****             break;
+ 228              		.loc 1 48 13 view .LVU29
+ 229 0194 4C8D0500 		leaq	.LC5(%rip), %r8
+ 229      000000
+ 230 019b 488D1500 		leaq	__func__.1(%rip), %rdx
+ 230      000000
+ 231              		.loc 1 57 1 view .LVU30
+ 232 01a2 5D       		popq	%rbp
+ 233              	.LCFI20:
+ 234              		.cfi_def_cfa_offset 16
+  48:mqtt_main.c   ****             break;
+ 235              		.loc 1 48 13 view .LVU31
+ 236 01a3 488D3500 		leaq	.LC1(%rip), %rsi
+ 236      000000
+ 237              		.loc 1 57 1 view .LVU32
+ 238 01aa 415C     		popq	%r12
+ 239              	.LCFI21:
+ 240              		.cfi_def_cfa_offset 8
+  48:mqtt_main.c   ****             break;
+ 241              		.loc 1 48 13 view .LVU33
+ 242 01ac E9000000 		jmp	bLogOut@PLT
+ 242      00
+ 243              	.L8:
+ 244              	.LCFI22:
+ 245              		.cfi_restore_state
+ 246              		.loc 1 57 1 view .LVU34
+ 247 01b1 E8000000 		call	__stack_chk_fail@PLT
+ 247      00
+ 248              		.cfi_endproc
+ 249              	.LFE125:
+ 251              		.section	.rodata.bMallocFailedHook.str1.1,"aMS",@progbits,1
+ 252              	.LC8:
+ 253 0000 3D3D3D3D 		.string	"=========================\r\n"
+ 253      3D3D3D3D 
+ 253      3D3D3D3D 
+ 253      3D3D3D3D 
+GAS LISTING /tmp/ccwo9hOv.s 			page 9
+
+
+ 253      3D3D3D3D 
+ 254              		.section	.text.bMallocFailedHook,"ax",@progbits
+ 255              		.p2align 4
+ 256              		.globl	bMallocFailedHook
+ 258              	bMallocFailedHook:
+ 259              	.LFB124:
+  26:mqtt_main.c   ****     b_log_e("=========================\r\n");
+ 260              		.loc 1 26 1 is_stmt 1 view -0
+ 261              		.cfi_startproc
+ 262 0000 F30F1EFA 		endbr64
+  27:mqtt_main.c   **** }
+ 263              		.loc 1 27 5 view .LVU36
+ 264 0004 4C8D0500 		leaq	.LC8(%rip), %r8
+ 264      000000
+ 265 000b B91B0000 		movl	$27, %ecx
+ 265      00
+ 266 0010 31C0     		xorl	%eax, %eax
+ 267 0012 BF020000 		movl	$2, %edi
+ 267      00
+ 268 0017 488D1500 		leaq	__func__.2(%rip), %rdx
+ 268      000000
+ 269 001e 488D3500 		leaq	.LC1(%rip), %rsi
+ 269      000000
+ 270 0025 E9000000 		jmp	bLogOut@PLT
+ 270      00
+ 271              	.LVL0:
+ 272              		.cfi_endproc
+ 273              	.LFE124:
+ 275              		.section	.rodata.main.str1.8,"aMS",@progbits,1
+ 276              		.align 8
+ 277              	.LC9:
+ 278 0000 624D7174 		.string	"bMqttSrvStartWithCfg returned: %d\r\n"
+ 278      74537276 
+ 278      53746172 
+ 278      74576974 
+ 278      68436667 
+ 279              		.section	.rodata.main.str1.1,"aMS",@progbits,1
+ 280              	.LC10:
+ 281 0000 63757374 		.string	"custom_topic"
+ 281      6F6D5F74 
+ 281      6F706963 
+ 281      00
+ 282              		.section	.rodata.main.str1.8
+ 283 0024 00000000 		.align 8
+ 284              	.LC11:
+ 285 0028 624D7174 		.string	"bMqttSrvSubscribe(custom_topic) returned: %d\r\n"
+ 285      74537276 
+ 285      53756273 
+ 285      63726962 
+ 285      65286375 
+ 286              		.section	.rodata.main.str1.1
+ 287              	.LC12:
+ 288 000d 6561726C 		.string	"early message"
+ 288      79206D65 
+ 288      73736167 
+ 288      6500
+ 289              		.section	.rodata.main.str1.8
+GAS LISTING /tmp/ccwo9hOv.s 			page 10
+
+
+ 290 0057 00       		.align 8
+ 291              	.LC13:
+ 292 0058 624D7174 		.string	"bMqttSrvPublish (early) returned: %d\r\n"
+ 292      74537276 
+ 292      5075626C 
+ 292      69736820 
+ 292      28656172 
+ 293 007f 00       		.align 8
+ 294              	.LC14:
+ 295 0080 624D7174 		.string	"bMqttSrvGetStatus returned: %d\r\n"
+ 295      74537276 
+ 295      47657453 
+ 295      74617475 
+ 295      73207265 
+ 296 00a1 00000000 		.align 8
+ 296      000000
+ 297              	.LC15:
+ 298 00a8 0D0A3D3D 		.string	"\r\n=== MQTT API Functions ===\r\n"
+ 298      3D204D51 
+ 298      54542041 
+ 298      50492046 
+ 298      756E6374 
+ 299 00c7 00       		.align 8
+ 300              	.LC16:
+ 301 00c8 624D7174 		.string	"bMqttSrvStartWithCfg(cb, arg) - Start MQTT service with callback\r\n"
+ 301      74537276 
+ 301      53746172 
+ 301      74576974 
+ 301      68436667 
+ 302 010b 00000000 		.align 8
+ 302      00
+ 303              	.LC17:
+ 304 0110 624D7174 		.string	"bMqttSrvPublish(topic, payload, len, qos) - Publish message\r\n"
+ 304      74537276 
+ 304      5075626C 
+ 304      69736828 
+ 304      746F7069 
+ 305 014e 0000     		.align 8
+ 306              	.LC18:
+ 307 0150 624D7174 		.string	"bMqttSrvSubscribe(topic, qos) - Subscribe to topic\r\n"
+ 307      74537276 
+ 307      53756273 
+ 307      63726962 
+ 307      6528746F 
+ 308 0185 000000   		.align 8
+ 309              	.LC19:
+ 310 0188 624D7174 		.string	"bMqttSrvUnsubscribe(topic) - Unsubscribe from topic\r\n"
+ 310      74537276 
+ 310      556E7375 
+ 310      62736372 
+ 310      69626528 
+ 311 01be 0000     		.align 8
+ 312              	.LC20:
+ 313 01c0 624D7174 		.string	"bMqttSrvGetStatus() - Get connection status\r\n"
+ 313      74537276 
+ 313      47657453 
+ 313      74617475 
+GAS LISTING /tmp/ccwo9hOv.s 			page 11
+
+
+ 313      73282920 
+ 314 01ee 0000     		.align 8
+ 315              	.LC21:
+ 316 01f0 624D7174 		.string	"bMqttSrvDestroy() - Destroy MQTT service\r\n"
+ 316      74537276 
+ 316      44657374 
+ 316      726F7928 
+ 316      29202D20 
+ 317 021b 00000000 		.align 8
+ 317      00
+ 318              	.LC22:
+ 319 0220 3D3D3D3D 		.string	"===========================\r\n\r\n"
+ 319      3D3D3D3D 
+ 319      3D3D3D3D 
+ 319      3D3D3D3D 
+ 319      3D3D3D3D 
+ 320              		.section	.text.startup.main,"ax",@progbits
+ 321              		.p2align 4
+ 322              		.globl	main
+ 324              	main:
+ 325              	.LFB126:
+  58:mqtt_main.c   **** 
+  59:mqtt_main.c   **** int main()
+  60:mqtt_main.c   **** {
+ 326              		.loc 1 60 1 view -0
+ 327              		.cfi_startproc
+ 328 0000 F30F1EFA 		endbr64
+  61:mqtt_main.c   ****     port_init();
+ 329              		.loc 1 61 5 view .LVU38
+  60:mqtt_main.c   ****     port_init();
+ 330              		.loc 1 60 1 is_stmt 0 view .LVU39
+ 331 0004 55       		pushq	%rbp
+ 332              	.LCFI23:
+ 333              		.cfi_def_cfa_offset 16
+ 334              		.cfi_offset 6, -16
+  62:mqtt_main.c   ****     bInit();
+  63:mqtt_main.c   ****     bTcpipSrvInit(&bNetCardInfo[0], 1);
+  64:mqtt_main.c   ****     
+  65:mqtt_main.c   ****     // Initialize and start MQTT service
+  66:mqtt_main.c   ****     int ret = bMqttSrvStartWithCfg(bMqttCallback, NULL);
+  67:mqtt_main.c   ****     b_log_i("bMqttSrvStartWithCfg returned: %d\r\n", ret);
+ 335              		.loc 1 67 5 view .LVU40
+ 336 0005 488D2D00 		leaq	__func__.0(%rip), %rbp
+ 336      000000
+  60:mqtt_main.c   ****     port_init();
+ 337              		.loc 1 60 1 view .LVU41
+ 338 000c 53       		pushq	%rbx
+ 339              	.LCFI24:
+ 340              		.cfi_def_cfa_offset 24
+ 341              		.cfi_offset 3, -24
+ 342              		.loc 1 67 5 view .LVU42
+ 343 000d 488D1D00 		leaq	.LC1(%rip), %rbx
+ 343      000000
+  60:mqtt_main.c   ****     port_init();
+ 344              		.loc 1 60 1 view .LVU43
+ 345 0014 4883EC08 		subq	$8, %rsp
+ 346              	.LCFI25:
+GAS LISTING /tmp/ccwo9hOv.s 			page 12
+
+
+ 347              		.cfi_def_cfa_offset 32
+  61:mqtt_main.c   ****     bInit();
+ 348              		.loc 1 61 5 view .LVU44
+ 349 0018 E8000000 		call	port_init@PLT
+ 349      00
+ 350              	.LVL1:
+  62:mqtt_main.c   ****     bInit();
+ 351              		.loc 1 62 5 is_stmt 1 view .LVU45
+ 352 001d E8000000 		call	bInit@PLT
+ 352      00
+ 353              	.LVL2:
+  63:mqtt_main.c   ****     
+ 354              		.loc 1 63 5 view .LVU46
+ 355 0022 BE010000 		movl	$1, %esi
+ 355      00
+ 356 0027 488D3D00 		leaq	bNetCardInfo(%rip), %rdi
+ 356      000000
+ 357 002e E8000000 		call	bTcpipSrvInit@PLT
+ 357      00
+ 358              	.LVL3:
+  66:mqtt_main.c   ****     b_log_i("bMqttSrvStartWithCfg returned: %d\r\n", ret);
+ 359              		.loc 1 66 5 view .LVU47
+  66:mqtt_main.c   ****     b_log_i("bMqttSrvStartWithCfg returned: %d\r\n", ret);
+ 360              		.loc 1 66 15 is_stmt 0 view .LVU48
+ 361 0033 31F6     		xorl	%esi, %esi
+ 362 0035 488D3D00 		leaq	bMqttCallback(%rip), %rdi
+ 362      000000
+ 363 003c E8000000 		call	bMqttSrvStartWithCfg@PLT
+ 363      00
+ 364              	.LVL4:
+ 365              		.loc 1 67 5 view .LVU49
+ 366 0041 B9430000 		movl	$67, %ecx
+ 366      00
+ 367 0046 4889EA   		movq	%rbp, %rdx
+ 368 0049 31FF     		xorl	%edi, %edi
+  66:mqtt_main.c   ****     b_log_i("bMqttSrvStartWithCfg returned: %d\r\n", ret);
+ 369              		.loc 1 66 15 view .LVU50
+ 370 004b 4189C1   		movl	%eax, %r9d
+ 371              	.LVL5:
+ 372              		.loc 1 67 5 is_stmt 1 view .LVU51
+ 373 004e 4C8D0500 		leaq	.LC9(%rip), %r8
+ 373      000000
+ 374 0055 31C0     		xorl	%eax, %eax
+ 375              	.LVL6:
+ 376              		.loc 1 67 5 is_stmt 0 view .LVU52
+ 377 0057 4889DE   		movq	%rbx, %rsi
+ 378 005a E8000000 		call	bLogOut@PLT
+ 378      00
+ 379              	.LVL7:
+  68:mqtt_main.c   ****     
+  69:mqtt_main.c   ****     // Try to subscribe to an additional topic
+  70:mqtt_main.c   ****     ret = bMqttSrvSubscribe("custom_topic", 0);
+ 380              		.loc 1 70 5 is_stmt 1 view .LVU53
+ 381              		.loc 1 70 11 is_stmt 0 view .LVU54
+ 382 005f 31F6     		xorl	%esi, %esi
+ 383 0061 488D3D00 		leaq	.LC10(%rip), %rdi
+ 383      000000
+GAS LISTING /tmp/ccwo9hOv.s 			page 13
+
+
+ 384 0068 E8000000 		call	bMqttSrvSubscribe@PLT
+ 384      00
+ 385              	.LVL8:
+  71:mqtt_main.c   ****     b_log_i("bMqttSrvSubscribe(custom_topic) returned: %d\r\n", ret);
+ 386              		.loc 1 71 5 view .LVU55
+ 387 006d 31FF     		xorl	%edi, %edi
+ 388 006f B9470000 		movl	$71, %ecx
+ 388      00
+ 389 0074 4889EA   		movq	%rbp, %rdx
+  70:mqtt_main.c   ****     b_log_i("bMqttSrvSubscribe(custom_topic) returned: %d\r\n", ret);
+ 390              		.loc 1 70 11 view .LVU56
+ 391 0077 4189C1   		movl	%eax, %r9d
+ 392              	.LVL9:
+ 393              		.loc 1 71 5 is_stmt 1 view .LVU57
+ 394 007a 4C8D0500 		leaq	.LC11(%rip), %r8
+ 394      000000
+ 395 0081 31C0     		xorl	%eax, %eax
+ 396              	.LVL10:
+ 397              		.loc 1 71 5 is_stmt 0 view .LVU58
+ 398 0083 4889DE   		movq	%rbx, %rsi
+ 399 0086 E8000000 		call	bLogOut@PLT
+ 399      00
+ 400              	.LVL11:
+  72:mqtt_main.c   ****     
+  73:mqtt_main.c   ****     // Try to publish immediately (should fail since not connected yet)
+  74:mqtt_main.c   ****     ret = bMqttSrvPublish("test_topic", (uint8_t *)"early message", 13, 0);
+ 401              		.loc 1 74 5 is_stmt 1 view .LVU59
+ 402              		.loc 1 74 11 is_stmt 0 view .LVU60
+ 403 008b 31C9     		xorl	%ecx, %ecx
+ 404 008d BA0D0000 		movl	$13, %edx
+ 404      00
+ 405 0092 488D3500 		leaq	.LC12(%rip), %rsi
+ 405      000000
+ 406 0099 488D3D00 		leaq	.LC3(%rip), %rdi
+ 406      000000
+ 407 00a0 E8000000 		call	bMqttSrvPublish@PLT
+ 407      00
+ 408              	.LVL12:
+  75:mqtt_main.c   ****     b_log_i("bMqttSrvPublish (early) returned: %d\r\n", ret);
+ 409              		.loc 1 75 5 view .LVU61
+ 410 00a5 31FF     		xorl	%edi, %edi
+ 411 00a7 B94B0000 		movl	$75, %ecx
+ 411      00
+ 412 00ac 4889EA   		movq	%rbp, %rdx
+  74:mqtt_main.c   ****     b_log_i("bMqttSrvPublish (early) returned: %d\r\n", ret);
+ 413              		.loc 1 74 11 view .LVU62
+ 414 00af 4189C1   		movl	%eax, %r9d
+ 415              	.LVL13:
+ 416              		.loc 1 75 5 is_stmt 1 view .LVU63
+ 417 00b2 4C8D0500 		leaq	.LC13(%rip), %r8
+ 417      000000
+ 418 00b9 4889DE   		movq	%rbx, %rsi
+ 419 00bc 31C0     		xorl	%eax, %eax
+ 420              	.LVL14:
+ 421              		.loc 1 75 5 is_stmt 0 view .LVU64
+ 422 00be E8000000 		call	bLogOut@PLT
+ 422      00
+GAS LISTING /tmp/ccwo9hOv.s 			page 14
+
+
+ 423              	.LVL15:
+  76:mqtt_main.c   ****     
+  77:mqtt_main.c   ****     // Check MQTT status
+  78:mqtt_main.c   ****     int status = bMqttSrvGetStatus();
+ 424              		.loc 1 78 5 is_stmt 1 view .LVU65
+ 425              		.loc 1 78 18 is_stmt 0 view .LVU66
+ 426 00c3 E8000000 		call	bMqttSrvGetStatus@PLT
+ 426      00
+ 427              	.LVL16:
+  79:mqtt_main.c   ****     b_log_i("bMqttSrvGetStatus returned: %d\r\n", status);
+ 428              		.loc 1 79 5 view .LVU67
+ 429 00c8 31FF     		xorl	%edi, %edi
+ 430 00ca B94F0000 		movl	$79, %ecx
+ 430      00
+ 431 00cf 4889EA   		movq	%rbp, %rdx
+  78:mqtt_main.c   ****     b_log_i("bMqttSrvGetStatus returned: %d\r\n", status);
+ 432              		.loc 1 78 18 view .LVU68
+ 433 00d2 4189C1   		movl	%eax, %r9d
+ 434              	.LVL17:
+ 435              		.loc 1 79 5 is_stmt 1 view .LVU69
+ 436 00d5 4C8D0500 		leaq	.LC14(%rip), %r8
+ 436      000000
+ 437 00dc 31C0     		xorl	%eax, %eax
+ 438              	.LVL18:
+ 439              		.loc 1 79 5 is_stmt 0 view .LVU70
+ 440 00de 4889DE   		movq	%rbx, %rsi
+ 441 00e1 E8000000 		call	bLogOut@PLT
+ 441      00
+ 442              	.LVL19:
+  80:mqtt_main.c   ****     
+  81:mqtt_main.c   ****     // Show available API functions
+  82:mqtt_main.c   ****     b_log_i("\r\n=== MQTT API Functions ===\r\n");
+ 443              		.loc 1 82 5 is_stmt 1 view .LVU71
+ 444 00e6 31FF     		xorl	%edi, %edi
+ 445 00e8 31C0     		xorl	%eax, %eax
+ 446 00ea 4C8D0500 		leaq	.LC15(%rip), %r8
+ 446      000000
+ 447 00f1 B9520000 		movl	$82, %ecx
+ 447      00
+ 448 00f6 4889EA   		movq	%rbp, %rdx
+ 449 00f9 4889DE   		movq	%rbx, %rsi
+ 450 00fc E8000000 		call	bLogOut@PLT
+ 450      00
+ 451              	.LVL20:
+  83:mqtt_main.c   ****     b_log_i("bMqttSrvStartWithCfg(cb, arg) - Start MQTT service with callback\r\n");
+ 452              		.loc 1 83 5 view .LVU72
+ 453 0101 31FF     		xorl	%edi, %edi
+ 454 0103 31C0     		xorl	%eax, %eax
+ 455 0105 4C8D0500 		leaq	.LC16(%rip), %r8
+ 455      000000
+ 456 010c B9530000 		movl	$83, %ecx
+ 456      00
+ 457 0111 4889EA   		movq	%rbp, %rdx
+ 458 0114 4889DE   		movq	%rbx, %rsi
+ 459 0117 E8000000 		call	bLogOut@PLT
+ 459      00
+ 460              	.LVL21:
+GAS LISTING /tmp/ccwo9hOv.s 			page 15
+
+
+  84:mqtt_main.c   ****     b_log_i("bMqttSrvPublish(topic, payload, len, qos) - Publish message\r\n");
+ 461              		.loc 1 84 5 view .LVU73
+ 462 011c 31C0     		xorl	%eax, %eax
+ 463 011e 4C8D0500 		leaq	.LC17(%rip), %r8
+ 463      000000
+ 464 0125 31FF     		xorl	%edi, %edi
+ 465 0127 B9540000 		movl	$84, %ecx
+ 465      00
+ 466 012c 4889EA   		movq	%rbp, %rdx
+ 467 012f 4889DE   		movq	%rbx, %rsi
+ 468 0132 E8000000 		call	bLogOut@PLT
+ 468      00
+ 469              	.LVL22:
+  85:mqtt_main.c   ****     b_log_i("bMqttSrvSubscribe(topic, qos) - Subscribe to topic\r\n");
+ 470              		.loc 1 85 5 view .LVU74
+ 471 0137 31FF     		xorl	%edi, %edi
+ 472 0139 4C8D0500 		leaq	.LC18(%rip), %r8
+ 472      000000
+ 473 0140 31C0     		xorl	%eax, %eax
+ 474 0142 B9550000 		movl	$85, %ecx
+ 474      00
+ 475 0147 4889EA   		movq	%rbp, %rdx
+ 476 014a 4889DE   		movq	%rbx, %rsi
+ 477 014d E8000000 		call	bLogOut@PLT
+ 477      00
+ 478              	.LVL23:
+  86:mqtt_main.c   ****     b_log_i("bMqttSrvUnsubscribe(topic) - Unsubscribe from topic\r\n");
+ 479              		.loc 1 86 5 view .LVU75
+ 480 0152 4C8D0500 		leaq	.LC19(%rip), %r8
+ 480      000000
+ 481 0159 31FF     		xorl	%edi, %edi
+ 482 015b 31C0     		xorl	%eax, %eax
+ 483 015d B9560000 		movl	$86, %ecx
+ 483      00
+ 484 0162 4889EA   		movq	%rbp, %rdx
+ 485 0165 4889DE   		movq	%rbx, %rsi
+ 486 0168 E8000000 		call	bLogOut@PLT
+ 486      00
+ 487              	.LVL24:
+  87:mqtt_main.c   ****     b_log_i("bMqttSrvGetStatus() - Get connection status\r\n");
+ 488              		.loc 1 87 5 view .LVU76
+ 489 016d 4C8D0500 		leaq	.LC20(%rip), %r8
+ 489      000000
+ 490 0174 31FF     		xorl	%edi, %edi
+ 491 0176 31C0     		xorl	%eax, %eax
+ 492 0178 B9570000 		movl	$87, %ecx
+ 492      00
+ 493 017d 4889EA   		movq	%rbp, %rdx
+ 494 0180 4889DE   		movq	%rbx, %rsi
+ 495 0183 E8000000 		call	bLogOut@PLT
+ 495      00
+ 496              	.LVL25:
+  88:mqtt_main.c   ****     b_log_i("bMqttSrvDestroy() - Destroy MQTT service\r\n");
+ 497              		.loc 1 88 5 view .LVU77
+ 498 0188 4C8D0500 		leaq	.LC21(%rip), %r8
+ 498      000000
+ 499 018f 31FF     		xorl	%edi, %edi
+GAS LISTING /tmp/ccwo9hOv.s 			page 16
+
+
+ 500 0191 31C0     		xorl	%eax, %eax
+ 501 0193 B9580000 		movl	$88, %ecx
+ 501      00
+ 502 0198 4889EA   		movq	%rbp, %rdx
+ 503 019b 4889DE   		movq	%rbx, %rsi
+ 504 019e E8000000 		call	bLogOut@PLT
+ 504      00
+ 505              	.LVL26:
+  89:mqtt_main.c   ****     b_log_i("===========================\r\n\r\n");
+ 506              		.loc 1 89 5 view .LVU78
+ 507 01a3 4C8D0500 		leaq	.LC22(%rip), %r8
+ 507      000000
+ 508 01aa 31FF     		xorl	%edi, %edi
+ 509 01ac 31C0     		xorl	%eax, %eax
+ 510 01ae B9590000 		movl	$89, %ecx
+ 510      00
+ 511 01b3 4889EA   		movq	%rbp, %rdx
+ 512 01b6 4889DE   		movq	%rbx, %rsi
+ 513 01b9 E8000000 		call	bLogOut@PLT
+ 513      00
+ 514              	.LVL27:
+ 515 01be 6690     		.p2align 4,,10
+ 516              		.p2align 3
+ 517              	.L12:
+  90:mqtt_main.c   ****     
+  91:mqtt_main.c   ****     while (1)
+ 518              		.loc 1 91 5 view .LVU79
+  92:mqtt_main.c   ****     {
+  93:mqtt_main.c   ****         bExec();
+ 519              		.loc 1 93 9 discriminator 1 view .LVU80
+ 520 01c0 E8000000 		call	bExec@PLT
+ 520      00
+ 521              	.LVL28:
+  91:mqtt_main.c   ****     {
+ 522              		.loc 1 91 11 view .LVU81
+ 523 01c5 EBF9     		jmp	.L12
+ 524              		.cfi_endproc
+ 525              	.LFE126:
+ 527              		.section	.rodata.__func__.0,"a"
+ 530              	__func__.0:
+ 531 0000 6D61696E 		.string	"main"
+ 531      00
+ 532              		.section	.rodata.__func__.1,"a"
+ 533              		.align 8
+ 536              	__func__.1:
+ 537 0000 624D7174 		.string	"bMqttCallback"
+ 537      7443616C 
+ 537      6C626163 
+ 537      6B00
+ 538              		.section	.rodata.__func__.2,"a"
+ 539              		.align 16
+ 542              	__func__.2:
+ 543 0000 624D616C 		.string	"bMallocFailedHook"
+ 543      6C6F6346 
+ 543      61696C65 
+ 543      64486F6F 
+ 543      6B00
+GAS LISTING /tmp/ccwo9hOv.s 			page 17
+
+
+ 544              		.section	.bss.g_publish_count,"aw",@nobits
+ 545              		.align 4
+ 548              	g_publish_count:
+ 549 0000 00000000 		.zero	4
+ 550              		.section	.rodata.bNetCardInfo,"a"
+ 551              		.align 16
+ 554              	bNetCardInfo:
+ 555 0000 01000000 		.long	1
+ 556 0004 00       		.byte	0
+ 557 0005 01       		.byte	1
+ 558 0006 00000000 		.zero	14
+ 558      00000000 
+ 558      00000000 
+ 558      0000
+ 559              		.text
+ 560              	.Letext0:
+ 561              		.file 3 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 562              		.file 4 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 563              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 564              		.file 6 "../../bos/modules/inc/b_mod_tcpip.h"
+ 565              		.file 7 "../../bos/services/inc/b_srv_mqtt.h"
+ 566              		.file 8 "../../bos/core/inc/b_device.h"
+ 567              		.file 9 "../../bos/core/inc/b_core.h"
+ 568              		.file 10 "../../bos/services/inc/b_srv_tcpip.h"
+ 569              		.file 11 "/usr/include/string.h"
+ 570              		.file 12 "../../bos/utils/inc/b_util_log.h"
+ 571              		.file 13 "../port.h"
+ 2948              		.section	.note.gnu.property,"a"
+ 2949              		.align 8
+ 2950 0000 04000000 		.long	1f - 0f
+ 2951 0004 10000000 		.long	4f - 1f
+ 2952 0008 05000000 		.long	5
+ 2953              	0:
+ 2954 000c 474E5500 		.string	"GNU"
+ 2955              	1:
+ 2956              		.align 8
+ 2957 0010 020000C0 		.long	0xc0000002
+ 2958 0014 04000000 		.long	3f - 2f
+ 2959              	2:
+ 2960 0018 03000000 		.long	0x3
+ 2961              	3:
+ 2962 001c 00000000 		.align 8
+ 2963              	4:
+GAS LISTING /tmp/ccwo9hOv.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 mqtt_main.c
+     /tmp/ccwo9hOv.s:29     .text.bMqttCallback:0000000000000000 bMqttCallback
+     /tmp/ccwo9hOv.s:536    .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/ccwo9hOv.s:548    .bss.g_publish_count:0000000000000000 g_publish_count
+     /tmp/ccwo9hOv.s:258    .text.bMallocFailedHook:0000000000000000 bMallocFailedHook
+     /tmp/ccwo9hOv.s:542    .rodata.__func__.2:0000000000000000 __func__.2
+     /tmp/ccwo9hOv.s:324    .text.startup.main:0000000000000000 main
+     /tmp/ccwo9hOv.s:530    .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccwo9hOv.s:554    .rodata.bNetCardInfo:0000000000000000 bNetCardInfo
+     /tmp/ccwo9hOv.s:8      .rodata.bMqttCallback.str1.1:0000000000000017 .LC1
+     /tmp/ccwo9hOv.s:6      .rodata.bMqttCallback.str1.1:0000000000000000 .LC0
+     /tmp/ccwo9hOv.s:10     .rodata.bMqttCallback.str1.1:0000000000000023 .LC2
+     /tmp/ccwo9hOv.s:12     .rodata.bMqttCallback.str1.1:0000000000000040 .LC3
+     /tmp/ccwo9hOv.s:16     .rodata.bMqttCallback.str1.8:0000000000000000 .LC4
+     /tmp/ccwo9hOv.s:21     .rodata.bMqttCallback.str1.1:0000000000000065 .LC6
+     /tmp/ccwo9hOv.s:23     .rodata.bMqttCallback.str1.1:0000000000000072 .LC7
+     /tmp/ccwo9hOv.s:19     .rodata.bMqttCallback.str1.1:000000000000004b .LC5
+     /tmp/ccwo9hOv.s:252    .rodata.bMallocFailedHook.str1.1:0000000000000000 .LC8
+     /tmp/ccwo9hOv.s:277    .rodata.main.str1.8:0000000000000000 .LC9
+     /tmp/ccwo9hOv.s:280    .rodata.main.str1.1:0000000000000000 .LC10
+     /tmp/ccwo9hOv.s:284    .rodata.main.str1.8:0000000000000028 .LC11
+     /tmp/ccwo9hOv.s:287    .rodata.main.str1.1:000000000000000d .LC12
+     /tmp/ccwo9hOv.s:291    .rodata.main.str1.8:0000000000000058 .LC13
+     /tmp/ccwo9hOv.s:294    .rodata.main.str1.8:0000000000000080 .LC14
+     /tmp/ccwo9hOv.s:297    .rodata.main.str1.8:00000000000000a8 .LC15
+     /tmp/ccwo9hOv.s:300    .rodata.main.str1.8:00000000000000c8 .LC16
+     /tmp/ccwo9hOv.s:303    .rodata.main.str1.8:0000000000000110 .LC17
+     /tmp/ccwo9hOv.s:306    .rodata.main.str1.8:0000000000000150 .LC18
+     /tmp/ccwo9hOv.s:309    .rodata.main.str1.8:0000000000000188 .LC19
+     /tmp/ccwo9hOv.s:312    .rodata.main.str1.8:00000000000001c0 .LC20
+     /tmp/ccwo9hOv.s:315    .rodata.main.str1.8:00000000000001f0 .LC21
+     /tmp/ccwo9hOv.s:318    .rodata.main.str1.8:0000000000000220 .LC22
+
+UNDEFINED SYMBOLS
+bLogOut
+__snprintf_chk
+strlen
+bMqttSrvPublish
+__stack_chk_fail
+port_init
+bInit
+bTcpipSrvInit
+bMqttSrvStartWithCfg
+bMqttSrvSubscribe
+bMqttSrvGetStatus
+bExec

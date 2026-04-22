@@ -1,0 +1,1631 @@
+GAS LISTING /tmp/ccqR7pxh.s 			page 1
+
+
+   1              		.file	"MQTTConnectClient.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c"
+   5              		.section	.text.MQTTSerialize_connectLength,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	MQTTSerialize_connectLength
+   9              	MQTTSerialize_connectLength:
+  10              	.LVL0:
+  11              	.LFB20:
+   1:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** /*******************************************************************************
+   2:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  * Copyright (c) 2014 IBM Corp.
+   3:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  *
+   4:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  * All rights reserved. This program and the accompanying materials
+   5:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  *
+   8:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  * The Eclipse Public License is available at
+   9:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  * and the Eclipse Distribution License is available at
+  11:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  *
+  13:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  * Contributors:
+  14:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****  *******************************************************************************/
+  16:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  17:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** #include "MQTTPacket.h"
+  18:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** #include "StackTrace.h"
+  19:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  20:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** #include <string.h>
+  21:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  22:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** /**
+  23:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * Determines the length of the MQTT connect packet that would be produced using the supplied conn
+  24:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param options the options to be used to build the connect packet
+  25:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @return the length of buffer needed to contain the serialized version of the packet
+  26:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   */
+  27:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** int MQTTSerialize_connectLength(MQTTPacket_connectData* options)
+  28:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
+  12              		.loc 1 28 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 28 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  29:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int len = 0;
+  16              		.loc 1 29 2 is_stmt 1 view .LVU2
+  17              	.LVL1:
+  30:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  31:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	FUNC_ENTRY;
+  18              		.loc 1 31 12 view .LVU3
+  32:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  33:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->MQTTVersion == 3)
+  19              		.loc 1 33 2 view .LVU4
+  20              		.loc 1 33 13 is_stmt 0 view .LVU5
+  21 0004 0FB64708 		movzbl	8(%rdi), %eax
+  28:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int len = 0;
+  22              		.loc 1 28 1 view .LVU6
+  23 0008 4154     		pushq	%r12
+  24              	.LCFI0:
+GAS LISTING /tmp/ccqR7pxh.s 			page 2
+
+
+  25              		.cfi_def_cfa_offset 16
+  26              		.cfi_offset 12, -16
+  27 000a 55       		pushq	%rbp
+  28              	.LCFI1:
+  29              		.cfi_def_cfa_offset 24
+  30              		.cfi_offset 6, -24
+  31 000b BD0C0000 		movl	$12, %ebp
+  31      00
+  32 0010 53       		pushq	%rbx
+  33              	.LCFI2:
+  34              		.cfi_def_cfa_offset 32
+  35              		.cfi_offset 3, -32
+  28:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int len = 0;
+  36              		.loc 1 28 1 view .LVU7
+  37 0011 4889FB   		movq	%rdi, %rbx
+  38              		.loc 1 33 5 view .LVU8
+  39 0014 3C03     		cmpb	$3, %al
+  40 0016 740F     		je	.L2
+  34:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len = 12; /* variable depending on MQTT or MQIsdp */
+  35:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	else if (options->MQTTVersion == 4)
+  41              		.loc 1 35 7 is_stmt 1 view .LVU9
+  29:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  42              		.loc 1 29 6 is_stmt 0 view .LVU10
+  43 0018 3C04     		cmpb	$4, %al
+  44 001a BD0A0000 		movl	$10, %ebp
+  44      00
+  45 001f B8000000 		movl	$0, %eax
+  45      00
+  46 0024 0F45E8   		cmovne	%eax, %ebp
+  47              	.L2:
+  48              	.LVL2:
+  36:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len = 10;
+  37:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  38:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	len += MQTTstrlen(options->clientID)+2;
+  49              		.loc 1 38 2 is_stmt 1 view .LVU11
+  50              		.loc 1 38 9 is_stmt 0 view .LVU12
+  51 0027 F30F6F43 		movdqu	16(%rbx), %xmm0
+  51      10
+  52 002c 4883EC20 		subq	$32, %rsp
+  53              	.LCFI3:
+  54              		.cfi_def_cfa_offset 64
+  55 0030 0F110424 		movups	%xmm0, (%rsp)
+  56 0034 488B4320 		movq	32(%rbx), %rax
+  57 0038 48894424 		movq	%rax, 16(%rsp)
+  57      10
+  58 003d E8000000 		call	MQTTstrlen@PLT
+  58      00
+  59              	.LVL3:
+  39:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->willFlag)
+  60              		.loc 1 39 5 view .LVU13
+  61 0042 4883C420 		addq	$32, %rsp
+  62              	.LCFI4:
+  63              		.cfi_def_cfa_offset 32
+  64 0046 807B2B00 		cmpb	$0, 43(%rbx)
+  38:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->willFlag)
+  65              		.loc 1 38 6 discriminator 1 view .LVU14
+  66 004a 8D6C0502 		leal	2(%rbp,%rax), %ebp
+GAS LISTING /tmp/ccqR7pxh.s 			page 3
+
+
+  67              	.LVL4:
+  68              		.loc 1 39 2 is_stmt 1 view .LVU15
+  69              		.loc 1 39 5 is_stmt 0 view .LVU16
+  70 004e 0F859C00 		jne	.L16
+  70      0000
+  71              	.L3:
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->will.topicName)+2 + MQTTstrlen(options->will.message)+2;
+  41:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+  72              		.loc 1 41 2 is_stmt 1 view .LVU17
+  73              		.loc 1 41 5 is_stmt 0 view .LVU18
+  74 0054 48837B70 		cmpq	$0, 112(%rbx)
+  74      00
+  75 0059 7465     		je	.L17
+  76              	.L4:
+  42:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->username)+2;
+  77              		.loc 1 42 3 is_stmt 1 view .LVU19
+  78              		.loc 1 42 10 is_stmt 0 view .LVU20
+  79 005b F30F6F4B 		movdqu	112(%rbx), %xmm1
+  79      70
+  80 0060 4883EC20 		subq	$32, %rsp
+  81              	.LCFI5:
+  82              		.cfi_def_cfa_offset 64
+  83 0064 0F110C24 		movups	%xmm1, (%rsp)
+  84 0068 488B8380 		movq	128(%rbx), %rax
+  84      000000
+  85 006f 48894424 		movq	%rax, 16(%rsp)
+  85      10
+  86 0074 E8000000 		call	MQTTstrlen@PLT
+  86      00
+  87              	.LVL5:
+  88              		.loc 1 42 7 discriminator 1 view .LVU21
+  89 0079 4883C420 		addq	$32, %rsp
+  90              	.LCFI6:
+  91              		.cfi_def_cfa_offset 32
+  43:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->password.cstring || options->password.lenstring.data)
+  92              		.loc 1 43 5 view .LVU22
+  93 007d 4883BB88 		cmpq	$0, 136(%rbx)
+  93      00000000 
+  42:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->username)+2;
+  94              		.loc 1 42 7 discriminator 1 view .LVU23
+  95 0085 8D6C0502 		leal	2(%rbp,%rax), %ebp
+  96              	.LVL6:
+  97              		.loc 1 43 2 is_stmt 1 view .LVU24
+  98              		.loc 1 43 5 is_stmt 0 view .LVU25
+  99 0089 744D     		je	.L18
+ 100              	.L6:
+  44:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->password)+2;
+ 101              		.loc 1 44 3 is_stmt 1 view .LVU26
+ 102              		.loc 1 44 10 is_stmt 0 view .LVU27
+ 103 008b F30F6F93 		movdqu	136(%rbx), %xmm2
+ 103      88000000 
+ 104 0093 4883EC20 		subq	$32, %rsp
+ 105              	.LCFI7:
+ 106              		.cfi_def_cfa_offset 64
+ 107 0097 0F111424 		movups	%xmm2, (%rsp)
+ 108 009b 488B8398 		movq	152(%rbx), %rax
+ 108      000000
+GAS LISTING /tmp/ccqR7pxh.s 			page 4
+
+
+ 109 00a2 48894424 		movq	%rax, 16(%rsp)
+ 109      10
+ 110 00a7 E8000000 		call	MQTTstrlen@PLT
+ 110      00
+ 111              	.LVL7:
+ 112              		.loc 1 44 7 discriminator 1 view .LVU28
+ 113 00ac 4883C420 		addq	$32, %rsp
+ 114              	.LCFI8:
+ 115              		.cfi_def_cfa_offset 32
+ 116 00b0 8D6C0502 		leal	2(%rbp,%rax), %ebp
+ 117              	.LVL8:
+  45:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  46:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	FUNC_EXIT_RC(len);
+ 118              		.loc 1 46 19 is_stmt 1 view .LVU29
+  47:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return len;
+ 119              		.loc 1 47 2 view .LVU30
+  48:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 120              		.loc 1 48 1 is_stmt 0 view .LVU31
+ 121 00b4 5B       		popq	%rbx
+ 122              	.LCFI9:
+ 123              		.cfi_remember_state
+ 124              		.cfi_def_cfa_offset 24
+ 125              	.LVL9:
+ 126              		.loc 1 48 1 view .LVU32
+ 127 00b5 89E8     		movl	%ebp, %eax
+ 128 00b7 5D       		popq	%rbp
+ 129              	.LCFI10:
+ 130              		.cfi_def_cfa_offset 16
+ 131              	.LVL10:
+ 132              		.loc 1 48 1 view .LVU33
+ 133 00b8 415C     		popq	%r12
+ 134              	.LCFI11:
+ 135              		.cfi_def_cfa_offset 8
+ 136 00ba C3       		ret
+ 137              	.LVL11:
+ 138 00bb 0F1F4400 		.p2align 4,,10
+ 138      00
+ 139              		.p2align 3
+ 140              	.L17:
+ 141              	.LCFI12:
+ 142              		.cfi_restore_state
+  41:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->username)+2;
+ 143              		.loc 1 41 32 discriminator 1 view .LVU34
+ 144 00c0 4883BB80 		cmpq	$0, 128(%rbx)
+ 144      00000000 
+ 145 00c8 7591     		jne	.L4
+  43:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->password)+2;
+ 146              		.loc 1 43 2 is_stmt 1 view .LVU35
+  43:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->password)+2;
+ 147              		.loc 1 43 5 is_stmt 0 view .LVU36
+ 148 00ca 4883BB88 		cmpq	$0, 136(%rbx)
+ 148      00000000 
+ 149 00d2 75B7     		jne	.L6
+ 150              		.p2align 4,,10
+ 151 00d4 0F1F4000 		.p2align 3
+ 152              	.L18:
+  43:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		len += MQTTstrlen(options->password)+2;
+GAS LISTING /tmp/ccqR7pxh.s 			page 5
+
+
+ 153              		.loc 1 43 32 discriminator 1 view .LVU37
+ 154 00d8 4883BB98 		cmpq	$0, 152(%rbx)
+ 154      00000000 
+ 155 00e0 75A9     		jne	.L6
+ 156              		.loc 1 48 1 view .LVU38
+ 157 00e2 89E8     		movl	%ebp, %eax
+ 158 00e4 5B       		popq	%rbx
+ 159              	.LCFI13:
+ 160              		.cfi_remember_state
+ 161              		.cfi_def_cfa_offset 24
+ 162              	.LVL12:
+ 163              		.loc 1 48 1 view .LVU39
+ 164 00e5 5D       		popq	%rbp
+ 165              	.LCFI14:
+ 166              		.cfi_def_cfa_offset 16
+ 167              	.LVL13:
+ 168              		.loc 1 48 1 view .LVU40
+ 169 00e6 415C     		popq	%r12
+ 170              	.LCFI15:
+ 171              		.cfi_def_cfa_offset 8
+ 172 00e8 C3       		ret
+ 173              	.LVL14:
+ 174 00e9 0F1F8000 		.p2align 4,,10
+ 174      000000
+ 175              		.p2align 3
+ 176              	.L16:
+ 177              	.LCFI16:
+ 178              		.cfi_restore_state
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 179              		.loc 1 40 3 is_stmt 1 view .LVU41
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 180              		.loc 1 40 10 is_stmt 0 view .LVU42
+ 181 00f0 F30F6F5B 		movdqu	56(%rbx), %xmm3
+ 181      38
+ 182 00f5 4883EC20 		subq	$32, %rsp
+ 183              	.LCFI17:
+ 184              		.cfi_def_cfa_offset 64
+ 185 00f9 0F111C24 		movups	%xmm3, (%rsp)
+ 186 00fd 488B4348 		movq	72(%rbx), %rax
+ 187 0101 48894424 		movq	%rax, 16(%rsp)
+ 187      10
+ 188 0106 E8000000 		call	MQTTstrlen@PLT
+ 188      00
+ 189              	.LVL15:
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 190              		.loc 1 40 50 discriminator 1 view .LVU43
+ 191 010b F30F6F63 		movdqu	80(%rbx), %xmm4
+ 191      50
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 192              		.loc 1 40 10 view .LVU44
+ 193 0110 4189C4   		movl	%eax, %r12d
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 194              		.loc 1 40 50 discriminator 1 view .LVU45
+ 195 0113 0F112424 		movups	%xmm4, (%rsp)
+ 196 0117 488B4360 		movq	96(%rbx), %rax
+ 197 011b 48894424 		movq	%rax, 16(%rsp)
+ 197      10
+GAS LISTING /tmp/ccqR7pxh.s 			page 6
+
+
+ 198 0120 E8000000 		call	MQTTstrlen@PLT
+ 198      00
+ 199              	.LVL16:
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 200              		.loc 1 40 7 discriminator 2 view .LVU46
+ 201 0125 4883C420 		addq	$32, %rsp
+ 202              	.LCFI18:
+ 203              		.cfi_def_cfa_offset 32
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 204              		.loc 1 40 83 discriminator 2 view .LVU47
+ 205 0129 418D4404 		leal	4(%r12,%rax), %eax
+ 205      04
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 206              		.loc 1 40 7 discriminator 2 view .LVU48
+ 207 012e 01C5     		addl	%eax, %ebp
+ 208              	.LVL17:
+  40:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 209              		.loc 1 40 7 discriminator 2 view .LVU49
+ 210 0130 E91FFFFF 		jmp	.L3
+ 210      FF
+ 211              		.cfi_endproc
+ 212              	.LFE20:
+ 214              		.section	.rodata.MQTTSerialize_connect.str1.1,"aMS",@progbits,1
+ 215              	.LC0:
+ 216 0000 4D515454 		.string	"MQTT"
+ 216      00
+ 217              	.LC1:
+ 218 0005 4D514973 		.string	"MQIsdp"
+ 218      647000
+ 219              		.section	.text.MQTTSerialize_connect,"ax",@progbits
+ 220              		.p2align 4
+ 221              		.globl	MQTTSerialize_connect
+ 223              	MQTTSerialize_connect:
+ 224              	.LVL18:
+ 225              	.LFB21:
+  49:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  50:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  51:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** /**
+  52:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * Serializes the connect options into the buffer.
+  53:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buf the buffer into which the packet will be serialized
+  54:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param len the length in bytes of the supplied buffer
+  55:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param options the options to be used to build the connect packet
+  56:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @return serialized length, or error if 0
+  57:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   */
+  58:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** int MQTTSerialize_connect(unsigned char* buf, int buflen, MQTTPacket_connectData* options)
+  59:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
+ 226              		.loc 1 59 1 is_stmt 1 view -0
+ 227              		.cfi_startproc
+ 228              		.loc 1 59 1 is_stmt 0 view .LVU51
+ 229 0000 F30F1EFA 		endbr64
+ 230 0004 4157     		pushq	%r15
+ 231              	.LCFI19:
+ 232              		.cfi_def_cfa_offset 16
+ 233              		.cfi_offset 15, -16
+ 234 0006 4156     		pushq	%r14
+ 235              	.LCFI20:
+ 236              		.cfi_def_cfa_offset 24
+GAS LISTING /tmp/ccqR7pxh.s 			page 7
+
+
+ 237              		.cfi_offset 14, -24
+ 238 0008 4155     		pushq	%r13
+ 239              	.LCFI21:
+ 240              		.cfi_def_cfa_offset 32
+ 241              		.cfi_offset 13, -32
+ 242 000a 4989FD   		movq	%rdi, %r13
+ 243 000d 4154     		pushq	%r12
+ 244              	.LCFI22:
+ 245              		.cfi_def_cfa_offset 40
+ 246              		.cfi_offset 12, -40
+ 247 000f 4189F4   		movl	%esi, %r12d
+ 248 0012 55       		pushq	%rbp
+ 249              	.LCFI23:
+ 250              		.cfi_def_cfa_offset 48
+ 251              		.cfi_offset 6, -48
+ 252 0013 53       		pushq	%rbx
+ 253              	.LCFI24:
+ 254              		.cfi_def_cfa_offset 56
+ 255              		.cfi_offset 3, -56
+ 256 0014 4889D3   		movq	%rdx, %rbx
+ 257 0017 4883EC18 		subq	$24, %rsp
+ 258              	.LCFI25:
+ 259              		.cfi_def_cfa_offset 80
+ 260              		.loc 1 59 1 view .LVU52
+ 261 001b 64488B04 		movq	%fs:40, %rax
+ 261      25280000 
+ 261      00
+ 262 0024 48894424 		movq	%rax, 8(%rsp)
+ 262      08
+ 263 0029 31C0     		xorl	%eax, %eax
+  60:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char *ptr = buf;
+ 264              		.loc 1 60 2 is_stmt 1 view .LVU53
+ 265              		.loc 1 60 17 is_stmt 0 view .LVU54
+ 266 002b 48893C24 		movq	%rdi, (%rsp)
+  61:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	MQTTHeader header = {0};
+ 267              		.loc 1 61 2 is_stmt 1 view .LVU55
+  62:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	MQTTConnectFlags flags = {0};
+ 268              		.loc 1 62 2 view .LVU56
+  63:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int len = 0;
+ 269              		.loc 1 63 2 view .LVU57
+ 270              	.LVL19:
+  64:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int rc = -1;
+ 271              		.loc 1 64 2 view .LVU58
+  65:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  66:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	FUNC_ENTRY;
+ 272              		.loc 1 66 12 view .LVU59
+  67:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (MQTTPacket_len(len = MQTTSerialize_connectLength(options)) > buflen)
+ 273              		.loc 1 67 2 view .LVU60
+ 274              		.loc 1 67 27 is_stmt 0 view .LVU61
+ 275 002f 4889D7   		movq	%rdx, %rdi
+ 276              	.LVL20:
+ 277              		.loc 1 67 27 view .LVU62
+ 278 0032 E8000000 		call	MQTTSerialize_connectLength
+ 278      00
+ 279              	.LVL21:
+ 280              		.loc 1 67 6 discriminator 1 view .LVU63
+ 281 0037 89C7     		movl	%eax, %edi
+GAS LISTING /tmp/ccqR7pxh.s 			page 8
+
+
+ 282              		.loc 1 67 27 view .LVU64
+ 283 0039 4189C6   		movl	%eax, %r14d
+ 284              	.LVL22:
+ 285              		.loc 1 67 6 discriminator 1 view .LVU65
+ 286 003c E8000000 		call	MQTTPacket_len@PLT
+ 286      00
+ 287              	.LVL23:
+ 288              		.loc 1 67 5 discriminator 2 view .LVU66
+ 289 0041 4439E0   		cmpl	%r12d, %eax
+ 290 0044 0F8F3E02 		jg	.L32
+ 290      0000
+  68:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+  69:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		rc = MQTTPACKET_BUFFER_TOO_SHORT;
+  70:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+  71:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+  72:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  73:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.byte = 0;
+  74:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.bits.type = CONNECT;
+  75:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 291              		.loc 1 75 2 view .LVU67
+ 292 004a 4989E4   		movq	%rsp, %r12
+ 293              	.LVL24:
+ 294              		.loc 1 75 2 view .LVU68
+ 295 004d BE100000 		movl	$16, %esi
+ 295      00
+ 296 0052 31ED     		xorl	%ebp, %ebp
+ 297              	.LVL25:
+  73:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.bits.type = CONNECT;
+ 298              		.loc 1 73 2 is_stmt 1 view .LVU69
+  74:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 299              		.loc 1 74 2 view .LVU70
+ 300              		.loc 1 75 2 view .LVU71
+ 301 0054 4C89E7   		movq	%r12, %rdi
+ 302 0057 E8000000 		call	writeChar@PLT
+ 302      00
+ 303              	.LVL26:
+  76:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  77:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	ptr += MQTTPacket_encode(ptr, len); /* write remaining length */
+ 304              		.loc 1 77 2 view .LVU72
+ 305              		.loc 1 77 9 is_stmt 0 view .LVU73
+ 306 005c 488B3C24 		movq	(%rsp), %rdi
+ 307 0060 4489F6   		movl	%r14d, %esi
+ 308 0063 E8000000 		call	MQTTPacket_encode@PLT
+ 308      00
+ 309              	.LVL27:
+ 310              		.loc 1 77 9 discriminator 1 view .LVU74
+ 311 0068 4898     		cltq
+ 312              		.loc 1 77 6 discriminator 1 view .LVU75
+ 313 006a 48010424 		addq	%rax, (%rsp)
+  78:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  79:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->MQTTVersion == 4)
+ 314              		.loc 1 79 2 is_stmt 1 view .LVU76
+ 315              		.loc 1 79 5 is_stmt 0 view .LVU77
+ 316 006e 807B0804 		cmpb	$4, 8(%rbx)
+ 317 0072 0F843001 		je	.L40
+ 317      0000
+  80:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+GAS LISTING /tmp/ccqR7pxh.s 			page 9
+
+
+  81:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeCString(&ptr, "MQTT");
+  82:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeChar(&ptr, (char) 4);
+  83:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+  84:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	else
+  85:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+  86:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeCString(&ptr, "MQIsdp");
+ 318              		.loc 1 86 3 is_stmt 1 view .LVU78
+ 319 0078 488D3500 		leaq	.LC1(%rip), %rsi
+ 319      000000
+ 320 007f 4C89E7   		movq	%r12, %rdi
+ 321 0082 E8000000 		call	writeCString@PLT
+ 321      00
+ 322              	.LVL28:
+  87:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeChar(&ptr, (char) 3);
+ 323              		.loc 1 87 3 view .LVU79
+ 324 0087 BE030000 		movl	$3, %esi
+ 324      00
+ 325 008c 4C89E7   		movq	%r12, %rdi
+ 326 008f E8000000 		call	writeChar@PLT
+ 326      00
+ 327              	.LVL29:
+ 328              	.L22:
+  88:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+  89:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+  90:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	flags.all = 0;
+ 329              		.loc 1 90 2 view .LVU80
+  91:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	flags.bits.cleansession = options->cleansession;
+ 330              		.loc 1 91 2 view .LVU81
+  92:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	flags.bits.will = (options->willFlag) ? 1 : 0;
+ 331              		.loc 1 92 2 view .LVU82
+ 332              		.loc 1 92 44 is_stmt 0 view .LVU83
+ 333 0094 807B2B00 		cmpb	$0, 43(%rbx)
+  91:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	flags.bits.cleansession = options->cleansession;
+ 334              		.loc 1 91 26 view .LVU84
+ 335 0098 0FB6432A 		movzbl	42(%rbx), %eax
+ 336              		.loc 1 92 44 view .LVU85
+ 337 009c 0F95C2   		setne	%dl
+  91:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	flags.bits.cleansession = options->cleansession;
+ 338              		.loc 1 91 26 view .LVU86
+ 339 009f C1E202   		sall	$2, %edx
+ 340 00a2 01C0     		addl	%eax, %eax
+ 341 00a4 83E002   		andl	$2, %eax
+ 342 00a7 4088D5   		movb	%dl, %bpl
+  91:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	flags.bits.cleansession = options->cleansession;
+ 343              		.loc 1 91 26 view .LVU87
+ 344 00aa 4008C5   		orb	%al, %bpl
+  93:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (flags.bits.will)
+ 345              		.loc 1 93 2 is_stmt 1 view .LVU88
+ 346              		.loc 1 93 5 is_stmt 0 view .LVU89
+ 347 00ad 40F6C504 		testb	$4, %bpl
+ 348 00b1 0F85A900 		jne	.L41
+ 348      0000
+  94:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+  95:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.willQoS = options->will.qos;
+  96:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.willRetain = options->will.retained;
+  97:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+  98:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+GAS LISTING /tmp/ccqR7pxh.s 			page 10
+
+
+  99:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->username.cstring || options->username.lenstring.data)
+ 349              		.loc 1 99 2 is_stmt 1 view .LVU90
+ 350              		.loc 1 99 5 is_stmt 0 view .LVU91
+ 351 00b7 48837B70 		cmpq	$0, 112(%rbx)
+ 351      00
+ 352 00bc 0F84CE00 		je	.L42
+ 352      0000
+ 353              	.L24:
+ 100:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.username = 1;
+ 354              		.loc 1 100 3 is_stmt 1 view .LVU92
+ 355              		.loc 1 100 23 is_stmt 0 view .LVU93
+ 356 00c2 4080CD80 		orb	$-128, %bpl
+ 357              	.L25:
+ 101:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->password.cstring || options->password.lenstring.data)
+ 358              		.loc 1 101 2 is_stmt 1 view .LVU94
+ 359              		.loc 1 101 5 is_stmt 0 view .LVU95
+ 360 00c6 4883BB88 		cmpq	$0, 136(%rbx)
+ 360      00000000 
+ 361 00ce 0F849C01 		je	.L43
+ 361      0000
+ 362              	.L26:
+ 102:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.password = 1;
+ 363              		.loc 1 102 3 is_stmt 1 view .LVU96
+ 364              		.loc 1 102 23 is_stmt 0 view .LVU97
+ 365 00d4 83CD40   		orl	$64, %ebp
+ 366              	.L27:
+ 103:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 104:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeChar(&ptr, flags.all);
+ 367              		.loc 1 104 2 is_stmt 1 view .LVU98
+ 368 00d7 400FBEF5 		movsbl	%bpl, %esi
+ 369 00db 4C89E7   		movq	%r12, %rdi
+ 370              		.loc 1 104 23 is_stmt 0 view .LVU99
+ 371 00de 4189EE   		movl	%ebp, %r14d
+ 372              	.LVL30:
+ 373              		.loc 1 104 23 view .LVU100
+ 374 00e1 4189EF   		movl	%ebp, %r15d
+ 375              		.loc 1 104 2 view .LVU101
+ 376 00e4 E8000000 		call	writeChar@PLT
+ 376      00
+ 377              	.LVL31:
+ 105:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeInt(&ptr, options->keepAliveInterval);
+ 378              		.loc 1 105 2 is_stmt 1 view .LVU102
+ 379 00e9 0FB77328 		movzwl	40(%rbx), %esi
+ 380 00ed 4C89E7   		movq	%r12, %rdi
+ 381 00f0 E8000000 		call	writeInt@PLT
+ 381      00
+ 382              	.LVL32:
+ 106:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeMQTTString(&ptr, options->clientID);
+ 383              		.loc 1 106 2 view .LVU103
+ 384 00f5 F30F6F43 		movdqu	16(%rbx), %xmm0
+ 384      10
+ 385 00fa 4883EC20 		subq	$32, %rsp
+ 386              	.LCFI26:
+ 387              		.cfi_def_cfa_offset 112
+ 388 00fe 4C89E7   		movq	%r12, %rdi
+ 389 0101 0F110424 		movups	%xmm0, (%rsp)
+ 390 0105 488B4320 		movq	32(%rbx), %rax
+GAS LISTING /tmp/ccqR7pxh.s 			page 11
+
+
+ 391 0109 48894424 		movq	%rax, 16(%rsp)
+ 391      10
+ 392 010e E8000000 		call	writeMQTTString@PLT
+ 392      00
+ 393              	.LVL33:
+ 107:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (options->willFlag)
+ 394              		.loc 1 107 2 view .LVU104
+ 395              		.loc 1 107 5 is_stmt 0 view .LVU105
+ 396 0113 4883C420 		addq	$32, %rsp
+ 397              	.LCFI27:
+ 398              		.cfi_def_cfa_offset 80
+ 399 0117 807B2B00 		cmpb	$0, 43(%rbx)
+ 400 011b 0F85DF00 		jne	.L44
+ 400      0000
+ 108:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+ 109:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeMQTTString(&ptr, options->will.topicName);
+ 110:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeMQTTString(&ptr, options->will.message);
+ 111:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+ 112:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (flags.bits.username)
+ 401              		.loc 1 112 2 is_stmt 1 view .LVU106
+ 402              		.loc 1 112 5 is_stmt 0 view .LVU107
+ 403 0121 4584FF   		testb	%r15b, %r15b
+ 404 0124 0F881B01 		js	.L45
+ 404      0000
+ 405              	.L29:
+ 113:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeMQTTString(&ptr, options->username);
+ 114:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (flags.bits.password)
+ 406              		.loc 1 114 2 is_stmt 1 view .LVU108
+ 407              		.loc 1 114 5 is_stmt 0 view .LVU109
+ 408 012a 4183E640 		andl	$64, %r14d
+ 409 012e 0F859C00 		jne	.L46
+ 409      0000
+ 410              	.L30:
+ 115:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeMQTTString(&ptr, options->password);
+ 116:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 117:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 411              		.loc 1 117 2 is_stmt 1 view .LVU110
+ 412              		.loc 1 117 5 is_stmt 0 view .LVU111
+ 413 0134 8B0424   		movl	(%rsp), %eax
+ 414 0137 4429E8   		subl	%r13d, %eax
+ 415              	.LVL34:
+ 416              	.L19:
+ 118:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 119:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	exit: FUNC_EXIT_RC(rc);
+ 120:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return rc;
+ 121:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 417              		.loc 1 121 1 view .LVU112
+ 418 013a 488B5424 		movq	8(%rsp), %rdx
+ 418      08
+ 419 013f 64482B14 		subq	%fs:40, %rdx
+ 419      25280000 
+ 419      00
+ 420 0148 0F854401 		jne	.L47
+ 420      0000
+ 421 014e 4883C418 		addq	$24, %rsp
+ 422              	.LCFI28:
+ 423              		.cfi_remember_state
+GAS LISTING /tmp/ccqR7pxh.s 			page 12
+
+
+ 424              		.cfi_def_cfa_offset 56
+ 425 0152 5B       		popq	%rbx
+ 426              	.LCFI29:
+ 427              		.cfi_def_cfa_offset 48
+ 428              	.LVL35:
+ 429              		.loc 1 121 1 view .LVU113
+ 430 0153 5D       		popq	%rbp
+ 431              	.LCFI30:
+ 432              		.cfi_def_cfa_offset 40
+ 433              		.loc 1 121 1 view .LVU114
+ 434 0154 415C     		popq	%r12
+ 435              	.LCFI31:
+ 436              		.cfi_def_cfa_offset 32
+ 437 0156 415D     		popq	%r13
+ 438              	.LCFI32:
+ 439              		.cfi_def_cfa_offset 24
+ 440              	.LVL36:
+ 441              		.loc 1 121 1 view .LVU115
+ 442 0158 415E     		popq	%r14
+ 443              	.LCFI33:
+ 444              		.cfi_def_cfa_offset 16
+ 445 015a 415F     		popq	%r15
+ 446              	.LCFI34:
+ 447              		.cfi_def_cfa_offset 8
+ 448 015c C3       		ret
+ 449              	.LVL37:
+ 450 015d 0F1F00   		.p2align 4,,10
+ 451              		.p2align 3
+ 452              	.L41:
+ 453              	.LCFI35:
+ 454              		.cfi_restore_state
+  95:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.willRetain = options->will.retained;
+ 455              		.loc 1 95 3 is_stmt 1 view .LVU116
+  96:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+ 456              		.loc 1 96 3 view .LVU117
+  95:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.willRetain = options->will.retained;
+ 457              		.loc 1 95 22 is_stmt 0 view .LVU118
+ 458 0160 0FB64368 		movzbl	104(%rbx), %eax
+ 459 0164 0FB64B69 		movzbl	105(%rbx), %ecx
+ 460 0168 C1E005   		sall	$5, %eax
+ 461 016b 8D14CD00 		leal	0(,%rcx,8), %edx
+ 461      000000
+ 462 0172 83E218   		andl	$24, %edx
+ 463 0175 83E020   		andl	$32, %eax
+ 464 0178 09D0     		orl	%edx, %eax
+ 465 017a 89EA     		movl	%ebp, %edx
+ 466 017c 83E2C7   		andl	$-57, %edx
+ 467 017f 4088C5   		movb	%al, %bpl
+  95:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.willRetain = options->will.retained;
+ 468              		.loc 1 95 22 view .LVU119
+ 469 0182 4008D5   		orb	%dl, %bpl
+  99:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.username = 1;
+ 470              		.loc 1 99 2 is_stmt 1 view .LVU120
+  99:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.username = 1;
+ 471              		.loc 1 99 5 is_stmt 0 view .LVU121
+ 472 0185 48837B70 		cmpq	$0, 112(%rbx)
+ 472      00
+GAS LISTING /tmp/ccqR7pxh.s 			page 13
+
+
+ 473 018a 0F8532FF 		jne	.L24
+ 473      FFFF
+ 474              	.L42:
+  99:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.username = 1;
+ 475              		.loc 1 99 32 discriminator 1 view .LVU122
+ 476 0190 4883BB80 		cmpq	$0, 128(%rbx)
+ 476      00000000 
+ 477 0198 0F8524FF 		jne	.L24
+ 477      FFFF
+ 478 019e E923FFFF 		jmp	.L25
+ 478      FF
+ 479              		.p2align 4,,10
+ 480 01a3 0F1F4400 		.p2align 3
+ 480      00
+ 481              	.L40:
+  81:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeChar(&ptr, (char) 4);
+ 482              		.loc 1 81 3 is_stmt 1 view .LVU123
+ 483 01a8 4C89E7   		movq	%r12, %rdi
+ 484 01ab 488D3500 		leaq	.LC0(%rip), %rsi
+ 484      000000
+ 485 01b2 E8000000 		call	writeCString@PLT
+ 485      00
+ 486              	.LVL38:
+  82:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+ 487              		.loc 1 82 3 view .LVU124
+ 488 01b7 BE040000 		movl	$4, %esi
+ 488      00
+ 489 01bc 4C89E7   		movq	%r12, %rdi
+ 490 01bf E8000000 		call	writeChar@PLT
+ 490      00
+ 491              	.LVL39:
+ 492 01c4 E9CBFEFF 		jmp	.L22
+ 492      FF
+ 493              	.LVL40:
+ 494 01c9 0F1F8000 		.p2align 4,,10
+ 494      000000
+ 495              		.p2align 3
+ 496              	.L46:
+ 115:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 497              		.loc 1 115 3 view .LVU125
+ 498 01d0 F30F6F9B 		movdqu	136(%rbx), %xmm3
+ 498      88000000 
+ 499 01d8 4883EC20 		subq	$32, %rsp
+ 500              	.LCFI36:
+ 501              		.cfi_def_cfa_offset 112
+ 502 01dc 4C89E7   		movq	%r12, %rdi
+ 503 01df 0F111C24 		movups	%xmm3, (%rsp)
+ 504 01e3 488B8398 		movq	152(%rbx), %rax
+ 504      000000
+ 505 01ea 48894424 		movq	%rax, 16(%rsp)
+ 505      10
+ 506 01ef E8000000 		call	writeMQTTString@PLT
+ 506      00
+ 507              	.LVL41:
+ 508 01f4 4883C420 		addq	$32, %rsp
+ 509              	.LCFI37:
+ 510              		.cfi_def_cfa_offset 80
+GAS LISTING /tmp/ccqR7pxh.s 			page 14
+
+
+ 511 01f8 E937FFFF 		jmp	.L30
+ 511      FF
+ 512 01fd 0F1F00   		.p2align 4,,10
+ 513              		.p2align 3
+ 514              	.L44:
+ 109:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeMQTTString(&ptr, options->will.message);
+ 515              		.loc 1 109 3 view .LVU126
+ 516 0200 F30F6F4B 		movdqu	56(%rbx), %xmm1
+ 516      38
+ 517 0205 4883EC20 		subq	$32, %rsp
+ 518              	.LCFI38:
+ 519              		.cfi_def_cfa_offset 112
+ 520 0209 4C89E7   		movq	%r12, %rdi
+ 521 020c 0F110C24 		movups	%xmm1, (%rsp)
+ 522 0210 488B4348 		movq	72(%rbx), %rax
+ 523 0214 48894424 		movq	%rax, 16(%rsp)
+ 523      10
+ 524 0219 E8000000 		call	writeMQTTString@PLT
+ 524      00
+ 525              	.LVL42:
+ 110:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+ 526              		.loc 1 110 3 view .LVU127
+ 527 021e F30F6F53 		movdqu	80(%rbx), %xmm2
+ 527      50
+ 528 0223 4C89E7   		movq	%r12, %rdi
+ 529 0226 0F111424 		movups	%xmm2, (%rsp)
+ 530 022a 488B4360 		movq	96(%rbx), %rax
+ 531 022e 48894424 		movq	%rax, 16(%rsp)
+ 531      10
+ 532 0233 E8000000 		call	writeMQTTString@PLT
+ 532      00
+ 533              	.LVL43:
+ 534 0238 4883C420 		addq	$32, %rsp
+ 535              	.LCFI39:
+ 536              		.cfi_def_cfa_offset 80
+ 112:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeMQTTString(&ptr, options->username);
+ 537              		.loc 1 112 2 view .LVU128
+ 112:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		writeMQTTString(&ptr, options->username);
+ 538              		.loc 1 112 5 is_stmt 0 view .LVU129
+ 539 023c 4584FF   		testb	%r15b, %r15b
+ 540 023f 0F89E5FE 		jns	.L29
+ 540      FFFF
+ 541              	.L45:
+ 113:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (flags.bits.password)
+ 542              		.loc 1 113 3 is_stmt 1 view .LVU130
+ 543 0245 F30F6F63 		movdqu	112(%rbx), %xmm4
+ 543      70
+ 544 024a 4883EC20 		subq	$32, %rsp
+ 545              	.LCFI40:
+ 546              		.cfi_def_cfa_offset 112
+ 547 024e 4C89E7   		movq	%r12, %rdi
+ 548 0251 0F112424 		movups	%xmm4, (%rsp)
+ 549 0255 488B8380 		movq	128(%rbx), %rax
+ 549      000000
+ 550 025c 48894424 		movq	%rax, 16(%rsp)
+ 550      10
+ 551 0261 E8000000 		call	writeMQTTString@PLT
+GAS LISTING /tmp/ccqR7pxh.s 			page 15
+
+
+ 551      00
+ 552              	.LVL44:
+ 553 0266 4883C420 		addq	$32, %rsp
+ 554              	.LCFI41:
+ 555              		.cfi_def_cfa_offset 80
+ 556 026a E9BBFEFF 		jmp	.L29
+ 556      FF
+ 557              	.LVL45:
+ 558 026f 90       		.p2align 4,,10
+ 559              		.p2align 3
+ 560              	.L43:
+ 101:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		flags.bits.password = 1;
+ 561              		.loc 1 101 32 is_stmt 0 discriminator 1 view .LVU131
+ 562 0270 4883BB98 		cmpq	$0, 152(%rbx)
+ 562      00000000 
+ 563 0278 0F8556FE 		jne	.L26
+ 563      FFFF
+ 564 027e E954FEFF 		jmp	.L27
+ 564      FF
+ 565              	.LVL46:
+ 566              		.p2align 4,,10
+ 567 0283 0F1F4400 		.p2align 3
+ 567      00
+ 568              	.L32:
+ 569              	.L20:
+ 119:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return rc;
+ 570              		.loc 1 119 24 is_stmt 1 view .LVU132
+ 120:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 571              		.loc 1 120 2 view .LVU133
+  69:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 572              		.loc 1 69 6 is_stmt 0 view .LVU134
+ 573 0288 B8FEFFFF 		movl	$-2, %eax
+ 573      FF
+ 120:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 574              		.loc 1 120 9 view .LVU135
+ 575 028d E9A8FEFF 		jmp	.L19
+ 575      FF
+ 576              	.LVL47:
+ 577              	.L47:
+ 578              		.loc 1 121 1 view .LVU136
+ 579 0292 E8000000 		call	__stack_chk_fail@PLT
+ 579      00
+ 580              	.LVL48:
+ 581              		.cfi_endproc
+ 582              	.LFE21:
+ 584              		.section	.text.MQTTDeserialize_connack,"ax",@progbits
+ 585              		.p2align 4
+ 586              		.globl	MQTTDeserialize_connack
+ 588              	MQTTDeserialize_connack:
+ 589              	.LVL49:
+ 590              	.LFB22:
+ 122:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 123:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 124:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** /**
+ 125:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * Deserializes the supplied (wire) buffer into connack data - return code
+ 126:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param sessionPresent the session present flag returned (only for MQTT 3.1.1)
+ 127:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param connack_rc returned integer value of the connack return code
+GAS LISTING /tmp/ccqR7pxh.s 			page 16
+
+
+ 128:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
+ 129:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param len the length in bytes of the data in the supplied buffer
+ 130:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @return error code.  1 is success, 0 is failure
+ 131:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   */
+ 132:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** int MQTTDeserialize_connack(unsigned char* sessionPresent, unsigned char* connack_rc, unsigned char
+ 133:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
+ 591              		.loc 1 133 1 is_stmt 1 view -0
+ 592              		.cfi_startproc
+ 593              		.loc 1 133 1 is_stmt 0 view .LVU138
+ 594 0000 F30F1EFA 		endbr64
+ 595              	.L49:
+ 596 0004 4154     		pushq	%r12
+ 597              	.LCFI42:
+ 598              		.cfi_def_cfa_offset 16
+ 599              		.cfi_offset 12, -16
+ 600 0006 55       		pushq	%rbp
+ 601              	.LCFI43:
+ 602              		.cfi_def_cfa_offset 24
+ 603              		.cfi_offset 6, -24
+ 604 0007 4889FD   		movq	%rdi, %rbp
+ 605 000a 53       		pushq	%rbx
+ 606              	.LCFI44:
+ 607              		.cfi_def_cfa_offset 32
+ 608              		.cfi_offset 3, -32
+ 609 000b 4889F3   		movq	%rsi, %rbx
+ 610 000e 4883EC20 		subq	$32, %rsp
+ 611              	.LCFI45:
+ 612              		.cfi_def_cfa_offset 64
+ 613              		.loc 1 133 1 view .LVU139
+ 614 0012 64488B04 		movq	%fs:40, %rax
+ 614      25280000 
+ 614      00
+ 615 001b 48894424 		movq	%rax, 24(%rsp)
+ 615      18
+ 616 0020 31C0     		xorl	%eax, %eax
+ 134:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	MQTTHeader header = {0};
+ 617              		.loc 1 134 2 is_stmt 1 view .LVU140
+ 618              	.LVL50:
+ 135:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char* curdata = buf;
+ 619              		.loc 1 135 2 view .LVU141
+ 136:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char* enddata = NULL;
+ 137:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int rc = 0;
+ 138:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int mylen;
+ 139:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	MQTTConnackFlags flags = {0};
+ 140:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 141:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	FUNC_ENTRY;
+ 142:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.byte = readChar(&curdata);
+ 620              		.loc 1 142 16 is_stmt 0 view .LVU142
+ 621 0022 4C8D6424 		leaq	16(%rsp), %r12
+ 621      10
+ 135:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char* curdata = buf;
+ 622              		.loc 1 135 17 view .LVU143
+ 623 0027 48895424 		movq	%rdx, 16(%rsp)
+ 623      10
+ 136:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char* enddata = NULL;
+ 624              		.loc 1 136 2 is_stmt 1 view .LVU144
+ 625              	.LVL51:
+GAS LISTING /tmp/ccqR7pxh.s 			page 17
+
+
+ 137:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int mylen;
+ 626              		.loc 1 137 2 view .LVU145
+ 138:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	MQTTConnackFlags flags = {0};
+ 627              		.loc 1 138 2 view .LVU146
+ 139:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 628              		.loc 1 139 2 view .LVU147
+ 141:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.byte = readChar(&curdata);
+ 629              		.loc 1 141 12 view .LVU148
+ 630              		.loc 1 142 2 view .LVU149
+ 631              		.loc 1 142 16 is_stmt 0 view .LVU150
+ 632 002c 4C89E7   		movq	%r12, %rdi
+ 633              	.LVL52:
+ 634              		.loc 1 142 16 view .LVU151
+ 635 002f E8000000 		call	readChar@PLT
+ 635      00
+ 636              	.LVL53:
+ 143:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (header.bits.type != CONNACK)
+ 637              		.loc 1 143 2 is_stmt 1 view .LVU152
+ 137:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int mylen;
+ 638              		.loc 1 137 6 is_stmt 0 view .LVU153
+ 639 0034 31D2     		xorl	%edx, %edx
+ 640              		.loc 1 143 5 view .LVU154
+ 641 0036 83E0F0   		andl	$-16, %eax
+ 642              	.LVL54:
+ 643              		.loc 1 143 5 view .LVU155
+ 644 0039 3C20     		cmpb	$32, %al
+ 645 003b 7423     		je	.L53
+ 646              	.LVL55:
+ 647              	.L48:
+ 144:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 145:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 146:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	curdata += (rc = MQTTPacket_decodeBuf(curdata, &mylen)); /* read remaining length */
+ 147:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	enddata = curdata + mylen;
+ 148:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (enddata - curdata < 2)
+ 149:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 150:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 151:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	flags.all = readChar(&curdata);
+ 152:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	*sessionPresent = flags.bits.sessionpresent;
+ 153:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	*connack_rc = readChar(&curdata);
+ 154:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 155:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = 1;
+ 156:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 157:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	FUNC_EXIT_RC(rc);
+ 158:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return rc;
+ 159:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 648              		.loc 1 159 1 view .LVU156
+ 649 003d 488B4424 		movq	24(%rsp), %rax
+ 649      18
+ 650 0042 64482B04 		subq	%fs:40, %rax
+ 650      25280000 
+ 650      00
+ 651 004b 7551     		jne	.L54
+ 652 004d 4883C420 		addq	$32, %rsp
+ 653              	.LCFI46:
+ 654              		.cfi_remember_state
+ 655              		.cfi_def_cfa_offset 32
+ 656 0051 89D0     		movl	%edx, %eax
+GAS LISTING /tmp/ccqR7pxh.s 			page 18
+
+
+ 657 0053 5B       		popq	%rbx
+ 658              	.LCFI47:
+ 659              		.cfi_def_cfa_offset 24
+ 660              	.LVL56:
+ 661              		.loc 1 159 1 view .LVU157
+ 662 0054 5D       		popq	%rbp
+ 663              	.LCFI48:
+ 664              		.cfi_def_cfa_offset 16
+ 665              	.LVL57:
+ 666              		.loc 1 159 1 view .LVU158
+ 667 0055 415C     		popq	%r12
+ 668              	.LCFI49:
+ 669              		.cfi_def_cfa_offset 8
+ 670 0057 C3       		ret
+ 671              	.LVL58:
+ 672 0058 0F1F8400 		.p2align 4,,10
+ 672      00000000 
+ 673              		.p2align 3
+ 674              	.L53:
+ 675              	.LCFI50:
+ 676              		.cfi_restore_state
+ 146:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	enddata = curdata + mylen;
+ 677              		.loc 1 146 2 is_stmt 1 view .LVU159
+ 146:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	enddata = curdata + mylen;
+ 678              		.loc 1 146 19 is_stmt 0 view .LVU160
+ 679 0060 488B7C24 		movq	16(%rsp), %rdi
+ 679      10
+ 680 0065 488D7424 		leaq	12(%rsp), %rsi
+ 680      0C
+ 681 006a E8000000 		call	MQTTPacket_decodeBuf@PLT
+ 681      00
+ 682              	.LVL59:
+ 683 006f 89C2     		movl	%eax, %edx
+ 684              	.LVL60:
+ 146:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	enddata = curdata + mylen;
+ 685              		.loc 1 146 17 discriminator 1 view .LVU161
+ 686 0071 4898     		cltq
+ 687              	.LVL61:
+ 146:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	enddata = curdata + mylen;
+ 688              		.loc 1 146 10 discriminator 1 view .LVU162
+ 689 0073 48014424 		addq	%rax, 16(%rsp)
+ 689      10
+ 147:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (enddata - curdata < 2)
+ 690              		.loc 1 147 2 is_stmt 1 view .LVU163
+ 691              	.LVL62:
+ 148:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 692              		.loc 1 148 2 view .LVU164
+ 148:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 693              		.loc 1 148 5 is_stmt 0 view .LVU165
+ 694 0078 837C240C 		cmpl	$1, 12(%rsp)
+ 694      01
+ 695 007d 7EBE     		jle	.L48
+ 151:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	*sessionPresent = flags.bits.sessionpresent;
+ 696              		.loc 1 151 2 is_stmt 1 view .LVU166
+ 151:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	*sessionPresent = flags.bits.sessionpresent;
+ 697              		.loc 1 151 14 is_stmt 0 view .LVU167
+ 698 007f 4C89E7   		movq	%r12, %rdi
+GAS LISTING /tmp/ccqR7pxh.s 			page 19
+
+
+ 699 0082 E8000000 		call	readChar@PLT
+ 699      00
+ 700              	.LVL63:
+ 152:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	*connack_rc = readChar(&curdata);
+ 701              		.loc 1 152 2 is_stmt 1 view .LVU168
+ 153:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 702              		.loc 1 153 16 is_stmt 0 view .LVU169
+ 703 0087 4C89E7   		movq	%r12, %rdi
+ 152:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	*connack_rc = readChar(&curdata);
+ 704              		.loc 1 152 30 view .LVU170
+ 705 008a 83E001   		andl	$1, %eax
+ 706 008d 884500   		movb	%al, 0(%rbp)
+ 153:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 707              		.loc 1 153 2 is_stmt 1 view .LVU171
+ 153:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 708              		.loc 1 153 16 is_stmt 0 view .LVU172
+ 709 0090 E8000000 		call	readChar@PLT
+ 709      00
+ 710              	.LVL64:
+ 155:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 711              		.loc 1 155 5 view .LVU173
+ 712 0095 BA010000 		movl	$1, %edx
+ 712      00
+ 153:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 713              		.loc 1 153 14 discriminator 1 view .LVU174
+ 714 009a 8803     		movb	%al, (%rbx)
+ 155:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 715              		.loc 1 155 2 is_stmt 1 view .LVU175
+ 716              	.LVL65:
+ 155:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 717              		.loc 1 155 2 is_stmt 0 view .LVU176
+ 718 009c EB9F     		jmp	.L48
+ 719              	.LVL66:
+ 720              	.L54:
+ 721              		.loc 1 159 1 view .LVU177
+ 722 009e E8000000 		call	__stack_chk_fail@PLT
+ 722      00
+ 723              	.LVL67:
+ 724              		.cfi_endproc
+ 725              	.LFE22:
+ 727              		.section	.text.MQTTSerialize_zero,"ax",@progbits
+ 728              		.p2align 4
+ 729              		.globl	MQTTSerialize_zero
+ 731              	MQTTSerialize_zero:
+ 732              	.LVL68:
+ 733              	.LFB23:
+ 160:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 161:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 162:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** /**
+ 163:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * Serializes a 0-length packet into the supplied buffer, ready for writing to a socket
+ 164:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buf the buffer into which the packet will be serialized
+ 165:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buflen the length in bytes of the supplied buffer, to avoid overruns
+ 166:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param packettype the message type
+ 167:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @return serialized length, or error if 0
+ 168:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   */
+ 169:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** int MQTTSerialize_zero(unsigned char* buf, int buflen, unsigned char packettype)
+ 170:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
+GAS LISTING /tmp/ccqR7pxh.s 			page 20
+
+
+ 734              		.loc 1 170 1 is_stmt 1 view -0
+ 735              		.cfi_startproc
+ 736              		.loc 1 170 1 is_stmt 0 view .LVU179
+ 737 0000 F30F1EFA 		endbr64
+ 738 0004 53       		pushq	%rbx
+ 739              	.LCFI51:
+ 740              		.cfi_def_cfa_offset 16
+ 741              		.cfi_offset 3, -16
+ 742 0005 4883EC10 		subq	$16, %rsp
+ 743              	.LCFI52:
+ 744              		.cfi_def_cfa_offset 32
+ 745              		.loc 1 170 1 view .LVU180
+ 746 0009 64488B04 		movq	%fs:40, %rax
+ 746      25280000 
+ 746      00
+ 747 0012 48894424 		movq	%rax, 8(%rsp)
+ 747      08
+ 748 0017 31C0     		xorl	%eax, %eax
+ 171:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	MQTTHeader header = {0};
+ 749              		.loc 1 171 2 is_stmt 1 view .LVU181
+ 172:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int rc = -1;
+ 750              		.loc 1 172 2 view .LVU182
+ 751              	.LVL69:
+ 173:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char *ptr = buf;
+ 752              		.loc 1 173 2 view .LVU183
+ 753              		.loc 1 173 17 is_stmt 0 view .LVU184
+ 754 0019 48893C24 		movq	%rdi, (%rsp)
+ 174:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 175:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	FUNC_ENTRY;
+ 755              		.loc 1 175 12 is_stmt 1 view .LVU185
+ 176:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (buflen < 2)
+ 756              		.loc 1 176 2 view .LVU186
+ 757              		.loc 1 176 5 is_stmt 0 view .LVU187
+ 758 001d 83FE01   		cmpl	$1, %esi
+ 759 0020 7E3E     		jle	.L58
+ 177:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+ 178:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		rc = MQTTPACKET_BUFFER_TOO_SHORT;
+ 179:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 180:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	}
+ 181:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.byte = 0;
+ 182:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.bits.type = packettype;
+ 760              		.loc 1 182 19 view .LVU188
+ 761 0022 83E20F   		andl	$15, %edx
+ 762              	.LVL70:
+ 763              		.loc 1 182 19 view .LVU189
+ 764 0025 4889FB   		movq	%rdi, %rbx
+ 181:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.bits.type = packettype;
+ 765              		.loc 1 181 2 is_stmt 1 view .LVU190
+ 766              		.loc 1 182 2 view .LVU191
+ 183:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 767              		.loc 1 183 2 is_stmt 0 view .LVU192
+ 768 0028 4889E7   		movq	%rsp, %rdi
+ 769              	.LVL71:
+ 182:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 770              		.loc 1 182 19 view .LVU193
+ 771 002b C1E204   		sall	$4, %edx
+ 772              		.loc 1 183 2 is_stmt 1 view .LVU194
+GAS LISTING /tmp/ccqR7pxh.s 			page 21
+
+
+ 773 002e 0FBEF2   		movsbl	%dl, %esi
+ 774              	.LVL72:
+ 775              		.loc 1 183 2 is_stmt 0 view .LVU195
+ 776 0031 E8000000 		call	writeChar@PLT
+ 776      00
+ 777              	.LVL73:
+ 184:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 185:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	ptr += MQTTPacket_encode(ptr, 0); /* write remaining length */
+ 778              		.loc 1 185 2 is_stmt 1 view .LVU196
+ 779              		.loc 1 185 9 is_stmt 0 view .LVU197
+ 780 0036 488B3C24 		movq	(%rsp), %rdi
+ 781 003a 31F6     		xorl	%esi, %esi
+ 782 003c E8000000 		call	MQTTPacket_encode@PLT
+ 782      00
+ 783              	.LVL74:
+ 186:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 784              		.loc 1 186 2 is_stmt 1 view .LVU198
+ 185:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 785              		.loc 1 185 6 is_stmt 0 discriminator 1 view .LVU199
+ 786 0041 030424   		addl	(%rsp), %eax
+ 787              		.loc 1 186 5 view .LVU200
+ 788 0044 29D8     		subl	%ebx, %eax
+ 789              	.LVL75:
+ 790              	.L55:
+ 187:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 188:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	FUNC_EXIT_RC(rc);
+ 189:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return rc;
+ 190:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 791              		.loc 1 190 1 view .LVU201
+ 792 0046 488B5424 		movq	8(%rsp), %rdx
+ 792      08
+ 793 004b 64482B14 		subq	%fs:40, %rdx
+ 793      25280000 
+ 793      00
+ 794 0054 7511     		jne	.L60
+ 795 0056 4883C410 		addq	$16, %rsp
+ 796              	.LCFI53:
+ 797              		.cfi_remember_state
+ 798              		.cfi_def_cfa_offset 16
+ 799 005a 5B       		popq	%rbx
+ 800              	.LCFI54:
+ 801              		.cfi_def_cfa_offset 8
+ 802 005b C3       		ret
+ 803              	.LVL76:
+ 804 005c 0F1F4000 		.p2align 4,,10
+ 805              		.p2align 3
+ 806              	.L58:
+ 807              	.LCFI55:
+ 808              		.cfi_restore_state
+ 809              	.L56:
+ 188:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return rc;
+ 810              		.loc 1 188 18 is_stmt 1 view .LVU202
+ 189:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 811              		.loc 1 189 2 view .LVU203
+ 178:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 812              		.loc 1 178 6 is_stmt 0 view .LVU204
+ 813 0060 B8FEFFFF 		movl	$-2, %eax
+GAS LISTING /tmp/ccqR7pxh.s 			page 22
+
+
+ 813      FF
+ 189:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 814              		.loc 1 189 9 view .LVU205
+ 815 0065 EBDF     		jmp	.L55
+ 816              	.LVL77:
+ 817              	.L60:
+ 818              		.loc 1 190 1 view .LVU206
+ 819 0067 E8000000 		call	__stack_chk_fail@PLT
+ 819      00
+ 820              	.LVL78:
+ 821              		.cfi_endproc
+ 822              	.LFE23:
+ 824              		.section	.text.MQTTSerialize_disconnect,"ax",@progbits
+ 825              		.p2align 4
+ 826              		.globl	MQTTSerialize_disconnect
+ 828              	MQTTSerialize_disconnect:
+ 829              	.LVL79:
+ 830              	.LFB24:
+ 191:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 192:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 193:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** /**
+ 194:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * Serializes a disconnect packet into the supplied buffer, ready for writing to a socket
+ 195:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buf the buffer into which the packet will be serialized
+ 196:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buflen the length in bytes of the supplied buffer, to avoid overruns
+ 197:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @return serialized length, or error if 0
+ 198:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   */
+ 199:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** int MQTTSerialize_disconnect(unsigned char* buf, int buflen)
+ 200:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
+ 831              		.loc 1 200 1 is_stmt 1 view -0
+ 832              		.cfi_startproc
+ 833              		.loc 1 200 1 is_stmt 0 view .LVU208
+ 834 0000 F30F1EFA 		endbr64
+ 835 0004 53       		pushq	%rbx
+ 836              	.LCFI56:
+ 837              		.cfi_def_cfa_offset 16
+ 838              		.cfi_offset 3, -16
+ 839 0005 4883EC10 		subq	$16, %rsp
+ 840              	.LCFI57:
+ 841              		.cfi_def_cfa_offset 32
+ 842              		.loc 1 200 1 view .LVU209
+ 843 0009 64488B04 		movq	%fs:40, %rax
+ 843      25280000 
+ 843      00
+ 844 0012 48894424 		movq	%rax, 8(%rsp)
+ 844      08
+ 845 0017 31C0     		xorl	%eax, %eax
+ 201:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return MQTTSerialize_zero(buf, buflen, DISCONNECT);
+ 846              		.loc 1 201 2 is_stmt 1 view .LVU210
+ 847              	.LVL80:
+ 848              	.LBB4:
+ 849              	.LBI4:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
+ 850              		.loc 1 169 5 view .LVU211
+ 851              	.LBB5:
+ 171:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int rc = -1;
+ 852              		.loc 1 171 2 view .LVU212
+ 172:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char *ptr = buf;
+GAS LISTING /tmp/ccqR7pxh.s 			page 23
+
+
+ 853              		.loc 1 172 2 view .LVU213
+ 173:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 854              		.loc 1 173 2 view .LVU214
+ 173:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 855              		.loc 1 173 17 is_stmt 0 view .LVU215
+ 856 0019 48893C24 		movq	%rdi, (%rsp)
+ 175:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (buflen < 2)
+ 857              		.loc 1 175 12 is_stmt 1 view .LVU216
+ 176:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+ 858              		.loc 1 176 2 view .LVU217
+ 176:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+ 859              		.loc 1 176 5 is_stmt 0 view .LVU218
+ 860 001d 83FE01   		cmpl	$1, %esi
+ 861 0020 7E3E     		jle	.L64
+ 862 0022 4889FB   		movq	%rdi, %rbx
+ 181:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.bits.type = packettype;
+ 863              		.loc 1 181 2 is_stmt 1 view .LVU219
+ 182:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 864              		.loc 1 182 2 view .LVU220
+ 183:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 865              		.loc 1 183 2 view .LVU221
+ 866 0025 BEE0FFFF 		movl	$-32, %esi
+ 866      FF
+ 867              	.LVL81:
+ 183:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 868              		.loc 1 183 2 is_stmt 0 view .LVU222
+ 869 002a 4889E7   		movq	%rsp, %rdi
+ 870              	.LVL82:
+ 183:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 871              		.loc 1 183 2 view .LVU223
+ 872 002d E8000000 		call	writeChar@PLT
+ 872      00
+ 873              	.LVL83:
+ 185:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 874              		.loc 1 185 2 is_stmt 1 view .LVU224
+ 185:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 875              		.loc 1 185 9 is_stmt 0 view .LVU225
+ 876 0032 488B3C24 		movq	(%rsp), %rdi
+ 877 0036 31F6     		xorl	%esi, %esi
+ 878 0038 E8000000 		call	MQTTPacket_encode@PLT
+ 878      00
+ 879              	.LVL84:
+ 186:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 880              		.loc 1 186 2 is_stmt 1 view .LVU226
+ 185:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 881              		.loc 1 185 6 is_stmt 0 discriminator 1 view .LVU227
+ 882 003d 030424   		addl	(%rsp), %eax
+ 186:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 883              		.loc 1 186 5 view .LVU228
+ 884 0040 29D8     		subl	%ebx, %eax
+ 885              	.LVL85:
+ 886              	.L61:
+ 186:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 887              		.loc 1 186 5 view .LVU229
+ 888              	.LBE5:
+ 889              	.LBE4:
+ 202:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+GAS LISTING /tmp/ccqR7pxh.s 			page 24
+
+
+ 890              		.loc 1 202 1 view .LVU230
+ 891 0042 488B5424 		movq	8(%rsp), %rdx
+ 891      08
+ 892 0047 64482B14 		subq	%fs:40, %rdx
+ 892      25280000 
+ 892      00
+ 893 0050 7515     		jne	.L66
+ 894 0052 4883C410 		addq	$16, %rsp
+ 895              	.LCFI58:
+ 896              		.cfi_remember_state
+ 897              		.cfi_def_cfa_offset 16
+ 898 0056 5B       		popq	%rbx
+ 899              	.LCFI59:
+ 900              		.cfi_def_cfa_offset 8
+ 901 0057 C3       		ret
+ 902              	.LVL86:
+ 903 0058 0F1F8400 		.p2align 4,,10
+ 903      00000000 
+ 904              		.p2align 3
+ 905              	.L64:
+ 906              	.LCFI60:
+ 907              		.cfi_restore_state
+ 908              	.L62:
+ 909              	.LBB7:
+ 910              	.LBB6:
+ 188:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return rc;
+ 911              		.loc 1 188 18 is_stmt 1 view .LVU231
+ 189:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 912              		.loc 1 189 2 view .LVU232
+ 178:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 913              		.loc 1 178 6 is_stmt 0 view .LVU233
+ 914 0060 B8FEFFFF 		movl	$-2, %eax
+ 914      FF
+ 915              	.LBE6:
+ 916              	.LBE7:
+ 201:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 917              		.loc 1 201 9 view .LVU234
+ 918 0065 EBDB     		jmp	.L61
+ 919              	.LVL87:
+ 920              	.L66:
+ 921              		.loc 1 202 1 view .LVU235
+ 922 0067 E8000000 		call	__stack_chk_fail@PLT
+ 922      00
+ 923              	.LVL88:
+ 924              		.cfi_endproc
+ 925              	.LFE24:
+ 927              		.section	.text.MQTTSerialize_pingreq,"ax",@progbits
+ 928              		.p2align 4
+ 929              		.globl	MQTTSerialize_pingreq
+ 931              	MQTTSerialize_pingreq:
+ 932              	.LVL89:
+ 933              	.LFB25:
+ 203:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 204:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 205:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** /**
+ 206:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * Serializes a disconnect packet into the supplied buffer, ready for writing to a socket
+ 207:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buf the buffer into which the packet will be serialized
+GAS LISTING /tmp/ccqR7pxh.s 			page 25
+
+
+ 208:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @param buflen the length in bytes of the supplied buffer, to avoid overruns
+ 209:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   * @return serialized length, or error if 0
+ 210:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c ****   */
+ 211:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** int MQTTSerialize_pingreq(unsigned char* buf, int buflen)
+ 212:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
+ 934              		.loc 1 212 1 is_stmt 1 view -0
+ 935              		.cfi_startproc
+ 936              		.loc 1 212 1 is_stmt 0 view .LVU237
+ 937 0000 F30F1EFA 		endbr64
+ 938 0004 53       		pushq	%rbx
+ 939              	.LCFI61:
+ 940              		.cfi_def_cfa_offset 16
+ 941              		.cfi_offset 3, -16
+ 942 0005 4883EC10 		subq	$16, %rsp
+ 943              	.LCFI62:
+ 944              		.cfi_def_cfa_offset 32
+ 945              		.loc 1 212 1 view .LVU238
+ 946 0009 64488B04 		movq	%fs:40, %rax
+ 946      25280000 
+ 946      00
+ 947 0012 48894424 		movq	%rax, 8(%rsp)
+ 947      08
+ 948 0017 31C0     		xorl	%eax, %eax
+ 213:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return MQTTSerialize_zero(buf, buflen, PINGREQ);
+ 949              		.loc 1 213 2 is_stmt 1 view .LVU239
+ 950              	.LVL90:
+ 951              	.LBB10:
+ 952              	.LBI10:
+ 169:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** {
+ 953              		.loc 1 169 5 view .LVU240
+ 954              	.LBB11:
+ 171:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	int rc = -1;
+ 955              		.loc 1 171 2 view .LVU241
+ 172:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	unsigned char *ptr = buf;
+ 956              		.loc 1 172 2 view .LVU242
+ 173:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 957              		.loc 1 173 2 view .LVU243
+ 173:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 958              		.loc 1 173 17 is_stmt 0 view .LVU244
+ 959 0019 48893C24 		movq	%rdi, (%rsp)
+ 175:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	if (buflen < 2)
+ 960              		.loc 1 175 12 is_stmt 1 view .LVU245
+ 176:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+ 961              		.loc 1 176 2 view .LVU246
+ 176:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	{
+ 962              		.loc 1 176 5 is_stmt 0 view .LVU247
+ 963 001d 83FE01   		cmpl	$1, %esi
+ 964 0020 7E3E     		jle	.L70
+ 965 0022 4889FB   		movq	%rdi, %rbx
+ 181:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	header.bits.type = packettype;
+ 966              		.loc 1 181 2 is_stmt 1 view .LVU248
+ 182:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 967              		.loc 1 182 2 view .LVU249
+ 183:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 968              		.loc 1 183 2 view .LVU250
+ 969 0025 BEC0FFFF 		movl	$-64, %esi
+ 969      FF
+GAS LISTING /tmp/ccqR7pxh.s 			page 26
+
+
+ 970              	.LVL91:
+ 183:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 971              		.loc 1 183 2 is_stmt 0 view .LVU251
+ 972 002a 4889E7   		movq	%rsp, %rdi
+ 973              	.LVL92:
+ 183:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 
+ 974              		.loc 1 183 2 view .LVU252
+ 975 002d E8000000 		call	writeChar@PLT
+ 975      00
+ 976              	.LVL93:
+ 185:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 977              		.loc 1 185 2 is_stmt 1 view .LVU253
+ 185:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 978              		.loc 1 185 9 is_stmt 0 view .LVU254
+ 979 0032 488B3C24 		movq	(%rsp), %rdi
+ 980 0036 31F6     		xorl	%esi, %esi
+ 981 0038 E8000000 		call	MQTTPacket_encode@PLT
+ 981      00
+ 982              	.LVL94:
+ 186:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 983              		.loc 1 186 2 is_stmt 1 view .LVU255
+ 185:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	rc = ptr - buf;
+ 984              		.loc 1 185 6 is_stmt 0 discriminator 1 view .LVU256
+ 985 003d 030424   		addl	(%rsp), %eax
+ 186:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 986              		.loc 1 186 5 view .LVU257
+ 987 0040 29D8     		subl	%ebx, %eax
+ 988              	.LVL95:
+ 989              	.L67:
+ 186:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** exit:
+ 990              		.loc 1 186 5 view .LVU258
+ 991              	.LBE11:
+ 992              	.LBE10:
+ 214:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 993              		.loc 1 214 1 view .LVU259
+ 994 0042 488B5424 		movq	8(%rsp), %rdx
+ 994      08
+ 995 0047 64482B14 		subq	%fs:40, %rdx
+ 995      25280000 
+ 995      00
+ 996 0050 7515     		jne	.L72
+ 997 0052 4883C410 		addq	$16, %rsp
+ 998              	.LCFI63:
+ 999              		.cfi_remember_state
+ 1000              		.cfi_def_cfa_offset 16
+ 1001 0056 5B       		popq	%rbx
+ 1002              	.LCFI64:
+ 1003              		.cfi_def_cfa_offset 8
+ 1004 0057 C3       		ret
+ 1005              	.LVL96:
+ 1006 0058 0F1F8400 		.p2align 4,,10
+ 1006      00000000 
+ 1007              		.p2align 3
+ 1008              	.L70:
+ 1009              	.LCFI65:
+ 1010              		.cfi_restore_state
+ 1011              	.L68:
+GAS LISTING /tmp/ccqR7pxh.s 			page 27
+
+
+ 1012              	.LBB13:
+ 1013              	.LBB12:
+ 188:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 	return rc;
+ 1014              		.loc 1 188 18 is_stmt 1 view .LVU260
+ 189:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 1015              		.loc 1 189 2 view .LVU261
+ 178:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** 		goto exit;
+ 1016              		.loc 1 178 6 is_stmt 0 view .LVU262
+ 1017 0060 B8FEFFFF 		movl	$-2, %eax
+ 1017      FF
+ 1018              	.LBE12:
+ 1019              	.LBE13:
+ 213:../../bos/thirdparty/mqtt-pack/MQTTConnectClient.c **** }
+ 1020              		.loc 1 213 9 view .LVU263
+ 1021 0065 EBDB     		jmp	.L67
+ 1022              	.LVL97:
+ 1023              	.L72:
+ 1024              		.loc 1 214 1 view .LVU264
+ 1025 0067 E8000000 		call	__stack_chk_fail@PLT
+ 1025      00
+ 1026              	.LVL98:
+ 1027              		.cfi_endproc
+ 1028              	.LFE25:
+ 1030              		.text
+ 1031              	.Letext0:
+ 1032              		.file 2 "../../bos/thirdparty/mqtt-pack/MQTTPacket.h"
+ 1033              		.file 3 "../../bos/thirdparty/mqtt-pack/MQTTConnect.h"
+ 4801              		.section	.note.gnu.property,"a"
+ 4802              		.align 8
+ 4803 0000 04000000 		.long	1f - 0f
+ 4804 0004 10000000 		.long	4f - 1f
+ 4805 0008 05000000 		.long	5
+ 4806              	0:
+ 4807 000c 474E5500 		.string	"GNU"
+ 4808              	1:
+ 4809              		.align 8
+ 4810 0010 020000C0 		.long	0xc0000002
+ 4811 0014 04000000 		.long	3f - 2f
+ 4812              	2:
+ 4813 0018 03000000 		.long	0x3
+ 4814              	3:
+ 4815 001c 00000000 		.align 8
+ 4816              	4:
+GAS LISTING /tmp/ccqR7pxh.s 			page 28
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 MQTTConnectClient.c
+     /tmp/ccqR7pxh.s:9      .text.MQTTSerialize_connectLength:0000000000000000 MQTTSerialize_connectLength
+     /tmp/ccqR7pxh.s:223    .text.MQTTSerialize_connect:0000000000000000 MQTTSerialize_connect
+     /tmp/ccqR7pxh.s:588    .text.MQTTDeserialize_connack:0000000000000000 MQTTDeserialize_connack
+     /tmp/ccqR7pxh.s:731    .text.MQTTSerialize_zero:0000000000000000 MQTTSerialize_zero
+     /tmp/ccqR7pxh.s:828    .text.MQTTSerialize_disconnect:0000000000000000 MQTTSerialize_disconnect
+     /tmp/ccqR7pxh.s:931    .text.MQTTSerialize_pingreq:0000000000000000 MQTTSerialize_pingreq
+     /tmp/ccqR7pxh.s:217    .rodata.MQTTSerialize_connect.str1.1:0000000000000005 .LC1
+     /tmp/ccqR7pxh.s:215    .rodata.MQTTSerialize_connect.str1.1:0000000000000000 .LC0
+
+UNDEFINED SYMBOLS
+MQTTstrlen
+MQTTPacket_len
+writeChar
+MQTTPacket_encode
+writeCString
+writeInt
+writeMQTTString
+__stack_chk_fail
+readChar
+MQTTPacket_decodeBuf

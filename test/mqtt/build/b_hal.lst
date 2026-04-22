@@ -1,0 +1,591 @@
+GAS LISTING /tmp/ccqXYS81.s 			page 1
+
+
+   1              		.file	"b_hal.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal.c"
+   5              		.section	.text.bHalUserInit,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bHalUserInit
+   9              	bHalUserInit:
+  10              	.LFB42:
+   1:../../bos/hal/b_hal.c **** /**
+   2:../../bos/hal/b_hal.c ****  *!
+   3:../../bos/hal/b_hal.c ****  * \file        b_hal.c
+   4:../../bos/hal/b_hal.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal.c ****  * \date        2019/06/05
+   6:../../bos/hal/b_hal.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal.c ****  * @attention
+   9:../../bos/hal/b_hal.c ****  *
+  10:../../bos/hal/b_hal.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/hal/b_hal.c ****  *
+  12:../../bos/hal/b_hal.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal.c ****  *
+  19:../../bos/hal/b_hal.c ****  * The above copyright notice and this permission notice shall be included in
+  20:../../bos/hal/b_hal.c ****  *all copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal.c ****  *
+  22:../../bos/hal/b_hal.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/hal/b_hal.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal.c ****  */
+  31:../../bos/hal/b_hal.c **** 
+  32:../../bos/hal/b_hal.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/hal/b_hal.c **** #include "hal/inc/b_hal.h"
+  34:../../bos/hal/b_hal.c **** 
+  35:../../bos/hal/b_hal.c **** #include <stdio.h>
+  36:../../bos/hal/b_hal.c **** #include <string.h>
+  37:../../bos/hal/b_hal.c **** 
+  38:../../bos/hal/b_hal.c **** /**
+  39:../../bos/hal/b_hal.c ****  * \addtogroup B_HAL
+  40:../../bos/hal/b_hal.c ****  * \{
+  41:../../bos/hal/b_hal.c ****  */
+  42:../../bos/hal/b_hal.c **** 
+  43:../../bos/hal/b_hal.c **** /**
+  44:../../bos/hal/b_hal.c ****  * \addtogroup HAL
+  45:../../bos/hal/b_hal.c ****  * \{
+  46:../../bos/hal/b_hal.c ****  */
+  47:../../bos/hal/b_hal.c **** 
+  48:../../bos/hal/b_hal.c **** /**
+GAS LISTING /tmp/ccqXYS81.s 			page 2
+
+
+  49:../../bos/hal/b_hal.c ****  * \defgroup HAL_Private_Variables
+  50:../../bos/hal/b_hal.c ****  * \{
+  51:../../bos/hal/b_hal.c ****  */
+  52:../../bos/hal/b_hal.c **** #if defined(USER_TICK_ENABLE) && (USER_TICK_ENABLE == 1)
+  53:../../bos/hal/b_hal.c **** 
+  54:../../bos/hal/b_hal.c **** #else
+  55:../../bos/hal/b_hal.c **** static volatile uint32_t bSysTickOvr = 0;
+  56:../../bos/hal/b_hal.c **** static volatile uint32_t bSysTick    = 0;
+  57:../../bos/hal/b_hal.c **** #endif
+  58:../../bos/hal/b_hal.c **** static uint32_t bUsDelayParam = 10;
+  59:../../bos/hal/b_hal.c **** /**
+  60:../../bos/hal/b_hal.c ****  * \}
+  61:../../bos/hal/b_hal.c ****  */
+  62:../../bos/hal/b_hal.c **** 
+  63:../../bos/hal/b_hal.c **** /**
+  64:../../bos/hal/b_hal.c ****  * \defgroup HAL_Private_Functions
+  65:../../bos/hal/b_hal.c ****  * \{
+  66:../../bos/hal/b_hal.c ****  */
+  67:../../bos/hal/b_hal.c **** static void _bHalUpdateDelayParam()
+  68:../../bos/hal/b_hal.c **** {
+  69:../../bos/hal/b_hal.c ****     uint32_t          base_value = 100000 * bUsDelayParam;
+  70:../../bos/hal/b_hal.c ****     volatile uint32_t delay      = 0;
+  71:../../bos/hal/b_hal.c ****     volatile uint32_t tick_s = 0, tick_e = 0;
+  72:../../bos/hal/b_hal.c ****     while (1)
+  73:../../bos/hal/b_hal.c ****     {
+  74:../../bos/hal/b_hal.c ****         delay  = base_value;
+  75:../../bos/hal/b_hal.c ****         tick_s = bHalGetSysTick();
+  76:../../bos/hal/b_hal.c ****         while (delay--)
+  77:../../bos/hal/b_hal.c ****             ;
+  78:../../bos/hal/b_hal.c ****         tick_e = bHalGetSysTick();
+  79:../../bos/hal/b_hal.c ****         if (tick_e > tick_s)
+  80:../../bos/hal/b_hal.c ****         {
+  81:../../bos/hal/b_hal.c ****             bUsDelayParam = (uint32_t)((base_value * 1.0) / (TICKS2MS(tick_e - tick_s)) / 1000);
+  82:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+  83:../../bos/hal/b_hal.c ****             {
+  84:../../bos/hal/b_hal.c ****                 break;
+  85:../../bos/hal/b_hal.c ****             }
+  86:../../bos/hal/b_hal.c ****         }
+  87:../../bos/hal/b_hal.c ****         base_value *= 10;
+  88:../../bos/hal/b_hal.c ****     }
+  89:../../bos/hal/b_hal.c **** }
+  90:../../bos/hal/b_hal.c **** /**
+  91:../../bos/hal/b_hal.c ****  * \}
+  92:../../bos/hal/b_hal.c ****  */
+  93:../../bos/hal/b_hal.c **** 
+  94:../../bos/hal/b_hal.c **** /**
+  95:../../bos/hal/b_hal.c ****  * \addtogroup HAL_Exported_Functions
+  96:../../bos/hal/b_hal.c ****  * \{
+  97:../../bos/hal/b_hal.c ****  */
+  98:../../bos/hal/b_hal.c **** #if defined(__WEAKDEF)
+  99:../../bos/hal/b_hal.c **** __WEAKDEF void bHalUserInit()
+ 100:../../bos/hal/b_hal.c **** {
+  11              		.loc 1 100 1 view -0
+  12              		.cfi_startproc
+  13 0000 F30F1EFA 		endbr64
+ 101:../../bos/hal/b_hal.c ****     ;
+  14              		.loc 1 101 5 view .LVU1
+GAS LISTING /tmp/ccqXYS81.s 			page 3
+
+
+ 102:../../bos/hal/b_hal.c **** }
+  15              		.loc 1 102 1 is_stmt 0 view .LVU2
+  16 0004 C3       		ret
+  17              		.cfi_endproc
+  18              	.LFE42:
+  20              		.section	.text.bHalGetSysTick,"ax",@progbits
+  21              		.p2align 4
+  22              		.weak	bHalGetSysTick
+  24              	bHalGetSysTick:
+  25              	.LFB44:
+ 103:../../bos/hal/b_hal.c **** #else
+ 104:../../bos/hal/b_hal.c **** static void (*pbHalUserInitFunc)(void) = NULL;
+ 105:../../bos/hal/b_hal.c **** void bHalUserInit()
+ 106:../../bos/hal/b_hal.c **** {
+ 107:../../bos/hal/b_hal.c ****     if (pbHalUserInitFunc)
+ 108:../../bos/hal/b_hal.c ****     {
+ 109:../../bos/hal/b_hal.c ****         pbHalUserInitFunc();
+ 110:../../bos/hal/b_hal.c ****     }
+ 111:../../bos/hal/b_hal.c **** }
+ 112:../../bos/hal/b_hal.c **** 
+ 113:../../bos/hal/b_hal.c **** void bHalRegUserInit(void (*cb)(void))
+ 114:../../bos/hal/b_hal.c **** {
+ 115:../../bos/hal/b_hal.c ****     pbHalUserInitFunc = cb;
+ 116:../../bos/hal/b_hal.c **** }
+ 117:../../bos/hal/b_hal.c **** #endif
+ 118:../../bos/hal/b_hal.c **** 
+ 119:../../bos/hal/b_hal.c **** void bHalInit()
+ 120:../../bos/hal/b_hal.c **** {
+ 121:../../bos/hal/b_hal.c ****     bHalUserInit();
+ 122:../../bos/hal/b_hal.c **** #if (defined(_WDT_ENABLE) && (_WDT_ENABLE == 1))
+ 123:../../bos/hal/b_hal.c **** #ifndef WDT_TIMEOUT_S
+ 124:../../bos/hal/b_hal.c **** #define WDT_TIMEOUT_S (60)
+ 125:../../bos/hal/b_hal.c **** #endif
+ 126:../../bos/hal/b_hal.c ****     bHalWdtStart(WDT_TIMEOUT_S);
+ 127:../../bos/hal/b_hal.c **** #endif
+ 128:../../bos/hal/b_hal.c ****     _bHalUpdateDelayParam();
+ 129:../../bos/hal/b_hal.c **** }
+ 130:../../bos/hal/b_hal.c **** 
+ 131:../../bos/hal/b_hal.c **** #if defined(USER_TICK_ENABLE) && (USER_TICK_ENABLE == 1)
+ 132:../../bos/hal/b_hal.c **** 
+ 133:../../bos/hal/b_hal.c **** #if defined(__WEAKDEF)
+ 134:../../bos/hal/b_hal.c **** __WEAKDEF uint32_t bHalGetSysTick()
+ 135:../../bos/hal/b_hal.c **** {
+  26              		.loc 1 135 1 is_stmt 1 view -0
+  27              		.cfi_startproc
+  28 0000 F30F1EFA 		endbr64
+ 136:../../bos/hal/b_hal.c ****     return 0;
+  29              		.loc 1 136 5 view .LVU4
+ 137:../../bos/hal/b_hal.c **** }
+  30              		.loc 1 137 1 is_stmt 0 view .LVU5
+  31 0004 31C0     		xorl	%eax, %eax
+  32 0006 C3       		ret
+  33              		.cfi_endproc
+  34              	.LFE44:
+  36              		.section	.text.bHalInit,"ax",@progbits
+  37              		.p2align 4
+  38              		.globl	bHalInit
+GAS LISTING /tmp/ccqXYS81.s 			page 4
+
+
+  40              	bHalInit:
+  41              	.LFB43:
+ 120:../../bos/hal/b_hal.c ****     bHalUserInit();
+  42              		.loc 1 120 1 is_stmt 1 view -0
+  43              		.cfi_startproc
+  44 0000 F30F1EFA 		endbr64
+ 121:../../bos/hal/b_hal.c **** #if (defined(_WDT_ENABLE) && (_WDT_ENABLE == 1))
+  45              		.loc 1 121 5 view .LVU7
+ 120:../../bos/hal/b_hal.c ****     bHalUserInit();
+  46              		.loc 1 120 1 is_stmt 0 view .LVU8
+  47 0004 53       		pushq	%rbx
+  48              	.LCFI0:
+  49              		.cfi_def_cfa_offset 16
+  50              		.cfi_offset 3, -16
+  51 0005 4883EC10 		subq	$16, %rsp
+  52              	.LCFI1:
+  53              		.cfi_def_cfa_offset 32
+ 121:../../bos/hal/b_hal.c **** #if (defined(_WDT_ENABLE) && (_WDT_ENABLE == 1))
+  54              		.loc 1 121 5 view .LVU9
+  55 0009 E8000000 		call	bHalUserInit
+  55      00
+  56              	.LVL0:
+ 128:../../bos/hal/b_hal.c **** }
+  57              		.loc 1 128 5 is_stmt 1 view .LVU10
+  58              	.LBB6:
+  59              	.LBI6:
+  67:../../bos/hal/b_hal.c **** {
+  60              		.loc 1 67 13 view .LVU11
+  61              	.LBB7:
+  69:../../bos/hal/b_hal.c ****     volatile uint32_t delay      = 0;
+  62              		.loc 1 69 5 view .LVU12
+  70:../../bos/hal/b_hal.c ****     volatile uint32_t tick_s = 0, tick_e = 0;
+  63              		.loc 1 70 23 is_stmt 0 view .LVU13
+  64 000e C7442404 		movl	$0, 4(%rsp)
+  64      00000000 
+  69:../../bos/hal/b_hal.c ****     volatile uint32_t delay      = 0;
+  65              		.loc 1 69 23 view .LVU14
+  66 0016 691D0000 		imull	$100000, bUsDelayParam(%rip), %ebx
+  66      0000A086 
+  66      0100
+  67              	.LVL1:
+  70:../../bos/hal/b_hal.c ****     volatile uint32_t tick_s = 0, tick_e = 0;
+  68              		.loc 1 70 5 is_stmt 1 view .LVU15
+  71:../../bos/hal/b_hal.c ****     while (1)
+  69              		.loc 1 71 5 view .LVU16
+  71:../../bos/hal/b_hal.c ****     while (1)
+  70              		.loc 1 71 23 is_stmt 0 view .LVU17
+  71 0020 C7442408 		movl	$0, 8(%rsp)
+  71      00000000 
+  71:../../bos/hal/b_hal.c ****     while (1)
+  72              		.loc 1 71 35 view .LVU18
+  73 0028 C744240C 		movl	$0, 12(%rsp)
+  73      00000000 
+  74              	.LVL2:
+  75              		.p2align 4,,10
+  76              		.p2align 3
+  77              	.L7:
+GAS LISTING /tmp/ccqXYS81.s 			page 5
+
+
+  72:../../bos/hal/b_hal.c ****     {
+  78              		.loc 1 72 5 is_stmt 1 view .LVU19
+  74:../../bos/hal/b_hal.c ****         tick_s = bHalGetSysTick();
+  79              		.loc 1 74 9 view .LVU20
+  74:../../bos/hal/b_hal.c ****         tick_s = bHalGetSysTick();
+  80              		.loc 1 74 16 is_stmt 0 view .LVU21
+  81 0030 895C2404 		movl	%ebx, 4(%rsp)
+  75:../../bos/hal/b_hal.c ****         while (delay--)
+  82              		.loc 1 75 9 is_stmt 1 view .LVU22
+  75:../../bos/hal/b_hal.c ****         while (delay--)
+  83              		.loc 1 75 18 is_stmt 0 view .LVU23
+  84 0034 E8000000 		call	bHalGetSysTick
+  84      00
+  85              	.LVL3:
+  75:../../bos/hal/b_hal.c ****         while (delay--)
+  86              		.loc 1 75 16 discriminator 1 view .LVU24
+  87 0039 89442408 		movl	%eax, 8(%rsp)
+  76:../../bos/hal/b_hal.c ****             ;
+  88              		.loc 1 76 9 is_stmt 1 view .LVU25
+  89 003d 0F1F00   		.p2align 4,,10
+  90              		.p2align 3
+  91              	.L5:
+  76:../../bos/hal/b_hal.c ****             ;
+  92              		.loc 1 76 16 discriminator 1 view .LVU26
+  76:../../bos/hal/b_hal.c ****             ;
+  93              		.loc 1 76 21 is_stmt 0 discriminator 1 view .LVU27
+  94 0040 8B442404 		movl	4(%rsp), %eax
+  95 0044 8D50FF   		leal	-1(%rax), %edx
+  96 0047 89542404 		movl	%edx, 4(%rsp)
+  76:../../bos/hal/b_hal.c ****             ;
+  97              		.loc 1 76 16 discriminator 1 view .LVU28
+  98 004b 85C0     		testl	%eax, %eax
+  99 004d 75F1     		jne	.L5
+  78:../../bos/hal/b_hal.c ****         if (tick_e > tick_s)
+ 100              		.loc 1 78 9 is_stmt 1 view .LVU29
+  78:../../bos/hal/b_hal.c ****         if (tick_e > tick_s)
+ 101              		.loc 1 78 18 is_stmt 0 view .LVU30
+ 102 004f E8000000 		call	bHalGetSysTick
+ 102      00
+ 103              	.LVL4:
+  78:../../bos/hal/b_hal.c ****         if (tick_e > tick_s)
+ 104              		.loc 1 78 16 discriminator 1 view .LVU31
+ 105 0054 8944240C 		movl	%eax, 12(%rsp)
+  79:../../bos/hal/b_hal.c ****         {
+ 106              		.loc 1 79 9 is_stmt 1 view .LVU32
+  79:../../bos/hal/b_hal.c ****         {
+ 107              		.loc 1 79 20 is_stmt 0 view .LVU33
+ 108 0058 8B44240C 		movl	12(%rsp), %eax
+ 109 005c 8B542408 		movl	8(%rsp), %edx
+  79:../../bos/hal/b_hal.c ****         {
+ 110              		.loc 1 79 12 view .LVU34
+ 111 0060 39C2     		cmpl	%eax, %edx
+ 112 0062 7339     		jnb	.L12
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 113              		.loc 1 81 13 is_stmt 1 view .LVU35
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 114              		.loc 1 81 62 is_stmt 0 view .LVU36
+GAS LISTING /tmp/ccqXYS81.s 			page 6
+
+
+ 115 0064 8B44240C 		movl	12(%rsp), %eax
+ 116 0068 8B542408 		movl	8(%rsp), %edx
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 117              		.loc 1 81 52 view .LVU37
+ 118 006c 89D9     		movl	%ebx, %ecx
+ 119 006e 660FEFC0 		pxor	%xmm0, %xmm0
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 120              		.loc 1 81 59 view .LVU38
+ 121 0072 660FEFC9 		pxor	%xmm1, %xmm1
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 122              		.loc 1 81 52 view .LVU39
+ 123 0076 F2480F2A 		cvtsi2sdq	%rcx, %xmm0
+ 123      C1
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 124              		.loc 1 81 59 view .LVU40
+ 125 007b 29D0     		subl	%edx, %eax
+ 126 007d F2480F2A 		cvtsi2sdq	%rax, %xmm1
+ 126      C8
+ 127 0082 F20F5EC1 		divsd	%xmm1, %xmm0
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 128              		.loc 1 81 89 view .LVU41
+ 129 0086 F20F5E05 		divsd	.LC0(%rip), %xmm0
+ 129      00000000 
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 130              		.loc 1 81 29 view .LVU42
+ 131 008e F2480F2C 		cvttsd2siq	%xmm0, %rax
+ 131      C0
+  81:../../bos/hal/b_hal.c ****             if (bUsDelayParam > 0)
+ 132              		.loc 1 81 27 view .LVU43
+ 133 0093 89050000 		movl	%eax, bUsDelayParam(%rip)
+ 133      0000
+  82:../../bos/hal/b_hal.c ****             {
+ 134              		.loc 1 82 13 is_stmt 1 view .LVU44
+  82:../../bos/hal/b_hal.c ****             {
+ 135              		.loc 1 82 16 is_stmt 0 view .LVU45
+ 136 0099 85C0     		testl	%eax, %eax
+ 137 009b 7507     		jne	.L15
+ 138              	.L12:
+  87:../../bos/hal/b_hal.c ****     }
+ 139              		.loc 1 87 9 is_stmt 1 view .LVU46
+  87:../../bos/hal/b_hal.c ****     }
+ 140              		.loc 1 87 20 is_stmt 0 view .LVU47
+ 141 009d 8D1C9B   		leal	(%rbx,%rbx,4), %ebx
+ 142              	.LVL5:
+  87:../../bos/hal/b_hal.c ****     }
+ 143              		.loc 1 87 20 view .LVU48
+ 144 00a0 01DB     		addl	%ebx, %ebx
+ 145              	.LVL6:
+  72:../../bos/hal/b_hal.c ****     {
+ 146              		.loc 1 72 11 is_stmt 1 view .LVU49
+  74:../../bos/hal/b_hal.c ****         tick_s = bHalGetSysTick();
+ 147              		.loc 1 74 16 is_stmt 0 view .LVU50
+ 148 00a2 EB8C     		jmp	.L7
+ 149              	.L15:
+  74:../../bos/hal/b_hal.c ****         tick_s = bHalGetSysTick();
+ 150              		.loc 1 74 16 view .LVU51
+ 151              	.LBE7:
+GAS LISTING /tmp/ccqXYS81.s 			page 7
+
+
+ 152              	.LBE6:
+ 129:../../bos/hal/b_hal.c **** 
+ 153              		.loc 1 129 1 view .LVU52
+ 154 00a4 4883C410 		addq	$16, %rsp
+ 155              	.LCFI2:
+ 156              		.cfi_def_cfa_offset 16
+ 157 00a8 5B       		popq	%rbx
+ 158              	.LCFI3:
+ 159              		.cfi_def_cfa_offset 8
+ 160              	.LVL7:
+ 129:../../bos/hal/b_hal.c **** 
+ 161              		.loc 1 129 1 view .LVU53
+ 162 00a9 C3       		ret
+ 163              		.cfi_endproc
+ 164              	.LFE43:
+ 166              		.section	.text.bHalGetSysTickPlus,"ax",@progbits
+ 167              		.p2align 4
+ 168              		.weak	bHalGetSysTickPlus
+ 170              	bHalGetSysTickPlus:
+ 171              	.LFB45:
+ 138:../../bos/hal/b_hal.c **** 
+ 139:../../bos/hal/b_hal.c **** __WEAKDEF uint64_t bHalGetSysTickPlus()
+ 140:../../bos/hal/b_hal.c **** {
+ 172              		.loc 1 140 1 is_stmt 1 view -0
+ 173              		.cfi_startproc
+ 174 0000 F30F1EFA 		endbr64
+ 141:../../bos/hal/b_hal.c ****     return 0;
+ 175              		.loc 1 141 5 view .LVU55
+ 142:../../bos/hal/b_hal.c **** }
+ 176              		.loc 1 142 1 is_stmt 0 view .LVU56
+ 177 0004 31C0     		xorl	%eax, %eax
+ 178 0006 C3       		ret
+ 179              		.cfi_endproc
+ 180              	.LFE45:
+ 182              		.section	.text.bHalDelayMs,"ax",@progbits
+ 183              		.p2align 4
+ 184              		.globl	bHalDelayMs
+ 186              	bHalDelayMs:
+ 187              	.LVL8:
+ 188              	.LFB46:
+ 143:../../bos/hal/b_hal.c **** 
+ 144:../../bos/hal/b_hal.c **** #endif
+ 145:../../bos/hal/b_hal.c **** 
+ 146:../../bos/hal/b_hal.c **** #else
+ 147:../../bos/hal/b_hal.c **** void bHalIncSysTick()
+ 148:../../bos/hal/b_hal.c **** {
+ 149:../../bos/hal/b_hal.c ****     bSysTick += 1;
+ 150:../../bos/hal/b_hal.c ****     if (bSysTick == 0)
+ 151:../../bos/hal/b_hal.c ****     {
+ 152:../../bos/hal/b_hal.c ****         bSysTickOvr += 1;
+ 153:../../bos/hal/b_hal.c ****     }
+ 154:../../bos/hal/b_hal.c **** }
+ 155:../../bos/hal/b_hal.c **** 
+ 156:../../bos/hal/b_hal.c **** uint32_t bHalGetSysTick()
+ 157:../../bos/hal/b_hal.c **** {
+ 158:../../bos/hal/b_hal.c ****     return bSysTick;
+ 159:../../bos/hal/b_hal.c **** }
+GAS LISTING /tmp/ccqXYS81.s 			page 8
+
+
+ 160:../../bos/hal/b_hal.c **** 
+ 161:../../bos/hal/b_hal.c **** uint64_t bHalGetSysTickPlus()
+ 162:../../bos/hal/b_hal.c **** {
+ 163:../../bos/hal/b_hal.c ****     uint64_t tick = bSysTickOvr;
+ 164:../../bos/hal/b_hal.c ****     tick          = bSysTick + (tick << (8 * sizeof(uint32_t)));
+ 165:../../bos/hal/b_hal.c ****     return tick;
+ 166:../../bos/hal/b_hal.c **** }
+ 167:../../bos/hal/b_hal.c **** 
+ 168:../../bos/hal/b_hal.c **** #endif
+ 169:../../bos/hal/b_hal.c **** 
+ 170:../../bos/hal/b_hal.c **** void bHalDelayMs(uint16_t xms)
+ 171:../../bos/hal/b_hal.c **** {
+ 189              		.loc 1 171 1 is_stmt 1 view -0
+ 190              		.cfi_startproc
+ 191              		.loc 1 171 1 is_stmt 0 view .LVU58
+ 192 0000 F30F1EFA 		endbr64
+ 172:../../bos/hal/b_hal.c ****     bHalDelayUs(1000 * xms);
+ 193              		.loc 1 172 5 is_stmt 1 view .LVU59
+ 194              	.LVL9:
+ 195              	.LBB8:
+ 196              	.LBI8:
+ 173:../../bos/hal/b_hal.c **** }
+ 174:../../bos/hal/b_hal.c **** 
+ 175:../../bos/hal/b_hal.c **** void bHalDelayUs(uint32_t xus)
+ 197              		.loc 1 175 6 view .LVU60
+ 198              	.LBB9:
+ 176:../../bos/hal/b_hal.c **** {
+ 177:../../bos/hal/b_hal.c ****     volatile uint64_t delay = (uint64_t)xus * bUsDelayParam;
+ 199              		.loc 1 177 5 view .LVU61
+ 200              	.LBE9:
+ 201              	.LBE8:
+ 172:../../bos/hal/b_hal.c **** }
+ 202              		.loc 1 172 22 is_stmt 0 view .LVU62
+ 203 0004 0FB7FF   		movzwl	%di, %edi
+ 204              	.LBB11:
+ 205              	.LBB10:
+ 206              		.loc 1 177 45 view .LVU63
+ 207 0007 8B050000 		movl	bUsDelayParam(%rip), %eax
+ 207      0000
+ 208              		.loc 1 177 31 view .LVU64
+ 209 000d 4869FFE8 		imulq	$1000, %rdi, %rdi
+ 209      030000
+ 210              	.LVL10:
+ 211              		.loc 1 177 45 view .LVU65
+ 212 0014 480FAFF8 		imulq	%rax, %rdi
+ 213              		.loc 1 177 23 view .LVU66
+ 214 0018 48897C24 		movq	%rdi, -8(%rsp)
+ 214      F8
+ 178:../../bos/hal/b_hal.c ****     while (delay--)
+ 215              		.loc 1 178 5 is_stmt 1 view .LVU67
+ 216 001d 0F1F00   		.p2align 4,,10
+ 217              		.p2align 3
+ 218              	.L18:
+ 219              		.loc 1 178 12 discriminator 1 view .LVU68
+ 220              		.loc 1 178 17 is_stmt 0 discriminator 1 view .LVU69
+ 221 0020 488B4424 		movq	-8(%rsp), %rax
+ 221      F8
+GAS LISTING /tmp/ccqXYS81.s 			page 9
+
+
+ 222 0025 488D50FF 		leaq	-1(%rax), %rdx
+ 223 0029 48895424 		movq	%rdx, -8(%rsp)
+ 223      F8
+ 224              		.loc 1 178 12 discriminator 1 view .LVU70
+ 225 002e 4885C0   		testq	%rax, %rax
+ 226 0031 75ED     		jne	.L18
+ 227              	.LBE10:
+ 228              	.LBE11:
+ 173:../../bos/hal/b_hal.c **** 
+ 229              		.loc 1 173 1 view .LVU71
+ 230 0033 C3       		ret
+ 231              		.cfi_endproc
+ 232              	.LFE46:
+ 234              		.section	.text.bHalDelayUs,"ax",@progbits
+ 235              		.p2align 4
+ 236              		.globl	bHalDelayUs
+ 238              	bHalDelayUs:
+ 239              	.LVL11:
+ 240              	.LFB47:
+ 176:../../bos/hal/b_hal.c ****     volatile uint64_t delay = (uint64_t)xus * bUsDelayParam;
+ 241              		.loc 1 176 1 is_stmt 1 view -0
+ 242              		.cfi_startproc
+ 176:../../bos/hal/b_hal.c ****     volatile uint64_t delay = (uint64_t)xus * bUsDelayParam;
+ 243              		.loc 1 176 1 is_stmt 0 view .LVU73
+ 244 0000 F30F1EFA 		endbr64
+ 177:../../bos/hal/b_hal.c ****     while (delay--)
+ 245              		.loc 1 177 5 is_stmt 1 view .LVU74
+ 177:../../bos/hal/b_hal.c ****     while (delay--)
+ 246              		.loc 1 177 45 is_stmt 0 view .LVU75
+ 247 0004 8B050000 		movl	bUsDelayParam(%rip), %eax
+ 247      0000
+ 177:../../bos/hal/b_hal.c ****     while (delay--)
+ 248              		.loc 1 177 31 view .LVU76
+ 249 000a 89FF     		movl	%edi, %edi
+ 177:../../bos/hal/b_hal.c ****     while (delay--)
+ 250              		.loc 1 177 45 view .LVU77
+ 251 000c 480FAFC7 		imulq	%rdi, %rax
+ 177:../../bos/hal/b_hal.c ****     while (delay--)
+ 252              		.loc 1 177 23 view .LVU78
+ 253 0010 48894424 		movq	%rax, -8(%rsp)
+ 253      F8
+ 254              		.loc 1 178 5 is_stmt 1 view .LVU79
+ 255              		.p2align 4,,10
+ 256 0015 0F1F00   		.p2align 3
+ 257              	.L21:
+ 258              		.loc 1 178 12 discriminator 1 view .LVU80
+ 259              		.loc 1 178 17 is_stmt 0 discriminator 1 view .LVU81
+ 260 0018 488B4424 		movq	-8(%rsp), %rax
+ 260      F8
+ 261 001d 488D50FF 		leaq	-1(%rax), %rdx
+ 262 0021 48895424 		movq	%rdx, -8(%rsp)
+ 262      F8
+ 263              		.loc 1 178 12 discriminator 1 view .LVU82
+ 264 0026 4885C0   		testq	%rax, %rax
+ 265 0029 75ED     		jne	.L21
+ 179:../../bos/hal/b_hal.c ****         ;
+ 180:../../bos/hal/b_hal.c **** }
+GAS LISTING /tmp/ccqXYS81.s 			page 10
+
+
+ 266              		.loc 1 180 1 view .LVU83
+ 267 002b C3       		ret
+ 268              		.cfi_endproc
+ 269              	.LFE47:
+ 271              		.section	.data.bUsDelayParam,"aw"
+ 272              		.align 4
+ 275              	bUsDelayParam:
+ 276 0000 0A000000 		.long	10
+ 277              		.section	.rodata.cst8,"aM",@progbits,8
+ 278              		.align 8
+ 279              	.LC0:
+ 280 0000 00000000 		.long	0
+ 281 0004 00408F40 		.long	1083129856
+ 282              		.text
+ 283              	.Letext0:
+ 284              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 285              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1204              		.section	.note.gnu.property,"a"
+ 1205              		.align 8
+ 1206 0000 04000000 		.long	1f - 0f
+ 1207 0004 10000000 		.long	4f - 1f
+ 1208 0008 05000000 		.long	5
+ 1209              	0:
+ 1210 000c 474E5500 		.string	"GNU"
+ 1211              	1:
+ 1212              		.align 8
+ 1213 0010 020000C0 		.long	0xc0000002
+ 1214 0014 04000000 		.long	3f - 2f
+ 1215              	2:
+ 1216 0018 03000000 		.long	0x3
+ 1217              	3:
+ 1218 001c 00000000 		.align 8
+ 1219              	4:
+GAS LISTING /tmp/ccqXYS81.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal.c
+     /tmp/ccqXYS81.s:9      .text.bHalUserInit:0000000000000000 bHalUserInit
+     /tmp/ccqXYS81.s:24     .text.bHalGetSysTick:0000000000000000 bHalGetSysTick
+     /tmp/ccqXYS81.s:40     .text.bHalInit:0000000000000000 bHalInit
+     /tmp/ccqXYS81.s:275    .data.bUsDelayParam:0000000000000000 bUsDelayParam
+     /tmp/ccqXYS81.s:170    .text.bHalGetSysTickPlus:0000000000000000 bHalGetSysTickPlus
+     /tmp/ccqXYS81.s:186    .text.bHalDelayMs:0000000000000000 bHalDelayMs
+     /tmp/ccqXYS81.s:238    .text.bHalDelayUs:0000000000000000 bHalDelayUs
+     /tmp/ccqXYS81.s:279    .rodata.cst8:0000000000000000 .LC0
+
+NO UNDEFINED SYMBOLS

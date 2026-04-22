@@ -1,0 +1,1803 @@
+GAS LISTING /tmp/ccAWTiLc.s 			page 1
+
+
+   1              		.file	"b_queue.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/core/b_queue.c"
+   5              		.section	.text.bQueueCreate,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	bQueueCreate
+   9              	bQueueCreate:
+  10              	.LVL0:
+  11              	.LFB29:
+   1:../../bos/core/b_queue.c **** /**
+   2:../../bos/core/b_queue.c ****  *!
+   3:../../bos/core/b_queue.c ****  * \file        b_queue.c
+   4:../../bos/core/b_queue.c ****  * \version     v0.0.1
+   5:../../bos/core/b_queue.c ****  * \date        2019/06/05
+   6:../../bos/core/b_queue.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/core/b_queue.c ****  *******************************************************************************
+   8:../../bos/core/b_queue.c ****  * @attention
+   9:../../bos/core/b_queue.c ****  *
+  10:../../bos/core/b_queue.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/core/b_queue.c ****  *
+  12:../../bos/core/b_queue.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/core/b_queue.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/core/b_queue.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/core/b_queue.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/core/b_queue.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/core/b_queue.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/core/b_queue.c ****  *
+  19:../../bos/core/b_queue.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/core/b_queue.c ****  * copies or substantial portions of the Software.
+  21:../../bos/core/b_queue.c ****  *
+  22:../../bos/core/b_queue.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/core/b_queue.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/core/b_queue.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/core/b_queue.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/core/b_queue.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/core/b_queue.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/core/b_queue.c ****  * SOFTWARE.
+  29:../../bos/core/b_queue.c ****  *******************************************************************************
+  30:../../bos/core/b_queue.c ****  */
+  31:../../bos/core/b_queue.c **** 
+  32:../../bos/core/b_queue.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/core/b_queue.c **** #include "core/inc/b_queue.h"
+  34:../../bos/core/b_queue.c **** 
+  35:../../bos/core/b_queue.c **** #include "b_section.h"
+  36:../../bos/core/b_queue.c **** #include "hal/inc/b_hal.h"
+  37:../../bos/core/b_queue.c **** 
+  38:../../bos/core/b_queue.c **** /**
+  39:../../bos/core/b_queue.c ****  * \addtogroup BABYOS
+  40:../../bos/core/b_queue.c ****  * \{
+  41:../../bos/core/b_queue.c ****  */
+  42:../../bos/core/b_queue.c **** 
+  43:../../bos/core/b_queue.c **** /**
+  44:../../bos/core/b_queue.c ****  * \addtogroup CORE
+  45:../../bos/core/b_queue.c ****  * \{
+  46:../../bos/core/b_queue.c ****  */
+  47:../../bos/core/b_queue.c **** 
+GAS LISTING /tmp/ccAWTiLc.s 			page 2
+
+
+  48:../../bos/core/b_queue.c **** /**
+  49:../../bos/core/b_queue.c ****  * \addtogroup QUEUE
+  50:../../bos/core/b_queue.c ****  * \{
+  51:../../bos/core/b_queue.c ****  */
+  52:../../bos/core/b_queue.c **** 
+  53:../../bos/core/b_queue.c **** /**
+  54:../../bos/core/b_queue.c ****  * \defgroup QUEUE_Private_TypesDefinitions
+  55:../../bos/core/b_queue.c ****  * \{
+  56:../../bos/core/b_queue.c ****  */
+  57:../../bos/core/b_queue.c **** 
+  58:../../bos/core/b_queue.c **** /**
+  59:../../bos/core/b_queue.c ****  * \}
+  60:../../bos/core/b_queue.c ****  */
+  61:../../bos/core/b_queue.c **** 
+  62:../../bos/core/b_queue.c **** /**
+  63:../../bos/core/b_queue.c ****  * \defgroup QUEUE_Private_Defines
+  64:../../bos/core/b_queue.c ****  * \{
+  65:../../bos/core/b_queue.c ****  */
+  66:../../bos/core/b_queue.c **** 
+  67:../../bos/core/b_queue.c **** /**
+  68:../../bos/core/b_queue.c ****  * \}
+  69:../../bos/core/b_queue.c ****  */
+  70:../../bos/core/b_queue.c **** 
+  71:../../bos/core/b_queue.c **** /**
+  72:../../bos/core/b_queue.c ****  * \defgroup QUEUE_Private_Macros
+  73:../../bos/core/b_queue.c ****  * \{
+  74:../../bos/core/b_queue.c ****  */
+  75:../../bos/core/b_queue.c **** 
+  76:../../bos/core/b_queue.c **** /**
+  77:../../bos/core/b_queue.c ****  * \}
+  78:../../bos/core/b_queue.c ****  */
+  79:../../bos/core/b_queue.c **** 
+  80:../../bos/core/b_queue.c **** /**
+  81:../../bos/core/b_queue.c ****  * \defgroup QUEUE_Private_Variables
+  82:../../bos/core/b_queue.c ****  * \{
+  83:../../bos/core/b_queue.c ****  */
+  84:../../bos/core/b_queue.c **** 
+  85:../../bos/core/b_queue.c **** static LIST_HEAD(bQueueListHead);
+  86:../../bos/core/b_queue.c **** 
+  87:../../bos/core/b_queue.c **** /**
+  88:../../bos/core/b_queue.c ****  * \}
+  89:../../bos/core/b_queue.c ****  */
+  90:../../bos/core/b_queue.c **** 
+  91:../../bos/core/b_queue.c **** /**
+  92:../../bos/core/b_queue.c ****  * \defgroup QUEUE_Private_FunctionPrototypes
+  93:../../bos/core/b_queue.c ****  * \{
+  94:../../bos/core/b_queue.c ****  */
+  95:../../bos/core/b_queue.c **** 
+  96:../../bos/core/b_queue.c **** /**
+  97:../../bos/core/b_queue.c ****  * \}
+  98:../../bos/core/b_queue.c ****  */
+  99:../../bos/core/b_queue.c **** 
+ 100:../../bos/core/b_queue.c **** /**
+ 101:../../bos/core/b_queue.c ****  * \defgroup QUEUE_Private_Functions
+ 102:../../bos/core/b_queue.c ****  * \{
+ 103:../../bos/core/b_queue.c ****  */
+ 104:../../bos/core/b_queue.c **** 
+GAS LISTING /tmp/ccAWTiLc.s 			page 3
+
+
+ 105:../../bos/core/b_queue.c **** static bQueueAttr_t *_bQueueFind(bQueueId_t id)
+ 106:../../bos/core/b_queue.c **** {
+ 107:../../bos/core/b_queue.c ****     struct list_head *pos   = NULL;
+ 108:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 109:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 110:../../bos/core/b_queue.c ****     {
+ 111:../../bos/core/b_queue.c ****         pattr = list_entry(pos, bQueueAttr_t, list);
+ 112:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 113:../../bos/core/b_queue.c ****         {
+ 114:../../bos/core/b_queue.c ****             break;
+ 115:../../bos/core/b_queue.c ****         }
+ 116:../../bos/core/b_queue.c ****         pattr = NULL;
+ 117:../../bos/core/b_queue.c ****     }
+ 118:../../bos/core/b_queue.c ****     return pattr;
+ 119:../../bos/core/b_queue.c **** }
+ 120:../../bos/core/b_queue.c **** 
+ 121:../../bos/core/b_queue.c **** /**
+ 122:../../bos/core/b_queue.c ****  * \}
+ 123:../../bos/core/b_queue.c ****  */
+ 124:../../bos/core/b_queue.c **** 
+ 125:../../bos/core/b_queue.c **** /**
+ 126:../../bos/core/b_queue.c ****  * \addtogroup QUEUE_Exported_Functions
+ 127:../../bos/core/b_queue.c ****  * \{
+ 128:../../bos/core/b_queue.c ****  */
+ 129:../../bos/core/b_queue.c **** bQueueId_t bQueueCreate(uint32_t msg_count, uint32_t msg_size, bQueueAttr_t *attr)
+ 130:../../bos/core/b_queue.c **** {
+  12              		.loc 1 130 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 130 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+ 131:../../bos/core/b_queue.c ****     if (attr == NULL || attr->mq_mem == NULL || (attr->mq_size < (msg_count * msg_size)))
+  16              		.loc 1 131 5 is_stmt 1 view .LVU2
+  17              		.loc 1 131 8 is_stmt 0 view .LVU3
+  18 0004 4885D2   		testq	%rdx, %rdx
+  19 0007 7477     		je	.L8
+  20              		.loc 1 131 29 discriminator 1 view .LVU4
+  21 0009 488B4218 		movq	24(%rdx), %rax
+  22              		.loc 1 131 22 discriminator 1 view .LVU5
+  23 000d 4885C0   		testq	%rax, %rax
+  24 0010 7470     		je	.L1
+  25              		.loc 1 131 77 discriminator 2 view .LVU6
+  26 0012 89F8     		movl	%edi, %eax
+  27 0014 0FAFC6   		imull	%esi, %eax
+  28              		.loc 1 131 46 discriminator 2 view .LVU7
+  29 0017 394220   		cmpl	%eax, 32(%rdx)
+  30 001a 7264     		jb	.L8
+ 132:../../bos/core/b_queue.c ****     {
+ 133:../../bos/core/b_queue.c ****         return NULL;
+ 134:../../bos/core/b_queue.c ****     }
+ 135:../../bos/core/b_queue.c ****     if (_bQueueFind(attr) != NULL)
+  31              		.loc 1 135 5 is_stmt 1 view .LVU8
+  32              	.LVL1:
+  33              	.LBB38:
+  34              	.LBI38:
+ 105:../../bos/core/b_queue.c **** {
+  35              		.loc 1 105 22 view .LVU9
+  36              	.LBB39:
+GAS LISTING /tmp/ccAWTiLc.s 			page 4
+
+
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+  37              		.loc 1 107 5 view .LVU10
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+  38              		.loc 1 108 5 view .LVU11
+ 109:../../bos/core/b_queue.c ****     {
+  39              		.loc 1 109 5 view .LVU12
+  40 001c 4C8B0D00 		movq	bQueueListHead(%rip), %r9
+  40      000000
+  41              	.LVL2:
+ 109:../../bos/core/b_queue.c ****     {
+  42              		.loc 1 109 5 discriminator 1 view .LVU13
+ 109:../../bos/core/b_queue.c ****     {
+  43              		.loc 1 109 5 is_stmt 0 view .LVU14
+  44 0023 4C8D0500 		leaq	bQueueListHead(%rip), %r8
+  44      000000
+ 109:../../bos/core/b_queue.c ****     {
+  45              		.loc 1 109 5 discriminator 1 view .LVU15
+  46 002a 4D39C1   		cmpq	%r8, %r9
+  47 002d 7422     		je	.L3
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+  48              		.loc 1 111 9 is_stmt 1 view .LVU16
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+  49              		.loc 1 111 15 is_stmt 0 view .LVU17
+  50 002f 498D41D8 		leaq	-40(%r9), %rax
+  51              	.LVL3:
+ 112:../../bos/core/b_queue.c ****         {
+  52              		.loc 1 112 9 is_stmt 1 view .LVU18
+ 112:../../bos/core/b_queue.c ****         {
+  53              		.loc 1 112 12 is_stmt 0 view .LVU19
+  54 0033 4839C2   		cmpq	%rax, %rdx
+  55 0036 744A     		je	.L1
+ 109:../../bos/core/b_queue.c ****     {
+  56              		.loc 1 109 5 view .LVU20
+  57 0038 4C89C8   		movq	%r9, %rax
+  58              	.LVL4:
+ 109:../../bos/core/b_queue.c ****     {
+  59              		.loc 1 109 5 view .LVU21
+  60 003b EB0C     		jmp	.L4
+  61              	.LVL5:
+  62 003d 0F1F00   		.p2align 4,,10
+  63              		.p2align 3
+  64              	.L6:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+  65              		.loc 1 111 9 is_stmt 1 view .LVU22
+ 112:../../bos/core/b_queue.c ****         {
+  66              		.loc 1 112 9 view .LVU23
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+  67              		.loc 1 111 15 is_stmt 0 view .LVU24
+  68 0040 488D48D8 		leaq	-40(%rax), %rcx
+  69              	.LVL6:
+ 112:../../bos/core/b_queue.c ****         {
+  70              		.loc 1 112 12 view .LVU25
+  71 0044 4839CA   		cmpq	%rcx, %rdx
+  72 0047 7433     		je	.L5
+  73              	.LVL7:
+  74              	.L4:
+ 116:../../bos/core/b_queue.c ****     }
+GAS LISTING /tmp/ccAWTiLc.s 			page 5
+
+
+  75              		.loc 1 116 9 is_stmt 1 view .LVU26
+ 109:../../bos/core/b_queue.c ****     {
+  76              		.loc 1 109 5 discriminator 2 view .LVU27
+  77 0049 488B00   		movq	(%rax), %rax
+  78              	.LVL8:
+ 109:../../bos/core/b_queue.c ****     {
+  79              		.loc 1 109 5 discriminator 1 view .LVU28
+  80 004c 4C39C0   		cmpq	%r8, %rax
+  81 004f 75EF     		jne	.L6
+  82              	.LVL9:
+  83              	.L3:
+ 118:../../bos/core/b_queue.c **** }
+  84              		.loc 1 118 5 view .LVU29
+ 118:../../bos/core/b_queue.c **** }
+  85              		.loc 1 118 5 is_stmt 0 view .LVU30
+  86              	.LBE39:
+  87              	.LBE38:
+ 136:../../bos/core/b_queue.c ****     {
+ 137:../../bos/core/b_queue.c ****         return attr;
+ 138:../../bos/core/b_queue.c ****     }
+ 139:../../bos/core/b_queue.c ****     attr->number    = 0;
+  88              		.loc 1 139 5 is_stmt 1 view .LVU31
+ 140:../../bos/core/b_queue.c ****     attr->r_index   = 0;
+  89              		.loc 1 140 5 view .LVU32
+ 141:../../bos/core/b_queue.c ****     attr->w_index   = 0;
+ 142:../../bos/core/b_queue.c ****     attr->msg_count = msg_count;
+ 143:../../bos/core/b_queue.c ****     attr->msg_size  = msg_size;
+ 144:../../bos/core/b_queue.c ****     list_add(&attr->list, &bQueueListHead);
+  90              		.loc 1 144 5 is_stmt 0 view .LVU33
+  91 0051 488D4228 		leaq	40(%rdx), %rax
+ 139:../../bos/core/b_queue.c ****     attr->r_index   = 0;
+  92              		.loc 1 139 21 view .LVU34
+  93 0055 48C70200 		movq	$0, (%rdx)
+  93      000000
+ 141:../../bos/core/b_queue.c ****     attr->w_index   = 0;
+  94              		.loc 1 141 5 is_stmt 1 view .LVU35
+ 141:../../bos/core/b_queue.c ****     attr->w_index   = 0;
+  95              		.loc 1 141 21 is_stmt 0 view .LVU36
+  96 005c C7420800 		movl	$0, 8(%rdx)
+  96      000000
+ 142:../../bos/core/b_queue.c ****     attr->msg_size  = msg_size;
+  97              		.loc 1 142 5 is_stmt 1 view .LVU37
+ 142:../../bos/core/b_queue.c ****     attr->msg_size  = msg_size;
+  98              		.loc 1 142 21 is_stmt 0 view .LVU38
+  99 0063 897A0C   		movl	%edi, 12(%rdx)
+ 143:../../bos/core/b_queue.c ****     list_add(&attr->list, &bQueueListHead);
+ 100              		.loc 1 143 5 is_stmt 1 view .LVU39
+ 143:../../bos/core/b_queue.c ****     list_add(&attr->list, &bQueueListHead);
+ 101              		.loc 1 143 21 is_stmt 0 view .LVU40
+ 102 0066 897210   		movl	%esi, 16(%rdx)
+ 103              		.loc 1 144 5 is_stmt 1 view .LVU41
+ 104              	.LVL10:
+ 105              	.LBB40:
+ 106              	.LBI40:
+ 107              		.file 2 "../../bos/utils/inc/b_util_list.h"
+   1:../../bos/utils/inc/b_util_list.h **** /**
+   2:../../bos/utils/inc/b_util_list.h ****  *!
+GAS LISTING /tmp/ccAWTiLc.s 			page 6
+
+
+   3:../../bos/utils/inc/b_util_list.h ****  * \file        b_util_list.h
+   4:../../bos/utils/inc/b_util_list.h ****  * \version     v0.0.1
+   5:../../bos/utils/inc/b_util_list.h ****  * \date        2019/12/23
+   6:../../bos/utils/inc/b_util_list.h ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+   8:../../bos/utils/inc/b_util_list.h ****  * @attention
+   9:../../bos/utils/inc/b_util_list.h ****  *
+  10:../../bos/utils/inc/b_util_list.h ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/inc/b_util_list.h ****  *
+  12:../../bos/utils/inc/b_util_list.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/inc/b_util_list.h ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/inc/b_util_list.h ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/inc/b_util_list.h ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/inc/b_util_list.h ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/inc/b_util_list.h ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/inc/b_util_list.h ****  *
+  19:../../bos/utils/inc/b_util_list.h ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/inc/b_util_list.h ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/inc/b_util_list.h ****  *
+  22:../../bos/utils/inc/b_util_list.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/inc/b_util_list.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/inc/b_util_list.h ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/inc/b_util_list.h ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/inc/b_util_list.h ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/inc/b_util_list.h ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/inc/b_util_list.h ****  * SOFTWARE.
+  29:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+  30:../../bos/utils/inc/b_util_list.h ****  */
+  31:../../bos/utils/inc/b_util_list.h **** #ifndef __B_UTIL_LIST_H__
+  32:../../bos/utils/inc/b_util_list.h **** #define __B_UTIL_LIST_H__
+  33:../../bos/utils/inc/b_util_list.h **** 
+  34:../../bos/utils/inc/b_util_list.h **** #ifdef __cplusplus
+  35:../../bos/utils/inc/b_util_list.h **** extern "C" {
+  36:../../bos/utils/inc/b_util_list.h **** #endif
+  37:../../bos/utils/inc/b_util_list.h **** 
+  38:../../bos/utils/inc/b_util_list.h **** /*Includes ----------------------------------------------*/
+  39:../../bos/utils/inc/b_util_list.h **** #include "b_type.h"
+  40:../../bos/utils/inc/b_util_list.h **** /**
+  41:../../bos/utils/inc/b_util_list.h ****  * \addtogroup B_UTILS
+  42:../../bos/utils/inc/b_util_list.h ****  * \{
+  43:../../bos/utils/inc/b_util_list.h ****  */
+  44:../../bos/utils/inc/b_util_list.h **** 
+  45:../../bos/utils/inc/b_util_list.h **** /**
+  46:../../bos/utils/inc/b_util_list.h ****  * \addtogroup LIST
+  47:../../bos/utils/inc/b_util_list.h ****  * \{
+  48:../../bos/utils/inc/b_util_list.h ****  */
+  49:../../bos/utils/inc/b_util_list.h **** 
+  50:../../bos/utils/inc/b_util_list.h **** struct list_head
+  51:../../bos/utils/inc/b_util_list.h **** {
+  52:../../bos/utils/inc/b_util_list.h ****     struct list_head *next, *prev;
+  53:../../bos/utils/inc/b_util_list.h **** };
+  54:../../bos/utils/inc/b_util_list.h **** 
+  55:../../bos/utils/inc/b_util_list.h **** #define WRITE_ONCE(var, val) (var) = (val)
+  56:../../bos/utils/inc/b_util_list.h **** 
+  57:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD_INIT(name) \
+  58:../../bos/utils/inc/b_util_list.h ****     {                        \
+  59:../../bos/utils/inc/b_util_list.h ****         &(name), &(name)     \
+GAS LISTING /tmp/ccAWTiLc.s 			page 7
+
+
+  60:../../bos/utils/inc/b_util_list.h ****     }
+  61:../../bos/utils/inc/b_util_list.h **** 
+  62:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD(name) struct list_head name = LIST_HEAD_INIT(name)
+  63:../../bos/utils/inc/b_util_list.h **** 
+  64:../../bos/utils/inc/b_util_list.h **** #define INIT_LIST_HEAD(ptr)  \
+  65:../../bos/utils/inc/b_util_list.h ****     do                       \
+  66:../../bos/utils/inc/b_util_list.h ****     {                        \
+  67:../../bos/utils/inc/b_util_list.h ****         (ptr)->next = (ptr); \
+  68:../../bos/utils/inc/b_util_list.h ****         (ptr)->prev = (ptr); \
+  69:../../bos/utils/inc/b_util_list.h ****     } while (0)
+  70:../../bos/utils/inc/b_util_list.h **** 
+  71:../../bos/utils/inc/b_util_list.h **** /**
+  72:../../bos/utils/inc/b_util_list.h ****  * list_entry - get the struct for this entry
+  73:../../bos/utils/inc/b_util_list.h ****  * @ptr: the &struct list_head pointer.
+  74:../../bos/utils/inc/b_util_list.h ****  * @type: the type of the struct this is embedded in.
+  75:../../bos/utils/inc/b_util_list.h ****  * @member: the name of the list_struct within the struct.
+  76:../../bos/utils/inc/b_util_list.h ****  */
+  77:../../bos/utils/inc/b_util_list.h **** #define list_entry(ptr, type, member) \
+  78:../../bos/utils/inc/b_util_list.h ****     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
+  79:../../bos/utils/inc/b_util_list.h **** 
+  80:../../bos/utils/inc/b_util_list.h **** #define list_first_entry(ptr, type, member) list_entry((ptr)->next, type, member)
+  81:../../bos/utils/inc/b_util_list.h **** 
+  82:../../bos/utils/inc/b_util_list.h **** #define list_next_entry(pos, type, member) list_entry((pos)->member.next, type, member)
+  83:../../bos/utils/inc/b_util_list.h **** 
+  84:../../bos/utils/inc/b_util_list.h **** /*
+  85:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry between two known consecutive entries.
+  86:../../bos/utils/inc/b_util_list.h ****  *
+  87:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+  88:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+  89:../../bos/utils/inc/b_util_list.h ****  */
+  90:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_add(struct list_head *newItem, struct list_head *prev,
+  91:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+  92:../../bos/utils/inc/b_util_list.h **** {
+  93:../../bos/utils/inc/b_util_list.h ****     next->prev    = newItem;
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+  95:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+  96:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+  97:../../bos/utils/inc/b_util_list.h **** }
+  98:../../bos/utils/inc/b_util_list.h **** 
+  99:../../bos/utils/inc/b_util_list.h **** /**
+ 100:../../bos/utils/inc/b_util_list.h ****  * list_add - add a new entry
+ 101:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 102:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it after
+ 103:../../bos/utils/inc/b_util_list.h ****  *
+ 104:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry after the specified head.
+ 105:../../bos/utils/inc/b_util_list.h ****  * This is good for implementing stacks.
+ 106:../../bos/utils/inc/b_util_list.h ****  */
+ 107:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add(struct list_head *newItem, struct list_head *head)
+ 108              		.loc 2 107 26 view .LVU42
+ 108:../../bos/utils/inc/b_util_list.h **** {
+ 109:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head, head->next);
+ 109              		.loc 2 109 5 view .LVU43
+ 110              	.LBB41:
+ 111              	.LBI41:
+  90:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+ 112              		.loc 2 90 26 view .LVU44
+ 113              	.LBB42:
+GAS LISTING /tmp/ccAWTiLc.s 			page 8
+
+
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 114              		.loc 2 93 5 view .LVU45
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 115              		.loc 2 96 5 is_stmt 0 view .LVU46
+ 116 0069 48890500 		movq	%rax, bQueueListHead(%rip)
+ 116      000000
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 117              		.loc 2 93 19 view .LVU47
+ 118 0070 49894108 		movq	%rax, 8(%r9)
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 119              		.loc 2 94 5 is_stmt 1 view .LVU48
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 120              		.loc 2 94 19 is_stmt 0 view .LVU49
+ 121 0074 4C894A28 		movq	%r9, 40(%rdx)
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 122              		.loc 2 95 5 is_stmt 1 view .LVU50
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 123              		.loc 2 95 19 is_stmt 0 view .LVU51
+ 124 0078 4C894230 		movq	%r8, 48(%rdx)
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 125              		.loc 2 96 5 is_stmt 1 view .LVU52
+ 126              	.LVL11:
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 127              		.loc 2 96 5 is_stmt 0 view .LVU53
+ 128              	.LBE42:
+ 129              	.LBE41:
+ 130              	.LBE40:
+ 145:../../bos/core/b_queue.c ****     return attr;
+ 131              		.loc 1 145 5 is_stmt 1 view .LVU54
+ 132              	.L5:
+ 137:../../bos/core/b_queue.c ****     }
+ 133              		.loc 1 137 16 is_stmt 0 view .LVU55
+ 134 007c 4889D0   		movq	%rdx, %rax
+ 135 007f C3       		ret
+ 136              		.p2align 4,,10
+ 137              		.p2align 3
+ 138              	.L8:
+ 133:../../bos/core/b_queue.c ****     }
+ 139              		.loc 1 133 16 view .LVU56
+ 140 0080 31C0     		xorl	%eax, %eax
+ 141              	.L1:
+ 146:../../bos/core/b_queue.c **** }
+ 142              		.loc 1 146 1 view .LVU57
+ 143 0082 C3       		ret
+ 144              		.cfi_endproc
+ 145              	.LFE29:
+ 147              		.section	.text.bQueuePutNonblock,"ax",@progbits
+ 148              		.p2align 4
+ 149              		.globl	bQueuePutNonblock
+ 151              	bQueuePutNonblock:
+ 152              	.LVL12:
+ 153              	.LFB30:
+ 147:../../bos/core/b_queue.c **** 
+ 148:../../bos/core/b_queue.c **** int bQueuePutNonblock(bQueueId_t id, const void *msg_ptr)
+ 149:../../bos/core/b_queue.c **** {
+ 154              		.loc 1 149 1 is_stmt 1 view -0
+ 155              		.cfi_startproc
+GAS LISTING /tmp/ccAWTiLc.s 			page 9
+
+
+ 156              		.loc 1 149 1 is_stmt 0 view .LVU59
+ 157 0000 F30F1EFA 		endbr64
+ 150:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 158              		.loc 1 150 5 is_stmt 1 view .LVU60
+ 159              	.LVL13:
+ 151:../../bos/core/b_queue.c ****     uint8_t      *pbuf = NULL;
+ 160              		.loc 1 151 5 view .LVU61
+ 152:../../bos/core/b_queue.c ****     if (id == NULL || msg_ptr == NULL)
+ 161              		.loc 1 152 5 view .LVU62
+ 162              		.loc 1 152 8 is_stmt 0 view .LVU63
+ 163 0004 4885FF   		testq	%rdi, %rdi
+ 164 0007 7475     		je	.L19
+ 165 0009 4885F6   		testq	%rsi, %rsi
+ 166 000c 7470     		je	.L19
+ 153:../../bos/core/b_queue.c ****     {
+ 154:../../bos/core/b_queue.c ****         return -1;
+ 155:../../bos/core/b_queue.c ****     }
+ 156:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
+ 167              		.loc 1 156 5 is_stmt 1 view .LVU64
+ 168              	.LVL14:
+ 169              	.LBB43:
+ 170              	.LBI43:
+ 105:../../bos/core/b_queue.c **** {
+ 171              		.loc 1 105 22 view .LVU65
+ 172              	.LBB44:
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 173              		.loc 1 107 5 view .LVU66
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 174              		.loc 1 108 5 view .LVU67
+ 109:../../bos/core/b_queue.c ****     {
+ 175              		.loc 1 109 5 view .LVU68
+ 176 000e 488B0500 		movq	bQueueListHead(%rip), %rax
+ 176      000000
+ 177              	.LVL15:
+ 109:../../bos/core/b_queue.c ****     {
+ 178              		.loc 1 109 5 discriminator 1 view .LVU69
+ 109:../../bos/core/b_queue.c ****     {
+ 179              		.loc 1 109 5 is_stmt 0 view .LVU70
+ 180 0015 488D1500 		leaq	bQueueListHead(%rip), %rdx
+ 180      000000
+ 109:../../bos/core/b_queue.c ****     {
+ 181              		.loc 1 109 5 discriminator 1 view .LVU71
+ 182 001c 4839D0   		cmpq	%rdx, %rax
+ 183 001f 745D     		je	.L19
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 184              		.loc 1 111 9 is_stmt 1 view .LVU72
+ 185              	.LBE44:
+ 186              	.LBE43:
+ 149:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 187              		.loc 1 149 1 is_stmt 0 view .LVU73
+ 188 0021 53       		pushq	%rbx
+ 189              	.LCFI0:
+ 190              		.cfi_def_cfa_offset 16
+ 191              		.cfi_offset 3, -16
+ 192              	.LBB46:
+ 193              	.LBB45:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+GAS LISTING /tmp/ccAWTiLc.s 			page 10
+
+
+ 194              		.loc 1 111 15 view .LVU74
+ 195 0022 488D58D8 		leaq	-40(%rax), %rbx
+ 196              	.LVL16:
+ 112:../../bos/core/b_queue.c ****         {
+ 197              		.loc 1 112 9 is_stmt 1 view .LVU75
+ 112:../../bos/core/b_queue.c ****         {
+ 198              		.loc 1 112 12 is_stmt 0 view .LVU76
+ 199 0026 4839DF   		cmpq	%rbx, %rdi
+ 200 0029 750E     		jne	.L16
+ 201 002b EB23     		jmp	.L15
+ 202              	.LVL17:
+ 203 002d 0F1F00   		.p2align 4,,10
+ 204              		.p2align 3
+ 205              	.L17:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 206              		.loc 1 111 9 is_stmt 1 view .LVU77
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 207              		.loc 1 111 15 is_stmt 0 view .LVU78
+ 208 0030 488D58D8 		leaq	-40(%rax), %rbx
+ 209              	.LVL18:
+ 112:../../bos/core/b_queue.c ****         {
+ 210              		.loc 1 112 9 is_stmt 1 view .LVU79
+ 112:../../bos/core/b_queue.c ****         {
+ 211              		.loc 1 112 12 is_stmt 0 view .LVU80
+ 212 0034 4839DF   		cmpq	%rbx, %rdi
+ 213 0037 7417     		je	.L15
+ 214              	.L16:
+ 116:../../bos/core/b_queue.c ****     }
+ 215              		.loc 1 116 9 is_stmt 1 view .LVU81
+ 216              	.LVL19:
+ 109:../../bos/core/b_queue.c ****     {
+ 217              		.loc 1 109 5 discriminator 2 view .LVU82
+ 218 0039 488B00   		movq	(%rax), %rax
+ 219              	.LVL20:
+ 109:../../bos/core/b_queue.c ****     {
+ 220              		.loc 1 109 5 discriminator 1 view .LVU83
+ 221 003c 4839D0   		cmpq	%rdx, %rax
+ 222 003f 75EF     		jne	.L17
+ 223              	.LBE45:
+ 224              	.LBE46:
+ 154:../../bos/core/b_queue.c ****     }
+ 225              		.loc 1 154 16 is_stmt 0 view .LVU84
+ 226 0041 B8FFFFFF 		movl	$-1, %eax
+ 226      FF
+ 227              	.LVL21:
+ 157:../../bos/core/b_queue.c ****     if (attr == NULL)
+ 158:../../bos/core/b_queue.c ****     {
+ 159:../../bos/core/b_queue.c ****         return -1;
+ 160:../../bos/core/b_queue.c ****     }
+ 161:../../bos/core/b_queue.c ****     if (attr->number >= attr->msg_count)
+ 162:../../bos/core/b_queue.c ****     {
+ 163:../../bos/core/b_queue.c ****         return -2;
+ 164:../../bos/core/b_queue.c ****     }
+ 165:../../bos/core/b_queue.c ****     pbuf = (uint8_t *)attr->mq_mem;
+ 166:../../bos/core/b_queue.c ****     memcpy(&pbuf[attr->w_index * attr->msg_size], msg_ptr, attr->msg_size);
+ 167:../../bos/core/b_queue.c ****     attr->w_index = (attr->w_index + 1) % attr->msg_count;
+ 168:../../bos/core/b_queue.c ****     attr->number += 1;
+GAS LISTING /tmp/ccAWTiLc.s 			page 11
+
+
+ 169:../../bos/core/b_queue.c ****     return 0;
+ 170:../../bos/core/b_queue.c **** }
+ 228              		.loc 1 170 1 view .LVU85
+ 229 0046 5B       		popq	%rbx
+ 230              	.LCFI1:
+ 231              		.cfi_remember_state
+ 232              		.cfi_def_cfa_offset 8
+ 233 0047 C3       		ret
+ 234              	.LVL22:
+ 235 0048 0F1F8400 		.p2align 4,,10
+ 235      00000000 
+ 236              		.p2align 3
+ 237              	.L15:
+ 238              	.LCFI2:
+ 239              		.cfi_restore_state
+ 161:../../bos/core/b_queue.c ****     {
+ 240              		.loc 1 161 5 is_stmt 1 view .LVU86
+ 161:../../bos/core/b_queue.c ****     {
+ 241              		.loc 1 161 8 is_stmt 0 view .LVU87
+ 242 0050 8B430C   		movl	12(%rbx), %eax
+ 243 0053 3903     		cmpl	%eax, (%rbx)
+ 244 0055 732D     		jnb	.L20
+ 165:../../bos/core/b_queue.c ****     memcpy(&pbuf[attr->w_index * attr->msg_size], msg_ptr, attr->msg_size);
+ 245              		.loc 1 165 5 is_stmt 1 view .LVU88
+ 246              	.LVL23:
+ 166:../../bos/core/b_queue.c ****     attr->w_index = (attr->w_index + 1) % attr->msg_count;
+ 247              		.loc 1 166 5 view .LVU89
+ 166:../../bos/core/b_queue.c ****     attr->w_index = (attr->w_index + 1) % attr->msg_count;
+ 248              		.loc 1 166 64 is_stmt 0 view .LVU90
+ 249 0057 8B5310   		movl	16(%rbx), %edx
+ 250              	.LVL24:
+ 251              	.LBB47:
+ 252              	.LBI47:
+ 253              		.file 3 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+GAS LISTING /tmp/ccAWTiLc.s 			page 12
+
+
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+ 254              		.loc 3 26 1 is_stmt 1 view .LVU91
+ 255              	.LBB48:
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+ 256              		.loc 3 29 3 view .LVU92
+ 257              	.LBE48:
+ 258              	.LBE47:
+ 166:../../bos/core/b_queue.c ****     attr->w_index = (attr->w_index + 1) % attr->msg_count;
+ 259              		.loc 1 166 32 is_stmt 0 view .LVU93
+ 260 005a 89D7     		movl	%edx, %edi
+ 261              	.LVL25:
+ 166:../../bos/core/b_queue.c ****     attr->w_index = (attr->w_index + 1) % attr->msg_count;
+ 262              		.loc 1 166 32 view .LVU94
+ 263 005c 0FAF7B08 		imull	8(%rbx), %edi
+ 166:../../bos/core/b_queue.c ****     attr->w_index = (attr->w_index + 1) % attr->msg_count;
+ 264              		.loc 1 166 12 view .LVU95
+ 265 0060 48037B18 		addq	24(%rbx), %rdi
+ 266              	.LBB50:
+ 267              	.LBB49:
+ 268              		.loc 3 29 10 discriminator 1 view .LVU96
+ 269 0064 E8000000 		call	memcpy@PLT
+ 269      00
+ 270              	.LVL26:
+ 271              		.loc 3 29 10 discriminator 1 view .LVU97
+ 272              	.LBE49:
+ 273              	.LBE50:
+ 167:../../bos/core/b_queue.c ****     attr->number += 1;
+ 274              		.loc 1 167 5 is_stmt 1 view .LVU98
+ 167:../../bos/core/b_queue.c ****     attr->number += 1;
+ 275              		.loc 1 167 36 is_stmt 0 view .LVU99
+ 276 0069 8B4308   		movl	8(%rbx), %eax
+ 167:../../bos/core/b_queue.c ****     attr->number += 1;
+ 277              		.loc 1 167 41 view .LVU100
+ 278 006c 31D2     		xorl	%edx, %edx
+ 168:../../bos/core/b_queue.c ****     return 0;
+ 279              		.loc 1 168 18 view .LVU101
+ 280 006e 830301   		addl	$1, (%rbx)
+ 167:../../bos/core/b_queue.c ****     attr->number += 1;
+ 281              		.loc 1 167 36 view .LVU102
+ 282 0071 83C001   		addl	$1, %eax
+ 167:../../bos/core/b_queue.c ****     attr->number += 1;
+ 283              		.loc 1 167 41 view .LVU103
+ 284 0074 F7730C   		divl	12(%rbx)
+ 169:../../bos/core/b_queue.c **** }
+ 285              		.loc 1 169 12 view .LVU104
+ 286 0077 31C0     		xorl	%eax, %eax
+ 167:../../bos/core/b_queue.c ****     attr->number += 1;
+ 287              		.loc 1 167 19 view .LVU105
+ 288 0079 895308   		movl	%edx, 8(%rbx)
+ 168:../../bos/core/b_queue.c ****     return 0;
+ 289              		.loc 1 168 5 is_stmt 1 view .LVU106
+ 169:../../bos/core/b_queue.c **** }
+ 290              		.loc 1 169 5 view .LVU107
+GAS LISTING /tmp/ccAWTiLc.s 			page 13
+
+
+ 291              		.loc 1 170 1 is_stmt 0 view .LVU108
+ 292 007c 5B       		popq	%rbx
+ 293              	.LCFI3:
+ 294              		.cfi_def_cfa_offset 8
+ 295 007d C3       		ret
+ 296              	.LVL27:
+ 297              	.L19:
+ 298              		.cfi_restore 3
+ 154:../../bos/core/b_queue.c ****     }
+ 299              		.loc 1 154 16 view .LVU109
+ 300 007e B8FFFFFF 		movl	$-1, %eax
+ 300      FF
+ 301              		.loc 1 170 1 view .LVU110
+ 302 0083 C3       		ret
+ 303              	.LVL28:
+ 304              	.L20:
+ 305              	.LCFI4:
+ 306              		.cfi_def_cfa_offset 16
+ 307              		.cfi_offset 3, -16
+ 163:../../bos/core/b_queue.c ****     }
+ 308              		.loc 1 163 16 view .LVU111
+ 309 0084 B8FEFFFF 		movl	$-2, %eax
+ 309      FF
+ 310              		.loc 1 170 1 view .LVU112
+ 311 0089 5B       		popq	%rbx
+ 312              	.LCFI5:
+ 313              		.cfi_def_cfa_offset 8
+ 314 008a C3       		ret
+ 315              		.cfi_endproc
+ 316              	.LFE30:
+ 318              		.section	.text.bQueueGetNonblock,"ax",@progbits
+ 319              		.p2align 4
+ 320              		.globl	bQueueGetNonblock
+ 322              	bQueueGetNonblock:
+ 323              	.LVL29:
+ 324              	.LFB31:
+ 171:../../bos/core/b_queue.c **** 
+ 172:../../bos/core/b_queue.c **** int bQueueGetNonblock(bQueueId_t id, void *msg_ptr)
+ 173:../../bos/core/b_queue.c **** {
+ 325              		.loc 1 173 1 is_stmt 1 view -0
+ 326              		.cfi_startproc
+ 327              		.loc 1 173 1 is_stmt 0 view .LVU114
+ 328 0000 F30F1EFA 		endbr64
+ 174:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 329              		.loc 1 174 5 is_stmt 1 view .LVU115
+ 330              	.LVL30:
+ 175:../../bos/core/b_queue.c ****     uint8_t      *pbuf = NULL;
+ 331              		.loc 1 175 5 view .LVU116
+ 176:../../bos/core/b_queue.c ****     if (id == NULL || msg_ptr == NULL)
+ 332              		.loc 1 176 5 view .LVU117
+ 173:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 333              		.loc 1 173 1 is_stmt 0 view .LVU118
+ 334 0004 4889FA   		movq	%rdi, %rdx
+ 335              		.loc 1 176 8 view .LVU119
+ 336 0007 4885FF   		testq	%rdi, %rdi
+ 337 000a 7472     		je	.L31
+ 338 000c 4889F7   		movq	%rsi, %rdi
+GAS LISTING /tmp/ccAWTiLc.s 			page 14
+
+
+ 339              	.LVL31:
+ 340              		.loc 1 176 8 view .LVU120
+ 341 000f 4885F6   		testq	%rsi, %rsi
+ 342 0012 746A     		je	.L31
+ 177:../../bos/core/b_queue.c ****     {
+ 178:../../bos/core/b_queue.c ****         return -1;
+ 179:../../bos/core/b_queue.c ****     }
+ 180:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
+ 343              		.loc 1 180 5 is_stmt 1 view .LVU121
+ 344              	.LVL32:
+ 345              	.LBB51:
+ 346              	.LBI51:
+ 105:../../bos/core/b_queue.c **** {
+ 347              		.loc 1 105 22 view .LVU122
+ 348              	.LBB52:
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 349              		.loc 1 107 5 view .LVU123
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 350              		.loc 1 108 5 view .LVU124
+ 109:../../bos/core/b_queue.c ****     {
+ 351              		.loc 1 109 5 view .LVU125
+ 352 0014 488B0500 		movq	bQueueListHead(%rip), %rax
+ 352      000000
+ 353              	.LVL33:
+ 109:../../bos/core/b_queue.c ****     {
+ 354              		.loc 1 109 5 discriminator 1 view .LVU126
+ 109:../../bos/core/b_queue.c ****     {
+ 355              		.loc 1 109 5 is_stmt 0 view .LVU127
+ 356 001b 488D0D00 		leaq	bQueueListHead(%rip), %rcx
+ 356      000000
+ 109:../../bos/core/b_queue.c ****     {
+ 357              		.loc 1 109 5 discriminator 1 view .LVU128
+ 358 0022 4839C8   		cmpq	%rcx, %rax
+ 359 0025 7457     		je	.L31
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 360              		.loc 1 111 9 is_stmt 1 view .LVU129
+ 361              	.LBE52:
+ 362              	.LBE51:
+ 173:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 363              		.loc 1 173 1 is_stmt 0 view .LVU130
+ 364 0027 53       		pushq	%rbx
+ 365              	.LCFI6:
+ 366              		.cfi_def_cfa_offset 16
+ 367              		.cfi_offset 3, -16
+ 368              	.LBB54:
+ 369              	.LBB53:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 370              		.loc 1 111 15 view .LVU131
+ 371 0028 488D58D8 		leaq	-40(%rax), %rbx
+ 372              	.LVL34:
+ 112:../../bos/core/b_queue.c ****         {
+ 373              		.loc 1 112 9 is_stmt 1 view .LVU132
+ 112:../../bos/core/b_queue.c ****         {
+ 374              		.loc 1 112 12 is_stmt 0 view .LVU133
+ 375 002c 4839DA   		cmpq	%rbx, %rdx
+ 376 002f 7510     		jne	.L28
+ 377 0031 EB1D     		jmp	.L27
+GAS LISTING /tmp/ccAWTiLc.s 			page 15
+
+
+ 378              	.LVL35:
+ 379              		.p2align 4,,10
+ 380 0033 0F1F4400 		.p2align 3
+ 380      00
+ 381              	.L29:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 382              		.loc 1 111 9 is_stmt 1 view .LVU134
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 383              		.loc 1 111 15 is_stmt 0 view .LVU135
+ 384 0038 488D58D8 		leaq	-40(%rax), %rbx
+ 385              	.LVL36:
+ 112:../../bos/core/b_queue.c ****         {
+ 386              		.loc 1 112 9 is_stmt 1 view .LVU136
+ 112:../../bos/core/b_queue.c ****         {
+ 387              		.loc 1 112 12 is_stmt 0 view .LVU137
+ 388 003c 4839DA   		cmpq	%rbx, %rdx
+ 389 003f 740F     		je	.L27
+ 390              	.L28:
+ 116:../../bos/core/b_queue.c ****     }
+ 391              		.loc 1 116 9 is_stmt 1 view .LVU138
+ 392              	.LVL37:
+ 109:../../bos/core/b_queue.c ****     {
+ 393              		.loc 1 109 5 discriminator 2 view .LVU139
+ 394 0041 488B00   		movq	(%rax), %rax
+ 395              	.LVL38:
+ 109:../../bos/core/b_queue.c ****     {
+ 396              		.loc 1 109 5 discriminator 1 view .LVU140
+ 397 0044 4839C8   		cmpq	%rcx, %rax
+ 398 0047 75EF     		jne	.L29
+ 399              	.LBE53:
+ 400              	.LBE54:
+ 178:../../bos/core/b_queue.c ****     }
+ 401              		.loc 1 178 16 is_stmt 0 view .LVU141
+ 402 0049 B8FFFFFF 		movl	$-1, %eax
+ 402      FF
+ 403              	.LVL39:
+ 181:../../bos/core/b_queue.c ****     if (attr == NULL)
+ 182:../../bos/core/b_queue.c ****     {
+ 183:../../bos/core/b_queue.c ****         return -1;
+ 184:../../bos/core/b_queue.c ****     }
+ 185:../../bos/core/b_queue.c ****     if (attr->number == 0)
+ 186:../../bos/core/b_queue.c ****     {
+ 187:../../bos/core/b_queue.c ****         return -3;
+ 188:../../bos/core/b_queue.c ****     }
+ 189:../../bos/core/b_queue.c ****     pbuf = (uint8_t *)attr->mq_mem;
+ 190:../../bos/core/b_queue.c ****     memcpy(msg_ptr, &pbuf[attr->r_index * attr->msg_size], attr->msg_size);
+ 191:../../bos/core/b_queue.c ****     attr->r_index = (attr->r_index + 1) % attr->msg_count;
+ 192:../../bos/core/b_queue.c ****     attr->number -= 1;
+ 193:../../bos/core/b_queue.c ****     return 0;
+ 194:../../bos/core/b_queue.c **** }
+ 404              		.loc 1 194 1 view .LVU142
+ 405 004e 5B       		popq	%rbx
+ 406              	.LCFI7:
+ 407              		.cfi_remember_state
+ 408              		.cfi_def_cfa_offset 8
+ 409 004f C3       		ret
+ 410              	.LVL40:
+GAS LISTING /tmp/ccAWTiLc.s 			page 16
+
+
+ 411              		.p2align 4,,10
+ 412              		.p2align 3
+ 413              	.L27:
+ 414              	.LCFI8:
+ 415              		.cfi_restore_state
+ 185:../../bos/core/b_queue.c ****     {
+ 416              		.loc 1 185 5 is_stmt 1 view .LVU143
+ 185:../../bos/core/b_queue.c ****     {
+ 417              		.loc 1 185 8 is_stmt 0 view .LVU144
+ 418 0050 8B03     		movl	(%rbx), %eax
+ 419 0052 85C0     		testl	%eax, %eax
+ 420 0054 742E     		je	.L32
+ 189:../../bos/core/b_queue.c ****     memcpy(msg_ptr, &pbuf[attr->r_index * attr->msg_size], attr->msg_size);
+ 421              		.loc 1 189 5 is_stmt 1 view .LVU145
+ 422              	.LVL41:
+ 190:../../bos/core/b_queue.c ****     attr->r_index = (attr->r_index + 1) % attr->msg_count;
+ 423              		.loc 1 190 5 view .LVU146
+ 190:../../bos/core/b_queue.c ****     attr->r_index = (attr->r_index + 1) % attr->msg_count;
+ 424              		.loc 1 190 64 is_stmt 0 view .LVU147
+ 425 0056 8B5310   		movl	16(%rbx), %edx
+ 426              	.LVL42:
+ 190:../../bos/core/b_queue.c ****     attr->r_index = (attr->r_index + 1) % attr->msg_count;
+ 427              		.loc 1 190 64 view .LVU148
+ 428 0059 4889D6   		movq	%rdx, %rsi
+ 429              	.LVL43:
+ 430              	.LBB55:
+ 431              	.LBI55:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 432              		.loc 3 26 1 is_stmt 1 view .LVU149
+ 433              	.LBB56:
+ 434              		.loc 3 29 3 view .LVU150
+ 435              	.LBE56:
+ 436              	.LBE55:
+ 190:../../bos/core/b_queue.c ****     attr->r_index = (attr->r_index + 1) % attr->msg_count;
+ 437              		.loc 1 190 41 is_stmt 0 view .LVU151
+ 438 005c 0FAF7304 		imull	4(%rbx), %esi
+ 439              	.LVL44:
+ 190:../../bos/core/b_queue.c ****     attr->r_index = (attr->r_index + 1) % attr->msg_count;
+ 440              		.loc 1 190 21 view .LVU152
+ 441 0060 48037318 		addq	24(%rbx), %rsi
+ 442              	.LBB58:
+ 443              	.LBB57:
+ 444              		.loc 3 29 10 discriminator 1 view .LVU153
+ 445 0064 E8000000 		call	memcpy@PLT
+ 445      00
+ 446              	.LVL45:
+ 447              		.loc 3 29 10 discriminator 1 view .LVU154
+ 448              	.LBE57:
+ 449              	.LBE58:
+ 191:../../bos/core/b_queue.c ****     attr->number -= 1;
+ 450              		.loc 1 191 5 is_stmt 1 view .LVU155
+ 191:../../bos/core/b_queue.c ****     attr->number -= 1;
+ 451              		.loc 1 191 36 is_stmt 0 view .LVU156
+ 452 0069 8B4304   		movl	4(%rbx), %eax
+ 191:../../bos/core/b_queue.c ****     attr->number -= 1;
+ 453              		.loc 1 191 41 view .LVU157
+ 454 006c 31D2     		xorl	%edx, %edx
+GAS LISTING /tmp/ccAWTiLc.s 			page 17
+
+
+ 192:../../bos/core/b_queue.c ****     return 0;
+ 455              		.loc 1 192 18 view .LVU158
+ 456 006e 832B01   		subl	$1, (%rbx)
+ 191:../../bos/core/b_queue.c ****     attr->number -= 1;
+ 457              		.loc 1 191 36 view .LVU159
+ 458 0071 83C001   		addl	$1, %eax
+ 191:../../bos/core/b_queue.c ****     attr->number -= 1;
+ 459              		.loc 1 191 41 view .LVU160
+ 460 0074 F7730C   		divl	12(%rbx)
+ 193:../../bos/core/b_queue.c **** }
+ 461              		.loc 1 193 12 view .LVU161
+ 462 0077 31C0     		xorl	%eax, %eax
+ 191:../../bos/core/b_queue.c ****     attr->number -= 1;
+ 463              		.loc 1 191 19 view .LVU162
+ 464 0079 895304   		movl	%edx, 4(%rbx)
+ 192:../../bos/core/b_queue.c ****     return 0;
+ 465              		.loc 1 192 5 is_stmt 1 view .LVU163
+ 193:../../bos/core/b_queue.c **** }
+ 466              		.loc 1 193 5 view .LVU164
+ 467              		.loc 1 194 1 is_stmt 0 view .LVU165
+ 468 007c 5B       		popq	%rbx
+ 469              	.LCFI9:
+ 470              		.cfi_def_cfa_offset 8
+ 471 007d C3       		ret
+ 472              	.LVL46:
+ 473              	.L31:
+ 474              		.cfi_restore 3
+ 178:../../bos/core/b_queue.c ****     }
+ 475              		.loc 1 178 16 view .LVU166
+ 476 007e B8FFFFFF 		movl	$-1, %eax
+ 476      FF
+ 477              		.loc 1 194 1 view .LVU167
+ 478 0083 C3       		ret
+ 479              	.LVL47:
+ 480              	.L32:
+ 481              	.LCFI10:
+ 482              		.cfi_def_cfa_offset 16
+ 483              		.cfi_offset 3, -16
+ 187:../../bos/core/b_queue.c ****     }
+ 484              		.loc 1 187 16 view .LVU168
+ 485 0084 B8FDFFFF 		movl	$-3, %eax
+ 485      FF
+ 486              		.loc 1 194 1 view .LVU169
+ 487 0089 5B       		popq	%rbx
+ 488              	.LCFI11:
+ 489              		.cfi_def_cfa_offset 8
+ 490 008a C3       		ret
+ 491              		.cfi_endproc
+ 492              	.LFE31:
+ 494              		.section	.text.bQueueGetCapacity,"ax",@progbits
+ 495              		.p2align 4
+ 496              		.globl	bQueueGetCapacity
+ 498              	bQueueGetCapacity:
+ 499              	.LVL48:
+ 500              	.LFB32:
+ 195:../../bos/core/b_queue.c **** 
+ 196:../../bos/core/b_queue.c **** uint32_t bQueueGetCapacity(bQueueId_t id)
+GAS LISTING /tmp/ccAWTiLc.s 			page 18
+
+
+ 197:../../bos/core/b_queue.c **** {
+ 501              		.loc 1 197 1 is_stmt 1 view -0
+ 502              		.cfi_startproc
+ 503              		.loc 1 197 1 is_stmt 0 view .LVU171
+ 504 0000 F30F1EFA 		endbr64
+ 198:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 505              		.loc 1 198 5 is_stmt 1 view .LVU172
+ 506              	.LVL49:
+ 199:../../bos/core/b_queue.c ****     if (id == NULL)
+ 507              		.loc 1 199 5 view .LVU173
+ 508              		.loc 1 199 8 is_stmt 0 view .LVU174
+ 509 0004 4885FF   		testq	%rdi, %rdi
+ 510 0007 742F     		je	.L43
+ 200:../../bos/core/b_queue.c ****     {
+ 201:../../bos/core/b_queue.c ****         return 0;
+ 202:../../bos/core/b_queue.c ****     }
+ 203:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
+ 511              		.loc 1 203 5 is_stmt 1 view .LVU175
+ 512              	.LVL50:
+ 513              	.LBB59:
+ 514              	.LBI59:
+ 105:../../bos/core/b_queue.c **** {
+ 515              		.loc 1 105 22 view .LVU176
+ 516              	.LBB60:
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 517              		.loc 1 107 5 view .LVU177
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 518              		.loc 1 108 5 view .LVU178
+ 109:../../bos/core/b_queue.c ****     {
+ 519              		.loc 1 109 5 view .LVU179
+ 520 0009 488B0500 		movq	bQueueListHead(%rip), %rax
+ 520      000000
+ 521              	.LVL51:
+ 109:../../bos/core/b_queue.c ****     {
+ 522              		.loc 1 109 5 discriminator 1 view .LVU180
+ 109:../../bos/core/b_queue.c ****     {
+ 523              		.loc 1 109 5 is_stmt 0 view .LVU181
+ 524 0010 488D0D00 		leaq	bQueueListHead(%rip), %rcx
+ 524      000000
+ 109:../../bos/core/b_queue.c ****     {
+ 525              		.loc 1 109 5 discriminator 1 view .LVU182
+ 526 0017 4839C8   		cmpq	%rcx, %rax
+ 527 001a 750C     		jne	.L41
+ 528 001c EB1A     		jmp	.L43
+ 529              	.LVL52:
+ 530 001e 6690     		.p2align 4,,10
+ 531              		.p2align 3
+ 532              	.L44:
+ 116:../../bos/core/b_queue.c ****     }
+ 533              		.loc 1 116 9 is_stmt 1 view .LVU183
+ 109:../../bos/core/b_queue.c ****     {
+ 534              		.loc 1 109 5 discriminator 2 view .LVU184
+ 535 0020 488B00   		movq	(%rax), %rax
+ 536              	.LVL53:
+ 109:../../bos/core/b_queue.c ****     {
+ 537              		.loc 1 109 5 discriminator 1 view .LVU185
+ 538 0023 4839C8   		cmpq	%rcx, %rax
+GAS LISTING /tmp/ccAWTiLc.s 			page 19
+
+
+ 539 0026 7410     		je	.L43
+ 540              	.L41:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 541              		.loc 1 111 9 view .LVU186
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 542              		.loc 1 111 15 is_stmt 0 view .LVU187
+ 543 0028 488D50D8 		leaq	-40(%rax), %rdx
+ 544              	.LVL54:
+ 112:../../bos/core/b_queue.c ****         {
+ 545              		.loc 1 112 9 is_stmt 1 view .LVU188
+ 112:../../bos/core/b_queue.c ****         {
+ 546              		.loc 1 112 12 is_stmt 0 view .LVU189
+ 547 002c 4839D7   		cmpq	%rdx, %rdi
+ 548 002f 75EF     		jne	.L44
+ 549              	.LVL55:
+ 112:../../bos/core/b_queue.c ****         {
+ 550              		.loc 1 112 12 view .LVU190
+ 551              	.LBE60:
+ 552              	.LBE59:
+ 204:../../bos/core/b_queue.c ****     if (attr == NULL)
+ 205:../../bos/core/b_queue.c ****     {
+ 206:../../bos/core/b_queue.c ****         return 0;
+ 207:../../bos/core/b_queue.c ****     }
+ 208:../../bos/core/b_queue.c ****     return attr->msg_count;
+ 553              		.loc 1 208 5 is_stmt 1 view .LVU191
+ 554              		.loc 1 208 16 is_stmt 0 view .LVU192
+ 555 0031 8B420C   		movl	12(%rdx), %eax
+ 556 0034 C3       		ret
+ 557              	.LVL56:
+ 558              		.p2align 4,,10
+ 559 0035 0F1F00   		.p2align 3
+ 560              	.L43:
+ 201:../../bos/core/b_queue.c ****     }
+ 561              		.loc 1 201 16 view .LVU193
+ 562 0038 31C0     		xorl	%eax, %eax
+ 563              	.LVL57:
+ 209:../../bos/core/b_queue.c **** }
+ 564              		.loc 1 209 1 view .LVU194
+ 565 003a C3       		ret
+ 566              		.cfi_endproc
+ 567              	.LFE32:
+ 569              		.section	.text.bQueueGetMsgSize,"ax",@progbits
+ 570              		.p2align 4
+ 571              		.globl	bQueueGetMsgSize
+ 573              	bQueueGetMsgSize:
+ 574              	.LVL58:
+ 575              	.LFB33:
+ 210:../../bos/core/b_queue.c **** 
+ 211:../../bos/core/b_queue.c **** uint32_t bQueueGetMsgSize(bQueueId_t id)
+ 212:../../bos/core/b_queue.c **** {
+ 576              		.loc 1 212 1 is_stmt 1 view -0
+ 577              		.cfi_startproc
+ 578              		.loc 1 212 1 is_stmt 0 view .LVU196
+ 579 0000 F30F1EFA 		endbr64
+ 213:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 580              		.loc 1 213 5 is_stmt 1 view .LVU197
+ 581              	.LVL59:
+GAS LISTING /tmp/ccAWTiLc.s 			page 20
+
+
+ 214:../../bos/core/b_queue.c ****     if (id == NULL)
+ 582              		.loc 1 214 5 view .LVU198
+ 583              		.loc 1 214 8 is_stmt 0 view .LVU199
+ 584 0004 4885FF   		testq	%rdi, %rdi
+ 585 0007 742F     		je	.L51
+ 215:../../bos/core/b_queue.c ****     {
+ 216:../../bos/core/b_queue.c ****         return 0;
+ 217:../../bos/core/b_queue.c ****     }
+ 218:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
+ 586              		.loc 1 218 5 is_stmt 1 view .LVU200
+ 587              	.LVL60:
+ 588              	.LBB61:
+ 589              	.LBI61:
+ 105:../../bos/core/b_queue.c **** {
+ 590              		.loc 1 105 22 view .LVU201
+ 591              	.LBB62:
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 592              		.loc 1 107 5 view .LVU202
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 593              		.loc 1 108 5 view .LVU203
+ 109:../../bos/core/b_queue.c ****     {
+ 594              		.loc 1 109 5 view .LVU204
+ 595 0009 488B0500 		movq	bQueueListHead(%rip), %rax
+ 595      000000
+ 596              	.LVL61:
+ 109:../../bos/core/b_queue.c ****     {
+ 597              		.loc 1 109 5 discriminator 1 view .LVU205
+ 109:../../bos/core/b_queue.c ****     {
+ 598              		.loc 1 109 5 is_stmt 0 view .LVU206
+ 599 0010 488D0D00 		leaq	bQueueListHead(%rip), %rcx
+ 599      000000
+ 109:../../bos/core/b_queue.c ****     {
+ 600              		.loc 1 109 5 discriminator 1 view .LVU207
+ 601 0017 4839C8   		cmpq	%rcx, %rax
+ 602 001a 750C     		jne	.L49
+ 603 001c EB1A     		jmp	.L51
+ 604              	.LVL62:
+ 605 001e 6690     		.p2align 4,,10
+ 606              		.p2align 3
+ 607              	.L52:
+ 116:../../bos/core/b_queue.c ****     }
+ 608              		.loc 1 116 9 is_stmt 1 view .LVU208
+ 109:../../bos/core/b_queue.c ****     {
+ 609              		.loc 1 109 5 discriminator 2 view .LVU209
+ 610 0020 488B00   		movq	(%rax), %rax
+ 611              	.LVL63:
+ 109:../../bos/core/b_queue.c ****     {
+ 612              		.loc 1 109 5 discriminator 1 view .LVU210
+ 613 0023 4839C8   		cmpq	%rcx, %rax
+ 614 0026 7410     		je	.L51
+ 615              	.L49:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 616              		.loc 1 111 9 view .LVU211
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 617              		.loc 1 111 15 is_stmt 0 view .LVU212
+ 618 0028 488D50D8 		leaq	-40(%rax), %rdx
+ 619              	.LVL64:
+GAS LISTING /tmp/ccAWTiLc.s 			page 21
+
+
+ 112:../../bos/core/b_queue.c ****         {
+ 620              		.loc 1 112 9 is_stmt 1 view .LVU213
+ 112:../../bos/core/b_queue.c ****         {
+ 621              		.loc 1 112 12 is_stmt 0 view .LVU214
+ 622 002c 4839D7   		cmpq	%rdx, %rdi
+ 623 002f 75EF     		jne	.L52
+ 624              	.LVL65:
+ 112:../../bos/core/b_queue.c ****         {
+ 625              		.loc 1 112 12 view .LVU215
+ 626              	.LBE62:
+ 627              	.LBE61:
+ 219:../../bos/core/b_queue.c ****     if (attr == NULL)
+ 220:../../bos/core/b_queue.c ****     {
+ 221:../../bos/core/b_queue.c ****         return 0;
+ 222:../../bos/core/b_queue.c ****     }
+ 223:../../bos/core/b_queue.c ****     return attr->msg_size;
+ 628              		.loc 1 223 5 is_stmt 1 view .LVU216
+ 629              		.loc 1 223 16 is_stmt 0 view .LVU217
+ 630 0031 8B4210   		movl	16(%rdx), %eax
+ 631 0034 C3       		ret
+ 632              	.LVL66:
+ 633              		.p2align 4,,10
+ 634 0035 0F1F00   		.p2align 3
+ 635              	.L51:
+ 216:../../bos/core/b_queue.c ****     }
+ 636              		.loc 1 216 16 view .LVU218
+ 637 0038 31C0     		xorl	%eax, %eax
+ 638              	.LVL67:
+ 224:../../bos/core/b_queue.c **** }
+ 639              		.loc 1 224 1 view .LVU219
+ 640 003a C3       		ret
+ 641              		.cfi_endproc
+ 642              	.LFE33:
+ 644              		.section	.text.bQueueGetCount,"ax",@progbits
+ 645              		.p2align 4
+ 646              		.globl	bQueueGetCount
+ 648              	bQueueGetCount:
+ 649              	.LVL68:
+ 650              	.LFB34:
+ 225:../../bos/core/b_queue.c **** 
+ 226:../../bos/core/b_queue.c **** uint32_t bQueueGetCount(bQueueId_t id)
+ 227:../../bos/core/b_queue.c **** {
+ 651              		.loc 1 227 1 is_stmt 1 view -0
+ 652              		.cfi_startproc
+ 653              		.loc 1 227 1 is_stmt 0 view .LVU221
+ 654 0000 F30F1EFA 		endbr64
+ 228:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 655              		.loc 1 228 5 is_stmt 1 view .LVU222
+ 656              	.LVL69:
+ 229:../../bos/core/b_queue.c ****     if (id == NULL)
+ 657              		.loc 1 229 5 view .LVU223
+ 658              		.loc 1 229 8 is_stmt 0 view .LVU224
+ 659 0004 4885FF   		testq	%rdi, %rdi
+ 660 0007 742F     		je	.L59
+ 230:../../bos/core/b_queue.c ****     {
+ 231:../../bos/core/b_queue.c ****         return 0;
+ 232:../../bos/core/b_queue.c ****     }
+GAS LISTING /tmp/ccAWTiLc.s 			page 22
+
+
+ 233:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
+ 661              		.loc 1 233 5 is_stmt 1 view .LVU225
+ 662              	.LVL70:
+ 663              	.LBB63:
+ 664              	.LBI63:
+ 105:../../bos/core/b_queue.c **** {
+ 665              		.loc 1 105 22 view .LVU226
+ 666              	.LBB64:
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 667              		.loc 1 107 5 view .LVU227
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 668              		.loc 1 108 5 view .LVU228
+ 109:../../bos/core/b_queue.c ****     {
+ 669              		.loc 1 109 5 view .LVU229
+ 670 0009 488B0500 		movq	bQueueListHead(%rip), %rax
+ 670      000000
+ 671              	.LVL71:
+ 109:../../bos/core/b_queue.c ****     {
+ 672              		.loc 1 109 5 discriminator 1 view .LVU230
+ 109:../../bos/core/b_queue.c ****     {
+ 673              		.loc 1 109 5 is_stmt 0 view .LVU231
+ 674 0010 488D0D00 		leaq	bQueueListHead(%rip), %rcx
+ 674      000000
+ 109:../../bos/core/b_queue.c ****     {
+ 675              		.loc 1 109 5 discriminator 1 view .LVU232
+ 676 0017 4839C8   		cmpq	%rcx, %rax
+ 677 001a 750C     		jne	.L57
+ 678 001c EB1A     		jmp	.L59
+ 679              	.LVL72:
+ 680 001e 6690     		.p2align 4,,10
+ 681              		.p2align 3
+ 682              	.L60:
+ 116:../../bos/core/b_queue.c ****     }
+ 683              		.loc 1 116 9 is_stmt 1 view .LVU233
+ 109:../../bos/core/b_queue.c ****     {
+ 684              		.loc 1 109 5 discriminator 2 view .LVU234
+ 685 0020 488B00   		movq	(%rax), %rax
+ 686              	.LVL73:
+ 109:../../bos/core/b_queue.c ****     {
+ 687              		.loc 1 109 5 discriminator 1 view .LVU235
+ 688 0023 4839C8   		cmpq	%rcx, %rax
+ 689 0026 7410     		je	.L59
+ 690              	.L57:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 691              		.loc 1 111 9 view .LVU236
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 692              		.loc 1 111 15 is_stmt 0 view .LVU237
+ 693 0028 488D50D8 		leaq	-40(%rax), %rdx
+ 694              	.LVL74:
+ 112:../../bos/core/b_queue.c ****         {
+ 695              		.loc 1 112 9 is_stmt 1 view .LVU238
+ 112:../../bos/core/b_queue.c ****         {
+ 696              		.loc 1 112 12 is_stmt 0 view .LVU239
+ 697 002c 4839D7   		cmpq	%rdx, %rdi
+ 698 002f 75EF     		jne	.L60
+ 699              	.LVL75:
+ 112:../../bos/core/b_queue.c ****         {
+GAS LISTING /tmp/ccAWTiLc.s 			page 23
+
+
+ 700              		.loc 1 112 12 view .LVU240
+ 701              	.LBE64:
+ 702              	.LBE63:
+ 234:../../bos/core/b_queue.c ****     if (attr == NULL)
+ 235:../../bos/core/b_queue.c ****     {
+ 236:../../bos/core/b_queue.c ****         return 0;
+ 237:../../bos/core/b_queue.c ****     }
+ 238:../../bos/core/b_queue.c ****     return attr->number;
+ 703              		.loc 1 238 5 is_stmt 1 view .LVU241
+ 704              		.loc 1 238 16 is_stmt 0 view .LVU242
+ 705 0031 8B02     		movl	(%rdx), %eax
+ 706 0033 C3       		ret
+ 707              	.LVL76:
+ 708              		.p2align 4,,10
+ 709 0034 0F1F4000 		.p2align 3
+ 710              	.L59:
+ 231:../../bos/core/b_queue.c ****     }
+ 711              		.loc 1 231 16 view .LVU243
+ 712 0038 31C0     		xorl	%eax, %eax
+ 713              	.LVL77:
+ 239:../../bos/core/b_queue.c **** }
+ 714              		.loc 1 239 1 view .LVU244
+ 715 003a C3       		ret
+ 716              		.cfi_endproc
+ 717              	.LFE34:
+ 719              		.section	.text.bQueueGetSpace,"ax",@progbits
+ 720              		.p2align 4
+ 721              		.globl	bQueueGetSpace
+ 723              	bQueueGetSpace:
+ 724              	.LVL78:
+ 725              	.LFB35:
+ 240:../../bos/core/b_queue.c **** 
+ 241:../../bos/core/b_queue.c **** uint32_t bQueueGetSpace(bQueueId_t id)
+ 242:../../bos/core/b_queue.c **** {
+ 726              		.loc 1 242 1 is_stmt 1 view -0
+ 727              		.cfi_startproc
+ 728              		.loc 1 242 1 is_stmt 0 view .LVU246
+ 729 0000 F30F1EFA 		endbr64
+ 243:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 730              		.loc 1 243 5 is_stmt 1 view .LVU247
+ 731              	.LVL79:
+ 244:../../bos/core/b_queue.c ****     if (id == NULL)
+ 732              		.loc 1 244 5 view .LVU248
+ 733              		.loc 1 244 8 is_stmt 0 view .LVU249
+ 734 0004 4885FF   		testq	%rdi, %rdi
+ 735 0007 7437     		je	.L67
+ 245:../../bos/core/b_queue.c ****     {
+ 246:../../bos/core/b_queue.c ****         return 0;
+ 247:../../bos/core/b_queue.c ****     }
+ 248:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
+ 736              		.loc 1 248 5 is_stmt 1 view .LVU250
+ 737              	.LVL80:
+ 738              	.LBB65:
+ 739              	.LBI65:
+ 105:../../bos/core/b_queue.c **** {
+ 740              		.loc 1 105 22 view .LVU251
+ 741              	.LBB66:
+GAS LISTING /tmp/ccAWTiLc.s 			page 24
+
+
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 742              		.loc 1 107 5 view .LVU252
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 743              		.loc 1 108 5 view .LVU253
+ 109:../../bos/core/b_queue.c ****     {
+ 744              		.loc 1 109 5 view .LVU254
+ 745 0009 488B0500 		movq	bQueueListHead(%rip), %rax
+ 745      000000
+ 746              	.LVL81:
+ 109:../../bos/core/b_queue.c ****     {
+ 747              		.loc 1 109 5 discriminator 1 view .LVU255
+ 109:../../bos/core/b_queue.c ****     {
+ 748              		.loc 1 109 5 is_stmt 0 view .LVU256
+ 749 0010 488D0D00 		leaq	bQueueListHead(%rip), %rcx
+ 749      000000
+ 109:../../bos/core/b_queue.c ****     {
+ 750              		.loc 1 109 5 discriminator 1 view .LVU257
+ 751 0017 4839C8   		cmpq	%rcx, %rax
+ 752 001a 750C     		jne	.L65
+ 753 001c EB22     		jmp	.L67
+ 754              	.LVL82:
+ 755 001e 6690     		.p2align 4,,10
+ 756              		.p2align 3
+ 757              	.L68:
+ 116:../../bos/core/b_queue.c ****     }
+ 758              		.loc 1 116 9 is_stmt 1 view .LVU258
+ 109:../../bos/core/b_queue.c ****     {
+ 759              		.loc 1 109 5 discriminator 2 view .LVU259
+ 760 0020 488B00   		movq	(%rax), %rax
+ 761              	.LVL83:
+ 109:../../bos/core/b_queue.c ****     {
+ 762              		.loc 1 109 5 discriminator 1 view .LVU260
+ 763 0023 4839C8   		cmpq	%rcx, %rax
+ 764 0026 7418     		je	.L67
+ 765              	.L65:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 766              		.loc 1 111 9 view .LVU261
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 767              		.loc 1 111 15 is_stmt 0 view .LVU262
+ 768 0028 488D50D8 		leaq	-40(%rax), %rdx
+ 769              	.LVL84:
+ 112:../../bos/core/b_queue.c ****         {
+ 770              		.loc 1 112 9 is_stmt 1 view .LVU263
+ 112:../../bos/core/b_queue.c ****         {
+ 771              		.loc 1 112 12 is_stmt 0 view .LVU264
+ 772 002c 4839D7   		cmpq	%rdx, %rdi
+ 773 002f 75EF     		jne	.L68
+ 774              	.LVL85:
+ 112:../../bos/core/b_queue.c ****         {
+ 775              		.loc 1 112 12 view .LVU265
+ 776              	.LBE66:
+ 777              	.LBE65:
+ 249:../../bos/core/b_queue.c ****     if (attr == NULL)
+ 250:../../bos/core/b_queue.c ****     {
+ 251:../../bos/core/b_queue.c ****         return 0;
+ 252:../../bos/core/b_queue.c ****     }
+ 253:../../bos/core/b_queue.c ****     return (attr->msg_count - attr->number);
+GAS LISTING /tmp/ccAWTiLc.s 			page 25
+
+
+ 778              		.loc 1 253 5 is_stmt 1 view .LVU266
+ 779              		.loc 1 253 29 is_stmt 0 view .LVU267
+ 780 0031 8B420C   		movl	12(%rdx), %eax
+ 781 0034 2B02     		subl	(%rdx), %eax
+ 782 0036 C3       		ret
+ 783              	.LVL86:
+ 784 0037 660F1F84 		.p2align 4,,10
+ 784      00000000 
+ 784      00
+ 785              		.p2align 3
+ 786              	.L67:
+ 246:../../bos/core/b_queue.c ****     }
+ 787              		.loc 1 246 16 view .LVU268
+ 788 0040 31C0     		xorl	%eax, %eax
+ 789              	.LVL87:
+ 254:../../bos/core/b_queue.c **** }
+ 790              		.loc 1 254 1 view .LVU269
+ 791 0042 C3       		ret
+ 792              		.cfi_endproc
+ 793              	.LFE35:
+ 795              		.section	.text.bQueueReset,"ax",@progbits
+ 796              		.p2align 4
+ 797              		.globl	bQueueReset
+ 799              	bQueueReset:
+ 800              	.LVL88:
+ 801              	.LFB36:
+ 255:../../bos/core/b_queue.c **** 
+ 256:../../bos/core/b_queue.c **** int bQueueReset(bQueueId_t id)
+ 257:../../bos/core/b_queue.c **** {
+ 802              		.loc 1 257 1 is_stmt 1 view -0
+ 803              		.cfi_startproc
+ 804              		.loc 1 257 1 is_stmt 0 view .LVU271
+ 805 0000 F30F1EFA 		endbr64
+ 258:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 806              		.loc 1 258 5 is_stmt 1 view .LVU272
+ 807              	.LVL89:
+ 259:../../bos/core/b_queue.c ****     if (id == NULL)
+ 808              		.loc 1 259 5 view .LVU273
+ 809              		.loc 1 259 8 is_stmt 0 view .LVU274
+ 810 0004 4885FF   		testq	%rdi, %rdi
+ 811 0007 743F     		je	.L75
+ 260:../../bos/core/b_queue.c ****     {
+ 261:../../bos/core/b_queue.c ****         return -1;
+ 262:../../bos/core/b_queue.c ****     }
+ 263:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
+ 812              		.loc 1 263 5 is_stmt 1 view .LVU275
+ 813              	.LVL90:
+ 814              	.LBB67:
+ 815              	.LBI67:
+ 105:../../bos/core/b_queue.c **** {
+ 816              		.loc 1 105 22 view .LVU276
+ 817              	.LBB68:
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 818              		.loc 1 107 5 view .LVU277
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 819              		.loc 1 108 5 view .LVU278
+ 109:../../bos/core/b_queue.c ****     {
+GAS LISTING /tmp/ccAWTiLc.s 			page 26
+
+
+ 820              		.loc 1 109 5 view .LVU279
+ 821 0009 488B0500 		movq	bQueueListHead(%rip), %rax
+ 821      000000
+ 822              	.LVL91:
+ 109:../../bos/core/b_queue.c ****     {
+ 823              		.loc 1 109 5 discriminator 1 view .LVU280
+ 109:../../bos/core/b_queue.c ****     {
+ 824              		.loc 1 109 5 is_stmt 0 view .LVU281
+ 825 0010 488D0D00 		leaq	bQueueListHead(%rip), %rcx
+ 825      000000
+ 109:../../bos/core/b_queue.c ****     {
+ 826              		.loc 1 109 5 discriminator 1 view .LVU282
+ 827 0017 4839C8   		cmpq	%rcx, %rax
+ 828 001a 750C     		jne	.L73
+ 829 001c EB2A     		jmp	.L75
+ 830              	.LVL92:
+ 831 001e 6690     		.p2align 4,,10
+ 832              		.p2align 3
+ 833              	.L76:
+ 116:../../bos/core/b_queue.c ****     }
+ 834              		.loc 1 116 9 is_stmt 1 view .LVU283
+ 109:../../bos/core/b_queue.c ****     {
+ 835              		.loc 1 109 5 discriminator 2 view .LVU284
+ 836 0020 488B00   		movq	(%rax), %rax
+ 837              	.LVL93:
+ 109:../../bos/core/b_queue.c ****     {
+ 838              		.loc 1 109 5 discriminator 1 view .LVU285
+ 839 0023 4839C8   		cmpq	%rcx, %rax
+ 840 0026 7420     		je	.L75
+ 841              	.L73:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 842              		.loc 1 111 9 view .LVU286
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 843              		.loc 1 111 15 is_stmt 0 view .LVU287
+ 844 0028 488D50D8 		leaq	-40(%rax), %rdx
+ 845              	.LVL94:
+ 112:../../bos/core/b_queue.c ****         {
+ 846              		.loc 1 112 9 is_stmt 1 view .LVU288
+ 112:../../bos/core/b_queue.c ****         {
+ 847              		.loc 1 112 12 is_stmt 0 view .LVU289
+ 848 002c 4839D7   		cmpq	%rdx, %rdi
+ 849 002f 75EF     		jne	.L76
+ 850              	.LVL95:
+ 112:../../bos/core/b_queue.c ****         {
+ 851              		.loc 1 112 12 view .LVU290
+ 852              	.LBE68:
+ 853              	.LBE67:
+ 264:../../bos/core/b_queue.c ****     if (attr == NULL)
+ 265:../../bos/core/b_queue.c ****     {
+ 266:../../bos/core/b_queue.c ****         return -1;
+ 267:../../bos/core/b_queue.c ****     }
+ 268:../../bos/core/b_queue.c ****     attr->number  = 0;
+ 854              		.loc 1 268 5 is_stmt 1 view .LVU291
+ 269:../../bos/core/b_queue.c ****     attr->r_index = 0;
+ 855              		.loc 1 269 5 view .LVU292
+ 268:../../bos/core/b_queue.c ****     attr->r_index = 0;
+ 856              		.loc 1 268 19 is_stmt 0 view .LVU293
+GAS LISTING /tmp/ccAWTiLc.s 			page 27
+
+
+ 857 0031 48C70200 		movq	$0, (%rdx)
+ 857      000000
+ 270:../../bos/core/b_queue.c ****     attr->w_index = 0;
+ 858              		.loc 1 270 5 is_stmt 1 view .LVU294
+ 271:../../bos/core/b_queue.c ****     return 0;
+ 859              		.loc 1 271 12 is_stmt 0 view .LVU295
+ 860 0038 31C0     		xorl	%eax, %eax
+ 270:../../bos/core/b_queue.c ****     attr->w_index = 0;
+ 861              		.loc 1 270 19 view .LVU296
+ 862 003a C7420800 		movl	$0, 8(%rdx)
+ 862      000000
+ 863              		.loc 1 271 5 is_stmt 1 view .LVU297
+ 864              		.loc 1 271 12 is_stmt 0 view .LVU298
+ 865 0041 C3       		ret
+ 866              	.LVL96:
+ 867              		.p2align 4,,10
+ 868 0042 660F1F44 		.p2align 3
+ 868      0000
+ 869              	.L75:
+ 261:../../bos/core/b_queue.c ****     }
+ 870              		.loc 1 261 16 view .LVU299
+ 871 0048 B8FFFFFF 		movl	$-1, %eax
+ 871      FF
+ 872              	.LVL97:
+ 272:../../bos/core/b_queue.c **** }
+ 873              		.loc 1 272 1 view .LVU300
+ 874 004d C3       		ret
+ 875              		.cfi_endproc
+ 876              	.LFE36:
+ 878              		.section	.text.bQueueDelete,"ax",@progbits
+ 879              		.p2align 4
+ 880              		.globl	bQueueDelete
+ 882              	bQueueDelete:
+ 883              	.LVL98:
+ 884              	.LFB37:
+ 273:../../bos/core/b_queue.c **** 
+ 274:../../bos/core/b_queue.c **** int bQueueDelete(bQueueId_t id)
+ 275:../../bos/core/b_queue.c **** {
+ 885              		.loc 1 275 1 is_stmt 1 view -0
+ 886              		.cfi_startproc
+ 887              		.loc 1 275 1 is_stmt 0 view .LVU302
+ 888 0000 F30F1EFA 		endbr64
+ 276:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
+ 889              		.loc 1 276 5 is_stmt 1 view .LVU303
+ 890              	.LVL99:
+ 277:../../bos/core/b_queue.c ****     if (id == NULL)
+ 891              		.loc 1 277 5 view .LVU304
+ 892              		.loc 1 277 8 is_stmt 0 view .LVU305
+ 893 0004 4885FF   		testq	%rdi, %rdi
+ 894 0007 743F     		je	.L83
+ 278:../../bos/core/b_queue.c ****     {
+ 279:../../bos/core/b_queue.c ****         return -1;
+ 280:../../bos/core/b_queue.c ****     }
+ 281:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
+ 895              		.loc 1 281 5 is_stmt 1 view .LVU306
+ 896              	.LVL100:
+ 897              	.LBB69:
+GAS LISTING /tmp/ccAWTiLc.s 			page 28
+
+
+ 898              	.LBI69:
+ 105:../../bos/core/b_queue.c **** {
+ 899              		.loc 1 105 22 view .LVU307
+ 900              	.LBB70:
+ 107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
+ 901              		.loc 1 107 5 view .LVU308
+ 108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
+ 902              		.loc 1 108 5 view .LVU309
+ 109:../../bos/core/b_queue.c ****     {
+ 903              		.loc 1 109 5 view .LVU310
+ 904 0009 488B0500 		movq	bQueueListHead(%rip), %rax
+ 904      000000
+ 905              	.LVL101:
+ 109:../../bos/core/b_queue.c ****     {
+ 906              		.loc 1 109 5 discriminator 1 view .LVU311
+ 109:../../bos/core/b_queue.c ****     {
+ 907              		.loc 1 109 5 is_stmt 0 view .LVU312
+ 908 0010 488D0D00 		leaq	bQueueListHead(%rip), %rcx
+ 908      000000
+ 109:../../bos/core/b_queue.c ****     {
+ 909              		.loc 1 109 5 discriminator 1 view .LVU313
+ 910 0017 4839C8   		cmpq	%rcx, %rax
+ 911 001a 750C     		jne	.L81
+ 912 001c EB2A     		jmp	.L83
+ 913              	.LVL102:
+ 914 001e 6690     		.p2align 4,,10
+ 915              		.p2align 3
+ 916              	.L84:
+ 116:../../bos/core/b_queue.c ****     }
+ 917              		.loc 1 116 9 is_stmt 1 view .LVU314
+ 109:../../bos/core/b_queue.c ****     {
+ 918              		.loc 1 109 5 discriminator 2 view .LVU315
+ 919 0020 488B00   		movq	(%rax), %rax
+ 920              	.LVL103:
+ 109:../../bos/core/b_queue.c ****     {
+ 921              		.loc 1 109 5 discriminator 1 view .LVU316
+ 922 0023 4839C8   		cmpq	%rcx, %rax
+ 923 0026 7420     		je	.L83
+ 924              	.L81:
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 925              		.loc 1 111 9 view .LVU317
+ 111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
+ 926              		.loc 1 111 15 is_stmt 0 view .LVU318
+ 927 0028 488D50D8 		leaq	-40(%rax), %rdx
+ 928              	.LVL104:
+ 112:../../bos/core/b_queue.c ****         {
+ 929              		.loc 1 112 9 is_stmt 1 view .LVU319
+ 112:../../bos/core/b_queue.c ****         {
+ 930              		.loc 1 112 12 is_stmt 0 view .LVU320
+ 931 002c 4839D7   		cmpq	%rdx, %rdi
+ 932 002f 75EF     		jne	.L84
+ 933              	.LVL105:
+ 112:../../bos/core/b_queue.c ****         {
+ 934              		.loc 1 112 12 view .LVU321
+ 935              	.LBE70:
+ 936              	.LBE69:
+ 282:../../bos/core/b_queue.c ****     if (attr == NULL)
+GAS LISTING /tmp/ccAWTiLc.s 			page 29
+
+
+ 283:../../bos/core/b_queue.c ****     {
+ 284:../../bos/core/b_queue.c ****         return -1;
+ 285:../../bos/core/b_queue.c ****     }
+ 286:../../bos/core/b_queue.c ****     __list_del(attr->list.prev, attr->list.next);
+ 937              		.loc 1 286 5 is_stmt 1 view .LVU322
+ 938 0031 488B4230 		movq	48(%rdx), %rax
+ 939              	.LVL106:
+ 940              		.loc 1 286 5 is_stmt 0 view .LVU323
+ 941 0035 488B4A28 		movq	40(%rdx), %rcx
+ 942              	.LVL107:
+ 943              	.LBB71:
+ 944              	.LBI71:
+ 110:../../bos/utils/inc/b_util_list.h **** }
+ 111:../../bos/utils/inc/b_util_list.h **** 
+ 112:../../bos/utils/inc/b_util_list.h **** /**
+ 113:../../bos/utils/inc/b_util_list.h ****  * list_add_tail - add a new entry
+ 114:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 115:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it before
+ 116:../../bos/utils/inc/b_util_list.h ****  *
+ 117:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry before the specified head.
+ 118:../../bos/utils/inc/b_util_list.h ****  * This is useful for implementing queues.
+ 119:../../bos/utils/inc/b_util_list.h ****  */
+ 120:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add_tail(struct list_head *newItem, struct list_head *head)
+ 121:../../bos/utils/inc/b_util_list.h **** {
+ 122:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head->prev, head);
+ 123:../../bos/utils/inc/b_util_list.h **** }
+ 124:../../bos/utils/inc/b_util_list.h **** 
+ 125:../../bos/utils/inc/b_util_list.h **** /*
+ 126:../../bos/utils/inc/b_util_list.h ****  * Delete a list entry by making the prev/next entries
+ 127:../../bos/utils/inc/b_util_list.h ****  * point to each other.
+ 128:../../bos/utils/inc/b_util_list.h ****  *
+ 129:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+ 130:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+ 131:../../bos/utils/inc/b_util_list.h ****  */
+ 132:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_del(struct list_head *prev, struct list_head *next)
+ 945              		.loc 2 132 26 is_stmt 1 view .LVU324
+ 946              	.LBB72:
+ 133:../../bos/utils/inc/b_util_list.h **** {
+ 134:../../bos/utils/inc/b_util_list.h ****     next->prev = prev;
+ 947              		.loc 2 134 5 view .LVU325
+ 948              		.loc 2 134 16 is_stmt 0 view .LVU326
+ 949 0039 48894108 		movq	%rax, 8(%rcx)
+ 135:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 950              		.loc 2 135 5 is_stmt 1 view .LVU327
+ 951 003d 488908   		movq	%rcx, (%rax)
+ 952              	.LVL108:
+ 953              		.loc 2 135 5 is_stmt 0 view .LVU328
+ 954              	.LBE72:
+ 955              	.LBE71:
+ 287:../../bos/core/b_queue.c ****     return 0;
+ 956              		.loc 1 287 5 is_stmt 1 view .LVU329
+ 957              		.loc 1 287 12 is_stmt 0 view .LVU330
+ 958 0040 31C0     		xorl	%eax, %eax
+ 959 0042 C3       		ret
+ 960              	.LVL109:
+ 961              		.p2align 4,,10
+ 962 0043 0F1F4400 		.p2align 3
+GAS LISTING /tmp/ccAWTiLc.s 			page 30
+
+
+ 962      00
+ 963              	.L83:
+ 279:../../bos/core/b_queue.c ****     }
+ 964              		.loc 1 279 16 view .LVU331
+ 965 0048 B8FFFFFF 		movl	$-1, %eax
+ 965      FF
+ 966              	.LVL110:
+ 288:../../bos/core/b_queue.c **** }
+ 967              		.loc 1 288 1 view .LVU332
+ 968 004d C3       		ret
+ 969              		.cfi_endproc
+ 970              	.LFE37:
+ 972              		.section	.data.rel.local.bQueueListHead,"aw"
+ 973              		.align 16
+ 976              	bQueueListHead:
+ 977 0000 00000000 		.quad	bQueueListHead
+ 977      00000000 
+ 978 0008 00000000 		.quad	bQueueListHead
+ 978      00000000 
+ 979              		.text
+ 980              	.Letext0:
+ 981              		.file 4 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 982              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 983              		.file 6 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 984              		.file 7 "../../bos/core/inc/b_queue.h"
+ 985              		.file 8 "<built-in>"
+ 4064              		.section	.note.gnu.property,"a"
+ 4065              		.align 8
+ 4066 0000 04000000 		.long	1f - 0f
+ 4067 0004 10000000 		.long	4f - 1f
+ 4068 0008 05000000 		.long	5
+ 4069              	0:
+ 4070 000c 474E5500 		.string	"GNU"
+ 4071              	1:
+ 4072              		.align 8
+ 4073 0010 020000C0 		.long	0xc0000002
+ 4074 0014 04000000 		.long	3f - 2f
+ 4075              	2:
+ 4076 0018 03000000 		.long	0x3
+ 4077              	3:
+ 4078 001c 00000000 		.align 8
+ 4079              	4:
+GAS LISTING /tmp/ccAWTiLc.s 			page 31
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_queue.c
+     /tmp/ccAWTiLc.s:9      .text.bQueueCreate:0000000000000000 bQueueCreate
+     /tmp/ccAWTiLc.s:976    .data.rel.local.bQueueListHead:0000000000000000 bQueueListHead
+     /tmp/ccAWTiLc.s:151    .text.bQueuePutNonblock:0000000000000000 bQueuePutNonblock
+     /tmp/ccAWTiLc.s:322    .text.bQueueGetNonblock:0000000000000000 bQueueGetNonblock
+     /tmp/ccAWTiLc.s:498    .text.bQueueGetCapacity:0000000000000000 bQueueGetCapacity
+     /tmp/ccAWTiLc.s:573    .text.bQueueGetMsgSize:0000000000000000 bQueueGetMsgSize
+     /tmp/ccAWTiLc.s:648    .text.bQueueGetCount:0000000000000000 bQueueGetCount
+     /tmp/ccAWTiLc.s:723    .text.bQueueGetSpace:0000000000000000 bQueueGetSpace
+     /tmp/ccAWTiLc.s:799    .text.bQueueReset:0000000000000000 bQueueReset
+     /tmp/ccAWTiLc.s:882    .text.bQueueDelete:0000000000000000 bQueueDelete
+
+UNDEFINED SYMBOLS
+memcpy

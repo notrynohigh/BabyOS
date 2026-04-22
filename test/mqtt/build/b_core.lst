@@ -1,0 +1,2224 @@
+GAS LISTING /tmp/ccCMW4E1.s 			page 1
+
+
+   1              		.file	"b_core.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/core/b_core.c"
+   5              		.section	.text._bCoreMonitor,"ax",@progbits
+   6              		.p2align 4
+   8              	_bCoreMonitor:
+   9              	.LFB28:
+   1:../../bos/core/b_core.c **** /**
+   2:../../bos/core/b_core.c ****  *!
+   3:../../bos/core/b_core.c ****  * \file        b_core.c
+   4:../../bos/core/b_core.c ****  * \version     v0.0.1
+   5:../../bos/core/b_core.c ****  * \date        2019/06/05
+   6:../../bos/core/b_core.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/core/b_core.c ****  *******************************************************************************
+   8:../../bos/core/b_core.c ****  * @attention
+   9:../../bos/core/b_core.c ****  *
+  10:../../bos/core/b_core.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/core/b_core.c ****  *
+  12:../../bos/core/b_core.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/core/b_core.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/core/b_core.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/core/b_core.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/core/b_core.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/core/b_core.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/core/b_core.c ****  *
+  19:../../bos/core/b_core.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/core/b_core.c ****  * copies or substantial portions of the Software.
+  21:../../bos/core/b_core.c ****  *
+  22:../../bos/core/b_core.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/core/b_core.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/core/b_core.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/core/b_core.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/core/b_core.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/core/b_core.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/core/b_core.c ****  * SOFTWARE.
+  29:../../bos/core/b_core.c ****  *******************************************************************************
+  30:../../bos/core/b_core.c ****  */
+  31:../../bos/core/b_core.c **** 
+  32:../../bos/core/b_core.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/core/b_core.c **** #include "core/inc/b_core.h"
+  34:../../bos/core/b_core.c **** 
+  35:../../bos/core/b_core.c **** #include "b_section.h"
+  36:../../bos/core/b_core.c **** #include "core/inc/b_device.h"
+  37:../../bos/core/b_core.c **** #include "hal/inc/b_hal.h"
+  38:../../bos/core/b_core.c **** #include "utils/inc/b_util_log.h"
+  39:../../bos/core/b_core.c **** 
+  40:../../bos/core/b_core.c **** /**
+  41:../../bos/core/b_core.c ****  * \addtogroup BABYOS
+  42:../../bos/core/b_core.c ****  * \{
+  43:../../bos/core/b_core.c ****  */
+  44:../../bos/core/b_core.c **** 
+  45:../../bos/core/b_core.c **** /**
+  46:../../bos/core/b_core.c ****  * \addtogroup CORE
+  47:../../bos/core/b_core.c ****  * \{
+  48:../../bos/core/b_core.c ****  */
+  49:../../bos/core/b_core.c **** 
+GAS LISTING /tmp/ccCMW4E1.s 			page 2
+
+
+  50:../../bos/core/b_core.c **** /**
+  51:../../bos/core/b_core.c ****  * \addtogroup CORE
+  52:../../bos/core/b_core.c ****  * \{
+  53:../../bos/core/b_core.c ****  */
+  54:../../bos/core/b_core.c **** 
+  55:../../bos/core/b_core.c **** /**
+  56:../../bos/core/b_core.c ****  * \defgroup CORE_Private_TypesDefinitions
+  57:../../bos/core/b_core.c ****  * \{
+  58:../../bos/core/b_core.c ****  */
+  59:../../bos/core/b_core.c **** 
+  60:../../bos/core/b_core.c **** /**
+  61:../../bos/core/b_core.c ****  * \}
+  62:../../bos/core/b_core.c ****  */
+  63:../../bos/core/b_core.c **** 
+  64:../../bos/core/b_core.c **** /**
+  65:../../bos/core/b_core.c ****  * \defgroup CORE_Private_Defines
+  66:../../bos/core/b_core.c ****  * \{
+  67:../../bos/core/b_core.c ****  */
+  68:../../bos/core/b_core.c **** 
+  69:../../bos/core/b_core.c **** /**
+  70:../../bos/core/b_core.c ****  * \}
+  71:../../bos/core/b_core.c ****  */
+  72:../../bos/core/b_core.c **** 
+  73:../../bos/core/b_core.c **** /**
+  74:../../bos/core/b_core.c ****  * \defgroup CORE_Private_Macros
+  75:../../bos/core/b_core.c ****  * \{
+  76:../../bos/core/b_core.c ****  */
+  77:../../bos/core/b_core.c **** 
+  78:../../bos/core/b_core.c **** /**
+  79:../../bos/core/b_core.c ****  * \}
+  80:../../bos/core/b_core.c ****  */
+  81:../../bos/core/b_core.c **** 
+  82:../../bos/core/b_core.c **** /**
+  83:../../bos/core/b_core.c ****  * \defgroup CORE_Private_Variables
+  84:../../bos/core/b_core.c ****  * \{
+  85:../../bos/core/b_core.c ****  */
+  86:../../bos/core/b_core.c **** 
+  87:../../bos/core/b_core.c **** static bCoreFd_t bCoreFdTable[B_REG_DEV_NUMBER];
+  88:../../bos/core/b_core.c **** 
+  89:../../bos/core/b_core.c **** bSECTION_DEF_FLASH(bos_polling, pbPoling_t);
+  90:../../bos/core/b_core.c **** /**
+  91:../../bos/core/b_core.c ****  * \}
+  92:../../bos/core/b_core.c ****  */
+  93:../../bos/core/b_core.c **** 
+  94:../../bos/core/b_core.c **** /**
+  95:../../bos/core/b_core.c ****  * \defgroup CORE_Private_FunctionPrototypes
+  96:../../bos/core/b_core.c ****  * \{
+  97:../../bos/core/b_core.c ****  */
+  98:../../bos/core/b_core.c **** static void _bCoreMonitor(void);
+  99:../../bos/core/b_core.c **** 
+ 100:../../bos/core/b_core.c **** #ifdef BSECTION_NEED_PRAGMA
+ 101:../../bos/core/b_core.c **** #pragma section bos_polling
+ 102:../../bos/core/b_core.c **** #endif
+ 103:../../bos/core/b_core.c **** BOS_REG_POLLING_FUNC(_bCoreMonitor);
+ 104:../../bos/core/b_core.c **** #ifdef BSECTION_NEED_PRAGMA
+ 105:../../bos/core/b_core.c **** #pragma section
+ 106:../../bos/core/b_core.c **** #endif
+GAS LISTING /tmp/ccCMW4E1.s 			page 3
+
+
+ 107:../../bos/core/b_core.c **** 
+ 108:../../bos/core/b_core.c **** /**
+ 109:../../bos/core/b_core.c ****  * \}
+ 110:../../bos/core/b_core.c ****  */
+ 111:../../bos/core/b_core.c **** 
+ 112:../../bos/core/b_core.c **** /**
+ 113:../../bos/core/b_core.c ****  * \defgroup CORE_Private_Functions
+ 114:../../bos/core/b_core.c ****  * \{
+ 115:../../bos/core/b_core.c ****  */
+ 116:../../bos/core/b_core.c **** 
+ 117:../../bos/core/b_core.c **** static void _bCoreMonitor()
+ 118:../../bos/core/b_core.c **** {
+  10              		.loc 1 118 1 view -0
+  11              		.cfi_startproc
+  12 0000 F30F1EFA 		endbr64
+ 119:../../bos/core/b_core.c **** #if (defined(_WDT_ENABLE) && (_WDT_ENABLE == 1))
+ 120:../../bos/core/b_core.c ****     bHalWdtFeed();
+ 121:../../bos/core/b_core.c **** #endif
+ 122:../../bos/core/b_core.c **** }
+  13              		.loc 1 122 1 view .LVU1
+  14 0004 C3       		ret
+  15              		.cfi_endproc
+  16              	.LFE28:
+  18              		.section	.text.bOpen,"ax",@progbits
+  19              		.p2align 4
+  20              		.globl	bOpen
+  22              	bOpen:
+  23              	.LVL0:
+  24              	.LFB31:
+ 123:../../bos/core/b_core.c **** 
+ 124:../../bos/core/b_core.c **** static int _bCoreCreateFd(uint32_t dev_no, uint8_t flag)
+ 125:../../bos/core/b_core.c **** {
+ 126:../../bos/core/b_core.c ****     int            i    = 0;
+ 127:../../bos/core/b_core.c ****     int            fd   = -1;
+ 128:../../bos/core/b_core.c ****     static uint8_t init = 0;
+ 129:../../bos/core/b_core.c ****     if (init == 0)
+ 130:../../bos/core/b_core.c ****     {
+ 131:../../bos/core/b_core.c ****         for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 132:../../bos/core/b_core.c ****         {
+ 133:../../bos/core/b_core.c ****             bCoreFdTable[i].status = BCORE_STA_NULL;
+ 134:../../bos/core/b_core.c ****         }
+ 135:../../bos/core/b_core.c ****         init = 1;
+ 136:../../bos/core/b_core.c ****     }
+ 137:../../bos/core/b_core.c **** 
+ 138:../../bos/core/b_core.c ****     for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 139:../../bos/core/b_core.c ****     {
+ 140:../../bos/core/b_core.c ****         if (bCoreFdTable[i].status == BCORE_STA_OPEN)
+ 141:../../bos/core/b_core.c ****         {
+ 142:../../bos/core/b_core.c ****             if (dev_no == bCoreFdTable[i].number)
+ 143:../../bos/core/b_core.c ****             {
+ 144:../../bos/core/b_core.c ****                 return -1;
+ 145:../../bos/core/b_core.c ****             }
+ 146:../../bos/core/b_core.c ****         }
+ 147:../../bos/core/b_core.c ****     }
+ 148:../../bos/core/b_core.c **** 
+ 149:../../bos/core/b_core.c ****     for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 150:../../bos/core/b_core.c ****     {
+GAS LISTING /tmp/ccCMW4E1.s 			page 4
+
+
+ 151:../../bos/core/b_core.c ****         if (bCoreFdTable[i].status == BCORE_STA_NULL)
+ 152:../../bos/core/b_core.c ****         {
+ 153:../../bos/core/b_core.c ****             bCoreFdTable[i].flag   = flag;
+ 154:../../bos/core/b_core.c ****             bCoreFdTable[i].number = dev_no;
+ 155:../../bos/core/b_core.c ****             bCoreFdTable[i].status = BCORE_STA_OPEN;
+ 156:../../bos/core/b_core.c ****             bCoreFdTable[i].lseek  = 0;
+ 157:../../bos/core/b_core.c ****             fd                     = i;
+ 158:../../bos/core/b_core.c ****             break;
+ 159:../../bos/core/b_core.c ****         }
+ 160:../../bos/core/b_core.c ****     }
+ 161:../../bos/core/b_core.c ****     return fd;
+ 162:../../bos/core/b_core.c **** }
+ 163:../../bos/core/b_core.c **** 
+ 164:../../bos/core/b_core.c **** static int _bCoreDeleteFd(int fd)
+ 165:../../bos/core/b_core.c **** {
+ 166:../../bos/core/b_core.c ****     if (fd < 0)
+ 167:../../bos/core/b_core.c ****     {
+ 168:../../bos/core/b_core.c ****         return -1;
+ 169:../../bos/core/b_core.c ****     }
+ 170:../../bos/core/b_core.c ****     if (bCoreFdTable[fd].status == BCORE_STA_NULL)
+ 171:../../bos/core/b_core.c ****     {
+ 172:../../bos/core/b_core.c ****         return -1;
+ 173:../../bos/core/b_core.c ****     }
+ 174:../../bos/core/b_core.c ****     bCoreFdTable[fd].status = BCORE_STA_NULL;
+ 175:../../bos/core/b_core.c ****     return 0;
+ 176:../../bos/core/b_core.c **** }
+ 177:../../bos/core/b_core.c **** 
+ 178:../../bos/core/b_core.c **** /**
+ 179:../../bos/core/b_core.c ****  * \}
+ 180:../../bos/core/b_core.c ****  */
+ 181:../../bos/core/b_core.c **** 
+ 182:../../bos/core/b_core.c **** /**
+ 183:../../bos/core/b_core.c ****  * \addtogroup CORE_Exported_Functions
+ 184:../../bos/core/b_core.c ****  * \{
+ 185:../../bos/core/b_core.c ****  */
+ 186:../../bos/core/b_core.c **** 
+ 187:../../bos/core/b_core.c **** /**
+ 188:../../bos/core/b_core.c ****  * \brief Open a device
+ 189:../../bos/core/b_core.c ****  * \param dev_no Device Number
+ 190:../../bos/core/b_core.c ****  * \param flag Open Flag
+ 191:../../bos/core/b_core.c ****  *          \arg \ref BCORE_FLAG_R
+ 192:../../bos/core/b_core.c ****  *          \arg \ref BCORE_FLAG_W
+ 193:../../bos/core/b_core.c ****  *          \arg \ref BCORE_FLAG_RW
+ 194:../../bos/core/b_core.c ****  * \retval Result
+ 195:../../bos/core/b_core.c ****  *          \arg 0  OK
+ 196:../../bos/core/b_core.c ****  *          \arg -1 ERR
+ 197:../../bos/core/b_core.c ****  */
+ 198:../../bos/core/b_core.c **** int bOpen(uint32_t dev_no, uint8_t flag)
+ 199:../../bos/core/b_core.c **** {
+  25              		.loc 1 199 1 view -0
+  26              		.cfi_startproc
+  27              		.loc 1 199 1 is_stmt 0 view .LVU3
+  28 0000 F30F1EFA 		endbr64
+ 200:../../bos/core/b_core.c ****     int fd     = -1;
+  29              		.loc 1 200 5 is_stmt 1 view .LVU4
+  30              	.LVL1:
+ 201:../../bos/core/b_core.c ****     int retval = 0;
+GAS LISTING /tmp/ccCMW4E1.s 			page 5
+
+
+  31              		.loc 1 201 5 view .LVU5
+ 202:../../bos/core/b_core.c ****     if (!IS_VALID_FLAG(flag))
+  32              		.loc 1 202 5 view .LVU6
+ 199:../../bos/core/b_core.c ****     int fd     = -1;
+  33              		.loc 1 199 1 is_stmt 0 view .LVU7
+  34 0004 55       		pushq	%rbp
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 6, -16
+  38 0005 53       		pushq	%rbx
+  39              	.LCFI1:
+  40              		.cfi_def_cfa_offset 24
+  41              		.cfi_offset 3, -24
+  42 0006 4883EC08 		subq	$8, %rsp
+  43              	.LCFI2:
+  44              		.cfi_def_cfa_offset 32
+  45              		.loc 1 202 8 view .LVU8
+  46 000a 4080FE02 		cmpb	$2, %sil
+  47 000e 772C     		ja	.L5
+ 203:../../bos/core/b_core.c ****     {
+ 204:../../bos/core/b_core.c ****         return -1;
+ 205:../../bos/core/b_core.c ****     }
+ 206:../../bos/core/b_core.c ****     fd = _bCoreCreateFd(dev_no, flag);
+  48              		.loc 1 206 5 is_stmt 1 view .LVU9
+  49              	.LVL2:
+  50              	.LBB10:
+  51              	.LBI10:
+ 124:../../bos/core/b_core.c **** {
+  52              		.loc 1 124 12 view .LVU10
+  53              	.LBB11:
+ 126:../../bos/core/b_core.c ****     int            fd   = -1;
+  54              		.loc 1 126 5 view .LVU11
+ 127:../../bos/core/b_core.c ****     static uint8_t init = 0;
+  55              		.loc 1 127 5 view .LVU12
+ 128:../../bos/core/b_core.c ****     if (init == 0)
+  56              		.loc 1 128 5 view .LVU13
+ 129:../../bos/core/b_core.c ****     {
+  57              		.loc 1 129 5 view .LVU14
+ 129:../../bos/core/b_core.c ****     {
+  58              		.loc 1 129 8 is_stmt 0 view .LVU15
+  59 0010 803D0000 		cmpb	$0, init.1(%rip)
+  59      000000
+  60 0017 7437     		je	.L22
+ 138:../../bos/core/b_core.c ****     {
+  61              		.loc 1 138 5 is_stmt 1 view .LVU16
+ 138:../../bos/core/b_core.c ****     {
+  62              		.loc 1 138 19 discriminator 1 view .LVU17
+ 140:../../bos/core/b_core.c ****         {
+  63              		.loc 1 140 9 view .LVU18
+ 140:../../bos/core/b_core.c ****         {
+  64              		.loc 1 140 28 is_stmt 0 view .LVU19
+  65 0019 0FB61500 		movzbl	1+bCoreFdTable(%rip), %edx
+  65      000000
+ 140:../../bos/core/b_core.c ****         {
+  66              		.loc 1 140 12 view .LVU20
+  67 0020 80FA01   		cmpb	$1, %dl
+  68 0023 754B     		jne	.L8
+GAS LISTING /tmp/ccCMW4E1.s 			page 6
+
+
+ 142:../../bos/core/b_core.c ****             {
+  69              		.loc 1 142 13 is_stmt 1 view .LVU21
+ 142:../../bos/core/b_core.c ****             {
+  70              		.loc 1 142 16 is_stmt 0 view .LVU22
+  71 0025 3B3D0000 		cmpl	4+bCoreFdTable(%rip), %edi
+  71      0000
+  72 002b 740F     		je	.L5
+ 138:../../bos/core/b_core.c ****     {
+  73              		.loc 1 138 40 is_stmt 1 discriminator 2 view .LVU23
+  74              	.LVL3:
+ 138:../../bos/core/b_core.c ****     {
+  75              		.loc 1 138 19 discriminator 1 view .LVU24
+ 140:../../bos/core/b_core.c ****         {
+  76              		.loc 1 140 9 view .LVU25
+ 140:../../bos/core/b_core.c ****         {
+  77              		.loc 1 140 28 is_stmt 0 view .LVU26
+  78 002d 0FB60500 		movzbl	13+bCoreFdTable(%rip), %eax
+  78      000000
+ 140:../../bos/core/b_core.c ****         {
+  79              		.loc 1 140 12 view .LVU27
+  80 0034 3C01     		cmpb	$1, %al
+  81 0036 7404     		je	.L5
+  82              	.LVL4:
+  83              	.L10:
+ 149:../../bos/core/b_core.c ****     {
+  84              		.loc 1 149 40 is_stmt 1 discriminator 2 view .LVU28
+ 149:../../bos/core/b_core.c ****     {
+  85              		.loc 1 149 19 discriminator 1 view .LVU29
+ 151:../../bos/core/b_core.c ****         {
+  86              		.loc 1 151 9 view .LVU30
+ 151:../../bos/core/b_core.c ****         {
+  87              		.loc 1 151 12 is_stmt 0 view .LVU31
+  88 0038 84C0     		testb	%al, %al
+  89 003a 7464     		je	.L23
+  90              	.LVL5:
+  91              	.L5:
+ 151:../../bos/core/b_core.c ****         {
+  92              		.loc 1 151 12 view .LVU32
+  93              	.LBE11:
+  94              	.LBE10:
+ 204:../../bos/core/b_core.c ****     }
+  95              		.loc 1 204 16 view .LVU33
+  96 003c BDFFFFFF 		movl	$-1, %ebp
+  96      FF
+  97              	.L3:
+ 207:../../bos/core/b_core.c ****     if (fd < 0)
+ 208:../../bos/core/b_core.c ****     {
+ 209:../../bos/core/b_core.c ****         return -1;
+ 210:../../bos/core/b_core.c ****     }
+ 211:../../bos/core/b_core.c ****     retval = bDeviceOpen(dev_no);
+ 212:../../bos/core/b_core.c ****     if (retval >= 0 || retval == B_DEVICE_FUNC_NULL)
+ 213:../../bos/core/b_core.c ****     {
+ 214:../../bos/core/b_core.c ****         return fd;
+ 215:../../bos/core/b_core.c ****     }
+ 216:../../bos/core/b_core.c ****     _bCoreDeleteFd(fd);
+ 217:../../bos/core/b_core.c ****     return -1;
+ 218:../../bos/core/b_core.c **** }
+GAS LISTING /tmp/ccCMW4E1.s 			page 7
+
+
+  98              		.loc 1 218 1 view .LVU34
+  99 0041 4883C408 		addq	$8, %rsp
+ 100              	.LCFI3:
+ 101              		.cfi_remember_state
+ 102              		.cfi_def_cfa_offset 24
+ 103 0045 89E8     		movl	%ebp, %eax
+ 104 0047 5B       		popq	%rbx
+ 105              	.LCFI4:
+ 106              		.cfi_def_cfa_offset 16
+ 107 0048 5D       		popq	%rbp
+ 108              	.LCFI5:
+ 109              		.cfi_def_cfa_offset 8
+ 110 0049 C3       		ret
+ 111              	.LVL6:
+ 112 004a 660F1F44 		.p2align 4,,10
+ 112      0000
+ 113              		.p2align 3
+ 114              	.L22:
+ 115              	.LCFI6:
+ 116              		.cfi_restore_state
+ 117              	.LBB13:
+ 118              	.LBB12:
+ 131:../../bos/core/b_core.c ****         {
+ 119              		.loc 1 131 23 is_stmt 1 discriminator 1 view .LVU35
+ 133:../../bos/core/b_core.c ****         }
+ 120              		.loc 1 133 13 view .LVU36
+ 133:../../bos/core/b_core.c ****         }
+ 121              		.loc 1 133 36 is_stmt 0 view .LVU37
+ 122 0050 C6050000 		movb	$0, 1+bCoreFdTable(%rip)
+ 122      000000
+ 131:../../bos/core/b_core.c ****         {
+ 123              		.loc 1 131 44 is_stmt 1 discriminator 3 view .LVU38
+ 124              	.LVL7:
+ 131:../../bos/core/b_core.c ****         {
+ 125              		.loc 1 131 23 discriminator 1 view .LVU39
+ 133:../../bos/core/b_core.c ****         }
+ 126              		.loc 1 133 13 view .LVU40
+ 149:../../bos/core/b_core.c ****     {
+ 127              		.loc 1 149 12 is_stmt 0 view .LVU41
+ 128 0057 31ED     		xorl	%ebp, %ebp
+ 133:../../bos/core/b_core.c ****         }
+ 129              		.loc 1 133 36 view .LVU42
+ 130 0059 C6050000 		movb	$0, 13+bCoreFdTable(%rip)
+ 130      000000
+ 131:../../bos/core/b_core.c ****         {
+ 131              		.loc 1 131 44 is_stmt 1 discriminator 3 view .LVU43
+ 132              	.LVL8:
+ 131:../../bos/core/b_core.c ****         {
+ 133              		.loc 1 131 23 discriminator 1 view .LVU44
+ 135:../../bos/core/b_core.c ****     }
+ 134              		.loc 1 135 9 view .LVU45
+ 135:../../bos/core/b_core.c ****     }
+ 135              		.loc 1 135 14 is_stmt 0 view .LVU46
+ 136 0060 C6050000 		movb	$1, init.1(%rip)
+ 136      000001
+ 138:../../bos/core/b_core.c ****     {
+ 137              		.loc 1 138 5 is_stmt 1 view .LVU47
+GAS LISTING /tmp/ccCMW4E1.s 			page 8
+
+
+ 138              	.LVL9:
+ 138:../../bos/core/b_core.c ****     {
+ 139              		.loc 1 138 19 discriminator 1 view .LVU48
+ 140:../../bos/core/b_core.c ****         {
+ 140              		.loc 1 140 9 view .LVU49
+ 138:../../bos/core/b_core.c ****     {
+ 141              		.loc 1 138 40 discriminator 2 view .LVU50
+ 138:../../bos/core/b_core.c ****     {
+ 142              		.loc 1 138 19 discriminator 1 view .LVU51
+ 140:../../bos/core/b_core.c ****         {
+ 143              		.loc 1 140 9 view .LVU52
+ 138:../../bos/core/b_core.c ****     {
+ 144              		.loc 1 138 40 discriminator 2 view .LVU53
+ 138:../../bos/core/b_core.c ****     {
+ 145              		.loc 1 138 19 discriminator 1 view .LVU54
+ 149:../../bos/core/b_core.c ****     {
+ 146              		.loc 1 149 19 discriminator 1 view .LVU55
+ 151:../../bos/core/b_core.c ****         {
+ 147              		.loc 1 151 9 view .LVU56
+ 148 0067 EB3F     		jmp	.L13
+ 149 0069 0F1F8000 		.p2align 4,,10
+ 149      000000
+ 150              		.p2align 3
+ 151              	.L8:
+ 140:../../bos/core/b_core.c ****         {
+ 152              		.loc 1 140 28 is_stmt 0 view .LVU57
+ 153 0070 0FB60500 		movzbl	13+bCoreFdTable(%rip), %eax
+ 153      000000
+ 138:../../bos/core/b_core.c ****     {
+ 154              		.loc 1 138 40 is_stmt 1 discriminator 2 view .LVU58
+ 155              	.LVL10:
+ 138:../../bos/core/b_core.c ****     {
+ 156              		.loc 1 138 19 discriminator 1 view .LVU59
+ 140:../../bos/core/b_core.c ****         {
+ 157              		.loc 1 140 9 view .LVU60
+ 140:../../bos/core/b_core.c ****         {
+ 158              		.loc 1 140 12 is_stmt 0 view .LVU61
+ 159 0077 3C01     		cmpb	$1, %al
+ 160 0079 7515     		jne	.L11
+ 142:../../bos/core/b_core.c ****             {
+ 161              		.loc 1 142 13 is_stmt 1 view .LVU62
+ 138:../../bos/core/b_core.c ****     {
+ 162              		.loc 1 138 40 discriminator 2 view .LVU63
+ 163              	.LVL11:
+ 138:../../bos/core/b_core.c ****     {
+ 164              		.loc 1 138 19 discriminator 1 view .LVU64
+ 149:../../bos/core/b_core.c ****     {
+ 165              		.loc 1 149 19 discriminator 1 view .LVU65
+ 151:../../bos/core/b_core.c ****         {
+ 166              		.loc 1 151 9 view .LVU66
+ 151:../../bos/core/b_core.c ****         {
+ 167              		.loc 1 151 12 is_stmt 0 view .LVU67
+ 168 007b 393D0000 		cmpl	%edi, 16+bCoreFdTable(%rip)
+ 168      0000
+ 169 0081 74B9     		je	.L5
+ 170 0083 84D2     		testb	%dl, %dl
+ 171 0085 75B5     		jne	.L5
+GAS LISTING /tmp/ccCMW4E1.s 			page 9
+
+
+ 149:../../bos/core/b_core.c ****     {
+ 172              		.loc 1 149 12 view .LVU68
+ 173 0087 31ED     		xorl	%ebp, %ebp
+ 174 0089 EB1D     		jmp	.L13
+ 175              	.LVL12:
+ 176 008b 0F1F4400 		.p2align 4,,10
+ 176      00
+ 177              		.p2align 3
+ 178              	.L11:
+ 138:../../bos/core/b_core.c ****     {
+ 179              		.loc 1 138 40 is_stmt 1 discriminator 2 view .LVU69
+ 138:../../bos/core/b_core.c ****     {
+ 180              		.loc 1 138 19 discriminator 1 view .LVU70
+ 149:../../bos/core/b_core.c ****     {
+ 181              		.loc 1 149 19 discriminator 1 view .LVU71
+ 151:../../bos/core/b_core.c ****         {
+ 182              		.loc 1 151 9 view .LVU72
+ 151:../../bos/core/b_core.c ****         {
+ 183              		.loc 1 151 12 is_stmt 0 view .LVU73
+ 184 0090 84D2     		testb	%dl, %dl
+ 185 0092 75A4     		jne	.L10
+ 149:../../bos/core/b_core.c ****     {
+ 186              		.loc 1 149 12 view .LVU74
+ 187 0094 31ED     		xorl	%ebp, %ebp
+ 188 0096 EB10     		jmp	.L13
+ 189              	.LVL13:
+ 190 0098 0F1F8400 		.p2align 4,,10
+ 190      00000000 
+ 191              		.p2align 3
+ 192              	.L23:
+ 149:../../bos/core/b_core.c ****     {
+ 193              		.loc 1 149 40 discriminator 2 view .LVU75
+ 194 00a0 BD010000 		movl	$1, %ebp
+ 194      00
+ 195              	.LVL14:
+ 196              		.p2align 4,,10
+ 197 00a5 0F1F00   		.p2align 3
+ 198              	.L13:
+ 153:../../bos/core/b_core.c ****             bCoreFdTable[i].number = dev_no;
+ 199              		.loc 1 153 13 is_stmt 1 view .LVU76
+ 153:../../bos/core/b_core.c ****             bCoreFdTable[i].number = dev_no;
+ 200              		.loc 1 153 36 is_stmt 0 view .LVU77
+ 201 00a8 4863C5   		movslq	%ebp, %rax
+ 202 00ab 488D1440 		leaq	(%rax,%rax,2), %rdx
+ 203 00af 488D0500 		leaq	bCoreFdTable(%rip), %rax
+ 203      000000
+ 204 00b6 488D1C90 		leaq	(%rax,%rdx,4), %rbx
+ 205 00ba 408833   		movb	%sil, (%rbx)
+ 154:../../bos/core/b_core.c ****             bCoreFdTable[i].status = BCORE_STA_OPEN;
+ 206              		.loc 1 154 13 is_stmt 1 view .LVU78
+ 154:../../bos/core/b_core.c ****             bCoreFdTable[i].status = BCORE_STA_OPEN;
+ 207              		.loc 1 154 36 is_stmt 0 view .LVU79
+ 208 00bd 897B04   		movl	%edi, 4(%rbx)
+ 155:../../bos/core/b_core.c ****             bCoreFdTable[i].lseek  = 0;
+ 209              		.loc 1 155 13 is_stmt 1 view .LVU80
+ 155:../../bos/core/b_core.c ****             bCoreFdTable[i].lseek  = 0;
+ 210              		.loc 1 155 36 is_stmt 0 view .LVU81
+GAS LISTING /tmp/ccCMW4E1.s 			page 10
+
+
+ 211 00c0 C6430101 		movb	$1, 1(%rbx)
+ 156:../../bos/core/b_core.c ****             fd                     = i;
+ 212              		.loc 1 156 13 is_stmt 1 view .LVU82
+ 156:../../bos/core/b_core.c ****             fd                     = i;
+ 213              		.loc 1 156 36 is_stmt 0 view .LVU83
+ 214 00c4 C7430800 		movl	$0, 8(%rbx)
+ 214      000000
+ 157:../../bos/core/b_core.c ****             break;
+ 215              		.loc 1 157 13 is_stmt 1 view .LVU84
+ 216              	.LVL15:
+ 158:../../bos/core/b_core.c ****         }
+ 217              		.loc 1 158 13 view .LVU85
+ 158:../../bos/core/b_core.c ****         }
+ 218              		.loc 1 158 13 is_stmt 0 view .LVU86
+ 219              	.LBE12:
+ 220              	.LBE13:
+ 207:../../bos/core/b_core.c ****     {
+ 221              		.loc 1 207 5 is_stmt 1 view .LVU87
+ 211:../../bos/core/b_core.c ****     if (retval >= 0 || retval == B_DEVICE_FUNC_NULL)
+ 222              		.loc 1 211 5 view .LVU88
+ 211:../../bos/core/b_core.c ****     if (retval >= 0 || retval == B_DEVICE_FUNC_NULL)
+ 223              		.loc 1 211 14 is_stmt 0 view .LVU89
+ 224 00cb E8000000 		call	bDeviceOpen@PLT
+ 224      00
+ 225              	.LVL16:
+ 212:../../bos/core/b_core.c ****     {
+ 226              		.loc 1 212 5 is_stmt 1 view .LVU90
+ 212:../../bos/core/b_core.c ****     {
+ 227              		.loc 1 212 8 is_stmt 0 view .LVU91
+ 228 00d0 85C0     		testl	%eax, %eax
+ 229 00d2 0F8969FF 		jns	.L3
+ 229      FFFF
+ 230 00d8 3D02FFFF 		cmpl	$-254, %eax
+ 230      FF
+ 231 00dd 0F845EFF 		je	.L3
+ 231      FFFF
+ 216:../../bos/core/b_core.c ****     return -1;
+ 232              		.loc 1 216 5 is_stmt 1 view .LVU92
+ 233              	.LVL17:
+ 234              	.LBB14:
+ 235              	.LBI14:
+ 164:../../bos/core/b_core.c **** {
+ 236              		.loc 1 164 12 view .LVU93
+ 237              	.LBB15:
+ 166:../../bos/core/b_core.c ****     {
+ 238              		.loc 1 166 5 view .LVU94
+ 170:../../bos/core/b_core.c ****     {
+ 239              		.loc 1 170 5 view .LVU95
+ 170:../../bos/core/b_core.c ****     {
+ 240              		.loc 1 170 8 is_stmt 0 view .LVU96
+ 241 00e3 807B0100 		cmpb	$0, 1(%rbx)
+ 242 00e7 0F844FFF 		je	.L5
+ 242      FFFF
+ 174:../../bos/core/b_core.c ****     return 0;
+ 243              		.loc 1 174 5 is_stmt 1 view .LVU97
+ 174:../../bos/core/b_core.c ****     return 0;
+ 244              		.loc 1 174 29 is_stmt 0 view .LVU98
+GAS LISTING /tmp/ccCMW4E1.s 			page 11
+
+
+ 245 00ed C6430100 		movb	$0, 1(%rbx)
+ 175:../../bos/core/b_core.c **** }
+ 246              		.loc 1 175 5 is_stmt 1 view .LVU99
+ 175:../../bos/core/b_core.c **** }
+ 247              		.loc 1 175 12 is_stmt 0 view .LVU100
+ 248 00f1 E946FFFF 		jmp	.L5
+ 248      FF
+ 249              	.LBE15:
+ 250              	.LBE14:
+ 251              		.cfi_endproc
+ 252              	.LFE31:
+ 254              		.section	.text.bRead,"ax",@progbits
+ 255              		.p2align 4
+ 256              		.globl	bRead
+ 258              	bRead:
+ 259              	.LVL18:
+ 260              	.LFB32:
+ 219:../../bos/core/b_core.c **** 
+ 220:../../bos/core/b_core.c **** int bRead(int fd, uint8_t *pdata, uint32_t len)
+ 221:../../bos/core/b_core.c **** {
+ 261              		.loc 1 221 1 is_stmt 1 view -0
+ 262              		.cfi_startproc
+ 263              		.loc 1 221 1 is_stmt 0 view .LVU102
+ 264 0000 F30F1EFA 		endbr64
+ 222:../../bos/core/b_core.c ****     int retval;
+ 265              		.loc 1 222 5 is_stmt 1 view .LVU103
+ 223:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER || pdata == NULL)
+ 266              		.loc 1 223 5 view .LVU104
+ 267              		.loc 1 223 8 is_stmt 0 view .LVU105
+ 268 0004 83FF01   		cmpl	$1, %edi
+ 269 0007 0F878300 		ja	.L27
+ 269      0000
+ 270 000d 4885F6   		testq	%rsi, %rsi
+ 271 0010 747E     		je	.L27
+ 224:../../bos/core/b_core.c ****     {
+ 225:../../bos/core/b_core.c ****         return -1;
+ 226:../../bos/core/b_core.c ****     }
+ 227:../../bos/core/b_core.c **** 
+ 228:../../bos/core/b_core.c ****     if (len == 0)
+ 272              		.loc 1 228 5 is_stmt 1 view .LVU106
+ 229:../../bos/core/b_core.c ****     {
+ 230:../../bos/core/b_core.c ****         return 0;
+ 273              		.loc 1 230 16 is_stmt 0 view .LVU107
+ 274 0012 31C0     		xorl	%eax, %eax
+ 228:../../bos/core/b_core.c ****     {
+ 275              		.loc 1 228 8 view .LVU108
+ 276 0014 85D2     		testl	%edx, %edx
+ 277 0016 7468     		je	.L34
+ 231:../../bos/core/b_core.c ****     }
+ 232:../../bos/core/b_core.c **** 
+ 233:../../bos/core/b_core.c ****     if (!READ_IS_VALID(bCoreFdTable[fd].flag) || bCoreFdTable[fd].status == BCORE_STA_NULL)
+ 278              		.loc 1 233 5 is_stmt 1 view .LVU109
+ 221:../../bos/core/b_core.c ****     int retval;
+ 279              		.loc 1 221 1 is_stmt 0 view .LVU110
+ 280 0018 55       		pushq	%rbp
+ 281              	.LCFI7:
+ 282              		.cfi_def_cfa_offset 16
+GAS LISTING /tmp/ccCMW4E1.s 			page 12
+
+
+ 283              		.cfi_offset 6, -16
+ 284              		.loc 1 233 10 view .LVU111
+ 285 0019 488D2D00 		leaq	bCoreFdTable(%rip), %rbp
+ 285      000000
+ 221:../../bos/core/b_core.c ****     int retval;
+ 286              		.loc 1 221 1 view .LVU112
+ 287 0020 53       		pushq	%rbx
+ 288              	.LCFI8:
+ 289              		.cfi_def_cfa_offset 24
+ 290              		.cfi_offset 3, -24
+ 291              		.loc 1 233 10 view .LVU113
+ 292 0021 4863DF   		movslq	%edi, %rbx
+ 293 0024 488D045B 		leaq	(%rbx,%rbx,2), %rax
+ 294 0028 488D4485 		leaq	0(%rbp,%rax,4), %rax
+ 294      00
+ 221:../../bos/core/b_core.c ****     int retval;
+ 295              		.loc 1 221 1 view .LVU114
+ 296 002d 4883EC08 		subq	$8, %rsp
+ 297              	.LCFI9:
+ 298              		.cfi_def_cfa_offset 32
+ 299              		.loc 1 233 8 view .LVU115
+ 300 0031 F600FD   		testb	$-3, (%rax)
+ 301 0034 7552     		jne	.L30
+ 302              		.loc 1 233 47 discriminator 1 view .LVU116
+ 303 0036 80780100 		cmpb	$0, 1(%rax)
+ 304 003a 744C     		je	.L30
+ 234:../../bos/core/b_core.c ****     {
+ 235:../../bos/core/b_core.c ****         return -1;
+ 236:../../bos/core/b_core.c ****     }
+ 237:../../bos/core/b_core.c **** 
+ 238:../../bos/core/b_core.c ****     retval = bDeviceRead(bCoreFdTable[fd].number, bCoreFdTable[fd].lseek, pdata, len);
+ 305              		.loc 1 238 5 is_stmt 1 view .LVU117
+ 306              		.loc 1 238 14 is_stmt 0 view .LVU118
+ 307 003c 448B4008 		movl	8(%rax), %r8d
+ 308 0040 8B7804   		movl	4(%rax), %edi
+ 309              	.LVL19:
+ 310              		.loc 1 238 14 view .LVU119
+ 311 0043 89D1     		movl	%edx, %ecx
+ 312 0045 4889F2   		movq	%rsi, %rdx
+ 313              	.LVL20:
+ 314              		.loc 1 238 14 view .LVU120
+ 315 0048 4489C6   		movl	%r8d, %esi
+ 316              	.LVL21:
+ 317              		.loc 1 238 14 view .LVU121
+ 318 004b E8000000 		call	bDeviceRead@PLT
+ 318      00
+ 319              	.LVL22:
+ 239:../../bos/core/b_core.c ****     if (retval == B_DEVICE_FUNC_NULL)
+ 320              		.loc 1 239 5 is_stmt 1 view .LVU122
+ 321              		.loc 1 239 8 is_stmt 0 view .LVU123
+ 322 0050 3D02FFFF 		cmpl	$-254, %eax
+ 322      FF
+ 323 0055 7419     		je	.L31
+ 240:../../bos/core/b_core.c ****     {
+ 241:../../bos/core/b_core.c ****         retval = 0;
+ 242:../../bos/core/b_core.c ****     }
+ 243:../../bos/core/b_core.c ****     if (retval >= 0)
+GAS LISTING /tmp/ccCMW4E1.s 			page 13
+
+
+ 324              		.loc 1 243 5 is_stmt 1 view .LVU124
+ 244:../../bos/core/b_core.c ****     {
+ 245:../../bos/core/b_core.c ****         bCoreFdTable[fd].lseek += retval;
+ 325              		.loc 1 245 32 is_stmt 0 view .LVU125
+ 326 0057 89C1     		movl	%eax, %ecx
+ 243:../../bos/core/b_core.c ****     {
+ 327              		.loc 1 243 8 view .LVU126
+ 328 0059 85C0     		testl	%eax, %eax
+ 329 005b 7808     		js	.L24
+ 330              	.LVL23:
+ 331              	.L26:
+ 332              		.loc 1 245 9 is_stmt 1 view .LVU127
+ 333              		.loc 1 245 32 is_stmt 0 view .LVU128
+ 334 005d 488D145B 		leaq	(%rbx,%rbx,2), %rdx
+ 335 0061 014C9508 		addl	%ecx, 8(%rbp,%rdx,4)
+ 336              	.L24:
+ 246:../../bos/core/b_core.c ****     }
+ 247:../../bos/core/b_core.c ****     return retval;
+ 248:../../bos/core/b_core.c **** }
+ 337              		.loc 1 248 1 view .LVU129
+ 338 0065 4883C408 		addq	$8, %rsp
+ 339              	.LCFI10:
+ 340              		.cfi_remember_state
+ 341              		.cfi_def_cfa_offset 24
+ 342 0069 5B       		popq	%rbx
+ 343              	.LCFI11:
+ 344              		.cfi_def_cfa_offset 16
+ 345              	.LVL24:
+ 346              		.loc 1 248 1 view .LVU130
+ 347 006a 5D       		popq	%rbp
+ 348              	.LCFI12:
+ 349              		.cfi_def_cfa_offset 8
+ 350 006b C3       		ret
+ 351              	.LVL25:
+ 352 006c 0F1F4000 		.p2align 4,,10
+ 353              		.p2align 3
+ 354              	.L31:
+ 355              	.LCFI13:
+ 356              		.cfi_restore_state
+ 357              		.loc 1 248 1 view .LVU131
+ 358 0070 31C9     		xorl	%ecx, %ecx
+ 241:../../bos/core/b_core.c ****     }
+ 359              		.loc 1 241 16 view .LVU132
+ 360 0072 31C0     		xorl	%eax, %eax
+ 361              	.LVL26:
+ 241:../../bos/core/b_core.c ****     }
+ 362              		.loc 1 241 16 view .LVU133
+ 363 0074 EBE7     		jmp	.L26
+ 364              	.LVL27:
+ 365 0076 662E0F1F 		.p2align 4,,10
+ 365      84000000 
+ 365      0000
+ 366              		.p2align 3
+ 367              	.L34:
+ 368              	.LCFI14:
+ 369              		.cfi_def_cfa_offset 8
+ 370              		.cfi_restore 3
+GAS LISTING /tmp/ccCMW4E1.s 			page 14
+
+
+ 371              		.cfi_restore 6
+ 372              		.loc 1 248 1 view .LVU134
+ 373 0080 C3       		ret
+ 374              		.p2align 4,,10
+ 375 0081 0F1F8000 		.p2align 3
+ 375      000000
+ 376              	.L30:
+ 377              	.LCFI15:
+ 378              		.cfi_def_cfa_offset 32
+ 379              		.cfi_offset 3, -24
+ 380              		.cfi_offset 6, -16
+ 225:../../bos/core/b_core.c ****     }
+ 381              		.loc 1 225 16 view .LVU135
+ 382 0088 B8FFFFFF 		movl	$-1, %eax
+ 382      FF
+ 383 008d EBD6     		jmp	.L24
+ 384 008f 90       		.p2align 4,,10
+ 385              		.p2align 3
+ 386              	.L27:
+ 387              	.LCFI16:
+ 388              		.cfi_def_cfa_offset 8
+ 389              		.cfi_restore 3
+ 390              		.cfi_restore 6
+ 391 0090 B8FFFFFF 		movl	$-1, %eax
+ 391      FF
+ 392 0095 C3       		ret
+ 393              		.cfi_endproc
+ 394              	.LFE32:
+ 396              		.section	.text.bWrite,"ax",@progbits
+ 397              		.p2align 4
+ 398              		.globl	bWrite
+ 400              	bWrite:
+ 401              	.LVL28:
+ 402              	.LFB33:
+ 249:../../bos/core/b_core.c **** 
+ 250:../../bos/core/b_core.c **** int bWrite(int fd, uint8_t *pdata, uint32_t len)
+ 251:../../bos/core/b_core.c **** {
+ 403              		.loc 1 251 1 is_stmt 1 view -0
+ 404              		.cfi_startproc
+ 405              		.loc 1 251 1 is_stmt 0 view .LVU137
+ 406 0000 F30F1EFA 		endbr64
+ 252:../../bos/core/b_core.c ****     int retval;
+ 407              		.loc 1 252 5 is_stmt 1 view .LVU138
+ 253:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER || pdata == NULL)
+ 408              		.loc 1 253 5 view .LVU139
+ 409              		.loc 1 253 8 is_stmt 0 view .LVU140
+ 410 0004 83FF01   		cmpl	$1, %edi
+ 411 0007 0F878300 		ja	.L40
+ 411      0000
+ 412 000d 4885F6   		testq	%rsi, %rsi
+ 413 0010 747E     		je	.L40
+ 414 0012 89D1     		movl	%edx, %ecx
+ 254:../../bos/core/b_core.c ****     {
+ 255:../../bos/core/b_core.c ****         return -1;
+ 256:../../bos/core/b_core.c ****     }
+ 257:../../bos/core/b_core.c **** 
+ 258:../../bos/core/b_core.c ****     if (len == 0)
+GAS LISTING /tmp/ccCMW4E1.s 			page 15
+
+
+ 415              		.loc 1 258 5 is_stmt 1 view .LVU141
+ 259:../../bos/core/b_core.c ****     {
+ 260:../../bos/core/b_core.c ****         return 0;
+ 416              		.loc 1 260 16 is_stmt 0 view .LVU142
+ 417 0014 31C0     		xorl	%eax, %eax
+ 258:../../bos/core/b_core.c ****     {
+ 418              		.loc 1 258 8 view .LVU143
+ 419 0016 85D2     		testl	%edx, %edx
+ 420 0018 7466     		je	.L47
+ 261:../../bos/core/b_core.c ****     }
+ 262:../../bos/core/b_core.c **** 
+ 263:../../bos/core/b_core.c ****     if (!WRITE_IS_VALID(bCoreFdTable[fd].flag) || bCoreFdTable[fd].status == BCORE_STA_NULL)
+ 421              		.loc 1 263 5 is_stmt 1 view .LVU144
+ 251:../../bos/core/b_core.c ****     int retval;
+ 422              		.loc 1 251 1 is_stmt 0 view .LVU145
+ 423 001a 55       		pushq	%rbp
+ 424              	.LCFI17:
+ 425              		.cfi_def_cfa_offset 16
+ 426              		.cfi_offset 6, -16
+ 427              		.loc 1 263 10 view .LVU146
+ 428 001b 488D2D00 		leaq	bCoreFdTable(%rip), %rbp
+ 428      000000
+ 251:../../bos/core/b_core.c ****     int retval;
+ 429              		.loc 1 251 1 view .LVU147
+ 430 0022 53       		pushq	%rbx
+ 431              	.LCFI18:
+ 432              		.cfi_def_cfa_offset 24
+ 433              		.cfi_offset 3, -24
+ 434              		.loc 1 263 10 view .LVU148
+ 435 0023 4863DF   		movslq	%edi, %rbx
+ 436 0026 488D045B 		leaq	(%rbx,%rbx,2), %rax
+ 437 002a 488D4485 		leaq	0(%rbp,%rax,4), %rax
+ 437      00
+ 251:../../bos/core/b_core.c ****     int retval;
+ 438              		.loc 1 251 1 view .LVU149
+ 439 002f 4883EC08 		subq	$8, %rsp
+ 440              	.LCFI19:
+ 441              		.cfi_def_cfa_offset 32
+ 442              		.loc 1 263 9 view .LVU150
+ 443 0033 0FB610   		movzbl	(%rax), %edx
+ 444              	.LVL29:
+ 445              		.loc 1 263 9 view .LVU151
+ 446 0036 83EA01   		subl	$1, %edx
+ 447              		.loc 1 263 8 view .LVU152
+ 448 0039 80FA01   		cmpb	$1, %dl
+ 449 003c 774A     		ja	.L43
+ 450              		.loc 1 263 48 discriminator 1 view .LVU153
+ 451 003e 80780100 		cmpb	$0, 1(%rax)
+ 452 0042 7444     		je	.L43
+ 264:../../bos/core/b_core.c ****     {
+ 265:../../bos/core/b_core.c ****         return -1;
+ 266:../../bos/core/b_core.c ****     }
+ 267:../../bos/core/b_core.c **** 
+ 268:../../bos/core/b_core.c ****     retval = bDeviceWrite(bCoreFdTable[fd].number, bCoreFdTable[fd].lseek, pdata, len);
+ 453              		.loc 1 268 5 is_stmt 1 view .LVU154
+ 454              		.loc 1 268 14 is_stmt 0 view .LVU155
+ 455 0044 448B4008 		movl	8(%rax), %r8d
+GAS LISTING /tmp/ccCMW4E1.s 			page 16
+
+
+ 456 0048 8B7804   		movl	4(%rax), %edi
+ 457              	.LVL30:
+ 458              		.loc 1 268 14 view .LVU156
+ 459 004b 4889F2   		movq	%rsi, %rdx
+ 460 004e 4489C6   		movl	%r8d, %esi
+ 461              	.LVL31:
+ 462              		.loc 1 268 14 view .LVU157
+ 463 0051 E8000000 		call	bDeviceWrite@PLT
+ 463      00
+ 464              	.LVL32:
+ 269:../../bos/core/b_core.c ****     if (retval == B_DEVICE_FUNC_NULL)
+ 465              		.loc 1 269 5 is_stmt 1 view .LVU158
+ 466              		.loc 1 269 8 is_stmt 0 view .LVU159
+ 467 0056 3D02FFFF 		cmpl	$-254, %eax
+ 467      FF
+ 468 005b 741B     		je	.L44
+ 270:../../bos/core/b_core.c ****     {
+ 271:../../bos/core/b_core.c ****         retval = 0;
+ 272:../../bos/core/b_core.c ****     }
+ 273:../../bos/core/b_core.c ****     if (retval >= 0)
+ 469              		.loc 1 273 5 is_stmt 1 view .LVU160
+ 274:../../bos/core/b_core.c ****     {
+ 275:../../bos/core/b_core.c ****         bCoreFdTable[fd].lseek += retval;
+ 470              		.loc 1 275 32 is_stmt 0 view .LVU161
+ 471 005d 89C1     		movl	%eax, %ecx
+ 273:../../bos/core/b_core.c ****     {
+ 472              		.loc 1 273 8 view .LVU162
+ 473 005f 85C0     		testl	%eax, %eax
+ 474 0061 7808     		js	.L37
+ 475              	.LVL33:
+ 476              	.L39:
+ 477              		.loc 1 275 9 is_stmt 1 view .LVU163
+ 478              		.loc 1 275 32 is_stmt 0 view .LVU164
+ 479 0063 488D145B 		leaq	(%rbx,%rbx,2), %rdx
+ 480 0067 014C9508 		addl	%ecx, 8(%rbp,%rdx,4)
+ 481              	.L37:
+ 276:../../bos/core/b_core.c ****     }
+ 277:../../bos/core/b_core.c ****     return retval;
+ 278:../../bos/core/b_core.c **** }
+ 482              		.loc 1 278 1 view .LVU165
+ 483 006b 4883C408 		addq	$8, %rsp
+ 484              	.LCFI20:
+ 485              		.cfi_remember_state
+ 486              		.cfi_def_cfa_offset 24
+ 487 006f 5B       		popq	%rbx
+ 488              	.LCFI21:
+ 489              		.cfi_def_cfa_offset 16
+ 490              	.LVL34:
+ 491              		.loc 1 278 1 view .LVU166
+ 492 0070 5D       		popq	%rbp
+ 493              	.LCFI22:
+ 494              		.cfi_def_cfa_offset 8
+ 495 0071 C3       		ret
+ 496              	.LVL35:
+ 497              		.p2align 4,,10
+ 498 0072 660F1F44 		.p2align 3
+ 498      0000
+GAS LISTING /tmp/ccCMW4E1.s 			page 17
+
+
+ 499              	.L44:
+ 500              	.LCFI23:
+ 501              		.cfi_restore_state
+ 502              		.loc 1 278 1 view .LVU167
+ 503 0078 31C9     		xorl	%ecx, %ecx
+ 271:../../bos/core/b_core.c ****     }
+ 504              		.loc 1 271 16 view .LVU168
+ 505 007a 31C0     		xorl	%eax, %eax
+ 506              	.LVL36:
+ 271:../../bos/core/b_core.c ****     }
+ 507              		.loc 1 271 16 view .LVU169
+ 508 007c EBE5     		jmp	.L39
+ 509              	.LVL37:
+ 510 007e 6690     		.p2align 4,,10
+ 511              		.p2align 3
+ 512              	.L47:
+ 513              	.LCFI24:
+ 514              		.cfi_def_cfa_offset 8
+ 515              		.cfi_restore 3
+ 516              		.cfi_restore 6
+ 517              		.loc 1 278 1 view .LVU170
+ 518 0080 C3       		ret
+ 519              	.LVL38:
+ 520              		.p2align 4,,10
+ 521 0081 0F1F8000 		.p2align 3
+ 521      000000
+ 522              	.L43:
+ 523              	.LCFI25:
+ 524              		.cfi_def_cfa_offset 32
+ 525              		.cfi_offset 3, -24
+ 526              		.cfi_offset 6, -16
+ 255:../../bos/core/b_core.c ****     }
+ 527              		.loc 1 255 16 view .LVU171
+ 528 0088 B8FFFFFF 		movl	$-1, %eax
+ 528      FF
+ 529 008d EBDC     		jmp	.L37
+ 530              	.LVL39:
+ 531 008f 90       		.p2align 4,,10
+ 532              		.p2align 3
+ 533              	.L40:
+ 534              	.LCFI26:
+ 535              		.cfi_def_cfa_offset 8
+ 536              		.cfi_restore 3
+ 537              		.cfi_restore 6
+ 255:../../bos/core/b_core.c ****     }
+ 538              		.loc 1 255 16 view .LVU172
+ 539 0090 B8FFFFFF 		movl	$-1, %eax
+ 539      FF
+ 540 0095 C3       		ret
+ 541              		.cfi_endproc
+ 542              	.LFE33:
+ 544              		.section	.text.bLseek,"ax",@progbits
+ 545              		.p2align 4
+ 546              		.globl	bLseek
+ 548              	bLseek:
+ 549              	.LVL40:
+ 550              	.LFB34:
+GAS LISTING /tmp/ccCMW4E1.s 			page 18
+
+
+ 279:../../bos/core/b_core.c **** 
+ 280:../../bos/core/b_core.c **** int bLseek(int fd, uint32_t off)
+ 281:../../bos/core/b_core.c **** {
+ 551              		.loc 1 281 1 is_stmt 1 view -0
+ 552              		.cfi_startproc
+ 553              		.loc 1 281 1 is_stmt 0 view .LVU174
+ 554 0000 F30F1EFA 		endbr64
+ 282:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+ 555              		.loc 1 282 5 is_stmt 1 view .LVU175
+ 556              		.loc 1 282 8 is_stmt 0 view .LVU176
+ 557 0004 83FF01   		cmpl	$1, %edi
+ 558 0007 7727     		ja	.L53
+ 283:../../bos/core/b_core.c ****     {
+ 284:../../bos/core/b_core.c ****         return -1;
+ 285:../../bos/core/b_core.c ****     }
+ 286:../../bos/core/b_core.c **** 
+ 287:../../bos/core/b_core.c ****     if (bCoreFdTable[fd].status == BCORE_STA_NULL)
+ 559              		.loc 1 287 5 is_stmt 1 view .LVU177
+ 560              		.loc 1 287 25 is_stmt 0 view .LVU178
+ 561 0009 4863FF   		movslq	%edi, %rdi
+ 562              		.loc 1 287 25 view .LVU179
+ 563 000c 488D0500 		leaq	bCoreFdTable(%rip), %rax
+ 563      000000
+ 564 0013 488D147F 		leaq	(%rdi,%rdi,2), %rdx
+ 565 0017 488D0490 		leaq	(%rax,%rdx,4), %rax
+ 566              		.loc 1 287 8 view .LVU180
+ 567 001b 80780100 		cmpb	$0, 1(%rax)
+ 568 001f 740F     		je	.L53
+ 288:../../bos/core/b_core.c ****     {
+ 289:../../bos/core/b_core.c ****         return -1;
+ 290:../../bos/core/b_core.c ****     }
+ 291:../../bos/core/b_core.c ****     bCoreFdTable[fd].lseek = off;
+ 569              		.loc 1 291 5 is_stmt 1 view .LVU181
+ 570              		.loc 1 291 28 is_stmt 0 view .LVU182
+ 571 0021 897008   		movl	%esi, 8(%rax)
+ 292:../../bos/core/b_core.c ****     return 0;
+ 572              		.loc 1 292 5 is_stmt 1 view .LVU183
+ 573              		.loc 1 292 12 is_stmt 0 view .LVU184
+ 574 0024 31C0     		xorl	%eax, %eax
+ 575 0026 C3       		ret
+ 576              	.LVL41:
+ 577 0027 660F1F84 		.p2align 4,,10
+ 577      00000000 
+ 577      00
+ 578              		.p2align 3
+ 579              	.L53:
+ 284:../../bos/core/b_core.c ****     }
+ 580              		.loc 1 284 16 view .LVU185
+ 581 0030 B8FFFFFF 		movl	$-1, %eax
+ 581      FF
+ 293:../../bos/core/b_core.c **** }
+ 582              		.loc 1 293 1 view .LVU186
+ 583 0035 C3       		ret
+ 584              		.cfi_endproc
+ 585              	.LFE34:
+ 587              		.section	.text.bCtl,"ax",@progbits
+ 588              		.p2align 4
+GAS LISTING /tmp/ccCMW4E1.s 			page 19
+
+
+ 589              		.globl	bCtl
+ 591              	bCtl:
+ 592              	.LVL42:
+ 593              	.LFB35:
+ 294:../../bos/core/b_core.c **** 
+ 295:../../bos/core/b_core.c **** int bCtl(int fd, uint8_t cmd, void *param)
+ 296:../../bos/core/b_core.c **** {
+ 594              		.loc 1 296 1 is_stmt 1 view -0
+ 595              		.cfi_startproc
+ 596              		.loc 1 296 1 is_stmt 0 view .LVU188
+ 597 0000 F30F1EFA 		endbr64
+ 297:../../bos/core/b_core.c ****     int retval = 0;
+ 598              		.loc 1 297 5 is_stmt 1 view .LVU189
+ 599              	.LVL43:
+ 298:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+ 600              		.loc 1 298 5 view .LVU190
+ 601              		.loc 1 298 8 is_stmt 0 view .LVU191
+ 602 0004 83FF01   		cmpl	$1, %edi
+ 603 0007 7737     		ja	.L56
+ 299:../../bos/core/b_core.c ****     {
+ 300:../../bos/core/b_core.c ****         return -1;
+ 301:../../bos/core/b_core.c ****     }
+ 302:../../bos/core/b_core.c ****     retval = bDeviceCtl(bCoreFdTable[fd].number, cmd, param);
+ 604              		.loc 1 302 5 is_stmt 1 view .LVU192
+ 605              		.loc 1 302 14 is_stmt 0 view .LVU193
+ 606 0009 4863FF   		movslq	%edi, %rdi
+ 607              		.loc 1 302 14 view .LVU194
+ 608 000c 488D0500 		leaq	bCoreFdTable(%rip), %rax
+ 608      000000
+ 296:../../bos/core/b_core.c ****     int retval = 0;
+ 609              		.loc 1 296 1 view .LVU195
+ 610 0013 4883EC08 		subq	$8, %rsp
+ 611              	.LCFI27:
+ 612              		.cfi_def_cfa_offset 16
+ 613              		.loc 1 302 14 view .LVU196
+ 614 0017 400FB6F6 		movzbl	%sil, %esi
+ 615              		.loc 1 302 14 view .LVU197
+ 616 001b 488D0C7F 		leaq	(%rdi,%rdi,2), %rcx
+ 617 001f 8B7C8804 		movl	4(%rax,%rcx,4), %edi
+ 618              	.LVL44:
+ 619              		.loc 1 302 14 view .LVU198
+ 620 0023 E8000000 		call	bDeviceCtl@PLT
+ 620      00
+ 621              	.LVL45:
+ 303:../../bos/core/b_core.c ****     if (retval == B_DEVICE_FUNC_NULL)
+ 622              		.loc 1 303 5 is_stmt 1 view .LVU199
+ 304:../../bos/core/b_core.c ****     {
+ 305:../../bos/core/b_core.c ****         retval = 0;
+ 623              		.loc 1 305 16 is_stmt 0 view .LVU200
+ 624 0028 31D2     		xorl	%edx, %edx
+ 625 002a 3D02FFFF 		cmpl	$-254, %eax
+ 625      FF
+ 626 002f 0F44C2   		cmove	%edx, %eax
+ 627              	.LVL46:
+ 306:../../bos/core/b_core.c ****     }
+ 307:../../bos/core/b_core.c ****     return retval;
+ 308:../../bos/core/b_core.c **** }
+GAS LISTING /tmp/ccCMW4E1.s 			page 20
+
+
+ 628              		.loc 1 308 1 view .LVU201
+ 629 0032 4883C408 		addq	$8, %rsp
+ 630              	.LCFI28:
+ 631              		.cfi_def_cfa_offset 8
+ 632 0036 C3       		ret
+ 633              	.LVL47:
+ 634 0037 660F1F84 		.p2align 4,,10
+ 634      00000000 
+ 634      00
+ 635              		.p2align 3
+ 636              	.L56:
+ 300:../../bos/core/b_core.c ****     }
+ 637              		.loc 1 300 16 view .LVU202
+ 638 0040 B8FFFFFF 		movl	$-1, %eax
+ 638      FF
+ 639              		.loc 1 308 1 view .LVU203
+ 640 0045 C3       		ret
+ 641              		.cfi_endproc
+ 642              	.LFE35:
+ 644              		.section	.text.bClose,"ax",@progbits
+ 645              		.p2align 4
+ 646              		.globl	bClose
+ 648              	bClose:
+ 649              	.LVL48:
+ 650              	.LFB36:
+ 309:../../bos/core/b_core.c **** 
+ 310:../../bos/core/b_core.c **** int bClose(int fd)
+ 311:../../bos/core/b_core.c **** {
+ 651              		.loc 1 311 1 is_stmt 1 view -0
+ 652              		.cfi_startproc
+ 653              		.loc 1 311 1 is_stmt 0 view .LVU205
+ 654 0000 F30F1EFA 		endbr64
+ 312:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+ 655              		.loc 1 312 5 is_stmt 1 view .LVU206
+ 656              		.loc 1 312 8 is_stmt 0 view .LVU207
+ 657 0004 83FF01   		cmpl	$1, %edi
+ 658 0007 773E     		ja	.L69
+ 313:../../bos/core/b_core.c ****     {
+ 314:../../bos/core/b_core.c ****         return -1;
+ 315:../../bos/core/b_core.c ****     }
+ 316:../../bos/core/b_core.c **** 
+ 317:../../bos/core/b_core.c ****     if (bCoreFdTable[fd].status == BCORE_STA_NULL)
+ 659              		.loc 1 317 5 is_stmt 1 view .LVU208
+ 660              		.loc 1 317 25 is_stmt 0 view .LVU209
+ 661 0009 4863FF   		movslq	%edi, %rdi
+ 662              		.loc 1 317 25 view .LVU210
+ 663 000c 488D0500 		leaq	bCoreFdTable(%rip), %rax
+ 663      000000
+ 311:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+ 664              		.loc 1 311 1 view .LVU211
+ 665 0013 53       		pushq	%rbx
+ 666              	.LCFI29:
+ 667              		.cfi_def_cfa_offset 16
+ 668              		.cfi_offset 3, -16
+ 669              		.loc 1 317 25 view .LVU212
+ 670 0014 488D147F 		leaq	(%rdi,%rdi,2), %rdx
+ 671 0018 488D1C90 		leaq	(%rax,%rdx,4), %rbx
+GAS LISTING /tmp/ccCMW4E1.s 			page 21
+
+
+ 672              		.loc 1 317 8 view .LVU213
+ 673 001c 807B0100 		cmpb	$0, 1(%rbx)
+ 674 0020 741E     		je	.L65
+ 318:../../bos/core/b_core.c ****     {
+ 319:../../bos/core/b_core.c ****         return -1;
+ 320:../../bos/core/b_core.c ****     }
+ 321:../../bos/core/b_core.c ****     bDeviceClose(bCoreFdTable[fd].number);
+ 675              		.loc 1 321 5 is_stmt 1 view .LVU214
+ 676 0022 8B7B04   		movl	4(%rbx), %edi
+ 677              	.LVL49:
+ 678              		.loc 1 321 5 is_stmt 0 view .LVU215
+ 679 0025 E8000000 		call	bDeviceClose@PLT
+ 679      00
+ 680              	.LVL50:
+ 322:../../bos/core/b_core.c ****     return _bCoreDeleteFd(fd);
+ 681              		.loc 1 322 5 is_stmt 1 view .LVU216
+ 682              	.LBB16:
+ 683              	.LBI16:
+ 164:../../bos/core/b_core.c **** {
+ 684              		.loc 1 164 12 view .LVU217
+ 685              	.LBB17:
+ 166:../../bos/core/b_core.c ****     {
+ 686              		.loc 1 166 5 view .LVU218
+ 170:../../bos/core/b_core.c ****     {
+ 687              		.loc 1 170 5 view .LVU219
+ 170:../../bos/core/b_core.c ****     {
+ 688              		.loc 1 170 8 is_stmt 0 view .LVU220
+ 689 002a 807B0100 		cmpb	$0, 1(%rbx)
+ 690 002e 7410     		je	.L65
+ 174:../../bos/core/b_core.c ****     return 0;
+ 691              		.loc 1 174 5 is_stmt 1 view .LVU221
+ 174:../../bos/core/b_core.c ****     return 0;
+ 692              		.loc 1 174 29 is_stmt 0 view .LVU222
+ 693 0030 C6430100 		movb	$0, 1(%rbx)
+ 175:../../bos/core/b_core.c **** }
+ 694              		.loc 1 175 5 is_stmt 1 view .LVU223
+ 175:../../bos/core/b_core.c **** }
+ 695              		.loc 1 175 12 is_stmt 0 view .LVU224
+ 696 0034 31C0     		xorl	%eax, %eax
+ 697              	.LVL51:
+ 175:../../bos/core/b_core.c **** }
+ 698              		.loc 1 175 12 view .LVU225
+ 699              	.LBE17:
+ 700              	.LBE16:
+ 323:../../bos/core/b_core.c **** }
+ 701              		.loc 1 323 1 view .LVU226
+ 702 0036 5B       		popq	%rbx
+ 703              	.LCFI30:
+ 704              		.cfi_remember_state
+ 705              		.cfi_def_cfa_offset 8
+ 706 0037 C3       		ret
+ 707 0038 0F1F8400 		.p2align 4,,10
+ 707      00000000 
+ 708              		.p2align 3
+ 709              	.L65:
+ 710              	.LCFI31:
+ 711              		.cfi_restore_state
+GAS LISTING /tmp/ccCMW4E1.s 			page 22
+
+
+ 314:../../bos/core/b_core.c ****     }
+ 712              		.loc 1 314 16 view .LVU227
+ 713 0040 B8FFFFFF 		movl	$-1, %eax
+ 713      FF
+ 714              		.loc 1 323 1 view .LVU228
+ 715 0045 5B       		popq	%rbx
+ 716              	.LCFI32:
+ 717              		.cfi_def_cfa_offset 8
+ 718 0046 C3       		ret
+ 719              	.LVL52:
+ 720              	.L69:
+ 721              		.cfi_restore 3
+ 314:../../bos/core/b_core.c ****     }
+ 722              		.loc 1 314 16 view .LVU229
+ 723 0047 83C8FF   		orl	$-1, %eax
+ 724              		.loc 1 323 1 view .LVU230
+ 725 004a C3       		ret
+ 726              		.cfi_endproc
+ 727              	.LFE36:
+ 729              		.section	.text.bCoreIsIdle,"ax",@progbits
+ 730              		.p2align 4
+ 731              		.globl	bCoreIsIdle
+ 733              	bCoreIsIdle:
+ 734              	.LFB37:
+ 324:../../bos/core/b_core.c **** 
+ 325:../../bos/core/b_core.c **** int bCoreIsIdle()
+ 326:../../bos/core/b_core.c **** {
+ 735              		.loc 1 326 1 is_stmt 1 view -0
+ 736              		.cfi_startproc
+ 737 0000 F30F1EFA 		endbr64
+ 327:../../bos/core/b_core.c ****     int i;
+ 738              		.loc 1 327 5 view .LVU232
+ 328:../../bos/core/b_core.c ****     for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 739              		.loc 1 328 5 view .LVU233
+ 740              	.LVL53:
+ 741              		.loc 1 328 19 discriminator 1 view .LVU234
+ 329:../../bos/core/b_core.c ****     {
+ 330:../../bos/core/b_core.c ****         if (bCoreFdTable[i].status == BCORE_STA_OPEN)
+ 742              		.loc 1 330 9 view .LVU235
+ 743              		.loc 1 330 12 is_stmt 0 view .LVU236
+ 744 0004 803D0000 		cmpb	$1, 1+bCoreFdTable(%rip)
+ 744      000001
+ 745 000b 7413     		je	.L72
+ 328:../../bos/core/b_core.c ****     for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 746              		.loc 1 328 40 is_stmt 1 discriminator 2 view .LVU237
+ 747              	.LVL54:
+ 328:../../bos/core/b_core.c ****     for (i = 0; i < B_REG_DEV_NUMBER; i++)
+ 748              		.loc 1 328 19 discriminator 1 view .LVU238
+ 749              		.loc 1 330 9 view .LVU239
+ 750              		.loc 1 330 12 is_stmt 0 view .LVU240
+ 751 000d 31C0     		xorl	%eax, %eax
+ 752 000f 803D0000 		cmpb	$1, 13+bCoreFdTable(%rip)
+ 752      000001
+ 753 0016 0F94C0   		sete	%al
+ 754 0019 F7D8     		negl	%eax
+ 755 001b C3       		ret
+ 756              	.LVL55:
+GAS LISTING /tmp/ccCMW4E1.s 			page 23
+
+
+ 757 001c 0F1F4000 		.p2align 4,,10
+ 758              		.p2align 3
+ 759              	.L72:
+ 331:../../bos/core/b_core.c ****         {
+ 332:../../bos/core/b_core.c ****             return -1;
+ 760              		.loc 1 332 20 view .LVU241
+ 761 0020 B8FFFFFF 		movl	$-1, %eax
+ 761      FF
+ 333:../../bos/core/b_core.c ****         }
+ 334:../../bos/core/b_core.c ****     }
+ 335:../../bos/core/b_core.c ****     return 0;
+ 336:../../bos/core/b_core.c **** }
+ 762              		.loc 1 336 1 view .LVU242
+ 763 0025 C3       		ret
+ 764              		.cfi_endproc
+ 765              	.LFE37:
+ 767              		.section	.rodata.bInit.str1.8,"aMS",@progbits,1
+ 768              		.align 8
+ 769              	.LC0:
+ 770 0000 5F5F5F5F 		.string	"______________________________________________\r\n"
+ 770      5F5F5F5F 
+ 770      5F5F5F5F 
+ 770      5F5F5F5F 
+ 770      5F5F5F5F 
+ 771              		.section	.rodata.bInit.str1.1,"aMS",@progbits,1
+ 772              	.LC1:
+ 773 0000 2E2E2F2E 		.string	"../../bos/core/b_core.c"
+ 773      2E2F626F 
+ 773      732F636F 
+ 773      72652F62 
+ 773      5F636F72 
+ 774              		.section	.rodata.bInit.str1.8
+ 775 0031 00000000 		.align 8
+ 775      000000
+ 776              	.LC2:
+ 777 0038 20202020 		.string	"    ____                         __       __  \r\n"
+ 777      5F5F5F5F 
+ 777      20202020 
+ 777      20202020 
+ 777      20202020 
+ 778 0069 00000000 		.align 8
+ 778      000000
+ 779              	.LC3:
+ 780 0070 20202020 		.string	"    /   )          /           /    )   /    \\\r\n"
+ 780      2F202020 
+ 780      29202020 
+ 780      20202020 
+ 780      2020202F 
+ 781 00a1 00000000 		.align 8
+ 781      000000
+ 782              	.LC4:
+ 783 00a8 2D2D2D2F 		.string	"---/__ /-----__---/__---------/----/----\\-----\r\n"
+ 783      5F5F202F 
+ 783      2D2D2D2D 
+ 783      2D5F5F2D 
+ 783      2D2D2F5F 
+ 784 00d9 00000000 		.align 8
+GAS LISTING /tmp/ccCMW4E1.s 			page 24
+
+
+ 784      000000
+ 785              	.LC5:
+ 786 00e0 20202F20 		.string	"  /    )   /   ) /   ) /   / /    /      \\    \r\n"
+ 786      20202029 
+ 786      2020202F 
+ 786      20202029 
+ 786      202F2020 
+ 787 0111 00000000 		.align 8
+ 787      000000
+ 788              	.LC6:
+ 789 0118 5F2F5F5F 		.string	"_/____/___(___(_(___/_(___/_(____/___(____/___\r\n"
+ 789      5F5F2F5F 
+ 789      5F5F285F 
+ 789      5F5F285F 
+ 789      285F5F5F 
+ 790 0149 00000000 		.align 8
+ 790      000000
+ 791              	.LC7:
+ 792 0150 20202020 		.string	"                         /                    \r\n"
+ 792      20202020 
+ 792      20202020 
+ 792      20202020 
+ 792      20202020 
+ 793 0181 00000000 		.align 8
+ 793      000000
+ 794              	.LC8:
+ 795 0188 20202020 		.string	"                     (_ /                     \r\n"
+ 795      20202020 
+ 795      20202020 
+ 795      20202020 
+ 795      20202020 
+ 796 01b9 00000000 		.align 8
+ 796      000000
+ 797              	.LC9:
+ 798 01c0 48573A25 		.string	"HW:%d.%d.%d FW:%d.%d.%d COMPILE:%s-%s\r\n"
+ 798      642E2564 
+ 798      2E256420 
+ 798      46573A25 
+ 798      642E2564 
+ 799              		.section	.rodata.bInit.str1.1
+ 800              	.LC10:
+ 801 0018 30393A35 		.string	"09:50:31"
+ 801      303A3331 
+ 801      00
+ 802              	.LC11:
+ 803 0021 41707220 		.string	"Apr 22 2026"
+ 803      32322032 
+ 803      30323600 
+ 804              	.LC12:
+ 805 002d 64657669 		.string	"device number:%d\r\n"
+ 805      6365206E 
+ 805      756D6265 
+ 805      723A2564 
+ 805      0D0A00
+ 806              		.section	.text.bInit,"ax",@progbits
+ 807              		.p2align 4
+ 808              		.globl	bInit
+GAS LISTING /tmp/ccCMW4E1.s 			page 25
+
+
+ 810              	bInit:
+ 811              	.LFB38:
+ 337:../../bos/core/b_core.c **** 
+ 338:../../bos/core/b_core.c **** /**
+ 339:../../bos/core/b_core.c ****  * \brief Init
+ 340:../../bos/core/b_core.c ****  * \retval Result
+ 341:../../bos/core/b_core.c ****  *          \arg 0  OK
+ 342:../../bos/core/b_core.c ****  *          \arg -1 ERR
+ 343:../../bos/core/b_core.c ****  */
+ 344:../../bos/core/b_core.c **** int bInit()
+ 345:../../bos/core/b_core.c **** {
+ 812              		.loc 1 345 1 is_stmt 1 view -0
+ 813              		.cfi_startproc
+ 814 0000 F30F1EFA 		endbr64
+ 346:../../bos/core/b_core.c ****     bHalInit();
+ 815              		.loc 1 346 5 view .LVU244
+ 345:../../bos/core/b_core.c ****     bHalInit();
+ 816              		.loc 1 345 1 is_stmt 0 view .LVU245
+ 817 0004 55       		pushq	%rbp
+ 818              	.LCFI33:
+ 819              		.cfi_def_cfa_offset 16
+ 820              		.cfi_offset 6, -16
+ 347:../../bos/core/b_core.c ****     b_log("______________________________________________\r\n");
+ 821              		.loc 1 347 5 view .LVU246
+ 822 0005 488D2D00 		leaq	__func__.0(%rip), %rbp
+ 822      000000
+ 345:../../bos/core/b_core.c ****     bHalInit();
+ 823              		.loc 1 345 1 view .LVU247
+ 824 000c 53       		pushq	%rbx
+ 825              	.LCFI34:
+ 826              		.cfi_def_cfa_offset 24
+ 827              		.cfi_offset 3, -24
+ 828              		.loc 1 347 5 view .LVU248
+ 829 000d 488D1D00 		leaq	.LC1(%rip), %rbx
+ 829      000000
+ 345:../../bos/core/b_core.c ****     bHalInit();
+ 830              		.loc 1 345 1 view .LVU249
+ 831 0014 4883EC08 		subq	$8, %rsp
+ 832              	.LCFI35:
+ 833              		.cfi_def_cfa_offset 32
+ 346:../../bos/core/b_core.c ****     bHalInit();
+ 834              		.loc 1 346 5 view .LVU250
+ 835 0018 E8000000 		call	bHalInit@PLT
+ 835      00
+ 836              	.LVL56:
+ 837              		.loc 1 347 5 is_stmt 1 view .LVU251
+ 838 001d 4889EA   		movq	%rbp, %rdx
+ 839 0020 4889DE   		movq	%rbx, %rsi
+ 840 0023 B95B0100 		movl	$347, %ecx
+ 840      00
+ 841 0028 4C8D0500 		leaq	.LC0(%rip), %r8
+ 841      000000
+ 842 002f BF030000 		movl	$3, %edi
+ 842      00
+ 843 0034 31C0     		xorl	%eax, %eax
+ 844 0036 E8000000 		call	bLogOut@PLT
+ 844      00
+GAS LISTING /tmp/ccCMW4E1.s 			page 26
+
+
+ 845              	.LVL57:
+ 348:../../bos/core/b_core.c ****     b_log("    ____                         __       __  \r\n");
+ 846              		.loc 1 348 5 view .LVU252
+ 847 003b 4889EA   		movq	%rbp, %rdx
+ 848 003e 4889DE   		movq	%rbx, %rsi
+ 849 0041 B95C0100 		movl	$348, %ecx
+ 849      00
+ 850 0046 4C8D0500 		leaq	.LC2(%rip), %r8
+ 850      000000
+ 851 004d BF030000 		movl	$3, %edi
+ 851      00
+ 852 0052 31C0     		xorl	%eax, %eax
+ 853 0054 E8000000 		call	bLogOut@PLT
+ 853      00
+ 854              	.LVL58:
+ 349:../../bos/core/b_core.c ****     b_log("    /   )          /           /    )   /    \\\r\n");
+ 855              		.loc 1 349 5 view .LVU253
+ 856 0059 4889EA   		movq	%rbp, %rdx
+ 857 005c 4889DE   		movq	%rbx, %rsi
+ 858 005f B95D0100 		movl	$349, %ecx
+ 858      00
+ 859 0064 4C8D0500 		leaq	.LC3(%rip), %r8
+ 859      000000
+ 860 006b BF030000 		movl	$3, %edi
+ 860      00
+ 861 0070 31C0     		xorl	%eax, %eax
+ 862 0072 E8000000 		call	bLogOut@PLT
+ 862      00
+ 863              	.LVL59:
+ 350:../../bos/core/b_core.c ****     b_log("---/__ /-----__---/__---------/----/----\\-----\r\n");
+ 864              		.loc 1 350 5 view .LVU254
+ 865 0077 4889EA   		movq	%rbp, %rdx
+ 866 007a 4889DE   		movq	%rbx, %rsi
+ 867 007d B95E0100 		movl	$350, %ecx
+ 867      00
+ 868 0082 4C8D0500 		leaq	.LC4(%rip), %r8
+ 868      000000
+ 869 0089 BF030000 		movl	$3, %edi
+ 869      00
+ 870 008e 31C0     		xorl	%eax, %eax
+ 871 0090 E8000000 		call	bLogOut@PLT
+ 871      00
+ 872              	.LVL60:
+ 351:../../bos/core/b_core.c ****     b_log("  /    )   /   ) /   ) /   / /    /      \\    \r\n");
+ 873              		.loc 1 351 5 view .LVU255
+ 874 0095 4889EA   		movq	%rbp, %rdx
+ 875 0098 4889DE   		movq	%rbx, %rsi
+ 876 009b B95F0100 		movl	$351, %ecx
+ 876      00
+ 877 00a0 4C8D0500 		leaq	.LC5(%rip), %r8
+ 877      000000
+ 878 00a7 BF030000 		movl	$3, %edi
+ 878      00
+ 879 00ac 31C0     		xorl	%eax, %eax
+ 880 00ae E8000000 		call	bLogOut@PLT
+ 880      00
+ 881              	.LVL61:
+GAS LISTING /tmp/ccCMW4E1.s 			page 27
+
+
+ 352:../../bos/core/b_core.c ****     b_log("_/____/___(___(_(___/_(___/_(____/___(____/___\r\n");
+ 882              		.loc 1 352 5 view .LVU256
+ 883 00b3 4889EA   		movq	%rbp, %rdx
+ 884 00b6 4889DE   		movq	%rbx, %rsi
+ 885 00b9 B9600100 		movl	$352, %ecx
+ 885      00
+ 886 00be 4C8D0500 		leaq	.LC6(%rip), %r8
+ 886      000000
+ 887 00c5 BF030000 		movl	$3, %edi
+ 887      00
+ 888 00ca 31C0     		xorl	%eax, %eax
+ 889 00cc E8000000 		call	bLogOut@PLT
+ 889      00
+ 890              	.LVL62:
+ 353:../../bos/core/b_core.c ****     b_log("                         /                    \r\n");
+ 891              		.loc 1 353 5 view .LVU257
+ 892 00d1 4889EA   		movq	%rbp, %rdx
+ 893 00d4 4889DE   		movq	%rbx, %rsi
+ 894 00d7 B9610100 		movl	$353, %ecx
+ 894      00
+ 895 00dc 4C8D0500 		leaq	.LC7(%rip), %r8
+ 895      000000
+ 896 00e3 BF030000 		movl	$3, %edi
+ 896      00
+ 897 00e8 31C0     		xorl	%eax, %eax
+ 898 00ea E8000000 		call	bLogOut@PLT
+ 898      00
+ 899              	.LVL63:
+ 354:../../bos/core/b_core.c ****     b_log("                     (_ /                     \r\n");
+ 900              		.loc 1 354 5 view .LVU258
+ 901 00ef 4889EA   		movq	%rbp, %rdx
+ 902 00f2 4889DE   		movq	%rbx, %rsi
+ 903 00f5 B9620100 		movl	$354, %ecx
+ 903      00
+ 904 00fa 4C8D0500 		leaq	.LC8(%rip), %r8
+ 904      000000
+ 905 0101 BF030000 		movl	$3, %edi
+ 905      00
+ 906 0106 31C0     		xorl	%eax, %eax
+ 907 0108 E8000000 		call	bLogOut@PLT
+ 907      00
+ 908              	.LVL64:
+ 355:../../bos/core/b_core.c ****     b_log("HW:%d.%d.%d FW:%d.%d.%d COMPILE:%s-%s\r\n", (HW_VERSION / 10000),
+ 909              		.loc 1 355 5 view .LVU259
+ 910 010d 4883EC08 		subq	$8, %rsp
+ 911              	.LCFI36:
+ 912              		.cfi_def_cfa_offset 40
+ 913 0111 4889EA   		movq	%rbp, %rdx
+ 914 0114 4889DE   		movq	%rbx, %rsi
+ 915 0117 41B91500 		movl	$21, %r9d
+ 915      0000
+ 916 011d B9630100 		movl	$355, %ecx
+ 916      00
+ 917 0122 BF030000 		movl	$3, %edi
+ 917      00
+ 918 0127 488D0500 		leaq	.LC10(%rip), %rax
+ 918      000000
+GAS LISTING /tmp/ccCMW4E1.s 			page 28
+
+
+ 919 012e 4C8D0500 		leaq	.LC9(%rip), %r8
+ 919      000000
+ 920 0135 50       		pushq	%rax
+ 921              	.LCFI37:
+ 922              		.cfi_def_cfa_offset 48
+ 923 0136 488D0500 		leaq	.LC11(%rip), %rax
+ 923      000000
+ 924 013d 50       		pushq	%rax
+ 925              	.LCFI38:
+ 926              		.cfi_def_cfa_offset 56
+ 927 013e 31C0     		xorl	%eax, %eax
+ 928 0140 6A06     		pushq	$6
+ 929              	.LCFI39:
+ 930              		.cfi_def_cfa_offset 64
+ 931 0142 6A01     		pushq	$1
+ 932              	.LCFI40:
+ 933              		.cfi_def_cfa_offset 72
+ 934 0144 6A08     		pushq	$8
+ 935              	.LCFI41:
+ 936              		.cfi_def_cfa_offset 80
+ 937 0146 6A0C     		pushq	$12
+ 938              	.LCFI42:
+ 939              		.cfi_def_cfa_offset 88
+ 940 0148 6A0C     		pushq	$12
+ 941              	.LCFI43:
+ 942              		.cfi_def_cfa_offset 96
+ 943 014a E8000000 		call	bLogOut@PLT
+ 943      00
+ 944              	.LVL65:
+ 356:../../bos/core/b_core.c ****           (HW_VERSION % 10000) / 100, HW_VERSION % 100, (FW_VERSION / 10000),
+ 357:../../bos/core/b_core.c ****           (FW_VERSION % 10000) / 100, FW_VERSION % 100, __DATE__, __TIME__);
+ 358:../../bos/core/b_core.c ****     b_log("device number:%d\r\n", B_REG_DEV_NUMBER);
+ 945              		.loc 1 358 5 view .LVU260
+ 946 014f 4883C440 		addq	$64, %rsp
+ 947              	.LCFI44:
+ 948              		.cfi_def_cfa_offset 32
+ 949 0153 4889EA   		movq	%rbp, %rdx
+ 950 0156 4889DE   		movq	%rbx, %rsi
+ 951 0159 41B90200 		movl	$2, %r9d
+ 951      0000
+ 952 015f 4C8D0500 		leaq	.LC12(%rip), %r8
+ 952      000000
+ 953 0166 B9660100 		movl	$358, %ecx
+ 953      00
+ 954 016b 31C0     		xorl	%eax, %eax
+ 955 016d BF030000 		movl	$3, %edi
+ 955      00
+ 956 0172 E8000000 		call	bLogOut@PLT
+ 956      00
+ 957              	.LVL66:
+ 359:../../bos/core/b_core.c ****     return bDeviceInit();
+ 958              		.loc 1 359 5 view .LVU261
+ 360:../../bos/core/b_core.c **** }
+ 959              		.loc 1 360 1 is_stmt 0 view .LVU262
+ 960 0177 4883C408 		addq	$8, %rsp
+ 961              	.LCFI45:
+ 962              		.cfi_def_cfa_offset 24
+GAS LISTING /tmp/ccCMW4E1.s 			page 29
+
+
+ 963 017b 5B       		popq	%rbx
+ 964              	.LCFI46:
+ 965              		.cfi_def_cfa_offset 16
+ 966 017c 5D       		popq	%rbp
+ 967              	.LCFI47:
+ 968              		.cfi_def_cfa_offset 8
+ 359:../../bos/core/b_core.c ****     return bDeviceInit();
+ 969              		.loc 1 359 12 view .LVU263
+ 970 017d E9000000 		jmp	bDeviceInit@PLT
+ 970      00
+ 971              	.LVL67:
+ 972              		.cfi_endproc
+ 973              	.LFE38:
+ 975              		.section	.text.bReinit,"ax",@progbits
+ 976              		.p2align 4
+ 977              		.globl	bReinit
+ 979              	bReinit:
+ 980              	.LVL68:
+ 981              	.LFB39:
+ 361:../../bos/core/b_core.c **** 
+ 362:../../bos/core/b_core.c **** int bReinit(uint32_t dev_no)
+ 363:../../bos/core/b_core.c **** {
+ 982              		.loc 1 363 1 is_stmt 1 view -0
+ 983              		.cfi_startproc
+ 984              		.loc 1 363 1 is_stmt 0 view .LVU265
+ 985 0000 F30F1EFA 		endbr64
+ 364:../../bos/core/b_core.c ****     return bDeviceReinit(dev_no);
+ 986              		.loc 1 364 5 is_stmt 1 view .LVU266
+ 987              		.loc 1 364 12 is_stmt 0 view .LVU267
+ 988 0004 E9000000 		jmp	bDeviceReinit@PLT
+ 988      00
+ 989              	.LVL69:
+ 990              		.loc 1 364 12 view .LVU268
+ 991              		.cfi_endproc
+ 992              	.LFE39:
+ 994              		.section	.text.bExec,"ax",@progbits
+ 995              		.p2align 4
+ 996              		.globl	bExec
+ 998              	bExec:
+ 999              	.LFB40:
+ 365:../../bos/core/b_core.c **** }
+ 366:../../bos/core/b_core.c **** 
+ 367:../../bos/core/b_core.c **** /**
+ 368:../../bos/core/b_core.c ****  * \brief  Call this function inside the while(1)
+ 369:../../bos/core/b_core.c ****  * \retval Result
+ 370:../../bos/core/b_core.c ****  *          \arg 0  OK
+ 371:../../bos/core/b_core.c ****  *          \arg -1 ERR
+ 372:../../bos/core/b_core.c ****  */
+ 373:../../bos/core/b_core.c **** int bExec()
+ 374:../../bos/core/b_core.c **** {
+ 1000              		.loc 1 374 1 is_stmt 1 view -0
+ 1001              		.cfi_startproc
+ 1002 0000 F30F1EFA 		endbr64
+ 375:../../bos/core/b_core.c ****     bSECTION_FOR_EACH(bos_polling, pbPoling_t, polling)
+ 1003              		.loc 1 375 5 view .LVU270
+ 1004              	.LBB18:
+ 1005              		.loc 1 375 5 view .LVU271
+GAS LISTING /tmp/ccCMW4E1.s 			page 30
+
+
+ 1006              	.LVL70:
+ 1007              		.loc 1 375 5 discriminator 1 view .LVU272
+ 1008              	.LBE18:
+ 374:../../bos/core/b_core.c ****     bSECTION_FOR_EACH(bos_polling, pbPoling_t, polling)
+ 1009              		.loc 1 374 1 is_stmt 0 view .LVU273
+ 1010 0004 55       		pushq	%rbp
+ 1011              	.LCFI48:
+ 1012              		.cfi_def_cfa_offset 16
+ 1013              		.cfi_offset 6, -16
+ 1014              	.LBB19:
+ 1015              		.loc 1 375 5 discriminator 1 view .LVU274
+ 1016 0005 488D0500 		leaq	__stop_bos_polling(%rip), %rax
+ 1016      000000
+ 1017              	.LBE19:
+ 374:../../bos/core/b_core.c ****     bSECTION_FOR_EACH(bos_polling, pbPoling_t, polling)
+ 1018              		.loc 1 374 1 view .LVU275
+ 1019 000c 53       		pushq	%rbx
+ 1020              	.LCFI49:
+ 1021              		.cfi_def_cfa_offset 24
+ 1022              		.cfi_offset 3, -24
+ 1023              	.LBB20:
+ 1024              		.loc 1 375 5 discriminator 1 view .LVU276
+ 1025 000d 488D1D00 		leaq	__start_bos_polling(%rip), %rbx
+ 1025      000000
+ 1026              	.LBE20:
+ 374:../../bos/core/b_core.c ****     bSECTION_FOR_EACH(bos_polling, pbPoling_t, polling)
+ 1027              		.loc 1 374 1 view .LVU277
+ 1028 0014 4883EC08 		subq	$8, %rsp
+ 1029              	.LCFI50:
+ 1030              		.cfi_def_cfa_offset 32
+ 1031              	.LBB21:
+ 1032              		.loc 1 375 5 discriminator 1 view .LVU278
+ 1033 0018 39C3     		cmpl	%eax, %ebx
+ 1034 001a 740E     		je	.L77
+ 1035 001c 89C5     		movl	%eax, %ebp
+ 1036              	.LVL71:
+ 1037 001e 6690     		.p2align 4,,10
+ 1038              		.p2align 3
+ 1039              	.L78:
+ 376:../../bos/core/b_core.c ****     {
+ 377:../../bos/core/b_core.c ****         (*polling)();
+ 1040              		.loc 1 377 9 is_stmt 1 view .LVU279
+ 1041              		.loc 1 377 10 is_stmt 0 view .LVU280
+ 1042 0020 FF13     		call	*(%rbx)
+ 1043              	.LVL72:
+ 375:../../bos/core/b_core.c ****     {
+ 1044              		.loc 1 375 5 is_stmt 1 discriminator 3 view .LVU281
+ 1045 0022 4883C308 		addq	$8, %rbx
+ 1046              	.LVL73:
+ 375:../../bos/core/b_core.c ****     {
+ 1047              		.loc 1 375 5 discriminator 1 view .LVU282
+ 1048 0026 39DD     		cmpl	%ebx, %ebp
+ 1049 0028 75F6     		jne	.L78
+ 1050              	.LVL74:
+ 1051              	.L77:
+ 375:../../bos/core/b_core.c ****     {
+ 1052              		.loc 1 375 5 is_stmt 0 discriminator 1 view .LVU283
+GAS LISTING /tmp/ccCMW4E1.s 			page 31
+
+
+ 1053              	.LBE21:
+ 378:../../bos/core/b_core.c ****     }
+ 379:../../bos/core/b_core.c ****     return 0;
+ 1054              		.loc 1 379 5 is_stmt 1 view .LVU284
+ 380:../../bos/core/b_core.c **** }
+ 1055              		.loc 1 380 1 is_stmt 0 view .LVU285
+ 1056 002a 4883C408 		addq	$8, %rsp
+ 1057              	.LCFI51:
+ 1058              		.cfi_def_cfa_offset 24
+ 1059 002e 31C0     		xorl	%eax, %eax
+ 1060 0030 5B       		popq	%rbx
+ 1061              	.LCFI52:
+ 1062              		.cfi_def_cfa_offset 16
+ 1063 0031 5D       		popq	%rbp
+ 1064              	.LCFI53:
+ 1065              		.cfi_def_cfa_offset 8
+ 1066 0032 C3       		ret
+ 1067              		.cfi_endproc
+ 1068              	.LFE40:
+ 1070              		.section	.text.bModifyHalIf,"ax",@progbits
+ 1071              		.p2align 4
+ 1072              		.globl	bModifyHalIf
+ 1074              	bModifyHalIf:
+ 1075              	.LVL75:
+ 1076              	.LFB41:
+ 381:../../bos/core/b_core.c **** 
+ 382:../../bos/core/b_core.c **** /**
+ 383:../../bos/core/b_core.c ****  * \brief  eg. bModifyHalIf(OLED, sizeof(bOLED_HalIf_t),
+ 384:../../bos/core/b_core.c ****  *                           (uint8_t)(&(((bOLED_HalIf_t *)0)->_if._i2c.dev_addr)),
+ 385:../../bos/core/b_core.c ****  *                            &dev_addr, 1);
+ 386:../../bos/core/b_core.c ****  * \retval Result
+ 387:../../bos/core/b_core.c ****  *          \arg 0  OK
+ 388:../../bos/core/b_core.c ****  *          \arg -1 ERR
+ 389:../../bos/core/b_core.c ****  */
+ 390:../../bos/core/b_core.c **** int bModifyHalIf(uint32_t dev_no, uint32_t type_size, uint32_t off, const uint8_t *pval,
+ 391:../../bos/core/b_core.c ****                  uint8_t len)
+ 392:../../bos/core/b_core.c **** {
+ 1077              		.loc 1 392 1 is_stmt 1 view -0
+ 1078              		.cfi_startproc
+ 1079              		.loc 1 392 1 is_stmt 0 view .LVU287
+ 1080 0000 F30F1EFA 		endbr64
+ 393:../../bos/core/b_core.c ****     if ((off + len) > type_size || pval == NULL || len == 0 || type_size == 0)
+ 1081              		.loc 1 393 5 is_stmt 1 view .LVU288
+ 392:../../bos/core/b_core.c ****     if ((off + len) > type_size || pval == NULL || len == 0 || type_size == 0)
+ 1082              		.loc 1 392 1 is_stmt 0 view .LVU289
+ 1083 0004 89F0     		movl	%esi, %eax
+ 1084              		.loc 1 393 14 view .LVU290
+ 1085 0006 450FB6C8 		movzbl	%r8b, %r9d
+ 392:../../bos/core/b_core.c ****     if ((off + len) > type_size || pval == NULL || len == 0 || type_size == 0)
+ 1086              		.loc 1 392 1 view .LVU291
+ 1087 000a 89D6     		movl	%edx, %esi
+ 1088              	.LVL76:
+ 392:../../bos/core/b_core.c ****     if ((off + len) > type_size || pval == NULL || len == 0 || type_size == 0)
+ 1089              		.loc 1 392 1 view .LVU292
+ 1090 000c 4889CA   		movq	%rcx, %rdx
+ 1091              	.LVL77:
+ 1092              		.loc 1 393 14 view .LVU293
+GAS LISTING /tmp/ccCMW4E1.s 			page 32
+
+
+ 1093 000f 418D0C31 		leal	(%r9,%rsi), %ecx
+ 1094              	.LVL78:
+ 1095              		.loc 1 393 8 view .LVU294
+ 1096 0013 39C8     		cmpl	%ecx, %eax
+ 1097 0015 7221     		jb	.L81
+ 1098              		.loc 1 393 41 discriminator 1 view .LVU295
+ 1099 0017 4885D2   		testq	%rdx, %rdx
+ 1100 001a 0F94C1   		sete	%cl
+ 1101              		.loc 1 393 56 discriminator 1 view .LVU296
+ 1102 001d 4584C0   		testb	%r8b, %r8b
+ 1103 0020 410F94C0 		sete	%r8b
+ 1104              	.LVL79:
+ 1105              		.loc 1 393 61 discriminator 2 view .LVU297
+ 1106 0024 4408C1   		orb	%r8b, %cl
+ 1107 0027 750F     		jne	.L81
+ 1108 0029 85C0     		testl	%eax, %eax
+ 1109 002b 740B     		je	.L81
+ 394:../../bos/core/b_core.c ****     {
+ 395:../../bos/core/b_core.c ****         return -1;
+ 396:../../bos/core/b_core.c ****     }
+ 397:../../bos/core/b_core.c ****     return bDeviceModifyHalIf(dev_no, off, pval, len);
+ 1110              		.loc 1 397 5 is_stmt 1 view .LVU298
+ 1111              		.loc 1 397 12 is_stmt 0 view .LVU299
+ 1112 002d 4489C9   		movl	%r9d, %ecx
+ 1113 0030 E9000000 		jmp	bDeviceModifyHalIf@PLT
+ 1113      00
+ 1114              	.LVL80:
+ 1115              		.p2align 4,,10
+ 1116 0035 0F1F00   		.p2align 3
+ 1117              	.L81:
+ 398:../../bos/core/b_core.c **** }
+ 1118              		.loc 1 398 1 view .LVU300
+ 1119 0038 B8FFFFFF 		movl	$-1, %eax
+ 1119      FF
+ 1120              	.LVL81:
+ 1121              		.loc 1 398 1 view .LVU301
+ 1122 003d C3       		ret
+ 1123              		.cfi_endproc
+ 1124              	.LFE41:
+ 1126              		.section	.text.bFdIsReadable,"ax",@progbits
+ 1127              		.p2align 4
+ 1128              		.globl	bFdIsReadable
+ 1130              	bFdIsReadable:
+ 1131              	.LVL82:
+ 1132              	.LFB42:
+ 399:../../bos/core/b_core.c **** 
+ 400:../../bos/core/b_core.c **** uint8_t bFdIsReadable(int fd)
+ 401:../../bos/core/b_core.c **** {
+ 1133              		.loc 1 401 1 is_stmt 1 view -0
+ 1134              		.cfi_startproc
+ 1135              		.loc 1 401 1 is_stmt 0 view .LVU303
+ 1136 0000 F30F1EFA 		endbr64
+ 402:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+ 1137              		.loc 1 402 5 is_stmt 1 view .LVU304
+ 1138              		.loc 1 402 8 is_stmt 0 view .LVU305
+ 1139 0004 83FF01   		cmpl	$1, %edi
+ 1140 0007 7607     		jbe	.L87
+GAS LISTING /tmp/ccCMW4E1.s 			page 33
+
+
+ 403:../../bos/core/b_core.c ****     {
+ 404:../../bos/core/b_core.c ****         return 0;
+ 405:../../bos/core/b_core.c ****     }
+ 406:../../bos/core/b_core.c ****     return bDeviceIsReadable(bCoreFdTable[fd].number);
+ 407:../../bos/core/b_core.c **** }
+ 1141              		.loc 1 407 1 view .LVU306
+ 1142 0009 31C0     		xorl	%eax, %eax
+ 1143 000b C3       		ret
+ 1144 000c 0F1F4000 		.p2align 4,,10
+ 1145              		.p2align 3
+ 1146              	.L87:
+ 406:../../bos/core/b_core.c **** }
+ 1147              		.loc 1 406 5 is_stmt 1 view .LVU307
+ 406:../../bos/core/b_core.c **** }
+ 1148              		.loc 1 406 12 is_stmt 0 view .LVU308
+ 1149 0010 4863FF   		movslq	%edi, %rdi
+ 406:../../bos/core/b_core.c **** }
+ 1150              		.loc 1 406 12 view .LVU309
+ 1151 0013 488D0500 		leaq	bCoreFdTable(%rip), %rax
+ 1151      000000
+ 1152 001a 488D147F 		leaq	(%rdi,%rdi,2), %rdx
+ 1153 001e 8B7C9004 		movl	4(%rax,%rdx,4), %edi
+ 1154              	.LVL83:
+ 406:../../bos/core/b_core.c **** }
+ 1155              		.loc 1 406 12 view .LVU310
+ 1156 0022 E9000000 		jmp	bDeviceIsReadable@PLT
+ 1156      00
+ 1157              	.LVL84:
+ 1158              		.cfi_endproc
+ 1159              	.LFE42:
+ 1161              		.section	.text.bFdIsWritable,"ax",@progbits
+ 1162              		.p2align 4
+ 1163              		.globl	bFdIsWritable
+ 1165              	bFdIsWritable:
+ 1166              	.LVL85:
+ 1167              	.LFB43:
+ 408:../../bos/core/b_core.c **** 
+ 409:../../bos/core/b_core.c **** uint8_t bFdIsWritable(int fd)
+ 410:../../bos/core/b_core.c **** {
+ 1168              		.loc 1 410 1 is_stmt 1 view -0
+ 1169              		.cfi_startproc
+ 1170              		.loc 1 410 1 is_stmt 0 view .LVU312
+ 1171 0000 F30F1EFA 		endbr64
+ 411:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+ 1172              		.loc 1 411 5 is_stmt 1 view .LVU313
+ 1173              		.loc 1 411 8 is_stmt 0 view .LVU314
+ 1174 0004 83FF01   		cmpl	$1, %edi
+ 1175 0007 7607     		jbe	.L90
+ 412:../../bos/core/b_core.c ****     {
+ 413:../../bos/core/b_core.c ****         return 0;
+ 414:../../bos/core/b_core.c ****     }
+ 415:../../bos/core/b_core.c ****     return bDeviceIsWritable(bCoreFdTable[fd].number);
+ 416:../../bos/core/b_core.c **** }
+ 1176              		.loc 1 416 1 view .LVU315
+ 1177 0009 31C0     		xorl	%eax, %eax
+ 1178 000b C3       		ret
+ 1179 000c 0F1F4000 		.p2align 4,,10
+GAS LISTING /tmp/ccCMW4E1.s 			page 34
+
+
+ 1180              		.p2align 3
+ 1181              	.L90:
+ 415:../../bos/core/b_core.c **** }
+ 1182              		.loc 1 415 5 is_stmt 1 view .LVU316
+ 415:../../bos/core/b_core.c **** }
+ 1183              		.loc 1 415 12 is_stmt 0 view .LVU317
+ 1184 0010 4863FF   		movslq	%edi, %rdi
+ 415:../../bos/core/b_core.c **** }
+ 1185              		.loc 1 415 12 view .LVU318
+ 1186 0013 488D0500 		leaq	bCoreFdTable(%rip), %rax
+ 1186      000000
+ 1187 001a 488D147F 		leaq	(%rdi,%rdi,2), %rdx
+ 1188 001e 8B7C9004 		movl	4(%rax,%rdx,4), %edi
+ 1189              	.LVL86:
+ 415:../../bos/core/b_core.c **** }
+ 1190              		.loc 1 415 12 view .LVU319
+ 1191 0022 E9000000 		jmp	bDeviceIsWritable@PLT
+ 1191      00
+ 1192              	.LVL87:
+ 1193              		.cfi_endproc
+ 1194              	.LFE43:
+ 1196              		.section	.text.bFdIsAbnormal,"ax",@progbits
+ 1197              		.p2align 4
+ 1198              		.globl	bFdIsAbnormal
+ 1200              	bFdIsAbnormal:
+ 1201              	.LVL88:
+ 1202              	.LFB44:
+ 417:../../bos/core/b_core.c **** 
+ 418:../../bos/core/b_core.c **** uint8_t bFdIsAbnormal(int fd)
+ 419:../../bos/core/b_core.c **** {
+ 1203              		.loc 1 419 1 is_stmt 1 view -0
+ 1204              		.cfi_startproc
+ 1205              		.loc 1 419 1 is_stmt 0 view .LVU321
+ 1206 0000 F30F1EFA 		endbr64
+ 420:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER)
+ 1207              		.loc 1 420 5 is_stmt 1 view .LVU322
+ 1208              		.loc 1 420 8 is_stmt 0 view .LVU323
+ 1209 0004 83FF01   		cmpl	$1, %edi
+ 1210 0007 7607     		jbe	.L93
+ 421:../../bos/core/b_core.c ****     {
+ 422:../../bos/core/b_core.c ****         return 1;
+ 423:../../bos/core/b_core.c ****     }
+ 424:../../bos/core/b_core.c ****     return bDeviceIsAbnormal(bCoreFdTable[fd].number);
+ 425:../../bos/core/b_core.c **** }
+ 1211              		.loc 1 425 1 view .LVU324
+ 1212 0009 B8010000 		movl	$1, %eax
+ 1212      00
+ 1213 000e C3       		ret
+ 1214 000f 90       		.p2align 4,,10
+ 1215              		.p2align 3
+ 1216              	.L93:
+ 424:../../bos/core/b_core.c **** }
+ 1217              		.loc 1 424 5 is_stmt 1 view .LVU325
+ 424:../../bos/core/b_core.c **** }
+ 1218              		.loc 1 424 12 is_stmt 0 view .LVU326
+ 1219 0010 4863FF   		movslq	%edi, %rdi
+ 424:../../bos/core/b_core.c **** }
+GAS LISTING /tmp/ccCMW4E1.s 			page 35
+
+
+ 1220              		.loc 1 424 12 view .LVU327
+ 1221 0013 488D0500 		leaq	bCoreFdTable(%rip), %rax
+ 1221      000000
+ 1222 001a 488D147F 		leaq	(%rdi,%rdi,2), %rdx
+ 1223 001e 8B7C9004 		movl	4(%rax,%rdx,4), %edi
+ 1224              	.LVL89:
+ 424:../../bos/core/b_core.c **** }
+ 1225              		.loc 1 424 12 view .LVU328
+ 1226 0022 E9000000 		jmp	bDeviceIsAbnormal@PLT
+ 1226      00
+ 1227              	.LVL90:
+ 1228              		.cfi_endproc
+ 1229              	.LFE44:
+ 1231              		.section	.text.bGetDevNumber,"ax",@progbits
+ 1232              		.p2align 4
+ 1233              		.globl	bGetDevNumber
+ 1235              	bGetDevNumber:
+ 1236              	.LVL91:
+ 1237              	.LFB45:
+ 426:../../bos/core/b_core.c **** 
+ 427:../../bos/core/b_core.c **** int bGetDevNumber(int fd, uint32_t *pdev_no)
+ 428:../../bos/core/b_core.c **** {
+ 1238              		.loc 1 428 1 is_stmt 1 view -0
+ 1239              		.cfi_startproc
+ 1240              		.loc 1 428 1 is_stmt 0 view .LVU330
+ 1241 0000 F30F1EFA 		endbr64
+ 429:../../bos/core/b_core.c ****     if (fd < 0 || fd >= B_REG_DEV_NUMBER || pdev_no == NULL)
+ 1242              		.loc 1 429 5 is_stmt 1 view .LVU331
+ 1243              		.loc 1 429 8 is_stmt 0 view .LVU332
+ 1244 0004 83FF01   		cmpl	$1, %edi
+ 1245 0007 7727     		ja	.L97
+ 1246 0009 4885F6   		testq	%rsi, %rsi
+ 1247 000c 7422     		je	.L97
+ 430:../../bos/core/b_core.c ****     {
+ 431:../../bos/core/b_core.c ****         return -1;
+ 432:../../bos/core/b_core.c ****     }
+ 433:../../bos/core/b_core.c ****     if (bCoreFdTable[fd].status != BCORE_STA_OPEN)
+ 1248              		.loc 1 433 5 is_stmt 1 view .LVU333
+ 1249              		.loc 1 433 25 is_stmt 0 view .LVU334
+ 1250 000e 4863FF   		movslq	%edi, %rdi
+ 1251              		.loc 1 433 25 view .LVU335
+ 1252 0011 488D0500 		leaq	bCoreFdTable(%rip), %rax
+ 1252      000000
+ 1253 0018 488D147F 		leaq	(%rdi,%rdi,2), %rdx
+ 1254 001c 488D0490 		leaq	(%rax,%rdx,4), %rax
+ 1255              		.loc 1 433 8 view .LVU336
+ 1256 0020 80780101 		cmpb	$1, 1(%rax)
+ 1257 0024 750A     		jne	.L97
+ 434:../../bos/core/b_core.c ****     {
+ 435:../../bos/core/b_core.c ****         return -1;
+ 436:../../bos/core/b_core.c ****     }
+ 437:../../bos/core/b_core.c ****     *pdev_no = bCoreFdTable[fd].number;
+ 1258              		.loc 1 437 5 is_stmt 1 view .LVU337
+ 1259              		.loc 1 437 14 is_stmt 0 view .LVU338
+ 1260 0026 8B4004   		movl	4(%rax), %eax
+ 1261 0029 8906     		movl	%eax, (%rsi)
+ 438:../../bos/core/b_core.c ****     return 0;
+GAS LISTING /tmp/ccCMW4E1.s 			page 36
+
+
+ 1262              		.loc 1 438 5 is_stmt 1 view .LVU339
+ 1263              		.loc 1 438 12 is_stmt 0 view .LVU340
+ 1264 002b 31C0     		xorl	%eax, %eax
+ 1265 002d C3       		ret
+ 1266              	.LVL92:
+ 1267 002e 6690     		.p2align 4,,10
+ 1268              		.p2align 3
+ 1269              	.L97:
+ 431:../../bos/core/b_core.c ****     }
+ 1270              		.loc 1 431 16 view .LVU341
+ 1271 0030 B8FFFFFF 		movl	$-1, %eax
+ 1271      FF
+ 439:../../bos/core/b_core.c **** }
+ 1272              		.loc 1 439 1 view .LVU342
+ 1273 0035 C3       		ret
+ 1274              		.cfi_endproc
+ 1275              	.LFE45:
+ 1277              		.section	.rodata.__func__.0,"a"
+ 1280              	__func__.0:
+ 1281 0000 62496E69 		.string	"bInit"
+ 1281      7400
+ 1282              		.section	.bss.init.1,"aw",@nobits
+ 1285              	init.1:
+ 1286 0000 00       		.zero	1
+ 1287              		.globl	polling_bCoreMonitor
+ 1288              		.section	.bos_polling,"aw"
+ 1289              		.align 8
+ 1292              	polling_bCoreMonitor:
+ 1293 0000 00000000 		.quad	_bCoreMonitor
+ 1293      00000000 
+ 1294              		.section	.bss.bCoreFdTable,"aw",@nobits
+ 1295              		.align 16
+ 1298              	bCoreFdTable:
+ 1299 0000 00000000 		.zero	24
+ 1299      00000000 
+ 1299      00000000 
+ 1299      00000000 
+ 1299      00000000 
+ 1300              		.text
+ 1301              	.Letext0:
+ 1302              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1303              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1304              		.file 4 "../../bos/core/inc/b_core.h"
+ 1305              		.file 5 "../../bos/b_section.h"
+ 1306              		.file 6 "../../bos/core/inc/b_device.h"
+ 1307              		.file 7 "../../bos/utils/inc/b_util_log.h"
+ 1308              		.file 8 "../../bos/hal/inc/b_hal.h"
+ 5277              		.section	.note.gnu.property,"a"
+ 5278              		.align 8
+ 5279 0000 04000000 		.long	1f - 0f
+ 5280 0004 10000000 		.long	4f - 1f
+ 5281 0008 05000000 		.long	5
+ 5282              	0:
+ 5283 000c 474E5500 		.string	"GNU"
+ 5284              	1:
+ 5285              		.align 8
+ 5286 0010 020000C0 		.long	0xc0000002
+GAS LISTING /tmp/ccCMW4E1.s 			page 37
+
+
+ 5287 0014 04000000 		.long	3f - 2f
+ 5288              	2:
+ 5289 0018 03000000 		.long	0x3
+ 5290              	3:
+ 5291 001c 00000000 		.align 8
+ 5292              	4:
+GAS LISTING /tmp/ccCMW4E1.s 			page 38
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_core.c
+     /tmp/ccCMW4E1.s:8      .text._bCoreMonitor:0000000000000000 _bCoreMonitor
+     /tmp/ccCMW4E1.s:22     .text.bOpen:0000000000000000 bOpen
+     /tmp/ccCMW4E1.s:1285   .bss.init.1:0000000000000000 init.1
+     /tmp/ccCMW4E1.s:1298   .bss.bCoreFdTable:0000000000000000 bCoreFdTable
+     /tmp/ccCMW4E1.s:258    .text.bRead:0000000000000000 bRead
+     /tmp/ccCMW4E1.s:400    .text.bWrite:0000000000000000 bWrite
+     /tmp/ccCMW4E1.s:548    .text.bLseek:0000000000000000 bLseek
+     /tmp/ccCMW4E1.s:591    .text.bCtl:0000000000000000 bCtl
+     /tmp/ccCMW4E1.s:648    .text.bClose:0000000000000000 bClose
+     /tmp/ccCMW4E1.s:733    .text.bCoreIsIdle:0000000000000000 bCoreIsIdle
+     /tmp/ccCMW4E1.s:810    .text.bInit:0000000000000000 bInit
+     /tmp/ccCMW4E1.s:1280   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccCMW4E1.s:979    .text.bReinit:0000000000000000 bReinit
+     /tmp/ccCMW4E1.s:998    .text.bExec:0000000000000000 bExec
+     /tmp/ccCMW4E1.s:1074   .text.bModifyHalIf:0000000000000000 bModifyHalIf
+     /tmp/ccCMW4E1.s:1130   .text.bFdIsReadable:0000000000000000 bFdIsReadable
+     /tmp/ccCMW4E1.s:1165   .text.bFdIsWritable:0000000000000000 bFdIsWritable
+     /tmp/ccCMW4E1.s:1200   .text.bFdIsAbnormal:0000000000000000 bFdIsAbnormal
+     /tmp/ccCMW4E1.s:1235   .text.bGetDevNumber:0000000000000000 bGetDevNumber
+     /tmp/ccCMW4E1.s:1292   .bos_polling:0000000000000000 polling_bCoreMonitor
+     /tmp/ccCMW4E1.s:772    .rodata.bInit.str1.1:0000000000000000 .LC1
+     /tmp/ccCMW4E1.s:769    .rodata.bInit.str1.8:0000000000000000 .LC0
+     /tmp/ccCMW4E1.s:776    .rodata.bInit.str1.8:0000000000000038 .LC2
+     /tmp/ccCMW4E1.s:779    .rodata.bInit.str1.8:0000000000000070 .LC3
+     /tmp/ccCMW4E1.s:782    .rodata.bInit.str1.8:00000000000000a8 .LC4
+     /tmp/ccCMW4E1.s:785    .rodata.bInit.str1.8:00000000000000e0 .LC5
+     /tmp/ccCMW4E1.s:788    .rodata.bInit.str1.8:0000000000000118 .LC6
+     /tmp/ccCMW4E1.s:791    .rodata.bInit.str1.8:0000000000000150 .LC7
+     /tmp/ccCMW4E1.s:794    .rodata.bInit.str1.8:0000000000000188 .LC8
+     /tmp/ccCMW4E1.s:800    .rodata.bInit.str1.1:0000000000000018 .LC10
+     /tmp/ccCMW4E1.s:797    .rodata.bInit.str1.8:00000000000001c0 .LC9
+     /tmp/ccCMW4E1.s:802    .rodata.bInit.str1.1:0000000000000021 .LC11
+     /tmp/ccCMW4E1.s:804    .rodata.bInit.str1.1:000000000000002d .LC12
+
+UNDEFINED SYMBOLS
+bDeviceOpen
+bDeviceRead
+bDeviceWrite
+bDeviceCtl
+bDeviceClose
+bHalInit
+bLogOut
+bDeviceInit
+bDeviceReinit
+__stop_bos_polling
+__start_bos_polling
+bDeviceModifyHalIf
+bDeviceIsReadable
+bDeviceIsWritable
+bDeviceIsAbnormal

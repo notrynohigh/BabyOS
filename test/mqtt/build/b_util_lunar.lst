@@ -1,0 +1,1105 @@
+GAS LISTING /tmp/cco6ZOMC.s 			page 1
+
+
+   1              		.file	"b_util_lunar.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/utils/b_util_lunar.c"
+   5              		.section	.text.bSolar2Lunar,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	bSolar2Lunar
+   9              	bSolar2Lunar:
+  10              	.LVL0:
+  11              	.LFB17:
+   1:../../bos/utils/b_util_lunar.c **** /**
+   2:../../bos/utils/b_util_lunar.c ****  *!
+   3:../../bos/utils/b_util_lunar.c ****  * \file        b_mod_lunar.c
+   4:../../bos/utils/b_util_lunar.c ****  * \version     v0.0.1
+   5:../../bos/utils/b_util_lunar.c ****  * \date        2019/12/31
+   6:../../bos/utils/b_util_lunar.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/b_util_lunar.c ****  *******************************************************************************
+   8:../../bos/utils/b_util_lunar.c ****  * @attention
+   9:../../bos/utils/b_util_lunar.c ****  *
+  10:../../bos/utils/b_util_lunar.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/b_util_lunar.c ****  *
+  12:../../bos/utils/b_util_lunar.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/b_util_lunar.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/b_util_lunar.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/b_util_lunar.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/b_util_lunar.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/b_util_lunar.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/b_util_lunar.c ****  *
+  19:../../bos/utils/b_util_lunar.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/b_util_lunar.c ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/b_util_lunar.c ****  *
+  22:../../bos/utils/b_util_lunar.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/b_util_lunar.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/b_util_lunar.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/b_util_lunar.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/b_util_lunar.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/b_util_lunar.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/b_util_lunar.c ****  * SOFTWARE.
+  29:../../bos/utils/b_util_lunar.c ****  *******************************************************************************
+  30:../../bos/utils/b_util_lunar.c ****  */
+  31:../../bos/utils/b_util_lunar.c **** 
+  32:../../bos/utils/b_util_lunar.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/utils/b_util_lunar.c **** #include "utils/inc/b_util_lunar.h"
+  34:../../bos/utils/b_util_lunar.c **** 
+  35:../../bos/utils/b_util_lunar.c **** /**
+  36:../../bos/utils/b_util_lunar.c ****  * \addtogroup B_UTILS
+  37:../../bos/utils/b_util_lunar.c ****  * \{
+  38:../../bos/utils/b_util_lunar.c ****  */
+  39:../../bos/utils/b_util_lunar.c **** 
+  40:../../bos/utils/b_util_lunar.c **** /**
+  41:../../bos/utils/b_util_lunar.c ****  * \addtogroup LUNAR
+  42:../../bos/utils/b_util_lunar.c ****  * \{
+  43:../../bos/utils/b_util_lunar.c ****  */
+  44:../../bos/utils/b_util_lunar.c **** 
+  45:../../bos/utils/b_util_lunar.c **** /**
+  46:../../bos/utils/b_util_lunar.c ****  * \defgroup LUNAR_Private_TypesDefinitions
+  47:../../bos/utils/b_util_lunar.c ****  * \{
+GAS LISTING /tmp/cco6ZOMC.s 			page 2
+
+
+  48:../../bos/utils/b_util_lunar.c ****  */
+  49:../../bos/utils/b_util_lunar.c **** 
+  50:../../bos/utils/b_util_lunar.c **** /**
+  51:../../bos/utils/b_util_lunar.c ****  * \}
+  52:../../bos/utils/b_util_lunar.c ****  */
+  53:../../bos/utils/b_util_lunar.c **** 
+  54:../../bos/utils/b_util_lunar.c **** /**
+  55:../../bos/utils/b_util_lunar.c ****  * \defgroup LUNAR_Private_Defines
+  56:../../bos/utils/b_util_lunar.c ****  * \{
+  57:../../bos/utils/b_util_lunar.c ****  */
+  58:../../bos/utils/b_util_lunar.c **** 
+  59:../../bos/utils/b_util_lunar.c **** /**
+  60:../../bos/utils/b_util_lunar.c ****  * \}
+  61:../../bos/utils/b_util_lunar.c ****  */
+  62:../../bos/utils/b_util_lunar.c **** 
+  63:../../bos/utils/b_util_lunar.c **** /**
+  64:../../bos/utils/b_util_lunar.c ****  * \defgroup LUNAR_Private_Macros
+  65:../../bos/utils/b_util_lunar.c ****  * \{
+  66:../../bos/utils/b_util_lunar.c ****  */
+  67:../../bos/utils/b_util_lunar.c **** 
+  68:../../bos/utils/b_util_lunar.c **** /**
+  69:../../bos/utils/b_util_lunar.c ****  * \}
+  70:../../bos/utils/b_util_lunar.c ****  */
+  71:../../bos/utils/b_util_lunar.c **** 
+  72:../../bos/utils/b_util_lunar.c **** /**
+  73:../../bos/utils/b_util_lunar.c ****  * \defgroup LUNAR_Private_Variables
+  74:../../bos/utils/b_util_lunar.c ****  * \{
+  75:../../bos/utils/b_util_lunar.c ****  */
+  76:../../bos/utils/b_util_lunar.c **** const static uint32_t bLunarCalendarTable[199] = {
+  77:../../bos/utils/b_util_lunar.c ****     /*1901-1910*/
+  78:../../bos/utils/b_util_lunar.c ****     0x04AE53, 0x0A5748, 0x5526BD, 0x0D2650, 0x0D9544, 0x46AAB9, 0x056A4D, 0x09AD42, 0x24AEB6,
+  79:../../bos/utils/b_util_lunar.c ****     0x04AE4A,
+  80:../../bos/utils/b_util_lunar.c ****     /*1911-1920*/
+  81:../../bos/utils/b_util_lunar.c ****     0x6A4DBE, 0x0A4D52, 0x0D2546, 0x5D52BA, 0x0B544E, 0x0D6A43, 0x296D37, 0x095B4B, 0x749BC1,
+  82:../../bos/utils/b_util_lunar.c ****     0x049754,
+  83:../../bos/utils/b_util_lunar.c ****     /*1921-1930*/
+  84:../../bos/utils/b_util_lunar.c ****     0x0A4B48, 0x5B25BC, 0x06A550, 0x06D445, 0x4ADAB8, 0x02B64D, 0x095742, 0x2497B7, 0x04974A,
+  85:../../bos/utils/b_util_lunar.c ****     0x664B3E,
+  86:../../bos/utils/b_util_lunar.c ****     /*1931-1940*/
+  87:../../bos/utils/b_util_lunar.c ****     0x0D4A51, 0x0EA546, 0x56D4BA, 0x05AD4E, 0x02B644, 0x393738, 0x092E4B, 0x7C96BF, 0x0C9553,
+  88:../../bos/utils/b_util_lunar.c ****     0x0D4A48,
+  89:../../bos/utils/b_util_lunar.c ****     /*1941-1950*/
+  90:../../bos/utils/b_util_lunar.c ****     0x6DA53B, 0x0B554F, 0x056A45, 0x4AADB9, 0x025D4D, 0x092D42, 0x2C95B6, 0x0A954A, 0x7B4ABD,
+  91:../../bos/utils/b_util_lunar.c ****     0x06CA51,
+  92:../../bos/utils/b_util_lunar.c ****     /*1951-1960*/
+  93:../../bos/utils/b_util_lunar.c ****     0x0B5546, 0x555ABB, 0x04DA4E, 0x0A5B43, 0x352BB8, 0x052B4C, 0x8A953F, 0x0E9552, 0x06AA48,
+  94:../../bos/utils/b_util_lunar.c ****     0x6AD53C,
+  95:../../bos/utils/b_util_lunar.c ****     /*1961-1970*/
+  96:../../bos/utils/b_util_lunar.c ****     0x0AB54F, 0x04B645, 0x4A5739, 0x0A574D, 0x052642, 0x3E9335, 0x0D9549, 0x75AABE, 0x056A51,
+  97:../../bos/utils/b_util_lunar.c ****     0x096D46,
+  98:../../bos/utils/b_util_lunar.c ****     /*1971-1980*/
+  99:../../bos/utils/b_util_lunar.c ****     0x54AEBB, 0x04AD4F, 0x0A4D43, 0x4D26B7, 0x0D254B, 0x8D52BF, 0x0B5452, 0x0B6A47, 0x696D3C,
+ 100:../../bos/utils/b_util_lunar.c ****     0x095B50,
+ 101:../../bos/utils/b_util_lunar.c ****     /*1981-1990*/
+ 102:../../bos/utils/b_util_lunar.c ****     0x049B45, 0x4A4BB9, 0x0A4B4D, 0xAB25C2, 0x06A554, 0x06D449, 0x6ADA3D, 0x0AB651, 0x093746,
+ 103:../../bos/utils/b_util_lunar.c ****     0x5497BB,
+ 104:../../bos/utils/b_util_lunar.c ****     /*1991-2000*/
+GAS LISTING /tmp/cco6ZOMC.s 			page 3
+
+
+ 105:../../bos/utils/b_util_lunar.c ****     0x04974F, 0x064B44, 0x36A537, 0x0EA54A, 0x86B2BF, 0x05AC53, 0x0AB647, 0x5936BC, 0x092E50,
+ 106:../../bos/utils/b_util_lunar.c ****     0x0C9645,
+ 107:../../bos/utils/b_util_lunar.c ****     /*2001-2010*/
+ 108:../../bos/utils/b_util_lunar.c ****     0x4D4AB8, 0x0D4A4C, 0x0DA541, 0x25AAB6, 0x056A49, 0x7AADBD, 0x025D52, 0x092D47, 0x5C95BA,
+ 109:../../bos/utils/b_util_lunar.c ****     0x0A954E,
+ 110:../../bos/utils/b_util_lunar.c ****     /*2011-2020*/
+ 111:../../bos/utils/b_util_lunar.c ****     0x0B4A43, 0x4B5537, 0x0AD54A, 0x955ABF, 0x04BA53, 0x0A5B48, 0x652BBC, 0x052B50, 0x0A9345,
+ 112:../../bos/utils/b_util_lunar.c ****     0x474AB9,
+ 113:../../bos/utils/b_util_lunar.c ****     /*2021-2030*/
+ 114:../../bos/utils/b_util_lunar.c ****     0x06AA4C, 0x0AD541, 0x24DAB6, 0x04B64A, 0x69573D, 0x0A4E51, 0x0D2646, 0x5E933A, 0x0D534D,
+ 115:../../bos/utils/b_util_lunar.c ****     0x05AA43,
+ 116:../../bos/utils/b_util_lunar.c ****     /*2031-2040*/
+ 117:../../bos/utils/b_util_lunar.c ****     0x36B537, 0x096D4B, 0xB4AEBF, 0x04AD53, 0x0A4D48, 0x6D25BC, 0x0D254F, 0x0D5244, 0x5DAA38,
+ 118:../../bos/utils/b_util_lunar.c ****     0x0B5A4C,
+ 119:../../bos/utils/b_util_lunar.c ****     /*2041-2050*/
+ 120:../../bos/utils/b_util_lunar.c ****     0x056D41, 0x24ADB6, 0x049B4A, 0x7A4BBE, 0x0A4B51, 0x0AA546, 0x5B52BA, 0x06D24E, 0x0ADA42,
+ 121:../../bos/utils/b_util_lunar.c ****     0x355B37,
+ 122:../../bos/utils/b_util_lunar.c ****     /*2051-2060*/
+ 123:../../bos/utils/b_util_lunar.c ****     0x09374B, 0x8497C1, 0x049753, 0x064B48, 0x66A53C, 0x0EA54F, 0x06B244, 0x4AB638, 0x0AAE4C,
+ 124:../../bos/utils/b_util_lunar.c ****     0x092E42,
+ 125:../../bos/utils/b_util_lunar.c ****     /*2061-2070*/
+ 126:../../bos/utils/b_util_lunar.c ****     0x3C9735, 0x0C9649, 0x7D4ABD, 0x0D4A51, 0x0DA545, 0x55AABA, 0x056A4E, 0x0A6D43, 0x452EB7,
+ 127:../../bos/utils/b_util_lunar.c ****     0x052D4B,
+ 128:../../bos/utils/b_util_lunar.c ****     /*2071-2080*/
+ 129:../../bos/utils/b_util_lunar.c ****     0x8A95BF, 0x0A9553, 0x0B4A47, 0x6B553B, 0x0AD54F, 0x055A45, 0x4A5D38, 0x0A5B4C, 0x052B42,
+ 130:../../bos/utils/b_util_lunar.c ****     0x3A93B6,
+ 131:../../bos/utils/b_util_lunar.c ****     /*2081-2090*/
+ 132:../../bos/utils/b_util_lunar.c ****     0x069349, 0x7729BD, 0x06AA51, 0x0AD546, 0x54DABA, 0x04B64E, 0x0A5743, 0x452738, 0x0D264A,
+ 133:../../bos/utils/b_util_lunar.c ****     0x8E933E,
+ 134:../../bos/utils/b_util_lunar.c ****     /*2091-2099*/
+ 135:../../bos/utils/b_util_lunar.c ****     0x0D5252, 0x0DAA47, 0x66B53B, 0x056D4F, 0x04AE45, 0x4A4EB9, 0x0A4D4C, 0x0D1541, 0x2D92B5};
+ 136:../../bos/utils/b_util_lunar.c **** const static uint32_t bLunarMonthSum[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+ 137:../../bos/utils/b_util_lunar.c **** 
+ 138:../../bos/utils/b_util_lunar.c **** /**
+ 139:../../bos/utils/b_util_lunar.c ****  * \}
+ 140:../../bos/utils/b_util_lunar.c ****  */
+ 141:../../bos/utils/b_util_lunar.c **** 
+ 142:../../bos/utils/b_util_lunar.c **** /**
+ 143:../../bos/utils/b_util_lunar.c ****  * \defgroup LUNAR_Private_FunctionPrototypes
+ 144:../../bos/utils/b_util_lunar.c ****  * \{
+ 145:../../bos/utils/b_util_lunar.c ****  */
+ 146:../../bos/utils/b_util_lunar.c **** 
+ 147:../../bos/utils/b_util_lunar.c **** /**
+ 148:../../bos/utils/b_util_lunar.c ****  * \}
+ 149:../../bos/utils/b_util_lunar.c ****  */
+ 150:../../bos/utils/b_util_lunar.c **** 
+ 151:../../bos/utils/b_util_lunar.c **** /**
+ 152:../../bos/utils/b_util_lunar.c ****  * \defgroup LUNAR_Private_Functions
+ 153:../../bos/utils/b_util_lunar.c ****  * \{
+ 154:../../bos/utils/b_util_lunar.c ****  */
+ 155:../../bos/utils/b_util_lunar.c **** 
+ 156:../../bos/utils/b_util_lunar.c **** /**
+ 157:../../bos/utils/b_util_lunar.c ****  * \}
+ 158:../../bos/utils/b_util_lunar.c ****  */
+ 159:../../bos/utils/b_util_lunar.c **** 
+ 160:../../bos/utils/b_util_lunar.c **** /**
+ 161:../../bos/utils/b_util_lunar.c ****  * \addtogroup LUNAR_Exported_Functions
+GAS LISTING /tmp/cco6ZOMC.s 			page 4
+
+
+ 162:../../bos/utils/b_util_lunar.c ****  * \{
+ 163:../../bos/utils/b_util_lunar.c ****  */
+ 164:../../bos/utils/b_util_lunar.c **** 
+ 165:../../bos/utils/b_util_lunar.c **** int bSolar2Lunar(uint16_t syear, uint8_t smonth, uint8_t sday, bLunarInfo_t *plunar)
+ 166:../../bos/utils/b_util_lunar.c **** {
+  12              		.loc 1 166 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 166 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+ 167:../../bos/utils/b_util_lunar.c ****     int l_year, s_year, days_m;
+  16              		.loc 1 167 5 is_stmt 1 view .LVU2
+ 168:../../bos/utils/b_util_lunar.c ****     int index, flag;
+  17              		.loc 1 168 5 view .LVU3
+ 169:../../bos/utils/b_util_lunar.c **** 
+ 170:../../bos/utils/b_util_lunar.c ****     if (plunar == NULL)
+  18              		.loc 1 170 5 view .LVU4
+  19              		.loc 1 170 8 is_stmt 0 view .LVU5
+  20 0004 4885C9   		testq	%rcx, %rcx
+  21 0007 0F84FC01 		je	.L24
+  21      0000
+  22 000d 89D0     		movl	%edx, %eax
+ 171:../../bos/utils/b_util_lunar.c ****     {
+ 172:../../bos/utils/b_util_lunar.c ****         return -1;
+ 173:../../bos/utils/b_util_lunar.c ****     }
+ 174:../../bos/utils/b_util_lunar.c **** 
+ 175:../../bos/utils/b_util_lunar.c ****     if (((bLunarCalendarTable[syear - 1901] & 0x0060) >> 5) == 1)
+  23              		.loc 1 175 37 view .LVU6
+  24 000f 0FB7D7   		movzwl	%di, %edx
+  25              	.LVL1:
+  26              		.loc 1 175 37 view .LVU7
+  27 0012 4989C8   		movq	%rcx, %r8
+  28 0015 4189F3   		movl	%esi, %r11d
+  29 0018 81EA6D07 		subl	$1901, %edx
+  29      0000
+ 166:../../bos/utils/b_util_lunar.c ****     int l_year, s_year, days_m;
+  30              		.loc 1 166 1 view .LVU8
+  31 001e 55       		pushq	%rbp
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 16
+  34              		.cfi_offset 6, -16
+ 176:../../bos/utils/b_util_lunar.c ****     {
+ 177:../../bos/utils/b_util_lunar.c ****         l_year = (bLunarCalendarTable[syear - 1901] & 0x001F) - 1;
+ 178:../../bos/utils/b_util_lunar.c ****     }
+ 179:../../bos/utils/b_util_lunar.c ****     else
+ 180:../../bos/utils/b_util_lunar.c ****     {
+ 181:../../bos/utils/b_util_lunar.c ****         l_year = (bLunarCalendarTable[syear - 1901] & 0x001F) - 1 + 31;
+ 182:../../bos/utils/b_util_lunar.c ****     }
+ 183:../../bos/utils/b_util_lunar.c ****     s_year = bLunarMonthSum[smonth - 1] + sday - 1;
+  35              		.loc 1 183 41 view .LVU9
+  36 001f 0FB6C0   		movzbl	%al, %eax
+  37              	.LVL2:
+  38              		.loc 1 183 41 view .LVU10
+  39 0022 4189F9   		movl	%edi, %r9d
+ 175:../../bos/utils/b_util_lunar.c ****     {
+  40              		.loc 1 175 5 is_stmt 1 view .LVU11
+ 175:../../bos/utils/b_util_lunar.c ****     {
+  41              		.loc 1 175 30 is_stmt 0 view .LVU12
+GAS LISTING /tmp/cco6ZOMC.s 			page 5
+
+
+  42 0025 4863D2   		movslq	%edx, %rdx
+  43 0028 488D0D00 		leaq	bLunarCalendarTable(%rip), %rcx
+  43      000000
+  44              	.LVL3:
+ 166:../../bos/utils/b_util_lunar.c ****     int l_year, s_year, days_m;
+  45              		.loc 1 166 1 view .LVU13
+  46 002f 53       		pushq	%rbx
+  47              	.LCFI1:
+  48              		.cfi_def_cfa_offset 24
+  49              		.cfi_offset 3, -24
+ 175:../../bos/utils/b_util_lunar.c ****     {
+  50              		.loc 1 175 30 view .LVU14
+  51 0030 448B1491 		movl	(%rcx,%rdx,4), %r10d
+ 177:../../bos/utils/b_util_lunar.c ****     }
+  52              		.loc 1 177 53 view .LVU15
+  53 0034 4489D6   		movl	%r10d, %esi
+  54              	.LVL4:
+ 175:../../bos/utils/b_util_lunar.c ****     {
+  55              		.loc 1 175 61 view .LVU16
+  56 0037 4489D3   		movl	%r10d, %ebx
+ 177:../../bos/utils/b_util_lunar.c ****     }
+  57              		.loc 1 177 53 view .LVU17
+  58 003a 83E61F   		andl	$31, %esi
+ 175:../../bos/utils/b_util_lunar.c ****     {
+  59              		.loc 1 175 61 view .LVU18
+  60 003d 83E360   		andl	$96, %ebx
+ 177:../../bos/utils/b_util_lunar.c ****     }
+  61              		.loc 1 177 63 view .LVU19
+  62 0040 8D56FF   		leal	-1(%rsi), %edx
+  63 0043 83C61E   		addl	$30, %esi
+  64 0046 83FB20   		cmpl	$32, %ebx
+  65 0049 0F44F2   		cmove	%edx, %esi
+  66              	.LVL5:
+  67              		.loc 1 183 5 is_stmt 1 view .LVU20
+  68              		.loc 1 183 36 is_stmt 0 view .LVU21
+  69 004c 410FB6D3 		movzbl	%r11b, %edx
+  70              		.loc 1 183 41 view .LVU22
+  71 0050 488D1D00 		leaq	bLunarMonthSum(%rip), %rbx
+  71      000000
+  72              		.loc 1 183 36 view .LVU23
+  73 0057 83EA01   		subl	$1, %edx
+  74              		.loc 1 183 28 view .LVU24
+  75 005a 4863D2   		movslq	%edx, %rdx
+  76              		.loc 1 183 41 view .LVU25
+  77 005d 030493   		addl	(%rbx,%rdx,4), %eax
+  78              		.loc 1 183 48 view .LVU26
+  79 0060 8D50FF   		leal	-1(%rax), %edx
+  80              	.LVL6:
+ 184:../../bos/utils/b_util_lunar.c **** 
+ 185:../../bos/utils/b_util_lunar.c ****     if ((!(syear % 4)) && (smonth > 2))
+  81              		.loc 1 185 5 is_stmt 1 view .LVU27
+  82              		.loc 1 185 24 is_stmt 0 discriminator 1 view .LVU28
+  83 0063 40F6C703 		testb	$3, %dil
+  84 0067 7507     		jne	.L5
+  85 0069 4180FB02 		cmpb	$2, %r11b
+  86 006d 0F47D0   		cmova	%eax, %edx
+  87              	.LVL7:
+GAS LISTING /tmp/cco6ZOMC.s 			page 6
+
+
+  88              	.L5:
+ 186:../../bos/utils/b_util_lunar.c ****     {
+ 187:../../bos/utils/b_util_lunar.c ****         s_year++;
+ 188:../../bos/utils/b_util_lunar.c ****     }
+ 189:../../bos/utils/b_util_lunar.c **** 
+ 190:../../bos/utils/b_util_lunar.c ****     if (s_year >= l_year)
+  89              		.loc 1 190 5 is_stmt 1 view .LVU29
+  90              		.loc 1 190 8 is_stmt 0 view .LVU30
+  91 0070 39D6     		cmpl	%edx, %esi
+  92 0072 0F8F9800 		jg	.L7
+  92      0000
+ 191:../../bos/utils/b_util_lunar.c ****     {
+ 192:../../bos/utils/b_util_lunar.c ****         s_year -= l_year;
+  93              		.loc 1 192 9 is_stmt 1 view .LVU31
+  94              		.loc 1 192 16 is_stmt 0 view .LVU32
+  95 0078 29F2     		subl	%esi, %edx
+  96              	.LVL8:
+ 193:../../bos/utils/b_util_lunar.c ****         smonth = 1;
+  97              		.loc 1 193 9 is_stmt 1 view .LVU33
+ 194:../../bos/utils/b_util_lunar.c ****         index  = 1;
+  98              		.loc 1 194 9 view .LVU34
+ 195:../../bos/utils/b_util_lunar.c ****         flag   = 0;
+  99              		.loc 1 195 9 view .LVU35
+ 196:../../bos/utils/b_util_lunar.c ****         if ((bLunarCalendarTable[syear - 1901] & (0x80000 >> (index - 1))) == 0)
+ 100              		.loc 1 196 9 view .LVU36
+ 197:../../bos/utils/b_util_lunar.c ****         {
+ 198:../../bos/utils/b_util_lunar.c ****             days_m = 29;
+ 101              		.loc 1 198 20 is_stmt 0 view .LVU37
+ 102 007a 31F6     		xorl	%esi, %esi
+ 103              	.LVL9:
+ 104              		.loc 1 198 20 view .LVU38
+ 105 007c 41F7C200 		testl	$524288, %r10d
+ 105      000800
+ 106 0083 400F95C6 		setne	%sil
+ 107 0087 83C61D   		addl	$29, %esi
+ 108              	.LVL10:
+ 199:../../bos/utils/b_util_lunar.c ****         }
+ 200:../../bos/utils/b_util_lunar.c ****         else
+ 201:../../bos/utils/b_util_lunar.c ****         {
+ 202:../../bos/utils/b_util_lunar.c ****             days_m = 30;
+ 203:../../bos/utils/b_util_lunar.c ****         }
+ 204:../../bos/utils/b_util_lunar.c ****         while (s_year >= days_m)
+ 109              		.loc 1 204 23 is_stmt 1 view .LVU39
+ 110 008a 39F2     		cmpl	%esi, %edx
+ 111 008c 0F8C2E01 		jl	.L27
+ 111      0000
+ 205:../../bos/utils/b_util_lunar.c ****         {
+ 206:../../bos/utils/b_util_lunar.c ****             s_year -= days_m;
+ 207:../../bos/utils/b_util_lunar.c ****             index++;
+ 208:../../bos/utils/b_util_lunar.c ****             if (smonth == ((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20))
+ 112              		.loc 1 208 75 is_stmt 0 view .LVU40
+ 113 0092 4589D3   		movl	%r10d, %r11d
+ 114 0095 B8010000 		movl	$1, %eax
+ 114      00
+ 115 009a B9010000 		movl	$1, %ecx
+ 115      00
+ 206:../../bos/utils/b_util_lunar.c ****             index++;
+GAS LISTING /tmp/cco6ZOMC.s 			page 7
+
+
+ 116              		.loc 1 206 20 view .LVU41
+ 117 009f 29F2     		subl	%esi, %edx
+ 118              	.LVL11:
+ 119              		.loc 1 208 75 view .LVU42
+ 120 00a1 41C1EB14 		shrl	$20, %r11d
+ 121              		.loc 1 208 24 view .LVU43
+ 122 00a5 0FB6F0   		movzbl	%al, %esi
+ 123              	.LVL12:
+ 124              		.loc 1 208 75 view .LVU44
+ 125 00a8 31DB     		xorl	%ebx, %ebx
+ 209:../../bos/utils/b_util_lunar.c ****             {
+ 210:../../bos/utils/b_util_lunar.c ****                 flag = ~flag;
+ 211:../../bos/utils/b_util_lunar.c ****                 if (flag == 0)
+ 212:../../bos/utils/b_util_lunar.c ****                 {
+ 213:../../bos/utils/b_util_lunar.c ****                     smonth++;
+ 214:../../bos/utils/b_util_lunar.c ****                 }
+ 215:../../bos/utils/b_util_lunar.c ****             }
+ 216:../../bos/utils/b_util_lunar.c ****             else
+ 217:../../bos/utils/b_util_lunar.c ****             {
+ 218:../../bos/utils/b_util_lunar.c ****                 smonth++;
+ 219:../../bos/utils/b_util_lunar.c ****             }
+ 220:../../bos/utils/b_util_lunar.c ****             if ((bLunarCalendarTable[syear - 1901] & (0x80000 >> (index - 1))) == 0)
+ 126              		.loc 1 220 63 view .LVU45
+ 127 00aa BD000008 		movl	$524288, %ebp
+ 127      00
+ 128              	.LVL13:
+ 206:../../bos/utils/b_util_lunar.c ****             index++;
+ 129              		.loc 1 206 13 is_stmt 1 view .LVU46
+ 207:../../bos/utils/b_util_lunar.c ****             if (smonth == ((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20))
+ 130              		.loc 1 207 13 view .LVU47
+ 208:../../bos/utils/b_util_lunar.c ****             {
+ 131              		.loc 1 208 75 is_stmt 0 view .LVU48
+ 132 00af 4183E30F 		andl	$15, %r11d
+ 207:../../bos/utils/b_util_lunar.c ****             if (smonth == ((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20))
+ 133              		.loc 1 207 18 view .LVU49
+ 134 00b3 8D7901   		leal	1(%rcx), %edi
+ 135              	.LVL14:
+ 208:../../bos/utils/b_util_lunar.c ****             {
+ 136              		.loc 1 208 13 is_stmt 1 view .LVU50
+ 208:../../bos/utils/b_util_lunar.c ****             {
+ 137              		.loc 1 208 16 is_stmt 0 view .LVU51
+ 138 00b6 4139F3   		cmpl	%esi, %r11d
+ 139 00b9 742E     		je	.L42
+ 140 00bb 0F1F4400 		.p2align 4,,10
+ 140      00
+ 141              		.p2align 3
+ 142              	.L10:
+ 218:../../bos/utils/b_util_lunar.c ****             }
+ 143              		.loc 1 218 17 is_stmt 1 view .LVU52
+ 144              		.loc 1 220 63 is_stmt 0 view .LVU53
+ 145 00c0 89EE     		movl	%ebp, %esi
+ 218:../../bos/utils/b_util_lunar.c ****             }
+ 146              		.loc 1 218 23 view .LVU54
+ 147 00c2 83C001   		addl	$1, %eax
+ 148              	.LVL15:
+ 149              		.loc 1 220 13 is_stmt 1 view .LVU55
+ 150              		.loc 1 220 63 is_stmt 0 view .LVU56
+GAS LISTING /tmp/cco6ZOMC.s 			page 8
+
+
+ 151 00c5 D3FE     		sarl	%cl, %esi
+ 152              		.loc 1 220 16 view .LVU57
+ 153 00c7 4485D6   		testl	%r10d, %esi
+ 154 00ca 742D     		je	.L12
+ 155              	.L43:
+ 156              	.LVL16:
+ 204:../../bos/utils/b_util_lunar.c ****         {
+ 157              		.loc 1 204 23 is_stmt 1 view .LVU58
+ 158 00cc 83FA1D   		cmpl	$29, %edx
+ 159 00cf 0F8EF300 		jle	.L9
+ 159      0000
+ 221:../../bos/utils/b_util_lunar.c ****             {
+ 222:../../bos/utils/b_util_lunar.c ****                 days_m = 29;
+ 223:../../bos/utils/b_util_lunar.c ****             }
+ 224:../../bos/utils/b_util_lunar.c ****             else
+ 225:../../bos/utils/b_util_lunar.c ****             {
+ 226:../../bos/utils/b_util_lunar.c ****                 days_m = 30;
+ 160              		.loc 1 226 24 is_stmt 0 view .LVU59
+ 161 00d5 BE1E0000 		movl	$30, %esi
+ 161      00
+ 207:../../bos/utils/b_util_lunar.c ****             if (smonth == ((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20))
+ 162              		.loc 1 207 18 view .LVU60
+ 163 00da 89F9     		movl	%edi, %ecx
+ 164              	.LVL17:
+ 165              	.L44:
+ 206:../../bos/utils/b_util_lunar.c ****             index++;
+ 166              		.loc 1 206 13 is_stmt 1 view .LVU61
+ 206:../../bos/utils/b_util_lunar.c ****             index++;
+ 167              		.loc 1 206 20 is_stmt 0 view .LVU62
+ 168 00dc 29F2     		subl	%esi, %edx
+ 169              	.LVL18:
+ 207:../../bos/utils/b_util_lunar.c ****             if (smonth == ((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20))
+ 170              		.loc 1 207 13 is_stmt 1 view .LVU63
+ 208:../../bos/utils/b_util_lunar.c ****             {
+ 171              		.loc 1 208 24 is_stmt 0 view .LVU64
+ 172 00de 0FB6F0   		movzbl	%al, %esi
+ 173              	.LVL19:
+ 207:../../bos/utils/b_util_lunar.c ****             if (smonth == ((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20))
+ 174              		.loc 1 207 18 view .LVU65
+ 175 00e1 8D7901   		leal	1(%rcx), %edi
+ 176              	.LVL20:
+ 208:../../bos/utils/b_util_lunar.c ****             {
+ 177              		.loc 1 208 13 is_stmt 1 view .LVU66
+ 208:../../bos/utils/b_util_lunar.c ****             {
+ 178              		.loc 1 208 16 is_stmt 0 view .LVU67
+ 179 00e4 4139F3   		cmpl	%esi, %r11d
+ 180 00e7 75D7     		jne	.L10
+ 181              	.LVL21:
+ 182              	.L42:
+ 210:../../bos/utils/b_util_lunar.c ****                 if (flag == 0)
+ 183              		.loc 1 210 17 is_stmt 1 view .LVU68
+ 210:../../bos/utils/b_util_lunar.c ****                 if (flag == 0)
+ 184              		.loc 1 210 22 is_stmt 0 view .LVU69
+ 185 00e9 F7D3     		notl	%ebx
+ 186              	.LVL22:
+ 211:../../bos/utils/b_util_lunar.c ****                 {
+ 187              		.loc 1 211 17 is_stmt 1 view .LVU70
+GAS LISTING /tmp/cco6ZOMC.s 			page 9
+
+
+ 220:../../bos/utils/b_util_lunar.c ****             {
+ 188              		.loc 1 220 63 is_stmt 0 view .LVU71
+ 189 00eb 89EE     		movl	%ebp, %esi
+ 213:../../bos/utils/b_util_lunar.c ****                 }
+ 190              		.loc 1 213 27 view .LVU72
+ 191 00ed 83FB01   		cmpl	$1, %ebx
+ 192 00f0 1400     		adcb	$0, %al
+ 193              	.LVL23:
+ 220:../../bos/utils/b_util_lunar.c ****             {
+ 194              		.loc 1 220 13 is_stmt 1 view .LVU73
+ 220:../../bos/utils/b_util_lunar.c ****             {
+ 195              		.loc 1 220 63 is_stmt 0 view .LVU74
+ 196 00f2 D3FE     		sarl	%cl, %esi
+ 220:../../bos/utils/b_util_lunar.c ****             {
+ 197              		.loc 1 220 16 view .LVU75
+ 198 00f4 4485D6   		testl	%r10d, %esi
+ 199 00f7 75D3     		jne	.L43
+ 200              	.L12:
+ 201              	.LVL24:
+ 204:../../bos/utils/b_util_lunar.c ****         {
+ 202              		.loc 1 204 23 is_stmt 1 view .LVU76
+ 203 00f9 83FA1C   		cmpl	$28, %edx
+ 204 00fc 0F8EC600 		jle	.L9
+ 204      0000
+ 204:../../bos/utils/b_util_lunar.c ****         {
+ 205              		.loc 1 204 23 is_stmt 0 view .LVU77
+ 206 0102 BE1D0000 		movl	$29, %esi
+ 206      00
+ 207:../../bos/utils/b_util_lunar.c ****             if (smonth == ((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20))
+ 207              		.loc 1 207 18 view .LVU78
+ 208 0107 89F9     		movl	%edi, %ecx
+ 209 0109 EBD1     		jmp	.L44
+ 210              	.LVL25:
+ 211 010b 0F1F4400 		.p2align 4,,10
+ 211      00
+ 212              		.p2align 3
+ 213              	.L7:
+ 227:../../bos/utils/b_util_lunar.c ****             }
+ 228:../../bos/utils/b_util_lunar.c ****         }
+ 229:../../bos/utils/b_util_lunar.c ****         sday = s_year + 1;
+ 230:../../bos/utils/b_util_lunar.c ****     }
+ 231:../../bos/utils/b_util_lunar.c ****     else
+ 232:../../bos/utils/b_util_lunar.c ****     {
+ 233:../../bos/utils/b_util_lunar.c ****         l_year -= s_year;
+ 214              		.loc 1 233 9 is_stmt 1 view .LVU79
+ 234:../../bos/utils/b_util_lunar.c ****         syear--;
+ 215              		.loc 1 234 14 is_stmt 0 view .LVU80
+ 216 0110 448D4FFF 		leal	-1(%rdi), %r9d
+ 233:../../bos/utils/b_util_lunar.c ****         syear--;
+ 217              		.loc 1 233 16 view .LVU81
+ 218 0114 29D6     		subl	%edx, %esi
+ 219              	.LVL26:
+ 220              		.loc 1 234 9 is_stmt 1 view .LVU82
+ 235:../../bos/utils/b_util_lunar.c ****         smonth = 12;
+ 221              		.loc 1 235 9 view .LVU83
+ 236:../../bos/utils/b_util_lunar.c ****         if (((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20) == 0)
+ 222              		.loc 1 236 9 view .LVU84
+GAS LISTING /tmp/cco6ZOMC.s 			page 10
+
+
+ 223              		.loc 1 236 41 is_stmt 0 view .LVU85
+ 224 0116 410FB7C1 		movzwl	%r9w, %eax
+ 225 011a 2D6D0700 		subl	$1901, %eax
+ 225      00
+ 226              		.loc 1 236 34 view .LVU86
+ 227 011f 4898     		cltq
+ 228 0121 448B1C81 		movl	(%rcx,%rax,4), %r11d
+ 229              		.loc 1 236 68 view .LVU87
+ 230 0125 4489DA   		movl	%r11d, %edx
+ 231              	.LVL27:
+ 232              		.loc 1 236 68 view .LVU88
+ 233 0128 81E20000 		andl	$15728640, %edx
+ 233      F000
+ 234              		.loc 1 236 12 view .LVU89
+ 235 012e 83FA01   		cmpl	$1, %edx
+ 236 0131 19C0     		sbbl	%eax, %eax
+ 237 0133 25800000 		andl	$128, %eax
+ 237      00
+ 238 0138 83E880   		subl	$-128, %eax
+ 239 013b 83FA01   		cmpl	$1, %edx
+ 240 013e 19C9     		sbbl	%ecx, %ecx
+ 237:../../bos/utils/b_util_lunar.c ****         {
+ 238:../../bos/utils/b_util_lunar.c ****             index = 12;
+ 239:../../bos/utils/b_util_lunar.c ****         }
+ 240:../../bos/utils/b_util_lunar.c ****         else
+ 241:../../bos/utils/b_util_lunar.c ****         {
+ 242:../../bos/utils/b_util_lunar.c ****             index = 13;
+ 243:../../bos/utils/b_util_lunar.c ****         }
+ 244:../../bos/utils/b_util_lunar.c ****         flag = 0;
+ 245:../../bos/utils/b_util_lunar.c ****         if ((bLunarCalendarTable[syear - 1901] & (0x80000 >> (index - 1))) == 0)
+ 241              		.loc 1 245 48 view .LVU90
+ 242 0140 4421D8   		andl	%r11d, %eax
+ 236:../../bos/utils/b_util_lunar.c ****         if (((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20) == 0)
+ 243              		.loc 1 236 12 view .LVU91
+ 244 0143 83C10D   		addl	$13, %ecx
+ 245              	.LVL28:
+ 244:../../bos/utils/b_util_lunar.c ****         if ((bLunarCalendarTable[syear - 1901] & (0x80000 >> (index - 1))) == 0)
+ 246              		.loc 1 244 9 is_stmt 1 view .LVU92
+ 247              		.loc 1 245 9 view .LVU93
+ 248              		.loc 1 245 12 is_stmt 0 view .LVU94
+ 249 0146 83F801   		cmpl	$1, %eax
+ 250 0149 19D2     		sbbl	%edx, %edx
+ 251 014b 83C21F   		addl	$31, %edx
+ 252 014e 83F801   		cmpl	$1, %eax
+ 253 0151 19FF     		sbbl	%edi, %edi
+ 254 0153 83C71E   		addl	$30, %edi
+ 255              	.LVL29:
+ 246:../../bos/utils/b_util_lunar.c ****         {
+ 247:../../bos/utils/b_util_lunar.c ****             days_m = 29;
+ 248:../../bos/utils/b_util_lunar.c ****         }
+ 249:../../bos/utils/b_util_lunar.c ****         else
+ 250:../../bos/utils/b_util_lunar.c ****         {
+ 251:../../bos/utils/b_util_lunar.c ****             days_m = 30;
+ 252:../../bos/utils/b_util_lunar.c ****         }
+ 253:../../bos/utils/b_util_lunar.c ****         while (l_year > days_m)
+ 256              		.loc 1 253 23 is_stmt 1 view .LVU95
+ 257 0156 39F7     		cmpl	%esi, %edi
+GAS LISTING /tmp/cco6ZOMC.s 			page 11
+
+
+ 258 0158 0F8DA200 		jge	.L31
+ 258      0000
+ 254:../../bos/utils/b_util_lunar.c ****         {
+ 255:../../bos/utils/b_util_lunar.c ****             l_year -= days_m;
+ 256:../../bos/utils/b_util_lunar.c ****             index--;
+ 257:../../bos/utils/b_util_lunar.c ****             if (flag == 0)
+ 258:../../bos/utils/b_util_lunar.c ****             {
+ 259:../../bos/utils/b_util_lunar.c ****                 smonth--;
+ 260:../../bos/utils/b_util_lunar.c ****             }
+ 261:../../bos/utils/b_util_lunar.c ****             if (smonth == ((bLunarCalendarTable[syear - 1901] & 0xF00000) >> 20))
+ 259              		.loc 1 261 75 is_stmt 0 view .LVU96
+ 260 015e 4489DB   		movl	%r11d, %ebx
+ 261 0161 83E902   		subl	$2, %ecx
+ 262              	.LVL30:
+ 263              		.loc 1 261 75 view .LVU97
+ 264 0164 31D2     		xorl	%edx, %edx
+ 265 0166 B80C0000 		movl	$12, %eax
+ 265      00
+ 266 016b C1EB14   		shrl	$20, %ebx
+ 262:../../bos/utils/b_util_lunar.c ****             {
+ 263:../../bos/utils/b_util_lunar.c ****                 flag = ~flag;
+ 264:../../bos/utils/b_util_lunar.c ****             }
+ 265:../../bos/utils/b_util_lunar.c ****             if ((bLunarCalendarTable[syear - 1901] & (0x80000 >> (index - 1))) == 0)
+ 267              		.loc 1 265 63 view .LVU98
+ 268 016e BD000008 		movl	$524288, %ebp
+ 268      00
+ 261:../../bos/utils/b_util_lunar.c ****             {
+ 269              		.loc 1 261 75 view .LVU99
+ 270 0173 83E30F   		andl	$15, %ebx
+ 271              	.LVL31:
+ 272 0176 662E0F1F 		.p2align 4,,10
+ 272      84000000 
+ 272      0000
+ 273              		.p2align 3
+ 274              	.L23:
+ 255:../../bos/utils/b_util_lunar.c ****             index--;
+ 275              		.loc 1 255 13 is_stmt 1 view .LVU100
+ 255:../../bos/utils/b_util_lunar.c ****             index--;
+ 276              		.loc 1 255 20 is_stmt 0 view .LVU101
+ 277 0180 29FE     		subl	%edi, %esi
+ 278              	.LVL32:
+ 256:../../bos/utils/b_util_lunar.c ****             if (flag == 0)
+ 279              		.loc 1 256 13 is_stmt 1 view .LVU102
+ 257:../../bos/utils/b_util_lunar.c ****             {
+ 280              		.loc 1 257 13 view .LVU103
+ 259:../../bos/utils/b_util_lunar.c ****             }
+ 281              		.loc 1 259 23 is_stmt 0 view .LVU104
+ 282 0182 83FA01   		cmpl	$1, %edx
+ 263:../../bos/utils/b_util_lunar.c ****             }
+ 283              		.loc 1 263 22 view .LVU105
+ 284 0185 89D7     		movl	%edx, %edi
+ 259:../../bos/utils/b_util_lunar.c ****             }
+ 285              		.loc 1 259 23 view .LVU106
+ 286 0187 1C00     		sbbb	$0, %al
+ 287              	.LVL33:
+ 261:../../bos/utils/b_util_lunar.c ****             {
+ 288              		.loc 1 261 13 is_stmt 1 view .LVU107
+GAS LISTING /tmp/cco6ZOMC.s 			page 12
+
+
+ 263:../../bos/utils/b_util_lunar.c ****             }
+ 289              		.loc 1 263 22 is_stmt 0 view .LVU108
+ 290 0189 F7D7     		notl	%edi
+ 261:../../bos/utils/b_util_lunar.c ****             {
+ 291              		.loc 1 261 24 view .LVU109
+ 292 018b 440FB6D0 		movzbl	%al, %r10d
+ 263:../../bos/utils/b_util_lunar.c ****             }
+ 293              		.loc 1 263 22 view .LVU110
+ 294 018f 4439D3   		cmpl	%r10d, %ebx
+ 295 0192 0F44D7   		cmove	%edi, %edx
+ 296              	.LVL34:
+ 297              		.loc 1 265 13 is_stmt 1 view .LVU111
+ 298              		.loc 1 265 63 is_stmt 0 view .LVU112
+ 299 0195 89EF     		movl	%ebp, %edi
+ 300 0197 D3FF     		sarl	%cl, %edi
+ 253:../../bos/utils/b_util_lunar.c ****         {
+ 301              		.loc 1 253 23 view .LVU113
+ 302 0199 83E901   		subl	$1, %ecx
+ 303              	.LVL35:
+ 304              		.loc 1 265 16 view .LVU114
+ 305 019c 4485DF   		testl	%r11d, %edi
+ 306 019f 740F     		je	.L21
+ 307              	.LVL36:
+ 253:../../bos/utils/b_util_lunar.c ****         {
+ 308              		.loc 1 253 23 is_stmt 1 view .LVU115
+ 309 01a1 83FE1E   		cmpl	$30, %esi
+ 310 01a4 7E3A     		jle	.L45
+ 266:../../bos/utils/b_util_lunar.c ****             {
+ 267:../../bos/utils/b_util_lunar.c ****                 days_m = 29;
+ 268:../../bos/utils/b_util_lunar.c ****             }
+ 269:../../bos/utils/b_util_lunar.c ****             else
+ 270:../../bos/utils/b_util_lunar.c ****             {
+ 271:../../bos/utils/b_util_lunar.c ****                 days_m = 30;
+ 311              		.loc 1 271 24 is_stmt 0 view .LVU116
+ 312 01a6 BF1E0000 		movl	$30, %edi
+ 312      00
+ 313 01ab EBD3     		jmp	.L23
+ 314              	.LVL37:
+ 315 01ad 0F1F00   		.p2align 4,,10
+ 316              		.p2align 3
+ 317              	.L21:
+ 253:../../bos/utils/b_util_lunar.c ****         {
+ 318              		.loc 1 253 23 is_stmt 1 view .LVU117
+ 319 01b0 83FE1D   		cmpl	$29, %esi
+ 320 01b3 7E3B     		jle	.L33
+ 321 01b5 BF1D0000 		movl	$29, %edi
+ 321      00
+ 322 01ba EBC4     		jmp	.L23
+ 323              	.LVL38:
+ 324 01bc 0F1F4000 		.p2align 4,,10
+ 325              		.p2align 3
+ 326              	.L27:
+ 204:../../bos/utils/b_util_lunar.c ****         {
+ 327              		.loc 1 204 23 is_stmt 0 view .LVU118
+ 328 01c0 B8010000 		movl	$1, %eax
+ 328      00
+ 329              	.LVL39:
+GAS LISTING /tmp/cco6ZOMC.s 			page 13
+
+
+ 330              		.p2align 4,,10
+ 331 01c5 0F1F00   		.p2align 3
+ 332              	.L9:
+ 229:../../bos/utils/b_util_lunar.c ****     }
+ 333              		.loc 1 229 9 is_stmt 1 view .LVU119
+ 229:../../bos/utils/b_util_lunar.c ****     }
+ 334              		.loc 1 229 14 is_stmt 0 view .LVU120
+ 335 01c8 83C201   		addl	$1, %edx
+ 336              	.LVL40:
+ 337              	.L15:
+ 272:../../bos/utils/b_util_lunar.c ****             }
+ 273:../../bos/utils/b_util_lunar.c ****         }
+ 274:../../bos/utils/b_util_lunar.c ****         sday = days_m - l_year + 1;
+ 275:../../bos/utils/b_util_lunar.c ****     }
+ 276:../../bos/utils/b_util_lunar.c ****     plunar->day   = sday;
+ 338              		.loc 1 276 5 is_stmt 1 view .LVU121
+ 277:../../bos/utils/b_util_lunar.c ****     plunar->month = smonth;
+ 339              		.loc 1 277 19 is_stmt 0 view .LVU122
+ 340 01cb 41884002 		movb	%al, 2(%r8)
+ 278:../../bos/utils/b_util_lunar.c ****     plunar->year  = syear;
+ 279:../../bos/utils/b_util_lunar.c ****     return 0;
+ 341              		.loc 1 279 12 view .LVU123
+ 342 01cf 31C0     		xorl	%eax, %eax
+ 343              	.LVL41:
+ 276:../../bos/utils/b_util_lunar.c ****     plunar->month = smonth;
+ 344              		.loc 1 276 19 view .LVU124
+ 345 01d1 41885003 		movb	%dl, 3(%r8)
+ 277:../../bos/utils/b_util_lunar.c ****     plunar->month = smonth;
+ 346              		.loc 1 277 5 is_stmt 1 view .LVU125
+ 278:../../bos/utils/b_util_lunar.c ****     plunar->year  = syear;
+ 347              		.loc 1 278 5 view .LVU126
+ 278:../../bos/utils/b_util_lunar.c ****     plunar->year  = syear;
+ 348              		.loc 1 278 19 is_stmt 0 view .LVU127
+ 349 01d5 66458908 		movw	%r9w, (%r8)
+ 350              		.loc 1 279 5 is_stmt 1 view .LVU128
+ 280:../../bos/utils/b_util_lunar.c **** }
+ 351              		.loc 1 280 1 is_stmt 0 view .LVU129
+ 352 01d9 5B       		popq	%rbx
+ 353              	.LCFI2:
+ 354              		.cfi_remember_state
+ 355              		.cfi_def_cfa_offset 16
+ 356 01da 5D       		popq	%rbp
+ 357              	.LCFI3:
+ 358              		.cfi_def_cfa_offset 8
+ 359 01db C3       		ret
+ 360              	.LVL42:
+ 361 01dc 0F1F4000 		.p2align 4,,10
+ 362              		.p2align 3
+ 363              	.L45:
+ 364              	.LCFI4:
+ 365              		.cfi_restore_state
+ 253:../../bos/utils/b_util_lunar.c ****         {
+ 366              		.loc 1 253 23 view .LVU130
+ 367 01e0 BA1F0000 		movl	$31, %edx
+ 367      00
+ 368              	.LVL43:
+ 274:../../bos/utils/b_util_lunar.c ****     }
+GAS LISTING /tmp/cco6ZOMC.s 			page 14
+
+
+ 369              		.loc 1 274 9 is_stmt 1 view .LVU131
+ 274:../../bos/utils/b_util_lunar.c ****     }
+ 370              		.loc 1 274 14 is_stmt 0 view .LVU132
+ 371 01e5 29F2     		subl	%esi, %edx
+ 372              	.LVL44:
+ 274:../../bos/utils/b_util_lunar.c ****     }
+ 373              		.loc 1 274 14 view .LVU133
+ 374 01e7 EBE2     		jmp	.L15
+ 375              	.LVL45:
+ 376 01e9 0F1F8000 		.p2align 4,,10
+ 376      000000
+ 377              		.p2align 3
+ 378              	.L33:
+ 253:../../bos/utils/b_util_lunar.c ****         {
+ 379              		.loc 1 253 23 view .LVU134
+ 380 01f0 BA1E0000 		movl	$30, %edx
+ 380      00
+ 381              	.LVL46:
+ 274:../../bos/utils/b_util_lunar.c ****     }
+ 382              		.loc 1 274 9 is_stmt 1 view .LVU135
+ 274:../../bos/utils/b_util_lunar.c ****     }
+ 383              		.loc 1 274 14 is_stmt 0 view .LVU136
+ 384 01f5 29F2     		subl	%esi, %edx
+ 385              	.LVL47:
+ 274:../../bos/utils/b_util_lunar.c ****     }
+ 386              		.loc 1 274 14 view .LVU137
+ 387 01f7 EBD2     		jmp	.L15
+ 388              	.LVL48:
+ 389 01f9 0F1F8000 		.p2align 4,,10
+ 389      000000
+ 390              		.p2align 3
+ 391              	.L31:
+ 253:../../bos/utils/b_util_lunar.c ****         {
+ 392              		.loc 1 253 23 view .LVU138
+ 393 0200 B80C0000 		movl	$12, %eax
+ 393      00
+ 274:../../bos/utils/b_util_lunar.c ****     }
+ 394              		.loc 1 274 9 is_stmt 1 view .LVU139
+ 274:../../bos/utils/b_util_lunar.c ****     }
+ 395              		.loc 1 274 14 is_stmt 0 view .LVU140
+ 396 0205 29F2     		subl	%esi, %edx
+ 397              	.LVL49:
+ 274:../../bos/utils/b_util_lunar.c ****     }
+ 398              		.loc 1 274 14 view .LVU141
+ 399 0207 EBC2     		jmp	.L15
+ 400              	.LVL50:
+ 401              	.L24:
+ 402              	.LCFI5:
+ 403              		.cfi_def_cfa_offset 8
+ 404              		.cfi_restore 3
+ 405              		.cfi_restore 6
+ 172:../../bos/utils/b_util_lunar.c ****     }
+ 406              		.loc 1 172 16 view .LVU142
+ 407 0209 B8FFFFFF 		movl	$-1, %eax
+ 407      FF
+ 408              		.loc 1 280 1 view .LVU143
+ 409 020e C3       		ret
+GAS LISTING /tmp/cco6ZOMC.s 			page 15
+
+
+ 410              		.cfi_endproc
+ 411              	.LFE17:
+ 413              		.section	.rodata.bLunarMonthSum,"a"
+ 414              		.align 32
+ 417              	bLunarMonthSum:
+ 418 0000 00000000 		.long	0
+ 419 0004 1F000000 		.long	31
+ 420 0008 3B000000 		.long	59
+ 421 000c 5A000000 		.long	90
+ 422 0010 78000000 		.long	120
+ 423 0014 97000000 		.long	151
+ 424 0018 B5000000 		.long	181
+ 425 001c D4000000 		.long	212
+ 426 0020 F3000000 		.long	243
+ 427 0024 11010000 		.long	273
+ 428 0028 30010000 		.long	304
+ 429 002c 4E010000 		.long	334
+ 430              		.section	.rodata.bLunarCalendarTable,"a"
+ 431              		.align 32
+ 434              	bLunarCalendarTable:
+ 435 0000 53AE0400 		.long	306771
+ 436 0004 48570A00 		.long	677704
+ 437 0008 BD265500 		.long	5580477
+ 438 000c 50260D00 		.long	861776
+ 439 0010 44950D00 		.long	890180
+ 440 0014 B9AA4600 		.long	4631225
+ 441 0018 4D6A0500 		.long	354893
+ 442 001c 42AD0900 		.long	634178
+ 443 0020 B6AE2400 		.long	2404022
+ 444 0024 4AAE0400 		.long	306762
+ 445 0028 BE4D6A00 		.long	6966718
+ 446 002c 524D0A00 		.long	675154
+ 447 0030 46250D00 		.long	861510
+ 448 0034 BA525D00 		.long	6116026
+ 449 0038 4E540B00 		.long	742478
+ 450 003c 436A0D00 		.long	879171
+ 451 0040 376D2900 		.long	2714935
+ 452 0044 4B5B0900 		.long	613195
+ 453 0048 C19B7400 		.long	7642049
+ 454 004c 54970400 		.long	300884
+ 455 0050 484B0A00 		.long	674632
+ 456 0054 BC255B00 		.long	5973436
+ 457 0058 50A50600 		.long	435536
+ 458 005c 45D40600 		.long	447557
+ 459 0060 B8DA4A00 		.long	4905656
+ 460 0064 4DB60200 		.long	177741
+ 461 0068 42570900 		.long	612162
+ 462 006c B7972400 		.long	2398135
+ 463 0070 4A970400 		.long	300874
+ 464 0074 3E4B6600 		.long	6703934
+ 465 0078 514A0D00 		.long	870993
+ 466 007c 46A50E00 		.long	959814
+ 467 0080 BAD45600 		.long	5690554
+ 468 0084 4EAD0500 		.long	372046
+ 469 0088 44B60200 		.long	177732
+ 470 008c 38373900 		.long	3749688
+ 471 0090 4B2E0900 		.long	601675
+GAS LISTING /tmp/cco6ZOMC.s 			page 16
+
+
+ 472 0094 BF967C00 		.long	8165055
+ 473 0098 53950C00 		.long	824659
+ 474 009c 484A0D00 		.long	870984
+ 475 00a0 3BA56D00 		.long	7185723
+ 476 00a4 4F550B00 		.long	742735
+ 477 00a8 456A0500 		.long	354885
+ 478 00ac B9AD4A00 		.long	4894137
+ 479 00b0 4D5D0200 		.long	154957
+ 480 00b4 422D0900 		.long	601410
+ 481 00b8 B6952C00 		.long	2921910
+ 482 00bc 4A950A00 		.long	693578
+ 483 00c0 BD4A7B00 		.long	8080061
+ 484 00c4 51CA0600 		.long	445009
+ 485 00c8 46550B00 		.long	742726
+ 486 00cc BB5A5500 		.long	5593787
+ 487 00d0 4EDA0400 		.long	318030
+ 488 00d4 435B0A00 		.long	678723
+ 489 00d8 B82B3500 		.long	3484600
+ 490 00dc 4C2B0500 		.long	338764
+ 491 00e0 3F958A00 		.long	9082175
+ 492 00e4 52950E00 		.long	955730
+ 493 00e8 48AA0600 		.long	436808
+ 494 00ec 3CD56A00 		.long	7001404
+ 495 00f0 4FB50A00 		.long	701775
+ 496 00f4 45B60400 		.long	308805
+ 497 00f8 39574A00 		.long	4871993
+ 498 00fc 4D570A00 		.long	677709
+ 499 0100 42260500 		.long	337474
+ 500 0104 35933E00 		.long	4100917
+ 501 0108 49950D00 		.long	890185
+ 502 010c BEAA7500 		.long	7711422
+ 503 0110 516A0500 		.long	354897
+ 504 0114 466D0900 		.long	617798
+ 505 0118 BBAE5400 		.long	5549755
+ 506 011c 4FAD0400 		.long	306511
+ 507 0120 434D0A00 		.long	675139
+ 508 0124 B7264D00 		.long	5056183
+ 509 0128 4B250D00 		.long	861515
+ 510 012c BF528D00 		.long	9261759
+ 511 0130 52540B00 		.long	742482
+ 512 0134 476A0B00 		.long	748103
+ 513 0138 3C6D6900 		.long	6909244
+ 514 013c 505B0900 		.long	613200
+ 515 0140 459B0400 		.long	301893
+ 516 0144 B94B4A00 		.long	4869049
+ 517 0148 4D4B0A00 		.long	674637
+ 518 014c C225AB00 		.long	11216322
+ 519 0150 54A50600 		.long	435540
+ 520 0154 49D40600 		.long	447561
+ 521 0158 3DDA6A00 		.long	7002685
+ 522 015c 51B60A00 		.long	702033
+ 523 0160 46370900 		.long	603974
+ 524 0164 BB975400 		.long	5543867
+ 525 0168 4F970400 		.long	300879
+ 526 016c 444B0600 		.long	412484
+ 527 0170 37A53600 		.long	3581239
+ 528 0174 4AA50E00 		.long	959818
+GAS LISTING /tmp/cco6ZOMC.s 			page 17
+
+
+ 529 0178 BFB28600 		.long	8827583
+ 530 017c 53AC0500 		.long	371795
+ 531 0180 47B60A00 		.long	702023
+ 532 0184 BC365900 		.long	5846716
+ 533 0188 502E0900 		.long	601680
+ 534 018c 45960C00 		.long	824901
+ 535 0190 B84A4D00 		.long	5065400
+ 536 0194 4C4A0D00 		.long	870988
+ 537 0198 41A50D00 		.long	894273
+ 538 019c B6AA2500 		.long	2468534
+ 539 01a0 496A0500 		.long	354889
+ 540 01a4 BDAD7A00 		.long	8039869
+ 541 01a8 525D0200 		.long	154962
+ 542 01ac 472D0900 		.long	601415
+ 543 01b0 BA955C00 		.long	6067642
+ 544 01b4 4E950A00 		.long	693582
+ 545 01b8 434A0B00 		.long	739907
+ 546 01bc 37554B00 		.long	4937015
+ 547 01c0 4AD50A00 		.long	709962
+ 548 01c4 BF5A9500 		.long	9788095
+ 549 01c8 53BA0400 		.long	309843
+ 550 01cc 485B0A00 		.long	678728
+ 551 01d0 BC2B6500 		.long	6630332
+ 552 01d4 502B0500 		.long	338768
+ 553 01d8 45930A00 		.long	693061
+ 554 01dc B94A4700 		.long	4672185
+ 555 01e0 4CAA0600 		.long	436812
+ 556 01e4 41D50A00 		.long	709953
+ 557 01e8 B6DA2400 		.long	2415286
+ 558 01ec 4AB60400 		.long	308810
+ 559 01f0 3D576900 		.long	6903613
+ 560 01f4 514E0A00 		.long	675409
+ 561 01f8 46260D00 		.long	861766
+ 562 01fc 3A935E00 		.long	6198074
+ 563 0200 4D530D00 		.long	873293
+ 564 0204 43AA0500 		.long	371267
+ 565 0208 37B53600 		.long	3585335
+ 566 020c 4B6D0900 		.long	617803
+ 567 0210 BFAEB400 		.long	11841215
+ 568 0214 53AD0400 		.long	306515
+ 569 0218 484D0A00 		.long	675144
+ 570 021c BC256D00 		.long	7153084
+ 571 0220 4F250D00 		.long	861519
+ 572 0224 44520D00 		.long	873028
+ 573 0228 38AA5D00 		.long	6138424
+ 574 022c 4C5A0B00 		.long	744012
+ 575 0230 416D0500 		.long	355649
+ 576 0234 B6AD2400 		.long	2403766
+ 577 0238 4A9B0400 		.long	301898
+ 578 023c BE4B7A00 		.long	8014782
+ 579 0240 514B0A00 		.long	674641
+ 580 0244 46A50A00 		.long	697670
+ 581 0248 BA525B00 		.long	5984954
+ 582 024c 4ED20600 		.long	447054
+ 583 0250 42DA0A00 		.long	711234
+ 584 0254 375B3500 		.long	3496759
+ 585 0258 4B370900 		.long	603979
+GAS LISTING /tmp/cco6ZOMC.s 			page 18
+
+
+ 586 025c C1978400 		.long	8689601
+ 587 0260 53970400 		.long	300883
+ 588 0264 484B0600 		.long	412488
+ 589 0268 3CA56600 		.long	6726972
+ 590 026c 4FA50E00 		.long	959823
+ 591 0270 44B20600 		.long	438852
+ 592 0274 38B64A00 		.long	4896312
+ 593 0278 4CAE0A00 		.long	699980
+ 594 027c 422E0900 		.long	601666
+ 595 0280 35973C00 		.long	3970869
+ 596 0284 49960C00 		.long	824905
+ 597 0288 BD4A7D00 		.long	8211133
+ 598 028c 514A0D00 		.long	870993
+ 599 0290 45A50D00 		.long	894277
+ 600 0294 BAAA5500 		.long	5614266
+ 601 0298 4E6A0500 		.long	354894
+ 602 029c 436D0A00 		.long	683331
+ 603 02a0 B72E4500 		.long	4533943
+ 604 02a4 4B2D0500 		.long	339275
+ 605 02a8 BF958A00 		.long	9082303
+ 606 02ac 53950A00 		.long	693587
+ 607 02b0 474A0B00 		.long	739911
+ 608 02b4 3B556B00 		.long	7034171
+ 609 02b8 4FD50A00 		.long	709967
+ 610 02bc 455A0500 		.long	350789
+ 611 02c0 385D4A00 		.long	4873528
+ 612 02c4 4C5B0A00 		.long	678732
+ 613 02c8 422B0500 		.long	338754
+ 614 02cc B6933A00 		.long	3838902
+ 615 02d0 49930600 		.long	430921
+ 616 02d4 BD297700 		.long	7809469
+ 617 02d8 51AA0600 		.long	436817
+ 618 02dc 46D50A00 		.long	709958
+ 619 02e0 BADA5400 		.long	5561018
+ 620 02e4 4EB60400 		.long	308814
+ 621 02e8 43570A00 		.long	677699
+ 622 02ec 38274500 		.long	4532024
+ 623 02f0 4A260D00 		.long	861770
+ 624 02f4 3E938E00 		.long	9343806
+ 625 02f8 52520D00 		.long	873042
+ 626 02fc 47AA0D00 		.long	895559
+ 627 0300 3BB56600 		.long	6731067
+ 628 0304 4F6D0500 		.long	355663
+ 629 0308 45AE0400 		.long	306757
+ 630 030c B94E4A00 		.long	4869817
+ 631 0310 4C4D0A00 		.long	675148
+ 632 0314 41150D00 		.long	857409
+ 633 0318 B5922D00 		.long	2986677
+ 634              		.text
+ 635              	.Letext0:
+ 636              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 637              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 638              		.file 4 "../../bos/utils/inc/b_util_lunar.h"
+ 1828              		.section	.note.gnu.property,"a"
+ 1829              		.align 8
+ 1830 0000 04000000 		.long	1f - 0f
+ 1831 0004 10000000 		.long	4f - 1f
+GAS LISTING /tmp/cco6ZOMC.s 			page 19
+
+
+ 1832 0008 05000000 		.long	5
+ 1833              	0:
+ 1834 000c 474E5500 		.string	"GNU"
+ 1835              	1:
+ 1836              		.align 8
+ 1837 0010 020000C0 		.long	0xc0000002
+ 1838 0014 04000000 		.long	3f - 2f
+ 1839              	2:
+ 1840 0018 03000000 		.long	0x3
+ 1841              	3:
+ 1842 001c 00000000 		.align 8
+ 1843              	4:
+GAS LISTING /tmp/cco6ZOMC.s 			page 20
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_util_lunar.c
+     /tmp/cco6ZOMC.s:9      .text.bSolar2Lunar:0000000000000000 bSolar2Lunar
+     /tmp/cco6ZOMC.s:434    .rodata.bLunarCalendarTable:0000000000000000 bLunarCalendarTable
+     /tmp/cco6ZOMC.s:417    .rodata.bLunarMonthSum:0000000000000000 bLunarMonthSum
+
+NO UNDEFINED SYMBOLS

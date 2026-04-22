@@ -1,0 +1,706 @@
+GAS LISTING /tmp/ccX7ljow.s 			page 1
+
+
+   1              		.file	"b_util_tools.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/utils/b_util_tools.c"
+   5              		.section	.text.bParseString,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	bParseString
+   9              	bParseString:
+  10              	.LVL0:
+  11              	.LFB17:
+   1:../../bos/utils/b_util_tools.c **** #include "utils/inc/b_util_tools.h"
+   2:../../bos/utils/b_util_tools.c **** 
+   3:../../bos/utils/b_util_tools.c **** #include <stdint.h>
+   4:../../bos/utils/b_util_tools.c **** #include <stdlib.h>
+   5:../../bos/utils/b_util_tools.c **** #include <string.h>
+   6:../../bos/utils/b_util_tools.c **** 
+   7:../../bos/utils/b_util_tools.c **** /**
+   8:../../bos/utils/b_util_tools.c ****  * @brief 按分隔符分割字符串并提取指定索引段数据
+   9:../../bos/utils/b_util_tools.c ****  * @param string 输入字符串
+  10:../../bos/utils/b_util_tools.c ****  * @param delimiter 分隔符
+  11:../../bos/utils/b_util_tools.c ****  * @param index 要提取的段索引（从0开始）
+  12:../../bos/utils/b_util_tools.c ****  * @param pnumber 输出：提取段转换后的整数值（无法转换则为0）
+  13:../../bos/utils/b_util_tools.c ****  * @param pstr 输出：提取段字符串的起始指针
+  14:../../bos/utils/b_util_tools.c ****  * @return 0-成功，-1-索引越界，-2-入参非法
+  15:../../bos/utils/b_util_tools.c ****  */
+  16:../../bos/utils/b_util_tools.c **** int bParseString(const char *string, const char *delimiter, uint8_t index, int32_t *pnumber,
+  17:../../bos/utils/b_util_tools.c ****                  const char **pstr)
+  18:../../bos/utils/b_util_tools.c **** {
+  12              		.loc 1 18 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 18 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  16 0004 4157     		pushq	%r15
+  17              	.LCFI0:
+  18              		.cfi_def_cfa_offset 16
+  19              		.cfi_offset 15, -16
+  20 0006 4156     		pushq	%r14
+  21              	.LCFI1:
+  22              		.cfi_def_cfa_offset 24
+  23              		.cfi_offset 14, -24
+  24 0008 4155     		pushq	%r13
+  25              	.LCFI2:
+  26              		.cfi_def_cfa_offset 32
+  27              		.cfi_offset 13, -32
+  28 000a 4154     		pushq	%r12
+  29              	.LCFI3:
+  30              		.cfi_def_cfa_offset 40
+  31              		.cfi_offset 12, -40
+  32 000c 55       		pushq	%rbp
+  33              	.LCFI4:
+  34              		.cfi_def_cfa_offset 48
+  35              		.cfi_offset 6, -48
+  36 000d 53       		pushq	%rbx
+  37              	.LCFI5:
+  38              		.cfi_def_cfa_offset 56
+  39              		.cfi_offset 3, -56
+  40 000e 4883EC58 		subq	$88, %rsp
+GAS LISTING /tmp/ccX7ljow.s 			page 2
+
+
+  41              	.LCFI6:
+  42              		.cfi_def_cfa_offset 144
+  43              		.loc 1 18 1 view .LVU2
+  44 0012 4C894424 		movq	%r8, 8(%rsp)
+  44      08
+  45 0017 64488B04 		movq	%fs:40, %rax
+  45      25280000 
+  45      00
+  46 0020 48894424 		movq	%rax, 72(%rsp)
+  46      48
+  47 0025 31C0     		xorl	%eax, %eax
+  19:../../bos/utils/b_util_tools.c ****     if (string == NULL || delimiter == NULL || pnumber == NULL || pstr == NULL)
+  48              		.loc 1 19 5 is_stmt 1 view .LVU3
+  49              		.loc 1 19 8 is_stmt 0 view .LVU4
+  50 0027 4885FF   		testq	%rdi, %rdi
+  51 002a 0F846301 		je	.L12
+  51      0000
+  52 0030 4889F5   		movq	%rsi, %rbp
+  53 0033 4885F6   		testq	%rsi, %rsi
+  54 0036 0F845701 		je	.L12
+  54      0000
+  55 003c 4989CE   		movq	%rcx, %r14
+  56              		.loc 1 19 64 discriminator 1 view .LVU5
+  57 003f 4885C9   		testq	%rcx, %rcx
+  58 0042 0F844B01 		je	.L12
+  58      0000
+  59 0048 4D85C0   		testq	%r8, %r8
+  60 004b 0F844201 		je	.L12
+  60      0000
+  61 0051 4889FB   		movq	%rdi, %rbx
+  20:../../bos/utils/b_util_tools.c ****     {
+  21:../../bos/utils/b_util_tools.c ****         return -2;
+  22:../../bos/utils/b_util_tools.c ****     }
+  23:../../bos/utils/b_util_tools.c **** 
+  24:../../bos/utils/b_util_tools.c ****     uint8_t     delim_len     = strlen(delimiter);
+  62              		.loc 1 24 33 view .LVU6
+  63 0054 4889F7   		movq	%rsi, %rdi
+  64              	.LVL1:
+  65              		.loc 1 24 33 view .LVU7
+  66 0057 4189D4   		movl	%edx, %r12d
+  67 005a 4189D5   		movl	%edx, %r13d
+  68              		.loc 1 24 5 is_stmt 1 view .LVU8
+  69              		.loc 1 24 33 is_stmt 0 view .LVU9
+  70 005d E8000000 		call	strlen@PLT
+  70      00
+  71              	.LVL2:
+  25:../../bos/utils/b_util_tools.c ****     const char *current_pos   = string;  // 当前遍历起始位置
+  72              		.loc 1 25 5 is_stmt 1 view .LVU10
+  26:../../bos/utils/b_util_tools.c ****     const char *segment_start = string;  // 目标段起始位置
+  73              		.loc 1 26 5 view .LVU11
+  27:../../bos/utils/b_util_tools.c ****     uint8_t     current_index = 0;       // 当前遍历到的段索引
+  74              		.loc 1 27 5 view .LVU12
+  28:../../bos/utils/b_util_tools.c ****     *pnumber                  = 0;       // 默认值初始化
+  75              		.loc 1 28 5 view .LVU13
+  76              		.loc 1 28 31 is_stmt 0 view .LVU14
+  77 0062 41C70600 		movl	$0, (%r14)
+  77      000000
+GAS LISTING /tmp/ccX7ljow.s 			page 3
+
+
+  27:../../bos/utils/b_util_tools.c ****     uint8_t     current_index = 0;       // 当前遍历到的段索引
+  78              		.loc 1 27 17 view .LVU15
+  79 0069 4531FF   		xorl	%r15d, %r15d
+  80              	.LBB9:
+  29:../../bos/utils/b_util_tools.c **** 
+  30:../../bos/utils/b_util_tools.c ****     while (1)
+  31:../../bos/utils/b_util_tools.c ****     {
+  32:../../bos/utils/b_util_tools.c ****         const char *delim_pos = strstr(current_pos, delimiter);
+  33:../../bos/utils/b_util_tools.c ****         if (delim_pos != NULL && current_index < index)
+  34:../../bos/utils/b_util_tools.c ****         {
+  35:../../bos/utils/b_util_tools.c ****             current_index++;                        // 索引+1
+  36:../../bos/utils/b_util_tools.c ****             current_pos   = delim_pos + delim_len;  // 下一段起始位置（跳过分隔符）
+  81              		.loc 1 36 27 view .LVU16
+  82 006c 0FB6C0   		movzbl	%al, %eax
+  83              		.loc 1 36 27 view .LVU17
+  84 006f 48890424 		movq	%rax, (%rsp)
+  85              	.LVL3:
+  86              	.L3:
+  87              		.loc 1 36 27 view .LVU18
+  88              	.LBE9:
+  30:../../bos/utils/b_util_tools.c ****     {
+  89              		.loc 1 30 5 is_stmt 1 view .LVU19
+  90              	.LBB17:
+  32:../../bos/utils/b_util_tools.c ****         if (delim_pos != NULL && current_index < index)
+  91              		.loc 1 32 9 view .LVU20
+  32:../../bos/utils/b_util_tools.c ****         if (delim_pos != NULL && current_index < index)
+  92              		.loc 1 32 33 is_stmt 0 view .LVU21
+  93 0073 4889EE   		movq	%rbp, %rsi
+  94 0076 4889DF   		movq	%rbx, %rdi
+  95 0079 E8000000 		call	strstr@PLT
+  95      00
+  96              	.LVL4:
+  33:../../bos/utils/b_util_tools.c ****         {
+  97              		.loc 1 33 9 is_stmt 1 view .LVU22
+  33:../../bos/utils/b_util_tools.c ****         {
+  98              		.loc 1 33 23 is_stmt 0 view .LVU23
+  99 007e 4885C0   		testq	%rax, %rax
+ 100 0081 0F95C1   		setne	%cl
+  33:../../bos/utils/b_util_tools.c ****         {
+ 101              		.loc 1 33 12 view .LVU24
+ 102 0084 4538EF   		cmpb	%r13b, %r15b
+ 103 0087 7317     		jnb	.L5
+ 104 0089 84C9     		testb	%cl, %cl
+ 105 008b 7413     		je	.L5
+  35:../../bos/utils/b_util_tools.c ****             current_pos   = delim_pos + delim_len;  // 下一段起始位置（跳过分隔符）
+ 106              		.loc 1 35 13 is_stmt 1 view .LVU25
+ 107              	.LVL5:
+ 108              		.loc 1 36 27 is_stmt 0 view .LVU26
+ 109 008d 488B3C24 		movq	(%rsp), %rdi
+  35:../../bos/utils/b_util_tools.c ****             current_pos   = delim_pos + delim_len;  // 下一段起始位置（跳过分隔符）
+ 110              		.loc 1 35 26 view .LVU27
+ 111 0091 4183C701 		addl	$1, %r15d
+ 112              	.LVL6:
+ 113              		.loc 1 36 13 is_stmt 1 view .LVU28
+ 114              		.loc 1 36 27 is_stmt 0 view .LVU29
+ 115 0095 488D1C38 		leaq	(%rax,%rdi), %rbx
+  37:../../bos/utils/b_util_tools.c ****             segment_start = current_pos;            // 更新段起始位置
+GAS LISTING /tmp/ccX7ljow.s 			page 4
+
+
+ 116              		.loc 1 37 13 is_stmt 1 view .LVU30
+  38:../../bos/utils/b_util_tools.c ****             continue;
+ 117              		.loc 1 38 13 view .LVU31
+ 118 0099 EBD8     		jmp	.L3
+ 119              	.LVL7:
+ 120 009b 0F1F4400 		.p2align 4,,10
+ 120      00
+ 121              		.p2align 3
+ 122              	.L5:
+  39:../../bos/utils/b_util_tools.c ****         }
+  40:../../bos/utils/b_util_tools.c ****         if (delim_pos != NULL && current_index == index)
+ 123              		.loc 1 40 9 view .LVU32
+ 124              		.loc 1 40 12 is_stmt 0 view .LVU33
+ 125 00a0 4538E7   		cmpb	%r12b, %r15b
+ 126 00a3 7504     		jne	.L6
+ 127 00a5 84C9     		testb	%cl, %cl
+ 128 00a7 750F     		jne	.L36
+ 129              	.L6:
+  41:../../bos/utils/b_util_tools.c ****         {
+  42:../../bos/utils/b_util_tools.c ****             *pstr               = segment_start;
+  43:../../bos/utils/b_util_tools.c ****             char   temp_buf[32] = {0};
+  44:../../bos/utils/b_util_tools.c ****             size_t segment_len  = delim_pos - segment_start;
+  45:../../bos/utils/b_util_tools.c ****             if (segment_len > sizeof(temp_buf) - 1)
+  46:../../bos/utils/b_util_tools.c ****             {
+  47:../../bos/utils/b_util_tools.c ****                 segment_len = sizeof(temp_buf) - 1;
+  48:../../bos/utils/b_util_tools.c ****             }
+  49:../../bos/utils/b_util_tools.c ****             strncpy(temp_buf, segment_start, segment_len);
+  50:../../bos/utils/b_util_tools.c **** 
+  51:../../bos/utils/b_util_tools.c ****             char     *end_ptr = NULL;
+  52:../../bos/utils/b_util_tools.c ****             long long num     = strtoll(temp_buf, &end_ptr, 10);
+  53:../../bos/utils/b_util_tools.c ****             if (end_ptr != temp_buf && *end_ptr == '\0' && num >= INT32_MIN && num <= INT32_MAX)
+  54:../../bos/utils/b_util_tools.c ****             {
+  55:../../bos/utils/b_util_tools.c ****                 *pnumber = (int32_t)num;
+  56:../../bos/utils/b_util_tools.c ****             }
+  57:../../bos/utils/b_util_tools.c ****             return 0;
+  58:../../bos/utils/b_util_tools.c ****         }
+  59:../../bos/utils/b_util_tools.c **** 
+  60:../../bos/utils/b_util_tools.c ****         if (delim_pos == NULL)
+ 130              		.loc 1 60 9 is_stmt 1 view .LVU34
+ 131              		.loc 1 60 12 is_stmt 0 view .LVU35
+ 132 00a9 4885C0   		testq	%rax, %rax
+ 133 00ac 0F84A600 		je	.L37
+ 133      0000
+ 134              	.LVL8:
+ 135              	.L4:
+ 136              		.loc 1 60 12 view .LVU36
+ 137              	.LBE17:
+  30:../../bos/utils/b_util_tools.c ****     {
+ 138              		.loc 1 30 5 is_stmt 1 view .LVU37
+ 139              	.LBB18:
+  32:../../bos/utils/b_util_tools.c ****         if (delim_pos != NULL && current_index < index)
+ 140              		.loc 1 32 9 view .LVU38
+  33:../../bos/utils/b_util_tools.c ****         {
+ 141              		.loc 1 33 9 view .LVU39
+  40:../../bos/utils/b_util_tools.c ****         {
+ 142              		.loc 1 40 9 view .LVU40
+ 143              		.loc 1 60 9 view .LVU41
+GAS LISTING /tmp/ccX7ljow.s 			page 5
+
+
+ 144              		.loc 1 60 9 is_stmt 0 view .LVU42
+ 145              	.LBE18:
+  30:../../bos/utils/b_util_tools.c ****     {
+ 146              		.loc 1 30 5 is_stmt 1 view .LVU43
+ 147              	.LBB19:
+  32:../../bos/utils/b_util_tools.c ****         if (delim_pos != NULL && current_index < index)
+ 148              		.loc 1 32 9 view .LVU44
+  33:../../bos/utils/b_util_tools.c ****         {
+ 149              		.loc 1 33 9 view .LVU45
+  40:../../bos/utils/b_util_tools.c ****         {
+ 150              		.loc 1 40 9 view .LVU46
+ 151              		.loc 1 60 9 view .LVU47
+ 152              		.loc 1 60 9 is_stmt 0 view .LVU48
+ 153 00b2 EBFE     		jmp	.L4
+ 154              	.LVL9:
+ 155              		.p2align 4,,10
+ 156 00b4 0F1F4000 		.p2align 3
+ 157              	.L36:
+ 158              	.LBB10:
+  42:../../bos/utils/b_util_tools.c ****             char   temp_buf[32] = {0};
+ 159              		.loc 1 42 13 is_stmt 1 view .LVU49
+  44:../../bos/utils/b_util_tools.c ****             if (segment_len > sizeof(temp_buf) - 1)
+ 160              		.loc 1 44 45 is_stmt 0 view .LVU50
+ 161 00b8 4829D8   		subq	%rbx, %rax
+ 162              	.LVL10:
+  42:../../bos/utils/b_util_tools.c ****             char   temp_buf[32] = {0};
+ 163              		.loc 1 42 33 view .LVU51
+ 164 00bb 488B7424 		movq	8(%rsp), %rsi
+ 164      08
+  43:../../bos/utils/b_util_tools.c ****             size_t segment_len  = delim_pos - segment_start;
+ 165              		.loc 1 43 20 view .LVU52
+ 166 00c0 660FEFC0 		pxor	%xmm0, %xmm0
+  44:../../bos/utils/b_util_tools.c ****             if (segment_len > sizeof(temp_buf) - 1)
+ 167              		.loc 1 44 45 view .LVU53
+ 168 00c4 4889C2   		movq	%rax, %rdx
+  45:../../bos/utils/b_util_tools.c ****             {
+ 169              		.loc 1 45 16 view .LVU54
+ 170 00c7 B81F0000 		movl	$31, %eax
+ 170      00
+  43:../../bos/utils/b_util_tools.c ****             size_t segment_len  = delim_pos - segment_start;
+ 171              		.loc 1 43 20 view .LVU55
+ 172 00cc 0F294424 		movaps	%xmm0, 32(%rsp)
+ 172      20
+  45:../../bos/utils/b_util_tools.c ****             {
+ 173              		.loc 1 45 16 view .LVU56
+ 174 00d1 4839C2   		cmpq	%rax, %rdx
+  42:../../bos/utils/b_util_tools.c ****             char   temp_buf[32] = {0};
+ 175              		.loc 1 42 33 view .LVU57
+ 176 00d4 48891E   		movq	%rbx, (%rsi)
+  43:../../bos/utils/b_util_tools.c ****             size_t segment_len  = delim_pos - segment_start;
+ 177              		.loc 1 43 13 is_stmt 1 view .LVU58
+  45:../../bos/utils/b_util_tools.c ****             {
+ 178              		.loc 1 45 16 is_stmt 0 view .LVU59
+ 179 00d7 480F47D0 		cmova	%rax, %rdx
+  43:../../bos/utils/b_util_tools.c ****             size_t segment_len  = delim_pos - segment_start;
+ 180              		.loc 1 43 20 view .LVU60
+ 181 00db 0F294424 		movaps	%xmm0, 48(%rsp)
+GAS LISTING /tmp/ccX7ljow.s 			page 6
+
+
+ 181      30
+  44:../../bos/utils/b_util_tools.c ****             if (segment_len > sizeof(temp_buf) - 1)
+ 182              		.loc 1 44 13 is_stmt 1 view .LVU61
+  45:../../bos/utils/b_util_tools.c ****             {
+ 183              		.loc 1 45 13 view .LVU62
+  49:../../bos/utils/b_util_tools.c **** 
+ 184              		.loc 1 49 13 view .LVU63
+ 185              	.LVL11:
+ 186              	.LBB11:
+ 187              	.LBI11:
+ 188              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+GAS LISTING /tmp/ccX7ljow.s 			page 7
+
+
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+  60:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  61:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  62:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  63:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_MISC
+  64:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # include <bits/strings_fortified.h>
+  65:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  66:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** void __explicit_bzero_chk (void *__dest, size_t __len, size_t __destlen)
+  67:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   __THROW __nonnull ((1)) __fortified_attr_access (__write_only__, 1, 2);
+  68:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  69:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void
+  70:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (explicit_bzero (void *__dest, size_t __len))
+  71:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  72:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   __explicit_bzero_chk (__dest, __len, __glibc_objsize0 (__dest));
+  73:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  74:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  75:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  76:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function char *
+  77:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (strcpy (char *__restrict __dest, const char *__restrict __src))
+  78:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  79:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___strcpy_chk (__dest, __src, __glibc_objsize (__dest));
+  80:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  81:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  82:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_XOPEN2K8
+  83:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function char *
+  84:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (stpcpy (char *__restrict __dest, const char *__restrict __src))
+  85:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  86:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___stpcpy_chk (__dest, __src, __glibc_objsize (__dest));
+  87:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  88:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  89:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  90:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  91:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function char *
+  92:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (strncpy (char *__restrict __dest, const char *__restrict __src,
+ 189              		.loc 2 92 1 view .LVU64
+ 190              	.LBB12:
+  93:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  94:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  95:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___strncpy_chk (__dest, __src, __len,
+ 191              		.loc 2 95 3 view .LVU65
+ 192              	.L34:
+ 193              		.loc 2 95 10 is_stmt 0 discriminator 1 view .LVU66
+ 194 00e0 488D6C24 		leaq	32(%rsp), %rbp
+ 194      20
+ 195              	.LVL12:
+GAS LISTING /tmp/ccX7ljow.s 			page 8
+
+
+ 196              		.loc 2 95 10 discriminator 1 view .LVU67
+ 197 00e5 4889DE   		movq	%rbx, %rsi
+ 198 00e8 4889EF   		movq	%rbp, %rdi
+ 199 00eb E8000000 		call	strncpy@PLT
+ 199      00
+ 200              	.LVL13:
+ 201              	.LBE12:
+ 202              	.LBE11:
+  51:../../bos/utils/b_util_tools.c ****             long long num     = strtoll(temp_buf, &end_ptr, 10);
+ 203              		.loc 1 51 13 is_stmt 1 view .LVU68
+  52:../../bos/utils/b_util_tools.c ****             if (end_ptr != temp_buf && *end_ptr == '\0' && num >= INT32_MIN && num <= INT32_MAX)
+ 204              		.loc 1 52 33 is_stmt 0 view .LVU69
+ 205 00f0 BA0A0000 		movl	$10, %edx
+ 205      00
+ 206 00f5 488D7424 		leaq	24(%rsp), %rsi
+ 206      18
+ 207 00fa 4889EF   		movq	%rbp, %rdi
+  51:../../bos/utils/b_util_tools.c ****             long long num     = strtoll(temp_buf, &end_ptr, 10);
+ 208              		.loc 1 51 23 view .LVU70
+ 209 00fd 48C74424 		movq	$0, 24(%rsp)
+ 209      18000000 
+ 209      00
+  52:../../bos/utils/b_util_tools.c ****             if (end_ptr != temp_buf && *end_ptr == '\0' && num >= INT32_MIN && num <= INT32_MAX)
+ 210              		.loc 1 52 13 is_stmt 1 view .LVU71
+  52:../../bos/utils/b_util_tools.c ****             if (end_ptr != temp_buf && *end_ptr == '\0' && num >= INT32_MIN && num <= INT32_MAX)
+ 211              		.loc 1 52 33 is_stmt 0 view .LVU72
+ 212 0106 E8000000 		call	strtoll@PLT
+ 212      00
+ 213              	.LVL14:
+  53:../../bos/utils/b_util_tools.c ****             {
+ 214              		.loc 1 53 13 is_stmt 1 view .LVU73
+  53:../../bos/utils/b_util_tools.c ****             {
+ 215              		.loc 1 53 25 is_stmt 0 view .LVU74
+ 216 010b 488B5424 		movq	24(%rsp), %rdx
+ 216      18
+  53:../../bos/utils/b_util_tools.c ****             {
+ 217              		.loc 1 53 16 view .LVU75
+ 218 0110 4839EA   		cmpq	%rbp, %rdx
+ 219 0113 7405     		je	.L9
+  53:../../bos/utils/b_util_tools.c ****             {
+ 220              		.loc 1 53 37 discriminator 1 view .LVU76
+ 221 0115 803A00   		cmpb	$0, (%rdx)
+ 222 0118 7426     		je	.L38
+ 223              	.L9:
+  57:../../bos/utils/b_util_tools.c ****         }
+ 224              		.loc 1 57 20 view .LVU77
+ 225 011a 31C0     		xorl	%eax, %eax
+ 226              	.LVL15:
+ 227              	.L1:
+  57:../../bos/utils/b_util_tools.c ****         }
+ 228              		.loc 1 57 20 view .LVU78
+ 229              	.LBE10:
+ 230              	.LBE19:
+  61:../../bos/utils/b_util_tools.c ****         {
+  62:../../bos/utils/b_util_tools.c ****             if (current_index == index)
+  63:../../bos/utils/b_util_tools.c ****             {
+  64:../../bos/utils/b_util_tools.c ****                 *pstr               = segment_start;
+GAS LISTING /tmp/ccX7ljow.s 			page 9
+
+
+  65:../../bos/utils/b_util_tools.c ****                 char   temp_buf[32] = {0};
+  66:../../bos/utils/b_util_tools.c ****                 size_t segment_len  = strlen(segment_start);
+  67:../../bos/utils/b_util_tools.c ****                 if (segment_len > sizeof(temp_buf) - 1)
+  68:../../bos/utils/b_util_tools.c ****                 {
+  69:../../bos/utils/b_util_tools.c ****                     segment_len = sizeof(temp_buf) - 1;
+  70:../../bos/utils/b_util_tools.c ****                 }
+  71:../../bos/utils/b_util_tools.c ****                 strncpy(temp_buf, segment_start, segment_len);
+  72:../../bos/utils/b_util_tools.c **** 
+  73:../../bos/utils/b_util_tools.c ****                 char     *end_ptr = NULL;
+  74:../../bos/utils/b_util_tools.c ****                 long long num     = strtoll(temp_buf, &end_ptr, 10);
+  75:../../bos/utils/b_util_tools.c ****                 if (end_ptr != temp_buf && *end_ptr == '\0' && num >= INT32_MIN && num <= INT32_MAX
+  76:../../bos/utils/b_util_tools.c ****                 {
+  77:../../bos/utils/b_util_tools.c ****                     *pnumber = (int32_t)num;
+  78:../../bos/utils/b_util_tools.c ****                 }
+  79:../../bos/utils/b_util_tools.c ****                 return 0;
+  80:../../bos/utils/b_util_tools.c ****             }
+  81:../../bos/utils/b_util_tools.c ****             else
+  82:../../bos/utils/b_util_tools.c ****             {
+  83:../../bos/utils/b_util_tools.c ****                 return -1;
+  84:../../bos/utils/b_util_tools.c ****             }
+  85:../../bos/utils/b_util_tools.c ****         }
+  86:../../bos/utils/b_util_tools.c ****     }
+  87:../../bos/utils/b_util_tools.c **** }
+ 231              		.loc 1 87 1 view .LVU79
+ 232 011c 488B5424 		movq	72(%rsp), %rdx
+ 232      48
+ 233 0121 64482B14 		subq	%fs:40, %rdx
+ 233      25280000 
+ 233      00
+ 234 012a 756E     		jne	.L39
+ 235 012c 4883C458 		addq	$88, %rsp
+ 236              	.LCFI7:
+ 237              		.cfi_remember_state
+ 238              		.cfi_def_cfa_offset 56
+ 239 0130 5B       		popq	%rbx
+ 240              	.LCFI8:
+ 241              		.cfi_def_cfa_offset 48
+ 242 0131 5D       		popq	%rbp
+ 243              	.LCFI9:
+ 244              		.cfi_def_cfa_offset 40
+ 245 0132 415C     		popq	%r12
+ 246              	.LCFI10:
+ 247              		.cfi_def_cfa_offset 32
+ 248 0134 415D     		popq	%r13
+ 249              	.LCFI11:
+ 250              		.cfi_def_cfa_offset 24
+ 251 0136 415E     		popq	%r14
+ 252              	.LCFI12:
+ 253              		.cfi_def_cfa_offset 16
+ 254 0138 415F     		popq	%r15
+ 255              	.LCFI13:
+ 256              		.cfi_def_cfa_offset 8
+ 257 013a C3       		ret
+ 258              	.LVL16:
+ 259 013b 0F1F4400 		.p2align 4,,10
+ 259      00
+ 260              		.p2align 3
+GAS LISTING /tmp/ccX7ljow.s 			page 10
+
+
+ 261              	.L38:
+ 262              	.LCFI14:
+ 263              		.cfi_restore_state
+ 264              	.LBB20:
+ 265              	.LBB13:
+  53:../../bos/utils/b_util_tools.c ****             {
+ 266              		.loc 1 53 77 discriminator 2 view .LVU80
+ 267 0140 BA000000 		movl	$2147483648, %edx
+ 267      80
+ 268 0145 4801C2   		addq	%rax, %rdx
+ 269 0148 48C1EA20 		shrq	$32, %rdx
+ 270 014c 75CC     		jne	.L9
+  55:../../bos/utils/b_util_tools.c ****             }
+ 271              		.loc 1 55 17 is_stmt 1 view .LVU81
+  55:../../bos/utils/b_util_tools.c ****             }
+ 272              		.loc 1 55 28 is_stmt 0 view .LVU82
+ 273 014e 418906   		movl	%eax, (%r14)
+  57:../../bos/utils/b_util_tools.c ****         }
+ 274              		.loc 1 57 13 is_stmt 1 view .LVU83
+ 275 0151 EBC7     		jmp	.L9
+ 276              	.LVL17:
+ 277              		.p2align 4,,10
+ 278 0153 0F1F4400 		.p2align 3
+ 278      00
+ 279              	.L37:
+  57:../../bos/utils/b_util_tools.c ****         }
+ 280              		.loc 1 57 13 is_stmt 0 view .LVU84
+ 281              	.LBE13:
+  62:../../bos/utils/b_util_tools.c ****             {
+ 282              		.loc 1 62 13 is_stmt 1 view .LVU85
+  62:../../bos/utils/b_util_tools.c ****             {
+ 283              		.loc 1 62 16 is_stmt 0 view .LVU86
+ 284 0158 4538E7   		cmpb	%r12b, %r15b
+ 285 015b 752F     		jne	.L13
+ 286              	.LBB14:
+  64:../../bos/utils/b_util_tools.c ****                 char   temp_buf[32] = {0};
+ 287              		.loc 1 64 17 is_stmt 1 view .LVU87
+  64:../../bos/utils/b_util_tools.c ****                 char   temp_buf[32] = {0};
+ 288              		.loc 1 64 37 is_stmt 0 view .LVU88
+ 289 015d 488B4424 		movq	8(%rsp), %rax
+ 289      08
+ 290              	.LVL18:
+  65:../../bos/utils/b_util_tools.c ****                 size_t segment_len  = strlen(segment_start);
+ 291              		.loc 1 65 24 view .LVU89
+ 292 0162 660FEFC0 		pxor	%xmm0, %xmm0
+  66:../../bos/utils/b_util_tools.c ****                 if (segment_len > sizeof(temp_buf) - 1)
+ 293              		.loc 1 66 39 view .LVU90
+ 294 0166 4889DF   		movq	%rbx, %rdi
+  65:../../bos/utils/b_util_tools.c ****                 size_t segment_len  = strlen(segment_start);
+ 295              		.loc 1 65 24 view .LVU91
+ 296 0169 0F294424 		movaps	%xmm0, 32(%rsp)
+ 296      20
+  64:../../bos/utils/b_util_tools.c ****                 char   temp_buf[32] = {0};
+ 297              		.loc 1 64 37 view .LVU92
+ 298 016e 488918   		movq	%rbx, (%rax)
+  65:../../bos/utils/b_util_tools.c ****                 size_t segment_len  = strlen(segment_start);
+ 299              		.loc 1 65 17 is_stmt 1 view .LVU93
+GAS LISTING /tmp/ccX7ljow.s 			page 11
+
+
+  65:../../bos/utils/b_util_tools.c ****                 size_t segment_len  = strlen(segment_start);
+ 300              		.loc 1 65 24 is_stmt 0 view .LVU94
+ 301 0171 0F294424 		movaps	%xmm0, 48(%rsp)
+ 301      30
+  66:../../bos/utils/b_util_tools.c ****                 if (segment_len > sizeof(temp_buf) - 1)
+ 302              		.loc 1 66 17 is_stmt 1 view .LVU95
+  66:../../bos/utils/b_util_tools.c ****                 if (segment_len > sizeof(temp_buf) - 1)
+ 303              		.loc 1 66 39 is_stmt 0 view .LVU96
+ 304 0176 E8000000 		call	strlen@PLT
+ 304      00
+ 305              	.LVL19:
+  67:../../bos/utils/b_util_tools.c ****                 {
+ 306              		.loc 1 67 17 is_stmt 1 view .LVU97
+  71:../../bos/utils/b_util_tools.c **** 
+ 307              		.loc 1 71 17 view .LVU98
+ 308              	.LBB15:
+ 309              	.LBI15:
+  92:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+ 310              		.loc 2 92 1 view .LVU99
+ 311              	.LBB16:
+ 312              		.loc 2 95 3 view .LVU100
+ 313              	.LBE16:
+ 314              	.LBE15:
+  67:../../bos/utils/b_util_tools.c ****                 {
+ 315              		.loc 1 67 20 is_stmt 0 view .LVU101
+ 316 017b BA1F0000 		movl	$31, %edx
+ 316      00
+ 317 0180 4839D0   		cmpq	%rdx, %rax
+ 318 0183 480F46D0 		cmovbe	%rax, %rdx
+ 319 0187 E954FFFF 		jmp	.L34
+ 319      FF
+ 320              	.LVL20:
+ 321              	.L13:
+  67:../../bos/utils/b_util_tools.c ****                 {
+ 322              		.loc 1 67 20 view .LVU102
+ 323              	.LBE14:
+  83:../../bos/utils/b_util_tools.c ****             }
+ 324              		.loc 1 83 24 view .LVU103
+ 325 018c B8FFFFFF 		movl	$-1, %eax
+ 325      FF
+ 326              	.LVL21:
+  83:../../bos/utils/b_util_tools.c ****             }
+ 327              		.loc 1 83 24 view .LVU104
+ 328 0191 EB89     		jmp	.L1
+ 329              	.LVL22:
+ 330              	.L12:
+  83:../../bos/utils/b_util_tools.c ****             }
+ 331              		.loc 1 83 24 view .LVU105
+ 332              	.LBE20:
+  21:../../bos/utils/b_util_tools.c ****     }
+ 333              		.loc 1 21 16 view .LVU106
+ 334 0193 B8FEFFFF 		movl	$-2, %eax
+ 334      FF
+ 335 0198 EB82     		jmp	.L1
+ 336              	.LVL23:
+ 337              	.L39:
+ 338              		.loc 1 87 1 view .LVU107
+GAS LISTING /tmp/ccX7ljow.s 			page 12
+
+
+ 339 019a E8000000 		call	__stack_chk_fail@PLT
+ 339      00
+ 340              	.LVL24:
+ 341              		.cfi_endproc
+ 342              	.LFE17:
+ 344              		.text
+ 345              	.Letext0:
+ 346              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 347              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"
+ 348              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 349              		.file 6 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 350              		.file 7 "/usr/include/stdlib.h"
+ 351              		.file 8 "/usr/include/string.h"
+ 352              		.file 9 "<built-in>"
+ 1921              		.section	.note.gnu.property,"a"
+ 1922              		.align 8
+ 1923 0000 04000000 		.long	1f - 0f
+ 1924 0004 10000000 		.long	4f - 1f
+ 1925 0008 05000000 		.long	5
+ 1926              	0:
+ 1927 000c 474E5500 		.string	"GNU"
+ 1928              	1:
+ 1929              		.align 8
+ 1930 0010 020000C0 		.long	0xc0000002
+ 1931 0014 04000000 		.long	3f - 2f
+ 1932              	2:
+ 1933 0018 03000000 		.long	0x3
+ 1934              	3:
+ 1935 001c 00000000 		.align 8
+ 1936              	4:
+GAS LISTING /tmp/ccX7ljow.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_util_tools.c
+     /tmp/ccX7ljow.s:9      .text.bParseString:0000000000000000 bParseString
+
+UNDEFINED SYMBOLS
+strlen
+strstr
+strncpy
+strtoll
+__stack_chk_fail

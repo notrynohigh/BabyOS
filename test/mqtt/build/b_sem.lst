@@ -1,0 +1,842 @@
+GAS LISTING /tmp/cc2rI3FZ.s 			page 1
+
+
+   1              		.file	"b_sem.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/core/b_sem.c"
+   5              		.section	.text.bSemCreate,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	bSemCreate
+   9              	bSemCreate:
+  10              	.LVL0:
+  11              	.LFB29:
+   1:../../bos/core/b_sem.c **** /**
+   2:../../bos/core/b_sem.c ****  *!
+   3:../../bos/core/b_sem.c ****  * \file        b_sem.c
+   4:../../bos/core/b_sem.c ****  * \version     v0.0.1
+   5:../../bos/core/b_sem.c ****  * \date        2019/06/05
+   6:../../bos/core/b_sem.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/core/b_sem.c ****  *******************************************************************************
+   8:../../bos/core/b_sem.c ****  * @attention
+   9:../../bos/core/b_sem.c ****  *
+  10:../../bos/core/b_sem.c ****  * Copyright (c) 2019 Bean
+  11:../../bos/core/b_sem.c ****  *
+  12:../../bos/core/b_sem.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/core/b_sem.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/core/b_sem.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/core/b_sem.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/core/b_sem.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/core/b_sem.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/core/b_sem.c ****  *
+  19:../../bos/core/b_sem.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/core/b_sem.c ****  * copies or substantial portions of the Software.
+  21:../../bos/core/b_sem.c ****  *
+  22:../../bos/core/b_sem.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/core/b_sem.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/core/b_sem.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/core/b_sem.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/core/b_sem.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/core/b_sem.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/core/b_sem.c ****  * SOFTWARE.
+  29:../../bos/core/b_sem.c ****  *******************************************************************************
+  30:../../bos/core/b_sem.c ****  */
+  31:../../bos/core/b_sem.c **** 
+  32:../../bos/core/b_sem.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/core/b_sem.c **** #include "core/inc/b_sem.h"
+  34:../../bos/core/b_sem.c **** 
+  35:../../bos/core/b_sem.c **** #include "b_section.h"
+  36:../../bos/core/b_sem.c **** #include "hal/inc/b_hal.h"
+  37:../../bos/core/b_sem.c **** 
+  38:../../bos/core/b_sem.c **** /**
+  39:../../bos/core/b_sem.c ****  * \addtogroup BABYOS
+  40:../../bos/core/b_sem.c ****  * \{
+  41:../../bos/core/b_sem.c ****  */
+  42:../../bos/core/b_sem.c **** 
+  43:../../bos/core/b_sem.c **** /**
+  44:../../bos/core/b_sem.c ****  * \addtogroup CORE
+  45:../../bos/core/b_sem.c ****  * \{
+  46:../../bos/core/b_sem.c ****  */
+  47:../../bos/core/b_sem.c **** 
+GAS LISTING /tmp/cc2rI3FZ.s 			page 2
+
+
+  48:../../bos/core/b_sem.c **** /**
+  49:../../bos/core/b_sem.c ****  * \addtogroup SEM
+  50:../../bos/core/b_sem.c ****  * \{
+  51:../../bos/core/b_sem.c ****  */
+  52:../../bos/core/b_sem.c **** 
+  53:../../bos/core/b_sem.c **** /**
+  54:../../bos/core/b_sem.c ****  * \defgroup SEM_Private_TypesDefinitions
+  55:../../bos/core/b_sem.c ****  * \{
+  56:../../bos/core/b_sem.c ****  */
+  57:../../bos/core/b_sem.c **** 
+  58:../../bos/core/b_sem.c **** /**
+  59:../../bos/core/b_sem.c ****  * \}
+  60:../../bos/core/b_sem.c ****  */
+  61:../../bos/core/b_sem.c **** 
+  62:../../bos/core/b_sem.c **** /**
+  63:../../bos/core/b_sem.c ****  * \defgroup SEM_Private_Defines
+  64:../../bos/core/b_sem.c ****  * \{
+  65:../../bos/core/b_sem.c ****  */
+  66:../../bos/core/b_sem.c **** 
+  67:../../bos/core/b_sem.c **** /**
+  68:../../bos/core/b_sem.c ****  * \}
+  69:../../bos/core/b_sem.c ****  */
+  70:../../bos/core/b_sem.c **** 
+  71:../../bos/core/b_sem.c **** /**
+  72:../../bos/core/b_sem.c ****  * \defgroup SEM_Private_Macros
+  73:../../bos/core/b_sem.c ****  * \{
+  74:../../bos/core/b_sem.c ****  */
+  75:../../bos/core/b_sem.c **** 
+  76:../../bos/core/b_sem.c **** /**
+  77:../../bos/core/b_sem.c ****  * \}
+  78:../../bos/core/b_sem.c ****  */
+  79:../../bos/core/b_sem.c **** 
+  80:../../bos/core/b_sem.c **** /**
+  81:../../bos/core/b_sem.c ****  * \defgroup SEM_Private_Variables
+  82:../../bos/core/b_sem.c ****  * \{
+  83:../../bos/core/b_sem.c ****  */
+  84:../../bos/core/b_sem.c **** 
+  85:../../bos/core/b_sem.c **** static LIST_HEAD(bSemListHead);
+  86:../../bos/core/b_sem.c **** 
+  87:../../bos/core/b_sem.c **** /**
+  88:../../bos/core/b_sem.c ****  * \}
+  89:../../bos/core/b_sem.c ****  */
+  90:../../bos/core/b_sem.c **** 
+  91:../../bos/core/b_sem.c **** /**
+  92:../../bos/core/b_sem.c ****  * \defgroup SEM_Private_FunctionPrototypes
+  93:../../bos/core/b_sem.c ****  * \{
+  94:../../bos/core/b_sem.c ****  */
+  95:../../bos/core/b_sem.c **** 
+  96:../../bos/core/b_sem.c **** /**
+  97:../../bos/core/b_sem.c ****  * \}
+  98:../../bos/core/b_sem.c ****  */
+  99:../../bos/core/b_sem.c **** 
+ 100:../../bos/core/b_sem.c **** /**
+ 101:../../bos/core/b_sem.c ****  * \defgroup SEM_Private_Functions
+ 102:../../bos/core/b_sem.c ****  * \{
+ 103:../../bos/core/b_sem.c ****  */
+ 104:../../bos/core/b_sem.c **** 
+GAS LISTING /tmp/cc2rI3FZ.s 			page 3
+
+
+ 105:../../bos/core/b_sem.c **** static bSemAttr_t *_bSemFind(bSemId_t id)
+ 106:../../bos/core/b_sem.c **** {
+ 107:../../bos/core/b_sem.c ****     struct list_head *pos   = NULL;
+ 108:../../bos/core/b_sem.c ****     bSemAttr_t       *pattr = NULL;
+ 109:../../bos/core/b_sem.c ****     list_for_each(pos, &bSemListHead)
+ 110:../../bos/core/b_sem.c ****     {
+ 111:../../bos/core/b_sem.c ****         pattr = list_entry(pos, bSemAttr_t, list);
+ 112:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+ 113:../../bos/core/b_sem.c ****         {
+ 114:../../bos/core/b_sem.c ****             break;
+ 115:../../bos/core/b_sem.c ****         }
+ 116:../../bos/core/b_sem.c ****         pattr = NULL;
+ 117:../../bos/core/b_sem.c ****     }
+ 118:../../bos/core/b_sem.c ****     return pattr;
+ 119:../../bos/core/b_sem.c **** }
+ 120:../../bos/core/b_sem.c **** 
+ 121:../../bos/core/b_sem.c **** /**
+ 122:../../bos/core/b_sem.c ****  * \}
+ 123:../../bos/core/b_sem.c ****  */
+ 124:../../bos/core/b_sem.c **** 
+ 125:../../bos/core/b_sem.c **** /**
+ 126:../../bos/core/b_sem.c ****  * \addtogroup SEM_Exported_Functions
+ 127:../../bos/core/b_sem.c ****  * \{
+ 128:../../bos/core/b_sem.c ****  */
+ 129:../../bos/core/b_sem.c **** 
+ 130:../../bos/core/b_sem.c **** bSemId_t bSemCreate(uint32_t max_count, uint32_t initial_count, bSemAttr_t *attr)
+ 131:../../bos/core/b_sem.c **** {
+  12              		.loc 1 131 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 131 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+ 132:../../bos/core/b_sem.c ****     if (attr == NULL)
+  16              		.loc 1 132 5 is_stmt 1 view .LVU2
+  17              		.loc 1 132 8 is_stmt 0 view .LVU3
+  18 0004 4885D2   		testq	%rdx, %rdx
+  19 0007 7458     		je	.L7
+ 133:../../bos/core/b_sem.c ****     {
+ 134:../../bos/core/b_sem.c ****         return NULL;
+ 135:../../bos/core/b_sem.c ****     }
+ 136:../../bos/core/b_sem.c ****     if (_bSemFind(attr) != NULL)
+  20              		.loc 1 136 5 is_stmt 1 view .LVU4
+  21              	.LVL1:
+  22              	.LBB18:
+  23              	.LBI18:
+ 105:../../bos/core/b_sem.c **** {
+  24              		.loc 1 105 20 view .LVU5
+  25              	.LBB19:
+ 107:../../bos/core/b_sem.c ****     bSemAttr_t       *pattr = NULL;
+  26              		.loc 1 107 5 view .LVU6
+ 108:../../bos/core/b_sem.c ****     list_for_each(pos, &bSemListHead)
+  27              		.loc 1 108 5 view .LVU7
+ 109:../../bos/core/b_sem.c ****     {
+  28              		.loc 1 109 5 view .LVU8
+  29 0009 4C8B0D00 		movq	bSemListHead(%rip), %r9
+  29      000000
+  30              	.LVL2:
+ 109:../../bos/core/b_sem.c ****     {
+GAS LISTING /tmp/cc2rI3FZ.s 			page 4
+
+
+  31              		.loc 1 109 5 discriminator 1 view .LVU9
+ 109:../../bos/core/b_sem.c ****     {
+  32              		.loc 1 109 5 is_stmt 0 view .LVU10
+  33 0010 4C8D0500 		leaq	bSemListHead(%rip), %r8
+  33      000000
+ 109:../../bos/core/b_sem.c ****     {
+  34              		.loc 1 109 5 discriminator 1 view .LVU11
+  35 0017 4D39C1   		cmpq	%r8, %r9
+  36 001a 7425     		je	.L3
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+  37              		.loc 1 111 9 is_stmt 1 view .LVU12
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+  38              		.loc 1 111 15 is_stmt 0 view .LVU13
+  39 001c 498D41F8 		leaq	-8(%r9), %rax
+  40              	.LVL3:
+ 112:../../bos/core/b_sem.c ****         {
+  41              		.loc 1 112 9 is_stmt 1 view .LVU14
+ 112:../../bos/core/b_sem.c ****         {
+  42              		.loc 1 112 12 is_stmt 0 view .LVU15
+  43 0020 4839C2   		cmpq	%rax, %rdx
+  44 0023 743E     		je	.L1
+ 109:../../bos/core/b_sem.c ****     {
+  45              		.loc 1 109 5 view .LVU16
+  46 0025 4C89C8   		movq	%r9, %rax
+  47              	.LVL4:
+ 109:../../bos/core/b_sem.c ****     {
+  48              		.loc 1 109 5 view .LVU17
+  49 0028 EB0F     		jmp	.L4
+  50              	.LVL5:
+  51 002a 660F1F44 		.p2align 4,,10
+  51      0000
+  52              		.p2align 3
+  53              	.L6:
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+  54              		.loc 1 111 9 is_stmt 1 view .LVU18
+ 112:../../bos/core/b_sem.c ****         {
+  55              		.loc 1 112 9 view .LVU19
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+  56              		.loc 1 111 15 is_stmt 0 view .LVU20
+  57 0030 488D48F8 		leaq	-8(%rax), %rcx
+  58              	.LVL6:
+ 112:../../bos/core/b_sem.c ****         {
+  59              		.loc 1 112 12 view .LVU21
+  60 0034 4839CA   		cmpq	%rcx, %rdx
+  61 0037 7424     		je	.L5
+  62              	.LVL7:
+  63              	.L4:
+ 116:../../bos/core/b_sem.c ****     }
+  64              		.loc 1 116 9 is_stmt 1 view .LVU22
+ 109:../../bos/core/b_sem.c ****     {
+  65              		.loc 1 109 5 discriminator 2 view .LVU23
+  66 0039 488B00   		movq	(%rax), %rax
+  67              	.LVL8:
+ 109:../../bos/core/b_sem.c ****     {
+  68              		.loc 1 109 5 discriminator 1 view .LVU24
+  69 003c 4C39C0   		cmpq	%r8, %rax
+  70 003f 75EF     		jne	.L6
+GAS LISTING /tmp/cc2rI3FZ.s 			page 5
+
+
+  71              	.LVL9:
+  72              	.L3:
+ 118:../../bos/core/b_sem.c **** }
+  73              		.loc 1 118 5 view .LVU25
+ 118:../../bos/core/b_sem.c **** }
+  74              		.loc 1 118 5 is_stmt 0 view .LVU26
+  75              	.LBE19:
+  76              	.LBE18:
+ 137:../../bos/core/b_sem.c ****     {
+ 138:../../bos/core/b_sem.c ****         return attr;
+ 139:../../bos/core/b_sem.c ****     }
+ 140:../../bos/core/b_sem.c ****     attr->value     = initial_count;
+  77              		.loc 1 140 5 is_stmt 1 view .LVU27
+ 141:../../bos/core/b_sem.c ****     attr->value_max = max_count;
+ 142:../../bos/core/b_sem.c ****     list_add(&attr->list, &bSemListHead);
+  78              		.loc 1 142 5 is_stmt 0 view .LVU28
+  79 0041 488D4208 		leaq	8(%rdx), %rax
+ 140:../../bos/core/b_sem.c ****     attr->value_max = max_count;
+  80              		.loc 1 140 21 view .LVU29
+  81 0045 8932     		movl	%esi, (%rdx)
+ 141:../../bos/core/b_sem.c ****     attr->value_max = max_count;
+  82              		.loc 1 141 5 is_stmt 1 view .LVU30
+ 141:../../bos/core/b_sem.c ****     attr->value_max = max_count;
+  83              		.loc 1 141 21 is_stmt 0 view .LVU31
+  84 0047 897A04   		movl	%edi, 4(%rdx)
+  85              		.loc 1 142 5 is_stmt 1 view .LVU32
+  86              	.LVL10:
+  87              	.LBB20:
+  88              	.LBI20:
+  89              		.file 2 "../../bos/utils/inc/b_util_list.h"
+   1:../../bos/utils/inc/b_util_list.h **** /**
+   2:../../bos/utils/inc/b_util_list.h ****  *!
+   3:../../bos/utils/inc/b_util_list.h ****  * \file        b_util_list.h
+   4:../../bos/utils/inc/b_util_list.h ****  * \version     v0.0.1
+   5:../../bos/utils/inc/b_util_list.h ****  * \date        2019/12/23
+   6:../../bos/utils/inc/b_util_list.h ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+   8:../../bos/utils/inc/b_util_list.h ****  * @attention
+   9:../../bos/utils/inc/b_util_list.h ****  *
+  10:../../bos/utils/inc/b_util_list.h ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/inc/b_util_list.h ****  *
+  12:../../bos/utils/inc/b_util_list.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/inc/b_util_list.h ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/inc/b_util_list.h ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/inc/b_util_list.h ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/inc/b_util_list.h ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/inc/b_util_list.h ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/inc/b_util_list.h ****  *
+  19:../../bos/utils/inc/b_util_list.h ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/inc/b_util_list.h ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/inc/b_util_list.h ****  *
+  22:../../bos/utils/inc/b_util_list.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/inc/b_util_list.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/inc/b_util_list.h ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/inc/b_util_list.h ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/inc/b_util_list.h ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/inc/b_util_list.h ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+GAS LISTING /tmp/cc2rI3FZ.s 			page 6
+
+
+  28:../../bos/utils/inc/b_util_list.h ****  * SOFTWARE.
+  29:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+  30:../../bos/utils/inc/b_util_list.h ****  */
+  31:../../bos/utils/inc/b_util_list.h **** #ifndef __B_UTIL_LIST_H__
+  32:../../bos/utils/inc/b_util_list.h **** #define __B_UTIL_LIST_H__
+  33:../../bos/utils/inc/b_util_list.h **** 
+  34:../../bos/utils/inc/b_util_list.h **** #ifdef __cplusplus
+  35:../../bos/utils/inc/b_util_list.h **** extern "C" {
+  36:../../bos/utils/inc/b_util_list.h **** #endif
+  37:../../bos/utils/inc/b_util_list.h **** 
+  38:../../bos/utils/inc/b_util_list.h **** /*Includes ----------------------------------------------*/
+  39:../../bos/utils/inc/b_util_list.h **** #include "b_type.h"
+  40:../../bos/utils/inc/b_util_list.h **** /**
+  41:../../bos/utils/inc/b_util_list.h ****  * \addtogroup B_UTILS
+  42:../../bos/utils/inc/b_util_list.h ****  * \{
+  43:../../bos/utils/inc/b_util_list.h ****  */
+  44:../../bos/utils/inc/b_util_list.h **** 
+  45:../../bos/utils/inc/b_util_list.h **** /**
+  46:../../bos/utils/inc/b_util_list.h ****  * \addtogroup LIST
+  47:../../bos/utils/inc/b_util_list.h ****  * \{
+  48:../../bos/utils/inc/b_util_list.h ****  */
+  49:../../bos/utils/inc/b_util_list.h **** 
+  50:../../bos/utils/inc/b_util_list.h **** struct list_head
+  51:../../bos/utils/inc/b_util_list.h **** {
+  52:../../bos/utils/inc/b_util_list.h ****     struct list_head *next, *prev;
+  53:../../bos/utils/inc/b_util_list.h **** };
+  54:../../bos/utils/inc/b_util_list.h **** 
+  55:../../bos/utils/inc/b_util_list.h **** #define WRITE_ONCE(var, val) (var) = (val)
+  56:../../bos/utils/inc/b_util_list.h **** 
+  57:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD_INIT(name) \
+  58:../../bos/utils/inc/b_util_list.h ****     {                        \
+  59:../../bos/utils/inc/b_util_list.h ****         &(name), &(name)     \
+  60:../../bos/utils/inc/b_util_list.h ****     }
+  61:../../bos/utils/inc/b_util_list.h **** 
+  62:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD(name) struct list_head name = LIST_HEAD_INIT(name)
+  63:../../bos/utils/inc/b_util_list.h **** 
+  64:../../bos/utils/inc/b_util_list.h **** #define INIT_LIST_HEAD(ptr)  \
+  65:../../bos/utils/inc/b_util_list.h ****     do                       \
+  66:../../bos/utils/inc/b_util_list.h ****     {                        \
+  67:../../bos/utils/inc/b_util_list.h ****         (ptr)->next = (ptr); \
+  68:../../bos/utils/inc/b_util_list.h ****         (ptr)->prev = (ptr); \
+  69:../../bos/utils/inc/b_util_list.h ****     } while (0)
+  70:../../bos/utils/inc/b_util_list.h **** 
+  71:../../bos/utils/inc/b_util_list.h **** /**
+  72:../../bos/utils/inc/b_util_list.h ****  * list_entry - get the struct for this entry
+  73:../../bos/utils/inc/b_util_list.h ****  * @ptr: the &struct list_head pointer.
+  74:../../bos/utils/inc/b_util_list.h ****  * @type: the type of the struct this is embedded in.
+  75:../../bos/utils/inc/b_util_list.h ****  * @member: the name of the list_struct within the struct.
+  76:../../bos/utils/inc/b_util_list.h ****  */
+  77:../../bos/utils/inc/b_util_list.h **** #define list_entry(ptr, type, member) \
+  78:../../bos/utils/inc/b_util_list.h ****     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
+  79:../../bos/utils/inc/b_util_list.h **** 
+  80:../../bos/utils/inc/b_util_list.h **** #define list_first_entry(ptr, type, member) list_entry((ptr)->next, type, member)
+  81:../../bos/utils/inc/b_util_list.h **** 
+  82:../../bos/utils/inc/b_util_list.h **** #define list_next_entry(pos, type, member) list_entry((pos)->member.next, type, member)
+  83:../../bos/utils/inc/b_util_list.h **** 
+  84:../../bos/utils/inc/b_util_list.h **** /*
+GAS LISTING /tmp/cc2rI3FZ.s 			page 7
+
+
+  85:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry between two known consecutive entries.
+  86:../../bos/utils/inc/b_util_list.h ****  *
+  87:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+  88:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+  89:../../bos/utils/inc/b_util_list.h ****  */
+  90:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_add(struct list_head *newItem, struct list_head *prev,
+  91:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+  92:../../bos/utils/inc/b_util_list.h **** {
+  93:../../bos/utils/inc/b_util_list.h ****     next->prev    = newItem;
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+  95:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+  96:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+  97:../../bos/utils/inc/b_util_list.h **** }
+  98:../../bos/utils/inc/b_util_list.h **** 
+  99:../../bos/utils/inc/b_util_list.h **** /**
+ 100:../../bos/utils/inc/b_util_list.h ****  * list_add - add a new entry
+ 101:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 102:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it after
+ 103:../../bos/utils/inc/b_util_list.h ****  *
+ 104:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry after the specified head.
+ 105:../../bos/utils/inc/b_util_list.h ****  * This is good for implementing stacks.
+ 106:../../bos/utils/inc/b_util_list.h ****  */
+ 107:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add(struct list_head *newItem, struct list_head *head)
+  90              		.loc 2 107 26 view .LVU33
+ 108:../../bos/utils/inc/b_util_list.h **** {
+ 109:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head, head->next);
+  91              		.loc 2 109 5 view .LVU34
+  92              	.LBB21:
+  93              	.LBI21:
+  90:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+  94              		.loc 2 90 26 view .LVU35
+  95              	.LBB22:
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+  96              		.loc 2 93 5 view .LVU36
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+  97              		.loc 2 93 19 is_stmt 0 view .LVU37
+  98 004a 49894108 		movq	%rax, 8(%r9)
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+  99              		.loc 2 94 5 is_stmt 1 view .LVU38
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 100              		.loc 2 96 5 is_stmt 0 view .LVU39
+ 101 004e 48890500 		movq	%rax, bSemListHead(%rip)
+ 101      000000
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 102              		.loc 2 94 19 view .LVU40
+ 103 0055 4C894A08 		movq	%r9, 8(%rdx)
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 104              		.loc 2 95 5 is_stmt 1 view .LVU41
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 105              		.loc 2 95 19 is_stmt 0 view .LVU42
+ 106 0059 4C894210 		movq	%r8, 16(%rdx)
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 107              		.loc 2 96 5 is_stmt 1 view .LVU43
+ 108              	.LVL11:
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 109              		.loc 2 96 5 is_stmt 0 view .LVU44
+ 110              	.LBE22:
+GAS LISTING /tmp/cc2rI3FZ.s 			page 8
+
+
+ 111              	.LBE21:
+ 112              	.LBE20:
+ 143:../../bos/core/b_sem.c ****     return attr;
+ 113              		.loc 1 143 5 is_stmt 1 view .LVU45
+ 114              	.L5:
+ 138:../../bos/core/b_sem.c ****     }
+ 115              		.loc 1 138 16 is_stmt 0 view .LVU46
+ 116 005d 4889D0   		movq	%rdx, %rax
+ 117 0060 C3       		ret
+ 118              	.L7:
+ 134:../../bos/core/b_sem.c ****     }
+ 119              		.loc 1 134 16 view .LVU47
+ 120 0061 31C0     		xorl	%eax, %eax
+ 121              	.L1:
+ 144:../../bos/core/b_sem.c **** }
+ 122              		.loc 1 144 1 view .LVU48
+ 123 0063 C3       		ret
+ 124              		.cfi_endproc
+ 125              	.LFE29:
+ 127              		.section	.text.bSemAcquireNonblock,"ax",@progbits
+ 128              		.p2align 4
+ 129              		.globl	bSemAcquireNonblock
+ 131              	bSemAcquireNonblock:
+ 132              	.LVL12:
+ 133              	.LFB30:
+ 145:../../bos/core/b_sem.c **** 
+ 146:../../bos/core/b_sem.c **** int bSemAcquireNonblock(bSemId_t id)
+ 147:../../bos/core/b_sem.c **** {
+ 134              		.loc 1 147 1 is_stmt 1 view -0
+ 135              		.cfi_startproc
+ 136              		.loc 1 147 1 is_stmt 0 view .LVU50
+ 137 0000 F30F1EFA 		endbr64
+ 148:../../bos/core/b_sem.c ****     bSemAttr_t *attr = NULL;
+ 138              		.loc 1 148 5 is_stmt 1 view .LVU51
+ 139              	.LVL13:
+ 149:../../bos/core/b_sem.c ****     if (id == NULL)
+ 140              		.loc 1 149 5 view .LVU52
+ 141              		.loc 1 149 8 is_stmt 0 view .LVU53
+ 142 0004 4885FF   		testq	%rdi, %rdi
+ 143 0007 7437     		je	.L16
+ 150:../../bos/core/b_sem.c ****     {
+ 151:../../bos/core/b_sem.c ****         return -1;
+ 152:../../bos/core/b_sem.c ****     }
+ 153:../../bos/core/b_sem.c ****     attr = _bSemFind(id);
+ 144              		.loc 1 153 5 is_stmt 1 view .LVU54
+ 145              	.LVL14:
+ 146              	.LBB23:
+ 147              	.LBI23:
+ 105:../../bos/core/b_sem.c **** {
+ 148              		.loc 1 105 20 view .LVU55
+ 149              	.LBB24:
+ 107:../../bos/core/b_sem.c ****     bSemAttr_t       *pattr = NULL;
+ 150              		.loc 1 107 5 view .LVU56
+ 108:../../bos/core/b_sem.c ****     list_for_each(pos, &bSemListHead)
+ 151              		.loc 1 108 5 view .LVU57
+ 109:../../bos/core/b_sem.c ****     {
+ 152              		.loc 1 109 5 view .LVU58
+GAS LISTING /tmp/cc2rI3FZ.s 			page 9
+
+
+ 153 0009 488B0500 		movq	bSemListHead(%rip), %rax
+ 153      000000
+ 154              	.LVL15:
+ 109:../../bos/core/b_sem.c ****     {
+ 155              		.loc 1 109 5 discriminator 1 view .LVU59
+ 109:../../bos/core/b_sem.c ****     {
+ 156              		.loc 1 109 5 is_stmt 0 view .LVU60
+ 157 0010 488D0D00 		leaq	bSemListHead(%rip), %rcx
+ 157      000000
+ 109:../../bos/core/b_sem.c ****     {
+ 158              		.loc 1 109 5 discriminator 1 view .LVU61
+ 159 0017 4839C8   		cmpq	%rcx, %rax
+ 160 001a 750C     		jne	.L13
+ 161 001c EB22     		jmp	.L16
+ 162              	.LVL16:
+ 163 001e 6690     		.p2align 4,,10
+ 164              		.p2align 3
+ 165              	.L17:
+ 116:../../bos/core/b_sem.c ****     }
+ 166              		.loc 1 116 9 is_stmt 1 view .LVU62
+ 109:../../bos/core/b_sem.c ****     {
+ 167              		.loc 1 109 5 discriminator 2 view .LVU63
+ 168 0020 488B00   		movq	(%rax), %rax
+ 169              	.LVL17:
+ 109:../../bos/core/b_sem.c ****     {
+ 170              		.loc 1 109 5 discriminator 1 view .LVU64
+ 171 0023 4839C8   		cmpq	%rcx, %rax
+ 172 0026 7418     		je	.L16
+ 173              	.L13:
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+ 174              		.loc 1 111 9 view .LVU65
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+ 175              		.loc 1 111 15 is_stmt 0 view .LVU66
+ 176 0028 488D50F8 		leaq	-8(%rax), %rdx
+ 177              	.LVL18:
+ 112:../../bos/core/b_sem.c ****         {
+ 178              		.loc 1 112 9 is_stmt 1 view .LVU67
+ 112:../../bos/core/b_sem.c ****         {
+ 179              		.loc 1 112 12 is_stmt 0 view .LVU68
+ 180 002c 4839D7   		cmpq	%rdx, %rdi
+ 181 002f 75EF     		jne	.L17
+ 182              	.LVL19:
+ 112:../../bos/core/b_sem.c ****         {
+ 183              		.loc 1 112 12 view .LVU69
+ 184              	.LBE24:
+ 185              	.LBE23:
+ 154:../../bos/core/b_sem.c ****     if (attr == NULL || attr->value == 0)
+ 186              		.loc 1 154 29 discriminator 1 view .LVU70
+ 187 0031 8B02     		movl	(%rdx), %eax
+ 188              		.loc 1 154 22 discriminator 1 view .LVU71
+ 189 0033 85C0     		testl	%eax, %eax
+ 190 0035 7409     		je	.L16
+ 155:../../bos/core/b_sem.c ****     {
+ 156:../../bos/core/b_sem.c ****         return -1;
+ 157:../../bos/core/b_sem.c ****     }
+ 158:../../bos/core/b_sem.c ****     attr->value -= 1;
+ 191              		.loc 1 158 5 is_stmt 1 view .LVU72
+GAS LISTING /tmp/cc2rI3FZ.s 			page 10
+
+
+ 192              		.loc 1 158 17 is_stmt 0 view .LVU73
+ 193 0037 83E801   		subl	$1, %eax
+ 194 003a 8902     		movl	%eax, (%rdx)
+ 159:../../bos/core/b_sem.c ****     return 0;
+ 195              		.loc 1 159 5 is_stmt 1 view .LVU74
+ 196              		.loc 1 159 12 is_stmt 0 view .LVU75
+ 197 003c 31C0     		xorl	%eax, %eax
+ 198 003e C3       		ret
+ 199 003f 90       		.p2align 4,,10
+ 200              		.p2align 3
+ 201              	.L16:
+ 151:../../bos/core/b_sem.c ****     }
+ 202              		.loc 1 151 16 view .LVU76
+ 203 0040 B8FFFFFF 		movl	$-1, %eax
+ 203      FF
+ 160:../../bos/core/b_sem.c **** }
+ 204              		.loc 1 160 1 view .LVU77
+ 205 0045 C3       		ret
+ 206              		.cfi_endproc
+ 207              	.LFE30:
+ 209              		.section	.text.bSemRelease,"ax",@progbits
+ 210              		.p2align 4
+ 211              		.globl	bSemRelease
+ 213              	bSemRelease:
+ 214              	.LVL20:
+ 215              	.LFB31:
+ 161:../../bos/core/b_sem.c **** 
+ 162:../../bos/core/b_sem.c **** int bSemRelease(bSemId_t id)
+ 163:../../bos/core/b_sem.c **** {
+ 216              		.loc 1 163 1 is_stmt 1 view -0
+ 217              		.cfi_startproc
+ 218              		.loc 1 163 1 is_stmt 0 view .LVU79
+ 219 0000 F30F1EFA 		endbr64
+ 164:../../bos/core/b_sem.c ****     bSemAttr_t *attr = NULL;
+ 220              		.loc 1 164 5 is_stmt 1 view .LVU80
+ 221              	.LVL21:
+ 165:../../bos/core/b_sem.c ****     if (id == NULL)
+ 222              		.loc 1 165 5 view .LVU81
+ 223              		.loc 1 165 8 is_stmt 0 view .LVU82
+ 224 0004 4885FF   		testq	%rdi, %rdi
+ 225 0007 7437     		je	.L25
+ 166:../../bos/core/b_sem.c ****     {
+ 167:../../bos/core/b_sem.c ****         return -1;
+ 168:../../bos/core/b_sem.c ****     }
+ 169:../../bos/core/b_sem.c ****     attr = _bSemFind(id);
+ 226              		.loc 1 169 5 is_stmt 1 view .LVU83
+ 227              	.LVL22:
+ 228              	.LBB25:
+ 229              	.LBI25:
+ 105:../../bos/core/b_sem.c **** {
+ 230              		.loc 1 105 20 view .LVU84
+ 231              	.LBB26:
+ 107:../../bos/core/b_sem.c ****     bSemAttr_t       *pattr = NULL;
+ 232              		.loc 1 107 5 view .LVU85
+ 108:../../bos/core/b_sem.c ****     list_for_each(pos, &bSemListHead)
+ 233              		.loc 1 108 5 view .LVU86
+ 109:../../bos/core/b_sem.c ****     {
+GAS LISTING /tmp/cc2rI3FZ.s 			page 11
+
+
+ 234              		.loc 1 109 5 view .LVU87
+ 235 0009 488B0500 		movq	bSemListHead(%rip), %rax
+ 235      000000
+ 236              	.LVL23:
+ 109:../../bos/core/b_sem.c ****     {
+ 237              		.loc 1 109 5 discriminator 1 view .LVU88
+ 109:../../bos/core/b_sem.c ****     {
+ 238              		.loc 1 109 5 is_stmt 0 view .LVU89
+ 239 0010 488D0D00 		leaq	bSemListHead(%rip), %rcx
+ 239      000000
+ 109:../../bos/core/b_sem.c ****     {
+ 240              		.loc 1 109 5 discriminator 1 view .LVU90
+ 241 0017 4839C8   		cmpq	%rcx, %rax
+ 242 001a 750C     		jne	.L22
+ 243 001c EB22     		jmp	.L25
+ 244              	.LVL24:
+ 245 001e 6690     		.p2align 4,,10
+ 246              		.p2align 3
+ 247              	.L26:
+ 116:../../bos/core/b_sem.c ****     }
+ 248              		.loc 1 116 9 is_stmt 1 view .LVU91
+ 109:../../bos/core/b_sem.c ****     {
+ 249              		.loc 1 109 5 discriminator 2 view .LVU92
+ 250 0020 488B00   		movq	(%rax), %rax
+ 251              	.LVL25:
+ 109:../../bos/core/b_sem.c ****     {
+ 252              		.loc 1 109 5 discriminator 1 view .LVU93
+ 253 0023 4839C8   		cmpq	%rcx, %rax
+ 254 0026 7418     		je	.L25
+ 255              	.L22:
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+ 256              		.loc 1 111 9 view .LVU94
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+ 257              		.loc 1 111 15 is_stmt 0 view .LVU95
+ 258 0028 488D50F8 		leaq	-8(%rax), %rdx
+ 259              	.LVL26:
+ 112:../../bos/core/b_sem.c ****         {
+ 260              		.loc 1 112 9 is_stmt 1 view .LVU96
+ 112:../../bos/core/b_sem.c ****         {
+ 261              		.loc 1 112 12 is_stmt 0 view .LVU97
+ 262 002c 4839D7   		cmpq	%rdx, %rdi
+ 263 002f 75EF     		jne	.L26
+ 264              	.LVL27:
+ 112:../../bos/core/b_sem.c ****         {
+ 265              		.loc 1 112 12 view .LVU98
+ 266              	.LBE26:
+ 267              	.LBE25:
+ 170:../../bos/core/b_sem.c ****     if (attr == NULL)
+ 171:../../bos/core/b_sem.c ****     {
+ 172:../../bos/core/b_sem.c ****         return -1;
+ 173:../../bos/core/b_sem.c ****     }
+ 174:../../bos/core/b_sem.c ****     if (attr->value < attr->value_max)
+ 268              		.loc 1 174 5 is_stmt 1 view .LVU99
+ 269              		.loc 1 174 13 is_stmt 0 view .LVU100
+ 270 0031 8B02     		movl	(%rdx), %eax
+ 271              		.loc 1 174 8 view .LVU101
+ 272 0033 3B4204   		cmpl	4(%rdx), %eax
+GAS LISTING /tmp/cc2rI3FZ.s 			page 12
+
+
+ 273 0036 7305     		jnb	.L23
+ 175:../../bos/core/b_sem.c ****     {
+ 176:../../bos/core/b_sem.c ****         attr->value += 1;
+ 274              		.loc 1 176 9 is_stmt 1 view .LVU102
+ 275              		.loc 1 176 21 is_stmt 0 view .LVU103
+ 276 0038 83C001   		addl	$1, %eax
+ 277 003b 8902     		movl	%eax, (%rdx)
+ 278              	.L23:
+ 177:../../bos/core/b_sem.c ****     }
+ 178:../../bos/core/b_sem.c ****     return 0;
+ 279              		.loc 1 178 12 view .LVU104
+ 280 003d 31C0     		xorl	%eax, %eax
+ 281 003f C3       		ret
+ 282              	.LVL28:
+ 283              		.p2align 4,,10
+ 284              		.p2align 3
+ 285              	.L25:
+ 167:../../bos/core/b_sem.c ****     }
+ 286              		.loc 1 167 16 view .LVU105
+ 287 0040 B8FFFFFF 		movl	$-1, %eax
+ 287      FF
+ 288              	.LVL29:
+ 179:../../bos/core/b_sem.c **** }
+ 289              		.loc 1 179 1 view .LVU106
+ 290 0045 C3       		ret
+ 291              		.cfi_endproc
+ 292              	.LFE31:
+ 294              		.section	.text.bSemGetCount,"ax",@progbits
+ 295              		.p2align 4
+ 296              		.globl	bSemGetCount
+ 298              	bSemGetCount:
+ 299              	.LVL30:
+ 300              	.LFB32:
+ 180:../../bos/core/b_sem.c **** 
+ 181:../../bos/core/b_sem.c **** uint32_t bSemGetCount(bSemId_t id)
+ 182:../../bos/core/b_sem.c **** {
+ 301              		.loc 1 182 1 is_stmt 1 view -0
+ 302              		.cfi_startproc
+ 303              		.loc 1 182 1 is_stmt 0 view .LVU108
+ 304 0000 F30F1EFA 		endbr64
+ 183:../../bos/core/b_sem.c ****     bSemAttr_t *attr = NULL;
+ 305              		.loc 1 183 5 is_stmt 1 view .LVU109
+ 306              	.LVL31:
+ 184:../../bos/core/b_sem.c ****     if (id == NULL)
+ 307              		.loc 1 184 5 view .LVU110
+ 308              		.loc 1 184 8 is_stmt 0 view .LVU111
+ 309 0004 4885FF   		testq	%rdi, %rdi
+ 310 0007 742F     		je	.L33
+ 185:../../bos/core/b_sem.c ****     {
+ 186:../../bos/core/b_sem.c ****         return 0;
+ 187:../../bos/core/b_sem.c ****     }
+ 188:../../bos/core/b_sem.c ****     attr = _bSemFind(id);
+ 311              		.loc 1 188 5 is_stmt 1 view .LVU112
+ 312              	.LVL32:
+ 313              	.LBB27:
+ 314              	.LBI27:
+ 105:../../bos/core/b_sem.c **** {
+GAS LISTING /tmp/cc2rI3FZ.s 			page 13
+
+
+ 315              		.loc 1 105 20 view .LVU113
+ 316              	.LBB28:
+ 107:../../bos/core/b_sem.c ****     bSemAttr_t       *pattr = NULL;
+ 317              		.loc 1 107 5 view .LVU114
+ 108:../../bos/core/b_sem.c ****     list_for_each(pos, &bSemListHead)
+ 318              		.loc 1 108 5 view .LVU115
+ 109:../../bos/core/b_sem.c ****     {
+ 319              		.loc 1 109 5 view .LVU116
+ 320 0009 488B0500 		movq	bSemListHead(%rip), %rax
+ 320      000000
+ 321              	.LVL33:
+ 109:../../bos/core/b_sem.c ****     {
+ 322              		.loc 1 109 5 discriminator 1 view .LVU117
+ 109:../../bos/core/b_sem.c ****     {
+ 323              		.loc 1 109 5 is_stmt 0 view .LVU118
+ 324 0010 488D0D00 		leaq	bSemListHead(%rip), %rcx
+ 324      000000
+ 109:../../bos/core/b_sem.c ****     {
+ 325              		.loc 1 109 5 discriminator 1 view .LVU119
+ 326 0017 4839C8   		cmpq	%rcx, %rax
+ 327 001a 750C     		jne	.L31
+ 328 001c EB1A     		jmp	.L33
+ 329              	.LVL34:
+ 330 001e 6690     		.p2align 4,,10
+ 331              		.p2align 3
+ 332              	.L34:
+ 116:../../bos/core/b_sem.c ****     }
+ 333              		.loc 1 116 9 is_stmt 1 view .LVU120
+ 109:../../bos/core/b_sem.c ****     {
+ 334              		.loc 1 109 5 discriminator 2 view .LVU121
+ 335 0020 488B00   		movq	(%rax), %rax
+ 336              	.LVL35:
+ 109:../../bos/core/b_sem.c ****     {
+ 337              		.loc 1 109 5 discriminator 1 view .LVU122
+ 338 0023 4839C8   		cmpq	%rcx, %rax
+ 339 0026 7410     		je	.L33
+ 340              	.L31:
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+ 341              		.loc 1 111 9 view .LVU123
+ 111:../../bos/core/b_sem.c ****         if (pattr == ((bSemAttr_t *)id))
+ 342              		.loc 1 111 15 is_stmt 0 view .LVU124
+ 343 0028 488D50F8 		leaq	-8(%rax), %rdx
+ 344              	.LVL36:
+ 112:../../bos/core/b_sem.c ****         {
+ 345              		.loc 1 112 9 is_stmt 1 view .LVU125
+ 112:../../bos/core/b_sem.c ****         {
+ 346              		.loc 1 112 12 is_stmt 0 view .LVU126
+ 347 002c 4839D7   		cmpq	%rdx, %rdi
+ 348 002f 75EF     		jne	.L34
+ 349              	.LVL37:
+ 112:../../bos/core/b_sem.c ****         {
+ 350              		.loc 1 112 12 view .LVU127
+ 351              	.LBE28:
+ 352              	.LBE27:
+ 189:../../bos/core/b_sem.c ****     if (attr == NULL)
+ 190:../../bos/core/b_sem.c ****     {
+ 191:../../bos/core/b_sem.c ****         return 0;
+GAS LISTING /tmp/cc2rI3FZ.s 			page 14
+
+
+ 192:../../bos/core/b_sem.c ****     }
+ 193:../../bos/core/b_sem.c ****     return attr->value;
+ 353              		.loc 1 193 5 is_stmt 1 view .LVU128
+ 354              		.loc 1 193 16 is_stmt 0 view .LVU129
+ 355 0031 8B02     		movl	(%rdx), %eax
+ 356 0033 C3       		ret
+ 357              	.LVL38:
+ 358              		.p2align 4,,10
+ 359 0034 0F1F4000 		.p2align 3
+ 360              	.L33:
+ 186:../../bos/core/b_sem.c ****     }
+ 361              		.loc 1 186 16 view .LVU130
+ 362 0038 31C0     		xorl	%eax, %eax
+ 363              	.LVL39:
+ 194:../../bos/core/b_sem.c **** }
+ 364              		.loc 1 194 1 view .LVU131
+ 365 003a C3       		ret
+ 366              		.cfi_endproc
+ 367              	.LFE32:
+ 369              		.section	.data.rel.local.bSemListHead,"aw"
+ 370              		.align 16
+ 373              	bSemListHead:
+ 374 0000 00000000 		.quad	bSemListHead
+ 374      00000000 
+ 375 0008 00000000 		.quad	bSemListHead
+ 375      00000000 
+ 376              		.text
+ 377              	.Letext0:
+ 378              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 379              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 380              		.file 5 "../../bos/core/inc/b_sem.h"
+ 1789              		.section	.note.gnu.property,"a"
+ 1790              		.align 8
+ 1791 0000 04000000 		.long	1f - 0f
+ 1792 0004 10000000 		.long	4f - 1f
+ 1793 0008 05000000 		.long	5
+ 1794              	0:
+ 1795 000c 474E5500 		.string	"GNU"
+ 1796              	1:
+ 1797              		.align 8
+ 1798 0010 020000C0 		.long	0xc0000002
+ 1799 0014 04000000 		.long	3f - 2f
+ 1800              	2:
+ 1801 0018 03000000 		.long	0x3
+ 1802              	3:
+ 1803 001c 00000000 		.align 8
+ 1804              	4:
+GAS LISTING /tmp/cc2rI3FZ.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_sem.c
+     /tmp/cc2rI3FZ.s:9      .text.bSemCreate:0000000000000000 bSemCreate
+     /tmp/cc2rI3FZ.s:373    .data.rel.local.bSemListHead:0000000000000000 bSemListHead
+     /tmp/cc2rI3FZ.s:131    .text.bSemAcquireNonblock:0000000000000000 bSemAcquireNonblock
+     /tmp/cc2rI3FZ.s:213    .text.bSemRelease:0000000000000000 bSemRelease
+     /tmp/cc2rI3FZ.s:298    .text.bSemGetCount:0000000000000000 bSemGetCount
+
+NO UNDEFINED SYMBOLS

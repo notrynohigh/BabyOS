@@ -1,0 +1,2110 @@
+GAS LISTING /tmp/ccjPosES.s 			page 1
+
+
+   1              		.file	"b_hal_uart.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_uart.c"
+   5              		.section	.text._bHalUartDetectIdle,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	_bHalUartDetectIdle
+   9              	_bHalUartDetectIdle:
+  10              	.LVL0:
+  11              	.LFB30:
+   1:../../bos/hal/b_hal_uart.c **** /**
+   2:../../bos/hal/b_hal_uart.c ****  *!
+   3:../../bos/hal/b_hal_uart.c ****  * \file        b_hal_uart.c
+   4:../../bos/hal/b_hal_uart.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_uart.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_uart.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_uart.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_uart.c ****  * @attention
+   9:../../bos/hal/b_hal_uart.c ****  *
+  10:../../bos/hal/b_hal_uart.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_uart.c ****  *
+  12:../../bos/hal/b_hal_uart.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_uart.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_uart.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_uart.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_uart.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_uart.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_uart.c ****  *
+  19:../../bos/hal/b_hal_uart.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_uart.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_uart.c ****  *
+  22:../../bos/hal/b_hal_uart.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_uart.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_uart.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_uart.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_uart.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_uart.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_uart.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_uart.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_uart.c ****  */
+  31:../../bos/hal/b_hal_uart.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_uart.c **** #include "b_section.h"
+  33:../../bos/hal/b_hal_uart.c **** #include "core/inc/b_task.h"
+  34:../../bos/hal/b_hal_uart.c **** #include "hal/inc/b_hal.h"
+  35:../../bos/hal/b_hal_uart.c **** 
+  36:../../bos/hal/b_hal_uart.c **** /**
+  37:../../bos/hal/b_hal_uart.c ****  * \addtogroup B_HAL
+  38:../../bos/hal/b_hal_uart.c ****  * \{
+  39:../../bos/hal/b_hal_uart.c ****  */
+  40:../../bos/hal/b_hal_uart.c **** 
+  41:../../bos/hal/b_hal_uart.c **** /**
+  42:../../bos/hal/b_hal_uart.c ****  * \addtogroup UART
+  43:../../bos/hal/b_hal_uart.c ****  * \{
+  44:../../bos/hal/b_hal_uart.c ****  */
+  45:../../bos/hal/b_hal_uart.c **** 
+  46:../../bos/hal/b_hal_uart.c **** /**
+  47:../../bos/hal/b_hal_uart.c ****  * \defgroup UART_Private_Variables
+GAS LISTING /tmp/ccjPosES.s 			page 2
+
+
+  48:../../bos/hal/b_hal_uart.c ****  * \{
+  49:../../bos/hal/b_hal_uart.c ****  */
+  50:../../bos/hal/b_hal_uart.c **** 
+  51:../../bos/hal/b_hal_uart.c **** static LIST_HEAD(bHalUartListHead);
+  52:../../bos/hal/b_hal_uart.c **** B_TASK_CREATE_ATTR(bHalUartTaskAttr);
+  53:../../bos/hal/b_hal_uart.c **** static bTaskId_t bHalUartTaskId = NULL;
+  54:../../bos/hal/b_hal_uart.c **** /**
+  55:../../bos/hal/b_hal_uart.c ****  * \}
+  56:../../bos/hal/b_hal_uart.c ****  */
+  57:../../bos/hal/b_hal_uart.c **** 
+  58:../../bos/hal/b_hal_uart.c **** /**
+  59:../../bos/hal/b_hal_uart.c ****  * \addtogroup UART_Private_Functions
+  60:../../bos/hal/b_hal_uart.c ****  * \{
+  61:../../bos/hal/b_hal_uart.c ****  */
+  62:../../bos/hal/b_hal_uart.c **** 
+  63:../../bos/hal/b_hal_uart.c **** static bHalUartIdleAttr_t *_bHalUartAttrFind(bHalUartNumber_t uart)
+  64:../../bos/hal/b_hal_uart.c **** {
+  65:../../bos/hal/b_hal_uart.c ****     struct list_head   *pos   = NULL;
+  66:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr = NULL;
+  67:../../bos/hal/b_hal_uart.c ****     list_for_each(pos, &bHalUartListHead)
+  68:../../bos/hal/b_hal_uart.c ****     {
+  69:../../bos/hal/b_hal_uart.c ****         pattr = list_entry(pos, bHalUartIdleAttr_t, list);
+  70:../../bos/hal/b_hal_uart.c ****         if (pattr->uart == uart)
+  71:../../bos/hal/b_hal_uart.c ****         {
+  72:../../bos/hal/b_hal_uart.c ****             return pattr;
+  73:../../bos/hal/b_hal_uart.c ****         }
+  74:../../bos/hal/b_hal_uart.c ****     }
+  75:../../bos/hal/b_hal_uart.c ****     return NULL;
+  76:../../bos/hal/b_hal_uart.c **** }
+  77:../../bos/hal/b_hal_uart.c **** 
+  78:../../bos/hal/b_hal_uart.c **** static void _bHalItHandler(bHalItNumber_t it, uint8_t index, bHalItParam_t *param, void *user_data)
+  79:../../bos/hal/b_hal_uart.c **** {
+  80:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr = (bHalUartIdleAttr_t *)user_data;
+  81:../../bos/hal/b_hal_uart.c ****     int                 i     = 0;
+  82:../../bos/hal/b_hal_uart.c ****     if (pattr == NULL || pattr->pbuf == NULL)
+  83:../../bos/hal/b_hal_uart.c ****     {
+  84:../../bos/hal/b_hal_uart.c ****         return;
+  85:../../bos/hal/b_hal_uart.c ****     }
+  86:../../bos/hal/b_hal_uart.c ****     for (i = 0; i < param->_uart.len; i++)
+  87:../../bos/hal/b_hal_uart.c ****     {
+  88:../../bos/hal/b_hal_uart.c ****         if (pattr->index < pattr->len)
+  89:../../bos/hal/b_hal_uart.c ****         {
+  90:../../bos/hal/b_hal_uart.c ****             pattr->pbuf[pattr->index] = param->_uart.pbuf[i];
+  91:../../bos/hal/b_hal_uart.c ****             pattr->index += 1;
+  92:../../bos/hal/b_hal_uart.c ****         }
+  93:../../bos/hal/b_hal_uart.c ****     }
+  94:../../bos/hal/b_hal_uart.c **** }
+  95:../../bos/hal/b_hal_uart.c **** 
+  96:../../bos/hal/b_hal_uart.c **** PT_THREAD(_bHalUartDetectIdle)(struct pt *pt, void *arg)
+  97:../../bos/hal/b_hal_uart.c **** {
+  12              		.loc 1 97 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 97 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  98:../../bos/hal/b_hal_uart.c ****     struct list_head   *pos    = NULL;
+  16              		.loc 1 98 5 is_stmt 1 view .LVU2
+  17              	.LVL1:
+GAS LISTING /tmp/ccjPosES.s 			page 3
+
+
+  99:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr  = NULL;
+  18              		.loc 1 99 5 view .LVU3
+ 100:../../bos/hal/b_hal_uart.c ****     int                 retval = -1;
+  19              		.loc 1 100 5 view .LVU4
+ 101:../../bos/hal/b_hal_uart.c ****     B_TASK_INIT_BEGIN();
+  20              		.loc 1 101 5 view .LVU5
+  97:../../bos/hal/b_hal_uart.c ****     struct list_head   *pos    = NULL;
+  21              		.loc 1 97 1 is_stmt 0 view .LVU6
+  22 0004 4155     		pushq	%r13
+  23              	.LCFI0:
+  24              		.cfi_def_cfa_offset 16
+  25              		.cfi_offset 13, -16
+  26 0006 4154     		pushq	%r12
+  27              	.LCFI1:
+  28              		.cfi_def_cfa_offset 24
+  29              		.cfi_offset 12, -24
+  30 0008 55       		pushq	%rbp
+  31              	.LCFI2:
+  32              		.cfi_def_cfa_offset 32
+  33              		.cfi_offset 6, -32
+  34 0009 4889FD   		movq	%rdi, %rbp
+  35 000c 53       		pushq	%rbx
+  36              	.LCFI3:
+  37              		.cfi_def_cfa_offset 40
+  38              		.cfi_offset 3, -40
+  39 000d 4883EC08 		subq	$8, %rsp
+  40              	.LCFI4:
+  41              		.cfi_def_cfa_offset 48
+  42              		.loc 1 101 5 view .LVU7
+  43 0011 807F0D00 		cmpb	$0, 13(%rdi)
+  44 0015 7504     		jne	.L2
+  45              		.loc 1 101 5 is_stmt 1 discriminator 1 view .LVU8
+  46 0017 C6470D01 		movb	$1, 13(%rdi)
+  47              	.L2:
+  48              		.loc 1 101 24 discriminator 3 view .LVU9
+ 102:../../bos/hal/b_hal_uart.c ****     // ...
+ 103:../../bos/hal/b_hal_uart.c ****     B_TASK_INIT_END();
+  49              		.loc 1 103 22 view .LVU10
+  50              	.LBB28:
+ 104:../../bos/hal/b_hal_uart.c **** 
+ 105:../../bos/hal/b_hal_uart.c ****     PT_BEGIN(pt);
+  51              		.loc 1 105 5 view .LVU11
+  52              	.LVL2:
+  53              		.loc 1 105 5 view .LVU12
+  54              		.loc 1 105 5 view .LVU13
+  55 001b 0FB74500 		movzwl	0(%rbp), %eax
+  56 001f 6685C0   		testw	%ax, %ax
+  57 0022 0F84BA00 		je	.L3
+  57      0000
+  58 0028 663D9500 		cmpw	$149, %ax
+  59 002c 7476     		je	.L4
+ 106:../../bos/hal/b_hal_uart.c ****     while (1)
+ 107:../../bos/hal/b_hal_uart.c ****     {
+ 108:../../bos/hal/b_hal_uart.c ****         if (list_empty(&bHalUartListHead))
+ 109:../../bos/hal/b_hal_uart.c ****         {
+ 110:../../bos/hal/b_hal_uart.c ****             bTaskRestart(pt);
+ 111:../../bos/hal/b_hal_uart.c ****         }
+GAS LISTING /tmp/ccjPosES.s 			page 4
+
+
+ 112:../../bos/hal/b_hal_uart.c ****         list_for_each(pos, &bHalUartListHead)
+ 113:../../bos/hal/b_hal_uart.c ****         {
+ 114:../../bos/hal/b_hal_uart.c ****             pattr = list_entry(pos, bHalUartIdleAttr_t, list);
+ 115:../../bos/hal/b_hal_uart.c ****             if (pattr->chl < B_HAL_DMA_CHL_NUMBER)
+ 116:../../bos/hal/b_hal_uart.c ****             {
+ 117:../../bos/hal/b_hal_uart.c ****                 pattr->index = pattr->len - bHalDmaGetCount(pattr->chl);
+ 118:../../bos/hal/b_hal_uart.c ****             }
+ 119:../../bos/hal/b_hal_uart.c ****             if (pattr->index > 0)
+ 120:../../bos/hal/b_hal_uart.c ****             {
+ 121:../../bos/hal/b_hal_uart.c ****                 if (pattr->l_index == 0 ||
+ 122:../../bos/hal/b_hal_uart.c ****                     ((pattr->l_index > 0) && (pattr->index != pattr->l_index)))
+ 123:../../bos/hal/b_hal_uart.c ****                 {
+ 124:../../bos/hal/b_hal_uart.c ****                     pattr->l_index = pattr->index;
+ 125:../../bos/hal/b_hal_uart.c ****                     pattr->l_tick  = bHalGetSysTick();
+ 126:../../bos/hal/b_hal_uart.c ****                 }
+ 127:../../bos/hal/b_hal_uart.c ****                 if (TICK_DIFF_BIT32(pattr->l_tick, bHalGetSysTick()) > MS2TICKS(pattr->idle_ms))
+ 128:../../bos/hal/b_hal_uart.c ****                 {
+ 129:../../bos/hal/b_hal_uart.c ****                     if (pattr->callback)
+ 130:../../bos/hal/b_hal_uart.c ****                     {
+ 131:../../bos/hal/b_hal_uart.c ****                         retval = pattr->callback(pattr->pbuf, pattr->index, pattr->user_data);
+ 132:../../bos/hal/b_hal_uart.c ****                         if (retval >= 0 || pattr->index == pattr->len)
+ 133:../../bos/hal/b_hal_uart.c ****                         {
+ 134:../../bos/hal/b_hal_uart.c ****                             memset(pattr->pbuf, 0, pattr->len);
+ 135:../../bos/hal/b_hal_uart.c ****                             pattr->index = 0;
+ 136:../../bos/hal/b_hal_uart.c ****                             if (pattr->chl < B_HAL_DMA_CHL_NUMBER)
+ 137:../../bos/hal/b_hal_uart.c ****                             {
+ 138:../../bos/hal/b_hal_uart.c ****                                 bHalDmaStop(pattr->chl);
+ 139:../../bos/hal/b_hal_uart.c ****                                 bHalDmaSetDest(pattr->chl, (uint32_t)pattr->pbuf);
+ 140:../../bos/hal/b_hal_uart.c ****                                 bHalDmaSetCount(pattr->chl, pattr->len);
+ 141:../../bos/hal/b_hal_uart.c ****                                 bHalDmaStart(pattr->chl);
+ 142:../../bos/hal/b_hal_uart.c ****                             }
+ 143:../../bos/hal/b_hal_uart.c ****                         }
+ 144:../../bos/hal/b_hal_uart.c ****                     }
+ 145:../../bos/hal/b_hal_uart.c ****                     pattr->l_tick = bHalGetSysTick();
+ 146:../../bos/hal/b_hal_uart.c ****                 }
+ 147:../../bos/hal/b_hal_uart.c ****             }
+ 148:../../bos/hal/b_hal_uart.c ****         }
+ 149:../../bos/hal/b_hal_uart.c ****         bTaskDelayMs(pt, 5);
+ 150:../../bos/hal/b_hal_uart.c ****     }
+ 151:../../bos/hal/b_hal_uart.c ****     PT_END(pt);
+  60              		.loc 1 151 5 view .LVU14
+  61              		.loc 1 151 5 view .LVU15
+  62              	.LVL3:
+  63              		.loc 1 151 5 view .LVU16
+  64              		.loc 1 151 5 view .LVU17
+  65 002e 31C0     		xorl	%eax, %eax
+  66 0030 31D2     		xorl	%edx, %edx
+  67 0032 48C74504 		movq	$0, 4(%rbp)
+  67      00000000 
+  68 003a 66894500 		movw	%ax, 0(%rbp)
+  69              		.loc 1 151 5 view .LVU18
+  70              		.loc 1 151 5 view .LVU19
+  71              		.loc 1 151 5 view .LVU20
+  72              		.loc 1 151 5 view .LVU21
+  73              		.loc 1 151 5 view .LVU22
+  74              		.loc 1 151 5 view .LVU23
+  75 003e B8030000 		movl	$3, %eax
+GAS LISTING /tmp/ccjPosES.s 			page 5
+
+
+  75      00
+  76 0043 C6450C00 		movb	$0, 12(%rbp)
+  77              		.loc 1 151 5 view .LVU24
+  78              		.loc 1 151 5 view .LVU25
+  79 0047 6689550E 		movw	%dx, 14(%rbp)
+  80              		.loc 1 151 5 view .LVU26
+  81              		.loc 1 151 5 view .LVU27
+  82              		.loc 1 151 5 view .LVU28
+  83              	.LBE28:
+  84              		.loc 1 151 15 discriminator 1 view .LVU29
+ 152:../../bos/hal/b_hal_uart.c **** }
+  85              		.loc 1 152 1 is_stmt 0 view .LVU30
+  86 004b 4883C408 		addq	$8, %rsp
+  87              	.LCFI5:
+  88              		.cfi_remember_state
+  89              		.cfi_def_cfa_offset 40
+  90 004f 5B       		popq	%rbx
+  91              	.LCFI6:
+  92              		.cfi_def_cfa_offset 32
+  93 0050 5D       		popq	%rbp
+  94              	.LCFI7:
+  95              		.cfi_def_cfa_offset 24
+  96 0051 415C     		popq	%r12
+  97              	.LCFI8:
+  98              		.cfi_def_cfa_offset 16
+  99 0053 415D     		popq	%r13
+ 100              	.LCFI9:
+ 101              		.cfi_def_cfa_offset 8
+ 102 0055 C3       		ret
+ 103              	.LVL4:
+ 104 0056 662E0F1F 		.p2align 4,,10
+ 104      84000000 
+ 104      0000
+ 105              		.p2align 3
+ 106              	.L47:
+ 107              	.LCFI10:
+ 108              		.cfi_restore_state
+ 109              	.LBB33:
+ 132:../../bos/hal/b_hal_uart.c ****                         {
+ 110              		.loc 1 132 65 discriminator 1 view .LVU31
+ 111 0060 8B53D8   		movl	-40(%rbx), %edx
+ 112              	.LVL5:
+ 113              	.L19:
+ 134:../../bos/hal/b_hal_uart.c ****                             pattr->index = 0;
+ 114              		.loc 1 134 29 is_stmt 1 view .LVU32
+ 115              	.LBB29:
+ 116              	.LBI29:
+ 117              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+GAS LISTING /tmp/ccjPosES.s 			page 6
+
+
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+ 118              		.loc 2 57 1 view .LVU33
+ 119              	.LBB30:
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+ 120              		.loc 2 59 3 view .LVU34
+ 121              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU35
+ 122 0063 488B7BD0 		movq	-48(%rbx), %rdi
+ 123 0067 31F6     		xorl	%esi, %esi
+ 124 0069 E8000000 		call	memset@PLT
+GAS LISTING /tmp/ccjPosES.s 			page 7
+
+
+ 124      00
+ 125              	.LVL6:
+ 126              		.loc 2 59 10 discriminator 1 view .LVU36
+ 127              	.LBE30:
+ 128              	.LBE29:
+ 135:../../bos/hal/b_hal_uart.c ****                             if (pattr->chl < B_HAL_DMA_CHL_NUMBER)
+ 129              		.loc 1 135 29 is_stmt 1 view .LVU37
+ 136:../../bos/hal/b_hal_uart.c ****                             {
+ 130              		.loc 1 136 38 is_stmt 0 view .LVU38
+ 131 006e 8B7BA4   		movl	-92(%rbx), %edi
+ 135:../../bos/hal/b_hal_uart.c ****                             if (pattr->chl < B_HAL_DMA_CHL_NUMBER)
+ 132              		.loc 1 135 42 view .LVU39
+ 133 0071 C743F000 		movl	$0, -16(%rbx)
+ 133      000000
+ 136:../../bos/hal/b_hal_uart.c ****                             {
+ 134              		.loc 1 136 29 is_stmt 1 view .LVU40
+ 136:../../bos/hal/b_hal_uart.c ****                             {
+ 135              		.loc 1 136 32 is_stmt 0 view .LVU41
+ 136 0078 83FF0F   		cmpl	$15, %edi
+ 137 007b 0F865F01 		jbe	.L42
+ 137      0000
+ 138              	.LVL7:
+ 139              	.L17:
+ 145:../../bos/hal/b_hal_uart.c ****                 }
+ 140              		.loc 1 145 21 is_stmt 1 view .LVU42
+ 145:../../bos/hal/b_hal_uart.c ****                 }
+ 141              		.loc 1 145 37 is_stmt 0 view .LVU43
+ 142 0081 E8000000 		call	bHalGetSysTick@PLT
+ 142      00
+ 143              	.LVL8:
+ 145:../../bos/hal/b_hal_uart.c ****                 }
+ 144              		.loc 1 145 35 discriminator 1 view .LVU44
+ 145 0086 8943F8   		movl	%eax, -8(%rbx)
+ 146              	.L10:
+ 112:../../bos/hal/b_hal_uart.c ****         {
+ 147              		.loc 1 112 9 is_stmt 1 discriminator 2 view .LVU45
+ 148 0089 488B1B   		movq	(%rbx), %rbx
+ 149              	.LVL9:
+ 112:../../bos/hal/b_hal_uart.c ****         {
+ 150              		.loc 1 112 9 discriminator 1 view .LVU46
+ 151 008c 4C39E3   		cmpq	%r12, %rbx
+ 152 008f 756F     		jne	.L6
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 153              		.loc 1 149 9 view .LVU47
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 154              		.loc 1 149 9 view .LVU48
+ 155 0091 807D0C00 		cmpb	$0, 12(%rbp)
+ 156 0095 0F842501 		je	.L43
+ 156      0000
+ 157              	.L21:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 158              		.loc 1 149 9 discriminator 3 view .LVU49
+ 159 009b BE950000 		movl	$149, %esi
+ 159      00
+ 160 00a0 66897500 		movw	%si, 0(%rbp)
+ 161              	.LVL10:
+ 162              	.L4:
+GAS LISTING /tmp/ccjPosES.s 			page 8
+
+
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 163              		.loc 1 149 9 discriminator 4 view .LVU50
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 164              		.loc 1 149 9 discriminator 4 view .LVU51
+ 165 00a4 E8000000 		call	bHalGetSysTick@PLT
+ 165      00
+ 166              	.LVL11:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 167              		.loc 1 149 9 is_stmt 0 discriminator 5 view .LVU52
+ 168 00a9 E8000000 		call	bHalGetSysTick@PLT
+ 168      00
+ 169              	.LVL12:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 170              		.loc 1 149 9 discriminator 1 view .LVU53
+ 171 00ae 2B4504   		subl	4(%rbp), %eax
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 172              		.loc 1 149 9 discriminator 8 view .LVU54
+ 173 00b1 3B4508   		cmpl	8(%rbp), %eax
+ 174 00b4 7312     		jnb	.L22
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 175              		.loc 1 110 13 view .LVU55
+ 176 00b6 31C0     		xorl	%eax, %eax
+ 177              	.L48:
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 178              		.loc 1 110 13 view .LVU56
+ 179              	.LBE33:
+ 180              		.loc 1 152 1 view .LVU57
+ 181 00b8 4883C408 		addq	$8, %rsp
+ 182              	.LCFI11:
+ 183              		.cfi_remember_state
+ 184              		.cfi_def_cfa_offset 40
+ 185 00bc 5B       		popq	%rbx
+ 186              	.LCFI12:
+ 187              		.cfi_def_cfa_offset 32
+ 188 00bd 5D       		popq	%rbp
+ 189              	.LCFI13:
+ 190              		.cfi_def_cfa_offset 24
+ 191              	.LVL13:
+ 192              		.loc 1 152 1 view .LVU58
+ 193 00be 415C     		popq	%r12
+ 194              	.LCFI14:
+ 195              		.cfi_def_cfa_offset 16
+ 196 00c0 415D     		popq	%r13
+ 197              	.LCFI15:
+ 198              		.cfi_def_cfa_offset 8
+ 199 00c2 C3       		ret
+ 200              	.LVL14:
+ 201              		.p2align 4,,10
+ 202 00c3 0F1F4400 		.p2align 3
+ 202      00
+ 203              	.L22:
+ 204              	.LCFI16:
+ 205              		.cfi_restore_state
+ 206              	.LBB34:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 207              		.loc 1 149 9 is_stmt 1 discriminator 10 view .LVU59
+ 208 00c8 E8000000 		call	bHalGetSysTick@PLT
+GAS LISTING /tmp/ccjPosES.s 			page 9
+
+
+ 208      00
+ 209              	.LVL15:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 210              		.loc 1 149 9 is_stmt 0 discriminator 11 view .LVU60
+ 211 00cd E8000000 		call	bHalGetSysTick@PLT
+ 211      00
+ 212              	.LVL16:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 213              		.loc 1 149 9 discriminator 1 view .LVU61
+ 214 00d2 2B4504   		subl	4(%rbp), %eax
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 215              		.loc 1 149 9 discriminator 14 view .LVU62
+ 216 00d5 3B4508   		cmpl	8(%rbp), %eax
+ 217 00d8 0F83D200 		jnb	.L44
+ 217      0000
+ 218              	.L24:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 219              		.loc 1 149 9 is_stmt 1 discriminator 17 view .LVU63
+ 220 00de C6450C00 		movb	$0, 12(%rbp)
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 221              		.loc 1 149 9 discriminator 17 view .LVU64
+ 106:../../bos/hal/b_hal_uart.c ****     {
+ 222              		.loc 1 106 11 view .LVU65
+ 223              	.L3:
+ 105:../../bos/hal/b_hal_uart.c ****     while (1)
+ 224              		.loc 1 105 17 discriminator 1 view .LVU66
+ 106:../../bos/hal/b_hal_uart.c ****     {
+ 225              		.loc 1 106 5 view .LVU67
+ 108:../../bos/hal/b_hal_uart.c ****         {
+ 226              		.loc 1 108 9 view .LVU68
+ 227              	.LVL17:
+ 228              	.LBB31:
+ 229              	.LBI31:
+ 230              		.file 3 "../../bos/utils/inc/b_util_list.h"
+   1:../../bos/utils/inc/b_util_list.h **** /**
+   2:../../bos/utils/inc/b_util_list.h ****  *!
+   3:../../bos/utils/inc/b_util_list.h ****  * \file        b_util_list.h
+   4:../../bos/utils/inc/b_util_list.h ****  * \version     v0.0.1
+   5:../../bos/utils/inc/b_util_list.h ****  * \date        2019/12/23
+   6:../../bos/utils/inc/b_util_list.h ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+   8:../../bos/utils/inc/b_util_list.h ****  * @attention
+   9:../../bos/utils/inc/b_util_list.h ****  *
+  10:../../bos/utils/inc/b_util_list.h ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/inc/b_util_list.h ****  *
+  12:../../bos/utils/inc/b_util_list.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/inc/b_util_list.h ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/inc/b_util_list.h ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/inc/b_util_list.h ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/inc/b_util_list.h ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/inc/b_util_list.h ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/inc/b_util_list.h ****  *
+  19:../../bos/utils/inc/b_util_list.h ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/inc/b_util_list.h ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/inc/b_util_list.h ****  *
+  22:../../bos/utils/inc/b_util_list.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/inc/b_util_list.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+GAS LISTING /tmp/ccjPosES.s 			page 10
+
+
+  24:../../bos/utils/inc/b_util_list.h ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/inc/b_util_list.h ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/inc/b_util_list.h ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/inc/b_util_list.h ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/inc/b_util_list.h ****  * SOFTWARE.
+  29:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+  30:../../bos/utils/inc/b_util_list.h ****  */
+  31:../../bos/utils/inc/b_util_list.h **** #ifndef __B_UTIL_LIST_H__
+  32:../../bos/utils/inc/b_util_list.h **** #define __B_UTIL_LIST_H__
+  33:../../bos/utils/inc/b_util_list.h **** 
+  34:../../bos/utils/inc/b_util_list.h **** #ifdef __cplusplus
+  35:../../bos/utils/inc/b_util_list.h **** extern "C" {
+  36:../../bos/utils/inc/b_util_list.h **** #endif
+  37:../../bos/utils/inc/b_util_list.h **** 
+  38:../../bos/utils/inc/b_util_list.h **** /*Includes ----------------------------------------------*/
+  39:../../bos/utils/inc/b_util_list.h **** #include "b_type.h"
+  40:../../bos/utils/inc/b_util_list.h **** /**
+  41:../../bos/utils/inc/b_util_list.h ****  * \addtogroup B_UTILS
+  42:../../bos/utils/inc/b_util_list.h ****  * \{
+  43:../../bos/utils/inc/b_util_list.h ****  */
+  44:../../bos/utils/inc/b_util_list.h **** 
+  45:../../bos/utils/inc/b_util_list.h **** /**
+  46:../../bos/utils/inc/b_util_list.h ****  * \addtogroup LIST
+  47:../../bos/utils/inc/b_util_list.h ****  * \{
+  48:../../bos/utils/inc/b_util_list.h ****  */
+  49:../../bos/utils/inc/b_util_list.h **** 
+  50:../../bos/utils/inc/b_util_list.h **** struct list_head
+  51:../../bos/utils/inc/b_util_list.h **** {
+  52:../../bos/utils/inc/b_util_list.h ****     struct list_head *next, *prev;
+  53:../../bos/utils/inc/b_util_list.h **** };
+  54:../../bos/utils/inc/b_util_list.h **** 
+  55:../../bos/utils/inc/b_util_list.h **** #define WRITE_ONCE(var, val) (var) = (val)
+  56:../../bos/utils/inc/b_util_list.h **** 
+  57:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD_INIT(name) \
+  58:../../bos/utils/inc/b_util_list.h ****     {                        \
+  59:../../bos/utils/inc/b_util_list.h ****         &(name), &(name)     \
+  60:../../bos/utils/inc/b_util_list.h ****     }
+  61:../../bos/utils/inc/b_util_list.h **** 
+  62:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD(name) struct list_head name = LIST_HEAD_INIT(name)
+  63:../../bos/utils/inc/b_util_list.h **** 
+  64:../../bos/utils/inc/b_util_list.h **** #define INIT_LIST_HEAD(ptr)  \
+  65:../../bos/utils/inc/b_util_list.h ****     do                       \
+  66:../../bos/utils/inc/b_util_list.h ****     {                        \
+  67:../../bos/utils/inc/b_util_list.h ****         (ptr)->next = (ptr); \
+  68:../../bos/utils/inc/b_util_list.h ****         (ptr)->prev = (ptr); \
+  69:../../bos/utils/inc/b_util_list.h ****     } while (0)
+  70:../../bos/utils/inc/b_util_list.h **** 
+  71:../../bos/utils/inc/b_util_list.h **** /**
+  72:../../bos/utils/inc/b_util_list.h ****  * list_entry - get the struct for this entry
+  73:../../bos/utils/inc/b_util_list.h ****  * @ptr: the &struct list_head pointer.
+  74:../../bos/utils/inc/b_util_list.h ****  * @type: the type of the struct this is embedded in.
+  75:../../bos/utils/inc/b_util_list.h ****  * @member: the name of the list_struct within the struct.
+  76:../../bos/utils/inc/b_util_list.h ****  */
+  77:../../bos/utils/inc/b_util_list.h **** #define list_entry(ptr, type, member) \
+  78:../../bos/utils/inc/b_util_list.h ****     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
+  79:../../bos/utils/inc/b_util_list.h **** 
+  80:../../bos/utils/inc/b_util_list.h **** #define list_first_entry(ptr, type, member) list_entry((ptr)->next, type, member)
+GAS LISTING /tmp/ccjPosES.s 			page 11
+
+
+  81:../../bos/utils/inc/b_util_list.h **** 
+  82:../../bos/utils/inc/b_util_list.h **** #define list_next_entry(pos, type, member) list_entry((pos)->member.next, type, member)
+  83:../../bos/utils/inc/b_util_list.h **** 
+  84:../../bos/utils/inc/b_util_list.h **** /*
+  85:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry between two known consecutive entries.
+  86:../../bos/utils/inc/b_util_list.h ****  *
+  87:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+  88:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+  89:../../bos/utils/inc/b_util_list.h ****  */
+  90:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_add(struct list_head *newItem, struct list_head *prev,
+  91:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+  92:../../bos/utils/inc/b_util_list.h **** {
+  93:../../bos/utils/inc/b_util_list.h ****     next->prev    = newItem;
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+  95:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+  96:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+  97:../../bos/utils/inc/b_util_list.h **** }
+  98:../../bos/utils/inc/b_util_list.h **** 
+  99:../../bos/utils/inc/b_util_list.h **** /**
+ 100:../../bos/utils/inc/b_util_list.h ****  * list_add - add a new entry
+ 101:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 102:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it after
+ 103:../../bos/utils/inc/b_util_list.h ****  *
+ 104:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry after the specified head.
+ 105:../../bos/utils/inc/b_util_list.h ****  * This is good for implementing stacks.
+ 106:../../bos/utils/inc/b_util_list.h ****  */
+ 107:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add(struct list_head *newItem, struct list_head *head)
+ 108:../../bos/utils/inc/b_util_list.h **** {
+ 109:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head, head->next);
+ 110:../../bos/utils/inc/b_util_list.h **** }
+ 111:../../bos/utils/inc/b_util_list.h **** 
+ 112:../../bos/utils/inc/b_util_list.h **** /**
+ 113:../../bos/utils/inc/b_util_list.h ****  * list_add_tail - add a new entry
+ 114:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 115:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it before
+ 116:../../bos/utils/inc/b_util_list.h ****  *
+ 117:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry before the specified head.
+ 118:../../bos/utils/inc/b_util_list.h ****  * This is useful for implementing queues.
+ 119:../../bos/utils/inc/b_util_list.h ****  */
+ 120:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add_tail(struct list_head *newItem, struct list_head *head)
+ 121:../../bos/utils/inc/b_util_list.h **** {
+ 122:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head->prev, head);
+ 123:../../bos/utils/inc/b_util_list.h **** }
+ 124:../../bos/utils/inc/b_util_list.h **** 
+ 125:../../bos/utils/inc/b_util_list.h **** /*
+ 126:../../bos/utils/inc/b_util_list.h ****  * Delete a list entry by making the prev/next entries
+ 127:../../bos/utils/inc/b_util_list.h ****  * point to each other.
+ 128:../../bos/utils/inc/b_util_list.h ****  *
+ 129:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+ 130:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+ 131:../../bos/utils/inc/b_util_list.h ****  */
+ 132:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_del(struct list_head *prev, struct list_head *next)
+ 133:../../bos/utils/inc/b_util_list.h **** {
+ 134:../../bos/utils/inc/b_util_list.h ****     next->prev = prev;
+ 135:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, next);
+ 136:../../bos/utils/inc/b_util_list.h **** }
+ 137:../../bos/utils/inc/b_util_list.h **** 
+GAS LISTING /tmp/ccjPosES.s 			page 12
+
+
+ 138:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_del(struct list_head *item)
+ 139:../../bos/utils/inc/b_util_list.h **** {
+ 140:../../bos/utils/inc/b_util_list.h ****     __list_del(item->prev, item->next);
+ 141:../../bos/utils/inc/b_util_list.h **** }
+ 142:../../bos/utils/inc/b_util_list.h **** 
+ 143:../../bos/utils/inc/b_util_list.h **** /**
+ 144:../../bos/utils/inc/b_util_list.h ****  * list_is_first -- tests whether @list is the first entry in list @head
+ 145:../../bos/utils/inc/b_util_list.h ****  * @list: the entry to test
+ 146:../../bos/utils/inc/b_util_list.h ****  * @head: the head of the list
+ 147:../../bos/utils/inc/b_util_list.h ****  */
+ 148:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF int list_is_first(const struct list_head *list, const struct list_head *head)
+ 149:../../bos/utils/inc/b_util_list.h **** {
+ 150:../../bos/utils/inc/b_util_list.h ****     return list->prev == head;
+ 151:../../bos/utils/inc/b_util_list.h **** }
+ 152:../../bos/utils/inc/b_util_list.h **** 
+ 153:../../bos/utils/inc/b_util_list.h **** /**
+ 154:../../bos/utils/inc/b_util_list.h ****  * list_is_last - tests whether @list is the last entry in list @head
+ 155:../../bos/utils/inc/b_util_list.h ****  * @list: the entry to test
+ 156:../../bos/utils/inc/b_util_list.h ****  * @head: the head of the list
+ 157:../../bos/utils/inc/b_util_list.h ****  */
+ 158:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF int list_is_last(const struct list_head *list, const struct list_head *head)
+ 159:../../bos/utils/inc/b_util_list.h **** {
+ 160:../../bos/utils/inc/b_util_list.h ****     return list->next == head;
+ 161:../../bos/utils/inc/b_util_list.h **** }
+ 162:../../bos/utils/inc/b_util_list.h **** 
+ 163:../../bos/utils/inc/b_util_list.h **** /**
+ 164:../../bos/utils/inc/b_util_list.h ****  * list_is_head - tests whether @list is the list @head
+ 165:../../bos/utils/inc/b_util_list.h ****  * @list: the entry to test
+ 166:../../bos/utils/inc/b_util_list.h ****  * @head: the head of the list
+ 167:../../bos/utils/inc/b_util_list.h ****  */
+ 168:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF int list_is_head(const struct list_head *list, const struct list_head *head)
+ 169:../../bos/utils/inc/b_util_list.h **** {
+ 170:../../bos/utils/inc/b_util_list.h ****     return list == head;
+ 171:../../bos/utils/inc/b_util_list.h **** }
+ 172:../../bos/utils/inc/b_util_list.h **** 
+ 173:../../bos/utils/inc/b_util_list.h **** /**
+ 174:../../bos/utils/inc/b_util_list.h ****  * list_empty - tests whether a list is empty
+ 175:../../bos/utils/inc/b_util_list.h ****  * @head: the list to test.
+ 176:../../bos/utils/inc/b_util_list.h ****  */
+ 177:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF int list_empty(const struct list_head *head)
+ 231              		.loc 3 177 25 view .LVU69
+ 232              	.LBB32:
+ 178:../../bos/utils/inc/b_util_list.h **** {
+ 179:../../bos/utils/inc/b_util_list.h ****     return head->next == head;
+ 233              		.loc 3 179 5 view .LVU70
+ 234              		.loc 3 179 16 is_stmt 0 view .LVU71
+ 235 00e2 488B1D00 		movq	bHalUartListHead(%rip), %rbx
+ 235      000000
+ 236              	.LVL18:
+ 237              		.loc 3 179 16 view .LVU72
+ 238 00e9 4C8D2500 		leaq	bHalUartListHead(%rip), %r12
+ 238      000000
+ 239              	.LBE32:
+ 240              	.LBE31:
+ 108:../../bos/hal/b_hal_uart.c ****         {
+ 241              		.loc 1 108 12 discriminator 1 view .LVU73
+ 242 00f0 4C39E3   		cmpq	%r12, %rbx
+GAS LISTING /tmp/ccjPosES.s 			page 13
+
+
+ 243 00f3 0F841701 		je	.L45
+ 243      0000
+ 244 00f9 0F1F8000 		.p2align 4,,10
+ 244      000000
+ 245              		.p2align 3
+ 246              	.L6:
+ 247              	.LVL19:
+ 114:../../bos/hal/b_hal_uart.c ****             if (pattr->chl < B_HAL_DMA_CHL_NUMBER)
+ 248              		.loc 1 114 13 is_stmt 1 view .LVU74
+ 115:../../bos/hal/b_hal_uart.c ****             {
+ 249              		.loc 1 115 13 view .LVU75
+ 115:../../bos/hal/b_hal_uart.c ****             {
+ 250              		.loc 1 115 22 is_stmt 0 view .LVU76
+ 251 0100 8B7BA4   		movl	-92(%rbx), %edi
+ 115:../../bos/hal/b_hal_uart.c ****             {
+ 252              		.loc 1 115 16 view .LVU77
+ 253 0103 83FF0F   		cmpl	$15, %edi
+ 254 0106 0F868C00 		jbe	.L46
+ 254      0000
+ 255              	.L8:
+ 119:../../bos/hal/b_hal_uart.c ****             {
+ 256              		.loc 1 119 13 is_stmt 1 view .LVU78
+ 119:../../bos/hal/b_hal_uart.c ****             {
+ 257              		.loc 1 119 22 is_stmt 0 view .LVU79
+ 258 010c 8B43F0   		movl	-16(%rbx), %eax
+ 119:../../bos/hal/b_hal_uart.c ****             {
+ 259              		.loc 1 119 16 view .LVU80
+ 260 010f 85C0     		testl	%eax, %eax
+ 261 0111 0F8472FF 		je	.L10
+ 261      FFFF
+ 121:../../bos/hal/b_hal_uart.c ****                     ((pattr->l_index > 0) && (pattr->index != pattr->l_index)))
+ 262              		.loc 1 121 17 is_stmt 1 view .LVU81
+ 121:../../bos/hal/b_hal_uart.c ****                     ((pattr->l_index > 0) && (pattr->index != pattr->l_index)))
+ 263              		.loc 1 121 26 is_stmt 0 view .LVU82
+ 264 0117 8B43F4   		movl	-12(%rbx), %eax
+ 121:../../bos/hal/b_hal_uart.c ****                     ((pattr->l_index > 0) && (pattr->index != pattr->l_index)))
+ 265              		.loc 1 121 20 view .LVU83
+ 266 011a 85C0     		testl	%eax, %eax
+ 267 011c 7411     		je	.L11
+ 122:../../bos/hal/b_hal_uart.c ****                 {
+ 268              		.loc 1 122 28 view .LVU84
+ 269 011e 8B43F4   		movl	-12(%rbx), %eax
+ 121:../../bos/hal/b_hal_uart.c ****                     ((pattr->l_index > 0) && (pattr->index != pattr->l_index)))
+ 270              		.loc 1 121 41 discriminator 1 view .LVU85
+ 271 0121 85C0     		testl	%eax, %eax
+ 272 0123 7418     		je	.L12
+ 122:../../bos/hal/b_hal_uart.c ****                 {
+ 273              		.loc 1 122 52 view .LVU86
+ 274 0125 8B53F0   		movl	-16(%rbx), %edx
+ 122:../../bos/hal/b_hal_uart.c ****                 {
+ 275              		.loc 1 122 68 view .LVU87
+ 276 0128 8B43F4   		movl	-12(%rbx), %eax
+ 122:../../bos/hal/b_hal_uart.c ****                 {
+ 277              		.loc 1 122 43 view .LVU88
+ 278 012b 39C2     		cmpl	%eax, %edx
+ 279 012d 740E     		je	.L12
+ 280              	.L11:
+GAS LISTING /tmp/ccjPosES.s 			page 14
+
+
+ 124:../../bos/hal/b_hal_uart.c ****                     pattr->l_tick  = bHalGetSysTick();
+ 281              		.loc 1 124 21 is_stmt 1 view .LVU89
+ 124:../../bos/hal/b_hal_uart.c ****                     pattr->l_tick  = bHalGetSysTick();
+ 282              		.loc 1 124 43 is_stmt 0 view .LVU90
+ 283 012f 8B43F0   		movl	-16(%rbx), %eax
+ 124:../../bos/hal/b_hal_uart.c ****                     pattr->l_tick  = bHalGetSysTick();
+ 284              		.loc 1 124 36 view .LVU91
+ 285 0132 8943F4   		movl	%eax, -12(%rbx)
+ 125:../../bos/hal/b_hal_uart.c ****                 }
+ 286              		.loc 1 125 21 is_stmt 1 view .LVU92
+ 125:../../bos/hal/b_hal_uart.c ****                 }
+ 287              		.loc 1 125 38 is_stmt 0 view .LVU93
+ 288 0135 E8000000 		call	bHalGetSysTick@PLT
+ 288      00
+ 289              	.LVL20:
+ 125:../../bos/hal/b_hal_uart.c ****                 }
+ 290              		.loc 1 125 36 discriminator 1 view .LVU94
+ 291 013a 8943F8   		movl	%eax, -8(%rbx)
+ 292              	.L12:
+ 127:../../bos/hal/b_hal_uart.c ****                 {
+ 293              		.loc 1 127 17 is_stmt 1 view .LVU95
+ 127:../../bos/hal/b_hal_uart.c ****                 {
+ 294              		.loc 1 127 21 is_stmt 0 view .LVU96
+ 295 013d E8000000 		call	bHalGetSysTick@PLT
+ 295      00
+ 296              	.LVL21:
+ 127:../../bos/hal/b_hal_uart.c ****                 {
+ 297              		.loc 1 127 21 discriminator 1 view .LVU97
+ 298 0142 8B53F8   		movl	-8(%rbx), %edx
+ 127:../../bos/hal/b_hal_uart.c ****                 {
+ 299              		.loc 1 127 21 discriminator 2 view .LVU98
+ 300 0145 E8000000 		call	bHalGetSysTick@PLT
+ 300      00
+ 301              	.LVL22:
+ 127:../../bos/hal/b_hal_uart.c ****                 {
+ 302              		.loc 1 127 21 discriminator 1 view .LVU99
+ 303 014a 8B53F8   		movl	-8(%rbx), %edx
+ 304 014d 29D0     		subl	%edx, %eax
+ 127:../../bos/hal/b_hal_uart.c ****                 {
+ 305              		.loc 1 127 72 discriminator 4 view .LVU100
+ 306 014f 0FB753DC 		movzwl	-36(%rbx), %edx
+ 127:../../bos/hal/b_hal_uart.c ****                 {
+ 307              		.loc 1 127 20 discriminator 4 view .LVU101
+ 308 0153 39C2     		cmpl	%eax, %edx
+ 309 0155 0F832EFF 		jnb	.L10
+ 309      FFFF
+ 129:../../bos/hal/b_hal_uart.c ****                     {
+ 310              		.loc 1 129 21 is_stmt 1 view .LVU102
+ 129:../../bos/hal/b_hal_uart.c ****                     {
+ 311              		.loc 1 129 30 is_stmt 0 view .LVU103
+ 312 015b 488B43E0 		movq	-32(%rbx), %rax
+ 129:../../bos/hal/b_hal_uart.c ****                     {
+ 313              		.loc 1 129 24 view .LVU104
+ 314 015f 4885C0   		testq	%rax, %rax
+ 315 0162 0F8419FF 		je	.L17
+ 315      FFFF
+ 131:../../bos/hal/b_hal_uart.c ****                         if (retval >= 0 || pattr->index == pattr->len)
+GAS LISTING /tmp/ccjPosES.s 			page 15
+
+
+ 316              		.loc 1 131 25 is_stmt 1 view .LVU105
+ 131:../../bos/hal/b_hal_uart.c ****                         if (retval >= 0 || pattr->index == pattr->len)
+ 317              		.loc 1 131 68 is_stmt 0 view .LVU106
+ 318 0168 8B73F0   		movl	-16(%rbx), %esi
+ 131:../../bos/hal/b_hal_uart.c ****                         if (retval >= 0 || pattr->index == pattr->len)
+ 319              		.loc 1 131 34 view .LVU107
+ 320 016b 488B53E8 		movq	-24(%rbx), %rdx
+ 321 016f 488B7BD0 		movq	-48(%rbx), %rdi
+ 322 0173 0FB7F6   		movzwl	%si, %esi
+ 323 0176 FFD0     		call	*%rax
+ 324              	.LVL23:
+ 132:../../bos/hal/b_hal_uart.c ****                         {
+ 325              		.loc 1 132 25 is_stmt 1 view .LVU108
+ 132:../../bos/hal/b_hal_uart.c ****                         {
+ 326              		.loc 1 132 28 is_stmt 0 view .LVU109
+ 327 0178 85C0     		testl	%eax, %eax
+ 328 017a 0F89E0FE 		jns	.L47
+ 328      FFFF
+ 132:../../bos/hal/b_hal_uart.c ****                         {
+ 329              		.loc 1 132 49 discriminator 1 view .LVU110
+ 330 0180 8B43F0   		movl	-16(%rbx), %eax
+ 331              	.LVL24:
+ 132:../../bos/hal/b_hal_uart.c ****                         {
+ 332              		.loc 1 132 65 discriminator 1 view .LVU111
+ 333 0183 8B53D8   		movl	-40(%rbx), %edx
+ 132:../../bos/hal/b_hal_uart.c ****                         {
+ 334              		.loc 1 132 41 discriminator 1 view .LVU112
+ 335 0186 39D0     		cmpl	%edx, %eax
+ 336 0188 0F85F3FE 		jne	.L17
+ 336      FFFF
+ 337 018e E9D0FEFF 		jmp	.L19
+ 337      FF
+ 338              	.LVL25:
+ 339              		.p2align 4,,10
+ 340 0193 0F1F4400 		.p2align 3
+ 340      00
+ 341              	.L46:
+ 117:../../bos/hal/b_hal_uart.c ****             }
+ 342              		.loc 1 117 17 is_stmt 1 view .LVU113
+ 117:../../bos/hal/b_hal_uart.c ****             }
+ 343              		.loc 1 117 37 is_stmt 0 view .LVU114
+ 344 0198 448B6BD8 		movl	-40(%rbx), %r13d
+ 117:../../bos/hal/b_hal_uart.c ****             }
+ 345              		.loc 1 117 45 view .LVU115
+ 346 019c E8000000 		call	bHalDmaGetCount@PLT
+ 346      00
+ 347              	.LVL26:
+ 117:../../bos/hal/b_hal_uart.c ****             }
+ 348              		.loc 1 117 43 discriminator 1 view .LVU116
+ 349 01a1 4129C5   		subl	%eax, %r13d
+ 117:../../bos/hal/b_hal_uart.c ****             }
+ 350              		.loc 1 117 30 discriminator 1 view .LVU117
+ 351 01a4 44896BF0 		movl	%r13d, -16(%rbx)
+ 352 01a8 E95FFFFF 		jmp	.L8
+ 352      FF
+ 353              	.LVL27:
+ 354 01ad 0F1F00   		.p2align 4,,10
+GAS LISTING /tmp/ccjPosES.s 			page 16
+
+
+ 355              		.p2align 3
+ 356              	.L44:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 357              		.loc 1 149 9 is_stmt 1 discriminator 15 view .LVU118
+ 358 01b0 B9FEFFFF 		movl	$-2, %ecx
+ 358      FF
+ 359 01b5 66894D0E 		movw	%cx, 14(%rbp)
+ 360 01b9 E920FFFF 		jmp	.L24
+ 360      FF
+ 361              	.LVL28:
+ 362 01be 6690     		.p2align 4,,10
+ 363              		.p2align 3
+ 364              	.L43:
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 365              		.loc 1 149 9 discriminator 1 view .LVU119
+ 366 01c0 E8000000 		call	bHalGetSysTick@PLT
+ 366      00
+ 367              	.LVL29:
+ 368 01c5 31FF     		xorl	%edi, %edi
+ 369 01c7 C7450805 		movl	$5, 8(%rbp)
+ 369      000000
+ 370 01ce 894504   		movl	%eax, 4(%rbp)
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 371              		.loc 1 149 9 discriminator 1 view .LVU120
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 372              		.loc 1 149 9 discriminator 1 view .LVU121
+ 373 01d1 C6450C01 		movb	$1, 12(%rbp)
+ 149:../../bos/hal/b_hal_uart.c ****     }
+ 374              		.loc 1 149 9 discriminator 1 view .LVU122
+ 375 01d5 66897D0E 		movw	%di, 14(%rbp)
+ 376 01d9 E9BDFEFF 		jmp	.L21
+ 376      FF
+ 377              	.LVL30:
+ 378 01de 6690     		.p2align 4,,10
+ 379              		.p2align 3
+ 380              	.L42:
+ 138:../../bos/hal/b_hal_uart.c ****                                 bHalDmaSetDest(pattr->chl, (uint32_t)pattr->pbuf);
+ 381              		.loc 1 138 33 view .LVU123
+ 382 01e0 E8000000 		call	bHalDmaStop@PLT
+ 382      00
+ 383              	.LVL31:
+ 139:../../bos/hal/b_hal_uart.c ****                                 bHalDmaSetCount(pattr->chl, pattr->len);
+ 384              		.loc 1 139 33 view .LVU124
+ 385 01e5 8B7BA4   		movl	-92(%rbx), %edi
+ 386 01e8 8B73D0   		movl	-48(%rbx), %esi
+ 387 01eb E8000000 		call	bHalDmaSetDest@PLT
+ 387      00
+ 388              	.LVL32:
+ 140:../../bos/hal/b_hal_uart.c ****                                 bHalDmaStart(pattr->chl);
+ 389              		.loc 1 140 33 view .LVU125
+ 390 01f0 8B7BA4   		movl	-92(%rbx), %edi
+ 391 01f3 8B73D8   		movl	-40(%rbx), %esi
+ 392 01f6 E8000000 		call	bHalDmaSetCount@PLT
+ 392      00
+ 393              	.LVL33:
+ 141:../../bos/hal/b_hal_uart.c ****                             }
+ 394              		.loc 1 141 33 view .LVU126
+GAS LISTING /tmp/ccjPosES.s 			page 17
+
+
+ 395 01fb 8B7BA4   		movl	-92(%rbx), %edi
+ 396 01fe E8000000 		call	bHalDmaStart@PLT
+ 396      00
+ 397              	.LVL34:
+ 398 0203 E979FEFF 		jmp	.L17
+ 398      FF
+ 399              	.LVL35:
+ 400 0208 0F1F8400 		.p2align 4,,10
+ 400      00000000 
+ 401              		.p2align 3
+ 402              	.L45:
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 403              		.loc 1 110 13 view .LVU127
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 404              		.loc 1 110 13 view .LVU128
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 405              		.loc 1 110 13 view .LVU129
+ 406 0210 4531C0   		xorl	%r8d, %r8d
+ 407 0213 4531C9   		xorl	%r9d, %r9d
+ 408 0216 48C74504 		movq	$0, 4(%rbp)
+ 408      00000000 
+ 409 021e 31C0     		xorl	%eax, %eax
+ 410 0220 66448945 		movw	%r8w, 0(%rbp)
+ 410      00
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 411              		.loc 1 110 13 view .LVU130
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 412              		.loc 1 110 13 view .LVU131
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 413              		.loc 1 110 13 view .LVU132
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 414              		.loc 1 110 13 view .LVU133
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 415              		.loc 1 110 13 view .LVU134
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 416              		.loc 1 110 13 view .LVU135
+ 417 0225 C6450C00 		movb	$0, 12(%rbp)
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 418              		.loc 1 110 13 view .LVU136
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 419              		.loc 1 110 13 view .LVU137
+ 420 0229 6644894D 		movw	%r9w, 14(%rbp)
+ 420      0E
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 421              		.loc 1 110 13 view .LVU138
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 422              		.loc 1 110 13 view .LVU139
+ 110:../../bos/hal/b_hal_uart.c ****         }
+ 423              		.loc 1 110 13 view .LVU140
+ 424 022e E985FEFF 		jmp	.L48
+ 424      FF
+ 425              	.LBE34:
+ 426              		.cfi_endproc
+ 427              	.LFE30:
+ 429              		.section	.text._bHalItHandler,"ax",@progbits
+ 430              		.p2align 4
+ 432              	_bHalItHandler:
+GAS LISTING /tmp/ccjPosES.s 			page 18
+
+
+ 433              	.LVL36:
+ 434              	.LFB29:
+  79:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr = (bHalUartIdleAttr_t *)user_data;
+ 435              		.loc 1 79 1 view -0
+ 436              		.cfi_startproc
+  79:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr = (bHalUartIdleAttr_t *)user_data;
+ 437              		.loc 1 79 1 is_stmt 0 view .LVU142
+ 438 0000 F30F1EFA 		endbr64
+  80:../../bos/hal/b_hal_uart.c ****     int                 i     = 0;
+ 439              		.loc 1 80 5 is_stmt 1 view .LVU143
+ 440              	.LVL37:
+  81:../../bos/hal/b_hal_uart.c ****     if (pattr == NULL || pattr->pbuf == NULL)
+ 441              		.loc 1 81 5 view .LVU144
+  82:../../bos/hal/b_hal_uart.c ****     {
+ 442              		.loc 1 82 5 view .LVU145
+  79:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr = (bHalUartIdleAttr_t *)user_data;
+ 443              		.loc 1 79 1 is_stmt 0 view .LVU146
+ 444 0004 4889D7   		movq	%rdx, %rdi
+ 445              	.LVL38:
+  82:../../bos/hal/b_hal_uart.c ****     {
+ 446              		.loc 1 82 8 view .LVU147
+ 447 0007 4885C9   		testq	%rcx, %rcx
+ 448 000a 7457     		je	.L49
+  82:../../bos/hal/b_hal_uart.c ****     {
+ 449              		.loc 1 82 23 discriminator 1 view .LVU148
+ 450 000c 48837930 		cmpq	$0, 48(%rcx)
+ 450      00
+ 451 0011 7450     		je	.L49
+ 452              	.LVL39:
+ 453              	.LBB37:
+ 454              	.LBB38:
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 455              		.loc 1 86 19 is_stmt 1 discriminator 1 view .LVU149
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 456              		.loc 1 86 33 is_stmt 0 discriminator 1 view .LVU150
+ 457 0013 0FB77208 		movzwl	8(%rdx), %esi
+ 458              	.LVL40:
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 459              		.loc 1 86 19 discriminator 1 view .LVU151
+ 460 0017 6685F6   		testw	%si, %si
+ 461 001a 7447     		je	.L49
+ 462 001c 31C0     		xorl	%eax, %eax
+ 463              	.LVL41:
+ 464 001e 6690     		.p2align 4,,10
+ 465              		.p2align 3
+ 466              	.L54:
+  88:../../bos/hal/b_hal_uart.c ****         {
+ 467              		.loc 1 88 9 is_stmt 1 view .LVU152
+  88:../../bos/hal/b_hal_uart.c ****         {
+ 468              		.loc 1 88 18 is_stmt 0 view .LVU153
+ 469 0020 8B5150   		movl	80(%rcx), %edx
+  88:../../bos/hal/b_hal_uart.c ****         {
+ 470              		.loc 1 88 12 view .LVU154
+ 471 0023 3B5138   		cmpl	56(%rcx), %edx
+ 472 0026 7330     		jnb	.L52
+  90:../../bos/hal/b_hal_uart.c ****             pattr->index += 1;
+ 473              		.loc 1 90 13 is_stmt 1 view .LVU155
+GAS LISTING /tmp/ccjPosES.s 			page 19
+
+
+  90:../../bos/hal/b_hal_uart.c ****             pattr->index += 1;
+ 474              		.loc 1 90 58 is_stmt 0 view .LVU156
+ 475 0028 488B37   		movq	(%rdi), %rsi
+  90:../../bos/hal/b_hal_uart.c ****             pattr->index += 1;
+ 476              		.loc 1 90 30 view .LVU157
+ 477 002b 8B5150   		movl	80(%rcx), %edx
+  90:../../bos/hal/b_hal_uart.c ****             pattr->index += 1;
+ 478              		.loc 1 90 58 view .LVU158
+ 479 002e 440FB604 		movzbl	(%rsi,%rax), %r8d
+ 479      06
+  90:../../bos/hal/b_hal_uart.c ****             pattr->index += 1;
+ 480              		.loc 1 90 39 view .LVU159
+ 481 0033 488B7130 		movq	48(%rcx), %rsi
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 482              		.loc 1 86 19 discriminator 1 view .LVU160
+ 483 0037 4883C001 		addq	$1, %rax
+ 484              	.LVL42:
+  90:../../bos/hal/b_hal_uart.c ****             pattr->index += 1;
+ 485              		.loc 1 90 39 view .LVU161
+ 486 003b 44880416 		movb	%r8b, (%rsi,%rdx)
+  91:../../bos/hal/b_hal_uart.c ****         }
+ 487              		.loc 1 91 13 is_stmt 1 view .LVU162
+  91:../../bos/hal/b_hal_uart.c ****         }
+ 488              		.loc 1 91 18 is_stmt 0 view .LVU163
+ 489 003f 8B5150   		movl	80(%rcx), %edx
+  91:../../bos/hal/b_hal_uart.c ****         }
+ 490              		.loc 1 91 26 view .LVU164
+ 491 0042 83C201   		addl	$1, %edx
+ 492 0045 895150   		movl	%edx, 80(%rcx)
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 493              		.loc 1 86 33 discriminator 1 view .LVU165
+ 494 0048 0FB75708 		movzwl	8(%rdi), %edx
+ 495 004c 89D6     		movl	%edx, %esi
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 496              		.loc 1 86 40 is_stmt 1 discriminator 2 view .LVU166
+ 497              	.LVL43:
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 498              		.loc 1 86 19 discriminator 1 view .LVU167
+ 499 004e 39C2     		cmpl	%eax, %edx
+ 500 0050 7FCE     		jg	.L54
+ 501 0052 C3       		ret
+ 502              	.LVL44:
+ 503              		.p2align 4,,10
+ 504 0053 0F1F4400 		.p2align 3
+ 504      00
+ 505              	.L52:
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 506              		.loc 1 86 40 discriminator 2 view .LVU168
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 507              		.loc 1 86 19 discriminator 1 view .LVU169
+ 508 0058 4883C001 		addq	$1, %rax
+ 509              	.LVL45:
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 510              		.loc 1 86 33 is_stmt 0 discriminator 1 view .LVU170
+ 511 005c 0FB7D6   		movzwl	%si, %edx
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 512              		.loc 1 86 19 discriminator 1 view .LVU171
+GAS LISTING /tmp/ccjPosES.s 			page 20
+
+
+ 513 005f 39C2     		cmpl	%eax, %edx
+ 514 0061 7FBD     		jg	.L54
+ 515              	.LVL46:
+ 516              	.L49:
+  86:../../bos/hal/b_hal_uart.c ****     {
+ 517              		.loc 1 86 19 discriminator 1 view .LVU172
+ 518              	.LBE38:
+ 519              	.LBE37:
+  94:../../bos/hal/b_hal_uart.c **** 
+ 520              		.loc 1 94 1 view .LVU173
+ 521 0063 C3       		ret
+ 522              		.cfi_endproc
+ 523              	.LFE29:
+ 525              		.section	.text.bMcuUartSend,"ax",@progbits
+ 526              		.p2align 4
+ 527              		.weak	bMcuUartSend
+ 529              	bMcuUartSend:
+ 530              	.LVL47:
+ 531              	.LFB31:
+ 153:../../bos/hal/b_hal_uart.c **** 
+ 154:../../bos/hal/b_hal_uart.c **** /**
+ 155:../../bos/hal/b_hal_uart.c ****  * \}
+ 156:../../bos/hal/b_hal_uart.c ****  */
+ 157:../../bos/hal/b_hal_uart.c **** 
+ 158:../../bos/hal/b_hal_uart.c **** /**
+ 159:../../bos/hal/b_hal_uart.c ****  * \addtogroup UART_Exported_Functions
+ 160:../../bos/hal/b_hal_uart.c ****  * \{
+ 161:../../bos/hal/b_hal_uart.c ****  */
+ 162:../../bos/hal/b_hal_uart.c **** #if defined(__WEAKDEF)
+ 163:../../bos/hal/b_hal_uart.c **** __WEAKDEF int bMcuUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
+ 164:../../bos/hal/b_hal_uart.c **** {
+ 532              		.loc 1 164 1 is_stmt 1 view -0
+ 533              		.cfi_startproc
+ 534              		.loc 1 164 1 is_stmt 0 view .LVU175
+ 535 0000 F30F1EFA 		endbr64
+ 165:../../bos/hal/b_hal_uart.c ****     return -1;
+ 536              		.loc 1 165 5 is_stmt 1 view .LVU176
+ 166:../../bos/hal/b_hal_uart.c **** }
+ 537              		.loc 1 166 1 is_stmt 0 view .LVU177
+ 538 0004 B8FFFFFF 		movl	$-1, %eax
+ 538      FF
+ 539 0009 C3       		ret
+ 540              		.cfi_endproc
+ 541              	.LFE31:
+ 543              		.section	.text.bMcuUartReceiveDma,"ax",@progbits
+ 544              		.p2align 4
+ 545              		.weak	bMcuUartReceiveDma
+ 547              	bMcuUartReceiveDma:
+ 548              	.LVL48:
+ 549              	.LFB32:
+ 167:../../bos/hal/b_hal_uart.c **** 
+ 168:../../bos/hal/b_hal_uart.c **** __WEAKDEF int bMcuUartReceiveDma(bHalUartNumber_t uart, bHalDmaConfig_t *pconf)
+ 169:../../bos/hal/b_hal_uart.c **** {
+ 550              		.loc 1 169 1 is_stmt 1 view -0
+ 551              		.cfi_startproc
+ 552              		.loc 1 169 1 is_stmt 0 view .LVU179
+ 553 0000 F30F1EFA 		endbr64
+GAS LISTING /tmp/ccjPosES.s 			page 21
+
+
+ 170:../../bos/hal/b_hal_uart.c ****     return -1;
+ 554              		.loc 1 170 5 is_stmt 1 view .LVU180
+ 171:../../bos/hal/b_hal_uart.c **** }
+ 555              		.loc 1 171 1 is_stmt 0 view .LVU181
+ 556 0004 B8FFFFFF 		movl	$-1, %eax
+ 556      FF
+ 557 0009 C3       		ret
+ 558              		.cfi_endproc
+ 559              	.LFE32:
+ 561              		.section	.text.bHalUartSend,"ax",@progbits
+ 562              		.p2align 4
+ 563              		.globl	bHalUartSend
+ 565              	bHalUartSend:
+ 566              	.LVL49:
+ 567              	.LFB33:
+ 172:../../bos/hal/b_hal_uart.c **** 
+ 173:../../bos/hal/b_hal_uart.c **** #endif
+ 174:../../bos/hal/b_hal_uart.c **** //---------------------------------------------------------------------------------------
+ 175:../../bos/hal/b_hal_uart.c **** //---------------------------------------------------------------------------------------
+ 176:../../bos/hal/b_hal_uart.c **** 
+ 177:../../bos/hal/b_hal_uart.c **** int bHalUartSend(bHalUartNumber_t uart, const uint8_t *pbuf, uint16_t len)
+ 178:../../bos/hal/b_hal_uart.c **** {
+ 568              		.loc 1 178 1 is_stmt 1 view -0
+ 569              		.cfi_startproc
+ 570              		.loc 1 178 1 is_stmt 0 view .LVU183
+ 571 0000 F30F1EFA 		endbr64
+ 179:../../bos/hal/b_hal_uart.c ****     if (IS_NULL(pbuf) || len == 0)
+ 572              		.loc 1 179 5 is_stmt 1 view .LVU184
+ 573              		.loc 1 179 8 is_stmt 0 view .LVU185
+ 574 0004 4885F6   		testq	%rsi, %rsi
+ 575 0007 7417     		je	.L61
+ 576 0009 6685D2   		testw	%dx, %dx
+ 577 000c 7412     		je	.L61
+ 180:../../bos/hal/b_hal_uart.c ****     {
+ 181:../../bos/hal/b_hal_uart.c ****         return -1;
+ 182:../../bos/hal/b_hal_uart.c ****     }
+ 183:../../bos/hal/b_hal_uart.c ****     return bMcuUartSend(uart, pbuf, len);
+ 578              		.loc 1 183 5 is_stmt 1 view .LVU186
+ 579              		.loc 1 183 12 is_stmt 0 view .LVU187
+ 580 000e 0FB7D2   		movzwl	%dx, %edx
+ 581              		.loc 1 183 12 view .LVU188
+ 582 0011 E9000000 		jmp	bMcuUartSend
+ 582      00
+ 583              	.LVL50:
+ 584 0016 662E0F1F 		.p2align 4,,10
+ 584      84000000 
+ 584      0000
+ 585              		.p2align 3
+ 586              	.L61:
+ 184:../../bos/hal/b_hal_uart.c **** }
+ 587              		.loc 1 184 1 view .LVU189
+ 588 0020 B8FFFFFF 		movl	$-1, %eax
+ 588      FF
+ 589 0025 C3       		ret
+ 590              		.cfi_endproc
+ 591              	.LFE33:
+ 593              		.section	.rodata.bHalUartReceive.str1.1,"aMS",@progbits,1
+GAS LISTING /tmp/ccjPosES.s 			page 22
+
+
+ 594              	.LC0:
+ 595 0000 75617274 		.string	"uart"
+ 595      00
+ 596              		.section	.text.bHalUartReceive,"ax",@progbits
+ 597              		.p2align 4
+ 598              		.globl	bHalUartReceive
+ 600              	bHalUartReceive:
+ 601              	.LVL51:
+ 602              	.LFB34:
+ 185:../../bos/hal/b_hal_uart.c **** 
+ 186:../../bos/hal/b_hal_uart.c **** int bHalUartReceive(bHalUartNumber_t uart, bHalUartIdleAttr_t *attr)
+ 187:../../bos/hal/b_hal_uart.c **** {
+ 603              		.loc 1 187 1 is_stmt 1 view -0
+ 604              		.cfi_startproc
+ 605              		.loc 1 187 1 is_stmt 0 view .LVU191
+ 606 0000 F30F1EFA 		endbr64
+ 188:../../bos/hal/b_hal_uart.c ****     int                 retval = -1;
+ 607              		.loc 1 188 5 is_stmt 1 view .LVU192
+ 608              	.LVL52:
+ 189:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr  = _bHalUartAttrFind(uart);
+ 609              		.loc 1 189 5 view .LVU193
+ 610              	.LBB39:
+ 611              	.LBI39:
+  63:../../bos/hal/b_hal_uart.c **** {
+ 612              		.loc 1 63 28 view .LVU194
+ 613              	.LBB40:
+  65:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr = NULL;
+ 614              		.loc 1 65 5 view .LVU195
+  66:../../bos/hal/b_hal_uart.c ****     list_for_each(pos, &bHalUartListHead)
+ 615              		.loc 1 66 5 view .LVU196
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 616              		.loc 1 67 5 view .LVU197
+ 617 0004 488B0500 		movq	bHalUartListHead(%rip), %rax
+ 617      000000
+ 618              	.LVL53:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 619              		.loc 1 67 5 discriminator 1 view .LVU198
+ 620              	.LBE40:
+ 621              	.LBE39:
+ 187:../../bos/hal/b_hal_uart.c ****     int                 retval = -1;
+ 622              		.loc 1 187 1 is_stmt 0 view .LVU199
+ 623 000b 4154     		pushq	%r12
+ 624              	.LCFI17:
+ 625              		.cfi_def_cfa_offset 16
+ 626              		.cfi_offset 12, -16
+ 627 000d 55       		pushq	%rbp
+ 628              	.LCFI18:
+ 629              		.cfi_def_cfa_offset 24
+ 630              		.cfi_offset 6, -24
+ 631              	.LBB43:
+ 632              	.LBB41:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 633              		.loc 1 67 5 view .LVU200
+ 634 000e 488D2D00 		leaq	bHalUartListHead(%rip), %rbp
+ 634      000000
+ 635              	.LBE41:
+ 636              	.LBE43:
+GAS LISTING /tmp/ccjPosES.s 			page 23
+
+
+ 187:../../bos/hal/b_hal_uart.c ****     int                 retval = -1;
+ 637              		.loc 1 187 1 view .LVU201
+ 638 0015 53       		pushq	%rbx
+ 639              	.LCFI19:
+ 640              		.cfi_def_cfa_offset 32
+ 641              		.cfi_offset 3, -32
+ 187:../../bos/hal/b_hal_uart.c ****     int                 retval = -1;
+ 642              		.loc 1 187 1 view .LVU202
+ 643 0016 4889F3   		movq	%rsi, %rbx
+ 644              	.LBB44:
+ 645              	.LBB42:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 646              		.loc 1 67 5 discriminator 1 view .LVU203
+ 647 0019 4839E8   		cmpq	%rbp, %rax
+ 648 001c 750A     		jne	.L65
+ 649 001e EB20     		jmp	.L63
+ 650              	.LVL54:
+ 651              		.p2align 4,,10
+ 652              		.p2align 3
+ 653              	.L73:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 654              		.loc 1 67 5 is_stmt 1 discriminator 2 view .LVU204
+ 655 0020 488B00   		movq	(%rax), %rax
+ 656              	.LVL55:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 657              		.loc 1 67 5 discriminator 1 view .LVU205
+ 658 0023 4839E8   		cmpq	%rbp, %rax
+ 659 0026 7418     		je	.L63
+ 660              	.LVL56:
+ 661              	.L65:
+  69:../../bos/hal/b_hal_uart.c ****         if (pattr->uart == uart)
+ 662              		.loc 1 69 9 view .LVU206
+  70:../../bos/hal/b_hal_uart.c ****         {
+ 663              		.loc 1 70 9 view .LVU207
+  70:../../bos/hal/b_hal_uart.c ****         {
+ 664              		.loc 1 70 12 is_stmt 0 view .LVU208
+ 665 0028 3B78A0   		cmpl	-96(%rax), %edi
+ 666 002b 75F3     		jne	.L73
+ 667              	.LVL57:
+ 668              	.L70:
+  70:../../bos/hal/b_hal_uart.c ****         {
+ 669              		.loc 1 70 12 view .LVU209
+ 670              	.LBE42:
+ 671              	.LBE44:
+ 190:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL)
+ 191:../../bos/hal/b_hal_uart.c ****     {
+ 192:../../bos/hal/b_hal_uart.c ****         return -1;
+ 672              		.loc 1 192 16 view .LVU210
+ 673 002d 41BCFFFF 		movl	$-1, %r12d
+ 673      FFFF
+ 193:../../bos/hal/b_hal_uart.c ****     }
+ 194:../../bos/hal/b_hal_uart.c ****     attr->uart         = uart;
+ 195:../../bos/hal/b_hal_uart.c ****     attr->it.it        = B_HAL_IT_UART_RX;
+ 196:../../bos/hal/b_hal_uart.c ****     attr->it.index     = uart;
+ 197:../../bos/hal/b_hal_uart.c ****     attr->it.handler   = _bHalItHandler;
+ 198:../../bos/hal/b_hal_uart.c ****     attr->it.user_data = attr;
+ 199:../../bos/hal/b_hal_uart.c ****     attr->index        = 0;
+GAS LISTING /tmp/ccjPosES.s 			page 24
+
+
+ 200:../../bos/hal/b_hal_uart.c ****     attr->l_index      = 0;
+ 201:../../bos/hal/b_hal_uart.c ****     attr->l_tick       = 0;
+ 202:../../bos/hal/b_hal_uart.c ****     if (0 == (retval = bHalItRegister(&attr->it)))
+ 203:../../bos/hal/b_hal_uart.c ****     {
+ 204:../../bos/hal/b_hal_uart.c ****         list_add(&attr->list, &bHalUartListHead);
+ 205:../../bos/hal/b_hal_uart.c ****     }
+ 206:../../bos/hal/b_hal_uart.c ****     if (bHalUartTaskId == NULL)
+ 207:../../bos/hal/b_hal_uart.c ****     {
+ 208:../../bos/hal/b_hal_uart.c ****         bHalUartTaskId = bTaskCreate("uart", _bHalUartDetectIdle, NULL, &bHalUartTaskAttr);
+ 209:../../bos/hal/b_hal_uart.c ****     }
+ 210:../../bos/hal/b_hal_uart.c ****     return retval;
+ 211:../../bos/hal/b_hal_uart.c **** }
+ 674              		.loc 1 211 1 view .LVU211
+ 675 0033 5B       		popq	%rbx
+ 676              	.LCFI20:
+ 677              		.cfi_remember_state
+ 678              		.cfi_def_cfa_offset 24
+ 679 0034 5D       		popq	%rbp
+ 680              	.LCFI21:
+ 681              		.cfi_def_cfa_offset 16
+ 682 0035 4489E0   		movl	%r12d, %eax
+ 683 0038 415C     		popq	%r12
+ 684              	.LCFI22:
+ 685              		.cfi_def_cfa_offset 8
+ 686 003a C3       		ret
+ 687              	.LVL58:
+ 688 003b 0F1F4400 		.p2align 4,,10
+ 688      00
+ 689              		.p2align 3
+ 690              	.L63:
+ 691              	.LCFI23:
+ 692              		.cfi_restore_state
+ 190:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL)
+ 693              		.loc 1 190 5 is_stmt 1 view .LVU212
+ 190:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL)
+ 694              		.loc 1 190 8 is_stmt 0 view .LVU213
+ 695 0040 4885DB   		testq	%rbx, %rbx
+ 696 0043 74E8     		je	.L70
+ 190:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL)
+ 697              		.loc 1 190 39 discriminator 1 view .LVU214
+ 698 0045 48837B30 		cmpq	$0, 48(%rbx)
+ 698      00
+ 699 004a 74E1     		je	.L70
+ 194:../../bos/hal/b_hal_uart.c ****     attr->it.it        = B_HAL_IT_UART_RX;
+ 700              		.loc 1 194 5 is_stmt 1 view .LVU215
+ 197:../../bos/hal/b_hal_uart.c ****     attr->it.user_data = attr;
+ 701              		.loc 1 197 24 is_stmt 0 view .LVU216
+ 702 004c 488D0500 		leaq	_bHalItHandler(%rip), %rax
+ 702      000000
+ 199:../../bos/hal/b_hal_uart.c ****     attr->l_index      = 0;
+ 703              		.loc 1 199 24 view .LVU217
+ 704 0053 C7435000 		movl	$0, 80(%rbx)
+ 704      000000
+ 194:../../bos/hal/b_hal_uart.c ****     attr->it.it        = B_HAL_IT_UART_RX;
+ 705              		.loc 1 194 24 view .LVU218
+ 706 005a 893B     		movl	%edi, (%rbx)
+ 195:../../bos/hal/b_hal_uart.c ****     attr->it.index     = uart;
+GAS LISTING /tmp/ccjPosES.s 			page 25
+
+
+ 707              		.loc 1 195 5 is_stmt 1 view .LVU219
+ 196:../../bos/hal/b_hal_uart.c ****     attr->it.handler   = _bHalItHandler;
+ 708              		.loc 1 196 24 is_stmt 0 view .LVU220
+ 709 005c 40887B0C 		movb	%dil, 12(%rbx)
+ 202:../../bos/hal/b_hal_uart.c ****     {
+ 710              		.loc 1 202 24 view .LVU221
+ 711 0060 488D7B08 		leaq	8(%rbx), %rdi
+ 712              	.LVL59:
+ 200:../../bos/hal/b_hal_uart.c ****     attr->l_tick       = 0;
+ 713              		.loc 1 200 24 view .LVU222
+ 714 0064 C7435400 		movl	$0, 84(%rbx)
+ 714      000000
+ 195:../../bos/hal/b_hal_uart.c ****     attr->it.index     = uart;
+ 715              		.loc 1 195 24 view .LVU223
+ 716 006b C7430855 		movl	$18773, 8(%rbx)
+ 716      490000
+ 196:../../bos/hal/b_hal_uart.c ****     attr->it.handler   = _bHalItHandler;
+ 717              		.loc 1 196 5 is_stmt 1 view .LVU224
+ 197:../../bos/hal/b_hal_uart.c ****     attr->it.user_data = attr;
+ 718              		.loc 1 197 5 view .LVU225
+ 197:../../bos/hal/b_hal_uart.c ****     attr->it.user_data = attr;
+ 719              		.loc 1 197 24 is_stmt 0 view .LVU226
+ 720 0072 48894310 		movq	%rax, 16(%rbx)
+ 198:../../bos/hal/b_hal_uart.c ****     attr->index        = 0;
+ 721              		.loc 1 198 5 is_stmt 1 view .LVU227
+ 198:../../bos/hal/b_hal_uart.c ****     attr->index        = 0;
+ 722              		.loc 1 198 24 is_stmt 0 view .LVU228
+ 723 0076 48895B18 		movq	%rbx, 24(%rbx)
+ 199:../../bos/hal/b_hal_uart.c ****     attr->l_index      = 0;
+ 724              		.loc 1 199 5 is_stmt 1 view .LVU229
+ 200:../../bos/hal/b_hal_uart.c ****     attr->l_tick       = 0;
+ 725              		.loc 1 200 5 view .LVU230
+ 201:../../bos/hal/b_hal_uart.c ****     if (0 == (retval = bHalItRegister(&attr->it)))
+ 726              		.loc 1 201 5 view .LVU231
+ 201:../../bos/hal/b_hal_uart.c ****     if (0 == (retval = bHalItRegister(&attr->it)))
+ 727              		.loc 1 201 24 is_stmt 0 view .LVU232
+ 728 007a C7435800 		movl	$0, 88(%rbx)
+ 728      000000
+ 202:../../bos/hal/b_hal_uart.c ****     {
+ 729              		.loc 1 202 5 is_stmt 1 view .LVU233
+ 202:../../bos/hal/b_hal_uart.c ****     {
+ 730              		.loc 1 202 24 is_stmt 0 view .LVU234
+ 731 0081 E8000000 		call	bHalItRegister@PLT
+ 731      00
+ 732              	.LVL60:
+ 202:../../bos/hal/b_hal_uart.c ****     {
+ 733              		.loc 1 202 24 view .LVU235
+ 734 0086 4189C4   		movl	%eax, %r12d
+ 735              	.LVL61:
+ 202:../../bos/hal/b_hal_uart.c ****     {
+ 736              		.loc 1 202 8 discriminator 1 view .LVU236
+ 737 0089 85C0     		testl	%eax, %eax
+ 738 008b 7413     		je	.L74
+ 206:../../bos/hal/b_hal_uart.c ****     {
+ 739              		.loc 1 206 5 is_stmt 1 view .LVU237
+ 206:../../bos/hal/b_hal_uart.c ****     {
+ 740              		.loc 1 206 8 is_stmt 0 view .LVU238
+GAS LISTING /tmp/ccjPosES.s 			page 26
+
+
+ 741 008d 48833D00 		cmpq	$0, bHalUartTaskId(%rip)
+ 741      00000000 
+ 742 0095 7431     		je	.L75
+ 743              	.LVL62:
+ 744              	.L62:
+ 745              		.loc 1 211 1 view .LVU239
+ 746 0097 4489E0   		movl	%r12d, %eax
+ 747 009a 5B       		popq	%rbx
+ 748              	.LCFI24:
+ 749              		.cfi_remember_state
+ 750              		.cfi_def_cfa_offset 24
+ 751              	.LVL63:
+ 752              		.loc 1 211 1 view .LVU240
+ 753 009b 5D       		popq	%rbp
+ 754              	.LCFI25:
+ 755              		.cfi_def_cfa_offset 16
+ 756 009c 415C     		popq	%r12
+ 757              	.LCFI26:
+ 758              		.cfi_def_cfa_offset 8
+ 759              	.LVL64:
+ 760              		.loc 1 211 1 view .LVU241
+ 761 009e C3       		ret
+ 762              	.LVL65:
+ 763 009f 90       		.p2align 4,,10
+ 764              		.p2align 3
+ 765              	.L74:
+ 766              	.LCFI27:
+ 767              		.cfi_restore_state
+ 204:../../bos/hal/b_hal_uart.c ****     }
+ 768              		.loc 1 204 9 is_stmt 1 view .LVU242
+ 769              	.LBB45:
+ 770              	.LBB46:
+ 109:../../bos/utils/inc/b_util_list.h **** }
+ 771              		.loc 3 109 5 is_stmt 0 view .LVU243
+ 772 00a0 488B1500 		movq	bHalUartListHead(%rip), %rdx
+ 772      000000
+ 773              	.LBE46:
+ 774              	.LBE45:
+ 204:../../bos/hal/b_hal_uart.c ****     }
+ 775              		.loc 1 204 9 view .LVU244
+ 776 00a7 488D4360 		leaq	96(%rbx), %rax
+ 777              	.LVL66:
+ 778              	.LBB53:
+ 779              	.LBI45:
+ 107:../../bos/utils/inc/b_util_list.h **** {
+ 780              		.loc 3 107 26 is_stmt 1 view .LVU245
+ 781              	.LBB51:
+ 109:../../bos/utils/inc/b_util_list.h **** }
+ 782              		.loc 3 109 5 view .LVU246
+ 783              	.LBB47:
+ 784              	.LBI47:
+  90:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+ 785              		.loc 3 90 26 view .LVU247
+ 786              	.LBB48:
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 787              		.loc 3 93 5 view .LVU248
+ 788              	.LBE48:
+GAS LISTING /tmp/ccjPosES.s 			page 27
+
+
+ 789              	.LBE47:
+ 790              	.LBE51:
+ 791              	.LBE53:
+ 206:../../bos/hal/b_hal_uart.c ****     {
+ 792              		.loc 1 206 8 is_stmt 0 view .LVU249
+ 793 00ab 48833D00 		cmpq	$0, bHalUartTaskId(%rip)
+ 793      00000000 
+ 794              	.LBB54:
+ 795              	.LBB52:
+ 796              	.LBB50:
+ 797              	.LBB49:
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 798              		.loc 3 96 5 view .LVU250
+ 799 00b3 48890500 		movq	%rax, bHalUartListHead(%rip)
+ 799      000000
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 800              		.loc 3 93 19 view .LVU251
+ 801 00ba 48894208 		movq	%rax, 8(%rdx)
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 802              		.loc 3 94 5 is_stmt 1 view .LVU252
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 803              		.loc 3 94 19 is_stmt 0 view .LVU253
+ 804 00be 48895360 		movq	%rdx, 96(%rbx)
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 805              		.loc 3 95 5 is_stmt 1 view .LVU254
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 806              		.loc 3 95 19 is_stmt 0 view .LVU255
+ 807 00c2 48896B68 		movq	%rbp, 104(%rbx)
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 808              		.loc 3 96 5 is_stmt 1 view .LVU256
+ 809              	.LVL67:
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 810              		.loc 3 96 5 is_stmt 0 view .LVU257
+ 811              	.LBE49:
+ 812              	.LBE50:
+ 813              	.LBE52:
+ 814              	.LBE54:
+ 206:../../bos/hal/b_hal_uart.c ****     {
+ 815              		.loc 1 206 5 is_stmt 1 view .LVU258
+ 206:../../bos/hal/b_hal_uart.c ****     {
+ 816              		.loc 1 206 8 is_stmt 0 view .LVU259
+ 817 00c6 75CF     		jne	.L62
+ 818              	.L75:
+ 208:../../bos/hal/b_hal_uart.c ****     }
+ 819              		.loc 1 208 9 is_stmt 1 view .LVU260
+ 208:../../bos/hal/b_hal_uart.c ****     }
+ 820              		.loc 1 208 26 is_stmt 0 view .LVU261
+ 821 00c8 488D0D00 		leaq	bHalUartTaskAttr(%rip), %rcx
+ 821      000000
+ 822 00cf 31D2     		xorl	%edx, %edx
+ 823 00d1 488D3500 		leaq	_bHalUartDetectIdle(%rip), %rsi
+ 823      000000
+ 824 00d8 488D3D00 		leaq	.LC0(%rip), %rdi
+ 824      000000
+ 825 00df E8000000 		call	bTaskCreate@PLT
+ 825      00
+ 826              	.LVL68:
+GAS LISTING /tmp/ccjPosES.s 			page 28
+
+
+ 827              		.loc 1 211 1 view .LVU262
+ 828 00e4 5B       		popq	%rbx
+ 829              	.LCFI28:
+ 830              		.cfi_def_cfa_offset 24
+ 831              	.LVL69:
+ 832              		.loc 1 211 1 view .LVU263
+ 833 00e5 5D       		popq	%rbp
+ 834              	.LCFI29:
+ 835              		.cfi_def_cfa_offset 16
+ 208:../../bos/hal/b_hal_uart.c ****     }
+ 836              		.loc 1 208 24 discriminator 1 view .LVU264
+ 837 00e6 48890500 		movq	%rax, bHalUartTaskId(%rip)
+ 837      000000
+ 838              		.loc 1 211 1 view .LVU265
+ 839 00ed 4489E0   		movl	%r12d, %eax
+ 840 00f0 415C     		popq	%r12
+ 841              	.LCFI30:
+ 842              		.cfi_def_cfa_offset 8
+ 843              	.LVL70:
+ 844              		.loc 1 211 1 view .LVU266
+ 845 00f2 C3       		ret
+ 846              		.cfi_endproc
+ 847              	.LFE34:
+ 849              		.section	.text.bHalUartReceiveDma,"ax",@progbits
+ 850              		.p2align 4
+ 851              		.globl	bHalUartReceiveDma
+ 853              	bHalUartReceiveDma:
+ 854              	.LVL71:
+ 855              	.LFB35:
+ 212:../../bos/hal/b_hal_uart.c **** 
+ 213:../../bos/hal/b_hal_uart.c **** int bHalUartReceiveDma(bHalUartNumber_t uart, bHalUartIdleAttr_t *attr, bHalDmaChlNumber_t chl)
+ 214:../../bos/hal/b_hal_uart.c **** {
+ 856              		.loc 1 214 1 is_stmt 1 view -0
+ 857              		.cfi_startproc
+ 858              		.loc 1 214 1 is_stmt 0 view .LVU268
+ 859 0000 F30F1EFA 		endbr64
+ 860 0004 4154     		pushq	%r12
+ 861              	.LCFI31:
+ 862              		.cfi_def_cfa_offset 16
+ 863              		.cfi_offset 12, -16
+ 864 0006 4189D4   		movl	%edx, %r12d
+ 865 0009 55       		pushq	%rbp
+ 866              	.LCFI32:
+ 867              		.cfi_def_cfa_offset 24
+ 868              		.cfi_offset 6, -24
+ 869              	.LBB55:
+ 870              	.LBB56:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 871              		.loc 1 67 5 view .LVU269
+ 872 000a 488D2D00 		leaq	bHalUartListHead(%rip), %rbp
+ 872      000000
+ 873              	.LBE56:
+ 874              	.LBE55:
+ 875              		.loc 1 214 1 view .LVU270
+ 876 0011 53       		pushq	%rbx
+ 877              	.LCFI33:
+ 878              		.cfi_def_cfa_offset 32
+GAS LISTING /tmp/ccjPosES.s 			page 29
+
+
+ 879              		.cfi_offset 3, -32
+ 880 0012 4889F3   		movq	%rsi, %rbx
+ 881 0015 4883EC30 		subq	$48, %rsp
+ 882              	.LCFI34:
+ 883              		.cfi_def_cfa_offset 80
+ 884              		.loc 1 214 1 view .LVU271
+ 885 0019 64488B04 		movq	%fs:40, %rax
+ 885      25280000 
+ 885      00
+ 886 0022 48894424 		movq	%rax, 40(%rsp)
+ 886      28
+ 887 0027 31C0     		xorl	%eax, %eax
+ 215:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr  = _bHalUartAttrFind(uart);
+ 888              		.loc 1 215 5 is_stmt 1 view .LVU272
+ 889              	.LVL72:
+ 890              	.LBB58:
+ 891              	.LBI55:
+  63:../../bos/hal/b_hal_uart.c **** {
+ 892              		.loc 1 63 28 view .LVU273
+ 893              	.LBB57:
+  65:../../bos/hal/b_hal_uart.c ****     bHalUartIdleAttr_t *pattr = NULL;
+ 894              		.loc 1 65 5 view .LVU274
+  66:../../bos/hal/b_hal_uart.c ****     list_for_each(pos, &bHalUartListHead)
+ 895              		.loc 1 66 5 view .LVU275
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 896              		.loc 1 67 5 view .LVU276
+ 897 0029 488B0500 		movq	bHalUartListHead(%rip), %rax
+ 897      000000
+ 898              	.LVL73:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 899              		.loc 1 67 5 discriminator 1 view .LVU277
+ 900 0030 4839E8   		cmpq	%rbp, %rax
+ 901 0033 7513     		jne	.L79
+ 902 0035 EB29     		jmp	.L77
+ 903              	.LVL74:
+ 904 0037 660F1F84 		.p2align 4,,10
+ 904      00000000 
+ 904      00
+ 905              		.p2align 3
+ 906              	.L86:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 907              		.loc 1 67 5 discriminator 2 view .LVU278
+ 908 0040 488B00   		movq	(%rax), %rax
+ 909              	.LVL75:
+  67:../../bos/hal/b_hal_uart.c ****     {
+ 910              		.loc 1 67 5 discriminator 1 view .LVU279
+ 911 0043 4839E8   		cmpq	%rbp, %rax
+ 912 0046 7418     		je	.L77
+ 913              	.LVL76:
+ 914              	.L79:
+  69:../../bos/hal/b_hal_uart.c ****         if (pattr->uart == uart)
+ 915              		.loc 1 69 9 view .LVU280
+  70:../../bos/hal/b_hal_uart.c ****         {
+ 916              		.loc 1 70 9 view .LVU281
+  70:../../bos/hal/b_hal_uart.c ****         {
+ 917              		.loc 1 70 12 is_stmt 0 view .LVU282
+ 918 0048 3B78A0   		cmpl	-96(%rax), %edi
+GAS LISTING /tmp/ccjPosES.s 			page 30
+
+
+ 919 004b 75F3     		jne	.L86
+ 920              	.LVL77:
+ 921              	.L78:
+  70:../../bos/hal/b_hal_uart.c ****         {
+ 922              		.loc 1 70 12 view .LVU283
+ 923              	.LBE57:
+ 924              	.LBE58:
+ 216:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL || chl >= B_HAL_DMA_CHL_NUMBER)
+ 217:../../bos/hal/b_hal_uart.c ****     {
+ 218:../../bos/hal/b_hal_uart.c ****         return -1;
+ 925              		.loc 1 218 16 view .LVU284
+ 926 004d B8FFFFFF 		movl	$-1, %eax
+ 926      FF
+ 927 0052 E99B0000 		jmp	.L76
+ 927      00
+ 928              	.LVL78:
+ 929 0057 660F1F84 		.p2align 4,,10
+ 929      00000000 
+ 929      00
+ 930              		.p2align 3
+ 931              	.L77:
+ 216:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL || chl >= B_HAL_DMA_CHL_NUMBER)
+ 932              		.loc 1 216 5 is_stmt 1 view .LVU285
+ 216:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL || chl >= B_HAL_DMA_CHL_NUMBER)
+ 933              		.loc 1 216 8 is_stmt 0 view .LVU286
+ 934 0060 4885DB   		testq	%rbx, %rbx
+ 935 0063 74E8     		je	.L78
+ 216:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL || chl >= B_HAL_DMA_CHL_NUMBER)
+ 936              		.loc 1 216 46 discriminator 1 view .LVU287
+ 937 0065 488B4330 		movq	48(%rbx), %rax
+ 216:../../bos/hal/b_hal_uart.c ****     if (pattr != NULL || attr == NULL || attr->pbuf == NULL || chl >= B_HAL_DMA_CHL_NUMBER)
+ 938              		.loc 1 216 61 discriminator 2 view .LVU288
+ 939 0069 4183FC0F 		cmpl	$15, %r12d
+ 940 006d 77DE     		ja	.L78
+ 941 006f 4885C0   		testq	%rax, %rax
+ 942 0072 74D9     		je	.L78
+ 219:../../bos/hal/b_hal_uart.c ****     }
+ 220:../../bos/hal/b_hal_uart.c ****     attr->uart    = uart;
+ 943              		.loc 1 220 5 is_stmt 1 view .LVU289
+ 221:../../bos/hal/b_hal_uart.c ****     attr->chl     = chl;
+ 222:../../bos/hal/b_hal_uart.c ****     attr->index   = 0;
+ 944              		.loc 1 222 19 is_stmt 0 view .LVU290
+ 945 0074 C7435000 		movl	$0, 80(%rbx)
+ 945      000000
+ 223:../../bos/hal/b_hal_uart.c ****     attr->l_index = 0;
+ 224:../../bos/hal/b_hal_uart.c ****     attr->l_tick  = 0;
+ 225:../../bos/hal/b_hal_uart.c **** 
+ 226:../../bos/hal/b_hal_uart.c ****     bHalDmaConfig_t dma_conf;
+ 227:../../bos/hal/b_hal_uart.c ****     dma_conf.dest        = (uint32_t)attr->pbuf;
+ 228:../../bos/hal/b_hal_uart.c ****     dma_conf.src         = 0;
+ 229:../../bos/hal/b_hal_uart.c ****     dma_conf.bits        = B_DMA_DATA_BIT8;
+ 230:../../bos/hal/b_hal_uart.c ****     dma_conf.chl         = attr->chl;
+ 231:../../bos/hal/b_hal_uart.c ****     dma_conf.count       = attr->len;
+ 232:../../bos/hal/b_hal_uart.c ****     dma_conf.inc         = B_DMA_DEST_ADDR_INC;
+ 233:../../bos/hal/b_hal_uart.c ****     dma_conf.is_circular = 0;
+ 234:../../bos/hal/b_hal_uart.c ****     if (bMcuUartReceiveDma(uart, &dma_conf) < 0)
+ 946              		.loc 1 234 9 view .LVU291
+GAS LISTING /tmp/ccjPosES.s 			page 31
+
+
+ 947 007b 4889E6   		movq	%rsp, %rsi
+ 223:../../bos/hal/b_hal_uart.c ****     attr->l_index = 0;
+ 948              		.loc 1 223 19 view .LVU292
+ 949 007e C7435400 		movl	$0, 84(%rbx)
+ 949      000000
+ 220:../../bos/hal/b_hal_uart.c ****     attr->chl     = chl;
+ 950              		.loc 1 220 19 view .LVU293
+ 951 0085 893B     		movl	%edi, (%rbx)
+ 221:../../bos/hal/b_hal_uart.c ****     attr->chl     = chl;
+ 952              		.loc 1 221 5 is_stmt 1 view .LVU294
+ 221:../../bos/hal/b_hal_uart.c ****     attr->chl     = chl;
+ 953              		.loc 1 221 19 is_stmt 0 view .LVU295
+ 954 0087 44896304 		movl	%r12d, 4(%rbx)
+ 222:../../bos/hal/b_hal_uart.c ****     attr->l_index = 0;
+ 955              		.loc 1 222 5 is_stmt 1 view .LVU296
+ 223:../../bos/hal/b_hal_uart.c ****     attr->l_index = 0;
+ 956              		.loc 1 223 5 view .LVU297
+ 224:../../bos/hal/b_hal_uart.c **** 
+ 957              		.loc 1 224 5 view .LVU298
+ 224:../../bos/hal/b_hal_uart.c **** 
+ 958              		.loc 1 224 19 is_stmt 0 view .LVU299
+ 959 008b C7435800 		movl	$0, 88(%rbx)
+ 959      000000
+ 226:../../bos/hal/b_hal_uart.c ****     dma_conf.dest        = (uint32_t)attr->pbuf;
+ 960              		.loc 1 226 5 is_stmt 1 view .LVU300
+ 227:../../bos/hal/b_hal_uart.c ****     dma_conf.src         = 0;
+ 961              		.loc 1 227 5 view .LVU301
+ 227:../../bos/hal/b_hal_uart.c ****     dma_conf.src         = 0;
+ 962              		.loc 1 227 28 is_stmt 0 view .LVU302
+ 963 0092 89442408 		movl	%eax, 8(%rsp)
+ 228:../../bos/hal/b_hal_uart.c ****     dma_conf.bits        = B_DMA_DATA_BIT8;
+ 964              		.loc 1 228 5 is_stmt 1 view .LVU303
+ 231:../../bos/hal/b_hal_uart.c ****     dma_conf.inc         = B_DMA_DEST_ADDR_INC;
+ 965              		.loc 1 231 26 is_stmt 0 view .LVU304
+ 966 0096 8B4338   		movl	56(%rbx), %eax
+ 228:../../bos/hal/b_hal_uart.c ****     dma_conf.bits        = B_DMA_DATA_BIT8;
+ 967              		.loc 1 228 26 view .LVU305
+ 968 0099 C7442404 		movl	$0, 4(%rsp)
+ 968      00000000 
+ 229:../../bos/hal/b_hal_uart.c ****     dma_conf.chl         = attr->chl;
+ 969              		.loc 1 229 5 is_stmt 1 view .LVU306
+ 230:../../bos/hal/b_hal_uart.c ****     dma_conf.count       = attr->len;
+ 970              		.loc 1 230 5 view .LVU307
+ 230:../../bos/hal/b_hal_uart.c ****     dma_conf.count       = attr->len;
+ 971              		.loc 1 230 26 is_stmt 0 view .LVU308
+ 972 00a1 44892424 		movl	%r12d, (%rsp)
+ 231:../../bos/hal/b_hal_uart.c ****     dma_conf.inc         = B_DMA_DEST_ADDR_INC;
+ 973              		.loc 1 231 5 is_stmt 1 view .LVU309
+ 231:../../bos/hal/b_hal_uart.c ****     dma_conf.inc         = B_DMA_DEST_ADDR_INC;
+ 974              		.loc 1 231 26 is_stmt 0 view .LVU310
+ 975 00a5 89442414 		movl	%eax, 20(%rsp)
+ 232:../../bos/hal/b_hal_uart.c ****     dma_conf.is_circular = 0;
+ 976              		.loc 1 232 5 is_stmt 1 view .LVU311
+ 232:../../bos/hal/b_hal_uart.c ****     dma_conf.is_circular = 0;
+ 977              		.loc 1 232 26 is_stmt 0 view .LVU312
+ 978 00a9 48C74424 		movq	$1, 12(%rsp)
+ 978      0C010000 
+GAS LISTING /tmp/ccjPosES.s 			page 32
+
+
+ 978      00
+ 233:../../bos/hal/b_hal_uart.c ****     if (bMcuUartReceiveDma(uart, &dma_conf) < 0)
+ 979              		.loc 1 233 5 is_stmt 1 view .LVU313
+ 233:../../bos/hal/b_hal_uart.c ****     if (bMcuUartReceiveDma(uart, &dma_conf) < 0)
+ 980              		.loc 1 233 26 is_stmt 0 view .LVU314
+ 981 00b2 C644241C 		movb	$0, 28(%rsp)
+ 981      00
+ 982              		.loc 1 234 5 is_stmt 1 view .LVU315
+ 983              		.loc 1 234 9 is_stmt 0 view .LVU316
+ 984 00b7 E8000000 		call	bMcuUartReceiveDma
+ 984      00
+ 985              	.LVL79:
+ 986              		.loc 1 234 8 discriminator 1 view .LVU317
+ 987 00bc 85C0     		testl	%eax, %eax
+ 988 00be 788D     		js	.L78
+ 235:../../bos/hal/b_hal_uart.c ****     {
+ 236:../../bos/hal/b_hal_uart.c ****         return -1;
+ 237:../../bos/hal/b_hal_uart.c ****     }
+ 238:../../bos/hal/b_hal_uart.c ****     list_add(&attr->list, &bHalUartListHead);
+ 989              		.loc 1 238 5 is_stmt 1 view .LVU318
+ 990              	.LBB59:
+ 991              	.LBB60:
+ 109:../../bos/utils/inc/b_util_list.h **** }
+ 992              		.loc 3 109 5 is_stmt 0 view .LVU319
+ 993 00c0 488B1500 		movq	bHalUartListHead(%rip), %rdx
+ 993      000000
+ 994              	.LBE60:
+ 995              	.LBE59:
+ 996              		.loc 1 238 5 view .LVU320
+ 997 00c7 488D4360 		leaq	96(%rbx), %rax
+ 998              	.LVL80:
+ 999              	.LBB67:
+ 1000              	.LBI59:
+ 107:../../bos/utils/inc/b_util_list.h **** {
+ 1001              		.loc 3 107 26 is_stmt 1 view .LVU321
+ 1002              	.LBB65:
+ 109:../../bos/utils/inc/b_util_list.h **** }
+ 1003              		.loc 3 109 5 view .LVU322
+ 1004              	.LBB61:
+ 1005              	.LBI61:
+  90:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+ 1006              		.loc 3 90 26 view .LVU323
+ 1007              	.LBB62:
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 1008              		.loc 3 93 5 view .LVU324
+ 1009              	.LBE62:
+ 1010              	.LBE61:
+ 1011              	.LBE65:
+ 1012              	.LBE67:
+ 239:../../bos/hal/b_hal_uart.c ****     if (bHalUartTaskId == NULL)
+ 1013              		.loc 1 239 8 is_stmt 0 view .LVU325
+ 1014 00cb 48833D00 		cmpq	$0, bHalUartTaskId(%rip)
+ 1014      00000000 
+ 1015              	.LBB68:
+ 1016              	.LBB66:
+ 1017              	.LBB64:
+ 1018              	.LBB63:
+GAS LISTING /tmp/ccjPosES.s 			page 33
+
+
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 1019              		.loc 3 96 5 view .LVU326
+ 1020 00d3 48890500 		movq	%rax, bHalUartListHead(%rip)
+ 1020      000000
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 1021              		.loc 3 93 19 view .LVU327
+ 1022 00da 48894208 		movq	%rax, 8(%rdx)
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 1023              		.loc 3 94 5 is_stmt 1 view .LVU328
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 1024              		.loc 3 94 19 is_stmt 0 view .LVU329
+ 1025 00de 48895360 		movq	%rdx, 96(%rbx)
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 1026              		.loc 3 95 5 is_stmt 1 view .LVU330
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 1027              		.loc 3 95 19 is_stmt 0 view .LVU331
+ 1028 00e2 48896B68 		movq	%rbp, 104(%rbx)
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 1029              		.loc 3 96 5 is_stmt 1 view .LVU332
+ 1030              	.LVL81:
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 1031              		.loc 3 96 5 is_stmt 0 view .LVU333
+ 1032              	.LBE63:
+ 1033              	.LBE64:
+ 1034              	.LBE66:
+ 1035              	.LBE68:
+ 1036              		.loc 1 239 5 is_stmt 1 view .LVU334
+ 1037              		.loc 1 239 8 is_stmt 0 view .LVU335
+ 1038 00e6 7428     		je	.L87
+ 1039              	.L82:
+ 240:../../bos/hal/b_hal_uart.c ****     {
+ 241:../../bos/hal/b_hal_uart.c ****         bHalUartTaskId = bTaskCreate("uart", _bHalUartDetectIdle, NULL, &bHalUartTaskAttr);
+ 242:../../bos/hal/b_hal_uart.c ****     }
+ 243:../../bos/hal/b_hal_uart.c ****     bHalDmaStart(chl);
+ 1040              		.loc 1 243 5 is_stmt 1 view .LVU336
+ 1041 00e8 4489E7   		movl	%r12d, %edi
+ 1042 00eb E8000000 		call	bHalDmaStart@PLT
+ 1042      00
+ 1043              	.LVL82:
+ 244:../../bos/hal/b_hal_uart.c ****     return 0;
+ 1044              		.loc 1 244 5 view .LVU337
+ 1045              		.loc 1 244 12 is_stmt 0 view .LVU338
+ 1046 00f0 31C0     		xorl	%eax, %eax
+ 1047              	.L76:
+ 245:../../bos/hal/b_hal_uart.c **** }
+ 1048              		.loc 1 245 1 view .LVU339
+ 1049 00f2 488B5424 		movq	40(%rsp), %rdx
+ 1049      28
+ 1050 00f7 64482B14 		subq	%fs:40, %rdx
+ 1050      25280000 
+ 1050      00
+ 1051 0100 7533     		jne	.L88
+ 1052 0102 4883C430 		addq	$48, %rsp
+ 1053              	.LCFI35:
+ 1054              		.cfi_remember_state
+ 1055              		.cfi_def_cfa_offset 32
+ 1056 0106 5B       		popq	%rbx
+GAS LISTING /tmp/ccjPosES.s 			page 34
+
+
+ 1057              	.LCFI36:
+ 1058              		.cfi_def_cfa_offset 24
+ 1059              	.LVL83:
+ 1060              		.loc 1 245 1 view .LVU340
+ 1061 0107 5D       		popq	%rbp
+ 1062              	.LCFI37:
+ 1063              		.cfi_def_cfa_offset 16
+ 1064 0108 415C     		popq	%r12
+ 1065              	.LCFI38:
+ 1066              		.cfi_def_cfa_offset 8
+ 1067              	.LVL84:
+ 1068              		.loc 1 245 1 view .LVU341
+ 1069 010a C3       		ret
+ 1070              	.LVL85:
+ 1071 010b 0F1F4400 		.p2align 4,,10
+ 1071      00
+ 1072              		.p2align 3
+ 1073              	.L87:
+ 1074              	.LCFI39:
+ 1075              		.cfi_restore_state
+ 241:../../bos/hal/b_hal_uart.c ****     }
+ 1076              		.loc 1 241 9 is_stmt 1 view .LVU342
+ 241:../../bos/hal/b_hal_uart.c ****     }
+ 1077              		.loc 1 241 26 is_stmt 0 view .LVU343
+ 1078 0110 488D0D00 		leaq	bHalUartTaskAttr(%rip), %rcx
+ 1078      000000
+ 1079 0117 31D2     		xorl	%edx, %edx
+ 1080 0119 488D3500 		leaq	_bHalUartDetectIdle(%rip), %rsi
+ 1080      000000
+ 1081 0120 488D3D00 		leaq	.LC0(%rip), %rdi
+ 1081      000000
+ 1082 0127 E8000000 		call	bTaskCreate@PLT
+ 1082      00
+ 1083              	.LVL86:
+ 241:../../bos/hal/b_hal_uart.c ****     }
+ 1084              		.loc 1 241 24 discriminator 1 view .LVU344
+ 1085 012c 48890500 		movq	%rax, bHalUartTaskId(%rip)
+ 1085      000000
+ 1086 0133 EBB3     		jmp	.L82
+ 1087              	.L88:
+ 1088              		.loc 1 245 1 view .LVU345
+ 1089 0135 E8000000 		call	__stack_chk_fail@PLT
+ 1089      00
+ 1090              	.LVL87:
+ 1091              		.cfi_endproc
+ 1092              	.LFE35:
+ 1094              		.section	.bss.bHalUartTaskId,"aw",@nobits
+ 1095              		.align 8
+ 1098              	bHalUartTaskId:
+ 1099 0000 00000000 		.zero	8
+ 1099      00000000 
+ 1100              		.section	.bss.bHalUartTaskAttr,"aw",@nobits
+ 1101              		.align 32
+ 1104              	bHalUartTaskAttr:
+ 1105 0000 00000000 		.zero	64
+ 1105      00000000 
+ 1105      00000000 
+GAS LISTING /tmp/ccjPosES.s 			page 35
+
+
+ 1105      00000000 
+ 1105      00000000 
+ 1106              		.section	.data.rel.local.bHalUartListHead,"aw"
+ 1107              		.align 16
+ 1110              	bHalUartListHead:
+ 1111 0000 00000000 		.quad	bHalUartListHead
+ 1111      00000000 
+ 1112 0008 00000000 		.quad	bHalUartListHead
+ 1112      00000000 
+ 1113              		.text
+ 1114              	.Letext0:
+ 1115              		.file 4 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1116              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"
+ 1117              		.file 6 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1118              		.file 7 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1119              		.file 8 "../../bos/hal/inc/b_hal_dma.h"
+ 1120              		.file 9 "../../bos/hal/inc/b_hal_it.h"
+ 1121              		.file 10 "../../bos/hal/inc/b_hal_uart.h"
+ 1122              		.file 11 "../../bos/thirdparty/pt/lc-switch.h"
+ 1123              		.file 12 "../../bos/thirdparty/pt/pt.h"
+ 1124              		.file 13 "../../bos/core/inc/b_task.h"
+ 1125              		.file 14 "../../bos/hal/inc/b_hal.h"
+ 1126              		.file 15 "<built-in>"
+ 5456              		.section	.note.gnu.property,"a"
+ 5457              		.align 8
+ 5458 0000 04000000 		.long	1f - 0f
+ 5459 0004 10000000 		.long	4f - 1f
+ 5460 0008 05000000 		.long	5
+ 5461              	0:
+ 5462 000c 474E5500 		.string	"GNU"
+ 5463              	1:
+ 5464              		.align 8
+ 5465 0010 020000C0 		.long	0xc0000002
+ 5466 0014 04000000 		.long	3f - 2f
+ 5467              	2:
+ 5468 0018 03000000 		.long	0x3
+ 5469              	3:
+ 5470 001c 00000000 		.align 8
+ 5471              	4:
+GAS LISTING /tmp/ccjPosES.s 			page 36
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_uart.c
+     /tmp/ccjPosES.s:9      .text._bHalUartDetectIdle:0000000000000000 _bHalUartDetectIdle
+     /tmp/ccjPosES.s:1110   .data.rel.local.bHalUartListHead:0000000000000000 bHalUartListHead
+     /tmp/ccjPosES.s:432    .text._bHalItHandler:0000000000000000 _bHalItHandler
+     /tmp/ccjPosES.s:529    .text.bMcuUartSend:0000000000000000 bMcuUartSend
+     /tmp/ccjPosES.s:547    .text.bMcuUartReceiveDma:0000000000000000 bMcuUartReceiveDma
+     /tmp/ccjPosES.s:565    .text.bHalUartSend:0000000000000000 bHalUartSend
+     /tmp/ccjPosES.s:600    .text.bHalUartReceive:0000000000000000 bHalUartReceive
+     /tmp/ccjPosES.s:1098   .bss.bHalUartTaskId:0000000000000000 bHalUartTaskId
+     /tmp/ccjPosES.s:1104   .bss.bHalUartTaskAttr:0000000000000000 bHalUartTaskAttr
+     /tmp/ccjPosES.s:853    .text.bHalUartReceiveDma:0000000000000000 bHalUartReceiveDma
+     /tmp/ccjPosES.s:594    .rodata.bHalUartReceive.str1.1:0000000000000000 .LC0
+
+UNDEFINED SYMBOLS
+memset
+bHalGetSysTick
+bHalDmaGetCount
+bHalDmaStop
+bHalDmaSetDest
+bHalDmaSetCount
+bHalDmaStart
+bHalItRegister
+bTaskCreate
+__stack_chk_fail

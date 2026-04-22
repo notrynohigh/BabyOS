@@ -1,0 +1,3037 @@
+GAS LISTING /tmp/cccyRS9s.s 			page 1
+
+
+   1              		.file	"rsa_alt_helpers.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c"
+   5              		.section	.text.mbedtls_rsa_deduce_primes,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	mbedtls_rsa_deduce_primes
+   9              	mbedtls_rsa_deduce_primes:
+  10              	.LVL0:
+  11              	.LFB28:
+   1:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** /*
+   2:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *  Helper functions for the RSA module
+   3:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+   4:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *  Copyright The Mbed TLS Contributors
+   5:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+   6:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+   7:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  */
+   8:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+   9:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** #include "common.h"
+  10:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  11:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** #if defined(MBEDTLS_RSA_C)
+  12:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  13:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/rsa.h"
+  14:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/bignum.h"
+  15:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** #include "rsa_alt_helpers.h"
+  16:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  17:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** /*
+  18:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * Compute RSA prime factors from public and private exponents
+  19:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  20:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * Summary of algorithm:
+  21:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * Setting F := lcm(P-1,Q-1), the idea is as follows:
+  22:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  23:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * (a) For any 1 <= X < N with gcd(X,N)=1, we have X^F = 1 modulo N, so X^(F/2)
+  24:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *     is a square root of 1 in Z/NZ. Since Z/NZ ~= Z/PZ x Z/QZ by CRT and the
+  25:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *     square roots of 1 in Z/PZ and Z/QZ are +1 and -1, this leaves the four
+  26:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *     possibilities X^(F/2) = (+-1, +-1). If it happens that X^(F/2) = (-1,+1)
+  27:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *     or (+1,-1), then gcd(X^(F/2) + 1, N) will be equal to one of the prime
+  28:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *     factors of N.
+  29:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  30:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * (b) If we don't know F/2 but (F/2) * K for some odd (!) K, then the same
+  31:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *     construction still applies since (-)^K is the identity on the set of
+  32:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *     roots of 1 in Z/NZ.
+  33:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  34:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * The public and private key primitives (-)^E and (-)^D are mutually inverse
+  35:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * bijections on Z/NZ if and only if (-)^(DE) is the identity on Z/NZ, i.e.
+  36:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * if and only if DE - 1 is a multiple of F, say DE - 1 = F * L.
+  37:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * Splitting L = 2^t * K with K odd, we have
+  38:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  39:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *   DE - 1 = FL = (F/2) * (2^(t+1)) * K,
+  40:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  41:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * so (F / 2) * K is among the numbers
+  42:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  43:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *   (DE - 1) >> 1, (DE - 1) >> 2, ..., (DE - 1) >> ord
+  44:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  45:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * where ord is the order of 2 in (DE - 1).
+  46:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * We can therefore iterate through these numbers apply the construction
+  47:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * of (a) and (b) above to attempt to factor N.
+GAS LISTING /tmp/cccyRS9s.s 			page 2
+
+
+  48:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  *
+  49:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  */
+  50:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** int mbedtls_rsa_deduce_primes(mbedtls_mpi const *N,
+  51:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                               mbedtls_mpi const *E, mbedtls_mpi const *D,
+  52:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                               mbedtls_mpi *P, mbedtls_mpi *Q)
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** {
+  12              		.loc 1 53 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 53 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  16 0004 4157     		pushq	%r15
+  17              	.LCFI0:
+  18              		.cfi_def_cfa_offset 16
+  19              		.cfi_offset 15, -16
+  20 0006 4156     		pushq	%r14
+  21              	.LCFI1:
+  22              		.cfi_def_cfa_offset 24
+  23              		.cfi_offset 14, -24
+  24 0008 4155     		pushq	%r13
+  25              	.LCFI2:
+  26              		.cfi_def_cfa_offset 32
+  27              		.cfi_offset 13, -32
+  28 000a 4154     		pushq	%r12
+  29              	.LCFI3:
+  30              		.cfi_def_cfa_offset 40
+  31              		.cfi_offset 12, -40
+  32 000c 55       		pushq	%rbp
+  33              	.LCFI4:
+  34              		.cfi_def_cfa_offset 48
+  35              		.cfi_offset 6, -48
+  36 000d 53       		pushq	%rbx
+  37              	.LCFI5:
+  38              		.cfi_def_cfa_offset 56
+  39              		.cfi_offset 3, -56
+  40 000e 4881EC88 		subq	$136, %rsp
+  40      000000
+  41              	.LCFI6:
+  42              		.cfi_def_cfa_offset 192
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+  55:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     uint16_t attempt;  /* Number of current attempt  */
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     uint16_t iter;     /* Number of squares computed in the current attempt */
+  58:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     uint16_t order;    /* Order of 2 in DE - 1 */
+  60:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi T;  /* Holds largest odd divisor of DE - 1     */
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi K;  /* Temporary holding the current candidate */
+  63:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  64:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     const unsigned char primes[] = { 2,
+  43              		.loc 1 64 25 view .LVU2
+  44 0015 660F6F05 		movdqa	.LC0(%rip), %xmm0
+  44      00000000 
+  53:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+  45              		.loc 1 53 1 view .LVU3
+  46 001d 48897424 		movq	%rsi, 8(%rsp)
+  46      08
+  47 0022 64488B04 		movq	%fs:40, %rax
+GAS LISTING /tmp/cccyRS9s.s 			page 3
+
+
+  47      25280000 
+  47      00
+  48 002b 48894424 		movq	%rax, 120(%rsp)
+  48      78
+  49 0030 31C0     		xorl	%eax, %eax
+  54:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+  50              		.loc 1 54 5 is_stmt 1 view .LVU4
+  51              	.LVL1:
+  56:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     uint16_t iter;     /* Number of squares computed in the current attempt */
+  52              		.loc 1 56 5 view .LVU5
+  57:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  53              		.loc 1 57 5 view .LVU6
+  59:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  54              		.loc 1 59 5 view .LVU7
+  61:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi K;  /* Temporary holding the current candidate */
+  55              		.loc 1 61 5 view .LVU8
+  62:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  56              		.loc 1 62 5 view .LVU9
+  57              		.loc 1 64 5 view .LVU10
+  58              		.loc 1 64 25 is_stmt 0 view .LVU11
+  59 0032 0F294424 		movaps	%xmm0, 64(%rsp)
+  59      40
+  60 0037 660F6F05 		movdqa	.LC1(%rip), %xmm0
+  60      00000000 
+  61 003f 48B8D3DF 		movabsq	$-292188712939036717, %rax
+  61      E3E5E9EF 
+  61      F1FB
+  62 0049 0F294424 		movaps	%xmm0, 80(%rsp)
+  62      50
+  63 004e 660F6F05 		movdqa	.LC2(%rip), %xmm0
+  63      00000000 
+  64 0056 0F294424 		movaps	%xmm0, 96(%rsp)
+  64      60
+  65 005b 48894424 		movq	%rax, 110(%rsp)
+  65      6E
+  65:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                      3,    5,    7,   11,   13,   17,   19,   23,
+  66:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                      29,   31,   37,   41,   43,   47,   53,   59,
+  67:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                      61,   67,   71,   73,   79,   83,   89,   97,
+  68:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                      101,  103,  107,  109,  113,  127,  131,  137,
+  69:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                      139,  149,  151,  157,  163,  167,  173,  179,
+  70:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                      181,  191,  193,  197,  199,  211,  223,  227,
+  71:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                      229,  233,  239,  241,  251 };
+  72:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  73:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     const size_t num_primes = sizeof(primes) / sizeof(*primes);
+  66              		.loc 1 73 5 is_stmt 1 view .LVU12
+  67              	.LVL2:
+  74:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  75:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (P == NULL || Q == NULL || P->p != NULL || Q->p != NULL) {
+  68              		.loc 1 75 5 view .LVU13
+  69              		.loc 1 75 8 is_stmt 0 view .LVU14
+  70 0060 4885C9   		testq	%rcx, %rcx
+  71 0063 0F843701 		je	.L5
+  71      0000
+  72 0069 4D89C6   		movq	%r8, %r14
+  73 006c 4D85C0   		testq	%r8, %r8
+  74 006f 0F842B01 		je	.L5
+  74      0000
+GAS LISTING /tmp/cccyRS9s.s 			page 4
+
+
+  75              		.loc 1 75 32 discriminator 1 view .LVU15
+  76 0075 48833900 		cmpq	$0, (%rcx)
+  77 0079 4989CC   		movq	%rcx, %r12
+  78 007c 0F851E01 		jne	.L5
+  78      0000
+  79              		.loc 1 75 48 discriminator 2 view .LVU16
+  80 0082 49833800 		cmpq	$0, (%r8)
+  81 0086 0F851401 		jne	.L5
+  81      0000
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+  77:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+  78:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (mbedtls_mpi_cmp_int(N, 0) <= 0 ||
+  82              		.loc 1 79 9 view .LVU17
+  83 008c 31F6     		xorl	%esi, %esi
+  84              	.LVL3:
+  85              		.loc 1 79 9 view .LVU18
+  86 008e 4889FD   		movq	%rdi, %rbp
+  87 0091 4989D5   		movq	%rdx, %r13
+  88              		.loc 1 79 5 is_stmt 1 view .LVU19
+  89              		.loc 1 79 9 is_stmt 0 view .LVU20
+  90 0094 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+  90      00
+  91              	.LVL4:
+  92              		.loc 1 79 8 discriminator 1 view .LVU21
+  93 0099 85C0     		testl	%eax, %eax
+  94 009b 0F8EFF00 		jle	.L5
+  94      0000
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+  95              		.loc 1 80 9 view .LVU22
+  96 00a1 BE010000 		movl	$1, %esi
+  96      00
+  97 00a6 4C89EF   		movq	%r13, %rdi
+  98 00a9 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+  98      00
+  99              	.LVL5:
+  79:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 100              		.loc 1 79 40 discriminator 1 view .LVU23
+ 101 00ae 85C0     		testl	%eax, %eax
+ 102 00b0 0F8EEA00 		jle	.L5
+ 102      0000
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_mpi(D, N) >= 0 ||
+ 103              		.loc 1 81 9 view .LVU24
+ 104 00b6 4889EE   		movq	%rbp, %rsi
+ 105 00b9 4C89EF   		movq	%r13, %rdi
+ 106 00bc E8000000 		call	mbedtls_mpi_cmp_mpi@PLT
+ 106      00
+ 107              	.LVL6:
+  80:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 108              		.loc 1 80 40 view .LVU25
+ 109 00c1 85C0     		testl	%eax, %eax
+ 110 00c3 0F89D700 		jns	.L5
+ 110      0000
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(E, 1) <= 0 ||
+ 111              		.loc 1 82 9 view .LVU26
+ 112 00c9 488B5C24 		movq	8(%rsp), %rbx
+ 112      08
+GAS LISTING /tmp/cccyRS9s.s 			page 5
+
+
+ 113 00ce BE010000 		movl	$1, %esi
+ 113      00
+ 114 00d3 4889DF   		movq	%rbx, %rdi
+ 115 00d6 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 115      00
+ 116              	.LVL7:
+  81:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_mpi(D, N) >= 0 ||
+ 117              		.loc 1 81 40 view .LVU27
+ 118 00db 85C0     		testl	%eax, %eax
+ 119 00dd 0F8EBD00 		jle	.L5
+ 119      0000
+  83:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_mpi(E, N) >= 0) {
+ 120              		.loc 1 83 9 view .LVU28
+ 121 00e3 4889EE   		movq	%rbp, %rsi
+ 122 00e6 4889DF   		movq	%rbx, %rdi
+ 123 00e9 48895C24 		movq	%rbx, 8(%rsp)
+ 123      08
+ 124              	.LVL8:
+ 125              		.loc 1 83 9 view .LVU29
+ 126 00ee E8000000 		call	mbedtls_mpi_cmp_mpi@PLT
+ 126      00
+ 127              	.LVL9:
+  82:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(E, 1) <= 0 ||
+ 128              		.loc 1 82 40 view .LVU30
+ 129 00f3 85C0     		testl	%eax, %eax
+ 130 00f5 0F89A500 		jns	.L5
+ 130      0000
+  84:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+  85:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+  86:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  87:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /*
+  88:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * Initializations and temporary changes
+  89:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      */
+  90:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&K);
+ 131              		.loc 1 91 5 is_stmt 1 view .LVU31
+ 132 00fb 488D5C24 		leaq	48(%rsp), %rbx
+ 132      30
+  92:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&T);
+ 133              		.loc 1 92 5 is_stmt 0 view .LVU32
+ 134 0100 4C8D7C24 		leaq	32(%rsp), %r15
+ 134      20
+  91:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&T);
+ 135              		.loc 1 91 5 view .LVU33
+ 136 0105 4889DF   		movq	%rbx, %rdi
+ 137 0108 E8000000 		call	mbedtls_mpi_init@PLT
+ 137      00
+ 138              	.LVL10:
+ 139              		.loc 1 92 5 is_stmt 1 view .LVU34
+ 140 010d 4C89FF   		movq	%r15, %rdi
+ 141 0110 E8000000 		call	mbedtls_mpi_init@PLT
+ 141      00
+ 142              	.LVL11:
+  93:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  94:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* T := DE - 1 */
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&T, D,  E));
+ 143              		.loc 1 95 5 view .LVU35
+GAS LISTING /tmp/cccyRS9s.s 			page 6
+
+
+ 144              		.loc 1 95 5 view .LVU36
+ 145 0115 488B5424 		movq	8(%rsp), %rdx
+ 145      08
+ 146 011a 4C89EE   		movq	%r13, %rsi
+ 147 011d 4C89FF   		movq	%r15, %rdi
+ 148 0120 E8000000 		call	mbedtls_mpi_mul_mpi@PLT
+ 148      00
+ 149              	.LVL12:
+ 150              		.loc 1 95 5 is_stmt 0 discriminator 1 view .LVU37
+ 151 0125 85C0     		testl	%eax, %eax
+ 152 0127 7447     		je	.L23
+ 153              	.LVL13:
+ 154              	.L6:
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&T, &T, 1));
+  97:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if ((order = (uint16_t) mbedtls_mpi_lsb(&T)) == 0) {
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+ 100:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 101:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 102:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 103:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* After this operation, T holds the largest odd divisor of DE - 1. */
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_shift_r(&T, order));
+ 105:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 106:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /*
+ 107:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * Actual work
+ 108:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      */
+ 109:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 110:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Skip trying 2 if N == 1 mod 8 */
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     attempt = 0;
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (N->p[0] % 8 == 1) {
+ 113:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         attempt = 1;
+ 114:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 115:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     for (; attempt < num_primes; ++attempt) {
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_lset(&K, primes[attempt]));
+ 118:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 119:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         /* Check if gcd(K,N) = 1 */
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_gcd(P, &K, N));
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) != 0) {
+ 122:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             continue;
+ 123:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 124:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 125:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         /* Go through K^T + 1, K^(2T) + 1, K^(4T) + 1, ...
+ 126:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****          * and check whether they have nontrivial GCD with N. */
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_exp_mod(&K, &K, &T, N,
+ 128:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                             Q /* temporarily use Q for storing Montgomery
+ 129:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                                * multiplication helper values */));
+ 130:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         for (iter = 1; iter <= order; ++iter) {
+ 132:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             /* If we reach 1 prematurely, there's no point
+ 133:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****              * in continuing to square K */
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             if (mbedtls_mpi_cmp_int(&K, 1) == 0) {
+ 135:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 break;
+ 136:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             }
+ 137:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_add_int(&K, &K, 1));
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_gcd(P, &K, N));
+GAS LISTING /tmp/cccyRS9s.s 			page 7
+
+
+ 140:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             if (mbedtls_mpi_cmp_int(P, 1) ==  1 &&
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 mbedtls_mpi_cmp_mpi(P, N) == -1) {
+ 143:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 /*
+ 144:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                  * Have found a nontrivial divisor P of N.
+ 145:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                  * Set Q := N / P.
+ 146:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                  */
+ 147:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 MBEDTLS_MPI_CHK(mbedtls_mpi_div_mpi(Q, NULL, N, P));
+ 149:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 goto cleanup;
+ 150:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             }
+ 151:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, &K, &K));
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, N));
+ 155:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 156:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 157:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         /*
+ 158:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****          * If we get here, then either we prematurely aborted the loop because
+ 159:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****          * we reached 1, or K holds primes[attempt]^(DE - 1) mod N, which must
+ 160:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****          * be 1 if D,E,N were consistent.
+ 161:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****          * Check if that's the case and abort if not, to avoid very long,
+ 162:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****          * yet eventually failing, computations if N,D,E were not sane.
+ 163:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****          */
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 1) != 0) {
+ 165:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             break;
+ 166:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 167:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 168:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 169:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+ 170:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 171:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** cleanup:
+ 172:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 173:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&K);
+ 155              		.loc 1 173 5 view .LVU38
+ 156 0129 4889DF   		movq	%rbx, %rdi
+ 157 012c 89442408 		movl	%eax, 8(%rsp)
+ 158              	.LVL14:
+ 159              		.loc 1 173 5 is_stmt 1 view .LVU39
+ 160 0130 E8000000 		call	mbedtls_mpi_free@PLT
+ 160      00
+ 161              	.LVL15:
+ 174:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&T);
+ 162              		.loc 1 174 5 view .LVU40
+ 163 0135 4C89FF   		movq	%r15, %rdi
+ 164 0138 E8000000 		call	mbedtls_mpi_free@PLT
+ 164      00
+ 165              	.LVL16:
+ 166 013d 8B442408 		movl	8(%rsp), %eax
+ 175:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     return ret;
+ 167              		.loc 1 175 5 view .LVU41
+ 168              	.LVL17:
+ 169              	.L1:
+ 176:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** }
+ 170              		.loc 1 176 1 is_stmt 0 view .LVU42
+ 171 0141 488B5424 		movq	120(%rsp), %rdx
+ 171      78
+GAS LISTING /tmp/cccyRS9s.s 			page 8
+
+
+ 172 0146 64482B14 		subq	%fs:40, %rdx
+ 172      25280000 
+ 172      00
+ 173 014f 0F850D02 		jne	.L24
+ 173      0000
+ 174 0155 4881C488 		addq	$136, %rsp
+ 174      000000
+ 175              	.LCFI7:
+ 176              		.cfi_remember_state
+ 177              		.cfi_def_cfa_offset 56
+ 178 015c 5B       		popq	%rbx
+ 179              	.LCFI8:
+ 180              		.cfi_def_cfa_offset 48
+ 181 015d 5D       		popq	%rbp
+ 182              	.LCFI9:
+ 183              		.cfi_def_cfa_offset 40
+ 184 015e 415C     		popq	%r12
+ 185              	.LCFI10:
+ 186              		.cfi_def_cfa_offset 32
+ 187 0160 415D     		popq	%r13
+ 188              	.LCFI11:
+ 189              		.cfi_def_cfa_offset 24
+ 190 0162 415E     		popq	%r14
+ 191              	.LCFI12:
+ 192              		.cfi_def_cfa_offset 16
+ 193 0164 415F     		popq	%r15
+ 194              	.LCFI13:
+ 195              		.cfi_def_cfa_offset 8
+ 196 0166 C3       		ret
+ 197              	.LVL18:
+ 198 0167 660F1F84 		.p2align 4,,10
+ 198      00000000 
+ 198      00
+ 199              		.p2align 3
+ 200              	.L23:
+ 201              	.LCFI14:
+ 202              		.cfi_restore_state
+  95:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&T, &T, 1));
+ 203              		.loc 1 95 5 is_stmt 1 discriminator 2 view .LVU43
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 204              		.loc 1 96 5 view .LVU44
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 205              		.loc 1 96 5 view .LVU45
+ 206 0170 BA010000 		movl	$1, %edx
+ 206      00
+ 207 0175 4C89FE   		movq	%r15, %rsi
+ 208 0178 4C89FF   		movq	%r15, %rdi
+ 209 017b E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 209      00
+ 210              	.LVL19:
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 211              		.loc 1 96 5 is_stmt 0 discriminator 1 view .LVU46
+ 212 0180 85C0     		testl	%eax, %eax
+ 213 0182 75A5     		jne	.L6
+  96:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 214              		.loc 1 96 5 is_stmt 1 discriminator 2 view .LVU47
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+GAS LISTING /tmp/cccyRS9s.s 			page 9
+
+
+ 215              		.loc 1 98 5 view .LVU48
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+ 216              		.loc 1 98 29 is_stmt 0 view .LVU49
+ 217 0184 4C89FF   		movq	%r15, %rdi
+ 218 0187 E8000000 		call	mbedtls_mpi_lsb@PLT
+ 218      00
+ 219              	.LVL20:
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+ 220              		.loc 1 98 16 discriminator 1 view .LVU50
+ 221 018c 66894424 		movw	%ax, 22(%rsp)
+ 221      16
+ 222              	.LVL21:
+  98:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+ 223              		.loc 1 98 8 discriminator 1 view .LVU51
+ 224 0191 6685C0   		testw	%ax, %ax
+ 225 0194 751A     		jne	.L7
+ 226              	.LVL22:
+ 227              	.L10:
+  99:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 228              		.loc 1 99 13 view .LVU52
+ 229 0196 B8FCFFFF 		movl	$-4, %eax
+ 229      FF
+ 230 019b EB8C     		jmp	.L6
+ 231              	.LVL23:
+ 232 019d 0F1F00   		.p2align 4,,10
+ 233              		.p2align 3
+ 234              	.L5:
+  76:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 235              		.loc 1 76 16 view .LVU53
+ 236 01a0 B8FCFFFF 		movl	$-4, %eax
+ 236      FF
+ 237 01a5 EB9A     		jmp	.L1
+ 238              	.LVL24:
+ 239 01a7 660F1F84 		.p2align 4,,10
+ 239      00000000 
+ 239      00
+ 240              		.p2align 3
+ 241              	.L7:
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 242              		.loc 1 104 5 is_stmt 1 view .LVU54
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 243              		.loc 1 104 5 view .LVU55
+ 244 01b0 0FB7F0   		movzwl	%ax, %esi
+ 245 01b3 4C89FF   		movq	%r15, %rdi
+ 246 01b6 E8000000 		call	mbedtls_mpi_shift_r@PLT
+ 246      00
+ 247              	.LVL25:
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 248              		.loc 1 104 5 is_stmt 0 discriminator 1 view .LVU56
+ 249 01bb 85C0     		testl	%eax, %eax
+ 250 01bd 0F8566FF 		jne	.L6
+ 250      FFFF
+ 104:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 251              		.loc 1 104 5 is_stmt 1 discriminator 2 view .LVU57
+ 111:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (N->p[0] % 8 == 1) {
+ 252              		.loc 1 111 5 view .LVU58
+ 253              	.LVL26:
+GAS LISTING /tmp/cccyRS9s.s 			page 10
+
+
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         attempt = 1;
+ 254              		.loc 1 112 5 view .LVU59
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_lset(&K, primes[attempt]));
+ 255              		.loc 1 116 20 discriminator 1 view .LVU60
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         attempt = 1;
+ 256              		.loc 1 112 13 is_stmt 0 view .LVU61
+ 257 01c3 488B4500 		movq	0(%rbp), %rax
+ 258              	.LVL27:
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         attempt = 1;
+ 259              		.loc 1 112 17 view .LVU62
+ 260 01c7 488B00   		movq	(%rax), %rax
+ 261 01ca 83E007   		andl	$7, %eax
+ 112:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         attempt = 1;
+ 262              		.loc 1 112 8 view .LVU63
+ 263 01cd 4883F801 		cmpq	$1, %rax
+ 264 01d1 0F94C0   		sete	%al
+ 265 01d4 0FB6C0   		movzbl	%al, %eax
+ 266 01d7 48894424 		movq	%rax, 8(%rsp)
+ 266      08
+ 267 01dc 488D4424 		leaq	64(%rsp), %rax
+ 267      40
+ 268 01e1 48894424 		movq	%rax, 24(%rsp)
+ 268      18
+ 269              	.LVL28:
+ 270              	.L9:
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 271              		.loc 1 117 9 is_stmt 1 view .LVU64
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 272              		.loc 1 117 9 view .LVU65
+ 273 01e6 488B4424 		movq	24(%rsp), %rax
+ 273      18
+ 274 01eb 488B4C24 		movq	8(%rsp), %rcx
+ 274      08
+ 275 01f0 4889DF   		movq	%rbx, %rdi
+ 276 01f3 0FB63408 		movzbl	(%rax,%rcx), %esi
+ 277 01f7 E8000000 		call	mbedtls_mpi_lset@PLT
+ 277      00
+ 278              	.LVL29:
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 279              		.loc 1 117 9 is_stmt 0 discriminator 1 view .LVU66
+ 280 01fc 85C0     		testl	%eax, %eax
+ 281 01fe 0F8525FF 		jne	.L6
+ 281      FFFF
+ 117:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 282              		.loc 1 117 9 is_stmt 1 discriminator 2 view .LVU67
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) != 0) {
+ 283              		.loc 1 120 9 view .LVU68
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) != 0) {
+ 284              		.loc 1 120 9 view .LVU69
+ 285 0204 4889EA   		movq	%rbp, %rdx
+ 286 0207 4889DE   		movq	%rbx, %rsi
+ 287 020a 4C89E7   		movq	%r12, %rdi
+ 288 020d E8000000 		call	mbedtls_mpi_gcd@PLT
+ 288      00
+ 289              	.LVL30:
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) != 0) {
+ 290              		.loc 1 120 9 is_stmt 0 discriminator 1 view .LVU70
+GAS LISTING /tmp/cccyRS9s.s 			page 11
+
+
+ 291 0212 85C0     		testl	%eax, %eax
+ 292 0214 0F850FFF 		jne	.L6
+ 292      FFFF
+ 120:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) != 0) {
+ 293              		.loc 1 120 9 is_stmt 1 discriminator 2 view .LVU71
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             continue;
+ 294              		.loc 1 121 9 view .LVU72
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             continue;
+ 295              		.loc 1 121 13 is_stmt 0 view .LVU73
+ 296 021a BE010000 		movl	$1, %esi
+ 296      00
+ 297 021f 4C89E7   		movq	%r12, %rdi
+ 298 0222 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 298      00
+ 299              	.LVL31:
+ 121:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             continue;
+ 300              		.loc 1 121 12 discriminator 1 view .LVU74
+ 301 0227 85C0     		testl	%eax, %eax
+ 302 0229 741D     		je	.L8
+ 303              	.LVL32:
+ 304              	.L14:
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_lset(&K, primes[attempt]));
+ 305              		.loc 1 116 34 is_stmt 1 view .LVU75
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_lset(&K, primes[attempt]));
+ 306              		.loc 1 116 20 discriminator 1 view .LVU76
+ 307 022b 48834424 		addq	$1, 8(%rsp)
+ 307      0801
+ 308              	.LVL33:
+ 116:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_lset(&K, primes[attempt]));
+ 309              		.loc 1 116 20 is_stmt 0 discriminator 1 view .LVU77
+ 310 0231 488B4424 		movq	8(%rsp), %rax
+ 310      08
+ 311 0236 6683F836 		cmpw	$54, %ax
+ 312 023a 75AA     		jne	.L9
+ 313 023c E955FFFF 		jmp	.L10
+ 313      FF
+ 314              	.LVL34:
+ 315              		.p2align 4,,10
+ 316 0241 0F1F8000 		.p2align 3
+ 316      000000
+ 317              	.L8:
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                             Q /* temporarily use Q for storing Montgomery
+ 318              		.loc 1 127 9 is_stmt 1 view .LVU78
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                             Q /* temporarily use Q for storing Montgomery
+ 319              		.loc 1 127 9 view .LVU79
+ 320 0248 4D89F0   		movq	%r14, %r8
+ 321 024b 4889E9   		movq	%rbp, %rcx
+ 322 024e 4C89FA   		movq	%r15, %rdx
+ 323 0251 4889DE   		movq	%rbx, %rsi
+ 324 0254 4889DF   		movq	%rbx, %rdi
+ 325 0257 E8000000 		call	mbedtls_mpi_exp_mod@PLT
+ 325      00
+ 326              	.LVL35:
+ 127:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                             Q /* temporarily use Q for storing Montgomery
+ 327              		.loc 1 127 9 is_stmt 0 discriminator 1 view .LVU80
+ 328 025c 85C0     		testl	%eax, %eax
+ 329 025e 0F85C5FE 		jne	.L6
+GAS LISTING /tmp/cccyRS9s.s 			page 12
+
+
+ 329      FFFF
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             /* If we reach 1 prematurely, there's no point
+ 330              		.loc 1 131 19 view .LVU81
+ 331 0264 41BD0100 		movl	$1, %r13d
+ 331      0000
+ 332 026a EB58     		jmp	.L13
+ 333              	.LVL36:
+ 334 026c 0F1F4000 		.p2align 4,,10
+ 335              		.p2align 3
+ 336              	.L12:
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, &K, &K));
+ 337              		.loc 1 152 13 is_stmt 1 view .LVU82
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, &K, &K));
+ 338              		.loc 1 152 13 view .LVU83
+ 339 0270 BA010000 		movl	$1, %edx
+ 339      00
+ 340 0275 4889DE   		movq	%rbx, %rsi
+ 341 0278 4889DF   		movq	%rbx, %rdi
+ 342 027b E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 342      00
+ 343              	.LVL37:
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, &K, &K));
+ 344              		.loc 1 152 13 is_stmt 0 discriminator 1 view .LVU84
+ 345 0280 85C0     		testl	%eax, %eax
+ 346 0282 0F85A1FE 		jne	.L6
+ 346      FFFF
+ 152:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, &K, &K));
+ 347              		.loc 1 152 13 is_stmt 1 discriminator 2 view .LVU85
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, N));
+ 348              		.loc 1 153 13 view .LVU86
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, N));
+ 349              		.loc 1 153 13 view .LVU87
+ 350 0288 4889DA   		movq	%rbx, %rdx
+ 351 028b 4889DE   		movq	%rbx, %rsi
+ 352 028e 4889DF   		movq	%rbx, %rdi
+ 353 0291 E8000000 		call	mbedtls_mpi_mul_mpi@PLT
+ 353      00
+ 354              	.LVL38:
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, N));
+ 355              		.loc 1 153 13 is_stmt 0 discriminator 1 view .LVU88
+ 356 0296 85C0     		testl	%eax, %eax
+ 357 0298 0F858BFE 		jne	.L6
+ 357      FFFF
+ 153:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, N));
+ 358              		.loc 1 153 13 is_stmt 1 discriminator 2 view .LVU89
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 359              		.loc 1 154 13 view .LVU90
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 360              		.loc 1 154 13 view .LVU91
+ 361 029e 4889EA   		movq	%rbp, %rdx
+ 362 02a1 4889DE   		movq	%rbx, %rsi
+ 363 02a4 4889DF   		movq	%rbx, %rdi
+ 364 02a7 E8000000 		call	mbedtls_mpi_mod_mpi@PLT
+ 364      00
+ 365              	.LVL39:
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 366              		.loc 1 154 13 is_stmt 0 discriminator 1 view .LVU92
+GAS LISTING /tmp/cccyRS9s.s 			page 13
+
+
+ 367 02ac 85C0     		testl	%eax, %eax
+ 368 02ae 0F8575FE 		jne	.L6
+ 368      FFFF
+ 154:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 369              		.loc 1 154 13 is_stmt 1 discriminator 2 view .LVU93
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             /* If we reach 1 prematurely, there's no point
+ 370              		.loc 1 131 39 discriminator 2 view .LVU94
+ 371 02b4 4183C501 		addl	$1, %r13d
+ 372              	.LVL40:
+ 131:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             /* If we reach 1 prematurely, there's no point
+ 373              		.loc 1 131 29 discriminator 1 view .LVU95
+ 374 02b8 6644396C 		cmpw	%r13w, 22(%rsp)
+ 374      2416
+ 375 02be 0F828400 		jb	.L11
+ 375      0000
+ 376              	.LVL41:
+ 377              	.L13:
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 break;
+ 378              		.loc 1 134 13 view .LVU96
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 break;
+ 379              		.loc 1 134 17 is_stmt 0 view .LVU97
+ 380 02c4 BE010000 		movl	$1, %esi
+ 380      00
+ 381 02c9 4889DF   		movq	%rbx, %rdi
+ 382 02cc E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 382      00
+ 383              	.LVL42:
+ 134:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 break;
+ 384              		.loc 1 134 16 discriminator 1 view .LVU98
+ 385 02d1 85C0     		testl	%eax, %eax
+ 386 02d3 7473     		je	.L11
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_gcd(P, &K, N));
+ 387              		.loc 1 138 13 is_stmt 1 view .LVU99
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_gcd(P, &K, N));
+ 388              		.loc 1 138 13 view .LVU100
+ 389 02d5 BA010000 		movl	$1, %edx
+ 389      00
+ 390 02da 4889DE   		movq	%rbx, %rsi
+ 391 02dd 4889DF   		movq	%rbx, %rdi
+ 392 02e0 E8000000 		call	mbedtls_mpi_add_int@PLT
+ 392      00
+ 393              	.LVL43:
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_gcd(P, &K, N));
+ 394              		.loc 1 138 13 is_stmt 0 discriminator 1 view .LVU101
+ 395 02e5 85C0     		testl	%eax, %eax
+ 396 02e7 0F853CFE 		jne	.L6
+ 396      FFFF
+ 138:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             MBEDTLS_MPI_CHK(mbedtls_mpi_gcd(P, &K, N));
+ 397              		.loc 1 138 13 is_stmt 1 discriminator 2 view .LVU102
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 398              		.loc 1 139 13 view .LVU103
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 399              		.loc 1 139 13 view .LVU104
+ 400 02ed 4889EA   		movq	%rbp, %rdx
+ 401 02f0 4889DE   		movq	%rbx, %rsi
+ 402 02f3 4C89E7   		movq	%r12, %rdi
+ 403 02f6 E8000000 		call	mbedtls_mpi_gcd@PLT
+GAS LISTING /tmp/cccyRS9s.s 			page 14
+
+
+ 403      00
+ 404              	.LVL44:
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 405              		.loc 1 139 13 is_stmt 0 discriminator 1 view .LVU105
+ 406 02fb 85C0     		testl	%eax, %eax
+ 407 02fd 0F8526FE 		jne	.L6
+ 407      FFFF
+ 139:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 408              		.loc 1 139 13 is_stmt 1 discriminator 2 view .LVU106
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 mbedtls_mpi_cmp_mpi(P, N) == -1) {
+ 409              		.loc 1 141 13 view .LVU107
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 mbedtls_mpi_cmp_mpi(P, N) == -1) {
+ 410              		.loc 1 141 17 is_stmt 0 view .LVU108
+ 411 0303 BE010000 		movl	$1, %esi
+ 411      00
+ 412 0308 4C89E7   		movq	%r12, %rdi
+ 413 030b E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 413      00
+ 414              	.LVL45:
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 mbedtls_mpi_cmp_mpi(P, N) == -1) {
+ 415              		.loc 1 141 16 discriminator 1 view .LVU109
+ 416 0310 83F801   		cmpl	$1, %eax
+ 417 0313 0F8557FF 		jne	.L12
+ 417      FFFF
+ 142:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 /*
+ 418              		.loc 1 142 17 view .LVU110
+ 419 0319 4889EE   		movq	%rbp, %rsi
+ 420 031c 4C89E7   		movq	%r12, %rdi
+ 421 031f E8000000 		call	mbedtls_mpi_cmp_mpi@PLT
+ 421      00
+ 422              	.LVL46:
+ 141:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 mbedtls_mpi_cmp_mpi(P, N) == -1) {
+ 423              		.loc 1 141 49 discriminator 1 view .LVU111
+ 424 0324 83F8FF   		cmpl	$-1, %eax
+ 425 0327 0F8543FF 		jne	.L12
+ 425      FFFF
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 goto cleanup;
+ 426              		.loc 1 148 17 is_stmt 1 view .LVU112
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 goto cleanup;
+ 427              		.loc 1 148 17 view .LVU113
+ 428 032d 4C89E1   		movq	%r12, %rcx
+ 429 0330 4889EA   		movq	%rbp, %rdx
+ 430 0333 31F6     		xorl	%esi, %esi
+ 431 0335 4C89F7   		movq	%r14, %rdi
+ 432 0338 E8000000 		call	mbedtls_mpi_div_mpi@PLT
+ 432      00
+ 433              	.LVL47:
+ 148:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                 goto cleanup;
+ 434              		.loc 1 148 17 is_stmt 0 view .LVU114
+ 435 033d E9E7FDFF 		jmp	.L6
+ 435      FF
+ 436              	.LVL48:
+ 437              		.p2align 4,,10
+ 438 0342 660F1F44 		.p2align 3
+ 438      0000
+ 439              	.L11:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             break;
+GAS LISTING /tmp/cccyRS9s.s 			page 15
+
+
+ 440              		.loc 1 164 9 is_stmt 1 view .LVU115
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             break;
+ 441              		.loc 1 164 13 is_stmt 0 view .LVU116
+ 442 0348 BE010000 		movl	$1, %esi
+ 442      00
+ 443 034d 4889DF   		movq	%rbx, %rdi
+ 444 0350 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 444      00
+ 445              	.LVL49:
+ 164:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             break;
+ 446              		.loc 1 164 12 discriminator 1 view .LVU117
+ 447 0355 85C0     		testl	%eax, %eax
+ 448 0357 0F84CEFE 		je	.L14
+ 448      FFFF
+ 449 035d E934FEFF 		jmp	.L10
+ 449      FF
+ 450              	.LVL50:
+ 451              	.L24:
+ 452              		.loc 1 176 1 view .LVU118
+ 453 0362 E8000000 		call	__stack_chk_fail@PLT
+ 453      00
+ 454              	.LVL51:
+ 455              		.cfi_endproc
+ 456              	.LFE28:
+ 458              		.section	.text.mbedtls_rsa_deduce_private_exponent,"ax",@progbits
+ 459              		.p2align 4
+ 460              		.globl	mbedtls_rsa_deduce_private_exponent
+ 462              	mbedtls_rsa_deduce_private_exponent:
+ 463              	.LVL52:
+ 464              	.LFB29:
+ 177:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 178:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** /*
+ 179:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * Given P, Q and the public exponent E, deduce D.
+ 180:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * This is essentially a modular inversion.
+ 181:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  */
+ 182:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** int mbedtls_rsa_deduce_private_exponent(mbedtls_mpi const *P,
+ 183:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                         mbedtls_mpi const *Q,
+ 184:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                         mbedtls_mpi const *E,
+ 185:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                         mbedtls_mpi *D)
+ 186:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** {
+ 465              		.loc 1 186 1 is_stmt 1 view -0
+ 466              		.cfi_startproc
+ 467              		.loc 1 186 1 is_stmt 0 view .LVU120
+ 468 0000 F30F1EFA 		endbr64
+ 469 0004 4157     		pushq	%r15
+ 470              	.LCFI15:
+ 471              		.cfi_def_cfa_offset 16
+ 472              		.cfi_offset 15, -16
+ 473 0006 4156     		pushq	%r14
+ 474              	.LCFI16:
+ 475              		.cfi_def_cfa_offset 24
+ 476              		.cfi_offset 14, -24
+ 477 0008 4155     		pushq	%r13
+ 478              	.LCFI17:
+ 479              		.cfi_def_cfa_offset 32
+ 480              		.cfi_offset 13, -32
+ 481 000a 4154     		pushq	%r12
+GAS LISTING /tmp/cccyRS9s.s 			page 16
+
+
+ 482              	.LCFI18:
+ 483              		.cfi_def_cfa_offset 40
+ 484              		.cfi_offset 12, -40
+ 485 000c 55       		pushq	%rbp
+ 486              	.LCFI19:
+ 487              		.cfi_def_cfa_offset 48
+ 488              		.cfi_offset 6, -48
+ 489 000d 53       		pushq	%rbx
+ 490              	.LCFI20:
+ 491              		.cfi_def_cfa_offset 56
+ 492              		.cfi_offset 3, -56
+ 493 000e 4883EC38 		subq	$56, %rsp
+ 494              	.LCFI21:
+ 495              		.cfi_def_cfa_offset 112
+ 496              		.loc 1 186 1 view .LVU121
+ 497 0012 64488B04 		movq	%fs:40, %rax
+ 497      25280000 
+ 497      00
+ 498 001b 48894424 		movq	%rax, 40(%rsp)
+ 498      28
+ 499 0020 31C0     		xorl	%eax, %eax
+ 187:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 500              		.loc 1 187 5 is_stmt 1 view .LVU122
+ 501              	.LVL53:
+ 188:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi K, L;
+ 502              		.loc 1 188 5 view .LVU123
+ 189:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 190:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (D == NULL || mbedtls_mpi_cmp_int(D, 0) != 0) {
+ 503              		.loc 1 190 5 view .LVU124
+ 504              		.loc 1 190 8 is_stmt 0 view .LVU125
+ 505 0022 4885C9   		testq	%rcx, %rcx
+ 506 0025 0F843501 		je	.L28
+ 506      0000
+ 507 002b 4889FB   		movq	%rdi, %rbx
+ 508 002e 4989F4   		movq	%rsi, %r12
+ 509              		.loc 1 190 22 discriminator 1 view .LVU126
+ 510 0031 4889CF   		movq	%rcx, %rdi
+ 511              	.LVL54:
+ 512              		.loc 1 190 22 discriminator 1 view .LVU127
+ 513 0034 31F6     		xorl	%esi, %esi
+ 514              	.LVL55:
+ 515              		.loc 1 190 22 discriminator 1 view .LVU128
+ 516 0036 4989D6   		movq	%rdx, %r14
+ 517 0039 4889CD   		movq	%rcx, %rbp
+ 518 003c E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 518      00
+ 519              	.LVL56:
+ 520              		.loc 1 190 19 discriminator 1 view .LVU129
+ 521 0041 85C0     		testl	%eax, %eax
+ 522 0043 0F851701 		jne	.L28
+ 522      0000
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+ 192:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 193:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (mbedtls_mpi_cmp_int(P, 1) <= 0 ||
+ 523              		.loc 1 194 5 is_stmt 1 view .LVU130
+ 524              		.loc 1 194 9 is_stmt 0 view .LVU131
+GAS LISTING /tmp/cccyRS9s.s 			page 17
+
+
+ 525 0049 BE010000 		movl	$1, %esi
+ 525      00
+ 526 004e 4889DF   		movq	%rbx, %rdi
+ 527 0051 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 527      00
+ 528              	.LVL57:
+ 529              		.loc 1 194 8 discriminator 1 view .LVU132
+ 530 0056 85C0     		testl	%eax, %eax
+ 531 0058 0F8E0201 		jle	.L28
+ 531      0000
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(Q, 1) <= 0 ||
+ 532              		.loc 1 195 9 view .LVU133
+ 533 005e BE010000 		movl	$1, %esi
+ 533      00
+ 534 0063 4C89E7   		movq	%r12, %rdi
+ 535 0066 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 535      00
+ 536              	.LVL58:
+ 194:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(Q, 1) <= 0 ||
+ 537              		.loc 1 194 40 discriminator 1 view .LVU134
+ 538 006b 85C0     		testl	%eax, %eax
+ 539 006d 0F8EED00 		jle	.L28
+ 539      0000
+ 196:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(E, 0) == 0) {
+ 540              		.loc 1 196 9 view .LVU135
+ 541 0073 31F6     		xorl	%esi, %esi
+ 542 0075 4C89F7   		movq	%r14, %rdi
+ 543 0078 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 543      00
+ 544              	.LVL59:
+ 195:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         mbedtls_mpi_cmp_int(Q, 1) <= 0 ||
+ 545              		.loc 1 195 40 view .LVU136
+ 546 007d 85C0     		testl	%eax, %eax
+ 547 007f 0F84DB00 		je	.L28
+ 547      0000
+ 197:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         return MBEDTLS_ERR_MPI_BAD_INPUT_DATA;
+ 198:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 199:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&K);
+ 548              		.loc 1 200 5 is_stmt 1 view .LVU137
+ 549 0085 4989E5   		movq	%rsp, %r13
+ 201:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&L);
+ 550              		.loc 1 201 5 is_stmt 0 view .LVU138
+ 551 0088 4C8D7C24 		leaq	16(%rsp), %r15
+ 551      10
+ 200:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&L);
+ 552              		.loc 1 200 5 view .LVU139
+ 553 008d 4C89EF   		movq	%r13, %rdi
+ 554 0090 E8000000 		call	mbedtls_mpi_init@PLT
+ 554      00
+ 555              	.LVL60:
+ 556              		.loc 1 201 5 is_stmt 1 view .LVU140
+ 557 0095 4C89FF   		movq	%r15, %rdi
+ 558 0098 E8000000 		call	mbedtls_mpi_init@PLT
+ 558      00
+ 559              	.LVL61:
+ 202:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+GAS LISTING /tmp/cccyRS9s.s 			page 18
+
+
+ 203:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Temporarily put K := P-1 and L := Q-1 */
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, P, 1));
+ 560              		.loc 1 204 5 view .LVU141
+ 561              		.loc 1 204 5 view .LVU142
+ 562 009d 4889DE   		movq	%rbx, %rsi
+ 563 00a0 BA010000 		movl	$1, %edx
+ 563      00
+ 564 00a5 4C89EF   		movq	%r13, %rdi
+ 565 00a8 E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 565      00
+ 566              	.LVL62:
+ 567 00ad 89C3     		movl	%eax, %ebx
+ 568              	.LVL63:
+ 569              		.loc 1 204 5 is_stmt 0 discriminator 1 view .LVU143
+ 570 00af 85C0     		testl	%eax, %eax
+ 571 00b1 743D     		je	.L35
+ 572              	.L29:
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, Q, 1));
+ 206:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 207:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Temporarily put D := gcd(P-1, Q-1) */
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_gcd(D, &K, &L));
+ 209:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 210:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* K := LCM(P-1, Q-1) */
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, &K, &L));
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_div_mpi(&K, NULL, &K, D));
+ 213:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 214:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Compute modular inverse of E in LCM(P-1, Q-1) */
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_inv_mod(D, E, &K));
+ 573              		.loc 1 215 5 is_stmt 1 discriminator 3 view .LVU144
+ 216:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** cleanup:
+ 218:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 219:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&K);
+ 574              		.loc 1 219 5 view .LVU145
+ 575 00b3 4C89EF   		movq	%r13, %rdi
+ 576 00b6 E8000000 		call	mbedtls_mpi_free@PLT
+ 576      00
+ 577              	.LVL64:
+ 220:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&L);
+ 578              		.loc 1 220 5 view .LVU146
+ 579 00bb 4C89FF   		movq	%r15, %rdi
+ 580 00be E8000000 		call	mbedtls_mpi_free@PLT
+ 580      00
+ 581              	.LVL65:
+ 221:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 222:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     return ret;
+ 582              		.loc 1 222 5 view .LVU147
+ 583              	.L25:
+ 223:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** }
+ 584              		.loc 1 223 1 is_stmt 0 view .LVU148
+ 585 00c3 488B4424 		movq	40(%rsp), %rax
+ 585      28
+ 586 00c8 64482B04 		subq	%fs:40, %rax
+ 586      25280000 
+ 586      00
+ 587 00d1 0F859300 		jne	.L36
+ 587      0000
+GAS LISTING /tmp/cccyRS9s.s 			page 19
+
+
+ 588 00d7 4883C438 		addq	$56, %rsp
+ 589              	.LCFI22:
+ 590              		.cfi_remember_state
+ 591              		.cfi_def_cfa_offset 56
+ 592 00db 89D8     		movl	%ebx, %eax
+ 593 00dd 5B       		popq	%rbx
+ 594              	.LCFI23:
+ 595              		.cfi_def_cfa_offset 48
+ 596 00de 5D       		popq	%rbp
+ 597              	.LCFI24:
+ 598              		.cfi_def_cfa_offset 40
+ 599 00df 415C     		popq	%r12
+ 600              	.LCFI25:
+ 601              		.cfi_def_cfa_offset 32
+ 602 00e1 415D     		popq	%r13
+ 603              	.LCFI26:
+ 604              		.cfi_def_cfa_offset 24
+ 605 00e3 415E     		popq	%r14
+ 606              	.LCFI27:
+ 607              		.cfi_def_cfa_offset 16
+ 608 00e5 415F     		popq	%r15
+ 609              	.LCFI28:
+ 610              		.cfi_def_cfa_offset 8
+ 611 00e7 C3       		ret
+ 612              	.LVL66:
+ 613 00e8 0F1F8400 		.p2align 4,,10
+ 613      00000000 
+ 614              		.p2align 3
+ 615              	.L35:
+ 616              	.LCFI29:
+ 617              		.cfi_restore_state
+ 204:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, Q, 1));
+ 618              		.loc 1 204 5 is_stmt 1 discriminator 2 view .LVU149
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 619              		.loc 1 205 5 view .LVU150
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 620              		.loc 1 205 5 view .LVU151
+ 621 00f0 BA010000 		movl	$1, %edx
+ 621      00
+ 622 00f5 4C89E6   		movq	%r12, %rsi
+ 623 00f8 4C89FF   		movq	%r15, %rdi
+ 624 00fb E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 624      00
+ 625              	.LVL67:
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 626              		.loc 1 205 5 is_stmt 0 view .LVU152
+ 627 0100 89C3     		movl	%eax, %ebx
+ 628              	.LVL68:
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 629              		.loc 1 205 5 discriminator 1 view .LVU153
+ 630 0102 85C0     		testl	%eax, %eax
+ 631 0104 75AD     		jne	.L29
+ 205:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 632              		.loc 1 205 5 is_stmt 1 discriminator 2 view .LVU154
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 633              		.loc 1 208 5 view .LVU155
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+GAS LISTING /tmp/cccyRS9s.s 			page 20
+
+
+ 634              		.loc 1 208 5 view .LVU156
+ 635 0106 4C89FA   		movq	%r15, %rdx
+ 636 0109 4C89EE   		movq	%r13, %rsi
+ 637 010c 4889EF   		movq	%rbp, %rdi
+ 638 010f E8000000 		call	mbedtls_mpi_gcd@PLT
+ 638      00
+ 639              	.LVL69:
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 640              		.loc 1 208 5 is_stmt 0 view .LVU157
+ 641 0114 89C3     		movl	%eax, %ebx
+ 642              	.LVL70:
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 643              		.loc 1 208 5 discriminator 1 view .LVU158
+ 644 0116 85C0     		testl	%eax, %eax
+ 645 0118 7599     		jne	.L29
+ 208:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 646              		.loc 1 208 5 is_stmt 1 discriminator 2 view .LVU159
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_div_mpi(&K, NULL, &K, D));
+ 647              		.loc 1 211 5 view .LVU160
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_div_mpi(&K, NULL, &K, D));
+ 648              		.loc 1 211 5 view .LVU161
+ 649 011a 4C89FA   		movq	%r15, %rdx
+ 650 011d 4C89EE   		movq	%r13, %rsi
+ 651 0120 4C89EF   		movq	%r13, %rdi
+ 652 0123 E8000000 		call	mbedtls_mpi_mul_mpi@PLT
+ 652      00
+ 653              	.LVL71:
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_div_mpi(&K, NULL, &K, D));
+ 654              		.loc 1 211 5 is_stmt 0 view .LVU162
+ 655 0128 89C3     		movl	%eax, %ebx
+ 656              	.LVL72:
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_div_mpi(&K, NULL, &K, D));
+ 657              		.loc 1 211 5 discriminator 1 view .LVU163
+ 658 012a 85C0     		testl	%eax, %eax
+ 659 012c 7585     		jne	.L29
+ 211:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     MBEDTLS_MPI_CHK(mbedtls_mpi_div_mpi(&K, NULL, &K, D));
+ 660              		.loc 1 211 5 is_stmt 1 discriminator 2 view .LVU164
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 661              		.loc 1 212 5 view .LVU165
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 662              		.loc 1 212 5 view .LVU166
+ 663 012e 4889E9   		movq	%rbp, %rcx
+ 664 0131 4C89EA   		movq	%r13, %rdx
+ 665 0134 31F6     		xorl	%esi, %esi
+ 666 0136 4C89EF   		movq	%r13, %rdi
+ 667 0139 E8000000 		call	mbedtls_mpi_div_mpi@PLT
+ 667      00
+ 668              	.LVL73:
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 669              		.loc 1 212 5 is_stmt 0 view .LVU167
+ 670 013e 89C3     		movl	%eax, %ebx
+ 671              	.LVL74:
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 672              		.loc 1 212 5 discriminator 1 view .LVU168
+ 673 0140 85C0     		testl	%eax, %eax
+ 674 0142 0F856BFF 		jne	.L29
+ 674      FFFF
+GAS LISTING /tmp/cccyRS9s.s 			page 21
+
+
+ 212:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 675              		.loc 1 212 5 is_stmt 1 discriminator 2 view .LVU169
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 676              		.loc 1 215 5 view .LVU170
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 677              		.loc 1 215 5 view .LVU171
+ 678 0148 4C89EA   		movq	%r13, %rdx
+ 679 014b 4C89F6   		movq	%r14, %rsi
+ 680 014e 4889EF   		movq	%rbp, %rdi
+ 681 0151 E8000000 		call	mbedtls_mpi_inv_mod@PLT
+ 681      00
+ 682              	.LVL75:
+ 215:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 683              		.loc 1 215 5 is_stmt 0 view .LVU172
+ 684 0156 89C3     		movl	%eax, %ebx
+ 685              	.LVL76:
+ 217:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 686              		.loc 1 217 1 view .LVU173
+ 687 0158 E956FFFF 		jmp	.L29
+ 687      FF
+ 688              	.LVL77:
+ 689 015d 0F1F00   		.p2align 4,,10
+ 690              		.p2align 3
+ 691              	.L28:
+ 191:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 692              		.loc 1 191 16 view .LVU174
+ 693 0160 BBFCFFFF 		movl	$-4, %ebx
+ 693      FF
+ 694 0165 E959FFFF 		jmp	.L25
+ 694      FF
+ 695              	.LVL78:
+ 696              	.L36:
+ 697              		.loc 1 223 1 view .LVU175
+ 698 016a E8000000 		call	__stack_chk_fail@PLT
+ 698      00
+ 699              	.LVL79:
+ 700              		.cfi_endproc
+ 701              	.LFE29:
+ 703              		.section	.text.mbedtls_rsa_deduce_crt,"ax",@progbits
+ 704              		.p2align 4
+ 705              		.globl	mbedtls_rsa_deduce_crt
+ 707              	mbedtls_rsa_deduce_crt:
+ 708              	.LVL80:
+ 709              	.LFB30:
+ 224:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 225:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** int mbedtls_rsa_deduce_crt(const mbedtls_mpi *P, const mbedtls_mpi *Q,
+ 226:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                            const mbedtls_mpi *D, mbedtls_mpi *DP,
+ 227:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                            mbedtls_mpi *DQ, mbedtls_mpi *QP)
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** {
+ 710              		.loc 1 228 1 is_stmt 1 view -0
+ 711              		.cfi_startproc
+ 712              		.loc 1 228 1 is_stmt 0 view .LVU177
+ 713 0000 F30F1EFA 		endbr64
+ 714 0004 4157     		pushq	%r15
+ 715              	.LCFI30:
+ 716              		.cfi_def_cfa_offset 16
+ 717              		.cfi_offset 15, -16
+GAS LISTING /tmp/cccyRS9s.s 			page 22
+
+
+ 718 0006 4989F7   		movq	%rsi, %r15
+ 719 0009 4156     		pushq	%r14
+ 720              	.LCFI31:
+ 721              		.cfi_def_cfa_offset 24
+ 722              		.cfi_offset 14, -24
+ 723 000b 4D89CE   		movq	%r9, %r14
+ 724 000e 4155     		pushq	%r13
+ 725              	.LCFI32:
+ 726              		.cfi_def_cfa_offset 32
+ 727              		.cfi_offset 13, -32
+ 728 0010 4989FD   		movq	%rdi, %r13
+ 729 0013 4154     		pushq	%r12
+ 730              	.LCFI33:
+ 731              		.cfi_def_cfa_offset 40
+ 732              		.cfi_offset 12, -40
+ 733 0015 4D89C4   		movq	%r8, %r12
+ 734 0018 55       		pushq	%rbp
+ 735              	.LCFI34:
+ 736              		.cfi_def_cfa_offset 48
+ 737              		.cfi_offset 6, -48
+ 738 0019 4889CD   		movq	%rcx, %rbp
+ 739 001c 53       		pushq	%rbx
+ 740              	.LCFI35:
+ 741              		.cfi_def_cfa_offset 56
+ 742              		.cfi_offset 3, -56
+ 743 001d 4883EC38 		subq	$56, %rsp
+ 744              	.LCFI36:
+ 745              		.cfi_def_cfa_offset 112
+ 746              		.loc 1 228 1 view .LVU178
+ 747 0021 48895424 		movq	%rdx, 8(%rsp)
+ 747      08
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi K;
+ 231:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&K);
+ 748              		.loc 1 231 5 view .LVU179
+ 749 0026 488D5C24 		leaq	16(%rsp), %rbx
+ 749      10
+ 750 002b 4889DF   		movq	%rbx, %rdi
+ 751              	.LVL81:
+ 228:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 752              		.loc 1 228 1 view .LVU180
+ 753 002e 64488B04 		movq	%fs:40, %rax
+ 753      25280000 
+ 753      00
+ 754 0037 48894424 		movq	%rax, 40(%rsp)
+ 754      28
+ 755 003c 31C0     		xorl	%eax, %eax
+ 229:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 756              		.loc 1 229 5 is_stmt 1 view .LVU181
+ 757              	.LVL82:
+ 230:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&K);
+ 758              		.loc 1 230 5 view .LVU182
+ 759              		.loc 1 231 5 view .LVU183
+ 760 003e E8000000 		call	mbedtls_mpi_init@PLT
+ 760      00
+ 761              	.LVL83:
+ 232:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+GAS LISTING /tmp/cccyRS9s.s 			page 23
+
+
+ 233:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* DP = D mod P-1 */
+ 234:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (DP != NULL) {
+ 762              		.loc 1 234 5 view .LVU184
+ 763              		.loc 1 234 8 is_stmt 0 view .LVU185
+ 764 0043 4885ED   		testq	%rbp, %rbp
+ 765 0046 745C     		je	.L42
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, P, 1));
+ 766              		.loc 1 235 9 is_stmt 1 view .LVU186
+ 767              		.loc 1 235 9 view .LVU187
+ 768 0048 BA010000 		movl	$1, %edx
+ 768      00
+ 769 004d 4C89EE   		movq	%r13, %rsi
+ 770 0050 4889DF   		movq	%rbx, %rdi
+ 771 0053 E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 771      00
+ 772              	.LVL84:
+ 773              		.loc 1 235 9 is_stmt 0 discriminator 1 view .LVU188
+ 774 0058 85C0     		testl	%eax, %eax
+ 775 005a 7434     		je	.L46
+ 776              	.LVL85:
+ 777              	.L41:
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(DP, D, &K));
+ 237:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 238:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 239:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* DQ = D mod Q-1 */
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (DQ != NULL) {
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, Q, 1));
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(DQ, D, &K));
+ 243:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 244:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 245:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* QP = Q^{-1} mod P */
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (QP != NULL) {
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_inv_mod(QP, Q, P));
+ 248:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 249:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** cleanup:
+ 251:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&K);
+ 778              		.loc 1 251 5 view .LVU189
+ 779 005c 4889DF   		movq	%rbx, %rdi
+ 780 005f 89442408 		movl	%eax, 8(%rsp)
+ 781              	.LVL86:
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 782              		.loc 1 247 9 is_stmt 1 discriminator 3 view .LVU190
+ 783              		.loc 1 251 5 view .LVU191
+ 784 0063 E8000000 		call	mbedtls_mpi_free@PLT
+ 784      00
+ 785              	.LVL87:
+ 252:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 253:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     return ret;
+ 786              		.loc 1 253 5 view .LVU192
+ 254:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** }
+ 787              		.loc 1 254 1 is_stmt 0 view .LVU193
+ 788 0068 8B442408 		movl	8(%rsp), %eax
+ 789 006c 488B5424 		movq	40(%rsp), %rdx
+ 789      28
+ 790 0071 64482B14 		subq	%fs:40, %rdx
+ 790      25280000 
+GAS LISTING /tmp/cccyRS9s.s 			page 24
+
+
+ 790      00
+ 791 007a 756F     		jne	.L47
+ 792 007c 4883C438 		addq	$56, %rsp
+ 793              	.LCFI37:
+ 794              		.cfi_remember_state
+ 795              		.cfi_def_cfa_offset 56
+ 796 0080 5B       		popq	%rbx
+ 797              	.LCFI38:
+ 798              		.cfi_def_cfa_offset 48
+ 799 0081 5D       		popq	%rbp
+ 800              	.LCFI39:
+ 801              		.cfi_def_cfa_offset 40
+ 802              	.LVL88:
+ 803              		.loc 1 254 1 view .LVU194
+ 804 0082 415C     		popq	%r12
+ 805              	.LCFI40:
+ 806              		.cfi_def_cfa_offset 32
+ 807              	.LVL89:
+ 808              		.loc 1 254 1 view .LVU195
+ 809 0084 415D     		popq	%r13
+ 810              	.LCFI41:
+ 811              		.cfi_def_cfa_offset 24
+ 812              	.LVL90:
+ 813              		.loc 1 254 1 view .LVU196
+ 814 0086 415E     		popq	%r14
+ 815              	.LCFI42:
+ 816              		.cfi_def_cfa_offset 16
+ 817              	.LVL91:
+ 818              		.loc 1 254 1 view .LVU197
+ 819 0088 415F     		popq	%r15
+ 820              	.LCFI43:
+ 821              		.cfi_def_cfa_offset 8
+ 822              	.LVL92:
+ 823              		.loc 1 254 1 view .LVU198
+ 824 008a C3       		ret
+ 825              	.LVL93:
+ 826 008b 0F1F4400 		.p2align 4,,10
+ 826      00
+ 827              		.p2align 3
+ 828              	.L46:
+ 829              	.LCFI44:
+ 830              		.cfi_restore_state
+ 235:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(DP, D, &K));
+ 831              		.loc 1 235 9 is_stmt 1 discriminator 2 view .LVU199
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 832              		.loc 1 236 9 view .LVU200
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 833              		.loc 1 236 9 view .LVU201
+ 834 0090 488B7424 		movq	8(%rsp), %rsi
+ 834      08
+ 835 0095 4889DA   		movq	%rbx, %rdx
+ 836 0098 4889EF   		movq	%rbp, %rdi
+ 837 009b E8000000 		call	mbedtls_mpi_mod_mpi@PLT
+ 837      00
+ 838              	.LVL94:
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 839              		.loc 1 236 9 is_stmt 0 discriminator 1 view .LVU202
+GAS LISTING /tmp/cccyRS9s.s 			page 25
+
+
+ 840 00a0 85C0     		testl	%eax, %eax
+ 841 00a2 75B8     		jne	.L41
+ 842              	.LVL95:
+ 843              	.L42:
+ 236:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 844              		.loc 1 236 9 is_stmt 1 discriminator 2 view .LVU203
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, Q, 1));
+ 845              		.loc 1 240 5 view .LVU204
+ 240:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, Q, 1));
+ 846              		.loc 1 240 8 is_stmt 0 view .LVU205
+ 847 00a4 4D85E4   		testq	%r12, %r12
+ 848 00a7 7428     		je	.L40
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(DQ, D, &K));
+ 849              		.loc 1 241 9 is_stmt 1 view .LVU206
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(DQ, D, &K));
+ 850              		.loc 1 241 9 view .LVU207
+ 851 00a9 BA010000 		movl	$1, %edx
+ 851      00
+ 852 00ae 4C89FE   		movq	%r15, %rsi
+ 853 00b1 4889DF   		movq	%rbx, %rdi
+ 854 00b4 E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 854      00
+ 855              	.LVL96:
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(DQ, D, &K));
+ 856              		.loc 1 241 9 is_stmt 0 discriminator 1 view .LVU208
+ 857 00b9 85C0     		testl	%eax, %eax
+ 858 00bb 759F     		jne	.L41
+ 241:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(DQ, D, &K));
+ 859              		.loc 1 241 9 is_stmt 1 discriminator 2 view .LVU209
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 860              		.loc 1 242 9 view .LVU210
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 861              		.loc 1 242 9 view .LVU211
+ 862 00bd 488B7424 		movq	8(%rsp), %rsi
+ 862      08
+ 863 00c2 4889DA   		movq	%rbx, %rdx
+ 864 00c5 4C89E7   		movq	%r12, %rdi
+ 865 00c8 E8000000 		call	mbedtls_mpi_mod_mpi@PLT
+ 865      00
+ 866              	.LVL97:
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 867              		.loc 1 242 9 is_stmt 0 discriminator 1 view .LVU212
+ 868 00cd 85C0     		testl	%eax, %eax
+ 869 00cf 758B     		jne	.L41
+ 870              	.LVL98:
+ 871              	.L40:
+ 242:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 872              		.loc 1 242 9 is_stmt 1 discriminator 2 view .LVU213
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_inv_mod(QP, Q, P));
+ 873              		.loc 1 246 5 view .LVU214
+ 250:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&K);
+ 874              		.loc 1 250 1 is_stmt 0 view .LVU215
+ 875 00d1 31C0     		xorl	%eax, %eax
+ 246:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_inv_mod(QP, Q, P));
+ 876              		.loc 1 246 8 view .LVU216
+ 877 00d3 4D85F6   		testq	%r14, %r14
+ 878 00d6 7484     		je	.L41
+GAS LISTING /tmp/cccyRS9s.s 			page 26
+
+
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 879              		.loc 1 247 9 is_stmt 1 view .LVU217
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 880              		.loc 1 247 9 view .LVU218
+ 881 00d8 4C89EA   		movq	%r13, %rdx
+ 882 00db 4C89FE   		movq	%r15, %rsi
+ 883 00de 4C89F7   		movq	%r14, %rdi
+ 884 00e1 E8000000 		call	mbedtls_mpi_inv_mod@PLT
+ 884      00
+ 885              	.LVL99:
+ 247:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 886              		.loc 1 247 9 is_stmt 0 view .LVU219
+ 887 00e6 E971FFFF 		jmp	.L41
+ 887      FF
+ 888              	.LVL100:
+ 889              	.L47:
+ 890              		.loc 1 254 1 view .LVU220
+ 891 00eb E8000000 		call	__stack_chk_fail@PLT
+ 891      00
+ 892              	.LVL101:
+ 893              		.cfi_endproc
+ 894              	.LFE30:
+ 896              		.section	.text.mbedtls_rsa_validate_params,"ax",@progbits
+ 897              		.p2align 4
+ 898              		.globl	mbedtls_rsa_validate_params
+ 900              	mbedtls_rsa_validate_params:
+ 901              	.LVL102:
+ 902              	.LFB31:
+ 255:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 256:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** /*
+ 257:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * Check that core RSA parameters are sane.
+ 258:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  */
+ 259:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** int mbedtls_rsa_validate_params(const mbedtls_mpi *N, const mbedtls_mpi *P,
+ 260:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                 const mbedtls_mpi *Q, const mbedtls_mpi *D,
+ 261:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                 const mbedtls_mpi *E,
+ 262:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                 int (*f_rng)(void *, unsigned char *, size_t),
+ 263:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                                 void *p_rng)
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** {
+ 903              		.loc 1 264 1 is_stmt 1 view -0
+ 904              		.cfi_startproc
+ 905              		.loc 1 264 1 is_stmt 0 view .LVU222
+ 906 0000 F30F1EFA 		endbr64
+ 907 0004 4157     		pushq	%r15
+ 908              	.LCFI45:
+ 909              		.cfi_def_cfa_offset 16
+ 910              		.cfi_offset 15, -16
+ 911 0006 4156     		pushq	%r14
+ 912              	.LCFI46:
+ 913              		.cfi_def_cfa_offset 24
+ 914              		.cfi_offset 14, -24
+ 915 0008 4155     		pushq	%r13
+ 916              	.LCFI47:
+ 917              		.cfi_def_cfa_offset 32
+ 918              		.cfi_offset 13, -32
+ 919 000a 4989FD   		movq	%rdi, %r13
+ 920 000d 4154     		pushq	%r12
+ 921              	.LCFI48:
+GAS LISTING /tmp/cccyRS9s.s 			page 27
+
+
+ 922              		.cfi_def_cfa_offset 40
+ 923              		.cfi_offset 12, -40
+ 924 000f 4989D4   		movq	%rdx, %r12
+ 925 0012 55       		pushq	%rbp
+ 926              	.LCFI49:
+ 927              		.cfi_def_cfa_offset 48
+ 928              		.cfi_offset 6, -48
+ 929 0013 4C89CD   		movq	%r9, %rbp
+ 930 0016 53       		pushq	%rbx
+ 931              	.LCFI50:
+ 932              		.cfi_def_cfa_offset 56
+ 933              		.cfi_offset 3, -56
+ 934 0017 4889F3   		movq	%rsi, %rbx
+ 935 001a 4883EC58 		subq	$88, %rsp
+ 936              	.LCFI51:
+ 937              		.cfi_def_cfa_offset 144
+ 938              		.loc 1 264 1 view .LVU223
+ 939 001e 4C894424 		movq	%r8, 8(%rsp)
+ 939      08
+ 265:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 266:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi K, L;
+ 267:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&K);
+ 940              		.loc 1 268 5 view .LVU224
+ 941 0023 4C8D7424 		leaq	32(%rsp), %r14
+ 941      20
+ 269:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&L);
+ 942              		.loc 1 269 5 view .LVU225
+ 943 0028 4C8D7C24 		leaq	48(%rsp), %r15
+ 943      30
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 944              		.loc 1 264 1 view .LVU226
+ 945 002d 488B8424 		movq	144(%rsp), %rax
+ 945      90000000 
+ 946 0035 48890C24 		movq	%rcx, (%rsp)
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&L);
+ 947              		.loc 1 268 5 view .LVU227
+ 948 0039 4C89F7   		movq	%r14, %rdi
+ 949              	.LVL103:
+ 264:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 950              		.loc 1 264 1 view .LVU228
+ 951 003c 48894424 		movq	%rax, 16(%rsp)
+ 951      10
+ 952 0041 64488B04 		movq	%fs:40, %rax
+ 952      25280000 
+ 952      00
+ 953 004a 48894424 		movq	%rax, 72(%rsp)
+ 953      48
+ 954 004f 31C0     		xorl	%eax, %eax
+ 265:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi K, L;
+ 955              		.loc 1 265 5 is_stmt 1 view .LVU229
+ 956              	.LVL104:
+ 266:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 957              		.loc 1 266 5 view .LVU230
+ 268:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&L);
+ 958              		.loc 1 268 5 view .LVU231
+ 959 0051 E8000000 		call	mbedtls_mpi_init@PLT
+GAS LISTING /tmp/cccyRS9s.s 			page 28
+
+
+ 959      00
+ 960              	.LVL105:
+ 961              		.loc 1 269 5 view .LVU232
+ 962 0056 4C89FF   		movq	%r15, %rdi
+ 963 0059 E8000000 		call	mbedtls_mpi_init@PLT
+ 963      00
+ 964              	.LVL106:
+ 270:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 271:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /*
+ 272:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * Step 1: If PRNG provided, check that P and Q are prime
+ 273:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      */
+ 274:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 275:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** #if defined(MBEDTLS_GENPRIME)
+ 276:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /*
+ 277:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * When generating keys, the strongest security we support aims for an error
+ 278:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * rate of at most 2^-100 and we are aiming for the same certainty here as
+ 279:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * well.
+ 280:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      */
+ 281:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (f_rng != NULL && P != NULL &&
+ 965              		.loc 1 281 5 view .LVU233
+ 966              		.loc 1 281 15 is_stmt 0 view .LVU234
+ 967 005e 4885ED   		testq	%rbp, %rbp
+ 968 0061 410F95C2 		setne	%r10b
+ 969              		.loc 1 281 28 view .LVU235
+ 970 0065 4885DB   		testq	%rbx, %rbx
+ 971 0068 410F95C0 		setne	%r8b
+ 972              		.loc 1 281 8 view .LVU236
+ 973 006c 4584D2   		testb	%r10b, %r10b
+ 974 006f 7409     		je	.L49
+ 975 0071 4584C0   		testb	%r8b, %r8b
+ 976 0074 0F850601 		jne	.L102
+ 976      0000
+ 977              	.LVL107:
+ 978              	.L49:
+ 282:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         (ret = mbedtls_mpi_is_prime_ext(P, 50, f_rng, p_rng)) != 0) {
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 284:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 285:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 286:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 287:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (f_rng != NULL && Q != NULL &&
+ 979              		.loc 1 287 5 is_stmt 1 view .LVU237
+ 980              		.loc 1 287 28 is_stmt 0 view .LVU238
+ 981 007a 4D85E4   		testq	%r12, %r12
+ 982 007d 410F95C1 		setne	%r9b
+ 983              		.loc 1 287 8 view .LVU239
+ 984 0081 4584D2   		testb	%r10b, %r10b
+ 985 0084 7409     		je	.L56
+ 986 0086 4584C9   		testb	%r9b, %r9b
+ 987 0089 0F852901 		jne	.L51
+ 987      0000
+ 988              	.L56:
+ 288:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         (ret = mbedtls_mpi_is_prime_ext(Q, 50, f_rng, p_rng)) != 0) {
+ 289:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 290:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 291:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 292:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** #else
+ 293:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     ((void) f_rng);
+GAS LISTING /tmp/cccyRS9s.s 			page 29
+
+
+ 294:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     ((void) p_rng);
+ 295:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** #endif /* MBEDTLS_GENPRIME */
+ 296:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 297:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /*
+ 298:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * Step 2: Check that 1 < N = P * Q
+ 299:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      */
+ 300:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (P != NULL && Q != NULL && N != NULL) {
+ 989              		.loc 1 301 5 is_stmt 1 view .LVU240
+ 990              		.loc 1 301 8 is_stmt 0 view .LVU241
+ 991 008f 4520C8   		andb	%r9b, %r8b
+ 992 0092 44884424 		movb	%r8b, 16(%rsp)
+ 992      10
+ 993 0097 7447     		je	.L103
+ 994              	.L53:
+ 995              		.loc 1 301 32 discriminator 1 view .LVU242
+ 996 0099 4D85ED   		testq	%r13, %r13
+ 997 009c 0F845E01 		je	.L104
+ 997      0000
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, P, Q));
+ 998              		.loc 1 302 9 is_stmt 1 view .LVU243
+ 999              		.loc 1 302 9 view .LVU244
+ 1000 00a2 4C89E2   		movq	%r12, %rdx
+ 1001 00a5 4889DE   		movq	%rbx, %rsi
+ 1002 00a8 4C89F7   		movq	%r14, %rdi
+ 1003 00ab E8000000 		call	mbedtls_mpi_mul_mpi@PLT
+ 1003      00
+ 1004              	.LVL108:
+ 1005 00b0 89C5     		movl	%eax, %ebp
+ 1006              	.LVL109:
+ 1007              		.loc 1 302 9 is_stmt 0 discriminator 1 view .LVU245
+ 1008 00b2 85C0     		testl	%eax, %eax
+ 1009 00b4 0F849602 		je	.L105
+ 1009      0000
+ 1010              	.LVL110:
+ 1011              	.L61:
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(N, 1)  <= 0 ||
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(&K, N) != 0) {
+ 305:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 306:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 307:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 308:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 309:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 310:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /*
+ 311:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * Step 3: Check and 1 < D, E < N if present.
+ 312:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      */
+ 313:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (N != NULL && D != NULL && E != NULL) {
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(E, 1) <= 0 ||
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(D, N) >= 0 ||
+ 318:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(E, N) >= 0) {
+ 319:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 320:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 321:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 322:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 323:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+GAS LISTING /tmp/cccyRS9s.s 			page 30
+
+
+ 324:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /*
+ 325:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      * Step 4: Check that D, E are inverse modulo P-1 and Q-1
+ 326:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****      */
+ 327:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (P != NULL && Q != NULL && D != NULL && E != NULL) {
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) <= 0 ||
+ 330:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(Q, 1) <= 0) {
+ 331:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 332:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 333:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 334:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 335:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         /* Compute DE-1 mod P-1 */
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, D, E));
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, P, 1));
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 341:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 342:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 343:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 344:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 345:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         /* Compute DE-1 mod Q-1 */
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, D, E));
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, Q, 1));
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 351:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 352:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 353:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 354:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 355:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 356:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** cleanup:
+ 357:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&K);
+ 1012              		.loc 1 358 5 is_stmt 1 view .LVU246
+ 1013 00ba 4C89F7   		movq	%r14, %rdi
+ 1014 00bd E8000000 		call	mbedtls_mpi_free@PLT
+ 1014      00
+ 1015              	.LVL111:
+ 359:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&L);
+ 1016              		.loc 1 359 5 view .LVU247
+ 1017 00c2 4C89FF   		movq	%r15, %rdi
+ 1018 00c5 E8000000 		call	mbedtls_mpi_free@PLT
+ 1018      00
+ 1019              	.LVL112:
+ 360:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 361:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Wrap MPI error codes by RSA check failure error code */
+ 362:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (ret != 0 && ret != MBEDTLS_ERR_RSA_KEY_CHECK_FAILED) {
+ 1020              		.loc 1 362 5 view .LVU248
+ 1021              		.loc 1 362 8 is_stmt 0 view .LVU249
+ 1022 00ca 81FD00BE 		cmpl	$-16896, %ebp
+ 1022      FFFF
+ 1023 00d0 0F847F00 		je	.L48
+ 1023      0000
+ 363:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret += MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1024              		.loc 1 363 9 is_stmt 1 view .LVU250
+GAS LISTING /tmp/cccyRS9s.s 			page 31
+
+
+ 1025              		.loc 1 363 13 is_stmt 0 view .LVU251
+ 1026 00d6 81ED0042 		subl	$16896, %ebp
+ 1026      0000
+ 1027              	.LVL113:
+ 364:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 365:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 366:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     return ret;
+ 1028              		.loc 1 366 5 is_stmt 1 view .LVU252
+ 1029              		.loc 1 366 12 is_stmt 0 view .LVU253
+ 1030 00dc EB77     		jmp	.L48
+ 1031              	.LVL114:
+ 1032 00de 6690     		.p2align 4,,10
+ 1033              		.p2align 3
+ 1034              	.L103:
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 1035              		.loc 1 314 5 is_stmt 1 view .LVU254
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 1036              		.loc 1 314 32 is_stmt 0 discriminator 1 view .LVU255
+ 1037 00e0 48837C24 		cmpq	$0, 8(%rsp)
+ 1037      0800
+ 1038 00e6 0F95C2   		setne	%dl
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 1039              		.loc 1 314 24 view .LVU256
+ 1040 00e9 48833C24 		cmpq	$0, (%rsp)
+ 1040      00
+ 1041 00ee 0F95C0   		setne	%al
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 1042              		.loc 1 314 32 discriminator 1 view .LVU257
+ 1043 00f1 84C2     		testb	%al, %dl
+ 1044 00f3 0F841701 		je	.L62
+ 1044      0000
+ 1045 00f9 4D85ED   		testq	%r13, %r13
+ 1046 00fc 0F840E01 		je	.L62
+ 1046      0000
+ 1047              	.LVL115:
+ 1048              	.L64:
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(E, 1) <= 0 ||
+ 1049              		.loc 1 315 9 is_stmt 1 view .LVU258
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(E, 1) <= 0 ||
+ 1050              		.loc 1 315 13 is_stmt 0 view .LVU259
+ 1051 0102 488B3C24 		movq	(%rsp), %rdi
+ 1052 0106 BE010000 		movl	$1, %esi
+ 1052      00
+ 1053 010b E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1053      00
+ 1054              	.LVL116:
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(E, 1) <= 0 ||
+ 1055              		.loc 1 315 12 discriminator 1 view .LVU260
+ 1056 0110 85C0     		testl	%eax, %eax
+ 1057 0112 7E2C     		jle	.L55
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(D, N) >= 0 ||
+ 1058              		.loc 1 316 13 view .LVU261
+ 1059 0114 488B7C24 		movq	8(%rsp), %rdi
+ 1059      08
+ 1060 0119 BE010000 		movl	$1, %esi
+ 1060      00
+ 1061 011e E8000000 		call	mbedtls_mpi_cmp_int@PLT
+GAS LISTING /tmp/cccyRS9s.s 			page 32
+
+
+ 1061      00
+ 1062              	.LVL117:
+ 315:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(E, 1) <= 0 ||
+ 1063              		.loc 1 315 44 discriminator 1 view .LVU262
+ 1064 0123 85C0     		testl	%eax, %eax
+ 1065 0125 7E19     		jle	.L55
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(E, N) >= 0) {
+ 1066              		.loc 1 317 13 view .LVU263
+ 1067 0127 488B3C24 		movq	(%rsp), %rdi
+ 1068 012b 4C89EE   		movq	%r13, %rsi
+ 1069 012e E8000000 		call	mbedtls_mpi_cmp_mpi@PLT
+ 1069      00
+ 1070              	.LVL118:
+ 316:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(D, N) >= 0 ||
+ 1071              		.loc 1 316 44 view .LVU264
+ 1072 0133 85C0     		testl	%eax, %eax
+ 1073 0135 0F885D02 		js	.L106
+ 1073      0000
+ 1074              	.LVL119:
+ 1075 013b 0F1F4400 		.p2align 4,,10
+ 1075      00
+ 1076              		.p2align 3
+ 1077              	.L55:
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 1078              		.loc 1 283 13 view .LVU265
+ 1079 0140 BD00BEFF 		movl	$-16896, %ebp
+ 1079      FF
+ 1080              	.L50:
+ 1081              	.LVL120:
+ 358:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&L);
+ 1082              		.loc 1 358 5 is_stmt 1 view .LVU266
+ 1083 0145 4C89F7   		movq	%r14, %rdi
+ 1084 0148 E8000000 		call	mbedtls_mpi_free@PLT
+ 1084      00
+ 1085              	.LVL121:
+ 359:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 1086              		.loc 1 359 5 view .LVU267
+ 1087 014d 4C89FF   		movq	%r15, %rdi
+ 1088 0150 E8000000 		call	mbedtls_mpi_free@PLT
+ 1088      00
+ 1089              	.LVL122:
+ 362:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret += MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1090              		.loc 1 362 5 view .LVU268
+ 1091              	.L48:
+ 367:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** }
+ 1092              		.loc 1 367 1 is_stmt 0 view .LVU269
+ 1093 0155 488B5424 		movq	72(%rsp), %rdx
+ 1093      48
+ 1094 015a 64482B14 		subq	%fs:40, %rdx
+ 1094      25280000 
+ 1094      00
+ 1095 0163 0F855602 		jne	.L107
+ 1095      0000
+ 1096 0169 4883C458 		addq	$88, %rsp
+ 1097              	.LCFI52:
+ 1098              		.cfi_remember_state
+ 1099              		.cfi_def_cfa_offset 56
+GAS LISTING /tmp/cccyRS9s.s 			page 33
+
+
+ 1100 016d 89E8     		movl	%ebp, %eax
+ 1101 016f 5B       		popq	%rbx
+ 1102              	.LCFI53:
+ 1103              		.cfi_def_cfa_offset 48
+ 1104              	.LVL123:
+ 1105              		.loc 1 367 1 view .LVU270
+ 1106 0170 5D       		popq	%rbp
+ 1107              	.LCFI54:
+ 1108              		.cfi_def_cfa_offset 40
+ 1109              	.LVL124:
+ 1110              		.loc 1 367 1 view .LVU271
+ 1111 0171 415C     		popq	%r12
+ 1112              	.LCFI55:
+ 1113              		.cfi_def_cfa_offset 32
+ 1114              	.LVL125:
+ 1115              		.loc 1 367 1 view .LVU272
+ 1116 0173 415D     		popq	%r13
+ 1117              	.LCFI56:
+ 1118              		.cfi_def_cfa_offset 24
+ 1119 0175 415E     		popq	%r14
+ 1120              	.LCFI57:
+ 1121              		.cfi_def_cfa_offset 16
+ 1122 0177 415F     		popq	%r15
+ 1123              	.LCFI58:
+ 1124              		.cfi_def_cfa_offset 8
+ 1125 0179 C3       		ret
+ 1126              	.LVL126:
+ 1127 017a 660F1F44 		.p2align 4,,10
+ 1127      0000
+ 1128              		.p2align 3
+ 1129              	.L102:
+ 1130              	.LCFI59:
+ 1131              		.cfi_restore_state
+ 282:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1132              		.loc 1 282 16 view .LVU273
+ 1133 0180 488B4C24 		movq	16(%rsp), %rcx
+ 1133      10
+ 1134 0185 4889EA   		movq	%rbp, %rdx
+ 1135 0188 BE320000 		movl	$50, %esi
+ 1135      00
+ 1136 018d 4889DF   		movq	%rbx, %rdi
+ 1137 0190 44884424 		movb	%r8b, 31(%rsp)
+ 1137      1F
+ 1138 0195 44885424 		movb	%r10b, 30(%rsp)
+ 1138      1E
+ 1139 019a E8000000 		call	mbedtls_mpi_is_prime_ext@PLT
+ 1139      00
+ 1140              	.LVL127:
+ 281:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         (ret = mbedtls_mpi_is_prime_ext(P, 50, f_rng, p_rng)) != 0) {
+ 1141              		.loc 1 281 36 discriminator 1 view .LVU274
+ 1142 019f 440FB654 		movzbl	30(%rsp), %r10d
+ 1142      241E
+ 1143 01a5 440FB644 		movzbl	31(%rsp), %r8d
+ 1143      241F
+ 1144 01ab 85C0     		testl	%eax, %eax
+ 1145 01ad 0F84C7FE 		je	.L49
+ 1145      FFFF
+GAS LISTING /tmp/cccyRS9s.s 			page 34
+
+
+ 1146 01b3 EB8B     		jmp	.L55
+ 1147              	.LVL128:
+ 1148              		.p2align 4,,10
+ 1149 01b5 0F1F00   		.p2align 3
+ 1150              	.L51:
+ 288:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1151              		.loc 1 288 16 view .LVU275
+ 1152 01b8 488B4C24 		movq	16(%rsp), %rcx
+ 1152      10
+ 1153 01bd 4889EA   		movq	%rbp, %rdx
+ 1154 01c0 BE320000 		movl	$50, %esi
+ 1154      00
+ 1155 01c5 4C89E7   		movq	%r12, %rdi
+ 1156 01c8 44884C24 		movb	%r9b, 31(%rsp)
+ 1156      1F
+ 1157 01cd 44884424 		movb	%r8b, 30(%rsp)
+ 1157      1E
+ 1158 01d2 E8000000 		call	mbedtls_mpi_is_prime_ext@PLT
+ 1158      00
+ 1159              	.LVL129:
+ 287:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         (ret = mbedtls_mpi_is_prime_ext(Q, 50, f_rng, p_rng)) != 0) {
+ 1160              		.loc 1 287 36 discriminator 1 view .LVU276
+ 1161 01d7 440FB644 		movzbl	30(%rsp), %r8d
+ 1161      241E
+ 1162 01dd 440FB64C 		movzbl	31(%rsp), %r9d
+ 1162      241F
+ 1163 01e3 85C0     		testl	%eax, %eax
+ 1164 01e5 0F8555FF 		jne	.L55
+ 1164      FFFF
+ 1165              	.LVL130:
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, P, Q));
+ 1166              		.loc 1 301 5 is_stmt 1 view .LVU277
+ 301:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, P, Q));
+ 1167              		.loc 1 301 8 is_stmt 0 view .LVU278
+ 1168 01eb 4520C8   		andb	%r9b, %r8b
+ 1169 01ee 44884424 		movb	%r8b, 16(%rsp)
+ 1169      10
+ 1170 01f3 0F85A0FE 		jne	.L53
+ 1170      FFFF
+ 1171 01f9 E9E2FEFF 		jmp	.L103
+ 1171      FF
+ 1172 01fe 6690     		.p2align 4,,10
+ 1173              		.p2align 3
+ 1174              	.L104:
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 1175              		.loc 1 314 5 is_stmt 1 view .LVU279
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) <= 0 ||
+ 1176              		.loc 1 328 5 view .LVU280
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) <= 0 ||
+ 1177              		.loc 1 328 45 is_stmt 0 discriminator 1 view .LVU281
+ 1178 0200 48837C24 		cmpq	$0, 8(%rsp)
+ 1178      0800
+ 1179 0206 7518     		jne	.L108
+ 1180              	.LVL131:
+ 1181 0208 0F1F8400 		.p2align 4,,10
+ 1181      00000000 
+ 1182              		.p2align 3
+GAS LISTING /tmp/cccyRS9s.s 			page 35
+
+
+ 1183              	.L62:
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 1184              		.loc 1 283 13 view .LVU282
+ 1185 0210 31ED     		xorl	%ebp, %ebp
+ 1186 0212 E92EFFFF 		jmp	.L50
+ 1186      FF
+ 1187              	.LVL132:
+ 1188 0217 660F1F84 		.p2align 4,,10
+ 1188      00000000 
+ 1188      00
+ 1189              		.p2align 3
+ 1190              	.L108:
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) <= 0 ||
+ 1191              		.loc 1 328 45 discriminator 1 view .LVU283
+ 1192 0220 48833C24 		cmpq	$0, (%rsp)
+ 1192      00
+ 1193 0225 74E9     		je	.L62
+ 1194              	.LVL133:
+ 1195              	.L58:
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(Q, 1) <= 0) {
+ 1196              		.loc 1 329 9 is_stmt 1 view .LVU284
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(Q, 1) <= 0) {
+ 1197              		.loc 1 329 13 is_stmt 0 view .LVU285
+ 1198 0227 BE010000 		movl	$1, %esi
+ 1198      00
+ 1199 022c 4889DF   		movq	%rbx, %rdi
+ 1200 022f E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1200      00
+ 1201              	.LVL134:
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(Q, 1) <= 0) {
+ 1202              		.loc 1 329 12 discriminator 1 view .LVU286
+ 1203 0234 85C0     		testl	%eax, %eax
+ 1204 0236 0F8E04FF 		jle	.L55
+ 1204      FFFF
+ 330:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1205              		.loc 1 330 13 view .LVU287
+ 1206 023c BE010000 		movl	$1, %esi
+ 1206      00
+ 1207 0241 4C89E7   		movq	%r12, %rdi
+ 1208 0244 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1208      00
+ 1209              	.LVL135:
+ 329:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_int(Q, 1) <= 0) {
+ 1210              		.loc 1 329 44 discriminator 1 view .LVU288
+ 1211 0249 85C0     		testl	%eax, %eax
+ 1212 024b 0F8EEFFE 		jle	.L55
+ 1212      FFFF
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1213              		.loc 1 336 9 is_stmt 1 view .LVU289
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1214              		.loc 1 336 9 view .LVU290
+ 1215 0251 4C8B2C24 		movq	(%rsp), %r13
+ 1216              	.LVL136:
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1217              		.loc 1 336 9 is_stmt 0 view .LVU291
+ 1218 0255 488B5424 		movq	8(%rsp), %rdx
+ 1218      08
+GAS LISTING /tmp/cccyRS9s.s 			page 36
+
+
+ 1219 025a 4C89F7   		movq	%r14, %rdi
+ 1220 025d 4C89EE   		movq	%r13, %rsi
+ 1221 0260 E8000000 		call	mbedtls_mpi_mul_mpi@PLT
+ 1221      00
+ 1222              	.LVL137:
+ 1223 0265 89C5     		movl	%eax, %ebp
+ 1224              	.LVL138:
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1225              		.loc 1 336 9 discriminator 1 view .LVU292
+ 1226 0267 85C0     		testl	%eax, %eax
+ 1227 0269 0F854BFE 		jne	.L61
+ 1227      FFFF
+ 336:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1228              		.loc 1 336 9 is_stmt 1 discriminator 2 view .LVU293
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, P, 1));
+ 1229              		.loc 1 337 9 view .LVU294
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, P, 1));
+ 1230              		.loc 1 337 9 view .LVU295
+ 1231 026f BA010000 		movl	$1, %edx
+ 1231      00
+ 1232 0274 4C89F6   		movq	%r14, %rsi
+ 1233 0277 4C89F7   		movq	%r14, %rdi
+ 1234 027a E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 1234      00
+ 1235              	.LVL139:
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, P, 1));
+ 1236              		.loc 1 337 9 is_stmt 0 view .LVU296
+ 1237 027f 89C5     		movl	%eax, %ebp
+ 1238              	.LVL140:
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, P, 1));
+ 1239              		.loc 1 337 9 discriminator 1 view .LVU297
+ 1240 0281 85C0     		testl	%eax, %eax
+ 1241 0283 0F8531FE 		jne	.L61
+ 1241      FFFF
+ 337:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, P, 1));
+ 1242              		.loc 1 337 9 is_stmt 1 discriminator 2 view .LVU298
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1243              		.loc 1 338 9 view .LVU299
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1244              		.loc 1 338 9 view .LVU300
+ 1245 0289 BA010000 		movl	$1, %edx
+ 1245      00
+ 1246 028e 4889DE   		movq	%rbx, %rsi
+ 1247 0291 4C89FF   		movq	%r15, %rdi
+ 1248 0294 E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 1248      00
+ 1249              	.LVL141:
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1250              		.loc 1 338 9 is_stmt 0 view .LVU301
+ 1251 0299 89C5     		movl	%eax, %ebp
+ 1252              	.LVL142:
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1253              		.loc 1 338 9 discriminator 1 view .LVU302
+ 1254 029b 85C0     		testl	%eax, %eax
+ 1255 029d 0F8517FE 		jne	.L61
+ 1255      FFFF
+ 338:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+GAS LISTING /tmp/cccyRS9s.s 			page 37
+
+
+ 1256              		.loc 1 338 9 is_stmt 1 discriminator 2 view .LVU303
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1257              		.loc 1 339 9 view .LVU304
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1258              		.loc 1 339 9 view .LVU305
+ 1259 02a3 4C89FA   		movq	%r15, %rdx
+ 1260 02a6 4C89F6   		movq	%r14, %rsi
+ 1261 02a9 4C89F7   		movq	%r14, %rdi
+ 1262 02ac E8000000 		call	mbedtls_mpi_mod_mpi@PLT
+ 1262      00
+ 1263              	.LVL143:
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1264              		.loc 1 339 9 is_stmt 0 view .LVU306
+ 1265 02b1 89C5     		movl	%eax, %ebp
+ 1266              	.LVL144:
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1267              		.loc 1 339 9 discriminator 1 view .LVU307
+ 1268 02b3 85C0     		testl	%eax, %eax
+ 1269 02b5 0F85FFFD 		jne	.L61
+ 1269      FFFF
+ 339:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1270              		.loc 1 339 9 is_stmt 1 discriminator 2 view .LVU308
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1271              		.loc 1 340 9 view .LVU309
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1272              		.loc 1 340 13 is_stmt 0 view .LVU310
+ 1273 02bb 31F6     		xorl	%esi, %esi
+ 1274 02bd 4C89F7   		movq	%r14, %rdi
+ 1275 02c0 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1275      00
+ 1276              	.LVL145:
+ 340:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1277              		.loc 1 340 12 discriminator 1 view .LVU311
+ 1278 02c5 85C0     		testl	%eax, %eax
+ 1279 02c7 0F8573FE 		jne	.L55
+ 1279      FFFF
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1280              		.loc 1 346 9 is_stmt 1 view .LVU312
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1281              		.loc 1 346 9 view .LVU313
+ 1282 02cd 488B5424 		movq	8(%rsp), %rdx
+ 1282      08
+ 1283 02d2 4C89EE   		movq	%r13, %rsi
+ 1284 02d5 4C89F7   		movq	%r14, %rdi
+ 1285 02d8 E8000000 		call	mbedtls_mpi_mul_mpi@PLT
+ 1285      00
+ 1286              	.LVL146:
+ 1287 02dd 89C5     		movl	%eax, %ebp
+ 1288              	.LVL147:
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1289              		.loc 1 346 9 is_stmt 0 discriminator 1 view .LVU314
+ 1290 02df 85C0     		testl	%eax, %eax
+ 1291 02e1 0F85D3FD 		jne	.L61
+ 1291      FFFF
+ 346:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1292              		.loc 1 346 9 is_stmt 1 discriminator 2 view .LVU315
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, Q, 1));
+GAS LISTING /tmp/cccyRS9s.s 			page 38
+
+
+ 1293              		.loc 1 347 9 view .LVU316
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, Q, 1));
+ 1294              		.loc 1 347 9 view .LVU317
+ 1295 02e7 BA010000 		movl	$1, %edx
+ 1295      00
+ 1296 02ec 4C89F6   		movq	%r14, %rsi
+ 1297 02ef 4C89F7   		movq	%r14, %rdi
+ 1298 02f2 E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 1298      00
+ 1299              	.LVL148:
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, Q, 1));
+ 1300              		.loc 1 347 9 is_stmt 0 view .LVU318
+ 1301 02f7 89C5     		movl	%eax, %ebp
+ 1302              	.LVL149:
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, Q, 1));
+ 1303              		.loc 1 347 9 discriminator 1 view .LVU319
+ 1304 02f9 85C0     		testl	%eax, %eax
+ 1305 02fb 0F85B9FD 		jne	.L61
+ 1305      FFFF
+ 347:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&L, Q, 1));
+ 1306              		.loc 1 347 9 is_stmt 1 discriminator 2 view .LVU320
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1307              		.loc 1 348 9 view .LVU321
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1308              		.loc 1 348 9 view .LVU322
+ 1309 0301 BA010000 		movl	$1, %edx
+ 1309      00
+ 1310 0306 4C89E6   		movq	%r12, %rsi
+ 1311 0309 4C89FF   		movq	%r15, %rdi
+ 1312 030c E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 1312      00
+ 1313              	.LVL150:
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1314              		.loc 1 348 9 is_stmt 0 view .LVU323
+ 1315 0311 89C5     		movl	%eax, %ebp
+ 1316              	.LVL151:
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1317              		.loc 1 348 9 discriminator 1 view .LVU324
+ 1318 0313 85C0     		testl	%eax, %eax
+ 1319 0315 0F859FFD 		jne	.L61
+ 1319      FFFF
+ 348:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, &L));
+ 1320              		.loc 1 348 9 is_stmt 1 discriminator 2 view .LVU325
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1321              		.loc 1 349 9 view .LVU326
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1322              		.loc 1 349 9 view .LVU327
+ 1323 031b 4C89FA   		movq	%r15, %rdx
+ 1324 031e 4C89F6   		movq	%r14, %rsi
+ 1325 0321 4C89F7   		movq	%r14, %rdi
+ 1326 0324 E8000000 		call	mbedtls_mpi_mod_mpi@PLT
+ 1326      00
+ 1327              	.LVL152:
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1328              		.loc 1 349 9 is_stmt 0 view .LVU328
+ 1329 0329 89C5     		movl	%eax, %ebp
+ 1330              	.LVL153:
+GAS LISTING /tmp/cccyRS9s.s 			page 39
+
+
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1331              		.loc 1 349 9 discriminator 1 view .LVU329
+ 1332 032b 85C0     		testl	%eax, %eax
+ 1333 032d 0F8587FD 		jne	.L61
+ 1333      FFFF
+ 349:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1334              		.loc 1 349 9 is_stmt 1 discriminator 2 view .LVU330
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1335              		.loc 1 350 9 view .LVU331
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1336              		.loc 1 350 13 is_stmt 0 view .LVU332
+ 1337 0333 31F6     		xorl	%esi, %esi
+ 1338 0335 4C89F7   		movq	%r14, %rdi
+ 1339 0338 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1339      00
+ 1340              	.LVL154:
+ 350:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1341              		.loc 1 350 12 discriminator 1 view .LVU333
+ 1342 033d 85C0     		testl	%eax, %eax
+ 1343 033f 0F85FBFD 		jne	.L55
+ 1343      FFFF
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 1344              		.loc 1 283 13 view .LVU334
+ 1345 0345 31ED     		xorl	%ebp, %ebp
+ 1346              	.LVL155:
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 1347              		.loc 1 283 13 view .LVU335
+ 1348 0347 E9F9FDFF 		jmp	.L50
+ 1348      FF
+ 1349              	.LVL156:
+ 1350 034c 0F1F4000 		.p2align 4,,10
+ 1351              		.p2align 3
+ 1352              	.L105:
+ 302:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(N, 1)  <= 0 ||
+ 1353              		.loc 1 302 9 is_stmt 1 discriminator 2 view .LVU336
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(&K, N) != 0) {
+ 1354              		.loc 1 303 9 view .LVU337
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(&K, N) != 0) {
+ 1355              		.loc 1 303 13 is_stmt 0 view .LVU338
+ 1356 0350 BE010000 		movl	$1, %esi
+ 1356      00
+ 1357 0355 4C89EF   		movq	%r13, %rdi
+ 1358 0358 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1358      00
+ 1359              	.LVL157:
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(&K, N) != 0) {
+ 1360              		.loc 1 303 12 discriminator 1 view .LVU339
+ 1361 035d 85C0     		testl	%eax, %eax
+ 1362 035f 0F8EDBFD 		jle	.L55
+ 1362      FFFF
+ 304:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1363              		.loc 1 304 13 view .LVU340
+ 1364 0365 4C89EE   		movq	%r13, %rsi
+ 1365 0368 4C89F7   		movq	%r14, %rdi
+ 1366 036b E8000000 		call	mbedtls_mpi_cmp_mpi@PLT
+ 1366      00
+ 1367              	.LVL158:
+GAS LISTING /tmp/cccyRS9s.s 			page 40
+
+
+ 303:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(&K, N) != 0) {
+ 1368              		.loc 1 303 45 discriminator 1 view .LVU341
+ 1369 0370 85C0     		testl	%eax, %eax
+ 1370 0372 0F85C8FD 		jne	.L55
+ 1370      FFFF
+ 1371              	.LVL159:
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 1372              		.loc 1 314 5 is_stmt 1 view .LVU342
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 1373              		.loc 1 314 8 is_stmt 0 view .LVU343
+ 1374 0378 48833C24 		cmpq	$0, (%rsp)
+ 1374      00
+ 1375 037d 0F848DFE 		je	.L62
+ 1375      FFFF
+ 314:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(D, 1) <= 0 ||
+ 1376              		.loc 1 314 32 discriminator 1 view .LVU344
+ 1377 0383 48837C24 		cmpq	$0, 8(%rsp)
+ 1377      0800
+ 1378 0389 0F8573FD 		jne	.L64
+ 1378      FFFF
+ 1379 038f E97CFEFF 		jmp	.L62
+ 1379      FF
+ 1380              		.p2align 4,,10
+ 1381 0394 0F1F4000 		.p2align 3
+ 1382              	.L106:
+ 318:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1383              		.loc 1 318 13 view .LVU345
+ 1384 0398 488B7C24 		movq	8(%rsp), %rdi
+ 1384      08
+ 1385 039d 4C89EE   		movq	%r13, %rsi
+ 1386 03a0 E8000000 		call	mbedtls_mpi_cmp_mpi@PLT
+ 1386      00
+ 1387              	.LVL160:
+ 317:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             mbedtls_mpi_cmp_mpi(E, N) >= 0) {
+ 1388              		.loc 1 317 44 view .LVU346
+ 1389 03a5 85C0     		testl	%eax, %eax
+ 1390 03a7 0F8993FD 		jns	.L55
+ 1390      FFFF
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) <= 0 ||
+ 1391              		.loc 1 328 5 is_stmt 1 view .LVU347
+ 328:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(P, 1) <= 0 ||
+ 1392              		.loc 1 328 8 is_stmt 0 view .LVU348
+ 1393 03ad 807C2410 		cmpb	$0, 16(%rsp)
+ 1393      00
+ 1394 03b2 0F856FFE 		jne	.L58
+ 1394      FFFF
+ 283:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         goto cleanup;
+ 1395              		.loc 1 283 13 view .LVU349
+ 1396 03b8 31ED     		xorl	%ebp, %ebp
+ 1397 03ba E986FDFF 		jmp	.L50
+ 1397      FF
+ 1398              	.LVL161:
+ 1399              	.L107:
+ 1400              		.loc 1 367 1 view .LVU350
+ 1401 03bf E8000000 		call	__stack_chk_fail@PLT
+ 1401      00
+ 1402              	.LVL162:
+GAS LISTING /tmp/cccyRS9s.s 			page 41
+
+
+ 1403              		.cfi_endproc
+ 1404              	.LFE31:
+ 1406              		.section	.text.mbedtls_rsa_validate_crt,"ax",@progbits
+ 1407              		.p2align 4
+ 1408              		.globl	mbedtls_rsa_validate_crt
+ 1410              	mbedtls_rsa_validate_crt:
+ 1411              	.LVL163:
+ 1412              	.LFB32:
+ 368:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 369:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** /*
+ 370:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  * Check that RSA CRT parameters are in accordance with core parameters.
+ 371:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****  */
+ 372:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** int mbedtls_rsa_validate_crt(const mbedtls_mpi *P,  const mbedtls_mpi *Q,
+ 373:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                              const mbedtls_mpi *D,  const mbedtls_mpi *DP,
+ 374:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****                              const mbedtls_mpi *DQ, const mbedtls_mpi *QP)
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** {
+ 1413              		.loc 1 375 1 is_stmt 1 view -0
+ 1414              		.cfi_startproc
+ 1415              		.loc 1 375 1 is_stmt 0 view .LVU352
+ 1416 0000 F30F1EFA 		endbr64
+ 1417 0004 4157     		pushq	%r15
+ 1418              	.LCFI60:
+ 1419              		.cfi_def_cfa_offset 16
+ 1420              		.cfi_offset 15, -16
+ 1421 0006 4D89C7   		movq	%r8, %r15
+ 1422 0009 4156     		pushq	%r14
+ 1423              	.LCFI61:
+ 1424              		.cfi_def_cfa_offset 24
+ 1425              		.cfi_offset 14, -24
+ 1426 000b 4989F6   		movq	%rsi, %r14
+ 1427 000e 4155     		pushq	%r13
+ 1428              	.LCFI62:
+ 1429              		.cfi_def_cfa_offset 32
+ 1430              		.cfi_offset 13, -32
+ 1431 0010 4154     		pushq	%r12
+ 1432              	.LCFI63:
+ 1433              		.cfi_def_cfa_offset 40
+ 1434              		.cfi_offset 12, -40
+ 1435 0012 55       		pushq	%rbp
+ 1436              	.LCFI64:
+ 1437              		.cfi_def_cfa_offset 48
+ 1438              		.cfi_offset 6, -48
+ 1439 0013 4889CD   		movq	%rcx, %rbp
+ 1440 0016 53       		pushq	%rbx
+ 1441              	.LCFI65:
+ 1442              		.cfi_def_cfa_offset 56
+ 1443              		.cfi_offset 3, -56
+ 1444 0017 4889FB   		movq	%rdi, %rbx
+ 1445 001a 4883EC48 		subq	$72, %rsp
+ 1446              	.LCFI66:
+ 1447              		.cfi_def_cfa_offset 128
+ 1448              		.loc 1 375 1 view .LVU353
+ 1449 001e 48891424 		movq	%rdx, (%rsp)
+ 376:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 377:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 378:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi K, L;
+ 379:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&K);
+GAS LISTING /tmp/cccyRS9s.s 			page 42
+
+
+ 1450              		.loc 1 379 5 view .LVU354
+ 1451 0022 4C8D6424 		leaq	16(%rsp), %r12
+ 1451      10
+ 380:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&L);
+ 1452              		.loc 1 380 5 view .LVU355
+ 1453 0027 4C8D6C24 		leaq	32(%rsp), %r13
+ 1453      20
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 1454              		.loc 1 375 1 view .LVU356
+ 1455 002c 4C894C24 		movq	%r9, 8(%rsp)
+ 1455      08
+ 379:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&L);
+ 1456              		.loc 1 379 5 view .LVU357
+ 1457 0031 4C89E7   		movq	%r12, %rdi
+ 1458              	.LVL164:
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 1459              		.loc 1 375 1 view .LVU358
+ 1460 0034 64488B04 		movq	%fs:40, %rax
+ 1460      25280000 
+ 1460      00
+ 1461 003d 48894424 		movq	%rax, 56(%rsp)
+ 1461      38
+ 1462 0042 31C0     		xorl	%eax, %eax
+ 376:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 1463              		.loc 1 376 5 is_stmt 1 view .LVU359
+ 1464              	.LVL165:
+ 378:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&K);
+ 1465              		.loc 1 378 5 view .LVU360
+ 379:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_init(&L);
+ 1466              		.loc 1 379 5 view .LVU361
+ 1467 0044 E8000000 		call	mbedtls_mpi_init@PLT
+ 1467      00
+ 1468              	.LVL166:
+ 1469              		.loc 1 380 5 view .LVU362
+ 1470 0049 4C89EF   		movq	%r13, %rdi
+ 1471 004c E8000000 		call	mbedtls_mpi_init@PLT
+ 1471      00
+ 1472              	.LVL167:
+ 381:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 382:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Check that DP - D == 0 mod P - 1 */
+ 383:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (DP != NULL) {
+ 1473              		.loc 1 383 5 view .LVU363
+ 1474              		.loc 1 383 8 is_stmt 0 view .LVU364
+ 1475 0051 4885ED   		testq	%rbp, %rbp
+ 1476 0054 746A     		je	.L115
+ 384:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (P == NULL) {
+ 1477              		.loc 1 384 9 is_stmt 1 view .LVU365
+ 1478              		.loc 1 384 12 is_stmt 0 view .LVU366
+ 1479 0056 4885DB   		testq	%rbx, %rbx
+ 1480 0059 7473     		je	.L113
+ 385:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 386:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 387:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 388:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 389:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, P, 1));
+ 1481              		.loc 1 389 9 is_stmt 1 view .LVU367
+ 1482              		.loc 1 389 9 view .LVU368
+GAS LISTING /tmp/cccyRS9s.s 			page 43
+
+
+ 1483 005b BA010000 		movl	$1, %edx
+ 1483      00
+ 1484 0060 4889DE   		movq	%rbx, %rsi
+ 1485 0063 4C89E7   		movq	%r12, %rdi
+ 1486 0066 E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 1486      00
+ 1487              	.LVL168:
+ 1488              		.loc 1 389 9 is_stmt 0 discriminator 1 view .LVU369
+ 1489 006b 85C0     		testl	%eax, %eax
+ 1490 006d 7519     		jne	.L114
+ 1491              		.loc 1 389 9 is_stmt 1 discriminator 2 view .LVU370
+ 390:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(&L, DP, D));
+ 1492              		.loc 1 390 9 view .LVU371
+ 1493              		.loc 1 390 9 view .LVU372
+ 1494 006f 488B1424 		movq	(%rsp), %rdx
+ 1495 0073 4889EE   		movq	%rbp, %rsi
+ 1496 0076 4C89EF   		movq	%r13, %rdi
+ 1497 0079 E8000000 		call	mbedtls_mpi_sub_mpi@PLT
+ 1497      00
+ 1498              	.LVL169:
+ 1499              		.loc 1 390 9 is_stmt 0 discriminator 1 view .LVU373
+ 1500 007e 85C0     		testl	%eax, %eax
+ 1501 0080 741E     		je	.L135
+ 1502              		.p2align 4,,10
+ 1503 0082 660F1F44 		.p2align 3
+ 1503      0000
+ 1504              	.L114:
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 392:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&L, 0) != 0) {
+ 394:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 395:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 396:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 397:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 398:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 399:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Check that DQ - D == 0 mod Q - 1 */
+ 400:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (DQ != NULL) {
+ 401:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (Q == NULL) {
+ 402:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 403:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 404:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 405:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, Q, 1));
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(&L, DQ, D));
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 409:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 410:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&L, 0) != 0) {
+ 411:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 412:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 413:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 414:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 415:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 416:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Check that QP * Q - 1 == 0 mod P */
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (QP != NULL) {
+ 418:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (P == NULL || Q == NULL) {
+ 419:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 420:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+GAS LISTING /tmp/cccyRS9s.s 			page 44
+
+
+ 421:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 422:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 423:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&K, QP, Q));
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, P));
+ 426:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 427:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 428:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 429:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         }
+ 430:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 431:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 432:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** cleanup:
+ 433:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 434:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     /* Wrap MPI error codes by RSA check failure error code */
+ 435:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     if (ret != 0 &&
+ 1505              		.loc 1 435 5 is_stmt 1 view .LVU374
+ 1506              		.loc 1 435 8 is_stmt 0 view .LVU375
+ 1507 0088 3D00BEFF 		cmpl	$-16896, %eax
+ 1507      FF
+ 1508 008d 0F857D00 		jne	.L136
+ 1508      0000
+ 1509              	.LVL170:
+ 1510              	.L120:
+ 394:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 1511              		.loc 1 394 17 view .LVU376
+ 1512 0093 BB00BEFF 		movl	$-16896, %ebx
+ 1512      FF
+ 1513              	.LVL171:
+ 394:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             goto cleanup;
+ 1514              		.loc 1 394 17 view .LVU377
+ 1515 0098 EB39     		jmp	.L116
+ 1516              	.LVL172:
+ 1517 009a 660F1F44 		.p2align 4,,10
+ 1517      0000
+ 1518              		.p2align 3
+ 1519              	.L135:
+ 390:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(&L, DP, D));
+ 1520              		.loc 1 390 9 is_stmt 1 discriminator 2 view .LVU378
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 1521              		.loc 1 391 9 view .LVU379
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 1522              		.loc 1 391 9 view .LVU380
+ 1523 00a0 4C89E2   		movq	%r12, %rdx
+ 1524 00a3 4C89EE   		movq	%r13, %rsi
+ 1525 00a6 4C89EF   		movq	%r13, %rdi
+ 1526 00a9 E8000000 		call	mbedtls_mpi_mod_mpi@PLT
+ 1526      00
+ 1527              	.LVL173:
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 1528              		.loc 1 391 9 is_stmt 0 discriminator 1 view .LVU381
+ 1529 00ae 85C0     		testl	%eax, %eax
+ 1530 00b0 75D6     		jne	.L114
+ 391:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 1531              		.loc 1 391 9 is_stmt 1 discriminator 2 view .LVU382
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1532              		.loc 1 393 9 view .LVU383
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+GAS LISTING /tmp/cccyRS9s.s 			page 45
+
+
+ 1533              		.loc 1 393 13 is_stmt 0 view .LVU384
+ 1534 00b2 31F6     		xorl	%esi, %esi
+ 1535 00b4 4C89EF   		movq	%r13, %rdi
+ 1536 00b7 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1536      00
+ 1537              	.LVL174:
+ 393:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1538              		.loc 1 393 12 discriminator 1 view .LVU385
+ 1539 00bc 85C0     		testl	%eax, %eax
+ 1540 00be 75D3     		jne	.L120
+ 1541              	.LVL175:
+ 1542              		.p2align 4,,10
+ 1543              		.p2align 3
+ 1544              	.L115:
+ 400:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (Q == NULL) {
+ 1545              		.loc 1 400 5 is_stmt 1 view .LVU386
+ 400:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (Q == NULL) {
+ 1546              		.loc 1 400 8 is_stmt 0 view .LVU387
+ 1547 00c0 4D85FF   		testq	%r15, %r15
+ 1548 00c3 0F84B700 		je	.L112
+ 1548      0000
+ 401:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 1549              		.loc 1 401 9 is_stmt 1 view .LVU388
+ 401:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 1550              		.loc 1 401 12 is_stmt 0 view .LVU389
+ 1551 00c9 4D85F6   		testq	%r14, %r14
+ 1552 00cc 7552     		jne	.L119
+ 1553              	.LVL176:
+ 1554              	.L113:
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 1555              		.loc 1 375 1 view .LVU390
+ 1556 00ce BB80BFFF 		movl	$-16512, %ebx
+ 1556      FF
+ 1557              	.LVL177:
+ 1558              	.L116:
+ 436:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret != MBEDTLS_ERR_RSA_KEY_CHECK_FAILED &&
+ 437:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret != MBEDTLS_ERR_RSA_BAD_INPUT_DATA) {
+ 438:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret += MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 439:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 440:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 441:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&K);
+ 1559              		.loc 1 441 5 is_stmt 1 view .LVU391
+ 1560 00d3 4C89E7   		movq	%r12, %rdi
+ 1561 00d6 E8000000 		call	mbedtls_mpi_free@PLT
+ 1561      00
+ 1562              	.LVL178:
+ 442:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     mbedtls_mpi_free(&L);
+ 1563              		.loc 1 442 5 view .LVU392
+ 1564 00db 4C89EF   		movq	%r13, %rdi
+ 1565 00de E8000000 		call	mbedtls_mpi_free@PLT
+ 1565      00
+ 1566              	.LVL179:
+ 443:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 444:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     return ret;
+ 1567              		.loc 1 444 5 view .LVU393
+ 445:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** }
+ 1568              		.loc 1 445 1 is_stmt 0 view .LVU394
+GAS LISTING /tmp/cccyRS9s.s 			page 46
+
+
+ 1569 00e3 488B4424 		movq	56(%rsp), %rax
+ 1569      38
+ 1570 00e8 64482B04 		subq	%fs:40, %rax
+ 1570      25280000 
+ 1570      00
+ 1571 00f1 0F850801 		jne	.L137
+ 1571      0000
+ 1572 00f7 4883C448 		addq	$72, %rsp
+ 1573              	.LCFI67:
+ 1574              		.cfi_remember_state
+ 1575              		.cfi_def_cfa_offset 56
+ 1576 00fb 89D8     		movl	%ebx, %eax
+ 1577 00fd 5B       		popq	%rbx
+ 1578              	.LCFI68:
+ 1579              		.cfi_def_cfa_offset 48
+ 1580              	.LVL180:
+ 1581              		.loc 1 445 1 view .LVU395
+ 1582 00fe 5D       		popq	%rbp
+ 1583              	.LCFI69:
+ 1584              		.cfi_def_cfa_offset 40
+ 1585              	.LVL181:
+ 1586              		.loc 1 445 1 view .LVU396
+ 1587 00ff 415C     		popq	%r12
+ 1588              	.LCFI70:
+ 1589              		.cfi_def_cfa_offset 32
+ 1590 0101 415D     		popq	%r13
+ 1591              	.LCFI71:
+ 1592              		.cfi_def_cfa_offset 24
+ 1593 0103 415E     		popq	%r14
+ 1594              	.LCFI72:
+ 1595              		.cfi_def_cfa_offset 16
+ 1596              	.LVL182:
+ 1597              		.loc 1 445 1 view .LVU397
+ 1598 0105 415F     		popq	%r15
+ 1599              	.LCFI73:
+ 1600              		.cfi_def_cfa_offset 8
+ 1601              	.LVL183:
+ 1602              		.loc 1 445 1 view .LVU398
+ 1603 0107 C3       		ret
+ 1604              	.LVL184:
+ 1605 0108 0F1F8400 		.p2align 4,,10
+ 1605      00000000 
+ 1606              		.p2align 3
+ 1607              	.L136:
+ 1608              	.LCFI74:
+ 1609              		.cfi_restore_state
+ 436:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret != MBEDTLS_ERR_RSA_BAD_INPUT_DATA) {
+ 1610              		.loc 1 436 49 view .LVU399
+ 1611 0110 3D80BFFF 		cmpl	$-16512, %eax
+ 1611      FF
+ 1612 0115 74B7     		je	.L113
+ 438:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 1613              		.loc 1 438 9 is_stmt 1 view .LVU400
+ 438:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 1614              		.loc 1 438 13 is_stmt 0 view .LVU401
+ 1615 0117 8D9800BE 		leal	-16896(%rax), %ebx
+ 1615      FFFF
+GAS LISTING /tmp/cccyRS9s.s 			page 47
+
+
+ 1616              	.LVL185:
+ 438:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     }
+ 1617              		.loc 1 438 13 view .LVU402
+ 1618 011d EBB4     		jmp	.L116
+ 1619              	.LVL186:
+ 1620 011f 90       		.p2align 4,,10
+ 1621              		.p2align 3
+ 1622              	.L119:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(&L, DQ, D));
+ 1623              		.loc 1 406 9 is_stmt 1 view .LVU403
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(&L, DQ, D));
+ 1624              		.loc 1 406 9 view .LVU404
+ 1625 0120 BA010000 		movl	$1, %edx
+ 1625      00
+ 1626 0125 4C89F6   		movq	%r14, %rsi
+ 1627 0128 4C89E7   		movq	%r12, %rdi
+ 1628 012b E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 1628      00
+ 1629              	.LVL187:
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(&L, DQ, D));
+ 1630              		.loc 1 406 9 is_stmt 0 discriminator 1 view .LVU405
+ 1631 0130 85C0     		testl	%eax, %eax
+ 1632 0132 0F8550FF 		jne	.L114
+ 1632      FFFF
+ 406:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_mpi(&L, DQ, D));
+ 1633              		.loc 1 406 9 is_stmt 1 discriminator 2 view .LVU406
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 1634              		.loc 1 407 9 view .LVU407
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 1635              		.loc 1 407 9 view .LVU408
+ 1636 0138 488B1424 		movq	(%rsp), %rdx
+ 1637 013c 4C89FE   		movq	%r15, %rsi
+ 1638 013f 4C89EF   		movq	%r13, %rdi
+ 1639 0142 E8000000 		call	mbedtls_mpi_sub_mpi@PLT
+ 1639      00
+ 1640              	.LVL188:
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 1641              		.loc 1 407 9 is_stmt 0 discriminator 1 view .LVU409
+ 1642 0147 85C0     		testl	%eax, %eax
+ 1643 0149 0F8539FF 		jne	.L114
+ 1643      FFFF
+ 407:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&L, &L, &K));
+ 1644              		.loc 1 407 9 is_stmt 1 discriminator 2 view .LVU410
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 1645              		.loc 1 408 9 view .LVU411
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 1646              		.loc 1 408 9 view .LVU412
+ 1647 014f 4C89E2   		movq	%r12, %rdx
+ 1648 0152 4C89EE   		movq	%r13, %rsi
+ 1649 0155 4C89EF   		movq	%r13, %rdi
+ 1650 0158 E8000000 		call	mbedtls_mpi_mod_mpi@PLT
+ 1650      00
+ 1651              	.LVL189:
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 1652              		.loc 1 408 9 is_stmt 0 discriminator 1 view .LVU413
+ 1653 015d 85C0     		testl	%eax, %eax
+ 1654 015f 0F8523FF 		jne	.L114
+GAS LISTING /tmp/cccyRS9s.s 			page 48
+
+
+ 1654      FFFF
+ 408:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c **** 
+ 1655              		.loc 1 408 9 is_stmt 1 discriminator 2 view .LVU414
+ 410:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1656              		.loc 1 410 9 view .LVU415
+ 410:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1657              		.loc 1 410 13 is_stmt 0 view .LVU416
+ 1658 0165 31F6     		xorl	%esi, %esi
+ 1659 0167 4C89EF   		movq	%r13, %rdi
+ 1660 016a E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1660      00
+ 1661              	.LVL190:
+ 410:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1662              		.loc 1 410 12 discriminator 1 view .LVU417
+ 1663 016f 85C0     		testl	%eax, %eax
+ 1664 0171 0F851CFF 		jne	.L120
+ 1664      FFFF
+ 1665              	.LVL191:
+ 1666 0177 660F1F84 		.p2align 4,,10
+ 1666      00000000 
+ 1666      00
+ 1667              		.p2align 3
+ 1668              	.L112:
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (P == NULL || Q == NULL) {
+ 1669              		.loc 1 417 5 is_stmt 1 view .LVU418
+ 417:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (P == NULL || Q == NULL) {
+ 1670              		.loc 1 417 8 is_stmt 0 view .LVU419
+ 1671 0180 48837C24 		cmpq	$0, 8(%rsp)
+ 1671      0800
+ 1672 0186 7470     		je	.L118
+ 418:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 1673              		.loc 1 418 9 is_stmt 1 view .LVU420
+ 418:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+ 1674              		.loc 1 418 12 is_stmt 0 view .LVU421
+ 1675 0188 4885DB   		testq	%rbx, %rbx
+ 1676 018b 0F843DFF 		je	.L113
+ 1676      FFFF
+ 1677 0191 4D85F6   		testq	%r14, %r14
+ 1678 0194 0F8434FF 		je	.L113
+ 1678      FFFF
+ 423:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1679              		.loc 1 423 9 is_stmt 1 view .LVU422
+ 423:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1680              		.loc 1 423 9 view .LVU423
+ 1681 019a 488B7424 		movq	8(%rsp), %rsi
+ 1681      08
+ 1682 019f 4C89F2   		movq	%r14, %rdx
+ 1683 01a2 4C89E7   		movq	%r12, %rdi
+ 1684 01a5 E8000000 		call	mbedtls_mpi_mul_mpi@PLT
+ 1684      00
+ 1685              	.LVL192:
+ 423:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+ 1686              		.loc 1 423 9 is_stmt 0 discriminator 1 view .LVU424
+ 1687 01aa 85C0     		testl	%eax, %eax
+ 1688 01ac 0F85D6FE 		jne	.L114
+ 1688      FFFF
+ 423:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_sub_int(&K, &K, 1));
+GAS LISTING /tmp/cccyRS9s.s 			page 49
+
+
+ 1689              		.loc 1 423 9 is_stmt 1 discriminator 2 view .LVU425
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, P));
+ 1690              		.loc 1 424 9 view .LVU426
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, P));
+ 1691              		.loc 1 424 9 view .LVU427
+ 1692 01b2 BA010000 		movl	$1, %edx
+ 1692      00
+ 1693 01b7 4C89E6   		movq	%r12, %rsi
+ 1694 01ba 4C89E7   		movq	%r12, %rdi
+ 1695 01bd E8000000 		call	mbedtls_mpi_sub_int@PLT
+ 1695      00
+ 1696              	.LVL193:
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, P));
+ 1697              		.loc 1 424 9 is_stmt 0 discriminator 1 view .LVU428
+ 1698 01c2 85C0     		testl	%eax, %eax
+ 1699 01c4 0F85BEFE 		jne	.L114
+ 1699      FFFF
+ 424:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         MBEDTLS_MPI_CHK(mbedtls_mpi_mod_mpi(&K, &K, P));
+ 1700              		.loc 1 424 9 is_stmt 1 discriminator 2 view .LVU429
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1701              		.loc 1 425 9 view .LVU430
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1702              		.loc 1 425 9 view .LVU431
+ 1703 01ca 4889DA   		movq	%rbx, %rdx
+ 1704 01cd 4C89E6   		movq	%r12, %rsi
+ 1705 01d0 4C89E7   		movq	%r12, %rdi
+ 1706 01d3 E8000000 		call	mbedtls_mpi_mod_mpi@PLT
+ 1706      00
+ 1707              	.LVL194:
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1708              		.loc 1 425 9 is_stmt 0 discriminator 1 view .LVU432
+ 1709 01d8 85C0     		testl	%eax, %eax
+ 1710 01da 0F85A8FE 		jne	.L114
+ 1710      FFFF
+ 425:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         if (mbedtls_mpi_cmp_int(&K, 0) != 0) {
+ 1711              		.loc 1 425 9 is_stmt 1 discriminator 2 view .LVU433
+ 426:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1712              		.loc 1 426 9 view .LVU434
+ 426:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1713              		.loc 1 426 13 is_stmt 0 view .LVU435
+ 1714 01e0 31F6     		xorl	%esi, %esi
+ 1715 01e2 4C89E7   		movq	%r12, %rdi
+ 1716 01e5 E8000000 		call	mbedtls_mpi_cmp_int@PLT
+ 1716      00
+ 1717              	.LVL195:
+ 426:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****             ret = MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+ 1718              		.loc 1 426 12 discriminator 1 view .LVU436
+ 1719 01ea 85C0     		testl	%eax, %eax
+ 1720 01ec 0F85A1FE 		jne	.L120
+ 1720      FFFF
+ 1721              	.LVL196:
+ 1722              		.p2align 4,,10
+ 1723 01f2 660F1F44 		.p2align 3
+ 1723      0000
+ 1724              	.L118:
+ 435:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****         ret != MBEDTLS_ERR_RSA_KEY_CHECK_FAILED &&
+ 1725              		.loc 1 435 5 is_stmt 1 view .LVU437
+GAS LISTING /tmp/cccyRS9s.s 			page 50
+
+
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 1726              		.loc 1 375 1 is_stmt 0 view .LVU438
+ 1727 01f8 31DB     		xorl	%ebx, %ebx
+ 1728              	.LVL197:
+ 375:../../bos/thirdparty/mbedtls/bos_mbedtls/rsa_alt_helpers.c ****     int ret = 0;
+ 1729              		.loc 1 375 1 view .LVU439
+ 1730 01fa E9D4FEFF 		jmp	.L116
+ 1730      FF
+ 1731              	.LVL198:
+ 1732              	.L137:
+ 1733              		.loc 1 445 1 view .LVU440
+ 1734 01ff E8000000 		call	__stack_chk_fail@PLT
+ 1734      00
+ 1735              	.LVL199:
+ 1736              		.cfi_endproc
+ 1737              	.LFE32:
+ 1739              		.section	.rodata.cst16,"aM",@progbits,16
+ 1740              		.align 16
+ 1741              	.LC0:
+ 1742 0000 02030507 		.quad	1373893702338282242
+ 1742      0B0D1113 
+ 1743 0008 171D1F25 		.quad	3832329263632030999
+ 1743      292B2F35 
+ 1744              		.align 16
+ 1745              	.LC1:
+ 1746 0010 3B3D4347 		.quad	6436575468589366587
+ 1746      494F5359 
+ 1747 0018 6165676B 		.quad	-8971327217931426463
+ 1747      6D717F83 
+ 1748              		.align 16
+ 1749              	.LC2:
+ 1750 0020 898B9597 		.quad	-5933594086788985975
+ 1750      9DA3A7AD 
+ 1751 0028 B3B5BFC1 		.quad	-2318289730992622157
+ 1751      C5C7D3DF 
+ 1752              		.text
+ 1753              	.Letext0:
+ 1754              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 1755              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"
+ 1756              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 1757              		.file 5 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 1758              		.file 6 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/bignum.h"
+ 7263              		.section	.note.gnu.property,"a"
+ 7264              		.align 8
+ 7265 0000 04000000 		.long	1f - 0f
+ 7266 0004 10000000 		.long	4f - 1f
+ 7267 0008 05000000 		.long	5
+ 7268              	0:
+ 7269 000c 474E5500 		.string	"GNU"
+ 7270              	1:
+ 7271              		.align 8
+ 7272 0010 020000C0 		.long	0xc0000002
+ 7273 0014 04000000 		.long	3f - 2f
+ 7274              	2:
+ 7275 0018 03000000 		.long	0x3
+ 7276              	3:
+ 7277 001c 00000000 		.align 8
+GAS LISTING /tmp/cccyRS9s.s 			page 51
+
+
+ 7278              	4:
+GAS LISTING /tmp/cccyRS9s.s 			page 52
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 rsa_alt_helpers.c
+     /tmp/cccyRS9s.s:9      .text.mbedtls_rsa_deduce_primes:0000000000000000 mbedtls_rsa_deduce_primes
+     /tmp/cccyRS9s.s:462    .text.mbedtls_rsa_deduce_private_exponent:0000000000000000 mbedtls_rsa_deduce_private_exponent
+     /tmp/cccyRS9s.s:707    .text.mbedtls_rsa_deduce_crt:0000000000000000 mbedtls_rsa_deduce_crt
+     /tmp/cccyRS9s.s:900    .text.mbedtls_rsa_validate_params:0000000000000000 mbedtls_rsa_validate_params
+     /tmp/cccyRS9s.s:1410   .text.mbedtls_rsa_validate_crt:0000000000000000 mbedtls_rsa_validate_crt
+     /tmp/cccyRS9s.s:1741   .rodata.cst16:0000000000000000 .LC0
+     /tmp/cccyRS9s.s:1745   .rodata.cst16:0000000000000010 .LC1
+     /tmp/cccyRS9s.s:1749   .rodata.cst16:0000000000000020 .LC2
+
+UNDEFINED SYMBOLS
+mbedtls_mpi_cmp_int
+mbedtls_mpi_cmp_mpi
+mbedtls_mpi_init
+mbedtls_mpi_mul_mpi
+mbedtls_mpi_free
+mbedtls_mpi_sub_int
+mbedtls_mpi_lsb
+mbedtls_mpi_shift_r
+mbedtls_mpi_lset
+mbedtls_mpi_gcd
+mbedtls_mpi_exp_mod
+mbedtls_mpi_mod_mpi
+mbedtls_mpi_add_int
+mbedtls_mpi_div_mpi
+__stack_chk_fail
+mbedtls_mpi_inv_mod
+mbedtls_mpi_is_prime_ext
+mbedtls_mpi_sub_mpi

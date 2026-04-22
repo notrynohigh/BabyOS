@@ -1,0 +1,1381 @@
+GAS LISTING /tmp/cc7v5j32.s 			page 1
+
+
+   1              		.file	"MQTTSerializePublish.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c"
+   5              		.section	.text.MQTTSerialize_publishLength,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	MQTTSerialize_publishLength
+   9              	MQTTSerialize_publishLength:
+  10              	.LVL0:
+  11              	.LFB20:
+   1:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** /*******************************************************************************
+   2:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  * Copyright (c) 2014 IBM Corp.
+   3:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  *
+   4:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  * All rights reserved. This program and the accompanying materials
+   5:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  *
+   8:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  * The Eclipse Public License is available at
+   9:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  * and the Eclipse Distribution License is available at
+  11:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  *
+  13:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  * Contributors:
+  14:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  *    Ian Craggs - fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=453144
+  16:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****  *******************************************************************************/
+  17:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  18:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** #include "MQTTPacket.h"
+  19:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** #include "StackTrace.h"
+  20:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  21:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** #include <string.h>
+  22:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  23:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  24:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** /**
+  25:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * Determines the length of the MQTT publish packet that would be produced using the supplied para
+  26:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param qos the MQTT QoS of the publish (packetid is omitted for QoS 0)
+  27:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param topicName the topic name to be used in the publish  
+  28:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param payloadlen the length of the payload to be sent
+  29:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @return the length of buffer needed to contain the serialized version of the packet
+  30:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   */
+  31:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** int MQTTSerialize_publishLength(int qos, MQTTString topicName, int payloadlen)
+  32:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+  12              		.loc 1 32 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 32 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  33:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int len = 0;
+  16              		.loc 1 33 2 is_stmt 1 view .LVU2
+  17              	.LVL1:
+  34:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	len += 2 + MQTTstrlen(topicName) + payloadlen;
+  18              		.loc 1 35 2 view .LVU3
+  32:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int len = 0;
+  19              		.loc 1 32 1 is_stmt 0 view .LVU4
+  20 0004 55       		pushq	%rbp
+  21              	.LCFI0:
+  22              		.cfi_def_cfa_offset 16
+GAS LISTING /tmp/cc7v5j32.s 			page 2
+
+
+  23              		.cfi_offset 6, -16
+  24 0005 89F5     		movl	%esi, %ebp
+  25 0007 53       		pushq	%rbx
+  26              	.LCFI1:
+  27              		.cfi_def_cfa_offset 24
+  28              		.cfi_offset 3, -24
+  29 0008 89FB     		movl	%edi, %ebx
+  30 000a 4883EC28 		subq	$40, %rsp
+  31              	.LCFI2:
+  32              		.cfi_def_cfa_offset 64
+  33              		.loc 1 35 13 view .LVU5
+  34 000e F30F6F44 		movdqu	64(%rsp), %xmm0
+  34      2440
+  35 0014 488B4424 		movq	80(%rsp), %rax
+  35      50
+  36 0019 0F110424 		movups	%xmm0, (%rsp)
+  37 001d 48894424 		movq	%rax, 16(%rsp)
+  37      10
+  38 0022 E8000000 		call	MQTTstrlen@PLT
+  38      00
+  39              	.LVL2:
+  36:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+  37:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		len += 2; /* packetid */
+  40              		.loc 1 37 7 view .LVU6
+  41 0027 85DB     		testl	%ebx, %ebx
+  35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+  42              		.loc 1 35 35 discriminator 1 view .LVU7
+  43 0029 8D440502 		leal	2(%rbp,%rax), %eax
+  44              	.LVL3:
+  36:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+  45              		.loc 1 36 2 is_stmt 1 view .LVU8
+  46              		.loc 1 37 7 is_stmt 0 view .LVU9
+  47 002d 8D5002   		leal	2(%rax), %edx
+  48 0030 0F4FC2   		cmovg	%edx, %eax
+  49              	.LVL4:
+  38:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return len;
+  39:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+  50              		.loc 1 39 1 view .LVU10
+  51 0033 4883C428 		addq	$40, %rsp
+  52              	.LCFI3:
+  53              		.cfi_def_cfa_offset 24
+  54 0037 5B       		popq	%rbx
+  55              	.LCFI4:
+  56              		.cfi_def_cfa_offset 16
+  57              	.LVL5:
+  58              		.loc 1 39 1 view .LVU11
+  59 0038 5D       		popq	%rbp
+  60              	.LCFI5:
+  61              		.cfi_def_cfa_offset 8
+  62              	.LVL6:
+  63              		.loc 1 39 1 view .LVU12
+  64 0039 C3       		ret
+  65              		.cfi_endproc
+  66              	.LFE20:
+  68              		.section	.text.MQTTSerialize_publish,"ax",@progbits
+  69              		.p2align 4
+  70              		.globl	MQTTSerialize_publish
+GAS LISTING /tmp/cc7v5j32.s 			page 3
+
+
+  72              	MQTTSerialize_publish:
+  73              	.LVL7:
+  74              	.LFB21:
+  40:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  41:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  42:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** /**
+  43:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * Serializes the supplied publish data into the supplied buffer, ready for sending
+  44:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buf the buffer into which the packet will be serialized
+  45:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buflen the length in bytes of the supplied buffer
+  46:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param dup integer - the MQTT dup flag
+  47:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param qos integer - the MQTT QoS value
+  48:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param retained integer - the MQTT retained flag
+  49:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param packetid integer - the MQTT packet identifier
+  50:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param topicName MQTTString - the MQTT topic in the publish
+  51:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param payload byte buffer - the MQTT publish payload
+  52:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param payloadlen integer - the length of the MQTT payload
+  53:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @return the length of the serialized data.  <= 0 indicates error
+  54:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   */
+  55:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** int MQTTSerialize_publish(unsigned char* buf, int buflen, unsigned char dup, int qos, unsigned char
+  56:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		MQTTString topicName, unsigned char* payload, int payloadlen)
+  57:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+  75              		.loc 1 57 1 is_stmt 1 view -0
+  76              		.cfi_startproc
+  77              		.loc 1 57 1 is_stmt 0 view .LVU14
+  78 0000 F30F1EFA 		endbr64
+  79 0004 4157     		pushq	%r15
+  80              	.LCFI6:
+  81              		.cfi_def_cfa_offset 16
+  82              		.cfi_offset 15, -16
+  83 0006 4189F7   		movl	%esi, %r15d
+  84 0009 4156     		pushq	%r14
+  85              	.LCFI7:
+  86              		.cfi_def_cfa_offset 24
+  87              		.cfi_offset 14, -24
+  88 000b 4155     		pushq	%r13
+  89              	.LCFI8:
+  90              		.cfi_def_cfa_offset 32
+  91              		.cfi_offset 13, -32
+  92 000d 4989FD   		movq	%rdi, %r13
+  93 0010 4154     		pushq	%r12
+  94              	.LCFI9:
+  95              		.cfi_def_cfa_offset 40
+  96              		.cfi_offset 12, -40
+  97 0012 4189CC   		movl	%ecx, %r12d
+  98 0015 55       		pushq	%rbp
+  99              	.LCFI10:
+ 100              		.cfi_def_cfa_offset 48
+ 101              		.cfi_offset 6, -48
+ 102 0016 4489C5   		movl	%r8d, %ebp
+ 103 0019 53       		pushq	%rbx
+ 104              	.LCFI11:
+ 105              		.cfi_def_cfa_offset 56
+ 106              		.cfi_offset 3, -56
+ 107 001a 89D3     		movl	%edx, %ebx
+ 108 001c 4883EC68 		subq	$104, %rsp
+ 109              	.LCFI12:
+ 110              		.cfi_def_cfa_offset 160
+GAS LISTING /tmp/cc7v5j32.s 			page 4
+
+
+ 111              		.loc 1 57 1 view .LVU15
+ 112 0020 488B8424 		movq	184(%rsp), %rax
+ 112      B8000000 
+ 113 0028 44894C24 		movl	%r9d, 44(%rsp)
+ 113      2C
+ 114              	.LBB8:
+ 115              	.LBB9:
+  35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+ 116              		.loc 1 35 13 view .LVU16
+ 117 002d F30F6F84 		movdqu	160(%rsp), %xmm0
+ 117      24A00000 
+ 117      00
+ 118              	.LBE9:
+ 119              	.LBE8:
+ 120              		.loc 1 57 1 view .LVU17
+ 121 0036 48894424 		movq	%rax, 32(%rsp)
+ 121      20
+ 122 003b 64488B04 		movq	%fs:40, %rax
+ 122      25280000 
+ 122      00
+ 123 0044 48894424 		movq	%rax, 88(%rsp)
+ 123      58
+ 124 0049 31C0     		xorl	%eax, %eax
+  58:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	unsigned char *ptr = buf;
+ 125              		.loc 1 58 2 is_stmt 1 view .LVU18
+ 126              	.LBB12:
+ 127              	.LBB10:
+  35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+ 128              		.loc 1 35 13 is_stmt 0 view .LVU19
+ 129 004b 488B8424 		movq	176(%rsp), %rax
+ 129      B0000000 
+ 130              	.LBE10:
+ 131              	.LBE12:
+ 132              		.loc 1 58 17 view .LVU20
+ 133 0053 48897C24 		movq	%rdi, 56(%rsp)
+ 133      38
+  59:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	MQTTHeader header = {0};
+ 134              		.loc 1 59 2 is_stmt 1 view .LVU21
+  60:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int rem_len = 0;
+ 135              		.loc 1 60 2 view .LVU22
+ 136              	.LVL8:
+  61:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int rc = 0;
+ 137              		.loc 1 61 2 view .LVU23
+  62:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  63:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	FUNC_ENTRY;
+ 138              		.loc 1 63 12 view .LVU24
+  64:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (MQTTPacket_len(rem_len = MQTTSerialize_publishLength(qos, topicName, payloadlen)) > buflen)
+ 139              		.loc 1 64 2 view .LVU25
+ 140              	.LBB13:
+ 141              	.LBI8:
+  31:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+ 142              		.loc 1 31 5 view .LVU26
+ 143              	.LBB11:
+  33:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 144              		.loc 1 33 2 view .LVU27
+  35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+ 145              		.loc 1 35 2 view .LVU28
+GAS LISTING /tmp/cc7v5j32.s 			page 5
+
+
+  35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+ 146              		.loc 1 35 13 is_stmt 0 view .LVU29
+ 147 0058 0F110424 		movups	%xmm0, (%rsp)
+ 148 005c 48894424 		movq	%rax, 16(%rsp)
+ 148      10
+ 149 0061 E8000000 		call	MQTTstrlen@PLT
+ 149      00
+ 150              	.LVL9:
+  35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+ 151              		.loc 1 35 35 discriminator 1 view .LVU30
+ 152 0066 8B8C24C0 		movl	192(%rsp), %ecx
+ 152      000000
+  36:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		len += 2; /* packetid */
+ 153              		.loc 1 36 5 view .LVU31
+ 154 006d 4883C420 		addq	$32, %rsp
+ 155              	.LCFI13:
+ 156              		.cfi_def_cfa_offset 128
+  37:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return len;
+ 157              		.loc 1 37 7 view .LVU32
+ 158 0071 4585E4   		testl	%r12d, %r12d
+  35:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+ 159              		.loc 1 35 35 discriminator 1 view .LVU33
+ 160 0074 448D7401 		leal	2(%rcx,%rax), %r14d
+ 160      02
+ 161              	.LVL10:
+  36:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		len += 2; /* packetid */
+ 162              		.loc 1 36 2 is_stmt 1 view .LVU34
+  37:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return len;
+ 163              		.loc 1 37 7 is_stmt 0 view .LVU35
+ 164 0079 418D4602 		leal	2(%r14), %eax
+ 165 007d 440F4FF0 		cmovg	%eax, %r14d
+ 166              	.LVL11:
+  38:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 167              		.loc 1 38 2 is_stmt 1 view .LVU36
+  38:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 168              		.loc 1 38 2 is_stmt 0 view .LVU37
+ 169              	.LBE11:
+ 170              	.LBE13:
+ 171              		.loc 1 64 6 discriminator 1 view .LVU38
+ 172 0081 4489F7   		movl	%r14d, %edi
+ 173 0084 E8000000 		call	MQTTPacket_len@PLT
+ 173      00
+ 174              	.LVL12:
+ 175              		.loc 1 64 5 discriminator 2 view .LVU39
+ 176 0089 4439F8   		cmpl	%r15d, %eax
+ 177 008c 0F8FC600 		jg	.L10
+ 177      0000
+  65:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	{
+  66:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		rc = MQTTPACKET_BUFFER_TOO_SHORT;
+  67:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		goto exit;
+  68:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	}
+  69:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  70:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.type = PUBLISH;
+ 178              		.loc 1 70 2 is_stmt 1 view .LVU40
+  71:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.dup = dup;
+ 179              		.loc 1 71 2 view .LVU41
+  72:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.qos = qos;
+GAS LISTING /tmp/cc7v5j32.s 			page 6
+
+
+ 180              		.loc 1 72 2 view .LVU42
+  73:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.retain = retained;
+ 181              		.loc 1 73 2 view .LVU43
+ 182              		.loc 1 73 21 is_stmt 0 view .LVU44
+ 183 0092 4489E0   		movl	%r12d, %eax
+ 184 0095 83E501   		andl	$1, %ebp
+ 185              	.LVL13:
+ 186              		.loc 1 73 21 view .LVU45
+ 187 0098 C1E303   		sall	$3, %ebx
+ 188              	.LVL14:
+ 189              		.loc 1 73 21 view .LVU46
+ 190 009b 83E003   		andl	$3, %eax
+ 191 009e 83CD30   		orl	$48, %ebp
+ 192 00a1 83E308   		andl	$8, %ebx
+ 193 00a4 01C0     		addl	%eax, %eax
+ 194 00a6 09E8     		orl	%ebp, %eax
+ 195 00a8 0FB6F0   		movzbl	%al, %esi
+ 196              	.LVL15:
+ 197              		.loc 1 73 21 view .LVU47
+ 198 00ab 4008DE   		orb	%bl, %sil
+  74:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 199              		.loc 1 74 2 is_stmt 1 view .LVU48
+ 200 00ae 488D5C24 		leaq	24(%rsp), %rbx
+ 200      18
+ 201              		.loc 1 74 2 is_stmt 0 view .LVU49
+ 202 00b3 400FBEF6 		movsbl	%sil, %esi
+ 203              		.loc 1 74 2 view .LVU50
+ 204 00b7 4889DF   		movq	%rbx, %rdi
+ 205 00ba E8000000 		call	writeChar@PLT
+ 205      00
+ 206              	.LVL16:
+  75:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  76:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	ptr += MQTTPacket_encode(ptr, rem_len); /* write remaining length */;
+ 207              		.loc 1 76 2 is_stmt 1 view .LVU51
+ 208              		.loc 1 76 9 is_stmt 0 view .LVU52
+ 209 00bf 488B7C24 		movq	24(%rsp), %rdi
+ 209      18
+ 210 00c4 4489F6   		movl	%r14d, %esi
+ 211 00c7 E8000000 		call	MQTTPacket_encode@PLT
+ 211      00
+ 212              	.LVL17:
+  77:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  78:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeMQTTString(&ptr, topicName);
+ 213              		.loc 1 78 2 view .LVU53
+ 214 00cc 4889DF   		movq	%rbx, %rdi
+  76:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 215              		.loc 1 76 9 discriminator 1 view .LVU54
+ 216 00cf 4898     		cltq
+  76:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 217              		.loc 1 76 6 discriminator 1 view .LVU55
+ 218 00d1 48014424 		addq	%rax, 24(%rsp)
+ 218      18
+  76:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 219              		.loc 1 76 70 is_stmt 1 discriminator 1 view .LVU56
+ 220              		.loc 1 78 2 view .LVU57
+ 221 00d6 4883EC20 		subq	$32, %rsp
+ 222              	.LCFI14:
+GAS LISTING /tmp/cc7v5j32.s 			page 7
+
+
+ 223              		.cfi_def_cfa_offset 160
+ 224 00da F30F6F8C 		movdqu	160(%rsp), %xmm1
+ 224      24A00000 
+ 224      00
+ 225 00e3 488B8424 		movq	176(%rsp), %rax
+ 225      B0000000 
+ 226 00eb 0F110C24 		movups	%xmm1, (%rsp)
+ 227 00ef 48894424 		movq	%rax, 16(%rsp)
+ 227      10
+ 228 00f4 E8000000 		call	writeMQTTString@PLT
+ 228      00
+ 229              	.LVL18:
+  79:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  80:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (qos > 0)
+ 230              		.loc 1 80 2 view .LVU58
+ 231              		.loc 1 80 5 is_stmt 0 view .LVU59
+ 232 00f9 4883C420 		addq	$32, %rsp
+ 233              	.LCFI15:
+ 234              		.cfi_def_cfa_offset 128
+ 235 00fd 4585E4   		testl	%r12d, %r12d
+ 236 0100 7E0D     		jle	.L8
+  81:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		writeInt(&ptr, packetid);
+ 237              		.loc 1 81 3 is_stmt 1 view .LVU60
+ 238 0102 0FB77424 		movzwl	12(%rsp), %esi
+ 238      0C
+ 239 0107 4889DF   		movq	%rbx, %rdi
+ 240 010a E8000000 		call	writeInt@PLT
+ 240      00
+ 241              	.LVL19:
+ 242              	.L8:
+  82:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  83:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	memcpy(ptr, payload, payloadlen);
+ 243              		.loc 1 83 2 view .LVU61
+ 244 010f 48639C24 		movslq	160(%rsp), %rbx
+ 244      A0000000 
+ 245              	.LVL20:
+ 246              	.LBB14:
+ 247              	.LBI14:
+ 248              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+GAS LISTING /tmp/cc7v5j32.s 			page 8
+
+
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+ 249              		.loc 2 26 1 view .LVU62
+ 250              	.LBB15:
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+ 251              		.loc 2 29 3 view .LVU63
+ 252              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU64
+ 253 0117 488B3424 		movq	(%rsp), %rsi
+ 254 011b 488B7C24 		movq	24(%rsp), %rdi
+ 254      18
+ 255 0120 4889DA   		movq	%rbx, %rdx
+ 256 0123 E8000000 		call	memcpy@PLT
+ 256      00
+ 257              	.LVL21:
+ 258              		.loc 2 29 10 discriminator 1 view .LVU65
+ 259              	.LBE15:
+ 260              	.LBE14:
+  84:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	ptr += payloadlen;
+ 261              		.loc 1 84 2 is_stmt 1 view .LVU66
+  85:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  86:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	rc = ptr - buf;
+ 262              		.loc 1 86 2 view .LVU67
+  84:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	ptr += payloadlen;
+ 263              		.loc 1 84 6 is_stmt 0 view .LVU68
+ 264 0128 488B4424 		movq	24(%rsp), %rax
+ 264      18
+ 265 012d 4801D8   		addq	%rbx, %rax
+ 266              		.loc 1 86 5 view .LVU69
+ 267 0130 4429E8   		subl	%r13d, %eax
+ 268              	.LVL22:
+ 269              	.L5:
+  87:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  88:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+  89:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	FUNC_EXIT_RC(rc);
+  90:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return rc;
+  91:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 270              		.loc 1 91 1 view .LVU70
+ 271 0133 488B5424 		movq	56(%rsp), %rdx
+ 271      38
+ 272 0138 64482B14 		subq	%fs:40, %rdx
+ 272      25280000 
+ 272      00
+ 273 0141 751C     		jne	.L12
+ 274 0143 4883C448 		addq	$72, %rsp
+ 275              	.LCFI16:
+ 276              		.cfi_remember_state
+ 277              		.cfi_def_cfa_offset 56
+ 278 0147 5B       		popq	%rbx
+ 279              	.LCFI17:
+GAS LISTING /tmp/cc7v5j32.s 			page 9
+
+
+ 280              		.cfi_def_cfa_offset 48
+ 281 0148 5D       		popq	%rbp
+ 282              	.LCFI18:
+ 283              		.cfi_def_cfa_offset 40
+ 284 0149 415C     		popq	%r12
+ 285              	.LCFI19:
+ 286              		.cfi_def_cfa_offset 32
+ 287              	.LVL23:
+ 288              		.loc 1 91 1 view .LVU71
+ 289 014b 415D     		popq	%r13
+ 290              	.LCFI20:
+ 291              		.cfi_def_cfa_offset 24
+ 292              	.LVL24:
+ 293              		.loc 1 91 1 view .LVU72
+ 294 014d 415E     		popq	%r14
+ 295              	.LCFI21:
+ 296              		.cfi_def_cfa_offset 16
+ 297              	.LVL25:
+ 298              		.loc 1 91 1 view .LVU73
+ 299 014f 415F     		popq	%r15
+ 300              	.LCFI22:
+ 301              		.cfi_def_cfa_offset 8
+ 302              	.LVL26:
+ 303              		.loc 1 91 1 view .LVU74
+ 304 0151 C3       		ret
+ 305              	.LVL27:
+ 306              		.p2align 4,,10
+ 307 0152 660F1F44 		.p2align 3
+ 307      0000
+ 308              	.L10:
+ 309              	.LCFI23:
+ 310              		.cfi_restore_state
+ 311              	.L7:
+  89:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return rc;
+ 312              		.loc 1 89 18 is_stmt 1 view .LVU75
+  90:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 313              		.loc 1 90 2 view .LVU76
+  66:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		goto exit;
+ 314              		.loc 1 66 6 is_stmt 0 view .LVU77
+ 315 0158 B8FEFFFF 		movl	$-2, %eax
+ 315      FF
+  90:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 316              		.loc 1 90 9 view .LVU78
+ 317 015d EBD4     		jmp	.L5
+ 318              	.LVL28:
+ 319              	.L12:
+ 320              		.loc 1 91 1 view .LVU79
+ 321 015f E8000000 		call	__stack_chk_fail@PLT
+ 321      00
+ 322              	.LVL29:
+ 323              		.cfi_endproc
+ 324              	.LFE21:
+ 326              		.section	.text.MQTTSerialize_ack,"ax",@progbits
+ 327              		.p2align 4
+ 328              		.globl	MQTTSerialize_ack
+ 330              	MQTTSerialize_ack:
+ 331              	.LVL30:
+GAS LISTING /tmp/cc7v5j32.s 			page 10
+
+
+ 332              	.LFB22:
+  92:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  93:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  94:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+  95:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** /**
+  96:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * Serializes the ack packet into the supplied buffer.
+  97:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buf the buffer into which the packet will be serialized
+  98:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buflen the length in bytes of the supplied buffer
+  99:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param type the MQTT packet type
+ 100:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param dup the MQTT dup flag
+ 101:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param packetid the MQTT packet identifier
+ 102:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @return serialized length, or error if 0
+ 103:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   */
+ 104:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** int MQTTSerialize_ack(unsigned char* buf, int buflen, unsigned char packettype, unsigned char dup, 
+ 105:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+ 333              		.loc 1 105 1 is_stmt 1 view -0
+ 334              		.cfi_startproc
+ 335              		.loc 1 105 1 is_stmt 0 view .LVU81
+ 336 0000 F30F1EFA 		endbr64
+ 337 0004 4154     		pushq	%r12
+ 338              	.LCFI24:
+ 339              		.cfi_def_cfa_offset 16
+ 340              		.cfi_offset 12, -16
+ 341 0006 89D0     		movl	%edx, %eax
+ 342 0008 55       		pushq	%rbp
+ 343              	.LCFI25:
+ 344              		.cfi_def_cfa_offset 24
+ 345              		.cfi_offset 6, -24
+ 346 0009 4889FD   		movq	%rdi, %rbp
+ 347 000c 53       		pushq	%rbx
+ 348              	.LCFI26:
+ 349              		.cfi_def_cfa_offset 32
+ 350              		.cfi_offset 3, -32
+ 351 000d 4883EC10 		subq	$16, %rsp
+ 352              	.LCFI27:
+ 353              		.cfi_def_cfa_offset 48
+ 354              		.loc 1 105 1 view .LVU82
+ 355 0011 64488B14 		movq	%fs:40, %rdx
+ 355      25280000 
+ 355      00
+ 356 001a 48895424 		movq	%rdx, 8(%rsp)
+ 356      08
+ 357 001f 31D2     		xorl	%edx, %edx
+ 358              	.LVL31:
+ 106:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	MQTTHeader header = {0};
+ 359              		.loc 1 106 2 is_stmt 1 view .LVU83
+ 107:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int rc = 0;
+ 360              		.loc 1 107 2 view .LVU84
+ 108:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	unsigned char *ptr = buf;
+ 361              		.loc 1 108 2 view .LVU85
+ 362              		.loc 1 108 17 is_stmt 0 view .LVU86
+ 363 0021 48893C24 		movq	%rdi, (%rsp)
+ 109:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 110:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	FUNC_ENTRY;
+ 364              		.loc 1 110 12 is_stmt 1 view .LVU87
+ 111:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (buflen < 4)
+ 365              		.loc 1 111 2 view .LVU88
+GAS LISTING /tmp/cc7v5j32.s 			page 11
+
+
+ 366              		.loc 1 111 5 is_stmt 0 view .LVU89
+ 367 0025 83FE03   		cmpl	$3, %esi
+ 368 0028 7E6E     		jle	.L16
+ 112:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	{
+ 113:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		rc = MQTTPACKET_BUFFER_TOO_SHORT;
+ 114:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		goto exit;
+ 115:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	}
+ 116:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.type = packettype;
+ 117:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.dup = dup;
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.qos = (packettype == PUBREL) ? 1 : 0;
+ 369              		.loc 1 118 18 view .LVU90
+ 370 002a C1E103   		sall	$3, %ecx
+ 371              	.LVL32:
+ 372              		.loc 1 118 18 view .LVU91
+ 373 002d 31F6     		xorl	%esi, %esi
+ 374              	.LVL33:
+ 116:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.dup = dup;
+ 375              		.loc 1 116 2 is_stmt 1 view .LVU92
+ 117:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.qos = (packettype == PUBREL) ? 1 : 0;
+ 376              		.loc 1 117 2 view .LVU93
+ 377              		.loc 1 118 2 view .LVU94
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 378              		.loc 1 119 2 is_stmt 0 view .LVU95
+ 379 002f 4989E4   		movq	%rsp, %r12
+ 380 0032 4489C3   		movl	%r8d, %ebx
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 381              		.loc 1 118 18 view .LVU96
+ 382 0035 83E108   		andl	$8, %ecx
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 383              		.loc 1 118 47 view .LVU97
+ 384 0038 3C06     		cmpb	$6, %al
+ 385              		.loc 1 119 2 view .LVU98
+ 386 003a 4C89E7   		movq	%r12, %rdi
+ 387              	.LVL34:
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 388              		.loc 1 118 47 view .LVU99
+ 389 003d 0F94C2   		sete	%dl
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 390              		.loc 1 118 18 view .LVU100
+ 391 0040 C1E004   		sall	$4, %eax
+ 392              	.LVL35:
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 393              		.loc 1 118 18 view .LVU101
+ 394 0043 01D2     		addl	%edx, %edx
+ 395 0045 09D1     		orl	%edx, %ecx
+ 396 0047 4088CE   		movb	%cl, %sil
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 397              		.loc 1 118 18 view .LVU102
+ 398 004a 4008C6   		orb	%al, %sil
+ 399              		.loc 1 119 2 is_stmt 1 view .LVU103
+ 400              		.loc 1 119 2 is_stmt 0 view .LVU104
+ 401 004d 400FBEF6 		movsbl	%sil, %esi
+ 402              		.loc 1 119 2 view .LVU105
+ 403 0051 E8000000 		call	writeChar@PLT
+ 403      00
+ 404              	.LVL36:
+ 120:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+GAS LISTING /tmp/cc7v5j32.s 			page 12
+
+
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	ptr += MQTTPacket_encode(ptr, 2); /* write remaining length */
+ 405              		.loc 1 121 2 is_stmt 1 view .LVU106
+ 406              		.loc 1 121 9 is_stmt 0 view .LVU107
+ 407 0056 488B3C24 		movq	(%rsp), %rdi
+ 408 005a BE020000 		movl	$2, %esi
+ 408      00
+ 409 005f E8000000 		call	MQTTPacket_encode@PLT
+ 409      00
+ 410              	.LVL37:
+ 122:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 411              		.loc 1 122 2 view .LVU108
+ 412 0064 0FB7F3   		movzwl	%bx, %esi
+ 413 0067 4C89E7   		movq	%r12, %rdi
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 414              		.loc 1 121 9 discriminator 1 view .LVU109
+ 415 006a 4898     		cltq
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 416              		.loc 1 121 6 discriminator 1 view .LVU110
+ 417 006c 48010424 		addq	%rax, (%rsp)
+ 418              		.loc 1 122 2 is_stmt 1 view .LVU111
+ 419 0070 E8000000 		call	writeInt@PLT
+ 419      00
+ 420              	.LVL38:
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	rc = ptr - buf;
+ 421              		.loc 1 123 2 view .LVU112
+ 422              		.loc 1 123 5 is_stmt 0 view .LVU113
+ 423 0075 8B0424   		movl	(%rsp), %eax
+ 424 0078 29E8     		subl	%ebp, %eax
+ 425              	.LVL39:
+ 426              	.L13:
+ 124:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 125:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	FUNC_EXIT_RC(rc);
+ 126:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return rc;
+ 127:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 427              		.loc 1 127 1 view .LVU114
+ 428 007a 488B5424 		movq	8(%rsp), %rdx
+ 428      08
+ 429 007f 64482B14 		subq	%fs:40, %rdx
+ 429      25280000 
+ 429      00
+ 430 0088 7515     		jne	.L18
+ 431 008a 4883C410 		addq	$16, %rsp
+ 432              	.LCFI28:
+ 433              		.cfi_remember_state
+ 434              		.cfi_def_cfa_offset 32
+ 435 008e 5B       		popq	%rbx
+ 436              	.LCFI29:
+ 437              		.cfi_def_cfa_offset 24
+ 438 008f 5D       		popq	%rbp
+ 439              	.LCFI30:
+ 440              		.cfi_def_cfa_offset 16
+ 441              	.LVL40:
+ 442              		.loc 1 127 1 view .LVU115
+ 443 0090 415C     		popq	%r12
+ 444              	.LCFI31:
+ 445              		.cfi_def_cfa_offset 8
+ 446 0092 C3       		ret
+GAS LISTING /tmp/cc7v5j32.s 			page 13
+
+
+ 447              	.LVL41:
+ 448              		.p2align 4,,10
+ 449 0093 0F1F4400 		.p2align 3
+ 449      00
+ 450              	.L16:
+ 451              	.LCFI32:
+ 452              		.cfi_restore_state
+ 453              	.L14:
+ 125:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return rc;
+ 454              		.loc 1 125 18 is_stmt 1 view .LVU116
+ 126:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 455              		.loc 1 126 2 view .LVU117
+ 113:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		goto exit;
+ 456              		.loc 1 113 6 is_stmt 0 view .LVU118
+ 457 0098 B8FEFFFF 		movl	$-2, %eax
+ 457      FF
+ 126:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 458              		.loc 1 126 9 view .LVU119
+ 459 009d EBDB     		jmp	.L13
+ 460              	.LVL42:
+ 461              	.L18:
+ 462              		.loc 1 127 1 view .LVU120
+ 463 009f E8000000 		call	__stack_chk_fail@PLT
+ 463      00
+ 464              	.LVL43:
+ 465              		.cfi_endproc
+ 466              	.LFE22:
+ 468              		.section	.text.MQTTSerialize_puback,"ax",@progbits
+ 469              		.p2align 4
+ 470              		.globl	MQTTSerialize_puback
+ 472              	MQTTSerialize_puback:
+ 473              	.LVL44:
+ 474              	.LFB23:
+ 128:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 129:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 130:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** /**
+ 131:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * Serializes a puback packet into the supplied buffer.
+ 132:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buf the buffer into which the packet will be serialized
+ 133:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buflen the length in bytes of the supplied buffer
+ 134:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param packetid integer - the MQTT packet identifier
+ 135:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @return serialized length, or error if 0
+ 136:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   */
+ 137:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** int MQTTSerialize_puback(unsigned char* buf, int buflen, unsigned short packetid)
+ 138:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+ 475              		.loc 1 138 1 is_stmt 1 view -0
+ 476              		.cfi_startproc
+ 477              		.loc 1 138 1 is_stmt 0 view .LVU122
+ 478 0000 F30F1EFA 		endbr64
+ 479 0004 4154     		pushq	%r12
+ 480              	.LCFI33:
+ 481              		.cfi_def_cfa_offset 16
+ 482              		.cfi_offset 12, -16
+ 483 0006 55       		pushq	%rbp
+ 484              	.LCFI34:
+ 485              		.cfi_def_cfa_offset 24
+ 486              		.cfi_offset 6, -24
+ 487 0007 53       		pushq	%rbx
+GAS LISTING /tmp/cc7v5j32.s 			page 14
+
+
+ 488              	.LCFI35:
+ 489              		.cfi_def_cfa_offset 32
+ 490              		.cfi_offset 3, -32
+ 491 0008 4883EC10 		subq	$16, %rsp
+ 492              	.LCFI36:
+ 493              		.cfi_def_cfa_offset 48
+ 494              		.loc 1 138 1 view .LVU123
+ 495 000c 64488B04 		movq	%fs:40, %rax
+ 495      25280000 
+ 495      00
+ 496 0015 48894424 		movq	%rax, 8(%rsp)
+ 496      08
+ 497 001a 31C0     		xorl	%eax, %eax
+ 139:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return MQTTSerialize_ack(buf, buflen, PUBACK, 0, packetid);
+ 498              		.loc 1 139 2 is_stmt 1 view .LVU124
+ 499              	.LVL45:
+ 500              	.LBB18:
+ 501              	.LBI18:
+ 104:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+ 502              		.loc 1 104 5 view .LVU125
+ 503              	.LBB19:
+ 106:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int rc = 0;
+ 504              		.loc 1 106 2 view .LVU126
+ 107:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	unsigned char *ptr = buf;
+ 505              		.loc 1 107 2 view .LVU127
+ 108:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 506              		.loc 1 108 2 view .LVU128
+ 108:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 507              		.loc 1 108 17 is_stmt 0 view .LVU129
+ 508 001c 48893C24 		movq	%rdi, (%rsp)
+ 110:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (buflen < 4)
+ 509              		.loc 1 110 12 is_stmt 1 view .LVU130
+ 111:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	{
+ 510              		.loc 1 111 2 view .LVU131
+ 111:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	{
+ 511              		.loc 1 111 5 is_stmt 0 view .LVU132
+ 512 0020 83FE03   		cmpl	$3, %esi
+ 513 0023 7E5B     		jle	.L22
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 514              		.loc 1 119 2 view .LVU133
+ 515 0025 4889E5   		movq	%rsp, %rbp
+ 516 0028 4889FB   		movq	%rdi, %rbx
+ 517 002b BE400000 		movl	$64, %esi
+ 517      00
+ 518              	.LVL46:
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 519              		.loc 1 119 2 view .LVU134
+ 520 0030 4189D4   		movl	%edx, %r12d
+ 116:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.dup = dup;
+ 521              		.loc 1 116 2 is_stmt 1 view .LVU135
+ 117:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.qos = (packettype == PUBREL) ? 1 : 0;
+ 522              		.loc 1 117 2 view .LVU136
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 523              		.loc 1 118 2 view .LVU137
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 524              		.loc 1 119 2 view .LVU138
+ 525 0033 4889EF   		movq	%rbp, %rdi
+GAS LISTING /tmp/cc7v5j32.s 			page 15
+
+
+ 526              	.LVL47:
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 527              		.loc 1 119 2 is_stmt 0 view .LVU139
+ 528 0036 E8000000 		call	writeChar@PLT
+ 528      00
+ 529              	.LVL48:
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 530              		.loc 1 121 2 is_stmt 1 view .LVU140
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 531              		.loc 1 121 9 is_stmt 0 view .LVU141
+ 532 003b 488B3C24 		movq	(%rsp), %rdi
+ 533 003f BE020000 		movl	$2, %esi
+ 533      00
+ 534 0044 E8000000 		call	MQTTPacket_encode@PLT
+ 534      00
+ 535              	.LVL49:
+ 122:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	rc = ptr - buf;
+ 536              		.loc 1 122 2 view .LVU142
+ 537 0049 410FB7F4 		movzwl	%r12w, %esi
+ 538 004d 4889EF   		movq	%rbp, %rdi
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 539              		.loc 1 121 9 discriminator 1 view .LVU143
+ 540 0050 4898     		cltq
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 541              		.loc 1 121 6 discriminator 1 view .LVU144
+ 542 0052 48010424 		addq	%rax, (%rsp)
+ 122:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	rc = ptr - buf;
+ 543              		.loc 1 122 2 is_stmt 1 view .LVU145
+ 544 0056 E8000000 		call	writeInt@PLT
+ 544      00
+ 545              	.LVL50:
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 546              		.loc 1 123 2 view .LVU146
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 547              		.loc 1 123 5 is_stmt 0 view .LVU147
+ 548 005b 8B0424   		movl	(%rsp), %eax
+ 549 005e 29D8     		subl	%ebx, %eax
+ 550              	.LVL51:
+ 551              	.L19:
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 552              		.loc 1 123 5 view .LVU148
+ 553              	.LBE19:
+ 554              	.LBE18:
+ 140:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 555              		.loc 1 140 1 view .LVU149
+ 556 0060 488B5424 		movq	8(%rsp), %rdx
+ 556      08
+ 557 0065 64482B14 		subq	%fs:40, %rdx
+ 557      25280000 
+ 557      00
+ 558 006e 7517     		jne	.L24
+ 559 0070 4883C410 		addq	$16, %rsp
+ 560              	.LCFI37:
+ 561              		.cfi_remember_state
+ 562              		.cfi_def_cfa_offset 32
+ 563 0074 5B       		popq	%rbx
+ 564              	.LCFI38:
+GAS LISTING /tmp/cc7v5j32.s 			page 16
+
+
+ 565              		.cfi_def_cfa_offset 24
+ 566 0075 5D       		popq	%rbp
+ 567              	.LCFI39:
+ 568              		.cfi_def_cfa_offset 16
+ 569 0076 415C     		popq	%r12
+ 570              	.LCFI40:
+ 571              		.cfi_def_cfa_offset 8
+ 572 0078 C3       		ret
+ 573              	.LVL52:
+ 574 0079 0F1F8000 		.p2align 4,,10
+ 574      000000
+ 575              		.p2align 3
+ 576              	.L22:
+ 577              	.LCFI41:
+ 578              		.cfi_restore_state
+ 579              	.L20:
+ 580              	.LBB21:
+ 581              	.LBB20:
+ 125:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return rc;
+ 582              		.loc 1 125 18 is_stmt 1 view .LVU150
+ 126:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 583              		.loc 1 126 2 view .LVU151
+ 113:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		goto exit;
+ 584              		.loc 1 113 6 is_stmt 0 view .LVU152
+ 585 0080 B8FEFFFF 		movl	$-2, %eax
+ 585      FF
+ 586              	.LBE20:
+ 587              	.LBE21:
+ 139:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 588              		.loc 1 139 9 view .LVU153
+ 589 0085 EBD9     		jmp	.L19
+ 590              	.LVL53:
+ 591              	.L24:
+ 592              		.loc 1 140 1 view .LVU154
+ 593 0087 E8000000 		call	__stack_chk_fail@PLT
+ 593      00
+ 594              	.LVL54:
+ 595              		.cfi_endproc
+ 596              	.LFE23:
+ 598              		.section	.text.MQTTSerialize_pubrel,"ax",@progbits
+ 599              		.p2align 4
+ 600              		.globl	MQTTSerialize_pubrel
+ 602              	MQTTSerialize_pubrel:
+ 603              	.LVL55:
+ 604              	.LFB24:
+ 141:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 142:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 143:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** /**
+ 144:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * Serializes a pubrel packet into the supplied buffer.
+ 145:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buf the buffer into which the packet will be serialized
+ 146:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buflen the length in bytes of the supplied buffer
+ 147:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param dup integer - the MQTT dup flag
+ 148:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param packetid integer - the MQTT packet identifier
+ 149:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @return serialized length, or error if 0
+ 150:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   */
+ 151:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** int MQTTSerialize_pubrel(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid
+ 152:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+GAS LISTING /tmp/cc7v5j32.s 			page 17
+
+
+ 605              		.loc 1 152 1 is_stmt 1 view -0
+ 606              		.cfi_startproc
+ 607              		.loc 1 152 1 is_stmt 0 view .LVU156
+ 608 0000 F30F1EFA 		endbr64
+ 609 0004 4154     		pushq	%r12
+ 610              	.LCFI42:
+ 611              		.cfi_def_cfa_offset 16
+ 612              		.cfi_offset 12, -16
+ 613 0006 55       		pushq	%rbp
+ 614              	.LCFI43:
+ 615              		.cfi_def_cfa_offset 24
+ 616              		.cfi_offset 6, -24
+ 617 0007 53       		pushq	%rbx
+ 618              	.LCFI44:
+ 619              		.cfi_def_cfa_offset 32
+ 620              		.cfi_offset 3, -32
+ 621 0008 89CB     		movl	%ecx, %ebx
+ 622 000a 4883EC10 		subq	$16, %rsp
+ 623              	.LCFI45:
+ 624              		.cfi_def_cfa_offset 48
+ 625              		.loc 1 152 1 view .LVU157
+ 626 000e 64488B0C 		movq	%fs:40, %rcx
+ 626      25280000 
+ 626      00
+ 627 0017 48894C24 		movq	%rcx, 8(%rsp)
+ 627      08
+ 628 001c 31C9     		xorl	%ecx, %ecx
+ 629              	.LVL56:
+ 153:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return MQTTSerialize_ack(buf, buflen, PUBREL, dup, packetid);
+ 630              		.loc 1 153 2 is_stmt 1 view .LVU158
+ 631              	.LBB24:
+ 632              	.LBI24:
+ 104:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+ 633              		.loc 1 104 5 view .LVU159
+ 634              	.LBB25:
+ 106:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int rc = 0;
+ 635              		.loc 1 106 2 view .LVU160
+ 107:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	unsigned char *ptr = buf;
+ 636              		.loc 1 107 2 view .LVU161
+ 108:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 637              		.loc 1 108 2 view .LVU162
+ 108:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 638              		.loc 1 108 17 is_stmt 0 view .LVU163
+ 639 001e 48893C24 		movq	%rdi, (%rsp)
+ 110:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (buflen < 4)
+ 640              		.loc 1 110 12 is_stmt 1 view .LVU164
+ 111:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	{
+ 641              		.loc 1 111 2 view .LVU165
+ 111:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	{
+ 642              		.loc 1 111 5 is_stmt 0 view .LVU166
+ 643 0022 83FE03   		cmpl	$3, %esi
+ 644 0025 7E59     		jle	.L28
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 645              		.loc 1 118 18 view .LVU167
+ 646 0027 8D34D500 		leal	0(,%rdx,8), %esi
+ 646      000000
+ 647              	.LVL57:
+GAS LISTING /tmp/cc7v5j32.s 			page 18
+
+
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 648              		.loc 1 119 2 view .LVU168
+ 649 002e 4989E4   		movq	%rsp, %r12
+ 650 0031 4889FD   		movq	%rdi, %rbp
+ 116:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.dup = dup;
+ 651              		.loc 1 116 2 is_stmt 1 view .LVU169
+ 117:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.qos = (packettype == PUBREL) ? 1 : 0;
+ 652              		.loc 1 117 2 view .LVU170
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 653              		.loc 1 118 2 view .LVU171
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 654              		.loc 1 118 18 is_stmt 0 view .LVU172
+ 655 0034 83E608   		andl	$8, %esi
+ 656              	.LVL58:
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 657              		.loc 1 119 2 is_stmt 1 view .LVU173
+ 658 0037 4C89E7   		movq	%r12, %rdi
+ 659              	.LVL59:
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 660              		.loc 1 119 2 is_stmt 0 view .LVU174
+ 661 003a 83CE62   		orl	$98, %esi
+ 662              	.LVL60:
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 663              		.loc 1 119 2 view .LVU175
+ 664 003d E8000000 		call	writeChar@PLT
+ 664      00
+ 665              	.LVL61:
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 666              		.loc 1 121 2 is_stmt 1 view .LVU176
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 667              		.loc 1 121 9 is_stmt 0 view .LVU177
+ 668 0042 488B3C24 		movq	(%rsp), %rdi
+ 669 0046 BE020000 		movl	$2, %esi
+ 669      00
+ 670 004b E8000000 		call	MQTTPacket_encode@PLT
+ 670      00
+ 671              	.LVL62:
+ 122:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	rc = ptr - buf;
+ 672              		.loc 1 122 2 view .LVU178
+ 673 0050 0FB7F3   		movzwl	%bx, %esi
+ 674 0053 4C89E7   		movq	%r12, %rdi
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 675              		.loc 1 121 9 discriminator 1 view .LVU179
+ 676 0056 4898     		cltq
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 677              		.loc 1 121 6 discriminator 1 view .LVU180
+ 678 0058 48010424 		addq	%rax, (%rsp)
+ 122:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	rc = ptr - buf;
+ 679              		.loc 1 122 2 is_stmt 1 view .LVU181
+ 680 005c E8000000 		call	writeInt@PLT
+ 680      00
+ 681              	.LVL63:
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 682              		.loc 1 123 2 view .LVU182
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 683              		.loc 1 123 5 is_stmt 0 view .LVU183
+ 684 0061 8B0424   		movl	(%rsp), %eax
+GAS LISTING /tmp/cc7v5j32.s 			page 19
+
+
+ 685 0064 29E8     		subl	%ebp, %eax
+ 686              	.LVL64:
+ 687              	.L25:
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 688              		.loc 1 123 5 view .LVU184
+ 689              	.LBE25:
+ 690              	.LBE24:
+ 154:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 691              		.loc 1 154 1 view .LVU185
+ 692 0066 488B5424 		movq	8(%rsp), %rdx
+ 692      08
+ 693 006b 64482B14 		subq	%fs:40, %rdx
+ 693      25280000 
+ 693      00
+ 694 0074 7511     		jne	.L30
+ 695 0076 4883C410 		addq	$16, %rsp
+ 696              	.LCFI46:
+ 697              		.cfi_remember_state
+ 698              		.cfi_def_cfa_offset 32
+ 699 007a 5B       		popq	%rbx
+ 700              	.LCFI47:
+ 701              		.cfi_def_cfa_offset 24
+ 702              	.LVL65:
+ 703              		.loc 1 154 1 view .LVU186
+ 704 007b 5D       		popq	%rbp
+ 705              	.LCFI48:
+ 706              		.cfi_def_cfa_offset 16
+ 707 007c 415C     		popq	%r12
+ 708              	.LCFI49:
+ 709              		.cfi_def_cfa_offset 8
+ 710 007e C3       		ret
+ 711              	.LVL66:
+ 712 007f 90       		.p2align 4,,10
+ 713              		.p2align 3
+ 714              	.L28:
+ 715              	.LCFI50:
+ 716              		.cfi_restore_state
+ 717              	.L26:
+ 718              	.LBB27:
+ 719              	.LBB26:
+ 125:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return rc;
+ 720              		.loc 1 125 18 is_stmt 1 view .LVU187
+ 126:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 721              		.loc 1 126 2 view .LVU188
+ 113:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		goto exit;
+ 722              		.loc 1 113 6 is_stmt 0 view .LVU189
+ 723 0080 B8FEFFFF 		movl	$-2, %eax
+ 723      FF
+ 724              	.LBE26:
+ 725              	.LBE27:
+ 153:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 726              		.loc 1 153 9 view .LVU190
+ 727 0085 EBDF     		jmp	.L25
+ 728              	.LVL67:
+ 729              	.L30:
+ 730              		.loc 1 154 1 view .LVU191
+ 731 0087 E8000000 		call	__stack_chk_fail@PLT
+GAS LISTING /tmp/cc7v5j32.s 			page 20
+
+
+ 731      00
+ 732              	.LVL68:
+ 733              		.cfi_endproc
+ 734              	.LFE24:
+ 736              		.section	.text.MQTTSerialize_pubcomp,"ax",@progbits
+ 737              		.p2align 4
+ 738              		.globl	MQTTSerialize_pubcomp
+ 740              	MQTTSerialize_pubcomp:
+ 741              	.LVL69:
+ 742              	.LFB25:
+ 155:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 156:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 157:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** /**
+ 158:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * Serializes a pubrel packet into the supplied buffer.
+ 159:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buf the buffer into which the packet will be serialized
+ 160:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param buflen the length in bytes of the supplied buffer
+ 161:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @param packetid integer - the MQTT packet identifier
+ 162:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   * @return serialized length, or error if 0
+ 163:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c ****   */
+ 164:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** int MQTTSerialize_pubcomp(unsigned char* buf, int buflen, unsigned short packetid)
+ 165:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+ 743              		.loc 1 165 1 is_stmt 1 view -0
+ 744              		.cfi_startproc
+ 745              		.loc 1 165 1 is_stmt 0 view .LVU193
+ 746 0000 F30F1EFA 		endbr64
+ 747 0004 4154     		pushq	%r12
+ 748              	.LCFI51:
+ 749              		.cfi_def_cfa_offset 16
+ 750              		.cfi_offset 12, -16
+ 751 0006 55       		pushq	%rbp
+ 752              	.LCFI52:
+ 753              		.cfi_def_cfa_offset 24
+ 754              		.cfi_offset 6, -24
+ 755 0007 53       		pushq	%rbx
+ 756              	.LCFI53:
+ 757              		.cfi_def_cfa_offset 32
+ 758              		.cfi_offset 3, -32
+ 759 0008 4883EC10 		subq	$16, %rsp
+ 760              	.LCFI54:
+ 761              		.cfi_def_cfa_offset 48
+ 762              		.loc 1 165 1 view .LVU194
+ 763 000c 64488B04 		movq	%fs:40, %rax
+ 763      25280000 
+ 763      00
+ 764 0015 48894424 		movq	%rax, 8(%rsp)
+ 764      08
+ 765 001a 31C0     		xorl	%eax, %eax
+ 166:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return MQTTSerialize_ack(buf, buflen, PUBCOMP, 0, packetid);
+ 766              		.loc 1 166 2 is_stmt 1 view .LVU195
+ 767              	.LVL70:
+ 768              	.LBB30:
+ 769              	.LBI30:
+ 104:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** {
+ 770              		.loc 1 104 5 view .LVU196
+ 771              	.LBB31:
+ 106:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	int rc = 0;
+ 772              		.loc 1 106 2 view .LVU197
+GAS LISTING /tmp/cc7v5j32.s 			page 21
+
+
+ 107:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	unsigned char *ptr = buf;
+ 773              		.loc 1 107 2 view .LVU198
+ 108:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 774              		.loc 1 108 2 view .LVU199
+ 108:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 775              		.loc 1 108 17 is_stmt 0 view .LVU200
+ 776 001c 48893C24 		movq	%rdi, (%rsp)
+ 110:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	if (buflen < 4)
+ 777              		.loc 1 110 12 is_stmt 1 view .LVU201
+ 111:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	{
+ 778              		.loc 1 111 2 view .LVU202
+ 111:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	{
+ 779              		.loc 1 111 5 is_stmt 0 view .LVU203
+ 780 0020 83FE03   		cmpl	$3, %esi
+ 781 0023 7E5B     		jle	.L34
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 782              		.loc 1 119 2 view .LVU204
+ 783 0025 4889E5   		movq	%rsp, %rbp
+ 784 0028 4889FB   		movq	%rdi, %rbx
+ 785 002b BE700000 		movl	$112, %esi
+ 785      00
+ 786              	.LVL71:
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 787              		.loc 1 119 2 view .LVU205
+ 788 0030 4189D4   		movl	%edx, %r12d
+ 116:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.dup = dup;
+ 789              		.loc 1 116 2 is_stmt 1 view .LVU206
+ 117:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	header.bits.qos = (packettype == PUBREL) ? 1 : 0;
+ 790              		.loc 1 117 2 view .LVU207
+ 118:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeChar(&ptr, header.byte); /* write header */
+ 791              		.loc 1 118 2 view .LVU208
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 792              		.loc 1 119 2 view .LVU209
+ 793 0033 4889EF   		movq	%rbp, %rdi
+ 794              	.LVL72:
+ 119:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 
+ 795              		.loc 1 119 2 is_stmt 0 view .LVU210
+ 796 0036 E8000000 		call	writeChar@PLT
+ 796      00
+ 797              	.LVL73:
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 798              		.loc 1 121 2 is_stmt 1 view .LVU211
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 799              		.loc 1 121 9 is_stmt 0 view .LVU212
+ 800 003b 488B3C24 		movq	(%rsp), %rdi
+ 801 003f BE020000 		movl	$2, %esi
+ 801      00
+ 802 0044 E8000000 		call	MQTTPacket_encode@PLT
+ 802      00
+ 803              	.LVL74:
+ 122:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	rc = ptr - buf;
+ 804              		.loc 1 122 2 view .LVU213
+ 805 0049 410FB7F4 		movzwl	%r12w, %esi
+ 806 004d 4889EF   		movq	%rbp, %rdi
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 807              		.loc 1 121 9 discriminator 1 view .LVU214
+ 808 0050 4898     		cltq
+GAS LISTING /tmp/cc7v5j32.s 			page 22
+
+
+ 121:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	writeInt(&ptr, packetid);
+ 809              		.loc 1 121 6 discriminator 1 view .LVU215
+ 810 0052 48010424 		addq	%rax, (%rsp)
+ 122:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	rc = ptr - buf;
+ 811              		.loc 1 122 2 is_stmt 1 view .LVU216
+ 812 0056 E8000000 		call	writeInt@PLT
+ 812      00
+ 813              	.LVL75:
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 814              		.loc 1 123 2 view .LVU217
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 815              		.loc 1 123 5 is_stmt 0 view .LVU218
+ 816 005b 8B0424   		movl	(%rsp), %eax
+ 817 005e 29D8     		subl	%ebx, %eax
+ 818              	.LVL76:
+ 819              	.L31:
+ 123:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** exit:
+ 820              		.loc 1 123 5 view .LVU219
+ 821              	.LBE31:
+ 822              	.LBE30:
+ 167:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 823              		.loc 1 167 1 view .LVU220
+ 824 0060 488B5424 		movq	8(%rsp), %rdx
+ 824      08
+ 825 0065 64482B14 		subq	%fs:40, %rdx
+ 825      25280000 
+ 825      00
+ 826 006e 7517     		jne	.L36
+ 827 0070 4883C410 		addq	$16, %rsp
+ 828              	.LCFI55:
+ 829              		.cfi_remember_state
+ 830              		.cfi_def_cfa_offset 32
+ 831 0074 5B       		popq	%rbx
+ 832              	.LCFI56:
+ 833              		.cfi_def_cfa_offset 24
+ 834 0075 5D       		popq	%rbp
+ 835              	.LCFI57:
+ 836              		.cfi_def_cfa_offset 16
+ 837 0076 415C     		popq	%r12
+ 838              	.LCFI58:
+ 839              		.cfi_def_cfa_offset 8
+ 840 0078 C3       		ret
+ 841              	.LVL77:
+ 842 0079 0F1F8000 		.p2align 4,,10
+ 842      000000
+ 843              		.p2align 3
+ 844              	.L34:
+ 845              	.LCFI59:
+ 846              		.cfi_restore_state
+ 847              	.L32:
+ 848              	.LBB33:
+ 849              	.LBB32:
+ 125:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 	return rc;
+ 850              		.loc 1 125 18 is_stmt 1 view .LVU221
+ 126:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 851              		.loc 1 126 2 view .LVU222
+ 113:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** 		goto exit;
+GAS LISTING /tmp/cc7v5j32.s 			page 23
+
+
+ 852              		.loc 1 113 6 is_stmt 0 view .LVU223
+ 853 0080 B8FEFFFF 		movl	$-2, %eax
+ 853      FF
+ 854              	.LBE32:
+ 855              	.LBE33:
+ 166:../../bos/thirdparty/mqtt-pack/MQTTSerializePublish.c **** }
+ 856              		.loc 1 166 9 view .LVU224
+ 857 0085 EBD9     		jmp	.L31
+ 858              	.LVL78:
+ 859              	.L36:
+ 860              		.loc 1 167 1 view .LVU225
+ 861 0087 E8000000 		call	__stack_chk_fail@PLT
+ 861      00
+ 862              	.LVL79:
+ 863              		.cfi_endproc
+ 864              	.LFE25:
+ 866              		.text
+ 867              	.Letext0:
+ 868              		.file 3 "../../bos/thirdparty/mqtt-pack/MQTTPacket.h"
+ 869              		.file 4 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 870              		.file 5 "<built-in>"
+ 4803              		.section	.note.gnu.property,"a"
+ 4804              		.align 8
+ 4805 0000 04000000 		.long	1f - 0f
+ 4806 0004 10000000 		.long	4f - 1f
+ 4807 0008 05000000 		.long	5
+ 4808              	0:
+ 4809 000c 474E5500 		.string	"GNU"
+ 4810              	1:
+ 4811              		.align 8
+ 4812 0010 020000C0 		.long	0xc0000002
+ 4813 0014 04000000 		.long	3f - 2f
+ 4814              	2:
+ 4815 0018 03000000 		.long	0x3
+ 4816              	3:
+ 4817 001c 00000000 		.align 8
+ 4818              	4:
+GAS LISTING /tmp/cc7v5j32.s 			page 24
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 MQTTSerializePublish.c
+     /tmp/cc7v5j32.s:9      .text.MQTTSerialize_publishLength:0000000000000000 MQTTSerialize_publishLength
+     /tmp/cc7v5j32.s:72     .text.MQTTSerialize_publish:0000000000000000 MQTTSerialize_publish
+     /tmp/cc7v5j32.s:330    .text.MQTTSerialize_ack:0000000000000000 MQTTSerialize_ack
+     /tmp/cc7v5j32.s:472    .text.MQTTSerialize_puback:0000000000000000 MQTTSerialize_puback
+     /tmp/cc7v5j32.s:602    .text.MQTTSerialize_pubrel:0000000000000000 MQTTSerialize_pubrel
+     /tmp/cc7v5j32.s:740    .text.MQTTSerialize_pubcomp:0000000000000000 MQTTSerialize_pubcomp
+
+UNDEFINED SYMBOLS
+MQTTstrlen
+MQTTPacket_len
+writeChar
+MQTTPacket_encode
+writeMQTTString
+writeInt
+memcpy
+__stack_chk_fail

@@ -1,0 +1,514 @@
+GAS LISTING /tmp/ccYvOdGS.s 			page 1
+
+
+   1              		.file	"b_hal_eth.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_eth.c"
+   5              		.section	.text.bMcuEthInit,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuEthInit
+   9              	bMcuEthInit:
+  10              	.LVL0:
+  11              	.LFB28:
+   1:../../bos/hal/b_hal_eth.c **** /**
+   2:../../bos/hal/b_hal_eth.c ****  *!
+   3:../../bos/hal/b_hal_eth.c ****  * \file        b_hal_eth.c
+   4:../../bos/hal/b_hal_eth.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_eth.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_eth.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_eth.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_eth.c ****  * @attention
+   9:../../bos/hal/b_hal_eth.c ****  *
+  10:../../bos/hal/b_hal_eth.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_eth.c ****  *
+  12:../../bos/hal/b_hal_eth.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_eth.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_eth.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_eth.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_eth.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_eth.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_eth.c ****  *
+  19:../../bos/hal/b_hal_eth.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_eth.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_eth.c ****  *
+  22:../../bos/hal/b_hal_eth.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_eth.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_eth.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_eth.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_eth.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_eth.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_eth.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_eth.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_eth.c ****  */
+  31:../../bos/hal/b_hal_eth.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_eth.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_eth.c **** 
+  34:../../bos/hal/b_hal_eth.c **** /**
+  35:../../bos/hal/b_hal_eth.c ****  * \addtogroup B_HAL
+  36:../../bos/hal/b_hal_eth.c ****  * \{
+  37:../../bos/hal/b_hal_eth.c ****  */
+  38:../../bos/hal/b_hal_eth.c **** 
+  39:../../bos/hal/b_hal_eth.c **** /**
+  40:../../bos/hal/b_hal_eth.c ****  * \addtogroup ETH
+  41:../../bos/hal/b_hal_eth.c ****  * \{
+  42:../../bos/hal/b_hal_eth.c ****  */
+  43:../../bos/hal/b_hal_eth.c **** 
+  44:../../bos/hal/b_hal_eth.c **** /**
+  45:../../bos/hal/b_hal_eth.c ****  * \addtogroup ETH_Exported_Functions
+  46:../../bos/hal/b_hal_eth.c ****  * \{
+  47:../../bos/hal/b_hal_eth.c ****  */
+GAS LISTING /tmp/ccYvOdGS.s 			page 2
+
+
+  48:../../bos/hal/b_hal_eth.c **** #if defined(__WEAKDEF)
+  49:../../bos/hal/b_hal_eth.c **** __WEAKDEF int bMcuEthInit(bHalBufList_t *pbuf_list)
+  50:../../bos/hal/b_hal_eth.c **** {
+  12              		.loc 1 50 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 50 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  51:../../bos/hal/b_hal_eth.c ****     return -1;
+  16              		.loc 1 51 5 is_stmt 1 view .LVU2
+  52:../../bos/hal/b_hal_eth.c **** }
+  17              		.loc 1 52 1 is_stmt 0 view .LVU3
+  18 0004 B8FFFFFF 		movl	$-1, %eax
+  18      FF
+  19 0009 C3       		ret
+  20              		.cfi_endproc
+  21              	.LFE28:
+  23              		.section	.text.bMcuEthGetMacAddr,"ax",@progbits
+  24              		.p2align 4
+  25              		.weak	bMcuEthGetMacAddr
+  27              	bMcuEthGetMacAddr:
+  28              	.LVL1:
+  29              	.LFB29:
+  53:../../bos/hal/b_hal_eth.c **** __WEAKDEF int bMcuEthGetMacAddr(uint8_t *paddr, uint8_t len)
+  54:../../bos/hal/b_hal_eth.c **** {
+  30              		.loc 1 54 1 is_stmt 1 view -0
+  31              		.cfi_startproc
+  32              		.loc 1 54 1 is_stmt 0 view .LVU5
+  33 0000 F30F1EFA 		endbr64
+  55:../../bos/hal/b_hal_eth.c ****     return -1;
+  34              		.loc 1 55 5 is_stmt 1 view .LVU6
+  56:../../bos/hal/b_hal_eth.c **** }
+  35              		.loc 1 56 1 is_stmt 0 view .LVU7
+  36 0004 B8FFFFFF 		movl	$-1, %eax
+  36      FF
+  37 0009 C3       		ret
+  38              		.cfi_endproc
+  39              	.LFE29:
+  41              		.section	.text.bMcuEthSetMacAddr,"ax",@progbits
+  42              		.p2align 4
+  43              		.weak	bMcuEthSetMacAddr
+  45              	bMcuEthSetMacAddr:
+  46              	.LFB43:
+  47              		.cfi_startproc
+  57:../../bos/hal/b_hal_eth.c **** 
+  58:../../bos/hal/b_hal_eth.c **** __WEAKDEF int bMcuEthSetMacAddr(uint8_t *paddr, uint8_t len)
+  48              		.loc 1 58 15 is_stmt 1 view -0
+  49 0000 F30F1EFA 		endbr64
+  50 0004 B8FFFFFF 		movl	$-1, %eax
+  50      FF
+  51 0009 C3       		ret
+  52              		.cfi_endproc
+  53              	.LFE43:
+  55              		.section	.text.bMcuEthIsLinked,"ax",@progbits
+  56              		.p2align 4
+  57              		.weak	bMcuEthIsLinked
+  59              	bMcuEthIsLinked:
+  60              	.LFB31:
+GAS LISTING /tmp/ccYvOdGS.s 			page 3
+
+
+  59:../../bos/hal/b_hal_eth.c **** {
+  60:../../bos/hal/b_hal_eth.c ****     return -1;
+  61:../../bos/hal/b_hal_eth.c **** }
+  62:../../bos/hal/b_hal_eth.c **** 
+  63:../../bos/hal/b_hal_eth.c **** __WEAKDEF uint8_t bMcuEthIsLinked()
+  64:../../bos/hal/b_hal_eth.c **** {
+  61              		.loc 1 64 1 view -0
+  62              		.cfi_startproc
+  63 0000 F30F1EFA 		endbr64
+  65:../../bos/hal/b_hal_eth.c ****     return 0;
+  64              		.loc 1 65 5 view .LVU10
+  66:../../bos/hal/b_hal_eth.c **** }
+  65              		.loc 1 66 1 is_stmt 0 view .LVU11
+  66 0004 31C0     		xorl	%eax, %eax
+  67 0006 C3       		ret
+  68              		.cfi_endproc
+  69              	.LFE31:
+  71              		.section	.text.bMcuEthLinkUpdate,"ax",@progbits
+  72              		.p2align 4
+  73              		.weak	bMcuEthLinkUpdate
+  75              	bMcuEthLinkUpdate:
+  76              	.LVL2:
+  77              	.LFB32:
+  67:../../bos/hal/b_hal_eth.c **** 
+  68:../../bos/hal/b_hal_eth.c **** __WEAKDEF int bMcuEthLinkUpdate(uint8_t link_state)
+  69:../../bos/hal/b_hal_eth.c **** {
+  78              		.loc 1 69 1 is_stmt 1 view -0
+  79              		.cfi_startproc
+  80              		.loc 1 69 1 is_stmt 0 view .LVU13
+  81 0000 F30F1EFA 		endbr64
+  70:../../bos/hal/b_hal_eth.c ****     return 0;
+  82              		.loc 1 70 5 is_stmt 1 view .LVU14
+  71:../../bos/hal/b_hal_eth.c **** }
+  83              		.loc 1 71 1 is_stmt 0 view .LVU15
+  84 0004 31C0     		xorl	%eax, %eax
+  85 0006 C3       		ret
+  86              		.cfi_endproc
+  87              	.LFE32:
+  89              		.section	.text.bMcuEthReceive,"ax",@progbits
+  90              		.p2align 4
+  91              		.weak	bMcuEthReceive
+  93              	bMcuEthReceive:
+  94              	.LVL3:
+  95              	.LFB33:
+  72:../../bos/hal/b_hal_eth.c **** 
+  73:../../bos/hal/b_hal_eth.c **** __WEAKDEF int bMcuEthReceive(void **pbuf, uint32_t *plen)
+  74:../../bos/hal/b_hal_eth.c **** {
+  96              		.loc 1 74 1 is_stmt 1 view -0
+  97              		.cfi_startproc
+  98              		.loc 1 74 1 is_stmt 0 view .LVU17
+  99 0000 F30F1EFA 		endbr64
+  75:../../bos/hal/b_hal_eth.c ****     return -1;
+ 100              		.loc 1 75 5 is_stmt 1 view .LVU18
+  76:../../bos/hal/b_hal_eth.c **** }
+ 101              		.loc 1 76 1 is_stmt 0 view .LVU19
+ 102 0004 B8FFFFFF 		movl	$-1, %eax
+ 102      FF
+GAS LISTING /tmp/ccYvOdGS.s 			page 4
+
+
+ 103 0009 C3       		ret
+ 104              		.cfi_endproc
+ 105              	.LFE33:
+ 107              		.section	.text.bMcuEthTransmit,"ax",@progbits
+ 108              		.p2align 4
+ 109              		.weak	bMcuEthTransmit
+ 111              	bMcuEthTransmit:
+ 112              	.LVL4:
+ 113              	.LFB34:
+  77:../../bos/hal/b_hal_eth.c **** 
+  78:../../bos/hal/b_hal_eth.c **** __WEAKDEF int bMcuEthTransmit(void *pbuf, uint32_t len)
+  79:../../bos/hal/b_hal_eth.c **** {
+ 114              		.loc 1 79 1 is_stmt 1 view -0
+ 115              		.cfi_startproc
+ 116              		.loc 1 79 1 is_stmt 0 view .LVU21
+ 117 0000 F30F1EFA 		endbr64
+  80:../../bos/hal/b_hal_eth.c ****     return -1;
+ 118              		.loc 1 80 5 is_stmt 1 view .LVU22
+  81:../../bos/hal/b_hal_eth.c **** }
+ 119              		.loc 1 81 1 is_stmt 0 view .LVU23
+ 120 0004 B8FFFFFF 		movl	$-1, %eax
+ 120      FF
+ 121 0009 C3       		ret
+ 122              		.cfi_endproc
+ 123              	.LFE34:
+ 125              		.section	.text.bHalEthInit,"ax",@progbits
+ 126              		.p2align 4
+ 127              		.globl	bHalEthInit
+ 129              	bHalEthInit:
+ 130              	.LVL5:
+ 131              	.LFB35:
+  82:../../bos/hal/b_hal_eth.c **** #endif
+  83:../../bos/hal/b_hal_eth.c **** //---------------------------------------------------------------------------------------
+  84:../../bos/hal/b_hal_eth.c **** //---------------------------------------------------------------------------------------
+  85:../../bos/hal/b_hal_eth.c **** 
+  86:../../bos/hal/b_hal_eth.c **** int bHalEthInit(bHalBufList_t *pbuf_list)
+  87:../../bos/hal/b_hal_eth.c **** {
+ 132              		.loc 1 87 1 is_stmt 1 view -0
+ 133              		.cfi_startproc
+ 134              		.loc 1 87 1 is_stmt 0 view .LVU25
+ 135 0000 F30F1EFA 		endbr64
+  88:../../bos/hal/b_hal_eth.c ****     if (pbuf_list == NULL)
+ 136              		.loc 1 88 5 is_stmt 1 view .LVU26
+ 137              		.loc 1 88 8 is_stmt 0 view .LVU27
+ 138 0004 4885FF   		testq	%rdi, %rdi
+ 139 0007 7405     		je	.L10
+  89:../../bos/hal/b_hal_eth.c ****     {
+  90:../../bos/hal/b_hal_eth.c ****         return -1;
+  91:../../bos/hal/b_hal_eth.c ****     }
+  92:../../bos/hal/b_hal_eth.c ****     return bMcuEthInit(pbuf_list);
+ 140              		.loc 1 92 5 is_stmt 1 view .LVU28
+ 141              		.loc 1 92 12 is_stmt 0 view .LVU29
+ 142 0009 E9000000 		jmp	bMcuEthInit
+ 142      00
+ 143              	.LVL6:
+ 144              	.L10:
+  93:../../bos/hal/b_hal_eth.c **** }
+GAS LISTING /tmp/ccYvOdGS.s 			page 5
+
+
+ 145              		.loc 1 93 1 view .LVU30
+ 146 000e B8FFFFFF 		movl	$-1, %eax
+ 146      FF
+ 147 0013 C3       		ret
+ 148              		.cfi_endproc
+ 149              	.LFE35:
+ 151              		.section	.text.bHalEthGetMacAddr,"ax",@progbits
+ 152              		.p2align 4
+ 153              		.globl	bHalEthGetMacAddr
+ 155              	bHalEthGetMacAddr:
+ 156              	.LVL7:
+ 157              	.LFB36:
+  94:../../bos/hal/b_hal_eth.c **** 
+  95:../../bos/hal/b_hal_eth.c **** int bHalEthGetMacAddr(uint8_t *paddr, uint8_t len)
+  96:../../bos/hal/b_hal_eth.c **** {
+ 158              		.loc 1 96 1 is_stmt 1 view -0
+ 159              		.cfi_startproc
+ 160              		.loc 1 96 1 is_stmt 0 view .LVU32
+ 161 0000 F30F1EFA 		endbr64
+  97:../../bos/hal/b_hal_eth.c ****     if (paddr == NULL || len == 0)
+ 162              		.loc 1 97 5 is_stmt 1 view .LVU33
+ 163              		.loc 1 97 8 is_stmt 0 view .LVU34
+ 164 0004 4885FF   		testq	%rdi, %rdi
+ 165 0007 7417     		je	.L12
+ 166 0009 4084F6   		testb	%sil, %sil
+ 167 000c 7412     		je	.L12
+  98:../../bos/hal/b_hal_eth.c ****     {
+  99:../../bos/hal/b_hal_eth.c ****         return -1;
+ 100:../../bos/hal/b_hal_eth.c ****     }
+ 101:../../bos/hal/b_hal_eth.c ****     return bMcuEthGetMacAddr(paddr, len);
+ 168              		.loc 1 101 5 is_stmt 1 view .LVU35
+ 169              		.loc 1 101 12 is_stmt 0 view .LVU36
+ 170 000e 400FB6F6 		movzbl	%sil, %esi
+ 171              		.loc 1 101 12 view .LVU37
+ 172 0012 E9000000 		jmp	bMcuEthGetMacAddr
+ 172      00
+ 173              	.LVL8:
+ 174 0017 660F1F84 		.p2align 4,,10
+ 174      00000000 
+ 174      00
+ 175              		.p2align 3
+ 176              	.L12:
+ 102:../../bos/hal/b_hal_eth.c **** }
+ 177              		.loc 1 102 1 view .LVU38
+ 178 0020 B8FFFFFF 		movl	$-1, %eax
+ 178      FF
+ 179 0025 C3       		ret
+ 180              		.cfi_endproc
+ 181              	.LFE36:
+ 183              		.section	.text.bHalEthSetMacAddr,"ax",@progbits
+ 184              		.p2align 4
+ 185              		.globl	bHalEthSetMacAddr
+ 187              	bHalEthSetMacAddr:
+ 188              	.LVL9:
+ 189              	.LFB37:
+ 103:../../bos/hal/b_hal_eth.c **** 
+ 104:../../bos/hal/b_hal_eth.c **** int bHalEthSetMacAddr(uint8_t *paddr, uint8_t len)
+GAS LISTING /tmp/ccYvOdGS.s 			page 6
+
+
+ 105:../../bos/hal/b_hal_eth.c **** {
+ 190              		.loc 1 105 1 is_stmt 1 view -0
+ 191              		.cfi_startproc
+ 192              		.loc 1 105 1 is_stmt 0 view .LVU40
+ 193 0000 F30F1EFA 		endbr64
+ 106:../../bos/hal/b_hal_eth.c ****     if (paddr == NULL || len == 0)
+ 194              		.loc 1 106 5 is_stmt 1 view .LVU41
+ 195              		.loc 1 106 8 is_stmt 0 view .LVU42
+ 196 0004 4885FF   		testq	%rdi, %rdi
+ 197 0007 7417     		je	.L14
+ 198 0009 4084F6   		testb	%sil, %sil
+ 199 000c 7412     		je	.L14
+ 107:../../bos/hal/b_hal_eth.c ****     {
+ 108:../../bos/hal/b_hal_eth.c ****         return -1;
+ 109:../../bos/hal/b_hal_eth.c ****     }
+ 110:../../bos/hal/b_hal_eth.c ****     return bMcuEthSetMacAddr(paddr, len);
+ 200              		.loc 1 110 5 is_stmt 1 view .LVU43
+ 201              		.loc 1 110 12 is_stmt 0 view .LVU44
+ 202 000e 400FB6F6 		movzbl	%sil, %esi
+ 203              		.loc 1 110 12 view .LVU45
+ 204 0012 E9000000 		jmp	bMcuEthSetMacAddr
+ 204      00
+ 205              	.LVL10:
+ 206 0017 660F1F84 		.p2align 4,,10
+ 206      00000000 
+ 206      00
+ 207              		.p2align 3
+ 208              	.L14:
+ 111:../../bos/hal/b_hal_eth.c **** }
+ 209              		.loc 1 111 1 view .LVU46
+ 210 0020 B8FFFFFF 		movl	$-1, %eax
+ 210      FF
+ 211 0025 C3       		ret
+ 212              		.cfi_endproc
+ 213              	.LFE37:
+ 215              		.section	.text.bHalEthIsLinked,"ax",@progbits
+ 216              		.p2align 4
+ 217              		.globl	bHalEthIsLinked
+ 219              	bHalEthIsLinked:
+ 220              	.LFB38:
+ 112:../../bos/hal/b_hal_eth.c **** 
+ 113:../../bos/hal/b_hal_eth.c **** uint8_t bHalEthIsLinked()
+ 114:../../bos/hal/b_hal_eth.c **** {
+ 221              		.loc 1 114 1 is_stmt 1 view -0
+ 222              		.cfi_startproc
+ 223 0000 F30F1EFA 		endbr64
+ 115:../../bos/hal/b_hal_eth.c ****     return bMcuEthIsLinked();
+ 224              		.loc 1 115 5 view .LVU48
+ 225              		.loc 1 115 12 is_stmt 0 view .LVU49
+ 226 0004 E9000000 		jmp	bMcuEthIsLinked
+ 226      00
+ 227              	.LVL11:
+ 228              		.cfi_endproc
+ 229              	.LFE38:
+ 231              		.section	.text.bHalEthLinkUpdate,"ax",@progbits
+ 232              		.p2align 4
+ 233              		.globl	bHalEthLinkUpdate
+GAS LISTING /tmp/ccYvOdGS.s 			page 7
+
+
+ 235              	bHalEthLinkUpdate:
+ 236              	.LVL12:
+ 237              	.LFB39:
+ 116:../../bos/hal/b_hal_eth.c **** }
+ 117:../../bos/hal/b_hal_eth.c **** 
+ 118:../../bos/hal/b_hal_eth.c **** int bHalEthLinkUpdate(uint8_t link_state)
+ 119:../../bos/hal/b_hal_eth.c **** {
+ 238              		.loc 1 119 1 is_stmt 1 view -0
+ 239              		.cfi_startproc
+ 240              		.loc 1 119 1 is_stmt 0 view .LVU51
+ 241 0000 F30F1EFA 		endbr64
+ 120:../../bos/hal/b_hal_eth.c ****     return bMcuEthLinkUpdate(link_state);
+ 242              		.loc 1 120 5 is_stmt 1 view .LVU52
+ 243              		.loc 1 120 12 is_stmt 0 view .LVU53
+ 244 0004 400FB6FF 		movzbl	%dil, %edi
+ 245              		.loc 1 120 12 view .LVU54
+ 246 0008 E9000000 		jmp	bMcuEthLinkUpdate
+ 246      00
+ 247              	.LVL13:
+ 248              		.loc 1 120 12 view .LVU55
+ 249              		.cfi_endproc
+ 250              	.LFE39:
+ 252              		.section	.text.bHalEthReceive,"ax",@progbits
+ 253              		.p2align 4
+ 254              		.globl	bHalEthReceive
+ 256              	bHalEthReceive:
+ 257              	.LVL14:
+ 258              	.LFB40:
+ 121:../../bos/hal/b_hal_eth.c **** }
+ 122:../../bos/hal/b_hal_eth.c **** 
+ 123:../../bos/hal/b_hal_eth.c **** int bHalEthReceive(void **pbuf, uint32_t *plen)
+ 124:../../bos/hal/b_hal_eth.c **** {
+ 259              		.loc 1 124 1 is_stmt 1 view -0
+ 260              		.cfi_startproc
+ 261              		.loc 1 124 1 is_stmt 0 view .LVU57
+ 262 0000 F30F1EFA 		endbr64
+ 125:../../bos/hal/b_hal_eth.c ****     if (pbuf == NULL || plen == 0)
+ 263              		.loc 1 125 5 is_stmt 1 view .LVU58
+ 264              		.loc 1 125 8 is_stmt 0 view .LVU59
+ 265 0004 4885FF   		testq	%rdi, %rdi
+ 266 0007 740F     		je	.L18
+ 267 0009 4885F6   		testq	%rsi, %rsi
+ 268 000c 740A     		je	.L18
+ 126:../../bos/hal/b_hal_eth.c ****     {
+ 127:../../bos/hal/b_hal_eth.c ****         return -1;
+ 128:../../bos/hal/b_hal_eth.c ****     }
+ 129:../../bos/hal/b_hal_eth.c ****     return bMcuEthReceive(pbuf, plen);
+ 269              		.loc 1 129 5 is_stmt 1 view .LVU60
+ 270              		.loc 1 129 12 is_stmt 0 view .LVU61
+ 271 000e E9000000 		jmp	bMcuEthReceive
+ 271      00
+ 272              	.LVL15:
+ 273              		.p2align 4,,10
+ 274 0013 0F1F4400 		.p2align 3
+ 274      00
+ 275              	.L18:
+ 130:../../bos/hal/b_hal_eth.c **** }
+GAS LISTING /tmp/ccYvOdGS.s 			page 8
+
+
+ 276              		.loc 1 130 1 view .LVU62
+ 277 0018 B8FFFFFF 		movl	$-1, %eax
+ 277      FF
+ 278 001d C3       		ret
+ 279              		.cfi_endproc
+ 280              	.LFE40:
+ 282              		.section	.text.bHalEthTransmit,"ax",@progbits
+ 283              		.p2align 4
+ 284              		.globl	bHalEthTransmit
+ 286              	bHalEthTransmit:
+ 287              	.LVL16:
+ 288              	.LFB41:
+ 131:../../bos/hal/b_hal_eth.c **** 
+ 132:../../bos/hal/b_hal_eth.c **** int bHalEthTransmit(void *pbuf, uint32_t len)
+ 133:../../bos/hal/b_hal_eth.c **** {
+ 289              		.loc 1 133 1 is_stmt 1 view -0
+ 290              		.cfi_startproc
+ 291              		.loc 1 133 1 is_stmt 0 view .LVU64
+ 292 0000 F30F1EFA 		endbr64
+ 134:../../bos/hal/b_hal_eth.c ****     if (pbuf == NULL || len == 0)
+ 293              		.loc 1 134 5 is_stmt 1 view .LVU65
+ 294              		.loc 1 134 8 is_stmt 0 view .LVU66
+ 295 0004 4885FF   		testq	%rdi, %rdi
+ 296 0007 740F     		je	.L20
+ 297 0009 85F6     		testl	%esi, %esi
+ 298 000b 740B     		je	.L20
+ 135:../../bos/hal/b_hal_eth.c ****     {
+ 136:../../bos/hal/b_hal_eth.c ****         return -1;
+ 137:../../bos/hal/b_hal_eth.c ****     }
+ 138:../../bos/hal/b_hal_eth.c ****     return bMcuEthTransmit(pbuf, len);
+ 299              		.loc 1 138 5 is_stmt 1 view .LVU67
+ 300              		.loc 1 138 12 is_stmt 0 view .LVU68
+ 301 000d E9000000 		jmp	bMcuEthTransmit
+ 301      00
+ 302              	.LVL17:
+ 303              		.p2align 4,,10
+ 304 0012 660F1F44 		.p2align 3
+ 304      0000
+ 305              	.L20:
+ 139:../../bos/hal/b_hal_eth.c **** }
+ 306              		.loc 1 139 1 view .LVU69
+ 307 0018 B8FFFFFF 		movl	$-1, %eax
+ 307      FF
+ 308 001d C3       		ret
+ 309              		.cfi_endproc
+ 310              	.LFE41:
+ 312              		.text
+ 313              	.Letext0:
+ 314              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 315              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 316              		.file 4 "../../bos/hal/inc/b_hal_eth.h"
+ 1802              		.section	.note.gnu.property,"a"
+ 1803              		.align 8
+ 1804 0000 04000000 		.long	1f - 0f
+ 1805 0004 10000000 		.long	4f - 1f
+ 1806 0008 05000000 		.long	5
+ 1807              	0:
+GAS LISTING /tmp/ccYvOdGS.s 			page 9
+
+
+ 1808 000c 474E5500 		.string	"GNU"
+ 1809              	1:
+ 1810              		.align 8
+ 1811 0010 020000C0 		.long	0xc0000002
+ 1812 0014 04000000 		.long	3f - 2f
+ 1813              	2:
+ 1814 0018 03000000 		.long	0x3
+ 1815              	3:
+ 1816 001c 00000000 		.align 8
+ 1817              	4:
+GAS LISTING /tmp/ccYvOdGS.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_eth.c
+     /tmp/ccYvOdGS.s:9      .text.bMcuEthInit:0000000000000000 bMcuEthInit
+     /tmp/ccYvOdGS.s:27     .text.bMcuEthGetMacAddr:0000000000000000 bMcuEthGetMacAddr
+     /tmp/ccYvOdGS.s:45     .text.bMcuEthSetMacAddr:0000000000000000 bMcuEthSetMacAddr
+     /tmp/ccYvOdGS.s:59     .text.bMcuEthIsLinked:0000000000000000 bMcuEthIsLinked
+     /tmp/ccYvOdGS.s:75     .text.bMcuEthLinkUpdate:0000000000000000 bMcuEthLinkUpdate
+     /tmp/ccYvOdGS.s:93     .text.bMcuEthReceive:0000000000000000 bMcuEthReceive
+     /tmp/ccYvOdGS.s:111    .text.bMcuEthTransmit:0000000000000000 bMcuEthTransmit
+     /tmp/ccYvOdGS.s:129    .text.bHalEthInit:0000000000000000 bHalEthInit
+     /tmp/ccYvOdGS.s:155    .text.bHalEthGetMacAddr:0000000000000000 bHalEthGetMacAddr
+     /tmp/ccYvOdGS.s:187    .text.bHalEthSetMacAddr:0000000000000000 bHalEthSetMacAddr
+     /tmp/ccYvOdGS.s:219    .text.bHalEthIsLinked:0000000000000000 bHalEthIsLinked
+     /tmp/ccYvOdGS.s:235    .text.bHalEthLinkUpdate:0000000000000000 bHalEthLinkUpdate
+     /tmp/ccYvOdGS.s:256    .text.bHalEthReceive:0000000000000000 bHalEthReceive
+     /tmp/ccYvOdGS.s:286    .text.bHalEthTransmit:0000000000000000 bHalEthTransmit
+
+NO UNDEFINED SYMBOLS

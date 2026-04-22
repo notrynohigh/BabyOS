@@ -1,0 +1,1232 @@
+GAS LISTING /tmp/ccP5yVFF.s 			page 1
+
+
+   1              		.file	"b_hal_spi.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_spi.c"
+   5              		.section	.text.bHalSpiTransfer.part.0,"ax",@progbits
+   6              		.p2align 4
+   8              	bHalSpiTransfer.part.0:
+   9              	.LVL0:
+  10              	.LFB37:
+   1:../../bos/hal/b_hal_spi.c **** /**
+   2:../../bos/hal/b_hal_spi.c ****  *!
+   3:../../bos/hal/b_hal_spi.c ****  * \file        b_hal_spi.c
+   4:../../bos/hal/b_hal_spi.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_spi.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_spi.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_spi.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_spi.c ****  * @attention
+   9:../../bos/hal/b_hal_spi.c ****  *
+  10:../../bos/hal/b_hal_spi.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_spi.c ****  *
+  12:../../bos/hal/b_hal_spi.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_spi.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_spi.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_spi.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_spi.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_spi.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_spi.c ****  *
+  19:../../bos/hal/b_hal_spi.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_spi.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_spi.c ****  *
+  22:../../bos/hal/b_hal_spi.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_spi.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_spi.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_spi.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_spi.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_spi.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_spi.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_spi.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_spi.c ****  */
+  31:../../bos/hal/b_hal_spi.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_spi.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_spi.c **** /**
+  34:../../bos/hal/b_hal_spi.c ****  * \addtogroup B_HAL
+  35:../../bos/hal/b_hal_spi.c ****  * \{
+  36:../../bos/hal/b_hal_spi.c ****  */
+  37:../../bos/hal/b_hal_spi.c **** 
+  38:../../bos/hal/b_hal_spi.c **** /**
+  39:../../bos/hal/b_hal_spi.c ****  * \addtogroup SPI
+  40:../../bos/hal/b_hal_spi.c ****  * \{
+  41:../../bos/hal/b_hal_spi.c ****  */
+  42:../../bos/hal/b_hal_spi.c **** 
+  43:../../bos/hal/b_hal_spi.c **** /**
+  44:../../bos/hal/b_hal_spi.c ****  * \defgroup SPI_Private_TypesDefinitions
+  45:../../bos/hal/b_hal_spi.c ****  */
+  46:../../bos/hal/b_hal_spi.c **** typedef struct
+  47:../../bos/hal/b_hal_spi.c **** {
+  48:../../bos/hal/b_hal_spi.c ****     bHalGPIOInstance_t miso;
+GAS LISTING /tmp/ccP5yVFF.s 			page 2
+
+
+  49:../../bos/hal/b_hal_spi.c ****     bHalGPIOInstance_t mosi;
+  50:../../bos/hal/b_hal_spi.c ****     bHalGPIOInstance_t clk;
+  51:../../bos/hal/b_hal_spi.c ****     uint8_t            CPOL;
+  52:../../bos/hal/b_hal_spi.c ****     uint8_t            CPHA;
+  53:../../bos/hal/b_hal_spi.c **** } bHalSPIIO_t;
+  54:../../bos/hal/b_hal_spi.c **** 
+  55:../../bos/hal/b_hal_spi.c **** /**
+  56:../../bos/hal/b_hal_spi.c ****  * \}
+  57:../../bos/hal/b_hal_spi.c ****  */
+  58:../../bos/hal/b_hal_spi.c **** 
+  59:../../bos/hal/b_hal_spi.c **** /**
+  60:../../bos/hal/b_hal_spi.c ****  * \addtogroup SPI_Private_Functions
+  61:../../bos/hal/b_hal_spi.c ****  * \{
+  62:../../bos/hal/b_hal_spi.c ****  */
+  63:../../bos/hal/b_hal_spi.c **** 
+  64:../../bos/hal/b_hal_spi.c **** static uint8_t _bHalSPIIOWriteRead(bHalSPIIO_t spi, uint8_t dat)
+  65:../../bos/hal/b_hal_spi.c **** {
+  66:../../bos/hal/b_hal_spi.c ****     uint8_t polarity = (spi.CPOL == 0) ? 0 : 1;
+  67:../../bos/hal/b_hal_spi.c ****     uint8_t init_p   = polarity;
+  68:../../bos/hal/b_hal_spi.c ****     uint8_t i        = 0;
+  69:../../bos/hal/b_hal_spi.c ****     bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+  70:../../bos/hal/b_hal_spi.c ****     if (spi.CPHA)
+  71:../../bos/hal/b_hal_spi.c ****     {
+  72:../../bos/hal/b_hal_spi.c ****         polarity = polarity ^ 0x01;
+  73:../../bos/hal/b_hal_spi.c ****         bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+  74:../../bos/hal/b_hal_spi.c ****     }
+  75:../../bos/hal/b_hal_spi.c ****     for (i = 0; i < 8; i++)
+  76:../../bos/hal/b_hal_spi.c ****     {
+  77:../../bos/hal/b_hal_spi.c ****         bHalGpioWritePin(spi.mosi.port, spi.mosi.pin, dat & 0x80);
+  78:../../bos/hal/b_hal_spi.c ****         dat <<= 1;
+  79:../../bos/hal/b_hal_spi.c ****         polarity = polarity ^ 0x01;
+  80:../../bos/hal/b_hal_spi.c ****         bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+  81:../../bos/hal/b_hal_spi.c **** 
+  82:../../bos/hal/b_hal_spi.c ****         if (bHalGpioReadPin(spi.miso.port, spi.miso.pin))
+  83:../../bos/hal/b_hal_spi.c ****         {
+  84:../../bos/hal/b_hal_spi.c ****             dat++;
+  85:../../bos/hal/b_hal_spi.c ****         }
+  86:../../bos/hal/b_hal_spi.c ****         if (i == 7 && spi.CPHA == 1)
+  87:../../bos/hal/b_hal_spi.c ****         {
+  88:../../bos/hal/b_hal_spi.c ****         }
+  89:../../bos/hal/b_hal_spi.c ****         else
+  90:../../bos/hal/b_hal_spi.c ****         {
+  91:../../bos/hal/b_hal_spi.c ****             polarity = polarity ^ 0x01;
+  92:../../bos/hal/b_hal_spi.c ****             bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+  93:../../bos/hal/b_hal_spi.c ****         }
+  94:../../bos/hal/b_hal_spi.c ****     }
+  95:../../bos/hal/b_hal_spi.c ****     if (init_p != polarity)
+  96:../../bos/hal/b_hal_spi.c ****     {
+  97:../../bos/hal/b_hal_spi.c ****         polarity = polarity ^ 0x01;
+  98:../../bos/hal/b_hal_spi.c ****         bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+  99:../../bos/hal/b_hal_spi.c ****     }
+ 100:../../bos/hal/b_hal_spi.c ****     return dat;
+ 101:../../bos/hal/b_hal_spi.c **** }
+ 102:../../bos/hal/b_hal_spi.c **** 
+ 103:../../bos/hal/b_hal_spi.c **** /**
+ 104:../../bos/hal/b_hal_spi.c ****  * \}
+ 105:../../bos/hal/b_hal_spi.c ****  */
+GAS LISTING /tmp/ccP5yVFF.s 			page 3
+
+
+ 106:../../bos/hal/b_hal_spi.c **** 
+ 107:../../bos/hal/b_hal_spi.c **** /**
+ 108:../../bos/hal/b_hal_spi.c ****  * \addtogroup SPI_Exported_Functions
+ 109:../../bos/hal/b_hal_spi.c ****  * \{
+ 110:../../bos/hal/b_hal_spi.c ****  */
+ 111:../../bos/hal/b_hal_spi.c **** #if defined(__WEAKDEF)
+ 112:../../bos/hal/b_hal_spi.c **** __WEAKDEF int bMcuSpiSetSpeed(const bHalSPIIf_t *spi_if, bHalSPISpeed_t speed)
+ 113:../../bos/hal/b_hal_spi.c **** {
+ 114:../../bos/hal/b_hal_spi.c ****     return -1;
+ 115:../../bos/hal/b_hal_spi.c **** }
+ 116:../../bos/hal/b_hal_spi.c **** 
+ 117:../../bos/hal/b_hal_spi.c **** __WEAKDEF uint8_t bMcuSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
+ 118:../../bos/hal/b_hal_spi.c **** {
+ 119:../../bos/hal/b_hal_spi.c ****     return 0;
+ 120:../../bos/hal/b_hal_spi.c **** }
+ 121:../../bos/hal/b_hal_spi.c **** 
+ 122:../../bos/hal/b_hal_spi.c **** __WEAKDEF int bMcuSpiSend(const bHalSPIIf_t *spi_if, const uint8_t *pbuf, uint16_t len)
+ 123:../../bos/hal/b_hal_spi.c **** {
+ 124:../../bos/hal/b_hal_spi.c ****     return -1;
+ 125:../../bos/hal/b_hal_spi.c **** }
+ 126:../../bos/hal/b_hal_spi.c **** 
+ 127:../../bos/hal/b_hal_spi.c **** __WEAKDEF int bMcuSpiReceive(const bHalSPIIf_t *spi_if, uint8_t *pbuf, uint16_t len)
+ 128:../../bos/hal/b_hal_spi.c **** {
+ 129:../../bos/hal/b_hal_spi.c ****     return -1;
+ 130:../../bos/hal/b_hal_spi.c **** }
+ 131:../../bos/hal/b_hal_spi.c **** #endif
+ 132:../../bos/hal/b_hal_spi.c **** //---------------------------------------------------------------------------------------
+ 133:../../bos/hal/b_hal_spi.c **** //---------------------------------------------------------------------------------------
+ 134:../../bos/hal/b_hal_spi.c **** 
+ 135:../../bos/hal/b_hal_spi.c **** int bHalSpiSetSpeed(const bHalSPIIf_t *spi_if, bHalSPISpeed_t speed)
+ 136:../../bos/hal/b_hal_spi.c **** {
+ 137:../../bos/hal/b_hal_spi.c ****     return bMcuSpiSetSpeed(spi_if, speed);
+ 138:../../bos/hal/b_hal_spi.c **** }
+ 139:../../bos/hal/b_hal_spi.c **** 
+ 140:../../bos/hal/b_hal_spi.c **** uint8_t bHalSpiTransfer(const bHalSPIIf_t *spi_if, uint8_t dat)
+  11              		.loc 1 140 9 view -0
+  12              		.cfi_startproc
+ 141:../../bos/hal/b_hal_spi.c **** {
+ 142:../../bos/hal/b_hal_spi.c ****     uint8_t     tmp;
+ 143:../../bos/hal/b_hal_spi.c ****     bHalSPIIO_t simulating_spi;
+ 144:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if))
+ 145:../../bos/hal/b_hal_spi.c ****     {
+ 146:../../bos/hal/b_hal_spi.c ****         return 0;
+ 147:../../bos/hal/b_hal_spi.c ****     }
+ 148:../../bos/hal/b_hal_spi.c ****     if (spi_if->is_simulation == 1)
+ 149:../../bos/hal/b_hal_spi.c ****     {
+ 150:../../bos/hal/b_hal_spi.c ****         simulating_spi.clk  = spi_if->_if.simulating_spi.clk;
+  13              		.loc 1 150 9 view .LVU1
+ 140:../../bos/hal/b_hal_spi.c **** {
+  14              		.loc 1 140 9 is_stmt 0 view .LVU2
+  15 0000 4157     		pushq	%r15
+  16              	.LCFI0:
+  17              		.cfi_def_cfa_offset 16
+  18              		.cfi_offset 15, -16
+  19 0002 4156     		pushq	%r14
+  20              	.LCFI1:
+  21              		.cfi_def_cfa_offset 24
+GAS LISTING /tmp/ccP5yVFF.s 			page 4
+
+
+  22              		.cfi_offset 14, -24
+  23 0004 4155     		pushq	%r13
+  24              	.LCFI2:
+  25              		.cfi_def_cfa_offset 32
+  26              		.cfi_offset 13, -32
+  27 0006 4154     		pushq	%r12
+  28              	.LCFI3:
+  29              		.cfi_def_cfa_offset 40
+  30              		.cfi_offset 12, -40
+  31 0008 55       		pushq	%rbp
+  32              	.LCFI4:
+  33              		.cfi_def_cfa_offset 48
+  34              		.cfi_offset 6, -48
+  35 0009 53       		pushq	%rbx
+  36              	.LCFI5:
+  37              		.cfi_def_cfa_offset 56
+  38              		.cfi_offset 3, -56
+  39 000a 4883EC28 		subq	$40, %rsp
+  40              	.LCFI6:
+  41              		.cfi_def_cfa_offset 96
+ 151:../../bos/hal/b_hal_spi.c ****         simulating_spi.mosi = spi_if->_if.simulating_spi.mosi;
+  42              		.loc 1 151 29 view .LVU3
+  43 000e 8B470C   		movl	12(%rdi), %eax
+ 152:../../bos/hal/b_hal_spi.c ****         simulating_spi.miso = spi_if->_if.simulating_spi.miso;
+ 153:../../bos/hal/b_hal_spi.c ****         simulating_spi.CPHA = spi_if->_if.simulating_spi.CPHA;
+ 154:../../bos/hal/b_hal_spi.c ****         simulating_spi.CPOL = spi_if->_if.simulating_spi.CPOL;
+  44              		.loc 1 154 57 view .LVU4
+  45 0011 0FB66F1C 		movzbl	28(%rdi), %ebp
+ 150:../../bos/hal/b_hal_spi.c ****         simulating_spi.mosi = spi_if->_if.simulating_spi.mosi;
+  46              		.loc 1 150 29 view .LVU5
+  47 0015 448B6F18 		movl	24(%rdi), %r13d
+  48 0019 448B6714 		movl	20(%rdi), %r12d
+  49              	.LVL1:
+ 151:../../bos/hal/b_hal_spi.c ****         simulating_spi.mosi = spi_if->_if.simulating_spi.mosi;
+  50              		.loc 1 151 9 is_stmt 1 view .LVU6
+ 140:../../bos/hal/b_hal_spi.c **** {
+  51              		.loc 1 140 9 is_stmt 0 view .LVU7
+  52 001d 89742418 		movl	%esi, 24(%rsp)
+  53              	.LBB4:
+  54              	.LBB5:
+  66:../../bos/hal/b_hal_spi.c ****     uint8_t init_p   = polarity;
+  55              		.loc 1 66 44 view .LVU8
+  56 0021 4084ED   		testb	%bpl, %bpl
+  57              	.LBE5:
+  58              	.LBE4:
+ 153:../../bos/hal/b_hal_spi.c ****         simulating_spi.CPOL = spi_if->_if.simulating_spi.CPOL;
+  59              		.loc 1 153 57 view .LVU9
+  60 0024 0FB65F1D 		movzbl	29(%rdi), %ebx
+ 152:../../bos/hal/b_hal_spi.c ****         simulating_spi.CPHA = spi_if->_if.simulating_spi.CPHA;
+  61              		.loc 1 152 29 view .LVU10
+  62 0028 448B7F04 		movl	4(%rdi), %r15d
+ 151:../../bos/hal/b_hal_spi.c ****         simulating_spi.miso = spi_if->_if.simulating_spi.miso;
+  63              		.loc 1 151 29 view .LVU11
+  64 002c 8944240C 		movl	%eax, 12(%rsp)
+  65              	.LVL2:
+ 151:../../bos/hal/b_hal_spi.c ****         simulating_spi.miso = spi_if->_if.simulating_spi.miso;
+  66              		.loc 1 151 29 view .LVU12
+GAS LISTING /tmp/ccP5yVFF.s 			page 5
+
+
+  67 0030 8B4710   		movl	16(%rdi), %eax
+  68              	.LVL3:
+  69              	.LBB10:
+  70              	.LBB6:
+  69:../../bos/hal/b_hal_spi.c ****     if (spi.CPHA)
+  71              		.loc 1 69 5 view .LVU13
+  72 0033 410F95C6 		setne	%r14b
+  73 0037 4489EE   		movl	%r13d, %esi
+  74              	.LVL4:
+  66:../../bos/hal/b_hal_spi.c ****     uint8_t init_p   = polarity;
+  75              		.loc 1 66 44 view .LVU14
+  76 003a 0F954424 		setne	29(%rsp)
+  76      1D
+  69:../../bos/hal/b_hal_spi.c ****     if (spi.CPHA)
+  77              		.loc 1 69 5 view .LVU15
+  78 003f 450FB6F6 		movzbl	%r14b, %r14d
+  79              	.LBE6:
+  80              	.LBE10:
+ 151:../../bos/hal/b_hal_spi.c ****         simulating_spi.miso = spi_if->_if.simulating_spi.miso;
+  81              		.loc 1 151 29 view .LVU16
+  82 0043 89442410 		movl	%eax, 16(%rsp)
+  83              	.LVL5:
+ 152:../../bos/hal/b_hal_spi.c ****         simulating_spi.CPHA = spi_if->_if.simulating_spi.CPHA;
+  84              		.loc 1 152 9 is_stmt 1 view .LVU17
+ 152:../../bos/hal/b_hal_spi.c ****         simulating_spi.CPHA = spi_if->_if.simulating_spi.CPHA;
+  85              		.loc 1 152 29 is_stmt 0 view .LVU18
+  86 0047 8B4708   		movl	8(%rdi), %eax
+  87              	.LVL6:
+  88              	.LBB11:
+  89              	.LBB7:
+  69:../../bos/hal/b_hal_spi.c ****     if (spi.CPHA)
+  90              		.loc 1 69 5 view .LVU19
+  91 004a 4489F2   		movl	%r14d, %edx
+  92 004d 4489E7   		movl	%r12d, %edi
+  93              	.LVL7:
+  69:../../bos/hal/b_hal_spi.c ****     if (spi.CPHA)
+  94              		.loc 1 69 5 view .LVU20
+  95              	.LBE7:
+  96              	.LBE11:
+ 152:../../bos/hal/b_hal_spi.c ****         simulating_spi.CPHA = spi_if->_if.simulating_spi.CPHA;
+  97              		.loc 1 152 29 view .LVU21
+  98 0050 89442414 		movl	%eax, 20(%rsp)
+  99              	.LVL8:
+ 153:../../bos/hal/b_hal_spi.c ****         simulating_spi.CPOL = spi_if->_if.simulating_spi.CPOL;
+ 100              		.loc 1 153 9 is_stmt 1 view .LVU22
+ 101              		.loc 1 154 9 view .LVU23
+ 155:../../bos/hal/b_hal_spi.c **** 
+ 156:../../bos/hal/b_hal_spi.c ****         tmp = _bHalSPIIOWriteRead(simulating_spi, dat);
+ 102              		.loc 1 156 9 view .LVU24
+ 103              	.LBB12:
+ 104              	.LBI4:
+  64:../../bos/hal/b_hal_spi.c **** {
+ 105              		.loc 1 64 16 view .LVU25
+ 106              	.LBB8:
+  66:../../bos/hal/b_hal_spi.c ****     uint8_t init_p   = polarity;
+ 107              		.loc 1 66 5 view .LVU26
+  67:../../bos/hal/b_hal_spi.c ****     uint8_t i        = 0;
+GAS LISTING /tmp/ccP5yVFF.s 			page 6
+
+
+ 108              		.loc 1 67 5 view .LVU27
+  68:../../bos/hal/b_hal_spi.c ****     bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+ 109              		.loc 1 68 5 view .LVU28
+  69:../../bos/hal/b_hal_spi.c ****     if (spi.CPHA)
+ 110              		.loc 1 69 5 view .LVU29
+ 111 0054 E8000000 		call	bHalGpioWritePin@PLT
+ 111      00
+ 112              	.LVL9:
+  70:../../bos/hal/b_hal_spi.c ****     {
+ 113              		.loc 1 70 5 view .LVU30
+  70:../../bos/hal/b_hal_spi.c ****     {
+ 114              		.loc 1 70 8 is_stmt 0 view .LVU31
+ 115 0059 84DB     		testb	%bl, %bl
+ 116 005b 0F85CF00 		jne	.L2
+ 116      0000
+  66:../../bos/hal/b_hal_spi.c ****     uint8_t init_p   = polarity;
+ 117              		.loc 1 66 13 view .LVU32
+ 118 0061 0FB64424 		movzbl	29(%rsp), %eax
+ 118      1D
+ 119 0066 4084ED   		testb	%bpl, %bpl
+  80:../../bos/hal/b_hal_spi.c **** 
+ 120              		.loc 1 80 9 view .LVU33
+ 121 0069 410F94C6 		sete	%r14b
+ 122 006d 0F94C2   		sete	%dl
+  66:../../bos/hal/b_hal_spi.c ****     uint8_t init_p   = polarity;
+ 123              		.loc 1 66 13 view .LVU34
+ 124 0070 8844241E 		movb	%al, 30(%rsp)
+  80:../../bos/hal/b_hal_spi.c **** 
+ 125              		.loc 1 80 9 view .LVU35
+ 126 0074 450FB6F6 		movzbl	%r14b, %r14d
+ 127              	.LVL10:
+ 128              	.L3:
+  92:../../bos/hal/b_hal_spi.c ****         }
+ 129              		.loc 1 92 13 view .LVU36
+ 130 0078 0FB64424 		movzbl	30(%rsp), %eax
+ 130      1E
+  86:../../bos/hal/b_hal_spi.c ****         {
+ 131              		.loc 1 86 20 discriminator 1 view .LVU37
+ 132 007d 80FB01   		cmpb	$1, %bl
+  92:../../bos/hal/b_hal_spi.c ****         }
+ 133              		.loc 1 92 13 view .LVU38
+ 134 0080 8854241F 		movb	%dl, 31(%rsp)
+  86:../../bos/hal/b_hal_spi.c ****         {
+ 135              		.loc 1 86 20 discriminator 1 view .LVU39
+ 136 0084 0FB65C24 		movzbl	24(%rsp), %ebx
+ 136      18
+ 137              	.LVL11:
+  86:../../bos/hal/b_hal_spi.c ****         {
+ 138              		.loc 1 86 20 discriminator 1 view .LVU40
+ 139 0089 0F944424 		sete	28(%rsp)
+ 139      1C
+ 140 008e 31ED     		xorl	%ebp, %ebp
+  92:../../bos/hal/b_hal_spi.c ****         }
+ 141              		.loc 1 92 13 view .LVU41
+ 142 0090 89442418 		movl	%eax, 24(%rsp)
+ 143              	.LVL12:
+  92:../../bos/hal/b_hal_spi.c ****         }
+GAS LISTING /tmp/ccP5yVFF.s 			page 7
+
+
+ 144              		.loc 1 92 13 view .LVU42
+ 145 0094 EB26     		jmp	.L7
+ 146              	.LVL13:
+ 147 0096 662E0F1F 		.p2align 4,,10
+ 147      84000000 
+ 147      0000
+ 148              		.p2align 3
+ 149              	.L9:
+  91:../../bos/hal/b_hal_spi.c ****             bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+ 150              		.loc 1 91 13 is_stmt 1 view .LVU43
+  92:../../bos/hal/b_hal_spi.c ****         }
+ 151              		.loc 1 92 13 view .LVU44
+ 152 00a0 8B542418 		movl	24(%rsp), %edx
+ 153 00a4 4489EE   		movl	%r13d, %esi
+ 154 00a7 4489E7   		movl	%r12d, %edi
+  75:../../bos/hal/b_hal_spi.c ****     {
+ 155              		.loc 1 75 25 is_stmt 0 discriminator 2 view .LVU45
+ 156 00aa 83C501   		addl	$1, %ebp
+ 157              	.LVL14:
+  92:../../bos/hal/b_hal_spi.c ****         }
+ 158              		.loc 1 92 13 view .LVU46
+ 159 00ad E8000000 		call	bHalGpioWritePin@PLT
+ 159      00
+ 160              	.LVL15:
+  75:../../bos/hal/b_hal_spi.c ****     {
+ 161              		.loc 1 75 25 is_stmt 1 discriminator 2 view .LVU47
+  75:../../bos/hal/b_hal_spi.c ****     {
+ 162              		.loc 1 75 19 discriminator 1 view .LVU48
+ 163 00b2 4080FD08 		cmpb	$8, %bpl
+ 164 00b6 0F849C00 		je	.L19
+ 164      0000
+ 165              	.LVL16:
+ 166              	.L7:
+  77:../../bos/hal/b_hal_spi.c ****         dat <<= 1;
+ 167              		.loc 1 77 9 view .LVU49
+ 168 00bc 8B742410 		movl	16(%rsp), %esi
+ 169 00c0 8B7C240C 		movl	12(%rsp), %edi
+ 170 00c4 89DA     		movl	%ebx, %edx
+  78:../../bos/hal/b_hal_spi.c ****         polarity = polarity ^ 0x01;
+ 171              		.loc 1 78 13 is_stmt 0 view .LVU50
+ 172 00c6 01DB     		addl	%ebx, %ebx
+ 173              	.LVL17:
+  77:../../bos/hal/b_hal_spi.c ****         dat <<= 1;
+ 174              		.loc 1 77 9 view .LVU51
+ 175 00c8 81E28000 		andl	$128, %edx
+ 175      0000
+ 176              	.LVL18:
+  77:../../bos/hal/b_hal_spi.c ****         dat <<= 1;
+ 177              		.loc 1 77 9 view .LVU52
+ 178 00ce E8000000 		call	bHalGpioWritePin@PLT
+ 178      00
+ 179              	.LVL19:
+  78:../../bos/hal/b_hal_spi.c ****         polarity = polarity ^ 0x01;
+ 180              		.loc 1 78 9 is_stmt 1 view .LVU53
+  79:../../bos/hal/b_hal_spi.c ****         bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+ 181              		.loc 1 79 9 view .LVU54
+  80:../../bos/hal/b_hal_spi.c **** 
+GAS LISTING /tmp/ccP5yVFF.s 			page 8
+
+
+ 182              		.loc 1 80 9 view .LVU55
+ 183 00d3 4489F2   		movl	%r14d, %edx
+ 184 00d6 4489EE   		movl	%r13d, %esi
+ 185 00d9 4489E7   		movl	%r12d, %edi
+ 186 00dc E8000000 		call	bHalGpioWritePin@PLT
+ 186      00
+ 187              	.LVL20:
+  82:../../bos/hal/b_hal_spi.c ****         {
+ 188              		.loc 1 82 9 view .LVU56
+  82:../../bos/hal/b_hal_spi.c ****         {
+ 189              		.loc 1 82 13 is_stmt 0 view .LVU57
+ 190 00e1 8B742414 		movl	20(%rsp), %esi
+ 191 00e5 4489FF   		movl	%r15d, %edi
+ 192 00e8 E8000000 		call	bHalGpioReadPin@PLT
+ 192      00
+ 193              	.LVL21:
+  84:../../bos/hal/b_hal_spi.c ****         }
+ 194              		.loc 1 84 16 view .LVU58
+ 195 00ed 3C01     		cmpb	$1, %al
+ 196 00ef 80DBFF   		sbbb	$-1, %bl
+ 197              	.LVL22:
+  86:../../bos/hal/b_hal_spi.c ****         {
+ 198              		.loc 1 86 9 is_stmt 1 view .LVU59
+  86:../../bos/hal/b_hal_spi.c ****         {
+ 199              		.loc 1 86 20 is_stmt 0 discriminator 1 view .LVU60
+ 200 00f2 4080FD07 		cmpb	$7, %bpl
+ 201 00f6 75A8     		jne	.L9
+ 202 00f8 807C241C 		cmpb	$0, 28(%rsp)
+ 202      00
+ 203 00fd 74A1     		je	.L9
+ 204 00ff 0FB65424 		movzbl	31(%rsp), %edx
+ 204      1F
+ 205              	.L5:
+ 206              	.LVL23:
+  95:../../bos/hal/b_hal_spi.c ****     {
+ 207              		.loc 1 95 5 is_stmt 1 view .LVU61
+  95:../../bos/hal/b_hal_spi.c ****     {
+ 208              		.loc 1 95 8 is_stmt 0 view .LVU62
+ 209 0104 3854241D 		cmpb	%dl, 29(%rsp)
+ 210 0108 7410     		je	.L1
+  97:../../bos/hal/b_hal_spi.c ****         bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+ 211              		.loc 1 97 9 is_stmt 1 view .LVU63
+ 212              	.LVL24:
+  98:../../bos/hal/b_hal_spi.c ****     }
+ 213              		.loc 1 98 9 view .LVU64
+ 214 010a 0FB65424 		movzbl	30(%rsp), %edx
+ 214      1E
+ 215 010f 4489EE   		movl	%r13d, %esi
+ 216 0112 4489E7   		movl	%r12d, %edi
+ 217 0115 E8000000 		call	bHalGpioWritePin@PLT
+ 217      00
+ 218              	.LVL25:
+ 100:../../bos/hal/b_hal_spi.c **** }
+ 219              		.loc 1 100 5 view .LVU65
+ 220              	.L1:
+ 100:../../bos/hal/b_hal_spi.c **** }
+ 221              		.loc 1 100 5 is_stmt 0 view .LVU66
+GAS LISTING /tmp/ccP5yVFF.s 			page 9
+
+
+ 222              	.LBE8:
+ 223              	.LBE12:
+ 157:../../bos/hal/b_hal_spi.c ****     }
+ 158:../../bos/hal/b_hal_spi.c ****     else
+ 159:../../bos/hal/b_hal_spi.c ****     {
+ 160:../../bos/hal/b_hal_spi.c ****         tmp = bMcuSpiTransfer(spi_if, dat);
+ 161:../../bos/hal/b_hal_spi.c ****     }
+ 162:../../bos/hal/b_hal_spi.c ****     return tmp;
+ 163:../../bos/hal/b_hal_spi.c **** }
+ 224              		.loc 1 163 1 view .LVU67
+ 225 011a 4883C428 		addq	$40, %rsp
+ 226              	.LCFI7:
+ 227              		.cfi_remember_state
+ 228              		.cfi_def_cfa_offset 56
+ 229 011e 89D8     		movl	%ebx, %eax
+ 230 0120 5B       		popq	%rbx
+ 231              	.LCFI8:
+ 232              		.cfi_def_cfa_offset 48
+ 233 0121 5D       		popq	%rbp
+ 234              	.LCFI9:
+ 235              		.cfi_def_cfa_offset 40
+ 236 0122 415C     		popq	%r12
+ 237              	.LCFI10:
+ 238              		.cfi_def_cfa_offset 32
+ 239              	.LVL26:
+ 240              		.loc 1 163 1 view .LVU68
+ 241 0124 415D     		popq	%r13
+ 242              	.LCFI11:
+ 243              		.cfi_def_cfa_offset 24
+ 244              	.LVL27:
+ 245              		.loc 1 163 1 view .LVU69
+ 246 0126 415E     		popq	%r14
+ 247              	.LCFI12:
+ 248              		.cfi_def_cfa_offset 16
+ 249 0128 415F     		popq	%r15
+ 250              	.LCFI13:
+ 251              		.cfi_def_cfa_offset 8
+ 252              	.LVL28:
+ 253              		.loc 1 163 1 view .LVU70
+ 254 012a C3       		ret
+ 255              	.LVL29:
+ 256 012b 0F1F4400 		.p2align 4,,10
+ 256      00
+ 257              		.p2align 3
+ 258              	.L2:
+ 259              	.LCFI14:
+ 260              		.cfi_restore_state
+ 261              	.LBB13:
+ 262              	.LBB9:
+  72:../../bos/hal/b_hal_spi.c ****         bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
+ 263              		.loc 1 72 9 is_stmt 1 view .LVU71
+  73:../../bos/hal/b_hal_spi.c ****     }
+ 264              		.loc 1 73 9 view .LVU72
+ 265 0130 4084ED   		testb	%bpl, %bpl
+ 266 0133 4489EE   		movl	%r13d, %esi
+ 267 0136 4489E7   		movl	%r12d, %edi
+ 268 0139 0F94C2   		sete	%dl
+GAS LISTING /tmp/ccP5yVFF.s 			page 10
+
+
+ 269 013c 0F944424 		sete	30(%rsp)
+ 269      1E
+ 270              	.LVL30:
+  73:../../bos/hal/b_hal_spi.c ****     }
+ 271              		.loc 1 73 9 is_stmt 0 view .LVU73
+ 272 0141 0FB6D2   		movzbl	%dl, %edx
+ 273 0144 E8000000 		call	bHalGpioWritePin@PLT
+ 273      00
+ 274              	.LVL31:
+  75:../../bos/hal/b_hal_spi.c ****     {
+ 275              		.loc 1 75 19 is_stmt 1 discriminator 1 view .LVU74
+  73:../../bos/hal/b_hal_spi.c ****     }
+ 276              		.loc 1 73 9 is_stmt 0 view .LVU75
+ 277 0149 0FB65424 		movzbl	29(%rsp), %edx
+ 277      1D
+ 278 014e E925FFFF 		jmp	.L3
+ 278      FF
+ 279              	.LVL32:
+ 280              		.p2align 4,,10
+ 281 0153 0F1F4400 		.p2align 3
+ 281      00
+ 282              	.L19:
+  73:../../bos/hal/b_hal_spi.c ****     }
+ 283              		.loc 1 73 9 view .LVU76
+ 284 0158 0FB64424 		movzbl	31(%rsp), %eax
+ 284      1F
+ 285 015d 0FB65424 		movzbl	30(%rsp), %edx
+ 285      1E
+ 286 0162 8844241E 		movb	%al, 30(%rsp)
+ 287 0166 EB9C     		jmp	.L5
+ 288              	.LBE9:
+ 289              	.LBE13:
+ 290              		.cfi_endproc
+ 291              	.LFE37:
+ 293              		.section	.text.bMcuSpiSetSpeed,"ax",@progbits
+ 294              		.p2align 4
+ 295              		.weak	bMcuSpiSetSpeed
+ 297              	bMcuSpiSetSpeed:
+ 298              	.LVL33:
+ 299              	.LFB29:
+ 113:../../bos/hal/b_hal_spi.c ****     return -1;
+ 300              		.loc 1 113 1 is_stmt 1 view -0
+ 301              		.cfi_startproc
+ 113:../../bos/hal/b_hal_spi.c ****     return -1;
+ 302              		.loc 1 113 1 is_stmt 0 view .LVU78
+ 303 0000 F30F1EFA 		endbr64
+ 114:../../bos/hal/b_hal_spi.c **** }
+ 304              		.loc 1 114 5 is_stmt 1 view .LVU79
+ 115:../../bos/hal/b_hal_spi.c **** 
+ 305              		.loc 1 115 1 is_stmt 0 view .LVU80
+ 306 0004 B8FFFFFF 		movl	$-1, %eax
+ 306      FF
+ 307 0009 C3       		ret
+ 308              		.cfi_endproc
+ 309              	.LFE29:
+ 311              		.section	.text.bMcuSpiTransfer,"ax",@progbits
+ 312              		.p2align 4
+GAS LISTING /tmp/ccP5yVFF.s 			page 11
+
+
+ 313              		.weak	bMcuSpiTransfer
+ 315              	bMcuSpiTransfer:
+ 316              	.LVL34:
+ 317              	.LFB30:
+ 118:../../bos/hal/b_hal_spi.c ****     return 0;
+ 318              		.loc 1 118 1 is_stmt 1 view -0
+ 319              		.cfi_startproc
+ 118:../../bos/hal/b_hal_spi.c ****     return 0;
+ 320              		.loc 1 118 1 is_stmt 0 view .LVU82
+ 321 0000 F30F1EFA 		endbr64
+ 119:../../bos/hal/b_hal_spi.c **** }
+ 322              		.loc 1 119 5 is_stmt 1 view .LVU83
+ 120:../../bos/hal/b_hal_spi.c **** 
+ 323              		.loc 1 120 1 is_stmt 0 view .LVU84
+ 324 0004 31C0     		xorl	%eax, %eax
+ 325 0006 C3       		ret
+ 326              		.cfi_endproc
+ 327              	.LFE30:
+ 329              		.section	.text.bMcuSpiSend,"ax",@progbits
+ 330              		.p2align 4
+ 331              		.weak	bMcuSpiSend
+ 333              	bMcuSpiSend:
+ 334              	.LVL35:
+ 335              	.LFB31:
+ 123:../../bos/hal/b_hal_spi.c ****     return -1;
+ 336              		.loc 1 123 1 is_stmt 1 view -0
+ 337              		.cfi_startproc
+ 123:../../bos/hal/b_hal_spi.c ****     return -1;
+ 338              		.loc 1 123 1 is_stmt 0 view .LVU86
+ 339 0000 F30F1EFA 		endbr64
+ 124:../../bos/hal/b_hal_spi.c **** }
+ 340              		.loc 1 124 5 is_stmt 1 view .LVU87
+ 125:../../bos/hal/b_hal_spi.c **** 
+ 341              		.loc 1 125 1 is_stmt 0 view .LVU88
+ 342 0004 B8FFFFFF 		movl	$-1, %eax
+ 342      FF
+ 343 0009 C3       		ret
+ 344              		.cfi_endproc
+ 345              	.LFE31:
+ 347              		.section	.text.bMcuSpiReceive,"ax",@progbits
+ 348              		.p2align 4
+ 349              		.weak	bMcuSpiReceive
+ 351              	bMcuSpiReceive:
+ 352              	.LFB39:
+ 353              		.cfi_startproc
+ 127:../../bos/hal/b_hal_spi.c **** {
+ 354              		.loc 1 127 15 is_stmt 1 view -0
+ 355 0000 F30F1EFA 		endbr64
+ 356 0004 B8FFFFFF 		movl	$-1, %eax
+ 356      FF
+ 357 0009 C3       		ret
+ 358              		.cfi_endproc
+ 359              	.LFE39:
+ 361              		.section	.text.bHalSpiSetSpeed,"ax",@progbits
+ 362              		.p2align 4
+ 363              		.globl	bHalSpiSetSpeed
+ 365              	bHalSpiSetSpeed:
+GAS LISTING /tmp/ccP5yVFF.s 			page 12
+
+
+ 366              	.LVL36:
+ 367              	.LFB33:
+ 136:../../bos/hal/b_hal_spi.c ****     return bMcuSpiSetSpeed(spi_if, speed);
+ 368              		.loc 1 136 1 view -0
+ 369              		.cfi_startproc
+ 136:../../bos/hal/b_hal_spi.c ****     return bMcuSpiSetSpeed(spi_if, speed);
+ 370              		.loc 1 136 1 is_stmt 0 view .LVU91
+ 371 0000 F30F1EFA 		endbr64
+ 137:../../bos/hal/b_hal_spi.c **** }
+ 372              		.loc 1 137 5 is_stmt 1 view .LVU92
+ 137:../../bos/hal/b_hal_spi.c **** }
+ 373              		.loc 1 137 12 is_stmt 0 view .LVU93
+ 374 0004 E9000000 		jmp	bMcuSpiSetSpeed
+ 374      00
+ 375              	.LVL37:
+ 137:../../bos/hal/b_hal_spi.c **** }
+ 376              		.loc 1 137 12 view .LVU94
+ 377              		.cfi_endproc
+ 378              	.LFE33:
+ 380              		.section	.text.bHalSpiTransfer,"ax",@progbits
+ 381              		.p2align 4
+ 382              		.globl	bHalSpiTransfer
+ 384              	bHalSpiTransfer:
+ 385              	.LVL38:
+ 386              	.LFB34:
+ 141:../../bos/hal/b_hal_spi.c ****     uint8_t     tmp;
+ 387              		.loc 1 141 1 is_stmt 1 view -0
+ 388              		.cfi_startproc
+ 141:../../bos/hal/b_hal_spi.c ****     uint8_t     tmp;
+ 389              		.loc 1 141 1 is_stmt 0 view .LVU96
+ 390 0000 F30F1EFA 		endbr64
+ 142:../../bos/hal/b_hal_spi.c ****     bHalSPIIO_t simulating_spi;
+ 391              		.loc 1 142 5 is_stmt 1 view .LVU97
+ 143:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if))
+ 392              		.loc 1 143 5 view .LVU98
+ 144:../../bos/hal/b_hal_spi.c ****     {
+ 393              		.loc 1 144 5 view .LVU99
+ 144:../../bos/hal/b_hal_spi.c ****     {
+ 394              		.loc 1 144 8 is_stmt 0 view .LVU100
+ 395 0004 4885FF   		testq	%rdi, %rdi
+ 396 0007 741F     		je	.L26
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 397              		.loc 1 148 5 is_stmt 1 view .LVU101
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 398              		.loc 1 148 8 is_stmt 0 view .LVU102
+ 399 0009 803F01   		cmpb	$1, (%rdi)
+ 400 000c 400FB6F6 		movzbl	%sil, %esi
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 401              		.loc 1 148 8 view .LVU103
+ 402 0010 740E     		je	.L28
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 403              		.loc 1 160 9 is_stmt 1 view .LVU104
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 404              		.loc 1 160 15 is_stmt 0 view .LVU105
+ 405 0012 E9000000 		jmp	bMcuSpiTransfer
+ 405      00
+ 406              	.LVL39:
+GAS LISTING /tmp/ccP5yVFF.s 			page 13
+
+
+ 407 0017 660F1F84 		.p2align 4,,10
+ 407      00000000 
+ 407      00
+ 408              		.p2align 3
+ 409              	.L28:
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 410              		.loc 1 160 15 view .LVU106
+ 411 0020 E9000000 		jmp	bHalSpiTransfer.part.0
+ 411      00
+ 412              	.LVL40:
+ 413              		.p2align 4,,10
+ 414 0025 0F1F00   		.p2align 3
+ 415              	.L26:
+ 416              		.loc 1 163 1 view .LVU107
+ 417 0028 31C0     		xorl	%eax, %eax
+ 418 002a C3       		ret
+ 419              		.cfi_endproc
+ 420              	.LFE34:
+ 422              		.section	.text.bHalSpiSend,"ax",@progbits
+ 423              		.p2align 4
+ 424              		.globl	bHalSpiSend
+ 426              	bHalSpiSend:
+ 427              	.LVL41:
+ 428              	.LFB35:
+ 164:../../bos/hal/b_hal_spi.c **** 
+ 165:../../bos/hal/b_hal_spi.c **** int bHalSpiSend(const bHalSPIIf_t *spi_if, const uint8_t *pbuf, uint16_t len)
+ 166:../../bos/hal/b_hal_spi.c **** {
+ 429              		.loc 1 166 1 is_stmt 1 view -0
+ 430              		.cfi_startproc
+ 431              		.loc 1 166 1 is_stmt 0 view .LVU109
+ 432 0000 F30F1EFA 		endbr64
+ 167:../../bos/hal/b_hal_spi.c ****     int i      = 0;
+ 433              		.loc 1 167 5 is_stmt 1 view .LVU110
+ 434              	.LVL42:
+ 168:../../bos/hal/b_hal_spi.c ****     int retval = 0;
+ 435              		.loc 1 168 5 view .LVU111
+ 169:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if) || IS_NULL(pbuf))
+ 436              		.loc 1 169 5 view .LVU112
+ 437              		.loc 1 169 8 is_stmt 0 view .LVU113
+ 438 0004 4885FF   		testq	%rdi, %rdi
+ 439 0007 746B     		je	.L36
+ 440 0009 4885F6   		testq	%rsi, %rsi
+ 441 000c 7466     		je	.L36
+ 166:../../bos/hal/b_hal_spi.c ****     int i      = 0;
+ 442              		.loc 1 166 1 view .LVU114
+ 443 000e 4154     		pushq	%r12
+ 444              	.LCFI15:
+ 445              		.cfi_def_cfa_offset 16
+ 446              		.cfi_offset 12, -16
+ 447 0010 55       		pushq	%rbp
+ 448              	.LCFI16:
+ 449              		.cfi_def_cfa_offset 24
+ 450              		.cfi_offset 6, -24
+ 451 0011 4889FD   		movq	%rdi, %rbp
+ 170:../../bos/hal/b_hal_spi.c ****     {
+ 171:../../bos/hal/b_hal_spi.c ****         return -1;
+ 172:../../bos/hal/b_hal_spi.c ****     }
+GAS LISTING /tmp/ccP5yVFF.s 			page 14
+
+
+ 173:../../bos/hal/b_hal_spi.c ****     if (spi_if->is_simulation == 1)
+ 452              		.loc 1 173 5 is_stmt 1 view .LVU115
+ 166:../../bos/hal/b_hal_spi.c ****     int i      = 0;
+ 453              		.loc 1 166 1 is_stmt 0 view .LVU116
+ 454 0014 53       		pushq	%rbx
+ 455              	.LCFI17:
+ 456              		.cfi_def_cfa_offset 32
+ 457              		.cfi_offset 3, -32
+ 458              		.loc 1 173 15 view .LVU117
+ 459 0015 0FB607   		movzbl	(%rdi), %eax
+ 460              		.loc 1 173 8 view .LVU118
+ 461 0018 3C01     		cmpb	$1, %al
+ 462 001a 754C     		jne	.L31
+ 174:../../bos/hal/b_hal_spi.c ****     {
+ 175:../../bos/hal/b_hal_spi.c ****         for (i = 0; i < len; i++)
+ 463              		.loc 1 175 23 is_stmt 1 discriminator 1 view .LVU119
+ 464 001c 6685D2   		testw	%dx, %dx
+ 465 001f 743C     		je	.L32
+ 466 0021 0FB7D2   		movzwl	%dx, %edx
+ 467              		.loc 1 175 23 is_stmt 0 discriminator 1 view .LVU120
+ 468 0024 4889F3   		movq	%rsi, %rbx
+ 469 0027 448D62FF 		leal	-1(%rdx), %r12d
+ 470 002b 4901F4   		addq	%rsi, %r12
+ 471 002e EB15     		jmp	.L33
+ 472              	.LVL43:
+ 473              		.p2align 4,,10
+ 474              		.p2align 3
+ 475              	.L34:
+ 476              	.LBB16:
+ 477              	.LBB17:
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 478              		.loc 1 160 9 is_stmt 1 view .LVU121
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 479              		.loc 1 160 15 is_stmt 0 view .LVU122
+ 480 0030 E8000000 		call	bMcuSpiTransfer
+ 480      00
+ 481              	.LVL44:
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 482              		.loc 1 160 15 view .LVU123
+ 483              	.LBE17:
+ 484              	.LBE16:
+ 485              		.loc 1 175 31 is_stmt 1 discriminator 3 view .LVU124
+ 486              		.loc 1 175 23 discriminator 1 view .LVU125
+ 487 0035 488D5301 		leaq	1(%rbx), %rdx
+ 488 0039 4C39E3   		cmpq	%r12, %rbx
+ 489 003c 741F     		je	.L32
+ 490              	.LVL45:
+ 491              	.L41:
+ 492              	.LBB20:
+ 493              	.LBB18:
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 494              		.loc 1 148 15 is_stmt 0 view .LVU126
+ 495 003e 0FB64500 		movzbl	0(%rbp), %eax
+ 496 0042 4889D3   		movq	%rdx, %rbx
+ 497              	.L33:
+ 498              	.LVL46:
+ 148:../../bos/hal/b_hal_spi.c ****     {
+GAS LISTING /tmp/ccP5yVFF.s 			page 15
+
+
+ 499              		.loc 1 148 15 view .LVU127
+ 500              	.LBE18:
+ 501              	.LBE20:
+ 176:../../bos/hal/b_hal_spi.c ****         {
+ 177:../../bos/hal/b_hal_spi.c ****             bHalSpiTransfer(spi_if, pbuf[i]);
+ 502              		.loc 1 177 13 is_stmt 1 view .LVU128
+ 503              		.loc 1 177 41 is_stmt 0 view .LVU129
+ 504 0045 0FB633   		movzbl	(%rbx), %esi
+ 505              	.LVL47:
+ 506              	.LBB21:
+ 507              	.LBI16:
+ 140:../../bos/hal/b_hal_spi.c **** {
+ 508              		.loc 1 140 9 is_stmt 1 view .LVU130
+ 509              	.LBB19:
+ 142:../../bos/hal/b_hal_spi.c ****     bHalSPIIO_t simulating_spi;
+ 510              		.loc 1 142 5 view .LVU131
+ 143:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if))
+ 511              		.loc 1 143 5 view .LVU132
+ 144:../../bos/hal/b_hal_spi.c ****     {
+ 512              		.loc 1 144 5 view .LVU133
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 513              		.loc 1 148 5 view .LVU134
+ 514 0048 4889EF   		movq	%rbp, %rdi
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 515              		.loc 1 148 8 is_stmt 0 view .LVU135
+ 516 004b 3C01     		cmpb	$1, %al
+ 517 004d 75E1     		jne	.L34
+ 518              	.LVL48:
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 519              		.loc 1 148 8 view .LVU136
+ 520 004f E8000000 		call	bHalSpiTransfer.part.0
+ 520      00
+ 521              	.LVL49:
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 522              		.loc 1 148 8 view .LVU137
+ 523              	.LBE19:
+ 524              	.LBE21:
+ 175:../../bos/hal/b_hal_spi.c ****         {
+ 525              		.loc 1 175 31 is_stmt 1 discriminator 3 view .LVU138
+ 175:../../bos/hal/b_hal_spi.c ****         {
+ 526              		.loc 1 175 23 discriminator 1 view .LVU139
+ 527 0054 488D5301 		leaq	1(%rbx), %rdx
+ 528 0058 4C39E3   		cmpq	%r12, %rbx
+ 529 005b 75E1     		jne	.L41
+ 530              	.LVL50:
+ 531              	.L32:
+ 178:../../bos/hal/b_hal_spi.c ****         }
+ 179:../../bos/hal/b_hal_spi.c ****     }
+ 180:../../bos/hal/b_hal_spi.c ****     else
+ 181:../../bos/hal/b_hal_spi.c ****     {
+ 182:../../bos/hal/b_hal_spi.c ****         retval = bMcuSpiSend(spi_if, pbuf, len);
+ 183:../../bos/hal/b_hal_spi.c ****     }
+ 184:../../bos/hal/b_hal_spi.c ****     return retval;
+ 185:../../bos/hal/b_hal_spi.c **** }
+ 532              		.loc 1 185 1 is_stmt 0 view .LVU140
+ 533 005d 5B       		popq	%rbx
+ 534              	.LCFI18:
+GAS LISTING /tmp/ccP5yVFF.s 			page 16
+
+
+ 535              		.cfi_remember_state
+ 536              		.cfi_def_cfa_offset 24
+ 168:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if) || IS_NULL(pbuf))
+ 537              		.loc 1 168 9 view .LVU141
+ 538 005e 31C0     		xorl	%eax, %eax
+ 539              		.loc 1 185 1 view .LVU142
+ 540 0060 5D       		popq	%rbp
+ 541              	.LCFI19:
+ 542              		.cfi_def_cfa_offset 16
+ 543              	.LVL51:
+ 544              		.loc 1 185 1 view .LVU143
+ 545 0061 415C     		popq	%r12
+ 546              	.LCFI20:
+ 547              		.cfi_def_cfa_offset 8
+ 548 0063 C3       		ret
+ 549              	.LVL52:
+ 550              		.p2align 4,,10
+ 551 0064 0F1F4000 		.p2align 3
+ 552              	.L31:
+ 553              	.LCFI21:
+ 554              		.cfi_restore_state
+ 182:../../bos/hal/b_hal_spi.c ****     }
+ 555              		.loc 1 182 9 is_stmt 1 view .LVU144
+ 556              		.loc 1 185 1 is_stmt 0 view .LVU145
+ 557 0068 5B       		popq	%rbx
+ 558              	.LCFI22:
+ 559              		.cfi_restore 3
+ 560              		.cfi_def_cfa_offset 24
+ 175:../../bos/hal/b_hal_spi.c ****         {
+ 561              		.loc 1 175 23 discriminator 1 view .LVU146
+ 562 0069 0FB7D2   		movzwl	%dx, %edx
+ 563              		.loc 1 185 1 view .LVU147
+ 564 006c 5D       		popq	%rbp
+ 565              	.LCFI23:
+ 566              		.cfi_restore 6
+ 567              		.cfi_def_cfa_offset 16
+ 568 006d 415C     		popq	%r12
+ 569              	.LCFI24:
+ 570              		.cfi_restore 12
+ 571              		.cfi_def_cfa_offset 8
+ 182:../../bos/hal/b_hal_spi.c ****     }
+ 572              		.loc 1 182 18 view .LVU148
+ 573 006f E9000000 		jmp	bMcuSpiSend
+ 573      00
+ 574              	.LVL53:
+ 575              	.L36:
+ 171:../../bos/hal/b_hal_spi.c ****     }
+ 576              		.loc 1 171 16 view .LVU149
+ 577 0074 B8FFFFFF 		movl	$-1, %eax
+ 577      FF
+ 578              	.LVL54:
+ 579              		.loc 1 185 1 view .LVU150
+ 580 0079 C3       		ret
+ 581              		.cfi_endproc
+ 582              	.LFE35:
+ 584              		.section	.text.bHalSpiReceive,"ax",@progbits
+ 585              		.p2align 4
+GAS LISTING /tmp/ccP5yVFF.s 			page 17
+
+
+ 586              		.globl	bHalSpiReceive
+ 588              	bHalSpiReceive:
+ 589              	.LVL55:
+ 590              	.LFB36:
+ 186:../../bos/hal/b_hal_spi.c **** 
+ 187:../../bos/hal/b_hal_spi.c **** int bHalSpiReceive(const bHalSPIIf_t *spi_if, uint8_t *pbuf, uint16_t len)
+ 188:../../bos/hal/b_hal_spi.c **** {
+ 591              		.loc 1 188 1 is_stmt 1 view -0
+ 592              		.cfi_startproc
+ 593              		.loc 1 188 1 is_stmt 0 view .LVU152
+ 594 0000 F30F1EFA 		endbr64
+ 189:../../bos/hal/b_hal_spi.c ****     int i      = 0;
+ 595              		.loc 1 189 5 is_stmt 1 view .LVU153
+ 596              	.LVL56:
+ 190:../../bos/hal/b_hal_spi.c ****     int retval = 0;
+ 597              		.loc 1 190 5 view .LVU154
+ 191:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if) || IS_NULL(pbuf))
+ 598              		.loc 1 191 5 view .LVU155
+ 599              		.loc 1 191 8 is_stmt 0 view .LVU156
+ 600 0004 4885FF   		testq	%rdi, %rdi
+ 601 0007 7473     		je	.L49
+ 602 0009 4885F6   		testq	%rsi, %rsi
+ 603 000c 746E     		je	.L49
+ 188:../../bos/hal/b_hal_spi.c ****     int i      = 0;
+ 604              		.loc 1 188 1 view .LVU157
+ 605 000e 4154     		pushq	%r12
+ 606              	.LCFI25:
+ 607              		.cfi_def_cfa_offset 16
+ 608              		.cfi_offset 12, -16
+ 609 0010 55       		pushq	%rbp
+ 610              	.LCFI26:
+ 611              		.cfi_def_cfa_offset 24
+ 612              		.cfi_offset 6, -24
+ 613 0011 4889FD   		movq	%rdi, %rbp
+ 192:../../bos/hal/b_hal_spi.c ****     {
+ 193:../../bos/hal/b_hal_spi.c ****         return -1;
+ 194:../../bos/hal/b_hal_spi.c ****     }
+ 195:../../bos/hal/b_hal_spi.c ****     if (spi_if->is_simulation == 1)
+ 614              		.loc 1 195 5 is_stmt 1 view .LVU158
+ 188:../../bos/hal/b_hal_spi.c ****     int i      = 0;
+ 615              		.loc 1 188 1 is_stmt 0 view .LVU159
+ 616 0014 53       		pushq	%rbx
+ 617              	.LCFI27:
+ 618              		.cfi_def_cfa_offset 32
+ 619              		.cfi_offset 3, -32
+ 620              		.loc 1 195 15 view .LVU160
+ 621 0015 0FB607   		movzbl	(%rdi), %eax
+ 622              		.loc 1 195 8 view .LVU161
+ 623 0018 3C01     		cmpb	$1, %al
+ 624 001a 7554     		jne	.L44
+ 196:../../bos/hal/b_hal_spi.c ****     {
+ 197:../../bos/hal/b_hal_spi.c ****         for (i = 0; i < len; i++)
+ 625              		.loc 1 197 23 is_stmt 1 discriminator 1 view .LVU162
+ 626 001c 6685D2   		testw	%dx, %dx
+ 627 001f 7442     		je	.L45
+ 628 0021 0FB7D2   		movzwl	%dx, %edx
+ 629              		.loc 1 197 23 is_stmt 0 discriminator 1 view .LVU163
+GAS LISTING /tmp/ccP5yVFF.s 			page 18
+
+
+ 630 0024 4889F3   		movq	%rsi, %rbx
+ 631 0027 448D62FF 		leal	-1(%rdx), %r12d
+ 632 002b 4901F4   		addq	%rsi, %r12
+ 633 002e EB17     		jmp	.L46
+ 634              	.LVL57:
+ 635              		.p2align 4,,10
+ 636              		.p2align 3
+ 637              	.L47:
+ 638              	.LBB24:
+ 639              	.LBB25:
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 640              		.loc 1 160 9 is_stmt 1 view .LVU164
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 641              		.loc 1 160 15 is_stmt 0 view .LVU165
+ 642 0030 E8000000 		call	bMcuSpiTransfer
+ 642      00
+ 643              	.LVL58:
+ 160:../../bos/hal/b_hal_spi.c ****     }
+ 644              		.loc 1 160 15 view .LVU166
+ 645              	.LBE25:
+ 646              	.LBE24:
+ 647              		.loc 1 197 23 discriminator 1 view .LVU167
+ 648 0035 488D5301 		leaq	1(%rbx), %rdx
+ 198:../../bos/hal/b_hal_spi.c ****         {
+ 199:../../bos/hal/b_hal_spi.c ****             pbuf[i] = bHalSpiTransfer(spi_if, 0xff);
+ 649              		.loc 1 199 21 discriminator 1 view .LVU168
+ 650 0039 8803     		movb	%al, (%rbx)
+ 197:../../bos/hal/b_hal_spi.c ****         {
+ 651              		.loc 1 197 31 is_stmt 1 discriminator 3 view .LVU169
+ 652              	.LVL59:
+ 197:../../bos/hal/b_hal_spi.c ****         {
+ 653              		.loc 1 197 23 discriminator 1 view .LVU170
+ 654 003b 4C39E3   		cmpq	%r12, %rbx
+ 655 003e 7423     		je	.L45
+ 656              	.LVL60:
+ 657              	.L48:
+ 658              	.LBB28:
+ 659              	.LBB26:
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 660              		.loc 1 148 15 is_stmt 0 view .LVU171
+ 661 0040 0FB64500 		movzbl	0(%rbp), %eax
+ 662 0044 4889D3   		movq	%rdx, %rbx
+ 663              	.L46:
+ 664              	.LVL61:
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 665              		.loc 1 148 15 view .LVU172
+ 666              	.LBE26:
+ 667              	.LBE28:
+ 668              		.loc 1 199 13 is_stmt 1 view .LVU173
+ 669              	.LBB29:
+ 670              	.LBI24:
+ 140:../../bos/hal/b_hal_spi.c **** {
+ 671              		.loc 1 140 9 view .LVU174
+ 672              	.LBB27:
+ 142:../../bos/hal/b_hal_spi.c ****     bHalSPIIO_t simulating_spi;
+ 673              		.loc 1 142 5 view .LVU175
+ 143:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if))
+GAS LISTING /tmp/ccP5yVFF.s 			page 19
+
+
+ 674              		.loc 1 143 5 view .LVU176
+ 144:../../bos/hal/b_hal_spi.c ****     {
+ 675              		.loc 1 144 5 view .LVU177
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 676              		.loc 1 148 5 view .LVU178
+ 677 0047 BEFF0000 		movl	$255, %esi
+ 677      00
+ 678 004c 4889EF   		movq	%rbp, %rdi
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 679              		.loc 1 148 8 is_stmt 0 view .LVU179
+ 680 004f 3C01     		cmpb	$1, %al
+ 681 0051 75DD     		jne	.L47
+ 682              	.LVL62:
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 683              		.loc 1 148 8 view .LVU180
+ 684 0053 E8000000 		call	bHalSpiTransfer.part.0
+ 684      00
+ 685              	.LVL63:
+ 148:../../bos/hal/b_hal_spi.c ****     {
+ 686              		.loc 1 148 8 view .LVU181
+ 687              	.LBE27:
+ 688              	.LBE29:
+ 197:../../bos/hal/b_hal_spi.c ****         {
+ 689              		.loc 1 197 23 discriminator 1 view .LVU182
+ 690 0058 488D5301 		leaq	1(%rbx), %rdx
+ 691              		.loc 1 199 21 discriminator 1 view .LVU183
+ 692 005c 8803     		movb	%al, (%rbx)
+ 197:../../bos/hal/b_hal_spi.c ****         {
+ 693              		.loc 1 197 31 is_stmt 1 discriminator 3 view .LVU184
+ 694              	.LVL64:
+ 197:../../bos/hal/b_hal_spi.c ****         {
+ 695              		.loc 1 197 23 discriminator 1 view .LVU185
+ 696 005e 4C39E3   		cmpq	%r12, %rbx
+ 697 0061 75DD     		jne	.L48
+ 698              	.LVL65:
+ 699              	.L45:
+ 200:../../bos/hal/b_hal_spi.c ****         }
+ 201:../../bos/hal/b_hal_spi.c ****     }
+ 202:../../bos/hal/b_hal_spi.c ****     else
+ 203:../../bos/hal/b_hal_spi.c ****     {
+ 204:../../bos/hal/b_hal_spi.c ****         retval = bMcuSpiReceive(spi_if, pbuf, len);
+ 205:../../bos/hal/b_hal_spi.c ****     }
+ 206:../../bos/hal/b_hal_spi.c ****     return retval;
+ 207:../../bos/hal/b_hal_spi.c **** }
+ 700              		.loc 1 207 1 is_stmt 0 view .LVU186
+ 701 0063 5B       		popq	%rbx
+ 702              	.LCFI28:
+ 703              		.cfi_remember_state
+ 704              		.cfi_def_cfa_offset 24
+ 190:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if) || IS_NULL(pbuf))
+ 705              		.loc 1 190 9 view .LVU187
+ 706 0064 31C0     		xorl	%eax, %eax
+ 707              		.loc 1 207 1 view .LVU188
+ 708 0066 5D       		popq	%rbp
+ 709              	.LCFI29:
+ 710              		.cfi_def_cfa_offset 16
+ 711              	.LVL66:
+GAS LISTING /tmp/ccP5yVFF.s 			page 20
+
+
+ 712              		.loc 1 207 1 view .LVU189
+ 713 0067 415C     		popq	%r12
+ 714              	.LCFI30:
+ 715              		.cfi_def_cfa_offset 8
+ 716 0069 C3       		ret
+ 717              	.LVL67:
+ 718 006a 660F1F44 		.p2align 4,,10
+ 718      0000
+ 719              		.p2align 3
+ 720              	.L44:
+ 721              	.LCFI31:
+ 722              		.cfi_restore_state
+ 204:../../bos/hal/b_hal_spi.c ****     }
+ 723              		.loc 1 204 9 is_stmt 1 view .LVU190
+ 724              		.loc 1 207 1 is_stmt 0 view .LVU191
+ 725 0070 5B       		popq	%rbx
+ 726              	.LCFI32:
+ 727              		.cfi_restore 3
+ 728              		.cfi_def_cfa_offset 24
+ 197:../../bos/hal/b_hal_spi.c ****         {
+ 729              		.loc 1 197 23 discriminator 1 view .LVU192
+ 730 0071 0FB7D2   		movzwl	%dx, %edx
+ 731              		.loc 1 207 1 view .LVU193
+ 732 0074 5D       		popq	%rbp
+ 733              	.LCFI33:
+ 734              		.cfi_restore 6
+ 735              		.cfi_def_cfa_offset 16
+ 736 0075 415C     		popq	%r12
+ 737              	.LCFI34:
+ 738              		.cfi_restore 12
+ 739              		.cfi_def_cfa_offset 8
+ 204:../../bos/hal/b_hal_spi.c ****     }
+ 740              		.loc 1 204 18 view .LVU194
+ 741 0077 E9000000 		jmp	bMcuSpiReceive
+ 741      00
+ 742              	.LVL68:
+ 743              	.L49:
+ 193:../../bos/hal/b_hal_spi.c ****     }
+ 744              		.loc 1 193 16 view .LVU195
+ 745 007c B8FFFFFF 		movl	$-1, %eax
+ 745      FF
+ 746              	.LVL69:
+ 747              		.loc 1 207 1 view .LVU196
+ 748 0081 C3       		ret
+ 749              		.cfi_endproc
+ 750              	.LFE36:
+ 752              		.text
+ 753              	.Letext0:
+ 754              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 755              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 756              		.file 4 "../../bos/hal/inc/b_hal_gpio.h"
+ 757              		.file 5 "../../bos/hal/inc/b_hal_spi.h"
+ 4386              		.section	.note.gnu.property,"a"
+ 4387              		.align 8
+ 4388 0000 04000000 		.long	1f - 0f
+ 4389 0004 10000000 		.long	4f - 1f
+ 4390 0008 05000000 		.long	5
+GAS LISTING /tmp/ccP5yVFF.s 			page 21
+
+
+ 4391              	0:
+ 4392 000c 474E5500 		.string	"GNU"
+ 4393              	1:
+ 4394              		.align 8
+ 4395 0010 020000C0 		.long	0xc0000002
+ 4396 0014 04000000 		.long	3f - 2f
+ 4397              	2:
+ 4398 0018 03000000 		.long	0x3
+ 4399              	3:
+ 4400 001c 00000000 		.align 8
+ 4401              	4:
+GAS LISTING /tmp/ccP5yVFF.s 			page 22
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_spi.c
+     /tmp/ccP5yVFF.s:8      .text.bHalSpiTransfer.part.0:0000000000000000 bHalSpiTransfer.part.0
+     /tmp/ccP5yVFF.s:297    .text.bMcuSpiSetSpeed:0000000000000000 bMcuSpiSetSpeed
+     /tmp/ccP5yVFF.s:315    .text.bMcuSpiTransfer:0000000000000000 bMcuSpiTransfer
+     /tmp/ccP5yVFF.s:333    .text.bMcuSpiSend:0000000000000000 bMcuSpiSend
+     /tmp/ccP5yVFF.s:351    .text.bMcuSpiReceive:0000000000000000 bMcuSpiReceive
+     /tmp/ccP5yVFF.s:365    .text.bHalSpiSetSpeed:0000000000000000 bHalSpiSetSpeed
+     /tmp/ccP5yVFF.s:384    .text.bHalSpiTransfer:0000000000000000 bHalSpiTransfer
+     /tmp/ccP5yVFF.s:426    .text.bHalSpiSend:0000000000000000 bHalSpiSend
+     /tmp/ccP5yVFF.s:588    .text.bHalSpiReceive:0000000000000000 bHalSpiReceive
+
+UNDEFINED SYMBOLS
+bHalGpioWritePin
+bHalGpioReadPin

@@ -1,0 +1,225 @@
+GAS LISTING /tmp/ccnWCWDK.s 			page 1
+
+
+   1              		.file	"b_hal_sdio.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_sdio.c"
+   5              		.section	.text.bMcuSDIOReadBlocks,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuSDIOReadBlocks
+   9              	bMcuSDIOReadBlocks:
+  10              	.LVL0:
+  11              	.LFB28:
+   1:../../bos/hal/b_hal_sdio.c **** /**
+   2:../../bos/hal/b_hal_sdio.c ****  *!
+   3:../../bos/hal/b_hal_sdio.c ****  * \file        b_hal_sdio.c
+   4:../../bos/hal/b_hal_sdio.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_sdio.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_sdio.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_sdio.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_sdio.c ****  * @attention
+   9:../../bos/hal/b_hal_sdio.c ****  *
+  10:../../bos/hal/b_hal_sdio.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_sdio.c ****  *
+  12:../../bos/hal/b_hal_sdio.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_sdio.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_sdio.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_sdio.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_sdio.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_sdio.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_sdio.c ****  *
+  19:../../bos/hal/b_hal_sdio.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_sdio.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_sdio.c ****  *
+  22:../../bos/hal/b_hal_sdio.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_sdio.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_sdio.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_sdio.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_sdio.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_sdio.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_sdio.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_sdio.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_sdio.c ****  */
+  31:../../bos/hal/b_hal_sdio.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_sdio.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_sdio.c **** /**
+  34:../../bos/hal/b_hal_sdio.c ****  * \addtogroup B_HAL
+  35:../../bos/hal/b_hal_sdio.c ****  * \{
+  36:../../bos/hal/b_hal_sdio.c ****  */
+  37:../../bos/hal/b_hal_sdio.c **** 
+  38:../../bos/hal/b_hal_sdio.c **** /**
+  39:../../bos/hal/b_hal_sdio.c ****  * \addtogroup SDIO
+  40:../../bos/hal/b_hal_sdio.c ****  * \{
+  41:../../bos/hal/b_hal_sdio.c ****  */
+  42:../../bos/hal/b_hal_sdio.c **** 
+  43:../../bos/hal/b_hal_sdio.c **** /**
+  44:../../bos/hal/b_hal_sdio.c ****  * \addtogroup SDIO_Exported_Functions
+  45:../../bos/hal/b_hal_sdio.c ****  * \{
+  46:../../bos/hal/b_hal_sdio.c ****  */
+  47:../../bos/hal/b_hal_sdio.c **** #if defined(__WEAKDEF)
+GAS LISTING /tmp/ccnWCWDK.s 			page 2
+
+
+  48:../../bos/hal/b_hal_sdio.c **** __WEAKDEF int bMcuSDIOReadBlocks(const bHalSDIONumber_t sd, uint8_t *pdata, uint32_t addr,
+  49:../../bos/hal/b_hal_sdio.c ****                                  uint32_t xblocks)
+  50:../../bos/hal/b_hal_sdio.c **** {
+  12              		.loc 1 50 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 50 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  51:../../bos/hal/b_hal_sdio.c ****     return 0;
+  16              		.loc 1 51 5 is_stmt 1 view .LVU2
+  52:../../bos/hal/b_hal_sdio.c **** }
+  17              		.loc 1 52 1 is_stmt 0 view .LVU3
+  18 0004 31C0     		xorl	%eax, %eax
+  19 0006 C3       		ret
+  20              		.cfi_endproc
+  21              	.LFE28:
+  23              		.section	.text.bMcuSDIOWriteBlocks,"ax",@progbits
+  24              		.p2align 4
+  25              		.weak	bMcuSDIOWriteBlocks
+  27              	bMcuSDIOWriteBlocks:
+  28              	.LFB33:
+  29              		.cfi_startproc
+  53:../../bos/hal/b_hal_sdio.c **** 
+  54:../../bos/hal/b_hal_sdio.c **** __WEAKDEF int bMcuSDIOWriteBlocks(const bHalSDIONumber_t sd, uint8_t *pdata, uint32_t addr,
+  30              		.loc 1 54 15 is_stmt 1 view -0
+  31 0000 F30F1EFA 		endbr64
+  32 0004 31C0     		xorl	%eax, %eax
+  33 0006 C3       		ret
+  34              		.cfi_endproc
+  35              	.LFE33:
+  37              		.section	.text.bHalSDIOReadBlocks,"ax",@progbits
+  38              		.p2align 4
+  39              		.globl	bHalSDIOReadBlocks
+  41              	bHalSDIOReadBlocks:
+  42              	.LVL1:
+  43              	.LFB30:
+  55:../../bos/hal/b_hal_sdio.c ****                                   uint32_t xblocks)
+  56:../../bos/hal/b_hal_sdio.c **** {
+  57:../../bos/hal/b_hal_sdio.c ****     return 0;
+  58:../../bos/hal/b_hal_sdio.c **** }
+  59:../../bos/hal/b_hal_sdio.c **** #endif
+  60:../../bos/hal/b_hal_sdio.c **** //---------------------------------------------------------------------------------------
+  61:../../bos/hal/b_hal_sdio.c **** //---------------------------------------------------------------------------------------
+  62:../../bos/hal/b_hal_sdio.c **** 
+  63:../../bos/hal/b_hal_sdio.c **** int bHalSDIOReadBlocks(const bHalSDIONumber_t sd, uint8_t *pdata, uint32_t addr, uint32_t xblocks)
+  64:../../bos/hal/b_hal_sdio.c **** {
+  44              		.loc 1 64 1 view -0
+  45              		.cfi_startproc
+  46              		.loc 1 64 1 is_stmt 0 view .LVU6
+  47 0000 F30F1EFA 		endbr64
+  65:../../bos/hal/b_hal_sdio.c ****     if (sd > B_HAL_SDIO_1 || IS_NULL(pdata) || xblocks == 0)
+  48              		.loc 1 65 5 is_stmt 1 view .LVU7
+  49              		.loc 1 65 30 is_stmt 0 view .LVU8
+  50 0004 4885F6   		testq	%rsi, %rsi
+  51 0007 0F94C0   		sete	%al
+  52              		.loc 1 65 45 discriminator 1 view .LVU9
+  53 000a 85C9     		testl	%ecx, %ecx
+  54 000c 410F94C0 		sete	%r8b
+GAS LISTING /tmp/ccnWCWDK.s 			page 3
+
+
+  55 0010 4408C0   		orb	%r8b, %al
+  56 0013 750B     		jne	.L5
+  57 0015 85FF     		testl	%edi, %edi
+  58 0017 7507     		jne	.L5
+  66:../../bos/hal/b_hal_sdio.c ****     {
+  67:../../bos/hal/b_hal_sdio.c ****         return -1;
+  68:../../bos/hal/b_hal_sdio.c ****     }
+  69:../../bos/hal/b_hal_sdio.c ****     return bMcuSDIOReadBlocks(sd, pdata, addr, xblocks);
+  59              		.loc 1 69 5 is_stmt 1 view .LVU10
+  60              		.loc 1 69 12 is_stmt 0 view .LVU11
+  61 0019 E9000000 		jmp	bMcuSDIOReadBlocks
+  61      00
+  62              	.LVL2:
+  63 001e 6690     		.p2align 4,,10
+  64              		.p2align 3
+  65              	.L5:
+  70:../../bos/hal/b_hal_sdio.c **** }
+  66              		.loc 1 70 1 view .LVU12
+  67 0020 B8FFFFFF 		movl	$-1, %eax
+  67      FF
+  68 0025 C3       		ret
+  69              		.cfi_endproc
+  70              	.LFE30:
+  72              		.section	.text.bHalSDIOWriteBlocks,"ax",@progbits
+  73              		.p2align 4
+  74              		.globl	bHalSDIOWriteBlocks
+  76              	bHalSDIOWriteBlocks:
+  77              	.LVL3:
+  78              	.LFB31:
+  71:../../bos/hal/b_hal_sdio.c **** 
+  72:../../bos/hal/b_hal_sdio.c **** int bHalSDIOWriteBlocks(const bHalSDIONumber_t sd, uint8_t *pdata, uint32_t addr, uint32_t xblocks)
+  73:../../bos/hal/b_hal_sdio.c **** {
+  79              		.loc 1 73 1 is_stmt 1 view -0
+  80              		.cfi_startproc
+  81              		.loc 1 73 1 is_stmt 0 view .LVU14
+  82 0000 F30F1EFA 		endbr64
+  74:../../bos/hal/b_hal_sdio.c ****     if (sd > B_HAL_SDIO_1 || IS_NULL(pdata) || xblocks == 0)
+  83              		.loc 1 74 5 is_stmt 1 view .LVU15
+  84              		.loc 1 74 30 is_stmt 0 view .LVU16
+  85 0004 4885F6   		testq	%rsi, %rsi
+  86 0007 0F94C0   		sete	%al
+  87              		.loc 1 74 45 discriminator 1 view .LVU17
+  88 000a 85C9     		testl	%ecx, %ecx
+  89 000c 410F94C0 		sete	%r8b
+  90 0010 4408C0   		orb	%r8b, %al
+  91 0013 750B     		jne	.L7
+  92 0015 85FF     		testl	%edi, %edi
+  93 0017 7507     		jne	.L7
+  75:../../bos/hal/b_hal_sdio.c ****     {
+  76:../../bos/hal/b_hal_sdio.c ****         return -1;
+  77:../../bos/hal/b_hal_sdio.c ****     }
+  78:../../bos/hal/b_hal_sdio.c ****     return bMcuSDIOWriteBlocks(sd, pdata, addr, xblocks);
+  94              		.loc 1 78 5 is_stmt 1 view .LVU18
+  95              		.loc 1 78 12 is_stmt 0 view .LVU19
+  96 0019 E9000000 		jmp	bMcuSDIOWriteBlocks
+  96      00
+  97              	.LVL4:
+GAS LISTING /tmp/ccnWCWDK.s 			page 4
+
+
+  98 001e 6690     		.p2align 4,,10
+  99              		.p2align 3
+ 100              	.L7:
+  79:../../bos/hal/b_hal_sdio.c **** }
+ 101              		.loc 1 79 1 view .LVU20
+ 102 0020 B8FFFFFF 		movl	$-1, %eax
+ 102      FF
+ 103 0025 C3       		ret
+ 104              		.cfi_endproc
+ 105              	.LFE31:
+ 107              		.text
+ 108              	.Letext0:
+ 109              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 110              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 111              		.file 4 "../../bos/hal/inc/b_hal_sdio.h"
+ 1053              		.section	.note.gnu.property,"a"
+ 1054              		.align 8
+ 1055 0000 04000000 		.long	1f - 0f
+ 1056 0004 10000000 		.long	4f - 1f
+ 1057 0008 05000000 		.long	5
+ 1058              	0:
+ 1059 000c 474E5500 		.string	"GNU"
+ 1060              	1:
+ 1061              		.align 8
+ 1062 0010 020000C0 		.long	0xc0000002
+ 1063 0014 04000000 		.long	3f - 2f
+ 1064              	2:
+ 1065 0018 03000000 		.long	0x3
+ 1066              	3:
+ 1067 001c 00000000 		.align 8
+ 1068              	4:
+GAS LISTING /tmp/ccnWCWDK.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_sdio.c
+     /tmp/ccnWCWDK.s:9      .text.bMcuSDIOReadBlocks:0000000000000000 bMcuSDIOReadBlocks
+     /tmp/ccnWCWDK.s:27     .text.bMcuSDIOWriteBlocks:0000000000000000 bMcuSDIOWriteBlocks
+     /tmp/ccnWCWDK.s:41     .text.bHalSDIOReadBlocks:0000000000000000 bHalSDIOReadBlocks
+     /tmp/ccnWCWDK.s:76     .text.bHalSDIOWriteBlocks:0000000000000000 bHalSDIOWriteBlocks
+
+NO UNDEFINED SYMBOLS

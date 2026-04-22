@@ -1,0 +1,660 @@
+GAS LISTING /tmp/ccH2kABf.s 			page 1
+
+
+   1              		.file	"MQTTDeserializePublish.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c"
+   5              		.section	.text.MQTTDeserialize_publish,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	MQTTDeserialize_publish
+   9              	MQTTDeserialize_publish:
+  10              	.LVL0:
+  11              	.LFB20:
+   1:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** /*******************************************************************************
+   2:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  * Copyright (c) 2014 IBM Corp.
+   3:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  *
+   4:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  * All rights reserved. This program and the accompanying materials
+   5:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  * are made available under the terms of the Eclipse Public License v1.0
+   6:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  * and Eclipse Distribution License v1.0 which accompany this distribution.
+   7:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  *
+   8:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  * The Eclipse Public License is available at
+   9:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  *    http://www.eclipse.org/legal/epl-v10.html
+  10:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  * and the Eclipse Distribution License is available at
+  11:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  *   http://www.eclipse.org/org/documents/edl-v10.php.
+  12:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  *
+  13:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  * Contributors:
+  14:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  *    Ian Craggs - initial API and implementation and/or initial documentation
+  15:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****  *******************************************************************************/
+  16:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  17:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** #include "StackTrace.h"
+  18:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** #include "MQTTPacket.h"
+  19:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** #include <string.h>
+  20:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  21:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** #define min(a, b) ((a < b) ? 1 : 0)
+  22:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  23:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** /**
+  24:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * Deserializes the supplied (wire) buffer into publish data
+  25:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param dup returned integer - the MQTT dup flag
+  26:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param qos returned integer - the MQTT QoS value
+  27:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param retained returned integer - the MQTT retained flag
+  28:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param packetid returned integer - the MQTT packet identifier
+  29:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param topicName returned MQTTString - the MQTT topic in the publish
+  30:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param payload returned byte buffer - the MQTT publish payload
+  31:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param payloadlen returned integer - the length of the MQTT payload
+  32:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
+  33:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param buflen the length in bytes of the data in the supplied buffer
+  34:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @return error code.  1 is success
+  35:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   */
+  36:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** int MQTTDeserialize_publish(unsigned char* dup, int* qos, unsigned char* retained, unsigned short* 
+  37:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		unsigned char** payload, int* payloadlen, unsigned char* buf, int buflen)
+  38:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** {
+  12              		.loc 1 38 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 38 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  16              	.L2:
+  17 0004 4157     		pushq	%r15
+  18              	.LCFI0:
+  19              		.cfi_def_cfa_offset 16
+  20              		.cfi_offset 15, -16
+GAS LISTING /tmp/ccH2kABf.s 			page 2
+
+
+  21 0006 4156     		pushq	%r14
+  22              	.LCFI1:
+  23              		.cfi_def_cfa_offset 24
+  24              		.cfi_offset 14, -24
+  25 0008 4155     		pushq	%r13
+  26              	.LCFI2:
+  27              		.cfi_def_cfa_offset 32
+  28              		.cfi_offset 13, -32
+  29 000a 4989FD   		movq	%rdi, %r13
+  30 000d 4154     		pushq	%r12
+  31              	.LCFI3:
+  32              		.cfi_def_cfa_offset 40
+  33              		.cfi_offset 12, -40
+  34 000f 4989D4   		movq	%rdx, %r12
+  35 0012 55       		pushq	%rbp
+  36              	.LCFI4:
+  37              		.cfi_def_cfa_offset 48
+  38              		.cfi_offset 6, -48
+  39 0013 4C89C5   		movq	%r8, %rbp
+  40 0016 53       		pushq	%rbx
+  41              	.LCFI5:
+  42              		.cfi_def_cfa_offset 56
+  43              		.cfi_offset 3, -56
+  44 0017 4889F3   		movq	%rsi, %rbx
+  45 001a 4883EC48 		subq	$72, %rsp
+  46              	.LCFI6:
+  47              		.cfi_def_cfa_offset 128
+  48              		.loc 1 38 1 view .LVU2
+  49 001e 48894C24 		movq	%rcx, 16(%rsp)
+  49      10
+  39:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	MQTTHeader header = {0};
+  40:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	unsigned char* curdata = buf;
+  41:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	unsigned char* enddata = NULL;
+  42:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	int rc = 0;
+  43:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	int mylen = 0;
+  44:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  45:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	FUNC_ENTRY;
+  46:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	header.byte = readChar(&curdata);
+  50              		.loc 1 46 16 view .LVU3
+  51 0023 4C8D7424 		leaq	48(%rsp), %r14
+  51      30
+  38:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	MQTTHeader header = {0};
+  52              		.loc 1 38 1 view .LVU4
+  53 0028 4C8BBC24 		movq	128(%rsp), %r15
+  53      80000000 
+  54 0030 4C894C24 		movq	%r9, 8(%rsp)
+  54      08
+  55              		.loc 1 46 16 view .LVU5
+  56 0035 4C89F7   		movq	%r14, %rdi
+  57              	.LVL1:
+  40:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	unsigned char* enddata = NULL;
+  58              		.loc 1 40 17 view .LVU6
+  59 0038 64488B04 		movq	%fs:40, %rax
+  59      25280000 
+  59      00
+  60 0041 48894424 		movq	%rax, 56(%rsp)
+  60      38
+GAS LISTING /tmp/ccH2kABf.s 			page 3
+
+
+  61 0046 488B8424 		movq	136(%rsp), %rax
+  61      88000000 
+  43:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  62              		.loc 1 43 6 view .LVU7
+  63 004e C744242C 		movl	$0, 44(%rsp)
+  63      00000000 
+  40:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	unsigned char* enddata = NULL;
+  64              		.loc 1 40 17 view .LVU8
+  65 0056 48894424 		movq	%rax, 48(%rsp)
+  65      30
+  41:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	int rc = 0;
+  66              		.loc 1 41 2 is_stmt 1 view .LVU9
+  67              	.LVL2:
+  42:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	int mylen = 0;
+  68              		.loc 1 42 2 view .LVU10
+  43:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  69              		.loc 1 43 2 view .LVU11
+  45:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	header.byte = readChar(&curdata);
+  70              		.loc 1 45 12 view .LVU12
+  71              		.loc 1 46 2 view .LVU13
+  72              		.loc 1 46 16 is_stmt 0 view .LVU14
+  73 005b E8000000 		call	readChar@PLT
+  73      00
+  74              	.LVL3:
+  42:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	int mylen = 0;
+  75              		.loc 1 42 6 view .LVU15
+  76 0060 31C9     		xorl	%ecx, %ecx
+  77              		.loc 1 46 14 discriminator 1 view .LVU16
+  78 0062 0FB6D0   		movzbl	%al, %edx
+  79              	.LVL4:
+  47:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	if (header.bits.type != PUBLISH)
+  80              		.loc 1 47 2 is_stmt 1 view .LVU17
+  81              		.loc 1 47 5 is_stmt 0 view .LVU18
+  82 0065 83E0F0   		andl	$-16, %eax
+  83 0068 3C30     		cmpb	$48, %al
+  84 006a 742C     		je	.L11
+  85              	.LVL5:
+  86              	.L1:
+  48:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		goto exit;
+  49:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+  50:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*qos = header.bits.qos;
+  51:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*retained = header.bits.retain;
+  52:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	curdata += (rc = MQTTPacket_decodeBuf(curdata, &mylen)); /* read remaining length */
+  54:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+  55:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  56:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	if (!readMQTTLenString(topicName, &curdata, enddata) ||
+  57:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		enddata - curdata < 0) /* do we have enough data to read the protocol version byte? */
+  58:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		goto exit;
+  59:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  60:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	if (*qos > 0)
+  61:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		*packetid = readInt(&curdata);
+  62:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  63:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*payloadlen = enddata - curdata;
+  64:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*payload = curdata;
+  65:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	rc = 1;
+  66:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** exit:
+GAS LISTING /tmp/ccH2kABf.s 			page 4
+
+
+  67:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	FUNC_EXIT_RC(rc);
+  68:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	return rc;
+  69:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** }
+  87              		.loc 1 69 1 view .LVU19
+  88 006c 488B4424 		movq	56(%rsp), %rax
+  88      38
+  89 0071 64482B04 		subq	%fs:40, %rax
+  89      25280000 
+  89      00
+  90 007a 0F85BF00 		jne	.L12
+  90      0000
+  91 0080 4883C448 		addq	$72, %rsp
+  92              	.LCFI7:
+  93              		.cfi_remember_state
+  94              		.cfi_def_cfa_offset 56
+  95 0084 89C8     		movl	%ecx, %eax
+  96 0086 5B       		popq	%rbx
+  97              	.LCFI8:
+  98              		.cfi_def_cfa_offset 48
+  99 0087 5D       		popq	%rbp
+ 100              	.LCFI9:
+ 101              		.cfi_def_cfa_offset 40
+ 102              	.LVL6:
+ 103              		.loc 1 69 1 view .LVU20
+ 104 0088 415C     		popq	%r12
+ 105              	.LCFI10:
+ 106              		.cfi_def_cfa_offset 32
+ 107 008a 415D     		popq	%r13
+ 108              	.LCFI11:
+ 109              		.cfi_def_cfa_offset 24
+ 110              	.LVL7:
+ 111              		.loc 1 69 1 view .LVU21
+ 112 008c 415E     		popq	%r14
+ 113              	.LCFI12:
+ 114              		.cfi_def_cfa_offset 16
+ 115 008e 415F     		popq	%r15
+ 116              	.LCFI13:
+ 117              		.cfi_def_cfa_offset 8
+ 118 0090 C3       		ret
+ 119              	.LVL8:
+ 120              		.p2align 4,,10
+ 121 0091 0F1F8000 		.p2align 3
+ 121      000000
+ 122              	.L11:
+ 123              	.LCFI14:
+ 124              		.cfi_restore_state
+  49:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*qos = header.bits.qos;
+ 125              		.loc 1 49 2 is_stmt 1 view .LVU22
+  49:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*qos = header.bits.qos;
+ 126              		.loc 1 49 20 is_stmt 0 view .LVU23
+ 127 0098 89D0     		movl	%edx, %eax
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 128              		.loc 1 53 19 view .LVU24
+ 129 009a 488B7C24 		movq	48(%rsp), %rdi
+ 129      30
+ 130 009f 488D7424 		leaq	44(%rsp), %rsi
+ 130      2C
+GAS LISTING /tmp/ccH2kABf.s 			page 5
+
+
+  49:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*qos = header.bits.qos;
+ 131              		.loc 1 49 20 view .LVU25
+ 132 00a4 C1E803   		shrl	$3, %eax
+ 133 00a7 83E001   		andl	$1, %eax
+ 134 00aa 41884500 		movb	%al, 0(%r13)
+  50:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*retained = header.bits.retain;
+ 135              		.loc 1 50 2 is_stmt 1 view .LVU26
+  50:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*retained = header.bits.retain;
+ 136              		.loc 1 50 20 is_stmt 0 view .LVU27
+ 137 00ae 89D0     		movl	%edx, %eax
+  51:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 138              		.loc 1 51 25 view .LVU28
+ 139 00b0 83E201   		andl	$1, %edx
+ 140              	.LVL9:
+  50:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*retained = header.bits.retain;
+ 141              		.loc 1 50 20 view .LVU29
+ 142 00b3 D1E8     		shrl	%eax
+ 143 00b5 83E003   		andl	$3, %eax
+ 144 00b8 8903     		movl	%eax, (%rbx)
+  51:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 145              		.loc 1 51 2 is_stmt 1 view .LVU30
+  51:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 146              		.loc 1 51 25 is_stmt 0 view .LVU31
+ 147 00ba 41881424 		movb	%dl, (%r12)
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 148              		.loc 1 53 2 is_stmt 1 view .LVU32
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 149              		.loc 1 53 19 is_stmt 0 view .LVU33
+ 150 00be E8000000 		call	MQTTPacket_decodeBuf@PLT
+ 150      00
+ 151              	.LVL10:
+  54:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 152              		.loc 1 54 20 view .LVU34
+ 153 00c3 48635424 		movslq	44(%rsp), %rdx
+ 153      2C
+  56:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		enddata - curdata < 0) /* do we have enough data to read the protocol version byte? */
+ 154              		.loc 1 56 7 view .LVU35
+ 155 00c8 4C89F6   		movq	%r14, %rsi
+ 156 00cb 4889EF   		movq	%rbp, %rdi
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 157              		.loc 1 53 19 view .LVU36
+ 158 00ce 89C1     		movl	%eax, %ecx
+ 159              	.LVL11:
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 160              		.loc 1 53 17 discriminator 1 view .LVU37
+ 161 00d0 4898     		cltq
+ 162              	.LVL12:
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 163              		.loc 1 53 10 discriminator 1 view .LVU38
+ 164 00d2 48034424 		addq	48(%rsp), %rax
+ 164      30
+  54:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 165              		.loc 1 54 10 view .LVU39
+ 166 00d7 4C8D2410 		leaq	(%rax,%rdx), %r12
+ 167              	.LVL13:
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 168              		.loc 1 53 17 discriminator 1 view .LVU40
+GAS LISTING /tmp/ccH2kABf.s 			page 6
+
+
+ 169 00db 894C241C 		movl	%ecx, 28(%rsp)
+  56:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		enddata - curdata < 0) /* do we have enough data to read the protocol version byte? */
+ 170              		.loc 1 56 7 view .LVU41
+ 171 00df 4C89E2   		movq	%r12, %rdx
+  53:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 172              		.loc 1 53 10 discriminator 1 view .LVU42
+ 173 00e2 48894424 		movq	%rax, 48(%rsp)
+ 173      30
+  54:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 174              		.loc 1 54 2 is_stmt 1 view .LVU43
+ 175              	.LVL14:
+  56:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		enddata - curdata < 0) /* do we have enough data to read the protocol version byte? */
+ 176              		.loc 1 56 2 view .LVU44
+  56:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		enddata - curdata < 0) /* do we have enough data to read the protocol version byte? */
+ 177              		.loc 1 56 7 is_stmt 0 view .LVU45
+ 178 00e7 E8000000 		call	readMQTTLenString@PLT
+ 178      00
+ 179              	.LVL15:
+  56:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		enddata - curdata < 0) /* do we have enough data to read the protocol version byte? */
+ 180              		.loc 1 56 5 discriminator 1 view .LVU46
+ 181 00ec 8B4C241C 		movl	28(%rsp), %ecx
+ 182 00f0 85C0     		testl	%eax, %eax
+ 183 00f2 0F8474FF 		je	.L1
+ 183      FFFF
+  57:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		goto exit;
+ 184              		.loc 1 57 11 view .LVU47
+ 185 00f8 488B4424 		movq	48(%rsp), %rax
+ 185      30
+  56:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		enddata - curdata < 0) /* do we have enough data to read the protocol version byte? */
+ 186              		.loc 1 56 55 discriminator 1 view .LVU48
+ 187 00fd 4C89E2   		movq	%r12, %rdx
+ 188 0100 4829C2   		subq	%rax, %rdx
+ 189 0103 0F8863FF 		js	.L1
+ 189      FFFF
+  60:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		*packetid = readInt(&curdata);
+ 190              		.loc 1 60 2 is_stmt 1 view .LVU49
+  60:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		*packetid = readInt(&curdata);
+ 191              		.loc 1 60 5 is_stmt 0 view .LVU50
+ 192 0109 8B0B     		movl	(%rbx), %ecx
+ 193 010b 85C9     		testl	%ecx, %ecx
+ 194 010d 7E1B     		jle	.L3
+  61:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 195              		.loc 1 61 3 is_stmt 1 view .LVU51
+  61:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 196              		.loc 1 61 15 is_stmt 0 view .LVU52
+ 197 010f 4C89F7   		movq	%r14, %rdi
+ 198 0112 E8000000 		call	readInt@PLT
+ 198      00
+ 199              	.LVL16:
+  61:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 200              		.loc 1 61 13 discriminator 1 view .LVU53
+ 201 0117 488B5C24 		movq	16(%rsp), %rbx
+ 201      10
+ 202              	.LVL17:
+  63:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*payload = curdata;
+ 203              		.loc 1 63 24 view .LVU54
+ 204 011c 4C89E2   		movq	%r12, %rdx
+GAS LISTING /tmp/ccH2kABf.s 			page 7
+
+
+  61:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 205              		.loc 1 61 13 discriminator 1 view .LVU55
+ 206 011f 668903   		movw	%ax, (%rbx)
+  63:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*payload = curdata;
+ 207              		.loc 1 63 24 view .LVU56
+ 208 0122 488B4424 		movq	48(%rsp), %rax
+ 208      30
+ 209 0127 4829C2   		subq	%rax, %rdx
+ 210              	.L3:
+  63:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*payload = curdata;
+ 211              		.loc 1 63 2 is_stmt 1 view .LVU57
+  64:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	rc = 1;
+ 212              		.loc 1 64 11 is_stmt 0 view .LVU58
+ 213 012a 488B5C24 		movq	8(%rsp), %rbx
+ 213      08
+  63:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*payload = curdata;
+ 214              		.loc 1 63 14 view .LVU59
+ 215 012f 418917   		movl	%edx, (%r15)
+  64:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	rc = 1;
+ 216              		.loc 1 64 2 is_stmt 1 view .LVU60
+  65:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** exit:
+ 217              		.loc 1 65 5 is_stmt 0 view .LVU61
+ 218 0132 B9010000 		movl	$1, %ecx
+ 218      00
+  64:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	rc = 1;
+ 219              		.loc 1 64 11 view .LVU62
+ 220 0137 488903   		movq	%rax, (%rbx)
+  65:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** exit:
+ 221              		.loc 1 65 2 is_stmt 1 view .LVU63
+ 222              	.LVL18:
+  65:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** exit:
+ 223              		.loc 1 65 2 is_stmt 0 view .LVU64
+ 224 013a E92DFFFF 		jmp	.L1
+ 224      FF
+ 225              	.LVL19:
+ 226              	.L12:
+ 227              		.loc 1 69 1 view .LVU65
+ 228 013f E8000000 		call	__stack_chk_fail@PLT
+ 228      00
+ 229              	.LVL20:
+ 230              		.cfi_endproc
+ 231              	.LFE20:
+ 233              		.section	.text.MQTTDeserialize_ack,"ax",@progbits
+ 234              		.p2align 4
+ 235              		.globl	MQTTDeserialize_ack
+ 237              	MQTTDeserialize_ack:
+ 238              	.LVL21:
+ 239              	.LFB21:
+  70:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  71:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  72:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  73:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** /**
+  74:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * Deserializes the supplied (wire) buffer into an ack
+  75:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param packettype returned integer - the MQTT packet type
+  76:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param dup returned integer - the MQTT dup flag
+  77:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param packetid returned integer - the MQTT packet identifier
+  78:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param buf the raw buffer data, of the correct length determined by the remaining length field
+GAS LISTING /tmp/ccH2kABf.s 			page 8
+
+
+  79:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @param buflen the length in bytes of the data in the supplied buffer
+  80:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   * @return error code.  1 is success, 0 is failure
+  81:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c ****   */
+  82:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** int MQTTDeserialize_ack(unsigned char* packettype, unsigned char* dup, unsigned short* packetid, un
+  83:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** {
+ 240              		.loc 1 83 1 is_stmt 1 view -0
+ 241              		.cfi_startproc
+ 242              		.loc 1 83 1 is_stmt 0 view .LVU67
+ 243 0000 F30F1EFA 		endbr64
+ 244 0004 4155     		pushq	%r13
+ 245              	.LCFI15:
+ 246              		.cfi_def_cfa_offset 16
+ 247              		.cfi_offset 13, -16
+ 248 0006 4154     		pushq	%r12
+ 249              	.LCFI16:
+ 250              		.cfi_def_cfa_offset 24
+ 251              		.cfi_offset 12, -24
+ 252 0008 4989F4   		movq	%rsi, %r12
+ 253 000b 55       		pushq	%rbp
+ 254              	.LCFI17:
+ 255              		.cfi_def_cfa_offset 32
+ 256              		.cfi_offset 6, -32
+ 257 000c 4889FD   		movq	%rdi, %rbp
+ 258 000f 53       		pushq	%rbx
+ 259              	.LCFI18:
+ 260              		.cfi_def_cfa_offset 40
+ 261              		.cfi_offset 3, -40
+ 262 0010 4889D3   		movq	%rdx, %rbx
+ 263 0013 4883EC28 		subq	$40, %rsp
+ 264              	.LCFI19:
+ 265              		.cfi_def_cfa_offset 80
+ 266              		.loc 1 83 1 view .LVU68
+ 267 0017 64488B04 		movq	%fs:40, %rax
+ 267      25280000 
+ 267      00
+ 268 0020 48894424 		movq	%rax, 24(%rsp)
+ 268      18
+ 269 0025 31C0     		xorl	%eax, %eax
+  84:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	MQTTHeader header = {0};
+ 270              		.loc 1 84 2 is_stmt 1 view .LVU69
+  85:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	unsigned char* curdata = buf;
+ 271              		.loc 1 85 2 view .LVU70
+  86:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	unsigned char* enddata = NULL;
+  87:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	int rc = 0;
+  88:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	int mylen;
+  89:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  90:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	FUNC_ENTRY;
+  91:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	header.byte = readChar(&curdata);
+ 272              		.loc 1 91 16 is_stmt 0 view .LVU71
+ 273 0027 4C8D6C24 		leaq	16(%rsp), %r13
+ 273      10
+  85:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	unsigned char* curdata = buf;
+ 274              		.loc 1 85 17 view .LVU72
+ 275 002c 48894C24 		movq	%rcx, 16(%rsp)
+ 275      10
+  86:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	unsigned char* enddata = NULL;
+ 276              		.loc 1 86 2 is_stmt 1 view .LVU73
+GAS LISTING /tmp/ccH2kABf.s 			page 9
+
+
+ 277              	.LVL22:
+  87:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	int mylen;
+ 278              		.loc 1 87 2 view .LVU74
+  88:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 279              		.loc 1 88 2 view .LVU75
+  90:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	header.byte = readChar(&curdata);
+ 280              		.loc 1 90 12 view .LVU76
+ 281              		.loc 1 91 2 view .LVU77
+ 282              		.loc 1 91 16 is_stmt 0 view .LVU78
+ 283 0031 4C89EF   		movq	%r13, %rdi
+ 284              	.LVL23:
+ 285              		.loc 1 91 16 view .LVU79
+ 286 0034 E8000000 		call	readChar@PLT
+ 286      00
+ 287              	.LVL24:
+  92:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+  93:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*packettype = header.bits.type;
+  94:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  95:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	curdata += (rc = MQTTPacket_decodeBuf(curdata, &mylen)); /* read remaining length */
+ 288              		.loc 1 95 19 view .LVU80
+ 289 0039 488B7C24 		movq	16(%rsp), %rdi
+ 289      10
+ 290 003e 488D7424 		leaq	12(%rsp), %rsi
+ 290      0C
+  91:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+ 291              		.loc 1 91 14 discriminator 1 view .LVU81
+ 292 0043 0FB6C0   		movzbl	%al, %eax
+ 293              	.LVL25:
+  92:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+ 294              		.loc 1 92 2 is_stmt 1 view .LVU82
+  92:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+ 295              		.loc 1 92 20 is_stmt 0 view .LVU83
+ 296 0046 89C2     		movl	%eax, %edx
+  93:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 297              		.loc 1 93 27 view .LVU84
+ 298 0048 C1E804   		shrl	$4, %eax
+ 299              	.LVL26:
+  92:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+ 300              		.loc 1 92 20 view .LVU85
+ 301 004b C1EA03   		shrl	$3, %edx
+  93:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 302              		.loc 1 93 27 view .LVU86
+ 303 004e 83E00F   		andl	$15, %eax
+  92:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*dup = header.bits.dup;
+ 304              		.loc 1 92 20 view .LVU87
+ 305 0051 83E201   		andl	$1, %edx
+ 306 0054 41881424 		movb	%dl, (%r12)
+  93:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 307              		.loc 1 93 2 is_stmt 1 view .LVU88
+  93:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 308              		.loc 1 93 27 is_stmt 0 view .LVU89
+ 309 0058 884500   		movb	%al, 0(%rbp)
+ 310              		.loc 1 95 2 is_stmt 1 view .LVU90
+ 311              		.loc 1 95 19 is_stmt 0 view .LVU91
+ 312 005b E8000000 		call	MQTTPacket_decodeBuf@PLT
+ 312      00
+ 313              	.LVL27:
+GAS LISTING /tmp/ccH2kABf.s 			page 10
+
+
+ 314              		.loc 1 95 17 discriminator 1 view .LVU92
+ 315 0060 4863D0   		movslq	%eax, %rdx
+ 316              		.loc 1 95 10 discriminator 1 view .LVU93
+ 317 0063 48015424 		addq	%rdx, 16(%rsp)
+ 317      10
+  96:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	enddata = curdata + mylen;
+ 318              		.loc 1 96 2 is_stmt 1 view .LVU94
+ 319              	.LVL28:
+  97:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+  98:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	if (enddata - curdata < 2)
+ 320              		.loc 1 98 2 view .LVU95
+ 321              		.loc 1 98 5 is_stmt 0 view .LVU96
+ 322 0068 837C240C 		cmpl	$1, 12(%rsp)
+ 322      01
+ 323 006d 7E10     		jle	.L13
+  99:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 		goto exit;
+ 100:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	*packetid = readInt(&curdata);
+ 324              		.loc 1 100 2 is_stmt 1 view .LVU97
+ 325              		.loc 1 100 14 is_stmt 0 view .LVU98
+ 326 006f 4C89EF   		movq	%r13, %rdi
+ 327 0072 E8000000 		call	readInt@PLT
+ 327      00
+ 328              	.LVL29:
+ 329              		.loc 1 100 12 discriminator 1 view .LVU99
+ 330 0077 668903   		movw	%ax, (%rbx)
+ 101:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 
+ 102:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	rc = 1;
+ 331              		.loc 1 102 2 is_stmt 1 view .LVU100
+ 332              	.LVL30:
+ 333              		.loc 1 102 5 is_stmt 0 view .LVU101
+ 334 007a B8010000 		movl	$1, %eax
+ 334      00
+ 103:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** exit:
+ 104:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	FUNC_EXIT_RC(rc);
+ 335              		.loc 1 104 18 is_stmt 1 view .LVU102
+ 105:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** 	return rc;
+ 336              		.loc 1 105 2 view .LVU103
+ 337              	.L14:
+ 338              	.LVL31:
+ 339              	.L13:
+ 106:../../bos/thirdparty/mqtt-pack/MQTTDeserializePublish.c **** }
+ 340              		.loc 1 106 1 is_stmt 0 view .LVU104
+ 341 007f 488B5424 		movq	24(%rsp), %rdx
+ 341      18
+ 342 0084 64482B14 		subq	%fs:40, %rdx
+ 342      25280000 
+ 342      00
+ 343 008d 750B     		jne	.L17
+ 344 008f 4883C428 		addq	$40, %rsp
+ 345              	.LCFI20:
+ 346              		.cfi_remember_state
+ 347              		.cfi_def_cfa_offset 40
+ 348 0093 5B       		popq	%rbx
+ 349              	.LCFI21:
+ 350              		.cfi_def_cfa_offset 32
+ 351              	.LVL32:
+ 352              		.loc 1 106 1 view .LVU105
+GAS LISTING /tmp/ccH2kABf.s 			page 11
+
+
+ 353 0094 5D       		popq	%rbp
+ 354              	.LCFI22:
+ 355              		.cfi_def_cfa_offset 24
+ 356              	.LVL33:
+ 357              		.loc 1 106 1 view .LVU106
+ 358 0095 415C     		popq	%r12
+ 359              	.LCFI23:
+ 360              		.cfi_def_cfa_offset 16
+ 361              	.LVL34:
+ 362              		.loc 1 106 1 view .LVU107
+ 363 0097 415D     		popq	%r13
+ 364              	.LCFI24:
+ 365              		.cfi_def_cfa_offset 8
+ 366 0099 C3       		ret
+ 367              	.LVL35:
+ 368              	.L17:
+ 369              	.LCFI25:
+ 370              		.cfi_restore_state
+ 371              		.loc 1 106 1 view .LVU108
+ 372 009a E8000000 		call	__stack_chk_fail@PLT
+ 372      00
+ 373              	.LVL36:
+ 374              		.cfi_endproc
+ 375              	.LFE21:
+ 377              		.text
+ 378              	.Letext0:
+ 379              		.file 2 "../../bos/thirdparty/mqtt-pack/MQTTPacket.h"
+ 2252              		.section	.note.gnu.property,"a"
+ 2253              		.align 8
+ 2254 0000 04000000 		.long	1f - 0f
+ 2255 0004 10000000 		.long	4f - 1f
+ 2256 0008 05000000 		.long	5
+ 2257              	0:
+ 2258 000c 474E5500 		.string	"GNU"
+ 2259              	1:
+ 2260              		.align 8
+ 2261 0010 020000C0 		.long	0xc0000002
+ 2262 0014 04000000 		.long	3f - 2f
+ 2263              	2:
+ 2264 0018 03000000 		.long	0x3
+ 2265              	3:
+ 2266 001c 00000000 		.align 8
+ 2267              	4:
+GAS LISTING /tmp/ccH2kABf.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 MQTTDeserializePublish.c
+     /tmp/ccH2kABf.s:9      .text.MQTTDeserialize_publish:0000000000000000 MQTTDeserialize_publish
+     /tmp/ccH2kABf.s:237    .text.MQTTDeserialize_ack:0000000000000000 MQTTDeserialize_ack
+
+UNDEFINED SYMBOLS
+readChar
+MQTTPacket_decodeBuf
+readMQTTLenString
+readInt
+__stack_chk_fail

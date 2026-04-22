@@ -1,0 +1,1430 @@
+GAS LISTING /tmp/cc0WmQqb.s 			page 1
+
+
+   1              		.file	"b_util_log.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/utils/b_util_log.c"
+   5              		.section	.text.bLogOutputBytes,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bLogOutputBytes
+   9              	bLogOutputBytes:
+  10              	.LVL0:
+  11              	.LFB41:
+   1:../../bos/utils/b_util_log.c **** /**
+   2:../../bos/utils/b_util_log.c ****  *!
+   3:../../bos/utils/b_util_log.c ****  * \file        b_util_log.c
+   4:../../bos/utils/b_util_log.c ****  * \version     v0.0.1
+   5:../../bos/utils/b_util_log.c ****  * \date        2020/02/25
+   6:../../bos/utils/b_util_log.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/b_util_log.c ****  *******************************************************************************
+   8:../../bos/utils/b_util_log.c ****  * @attention
+   9:../../bos/utils/b_util_log.c ****  *
+  10:../../bos/utils/b_util_log.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/utils/b_util_log.c ****  *
+  12:../../bos/utils/b_util_log.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/b_util_log.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/b_util_log.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/b_util_log.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/b_util_log.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/b_util_log.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/b_util_log.c ****  *
+  19:../../bos/utils/b_util_log.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/b_util_log.c ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/b_util_log.c ****  *
+  22:../../bos/utils/b_util_log.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/b_util_log.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/b_util_log.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/b_util_log.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/b_util_log.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/b_util_log.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/b_util_log.c ****  * SOFTWARE.
+  29:../../bos/utils/b_util_log.c ****  *******************************************************************************
+  30:../../bos/utils/b_util_log.c ****  */
+  31:../../bos/utils/b_util_log.c **** 
+  32:../../bos/utils/b_util_log.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/utils/b_util_log.c **** #include "utils/inc/b_util_log.h"
+  34:../../bos/utils/b_util_log.c **** 
+  35:../../bos/utils/b_util_log.c **** #include <stdarg.h>
+  36:../../bos/utils/b_util_log.c **** #include <stdio.h>
+  37:../../bos/utils/b_util_log.c **** #include <string.h>
+  38:../../bos/utils/b_util_log.c **** 
+  39:../../bos/utils/b_util_log.c **** #include "hal/inc/b_hal.h"
+  40:../../bos/utils/b_util_log.c **** 
+  41:../../bos/utils/b_util_log.c **** #if ((defined(_DEBUG_ENABLE)) && (_DEBUG_ENABLE == 1))
+  42:../../bos/utils/b_util_log.c **** 
+  43:../../bos/utils/b_util_log.c **** /**
+  44:../../bos/utils/b_util_log.c ****  * \addtogroup B_UTILS
+  45:../../bos/utils/b_util_log.c ****  * \{
+  46:../../bos/utils/b_util_log.c ****  */
+  47:../../bos/utils/b_util_log.c **** 
+GAS LISTING /tmp/cc0WmQqb.s 			page 2
+
+
+  48:../../bos/utils/b_util_log.c **** /**
+  49:../../bos/utils/b_util_log.c ****  * \addtogroup LOG
+  50:../../bos/utils/b_util_log.c ****  * \{
+  51:../../bos/utils/b_util_log.c ****  */
+  52:../../bos/utils/b_util_log.c **** 
+  53:../../bos/utils/b_util_log.c **** /**
+  54:../../bos/utils/b_util_log.c ****  * \defgroup LOG_Private_TypesDefinitions
+  55:../../bos/utils/b_util_log.c ****  * \{
+  56:../../bos/utils/b_util_log.c ****  */
+  57:../../bos/utils/b_util_log.c **** 
+  58:../../bos/utils/b_util_log.c **** /**
+  59:../../bos/utils/b_util_log.c ****  * \}
+  60:../../bos/utils/b_util_log.c ****  */
+  61:../../bos/utils/b_util_log.c **** 
+  62:../../bos/utils/b_util_log.c **** /**
+  63:../../bos/utils/b_util_log.c ****  * \defgroup LOG_Private_Defines
+  64:../../bos/utils/b_util_log.c ****  * \{
+  65:../../bos/utils/b_util_log.c ****  */
+  66:../../bos/utils/b_util_log.c **** 
+  67:../../bos/utils/b_util_log.c **** #define B_LOG_BUF_MIN 64
+  68:../../bos/utils/b_util_log.c **** 
+  69:../../bos/utils/b_util_log.c **** #if (B_LOG_BUF_SIZE < B_LOG_BUF_MIN)
+  70:../../bos/utils/b_util_log.c **** #error "error: B_LOG_BUF_SIZE < 64"
+  71:../../bos/utils/b_util_log.c **** #endif
+  72:../../bos/utils/b_util_log.c **** 
+  73:../../bos/utils/b_util_log.c **** /**
+  74:../../bos/utils/b_util_log.c ****  * \}
+  75:../../bos/utils/b_util_log.c ****  */
+  76:../../bos/utils/b_util_log.c **** 
+  77:../../bos/utils/b_util_log.c **** /**
+  78:../../bos/utils/b_util_log.c ****  * \defgroup LOG_Private_Macros
+  79:../../bos/utils/b_util_log.c ****  * \{
+  80:../../bos/utils/b_util_log.c ****  */
+  81:../../bos/utils/b_util_log.c **** 
+  82:../../bos/utils/b_util_log.c **** /**
+  83:../../bos/utils/b_util_log.c ****  * \}
+  84:../../bos/utils/b_util_log.c ****  */
+  85:../../bos/utils/b_util_log.c **** 
+  86:../../bos/utils/b_util_log.c **** /**
+  87:../../bos/utils/b_util_log.c ****  * \defgroup LOG_Private_Variables
+  88:../../bos/utils/b_util_log.c ****  * \{
+  89:../../bos/utils/b_util_log.c ****  */
+  90:../../bos/utils/b_util_log.c **** static uint8_t       bLogBuff[B_LOG_BUF_SIZE];
+  91:../../bos/utils/b_util_log.c **** static const uint8_t bLogParamTable[3] = {B_LOG_I_PARAM, B_LOG_W_PARAM, B_LOG_E_PARAM};
+  92:../../bos/utils/b_util_log.c **** static const char    bLogPrefix[3]     = {'I', 'W', 'E'};
+  93:../../bos/utils/b_util_log.c **** 
+  94:../../bos/utils/b_util_log.c **** /**
+  95:../../bos/utils/b_util_log.c ****  * \}
+  96:../../bos/utils/b_util_log.c ****  */
+  97:../../bos/utils/b_util_log.c **** 
+  98:../../bos/utils/b_util_log.c **** /**
+  99:../../bos/utils/b_util_log.c ****  * \defgroup LOG_Private_FunctionPrototypes
+ 100:../../bos/utils/b_util_log.c ****  * \{
+ 101:../../bos/utils/b_util_log.c ****  */
+ 102:../../bos/utils/b_util_log.c **** 
+ 103:../../bos/utils/b_util_log.c **** /**
+ 104:../../bos/utils/b_util_log.c ****  * \}
+GAS LISTING /tmp/cc0WmQqb.s 			page 3
+
+
+ 105:../../bos/utils/b_util_log.c ****  */
+ 106:../../bos/utils/b_util_log.c **** 
+ 107:../../bos/utils/b_util_log.c **** /**
+ 108:../../bos/utils/b_util_log.c ****  * \defgroup LOG_Private_Functions
+ 109:../../bos/utils/b_util_log.c ****  * \{
+ 110:../../bos/utils/b_util_log.c ****  */
+ 111:../../bos/utils/b_util_log.c **** #if defined(__GNUC__) && !(defined(__ARMCC_VERSION))
+ 112:../../bos/utils/b_util_log.c **** #define B_FPUTC int _write(int file, char *ptr, int c)
+ 113:../../bos/utils/b_util_log.c **** #elif defined(__RENESAS__)
+ 114:../../bos/utils/b_util_log.c **** #define B_FPUTC int __far putchar(int c)
+ 115:../../bos/utils/b_util_log.c **** #else
+ 116:../../bos/utils/b_util_log.c **** #define B_FPUTC int fputc(int c, FILE *f)
+ 117:../../bos/utils/b_util_log.c **** #endif
+ 118:../../bos/utils/b_util_log.c **** 
+ 119:../../bos/utils/b_util_log.c **** #if defined(__WEAKDEF)
+ 120:../../bos/utils/b_util_log.c **** __WEAKDEF void bLogOutputBytes(uint8_t *pbuf, uint16_t len)
+ 121:../../bos/utils/b_util_log.c **** {
+  12              		.loc 1 121 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 121 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+ 122:../../bos/utils/b_util_log.c **** #if defined(LOG_UART)
+ 123:../../bos/utils/b_util_log.c ****     bHalUartSend((bHalUartNumber_t)LOG_UART, pbuf, len);
+  16              		.loc 1 123 5 is_stmt 1 view .LVU2
+  17 0004 0FB7D6   		movzwl	%si, %edx
+  18 0007 4889FE   		movq	%rdi, %rsi
+  19              	.LVL1:
+  20              		.loc 1 123 5 is_stmt 0 view .LVU3
+  21 000a 31FF     		xorl	%edi, %edi
+  22              	.LVL2:
+  23              		.loc 1 123 5 view .LVU4
+  24 000c E9000000 		jmp	bHalUartSend@PLT
+  24      00
+  25              	.LVL3:
+  26              		.loc 1 123 5 view .LVU5
+  27              		.cfi_endproc
+  28              	.LFE41:
+  30              		.section	.text._write,"ax",@progbits
+  31              		.p2align 4
+  32              		.globl	_write
+  34              	_write:
+  35              	.LVL4:
+  36              	.LFB42:
+ 124:../../bos/utils/b_util_log.c **** #else
+ 125:../../bos/utils/b_util_log.c ****     (void)pbuf;
+ 126:../../bos/utils/b_util_log.c ****     (void)len;
+ 127:../../bos/utils/b_util_log.c **** #endif
+ 128:../../bos/utils/b_util_log.c **** }
+ 129:../../bos/utils/b_util_log.c **** #else
+ 130:../../bos/utils/b_util_log.c **** static void (*pbLogOutputBytes)(uint8_t *pbuf, uint16_t len) = NULL;
+ 131:../../bos/utils/b_util_log.c **** 
+ 132:../../bos/utils/b_util_log.c **** void bLogOutputBytes(uint8_t *pbuf, uint16_t len)
+ 133:../../bos/utils/b_util_log.c **** {
+ 134:../../bos/utils/b_util_log.c ****     if (pbLogOutputBytes)
+ 135:../../bos/utils/b_util_log.c ****     {
+ 136:../../bos/utils/b_util_log.c ****         pbLogOutputBytes(pbuf, len);
+ 137:../../bos/utils/b_util_log.c ****     }
+GAS LISTING /tmp/cc0WmQqb.s 			page 4
+
+
+ 138:../../bos/utils/b_util_log.c **** }
+ 139:../../bos/utils/b_util_log.c **** 
+ 140:../../bos/utils/b_util_log.c **** void bLogRegOutputBytes(void (*pfn)(uint8_t *pbuf, uint16_t len))
+ 141:../../bos/utils/b_util_log.c **** {
+ 142:../../bos/utils/b_util_log.c ****     pbLogOutputBytes = pfn;
+ 143:../../bos/utils/b_util_log.c **** }
+ 144:../../bos/utils/b_util_log.c **** 
+ 145:../../bos/utils/b_util_log.c **** #endif
+ 146:../../bos/utils/b_util_log.c **** 
+ 147:../../bos/utils/b_util_log.c **** B_FPUTC
+ 148:../../bos/utils/b_util_log.c **** {
+  37              		.loc 1 148 1 is_stmt 1 view -0
+  38              		.cfi_startproc
+  39              		.loc 1 148 1 is_stmt 0 view .LVU7
+  40 0000 F30F1EFA 		endbr64
+ 149:../../bos/utils/b_util_log.c ****     uint8_t ch = c & 0xff;
+  41              		.loc 1 149 5 is_stmt 1 view .LVU8
+  42              	.LVL5:
+ 150:../../bos/utils/b_util_log.c **** #if defined(LOG_UART)
+ 151:../../bos/utils/b_util_log.c **** #if defined(__GNUC__) && !(defined(__ARMCC_VERSION))
+ 152:../../bos/utils/b_util_log.c ****     (void)ch;
+  43              		.loc 1 152 5 view .LVU9
+ 153:../../bos/utils/b_util_log.c ****     bHalUartSend((bHalUartNumber_t)LOG_UART, (uint8_t *)ptr, c);
+  44              		.loc 1 153 5 view .LVU10
+ 148:../../bos/utils/b_util_log.c ****     uint8_t ch = c & 0xff;
+  45              		.loc 1 148 1 is_stmt 0 view .LVU11
+  46 0004 53       		pushq	%rbx
+  47              	.LCFI0:
+  48              		.cfi_def_cfa_offset 16
+  49              		.cfi_offset 3, -16
+  50              		.loc 1 153 5 view .LVU12
+  51 0005 31FF     		xorl	%edi, %edi
+  52              	.LVL6:
+ 148:../../bos/utils/b_util_log.c ****     uint8_t ch = c & 0xff;
+  53              		.loc 1 148 1 view .LVU13
+  54 0007 89D3     		movl	%edx, %ebx
+  55              		.loc 1 153 5 view .LVU14
+  56 0009 0FB7D2   		movzwl	%dx, %edx
+  57              	.LVL7:
+  58              		.loc 1 153 5 view .LVU15
+  59 000c E8000000 		call	bHalUartSend@PLT
+  59      00
+  60              	.LVL8:
+ 154:../../bos/utils/b_util_log.c **** #else
+ 155:../../bos/utils/b_util_log.c ****     bHalUartSend((bHalUartNumber_t)LOG_UART, &ch, 1);
+ 156:../../bos/utils/b_util_log.c **** #endif
+ 157:../../bos/utils/b_util_log.c **** #elif defined(_LOG_VIA_USER_SPECIFIED) && (_LOG_VIA_USER_SPECIFIED == 1)
+ 158:../../bos/utils/b_util_log.c ****     bLogOutputBytes(&ch, 1);
+ 159:../../bos/utils/b_util_log.c **** #else
+ 160:../../bos/utils/b_util_log.c ****     (void)ch;
+ 161:../../bos/utils/b_util_log.c **** #endif
+ 162:../../bos/utils/b_util_log.c ****     return c;
+  61              		.loc 1 162 5 is_stmt 1 view .LVU16
+ 163:../../bos/utils/b_util_log.c **** }
+  62              		.loc 1 163 1 is_stmt 0 view .LVU17
+  63 0011 89D8     		movl	%ebx, %eax
+  64 0013 5B       		popq	%rbx
+GAS LISTING /tmp/cc0WmQqb.s 			page 5
+
+
+  65              	.LCFI1:
+  66              		.cfi_def_cfa_offset 8
+  67              	.LVL9:
+  68              		.loc 1 163 1 view .LVU18
+  69 0014 C3       		ret
+  70              		.cfi_endproc
+  71              	.LFE42:
+  73              		.section	.rodata.bLogOut.str1.1,"aMS",@progbits,1
+  74              	.LC0:
+  75 0000 257500   		.string	"%u"
+  76              		.section	.text.bLogOut,"ax",@progbits
+  77              		.p2align 4
+  78              		.globl	bLogOut
+  80              	bLogOut:
+  81              	.LVL10:
+  82              	.LFB44:
+ 164:../../bos/utils/b_util_log.c **** 
+ 165:../../bos/utils/b_util_log.c **** static void _bLogOutput(void *p)
+ 166:../../bos/utils/b_util_log.c **** {
+ 167:../../bos/utils/b_util_log.c **** #if defined(_LOG_VIA_USER_SPECIFIED) && (_LOG_VIA_USER_SPECIFIED == 1)
+ 168:../../bos/utils/b_util_log.c ****     bLogOutputBytes(p, strlen(p));
+ 169:../../bos/utils/b_util_log.c **** #elif defined(LOG_UART)
+ 170:../../bos/utils/b_util_log.c ****     bHalUartSend((bHalUartNumber_t)LOG_UART, p, strlen(p));
+ 171:../../bos/utils/b_util_log.c **** #else
+ 172:../../bos/utils/b_util_log.c ****     (void)p;
+ 173:../../bos/utils/b_util_log.c **** #endif
+ 174:../../bos/utils/b_util_log.c **** }
+ 175:../../bos/utils/b_util_log.c **** 
+ 176:../../bos/utils/b_util_log.c **** /**
+ 177:../../bos/utils/b_util_log.c ****  * \}
+ 178:../../bos/utils/b_util_log.c ****  */
+ 179:../../bos/utils/b_util_log.c **** 
+ 180:../../bos/utils/b_util_log.c **** /**
+ 181:../../bos/utils/b_util_log.c ****  * \addtogroup LOG_Exported_Functions
+ 182:../../bos/utils/b_util_log.c ****  * \{
+ 183:../../bos/utils/b_util_log.c ****  */
+ 184:../../bos/utils/b_util_log.c **** 
+ 185:../../bos/utils/b_util_log.c **** /**
+ 186:../../bos/utils/b_util_log.c ****  * \brief Create and output string
+ 187:../../bos/utils/b_util_log.c ****  * \param type b_log_i b_log_w b_log_e b_log >> 0, 1, 2, 3
+ 188:../../bos/utils/b_util_log.c ****  * \param ptr_file file name
+ 189:../../bos/utils/b_util_log.c ****  * \param ptr_func function name
+ 190:../../bos/utils/b_util_log.c ****  * \param line line number
+ 191:../../bos/utils/b_util_log.c ****  * \retval none
+ 192:../../bos/utils/b_util_log.c ****  */
+ 193:../../bos/utils/b_util_log.c **** void bLogOut(uint8_t type, const char *ptr_file, const char *ptr_func, uint32_t line,
+ 194:../../bos/utils/b_util_log.c ****              const char *fmt, ...)
+ 195:../../bos/utils/b_util_log.c **** {
+  83              		.loc 1 195 1 is_stmt 1 view -0
+  84              		.cfi_startproc
+  85              		.loc 1 195 1 is_stmt 0 view .LVU20
+  86 0000 F30F1EFA 		endbr64
+  87 0004 4157     		pushq	%r15
+  88              	.LCFI2:
+  89              		.cfi_def_cfa_offset 16
+  90              		.cfi_offset 15, -16
+  91 0006 4989F7   		movq	%rsi, %r15
+GAS LISTING /tmp/cc0WmQqb.s 			page 6
+
+
+  92 0009 4156     		pushq	%r14
+  93              	.LCFI3:
+  94              		.cfi_def_cfa_offset 24
+  95              		.cfi_offset 14, -24
+  96 000b 4155     		pushq	%r13
+  97              	.LCFI4:
+  98              		.cfi_def_cfa_offset 32
+  99              		.cfi_offset 13, -32
+ 100 000d 4189CD   		movl	%ecx, %r13d
+ 101 0010 4154     		pushq	%r12
+ 102              	.LCFI5:
+ 103              		.cfi_def_cfa_offset 40
+ 104              		.cfi_offset 12, -40
+ 105 0012 4D89C4   		movq	%r8, %r12
+ 106 0015 55       		pushq	%rbp
+ 107              	.LCFI6:
+ 108              		.cfi_def_cfa_offset 48
+ 109              		.cfi_offset 6, -48
+ 110 0016 4889D5   		movq	%rdx, %rbp
+ 111 0019 53       		pushq	%rbx
+ 112              	.LCFI7:
+ 113              		.cfi_def_cfa_offset 56
+ 114              		.cfi_offset 3, -56
+ 115 001a 89FB     		movl	%edi, %ebx
+ 116 001c 4881ECF8 		subq	$248, %rsp
+ 116      000000
+ 117              	.LCFI8:
+ 118              		.cfi_def_cfa_offset 304
+ 119 0023 4C894C24 		movq	%r9, 104(%rsp)
+ 119      68
+ 120 0028 84C0     		testb	%al, %al
+ 121 002a 743D     		je	.L6
+ 122 002c 0F294424 		movaps	%xmm0, 112(%rsp)
+ 122      70
+ 123 0031 0F298C24 		movaps	%xmm1, 128(%rsp)
+ 123      80000000 
+ 124 0039 0F299424 		movaps	%xmm2, 144(%rsp)
+ 124      90000000 
+ 125 0041 0F299C24 		movaps	%xmm3, 160(%rsp)
+ 125      A0000000 
+ 126 0049 0F29A424 		movaps	%xmm4, 176(%rsp)
+ 126      B0000000 
+ 127 0051 0F29AC24 		movaps	%xmm5, 192(%rsp)
+ 127      C0000000 
+ 128 0059 0F29B424 		movaps	%xmm6, 208(%rsp)
+ 128      D0000000 
+ 129 0061 0F29BC24 		movaps	%xmm7, 224(%rsp)
+ 129      E0000000 
+ 130              	.L6:
+ 131              		.loc 1 195 1 view .LVU21
+ 132 0069 64488B04 		movq	%fs:40, %rax
+ 132      25280000 
+ 132      00
+ 133 0072 48894424 		movq	%rax, 56(%rsp)
+ 133      38
+ 134 0077 31C0     		xorl	%eax, %eax
+ 196:../../bos/utils/b_util_log.c ****     uint32_t buf_len  = 0;
+GAS LISTING /tmp/cc0WmQqb.s 			page 7
+
+
+ 135              		.loc 1 196 5 is_stmt 1 view .LVU22
+ 136              	.LVL11:
+ 197:../../bos/utils/b_util_log.c ****     uint32_t param    = 0;
+ 137              		.loc 1 197 5 view .LVU23
+ 198:../../bos/utils/b_util_log.c ****     uint8_t  name_len = 0;
+ 138              		.loc 1 198 5 view .LVU24
+ 199:../../bos/utils/b_util_log.c ****     int      str_len  = 0;
+ 139              		.loc 1 199 5 view .LVU25
+ 200:../../bos/utils/b_util_log.c ****     char    *p_tmp = NULL, *pbuf = (char *)bLogBuff;
+ 140              		.loc 1 200 5 view .LVU26
+ 201:../../bos/utils/b_util_log.c ****     char     line_number[8];
+ 141              		.loc 1 201 5 view .LVU27
+ 202:../../bos/utils/b_util_log.c ****     va_list  ap;
+ 142              		.loc 1 202 5 view .LVU28
+ 203:../../bos/utils/b_util_log.c **** 
+ 204:../../bos/utils/b_util_log.c ****     if (type >= 4)
+ 143              		.loc 1 204 5 view .LVU29
+ 144              		.loc 1 204 8 is_stmt 0 view .LVU30
+ 145 0079 80FB03   		cmpb	$3, %bl
+ 146 007c 762A     		jbe	.L56
+ 147              	.LVL12:
+ 148              	.L5:
+ 205:../../bos/utils/b_util_log.c ****     {
+ 206:../../bos/utils/b_util_log.c ****         return;
+ 207:../../bos/utils/b_util_log.c ****     }
+ 208:../../bos/utils/b_util_log.c **** 
+ 209:../../bos/utils/b_util_log.c ****     memset(pbuf, 0, B_LOG_BUF_SIZE);
+ 210:../../bos/utils/b_util_log.c **** 
+ 211:../../bos/utils/b_util_log.c ****     if (type < 3)
+ 212:../../bos/utils/b_util_log.c ****     {
+ 213:../../bos/utils/b_util_log.c ****         param           = bLogParamTable[type];
+ 214:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = bLogPrefix[type];
+ 215:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = ':';
+ 216:../../bos/utils/b_util_log.c ****         if (param & B_LOG_PARAM_FILE)
+ 217:../../bos/utils/b_util_log.c ****         {
+ 218:../../bos/utils/b_util_log.c ****             name_len = strlen(ptr_file);
+ 219:../../bos/utils/b_util_log.c ****             p_tmp    = (char *)ptr_file;
+ 220:../../bos/utils/b_util_log.c ****             if (name_len > 10)
+ 221:../../bos/utils/b_util_log.c ****             {
+ 222:../../bos/utils/b_util_log.c ****                 p_tmp    = (char *)(ptr_file + name_len - 10);
+ 223:../../bos/utils/b_util_log.c ****                 name_len = 10;
+ 224:../../bos/utils/b_util_log.c ****             }
+ 225:../../bos/utils/b_util_log.c ****             memcpy(pbuf + buf_len, p_tmp, name_len);
+ 226:../../bos/utils/b_util_log.c ****             buf_len += name_len;
+ 227:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 228:../../bos/utils/b_util_log.c ****         }
+ 229:../../bos/utils/b_util_log.c ****         if (param & B_LOG_PARAM_FUNC)
+ 230:../../bos/utils/b_util_log.c ****         {
+ 231:../../bos/utils/b_util_log.c ****             p_tmp    = (char *)ptr_func;
+ 232:../../bos/utils/b_util_log.c ****             name_len = strlen(ptr_func);
+ 233:../../bos/utils/b_util_log.c ****             memcpy(pbuf + buf_len, p_tmp, name_len);
+ 234:../../bos/utils/b_util_log.c ****             buf_len += name_len;
+ 235:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 236:../../bos/utils/b_util_log.c ****         }
+ 237:../../bos/utils/b_util_log.c ****         if (param & B_LOG_PARAM_LINE)
+ 238:../../bos/utils/b_util_log.c ****         {
+ 239:../../bos/utils/b_util_log.c ****             str_len = snprintf(line_number, sizeof(line_number), "%u", line);
+GAS LISTING /tmp/cc0WmQqb.s 			page 8
+
+
+ 240:../../bos/utils/b_util_log.c ****             if (str_len < 0)
+ 241:../../bos/utils/b_util_log.c ****             {
+ 242:../../bos/utils/b_util_log.c ****                 return;
+ 243:../../bos/utils/b_util_log.c ****             }
+ 244:../../bos/utils/b_util_log.c ****             memcpy(pbuf + buf_len, line_number, str_len);
+ 245:../../bos/utils/b_util_log.c ****             buf_len += str_len;
+ 246:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 247:../../bos/utils/b_util_log.c ****         }
+ 248:../../bos/utils/b_util_log.c ****     }
+ 249:../../bos/utils/b_util_log.c ****     va_start(ap, fmt);
+ 250:../../bos/utils/b_util_log.c ****     str_len = vsnprintf(pbuf + buf_len, B_LOG_BUF_SIZE - buf_len - 1, fmt, ap);
+ 251:../../bos/utils/b_util_log.c ****     va_end(ap);
+ 252:../../bos/utils/b_util_log.c ****     if (str_len < 0)
+ 253:../../bos/utils/b_util_log.c ****     {
+ 254:../../bos/utils/b_util_log.c ****         return;
+ 255:../../bos/utils/b_util_log.c ****     }
+ 256:../../bos/utils/b_util_log.c ****     _bLogOutput(pbuf);
+ 257:../../bos/utils/b_util_log.c **** }
+ 149              		.loc 1 257 1 view .LVU31
+ 150 007e 488B4424 		movq	56(%rsp), %rax
+ 150      38
+ 151 0083 64482B04 		subq	%fs:40, %rax
+ 151      25280000 
+ 151      00
+ 152 008c 0F858803 		jne	.L57
+ 152      0000
+ 153 0092 4881C4F8 		addq	$248, %rsp
+ 153      000000
+ 154              	.LCFI9:
+ 155              		.cfi_remember_state
+ 156              		.cfi_def_cfa_offset 56
+ 157 0099 5B       		popq	%rbx
+ 158              	.LCFI10:
+ 159              		.cfi_def_cfa_offset 48
+ 160 009a 5D       		popq	%rbp
+ 161              	.LCFI11:
+ 162              		.cfi_def_cfa_offset 40
+ 163 009b 415C     		popq	%r12
+ 164              	.LCFI12:
+ 165              		.cfi_def_cfa_offset 32
+ 166              	.LVL13:
+ 167              		.loc 1 257 1 view .LVU32
+ 168 009d 415D     		popq	%r13
+ 169              	.LCFI13:
+ 170              		.cfi_def_cfa_offset 24
+ 171              	.LVL14:
+ 172              		.loc 1 257 1 view .LVU33
+ 173 009f 415E     		popq	%r14
+ 174              	.LCFI14:
+ 175              		.cfi_def_cfa_offset 16
+ 176 00a1 415F     		popq	%r15
+ 177              	.LCFI15:
+ 178              		.cfi_def_cfa_offset 8
+ 179 00a3 C3       		ret
+ 180              	.LVL15:
+ 181              		.p2align 4,,10
+ 182 00a4 0F1F4000 		.p2align 3
+GAS LISTING /tmp/cc0WmQqb.s 			page 9
+
+
+ 183              	.L56:
+ 184              	.LCFI16:
+ 185              		.cfi_restore_state
+ 209:../../bos/utils/b_util_log.c **** 
+ 186              		.loc 1 209 5 is_stmt 1 view .LVU34
+ 187              	.LBB28:
+ 188              	.LBI28:
+ 189              		.file 2 "/usr/include/x86_64-linux-gnu/bits/string_fortified.h"
+   1:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
+   3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
+   5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
+   6:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License as published by the Free Software Foundation; either
+   7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
+   8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+   9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  12:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    Lesser General Public License for more details.
+  13:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  14:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    You should have received a copy of the GNU Lesser General Public
+  15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
+  16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
+  17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
+  19:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #define _BITS_STRING_FORTIFIED_H 1
+  20:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
+  22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
+  23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  25:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memcpy (void *__restrict __dest, const void *__restrict __src,
+  27:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+  28:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memcpy_chk (__dest, __src, __len,
+  30:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+  31:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  32:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  33:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  34:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memmove (void *__dest, const void *__src, size_t __len))
+  35:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  36:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memmove_chk (__dest, __src, __len,
+  37:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
+  41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
+  43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
+  44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
+  46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
+  47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
+  48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
+  49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+GAS LISTING /tmp/cc0WmQqb.s 			page 10
+
+
+  50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
+  51:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** /* The first two tests here help to catch a somewhat common problem
+  52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
+  53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
+  54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
+  55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
+  56:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
+  57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (memset (void *__dest, int __ch, size_t __len))
+ 190              		.loc 2 57 1 view .LVU35
+ 191              	.LBB29:
+  58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
+  59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
+ 192              		.loc 2 59 3 view .LVU36
+ 193              		.loc 2 59 10 is_stmt 0 discriminator 1 view .LVU37
+ 194 00a8 4C8D3500 		leaq	bLogBuff(%rip), %r14
+ 194      000000
+ 195 00af 31F6     		xorl	%esi, %esi
+ 196              	.LVL16:
+ 197              		.loc 2 59 10 discriminator 1 view .LVU38
+ 198 00b1 BAA08601 		movl	$100000, %edx
+ 198      00
+ 199              	.LVL17:
+ 200              		.loc 2 59 10 discriminator 1 view .LVU39
+ 201 00b6 4C89F7   		movq	%r14, %rdi
+ 202              	.LVL18:
+ 203              		.loc 2 59 10 discriminator 1 view .LVU40
+ 204 00b9 E8000000 		call	memset@PLT
+ 204      00
+ 205              	.LVL19:
+ 206              		.loc 2 59 10 discriminator 1 view .LVU41
+ 207              	.LBE29:
+ 208              	.LBE28:
+ 211:../../bos/utils/b_util_log.c ****     {
+ 209              		.loc 1 211 5 is_stmt 1 view .LVU42
+ 211:../../bos/utils/b_util_log.c ****     {
+ 210              		.loc 1 211 8 is_stmt 0 view .LVU43
+ 211 00be 80FB03   		cmpb	$3, %bl
+ 212 00c1 0F840102 		je	.L32
+ 212      0000
+ 213:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = bLogPrefix[type];
+ 213              		.loc 1 213 9 is_stmt 1 view .LVU44
+ 213:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = bLogPrefix[type];
+ 214              		.loc 1 213 41 is_stmt 0 view .LVU45
+ 215 00c7 0FB6DB   		movzbl	%bl, %ebx
+ 216              	.LVL20:
+ 213:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = bLogPrefix[type];
+ 217              		.loc 1 213 41 view .LVU46
+ 218 00ca 488D0500 		leaq	bLogParamTable(%rip), %rax
+ 218      000000
+ 215:../../bos/utils/b_util_log.c ****         if (param & B_LOG_PARAM_FILE)
+ 219              		.loc 1 215 25 view .LVU47
+ 220 00d1 C6050000 		movb	$58, 1+bLogBuff(%rip)
+ 220      00003A
+ 213:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = bLogPrefix[type];
+ 221              		.loc 1 213 41 view .LVU48
+ 222 00d8 0FB61418 		movzbl	(%rax,%rbx), %edx
+ 223              	.LVL21:
+GAS LISTING /tmp/cc0WmQqb.s 			page 11
+
+
+ 214:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = ':';
+ 224              		.loc 1 214 9 is_stmt 1 view .LVU49
+ 214:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = ':';
+ 225              		.loc 1 214 37 is_stmt 0 view .LVU50
+ 226 00dc 488D0500 		leaq	bLogPrefix(%rip), %rax
+ 226      000000
+ 214:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = ':';
+ 227              		.loc 1 214 25 view .LVU51
+ 228 00e3 0FB60418 		movzbl	(%rax,%rbx), %eax
+ 215:../../bos/utils/b_util_log.c ****         if (param & B_LOG_PARAM_FILE)
+ 229              		.loc 1 215 21 view .LVU52
+ 230 00e7 BB020000 		movl	$2, %ebx
+ 230      00
+ 214:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = ':';
+ 231              		.loc 1 214 25 view .LVU53
+ 232 00ec 88050000 		movb	%al, bLogBuff(%rip)
+ 232      0000
+ 215:../../bos/utils/b_util_log.c ****         if (param & B_LOG_PARAM_FILE)
+ 233              		.loc 1 215 9 is_stmt 1 view .LVU54
+ 234              	.LVL22:
+ 216:../../bos/utils/b_util_log.c ****         {
+ 235              		.loc 1 216 9 view .LVU55
+ 216:../../bos/utils/b_util_log.c ****         {
+ 236              		.loc 1 216 12 is_stmt 0 view .LVU56
+ 237 00f2 F6C204   		testb	$4, %dl
+ 238 00f5 7466     		je	.L9
+ 218:../../bos/utils/b_util_log.c ****             p_tmp    = (char *)ptr_file;
+ 239              		.loc 1 218 24 view .LVU57
+ 240 00f7 4C89FF   		movq	%r15, %rdi
+ 241 00fa 8854240F 		movb	%dl, 15(%rsp)
+ 218:../../bos/utils/b_util_log.c ****             p_tmp    = (char *)ptr_file;
+ 242              		.loc 1 218 13 is_stmt 1 view .LVU58
+ 218:../../bos/utils/b_util_log.c ****             p_tmp    = (char *)ptr_file;
+ 243              		.loc 1 218 24 is_stmt 0 view .LVU59
+ 244 00fe E8000000 		call	strlen@PLT
+ 244      00
+ 245              	.LVL23:
+ 219:../../bos/utils/b_util_log.c ****             if (name_len > 10)
+ 246              		.loc 1 219 13 is_stmt 1 view .LVU60
+ 220:../../bos/utils/b_util_log.c ****             {
+ 247              		.loc 1 220 13 view .LVU61
+ 220:../../bos/utils/b_util_log.c ****             {
+ 248              		.loc 1 220 16 is_stmt 0 view .LVU62
+ 249 0103 0FB65424 		movzbl	15(%rsp), %edx
+ 249      0F
+ 250 0108 3C0A     		cmpb	$10, %al
+ 251 010a 0F872802 		ja	.L10
+ 251      0000
+ 252 0110 0FB6C8   		movzbl	%al, %ecx
+ 226:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 253              		.loc 1 226 21 view .LVU63
+ 254 0113 0FB6C0   		movzbl	%al, %eax
+ 226:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 255              		.loc 1 226 21 view .LVU64
+ 256 0116 8D7802   		leal	2(%rax), %edi
+ 227:../../bos/utils/b_util_log.c ****         }
+ 257              		.loc 1 227 25 view .LVU65
+GAS LISTING /tmp/cc0WmQqb.s 			page 12
+
+
+ 258 0119 8D5803   		leal	3(%rax), %ebx
+ 259              	.LVL24:
+ 260              	.L11:
+ 225:../../bos/utils/b_util_log.c ****             buf_len += name_len;
+ 261              		.loc 1 225 13 is_stmt 1 view .LVU66
+ 262              	.LBB30:
+ 263              	.LBI30:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 264              		.loc 2 26 1 view .LVU67
+ 265              	.LBB31:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 266              		.loc 2 29 3 view .LVU68
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 267              		.loc 2 29 10 is_stmt 0 discriminator 1 view .LVU69
+ 268 011c 488D3500 		leaq	2+bLogBuff(%rip), %rsi
+ 268      000000
+ 269              	.LVL25:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 270              		.loc 2 29 10 discriminator 1 view .LVU70
+ 271 0123 89C8     		movl	%ecx, %eax
+ 272 0125 83F908   		cmpl	$8, %ecx
+ 273 0128 0F83B201 		jnb	.L12
+ 273      0000
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 274              		.loc 2 29 10 discriminator 1 view .LVU71
+ 275 012e 83E104   		andl	$4, %ecx
+ 276 0131 0F85A502 		jne	.L58
+ 276      0000
+ 277 0137 85C0     		testl	%eax, %eax
+ 278 0139 741D     		je	.L13
+ 279 013b 410FB60F 		movzbl	(%r15), %ecx
+ 280 013f 880D0000 		movb	%cl, 2+bLogBuff(%rip)
+ 280      0000
+ 281 0145 A802     		testb	$2, %al
+ 282 0147 740F     		je	.L13
+ 283 0149 410FB74C 		movzwl	-2(%r15,%rax), %ecx
+ 283      07FE
+ 284 014f 66894C06 		movw	%cx, -2(%rsi,%rax)
+ 284      FE
+ 285              	.LVL26:
+ 286              		.p2align 4,,10
+ 287 0154 0F1F4000 		.p2align 3
+ 288              	.L13:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 289              		.loc 2 29 10 discriminator 1 view .LVU72
+ 290              	.LBE31:
+ 291              	.LBE30:
+ 226:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 292              		.loc 1 226 13 is_stmt 1 view .LVU73
+ 227:../../bos/utils/b_util_log.c ****         }
+ 293              		.loc 1 227 13 view .LVU74
+ 227:../../bos/utils/b_util_log.c ****         }
+ 294              		.loc 1 227 29 is_stmt 0 view .LVU75
+ 295 0158 41C6043E 		movb	$32, (%r14,%rdi)
+ 295      20
+ 296              	.LVL27:
+ 297              	.L9:
+GAS LISTING /tmp/cc0WmQqb.s 			page 13
+
+
+ 229:../../bos/utils/b_util_log.c ****         {
+ 298              		.loc 1 229 9 is_stmt 1 view .LVU76
+ 229:../../bos/utils/b_util_log.c ****         {
+ 299              		.loc 1 229 12 is_stmt 0 view .LVU77
+ 300 015d F6C202   		testb	$2, %dl
+ 301 0160 0F850201 		jne	.L59
+ 301      0000
+ 302              	.L18:
+ 237:../../bos/utils/b_util_log.c ****         {
+ 303              		.loc 1 237 9 is_stmt 1 view .LVU78
+ 237:../../bos/utils/b_util_log.c ****         {
+ 304              		.loc 1 237 12 is_stmt 0 view .LVU79
+ 305 0166 83E201   		andl	$1, %edx
+ 306              	.LVL28:
+ 237:../../bos/utils/b_util_log.c ****         {
+ 307              		.loc 1 237 12 view .LVU80
+ 308 0169 7575     		jne	.L23
+ 250:../../bos/utils/b_util_log.c ****     va_end(ap);
+ 309              		.loc 1 250 15 view .LVU81
+ 310 016b BE9F8601 		movl	$99999, %esi
+ 310      00
+ 311 0170 B9A08601 		movl	$100000, %ecx
+ 311      00
+ 312 0175 29DE     		subl	%ebx, %esi
+ 244:../../bos/utils/b_util_log.c ****             buf_len += str_len;
+ 313              		.loc 1 244 13 view .LVU82
+ 314 0177 89DB     		movl	%ebx, %ebx
+ 250:../../bos/utils/b_util_log.c ****     va_end(ap);
+ 315              		.loc 1 250 15 view .LVU83
+ 316 0179 498D3C1E 		leaq	(%r14,%rbx), %rdi
+ 317 017d 4829D9   		subq	%rbx, %rcx
+ 318              	.LVL29:
+ 319              	.L8:
+ 249:../../bos/utils/b_util_log.c ****     str_len = vsnprintf(pbuf + buf_len, B_LOG_BUF_SIZE - buf_len - 1, fmt, ap);
+ 320              		.loc 1 249 5 is_stmt 1 view .LVU84
+ 321 0180 488D8424 		leaq	304(%rsp), %rax
+ 321      30010000 
+ 322              	.LBB34:
+ 323              	.LBB35:
+ 324              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdio2.h"
+   1:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** /* Checking macros for stdio functions.
+   2:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Copyright (C) 2004-2024 Free Software Foundation, Inc.
+   3:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    This file is part of the GNU C Library.
+   4:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+   5:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is free software; you can redistribute it and/or
+   6:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    modify it under the terms of the GNU Lesser General Public
+   7:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License as published by the Free Software Foundation; either
+   8:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    version 2.1 of the License, or (at your option) any later version.
+   9:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  10:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    The GNU C Library is distributed in the hope that it will be useful,
+  11:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
+  12:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  13:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    Lesser General Public License for more details.
+  14:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  15:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    You should have received a copy of the GNU Lesser General Public
+  16:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License along with the GNU C Library; if not, see
+  17:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    <https://www.gnu.org/licenses/>.  */
+GAS LISTING /tmp/cc0WmQqb.s 			page 14
+
+
+  18:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  19:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _BITS_STDIO2_H
+  20:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #define _BITS_STDIO2_H 1
+  21:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  22:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _STDIO_H
+  23:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # error "Never include <bits/stdio2.h> directly; use <stdio.h> instead."
+  24:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  25:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  26:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifdef __va_arg_pack
+  27:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  28:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (sprintf (char *__restrict __s, const char *__restrict __fmt, ...))
+  29:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  30:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+  31:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				  __glibc_objsize (__s), __fmt,
+  32:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				  __va_arg_pack ());
+  33:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  34:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #elif !defined __cplusplus
+  35:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # define sprintf(str, ...) \
+  36:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   __builtin___sprintf_chk (str, __USE_FORTIFY_LEVEL - 1,		      \
+  37:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 			   __glibc_objsize (str), __VA_ARGS__)
+  38:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
+  39:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  40:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  41:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (vsprintf (char *__restrict __s, const char *__restrict __fmt,
+  42:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 __gnuc_va_list __ap))
+  43:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  44:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___vsprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+  45:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt, __ap);
+  46:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  47:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  48:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #if defined __USE_ISOC99 || defined __USE_UNIX98
+  49:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # ifdef __va_arg_pack
+  50:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (snprintf (char *__restrict __s, size_t __n,
+  52:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+  53:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  54:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+  55:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt,
+  56:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __va_arg_pack ());
+  57:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** }
+  58:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # elif !defined __cplusplus
+  59:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #  define snprintf(str, len, ...) \
+  60:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   __builtin___snprintf_chk (str, len, __USE_FORTIFY_LEVEL - 1,		      \
+  61:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 			    __glibc_objsize (str), __VA_ARGS__)
+  62:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # endif
+  63:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
+  64:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
+  65:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (vsnprintf (char *__restrict __s, size_t __n,
+  66:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		  const char *__restrict __fmt, __gnuc_va_list __ap))
+  67:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** {
+  68:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****   return __builtin___vsnprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+ 325              		.loc 3 68 10 is_stmt 0 discriminator 1 view .LVU85
+ 326 0188 4C8D4C24 		leaq	24(%rsp), %r9
+ 326      18
+ 327 018d 4D89E0   		movq	%r12, %r8
+ 328 0190 BA020000 		movl	$2, %edx
+ 328      00
+GAS LISTING /tmp/cc0WmQqb.s 			page 15
+
+
+ 329              	.LBE35:
+ 330              	.LBE34:
+ 249:../../bos/utils/b_util_log.c ****     str_len = vsnprintf(pbuf + buf_len, B_LOG_BUF_SIZE - buf_len - 1, fmt, ap);
+ 331              		.loc 1 249 5 view .LVU86
+ 332 0195 48894424 		movq	%rax, 32(%rsp)
+ 332      20
+ 333 019a 488D4424 		leaq	64(%rsp), %rax
+ 333      40
+ 334 019f C7442418 		movl	$40, 24(%rsp)
+ 334      28000000 
+ 335 01a7 C744241C 		movl	$48, 28(%rsp)
+ 335      30000000 
+ 336 01af 48894424 		movq	%rax, 40(%rsp)
+ 336      28
+ 250:../../bos/utils/b_util_log.c ****     va_end(ap);
+ 337              		.loc 1 250 5 is_stmt 1 view .LVU87
+ 338              	.LVL30:
+ 339              	.LBB37:
+ 340              	.LBI34:
+  65:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		  const char *__restrict __fmt, __gnuc_va_list __ap))
+ 341              		.loc 3 65 1 view .LVU88
+ 342              	.LBB36:
+ 343              		.loc 3 68 3 view .LVU89
+ 344              		.loc 3 68 10 is_stmt 0 discriminator 1 view .LVU90
+ 345 01b4 E8000000 		call	__vsnprintf_chk@PLT
+ 345      00
+ 346              	.LVL31:
+ 347              		.loc 3 68 10 discriminator 1 view .LVU91
+ 348              	.LBE36:
+ 349              	.LBE37:
+ 251:../../bos/utils/b_util_log.c ****     if (str_len < 0)
+ 350              		.loc 1 251 5 is_stmt 1 view .LVU92
+ 252:../../bos/utils/b_util_log.c ****     {
+ 351              		.loc 1 252 5 view .LVU93
+ 252:../../bos/utils/b_util_log.c ****     {
+ 352              		.loc 1 252 8 is_stmt 0 view .LVU94
+ 353 01b9 85C0     		testl	%eax, %eax
+ 354 01bb 0F88BDFE 		js	.L5
+ 354      FFFF
+ 256:../../bos/utils/b_util_log.c **** }
+ 355              		.loc 1 256 5 is_stmt 1 view .LVU95
+ 356              	.LBB38:
+ 357              	.LBI38:
+ 165:../../bos/utils/b_util_log.c **** {
+ 358              		.loc 1 165 13 view .LVU96
+ 359              	.LVL32:
+ 360              	.LBB39:
+ 170:../../bos/utils/b_util_log.c **** #else
+ 361              		.loc 1 170 5 view .LVU97
+ 170:../../bos/utils/b_util_log.c **** #else
+ 362              		.loc 1 170 49 is_stmt 0 view .LVU98
+ 363 01c1 4C89F7   		movq	%r14, %rdi
+ 364 01c4 E8000000 		call	strlen@PLT
+ 364      00
+ 365              	.LVL33:
+ 170:../../bos/utils/b_util_log.c **** #else
+ 366              		.loc 1 170 5 discriminator 1 view .LVU99
+GAS LISTING /tmp/cc0WmQqb.s 			page 16
+
+
+ 367 01c9 4C89F6   		movq	%r14, %rsi
+ 368 01cc 31FF     		xorl	%edi, %edi
+ 369 01ce 0FB7D0   		movzwl	%ax, %edx
+ 370 01d1 E8000000 		call	bHalUartSend@PLT
+ 370      00
+ 371              	.LVL34:
+ 170:../../bos/utils/b_util_log.c **** #else
+ 372              		.loc 1 170 5 discriminator 1 view .LVU100
+ 373              	.LBE39:
+ 374              	.LBE38:
+ 375 01d6 E9A3FEFF 		jmp	.L5
+ 375      FF
+ 376              	.LVL35:
+ 377 01db 0F1F4400 		.p2align 4,,10
+ 377      00
+ 378              		.p2align 3
+ 379              	.L23:
+ 239:../../bos/utils/b_util_log.c ****             if (str_len < 0)
+ 380              		.loc 1 239 13 is_stmt 1 view .LVU101
+ 381              	.LBB40:
+ 382              	.LBI40:
+  51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 		 const char *__restrict __fmt, ...))
+ 383              		.loc 3 51 1 view .LVU102
+ 384              	.LBB41:
+  54:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt,
+ 385              		.loc 3 54 3 view .LVU103
+  54:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt,
+ 386              		.loc 3 54 10 is_stmt 0 discriminator 1 view .LVU104
+ 387 01e0 488D6C24 		leaq	48(%rsp), %rbp
+ 387      30
+ 388              	.LVL36:
+  54:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt,
+ 389              		.loc 3 54 10 discriminator 1 view .LVU105
+ 390 01e5 BA020000 		movl	$2, %edx
+ 390      00
+ 391 01ea 4589E9   		movl	%r13d, %r9d
+ 392 01ed 31C0     		xorl	%eax, %eax
+ 393 01ef 4C8D0500 		leaq	.LC0(%rip), %r8
+ 393      000000
+ 394 01f6 B9080000 		movl	$8, %ecx
+ 394      00
+ 395 01fb BE080000 		movl	$8, %esi
+ 395      00
+ 396 0200 4889EF   		movq	%rbp, %rdi
+ 397 0203 E8000000 		call	__snprintf_chk@PLT
+ 397      00
+ 398              	.LVL37:
+  54:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 				   __glibc_objsize (__s), __fmt,
+ 399              		.loc 3 54 10 discriminator 1 view .LVU106
+ 400              	.LBE41:
+ 401              	.LBE40:
+ 240:../../bos/utils/b_util_log.c ****             {
+ 402              		.loc 1 240 13 is_stmt 1 view .LVU107
+ 244:../../bos/utils/b_util_log.c ****             buf_len += str_len;
+ 403              		.loc 1 244 13 view .LVU108
+ 404              	.LBB42:
+ 405              	.LBI42:
+GAS LISTING /tmp/cc0WmQqb.s 			page 17
+
+
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 406              		.loc 2 26 1 view .LVU109
+ 407              	.LBB43:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 408              		.loc 2 29 3 view .LVU110
+ 409              	.LBE43:
+ 410              	.LBE42:
+ 244:../../bos/utils/b_util_log.c ****             buf_len += str_len;
+ 411              		.loc 1 244 13 is_stmt 0 view .LVU111
+ 412 0208 89DA     		movl	%ebx, %edx
+ 244:../../bos/utils/b_util_log.c ****             buf_len += str_len;
+ 413              		.loc 1 244 25 view .LVU112
+ 414 020a 4C01F2   		addq	%r14, %rdx
+ 415              	.LBB47:
+ 416              	.LBB44:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 417              		.loc 2 29 10 discriminator 1 view .LVU113
+ 418 020d 83F808   		cmpl	$8, %eax
+ 419 0210 0F837A01 		jnb	.L24
+ 419      0000
+ 420 0216 A804     		testb	$4, %al
+ 421 0218 0F85E701 		jne	.L60
+ 421      0000
+ 422 021e 85C0     		testl	%eax, %eax
+ 423 0220 741E     		je	.L25
+ 424 0222 0FB64C24 		movzbl	48(%rsp), %ecx
+ 424      30
+ 425 0227 880A     		movb	%cl, (%rdx)
+ 426 0229 A802     		testb	$2, %al
+ 427 022b 7413     		je	.L25
+ 428 022d 89C1     		movl	%eax, %ecx
+ 429 022f 0FB7740D 		movzwl	-2(%rbp,%rcx), %esi
+ 429      FE
+ 430 0234 6689740A 		movw	%si, -2(%rdx,%rcx)
+ 430      FE
+ 431              	.LVL38:
+ 432 0239 0F1F8000 		.p2align 4,,10
+ 432      000000
+ 433              		.p2align 3
+ 434              	.L25:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 435              		.loc 2 29 10 discriminator 1 view .LVU114
+ 436              	.LBE44:
+ 437              	.LBE47:
+ 245:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 438              		.loc 1 245 13 is_stmt 1 view .LVU115
+ 245:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 439              		.loc 1 245 21 is_stmt 0 view .LVU116
+ 440 0240 01D8     		addl	%ebx, %eax
+ 441              	.LVL39:
+ 246:../../bos/utils/b_util_log.c ****         }
+ 442              		.loc 1 246 13 is_stmt 1 view .LVU117
+ 250:../../bos/utils/b_util_log.c ****     va_end(ap);
+ 443              		.loc 1 250 15 is_stmt 0 view .LVU118
+ 444 0242 BE9F8601 		movl	$99999, %esi
+ 444      00
+ 445 0247 B9A08601 		movl	$100000, %ecx
+GAS LISTING /tmp/cc0WmQqb.s 			page 18
+
+
+ 445      00
+ 246:../../bos/utils/b_util_log.c ****         }
+ 446              		.loc 1 246 25 view .LVU119
+ 447 024c 8D5001   		leal	1(%rax), %edx
+ 448              	.LVL40:
+ 246:../../bos/utils/b_util_log.c ****         }
+ 449              		.loc 1 246 29 view .LVU120
+ 450 024f 41C60406 		movb	$32, (%r14,%rax)
+ 450      20
+ 250:../../bos/utils/b_util_log.c ****     va_end(ap);
+ 451              		.loc 1 250 15 view .LVU121
+ 452 0254 89D0     		movl	%edx, %eax
+ 453 0256 29D6     		subl	%edx, %esi
+ 454 0258 498D3C06 		leaq	(%r14,%rax), %rdi
+ 455 025c 4829C1   		subq	%rax, %rcx
+ 456 025f E91CFFFF 		jmp	.L8
+ 456      FF
+ 457              	.LVL41:
+ 458              		.p2align 4,,10
+ 459 0264 0F1F4000 		.p2align 3
+ 460              	.L59:
+ 232:../../bos/utils/b_util_log.c ****             memcpy(pbuf + buf_len, p_tmp, name_len);
+ 461              		.loc 1 232 24 view .LVU122
+ 462 0268 4889EF   		movq	%rbp, %rdi
+ 463 026b 8854240F 		movb	%dl, 15(%rsp)
+ 231:../../bos/utils/b_util_log.c ****             name_len = strlen(ptr_func);
+ 464              		.loc 1 231 13 is_stmt 1 view .LVU123
+ 465              	.LVL42:
+ 232:../../bos/utils/b_util_log.c ****             memcpy(pbuf + buf_len, p_tmp, name_len);
+ 466              		.loc 1 232 13 view .LVU124
+ 232:../../bos/utils/b_util_log.c ****             memcpy(pbuf + buf_len, p_tmp, name_len);
+ 467              		.loc 1 232 24 is_stmt 0 view .LVU125
+ 468 026f E8000000 		call	strlen@PLT
+ 468      00
+ 469              	.LVL43:
+ 233:../../bos/utils/b_util_log.c ****             buf_len += name_len;
+ 470              		.loc 1 233 13 is_stmt 1 view .LVU126
+ 471              	.LBB48:
+ 472              	.LBI48:
+  26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
+ 473              		.loc 2 26 1 view .LVU127
+ 474              	.LBB49:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 475              		.loc 2 29 3 view .LVU128
+ 476              	.LBE49:
+ 477              	.LBE48:
+ 233:../../bos/utils/b_util_log.c ****             buf_len += name_len;
+ 478              		.loc 1 233 13 is_stmt 0 view .LVU129
+ 479 0274 89DE     		movl	%ebx, %esi
+ 480              	.LBB54:
+ 481              	.LBB50:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 482              		.loc 2 29 10 discriminator 1 view .LVU130
+ 483 0276 0FB65424 		movzbl	15(%rsp), %edx
+ 483      0F
+ 484 027b 0FB6C8   		movzbl	%al, %ecx
+ 485              	.LBE50:
+GAS LISTING /tmp/cc0WmQqb.s 			page 19
+
+
+ 486              	.LBE54:
+ 233:../../bos/utils/b_util_log.c ****             buf_len += name_len;
+ 487              		.loc 1 233 25 view .LVU131
+ 488 027e 4C01F6   		addq	%r14, %rsi
+ 489              	.LBB55:
+ 490              	.LBB51:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 491              		.loc 2 29 10 discriminator 1 view .LVU132
+ 492 0281 83F908   		cmpl	$8, %ecx
+ 493 0284 0F83CE00 		jnb	.L19
+ 493      0000
+ 494              	.LVL44:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 495              		.loc 2 29 10 discriminator 1 view .LVU133
+ 496 028a F6C104   		testb	$4, %cl
+ 497 028d 0F856001 		jne	.L61
+ 497      0000
+ 498 0293 85C9     		testl	%ecx, %ecx
+ 499 0295 7419     		je	.L20
+ 500 0297 0FB67D00 		movzbl	0(%rbp), %edi
+ 501 029b 40883E   		movb	%dil, (%rsi)
+ 502 029e F6C102   		testb	$2, %cl
+ 503 02a1 740D     		je	.L20
+ 504 02a3 0FB77C0D 		movzwl	-2(%rbp,%rcx), %edi
+ 504      FE
+ 505 02a8 66897C0E 		movw	%di, -2(%rsi,%rcx)
+ 505      FE
+ 506 02ad 0F1F00   		.p2align 4,,10
+ 507              		.p2align 3
+ 508              	.L20:
+ 509              	.LVL45:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 510              		.loc 2 29 10 discriminator 1 view .LVU134
+ 511              	.LBE51:
+ 512              	.LBE55:
+ 234:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 513              		.loc 1 234 13 is_stmt 1 view .LVU135
+ 234:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 514              		.loc 1 234 21 is_stmt 0 view .LVU136
+ 515 02b0 0FB6C0   		movzbl	%al, %eax
+ 234:../../bos/utils/b_util_log.c ****             pbuf[buf_len++] = ' ';
+ 516              		.loc 1 234 21 view .LVU137
+ 517 02b3 01D8     		addl	%ebx, %eax
+ 518              	.LVL46:
+ 235:../../bos/utils/b_util_log.c ****         }
+ 519              		.loc 1 235 13 is_stmt 1 view .LVU138
+ 235:../../bos/utils/b_util_log.c ****         }
+ 520              		.loc 1 235 29 is_stmt 0 view .LVU139
+ 521 02b5 41C60406 		movb	$32, (%r14,%rax)
+ 521      20
+ 235:../../bos/utils/b_util_log.c ****         }
+ 522              		.loc 1 235 25 view .LVU140
+ 523 02ba 8D5801   		leal	1(%rax), %ebx
+ 524              	.LVL47:
+ 235:../../bos/utils/b_util_log.c ****         }
+ 525              		.loc 1 235 25 view .LVU141
+ 526 02bd E9A4FEFF 		jmp	.L18
+GAS LISTING /tmp/cc0WmQqb.s 			page 20
+
+
+ 526      FF
+ 527              	.LVL48:
+ 528              		.p2align 4,,10
+ 529 02c2 660F1F44 		.p2align 3
+ 529      0000
+ 530              	.L32:
+ 235:../../bos/utils/b_util_log.c ****         }
+ 531              		.loc 1 235 25 view .LVU142
+ 532 02c8 B9A08601 		movl	$100000, %ecx
+ 532      00
+ 533 02cd 4C89F7   		movq	%r14, %rdi
+ 534 02d0 BE9F8601 		movl	$99999, %esi
+ 534      00
+ 535 02d5 E9A6FEFF 		jmp	.L8
+ 535      FF
+ 536              	.LVL49:
+ 537 02da 660F1F44 		.p2align 4,,10
+ 537      0000
+ 538              		.p2align 3
+ 539              	.L12:
+ 540              	.LBB56:
+ 541              	.LBB32:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 542              		.loc 2 29 10 discriminator 1 view .LVU143
+ 543 02e0 498B07   		movq	(%r15), %rax
+ 544 02e3 4C8D0D00 		leaq	10+bLogBuff(%rip), %r9
+ 544      000000
+ 545 02ea 4983E1F8 		andq	$-8, %r9
+ 546 02ee 48890500 		movq	%rax, 2+bLogBuff(%rip)
+ 546      000000
+ 547 02f5 498B440F 		movq	-8(%r15,%rcx), %rax
+ 547      F8
+ 548 02fa 4889440E 		movq	%rax, -8(%rsi,%rcx)
+ 548      F8
+ 549 02ff 4889F0   		movq	%rsi, %rax
+ 550 0302 4C29C8   		subq	%r9, %rax
+ 551 0305 4929C7   		subq	%rax, %r15
+ 552              	.LVL50:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 553              		.loc 2 29 10 discriminator 1 view .LVU144
+ 554 0308 01C8     		addl	%ecx, %eax
+ 555 030a 83E0F8   		andl	$-8, %eax
+ 556 030d 83F808   		cmpl	$8, %eax
+ 557 0310 0F8242FE 		jb	.L13
+ 557      FFFF
+ 558 0316 83E0F8   		andl	$-8, %eax
+ 559 0319 31C9     		xorl	%ecx, %ecx
+ 560              	.LVL51:
+ 561              	.L16:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 562              		.loc 2 29 10 discriminator 1 view .LVU145
+ 563 031b 89CE     		movl	%ecx, %esi
+ 564 031d 83C108   		addl	$8, %ecx
+ 565 0320 4D8B0437 		movq	(%r15,%rsi), %r8
+ 566 0324 4D890431 		movq	%r8, (%r9,%rsi)
+ 567 0328 39C1     		cmpl	%eax, %ecx
+ 568 032a 72EF     		jb	.L16
+GAS LISTING /tmp/cc0WmQqb.s 			page 21
+
+
+ 569 032c E927FEFF 		jmp	.L13
+ 569      FF
+ 570              	.LVL52:
+ 571              		.p2align 4,,10
+ 572 0331 0F1F8000 		.p2align 3
+ 572      000000
+ 573              	.L10:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 574              		.loc 2 29 10 discriminator 1 view .LVU146
+ 575              	.LBE32:
+ 576              	.LBE56:
+ 222:../../bos/utils/b_util_log.c ****                 name_len = 10;
+ 577              		.loc 1 222 17 is_stmt 1 view .LVU147
+ 222:../../bos/utils/b_util_log.c ****                 name_len = 10;
+ 578              		.loc 1 222 57 is_stmt 0 view .LVU148
+ 579 0338 0FB6C0   		movzbl	%al, %eax
+ 222:../../bos/utils/b_util_log.c ****                 name_len = 10;
+ 580              		.loc 1 222 26 view .LVU149
+ 581 033b BB0D0000 		movl	$13, %ebx
+ 581      00
+ 582 0340 BF0C0000 		movl	$12, %edi
+ 582      00
+ 583 0345 B90A0000 		movl	$10, %ecx
+ 583      00
+ 584 034a 4D8D7C07 		leaq	-10(%r15,%rax), %r15
+ 584      F6
+ 585              	.LVL53:
+ 223:../../bos/utils/b_util_log.c ****             }
+ 586              		.loc 1 223 17 is_stmt 1 view .LVU150
+ 223:../../bos/utils/b_util_log.c ****             }
+ 587              		.loc 1 223 17 is_stmt 0 view .LVU151
+ 588 034f E9C8FDFF 		jmp	.L11
+ 588      FF
+ 589              	.LVL54:
+ 590              		.p2align 4,,10
+ 591 0354 0F1F4000 		.p2align 3
+ 592              	.L19:
+ 593              	.LBB57:
+ 594              	.LBB52:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 595              		.loc 2 29 10 discriminator 1 view .LVU152
+ 596 0358 488B7D00 		movq	0(%rbp), %rdi
+ 597 035c 48893E   		movq	%rdi, (%rsi)
+ 598 035f 488B7C0D 		movq	-8(%rbp,%rcx), %rdi
+ 598      F8
+ 599 0364 48897C0E 		movq	%rdi, -8(%rsi,%rcx)
+ 599      F8
+ 600 0369 488D7E08 		leaq	8(%rsi), %rdi
+ 601 036d 4883E7F8 		andq	$-8, %rdi
+ 602 0371 4829FE   		subq	%rdi, %rsi
+ 603 0374 4989F0   		movq	%rsi, %r8
+ 604 0377 4889EE   		movq	%rbp, %rsi
+ 605 037a 4401C1   		addl	%r8d, %ecx
+ 606 037d 4C29C6   		subq	%r8, %rsi
+ 607 0380 C1E903   		shrl	$3, %ecx
+ 608 0383 F348A5   		rep movsq
+ 609 0386 E925FFFF 		jmp	.L20
+GAS LISTING /tmp/cc0WmQqb.s 			page 22
+
+
+ 609      FF
+ 610              	.LVL55:
+ 611 038b 0F1F4400 		.p2align 4,,10
+ 611      00
+ 612              		.p2align 3
+ 613              	.L24:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 614              		.loc 2 29 10 discriminator 1 view .LVU153
+ 615              	.LBE52:
+ 616              	.LBE57:
+ 617              	.LBB58:
+ 618              	.LBB45:
+ 619 0390 488B4C24 		movq	48(%rsp), %rcx
+ 619      30
+ 620 0395 488D7A08 		leaq	8(%rdx), %rdi
+ 621 0399 4883E7F8 		andq	$-8, %rdi
+ 622 039d 48890A   		movq	%rcx, (%rdx)
+ 623 03a0 89C1     		movl	%eax, %ecx
+ 624 03a2 488B740D 		movq	-8(%rbp,%rcx), %rsi
+ 624      F8
+ 625 03a7 4889740A 		movq	%rsi, -8(%rdx,%rcx)
+ 625      F8
+ 626 03ac 4829FA   		subq	%rdi, %rdx
+ 627 03af 4829D5   		subq	%rdx, %rbp
+ 628              	.LVL56:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 629              		.loc 2 29 10 discriminator 1 view .LVU154
+ 630 03b2 01C2     		addl	%eax, %edx
+ 631 03b4 83E2F8   		andl	$-8, %edx
+ 632 03b7 83FA08   		cmpl	$8, %edx
+ 633 03ba 0F8280FE 		jb	.L25
+ 633      FFFF
+ 634 03c0 83E2F8   		andl	$-8, %edx
+ 635 03c3 31C9     		xorl	%ecx, %ecx
+ 636              	.L28:
+ 637 03c5 89CE     		movl	%ecx, %esi
+ 638 03c7 83C108   		addl	$8, %ecx
+ 639 03ca 4C8B4435 		movq	0(%rbp,%rsi), %r8
+ 639      00
+ 640 03cf 4C890437 		movq	%r8, (%rdi,%rsi)
+ 641 03d3 39D1     		cmpl	%edx, %ecx
+ 642 03d5 72EE     		jb	.L28
+ 643 03d7 E964FEFF 		jmp	.L25
+ 643      FF
+ 644              	.LVL57:
+ 645              	.L58:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 646              		.loc 2 29 10 discriminator 1 view .LVU155
+ 647              	.LBE45:
+ 648              	.LBE58:
+ 649              	.LBB59:
+ 650              	.LBB33:
+ 651 03dc 418B0F   		movl	(%r15), %ecx
+ 652 03df 890D0000 		movl	%ecx, 2+bLogBuff(%rip)
+ 652      0000
+ 653 03e5 418B4C07 		movl	-4(%r15,%rax), %ecx
+ 653      FC
+GAS LISTING /tmp/cc0WmQqb.s 			page 23
+
+
+ 654 03ea 894C06FC 		movl	%ecx, -4(%rsi,%rax)
+ 655 03ee E965FDFF 		jmp	.L13
+ 655      FF
+ 656              	.LVL58:
+ 657              	.L61:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 658              		.loc 2 29 10 discriminator 1 view .LVU156
+ 659              	.LBE33:
+ 660              	.LBE59:
+ 661              	.LBB60:
+ 662              	.LBB53:
+ 663 03f3 8B7D00   		movl	0(%rbp), %edi
+ 664 03f6 893E     		movl	%edi, (%rsi)
+ 665 03f8 8B7C0DFC 		movl	-4(%rbp,%rcx), %edi
+ 666 03fc 897C0EFC 		movl	%edi, -4(%rsi,%rcx)
+ 667 0400 E9ABFEFF 		jmp	.L20
+ 667      FF
+ 668              	.LVL59:
+ 669              	.L60:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 670              		.loc 2 29 10 discriminator 1 view .LVU157
+ 671              	.LBE53:
+ 672              	.LBE60:
+ 673              	.LBB61:
+ 674              	.LBB46:
+ 675 0405 8B4C2430 		movl	48(%rsp), %ecx
+ 676 0409 890A     		movl	%ecx, (%rdx)
+ 677 040b 89C1     		movl	%eax, %ecx
+ 678 040d 8B740DFC 		movl	-4(%rbp,%rcx), %esi
+ 679 0411 89740AFC 		movl	%esi, -4(%rdx,%rcx)
+ 680 0415 E926FEFF 		jmp	.L25
+ 680      FF
+ 681              	.LVL60:
+ 682              	.L57:
+  29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
+ 683              		.loc 2 29 10 discriminator 1 view .LVU158
+ 684              	.LBE46:
+ 685              	.LBE61:
+ 686              		.loc 1 257 1 view .LVU159
+ 687 041a E8000000 		call	__stack_chk_fail@PLT
+ 687      00
+ 688              	.LVL61:
+ 689              		.cfi_endproc
+ 690              	.LFE44:
+ 692              		.section	.rodata.bLogPrefix,"a"
+ 695              	bLogPrefix:
+ 696 0000 495745   		.ascii	"IWE"
+ 697              		.section	.rodata.bLogParamTable,"a"
+ 700              	bLogParamTable:
+ 701 0000 00       		.string	""
+ 702 0001 0307     		.ascii	"\003\007"
+ 703              		.section	.bss.bLogBuff,"aw",@nobits
+ 704              		.align 32
+ 707              	bLogBuff:
+ 708 0000 00000000 		.zero	100000
+ 708      00000000 
+ 708      00000000 
+GAS LISTING /tmp/cc0WmQqb.s 			page 24
+
+
+ 708      00000000 
+ 708      00000000 
+ 709              		.text
+ 710              	.Letext0:
+ 711              		.file 4 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 712              		.file 5 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 713              		.file 6 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
+ 714              		.file 7 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h"
+ 715              		.file 8 "<built-in>"
+ 716              		.file 9 "../../bos/hal/inc/b_hal_uart.h"
+ 717              		.file 10 "/usr/include/string.h"
+ 3971              		.section	.note.gnu.property,"a"
+ 3972              		.align 8
+ 3973 0000 04000000 		.long	1f - 0f
+ 3974 0004 10000000 		.long	4f - 1f
+ 3975 0008 05000000 		.long	5
+ 3976              	0:
+ 3977 000c 474E5500 		.string	"GNU"
+ 3978              	1:
+ 3979              		.align 8
+ 3980 0010 020000C0 		.long	0xc0000002
+ 3981 0014 04000000 		.long	3f - 2f
+ 3982              	2:
+ 3983 0018 03000000 		.long	0x3
+ 3984              	3:
+ 3985 001c 00000000 		.align 8
+ 3986              	4:
+GAS LISTING /tmp/cc0WmQqb.s 			page 25
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_util_log.c
+     /tmp/cc0WmQqb.s:9      .text.bLogOutputBytes:0000000000000000 bLogOutputBytes
+     /tmp/cc0WmQqb.s:34     .text._write:0000000000000000 _write
+     /tmp/cc0WmQqb.s:80     .text.bLogOut:0000000000000000 bLogOut
+     /tmp/cc0WmQqb.s:707    .bss.bLogBuff:0000000000000000 bLogBuff
+     /tmp/cc0WmQqb.s:700    .rodata.bLogParamTable:0000000000000000 bLogParamTable
+     /tmp/cc0WmQqb.s:695    .rodata.bLogPrefix:0000000000000000 bLogPrefix
+     /tmp/cc0WmQqb.s:74     .rodata.bLogOut.str1.1:0000000000000000 .LC0
+
+UNDEFINED SYMBOLS
+bHalUartSend
+memset
+strlen
+__vsnprintf_chk
+__snprintf_chk
+__stack_chk_fail

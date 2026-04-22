@@ -1,0 +1,489 @@
+GAS LISTING /tmp/ccp7zTwZ.s 			page 1
+
+
+   1              		.file	"b_hal_gpio.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_gpio.c"
+   5              		.section	.text.bMcuGpioConfig,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuGpioConfig
+   9              	bMcuGpioConfig:
+  10              	.LVL0:
+  11              	.LFB28:
+   1:../../bos/hal/b_hal_gpio.c **** /**
+   2:../../bos/hal/b_hal_gpio.c ****  *!
+   3:../../bos/hal/b_hal_gpio.c ****  * \file        b_hal_gpio.c
+   4:../../bos/hal/b_hal_gpio.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_gpio.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_gpio.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_gpio.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_gpio.c ****  * @attention
+   9:../../bos/hal/b_hal_gpio.c ****  *
+  10:../../bos/hal/b_hal_gpio.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_gpio.c ****  *
+  12:../../bos/hal/b_hal_gpio.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_gpio.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_gpio.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_gpio.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_gpio.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_gpio.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_gpio.c ****  *
+  19:../../bos/hal/b_hal_gpio.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_gpio.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_gpio.c ****  *
+  22:../../bos/hal/b_hal_gpio.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_gpio.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_gpio.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_gpio.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_gpio.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_gpio.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_gpio.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_gpio.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_gpio.c ****  */
+  31:../../bos/hal/b_hal_gpio.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_gpio.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_gpio.c **** 
+  34:../../bos/hal/b_hal_gpio.c **** /**
+  35:../../bos/hal/b_hal_gpio.c ****  * \addtogroup B_HAL
+  36:../../bos/hal/b_hal_gpio.c ****  * \{
+  37:../../bos/hal/b_hal_gpio.c ****  */
+  38:../../bos/hal/b_hal_gpio.c **** 
+  39:../../bos/hal/b_hal_gpio.c **** /**
+  40:../../bos/hal/b_hal_gpio.c ****  * \addtogroup GPIO
+  41:../../bos/hal/b_hal_gpio.c ****  * \{
+  42:../../bos/hal/b_hal_gpio.c ****  */
+  43:../../bos/hal/b_hal_gpio.c **** 
+  44:../../bos/hal/b_hal_gpio.c **** /**
+  45:../../bos/hal/b_hal_gpio.c ****  * \addtogroup GPIO_Exported_Functions
+  46:../../bos/hal/b_hal_gpio.c ****  * \{
+  47:../../bos/hal/b_hal_gpio.c ****  */
+GAS LISTING /tmp/ccp7zTwZ.s 			page 2
+
+
+  48:../../bos/hal/b_hal_gpio.c **** #if defined(__WEAKDEF)
+  49:../../bos/hal/b_hal_gpio.c **** __WEAKDEF void bMcuGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir,
+  50:../../bos/hal/b_hal_gpio.c ****                               bHalGPIOPull_t pull)
+  51:../../bos/hal/b_hal_gpio.c **** {
+  12              		.loc 1 51 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 51 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  52:../../bos/hal/b_hal_gpio.c ****     ;
+  16              		.loc 1 52 5 is_stmt 1 view .LVU2
+  53:../../bos/hal/b_hal_gpio.c **** }
+  17              		.loc 1 53 1 is_stmt 0 view .LVU3
+  18 0004 C3       		ret
+  19              		.cfi_endproc
+  20              	.LFE28:
+  22              		.section	.text.bMcuGpioWritePin,"ax",@progbits
+  23              		.p2align 4
+  24              		.weak	bMcuGpioWritePin
+  26              	bMcuGpioWritePin:
+  27              	.LVL1:
+  28              	.LFB29:
+  54:../../bos/hal/b_hal_gpio.c **** 
+  55:../../bos/hal/b_hal_gpio.c **** __WEAKDEF void bMcuGpioWritePin(bHalGPIOPort_t port, bHalGPIOPin_t pin, uint8_t s)
+  56:../../bos/hal/b_hal_gpio.c **** {
+  29              		.loc 1 56 1 is_stmt 1 view -0
+  30              		.cfi_startproc
+  31              		.loc 1 56 1 is_stmt 0 view .LVU5
+  32 0000 F30F1EFA 		endbr64
+  57:../../bos/hal/b_hal_gpio.c ****     ;
+  33              		.loc 1 57 5 is_stmt 1 view .LVU6
+  58:../../bos/hal/b_hal_gpio.c **** }
+  34              		.loc 1 58 1 is_stmt 0 view .LVU7
+  35 0004 C3       		ret
+  36              		.cfi_endproc
+  37              	.LFE29:
+  39              		.section	.text.bMcuGpioWritePort,"ax",@progbits
+  40              		.p2align 4
+  41              		.weak	bMcuGpioWritePort
+  43              	bMcuGpioWritePort:
+  44              	.LVL2:
+  45              	.LFB30:
+  59:../../bos/hal/b_hal_gpio.c **** 
+  60:../../bos/hal/b_hal_gpio.c **** __WEAKDEF void bMcuGpioWritePort(bHalGPIOPort_t port, uint16_t dat)
+  61:../../bos/hal/b_hal_gpio.c **** {
+  46              		.loc 1 61 1 is_stmt 1 view -0
+  47              		.cfi_startproc
+  48              		.loc 1 61 1 is_stmt 0 view .LVU9
+  49 0000 F30F1EFA 		endbr64
+  62:../../bos/hal/b_hal_gpio.c ****     ;
+  50              		.loc 1 62 5 is_stmt 1 view .LVU10
+  63:../../bos/hal/b_hal_gpio.c **** }
+  51              		.loc 1 63 1 is_stmt 0 view .LVU11
+  52 0004 C3       		ret
+  53              		.cfi_endproc
+  54              	.LFE30:
+  56              		.section	.text.bMcuGpioReadPin,"ax",@progbits
+  57              		.p2align 4
+GAS LISTING /tmp/ccp7zTwZ.s 			page 3
+
+
+  58              		.weak	bMcuGpioReadPin
+  60              	bMcuGpioReadPin:
+  61              	.LVL3:
+  62              	.LFB31:
+  64:../../bos/hal/b_hal_gpio.c **** 
+  65:../../bos/hal/b_hal_gpio.c **** __WEAKDEF uint8_t bMcuGpioReadPin(bHalGPIOPort_t port, bHalGPIOPin_t pin)
+  66:../../bos/hal/b_hal_gpio.c **** {
+  63              		.loc 1 66 1 is_stmt 1 view -0
+  64              		.cfi_startproc
+  65              		.loc 1 66 1 is_stmt 0 view .LVU13
+  66 0000 F30F1EFA 		endbr64
+  67:../../bos/hal/b_hal_gpio.c ****     return 0;
+  67              		.loc 1 67 5 is_stmt 1 view .LVU14
+  68:../../bos/hal/b_hal_gpio.c **** }
+  68              		.loc 1 68 1 is_stmt 0 view .LVU15
+  69 0004 31C0     		xorl	%eax, %eax
+  70 0006 C3       		ret
+  71              		.cfi_endproc
+  72              	.LFE31:
+  74              		.section	.text.bMcuGpioReadPort,"ax",@progbits
+  75              		.p2align 4
+  76              		.weak	bMcuGpioReadPort
+  78              	bMcuGpioReadPort:
+  79              	.LVL4:
+  80              	.LFB32:
+  69:../../bos/hal/b_hal_gpio.c **** 
+  70:../../bos/hal/b_hal_gpio.c **** __WEAKDEF uint16_t bMcuGpioReadPort(bHalGPIOPort_t port)
+  71:../../bos/hal/b_hal_gpio.c **** {
+  81              		.loc 1 71 1 is_stmt 1 view -0
+  82              		.cfi_startproc
+  83              		.loc 1 71 1 is_stmt 0 view .LVU17
+  84 0000 F30F1EFA 		endbr64
+  72:../../bos/hal/b_hal_gpio.c ****     return 0;
+  85              		.loc 1 72 5 is_stmt 1 view .LVU18
+  73:../../bos/hal/b_hal_gpio.c **** }
+  86              		.loc 1 73 1 is_stmt 0 view .LVU19
+  87 0004 31C0     		xorl	%eax, %eax
+  88 0006 C3       		ret
+  89              		.cfi_endproc
+  90              	.LFE32:
+  92              		.section	.text.bHalGpioConfig,"ax",@progbits
+  93              		.p2align 4
+  94              		.globl	bHalGpioConfig
+  96              	bHalGpioConfig:
+  97              	.LVL5:
+  98              	.LFB33:
+  74:../../bos/hal/b_hal_gpio.c **** #endif
+  75:../../bos/hal/b_hal_gpio.c **** //---------------------------------------------------------------------------------------
+  76:../../bos/hal/b_hal_gpio.c **** //---------------------------------------------------------------------------------------
+  77:../../bos/hal/b_hal_gpio.c **** 
+  78:../../bos/hal/b_hal_gpio.c **** void bHalGpioConfig(bHalGPIOPort_t port, bHalGPIOPin_t pin, bHalGPIODir_t dir, bHalGPIOPull_t pull)
+  79:../../bos/hal/b_hal_gpio.c **** {
+  99              		.loc 1 79 1 is_stmt 1 view -0
+ 100              		.cfi_startproc
+ 101              		.loc 1 79 1 is_stmt 0 view .LVU21
+ 102 0000 F30F1EFA 		endbr64
+  80:../../bos/hal/b_hal_gpio.c ****     bMcuGpioConfig(port, pin, dir, pull);
+GAS LISTING /tmp/ccp7zTwZ.s 			page 4
+
+
+ 103              		.loc 1 80 5 is_stmt 1 view .LVU22
+ 104 0004 E9000000 		jmp	bMcuGpioConfig
+ 104      00
+ 105              	.LVL6:
+ 106              		.loc 1 80 5 is_stmt 0 view .LVU23
+ 107              		.cfi_endproc
+ 108              	.LFE33:
+ 110              		.section	.text.bHalGpioWritePin,"ax",@progbits
+ 111              		.p2align 4
+ 112              		.globl	bHalGpioWritePin
+ 114              	bHalGpioWritePin:
+ 115              	.LVL7:
+ 116              	.LFB34:
+  81:../../bos/hal/b_hal_gpio.c **** }
+  82:../../bos/hal/b_hal_gpio.c **** 
+  83:../../bos/hal/b_hal_gpio.c **** void bHalGpioWritePin(bHalGPIOPort_t port, bHalGPIOPin_t pin, uint8_t s)
+  84:../../bos/hal/b_hal_gpio.c **** {
+ 117              		.loc 1 84 1 is_stmt 1 view -0
+ 118              		.cfi_startproc
+ 119              		.loc 1 84 1 is_stmt 0 view .LVU25
+ 120 0000 F30F1EFA 		endbr64
+  85:../../bos/hal/b_hal_gpio.c ****     bMcuGpioWritePin(port, pin, s);
+ 121              		.loc 1 85 5 is_stmt 1 view .LVU26
+ 122 0004 0FB6D2   		movzbl	%dl, %edx
+ 123              		.loc 1 85 5 is_stmt 0 view .LVU27
+ 124 0007 E9000000 		jmp	bMcuGpioWritePin
+ 124      00
+ 125              	.LVL8:
+ 126              		.loc 1 85 5 view .LVU28
+ 127              		.cfi_endproc
+ 128              	.LFE34:
+ 130              		.section	.text.bHalGpioWritePort,"ax",@progbits
+ 131              		.p2align 4
+ 132              		.globl	bHalGpioWritePort
+ 134              	bHalGpioWritePort:
+ 135              	.LVL9:
+ 136              	.LFB35:
+  86:../../bos/hal/b_hal_gpio.c **** }
+  87:../../bos/hal/b_hal_gpio.c **** 
+  88:../../bos/hal/b_hal_gpio.c **** void bHalGpioWritePort(bHalGPIOPort_t port, uint16_t dat)
+  89:../../bos/hal/b_hal_gpio.c **** {
+ 137              		.loc 1 89 1 is_stmt 1 view -0
+ 138              		.cfi_startproc
+ 139              		.loc 1 89 1 is_stmt 0 view .LVU30
+ 140 0000 F30F1EFA 		endbr64
+  90:../../bos/hal/b_hal_gpio.c ****     bMcuGpioWritePort(port, dat);
+ 141              		.loc 1 90 5 is_stmt 1 view .LVU31
+ 142 0004 0FB7F6   		movzwl	%si, %esi
+ 143              		.loc 1 90 5 is_stmt 0 view .LVU32
+ 144 0007 E9000000 		jmp	bMcuGpioWritePort
+ 144      00
+ 145              	.LVL10:
+ 146              		.loc 1 90 5 view .LVU33
+ 147              		.cfi_endproc
+ 148              	.LFE35:
+ 150              		.section	.text.bHalGpioReadPin,"ax",@progbits
+ 151              		.p2align 4
+GAS LISTING /tmp/ccp7zTwZ.s 			page 5
+
+
+ 152              		.globl	bHalGpioReadPin
+ 154              	bHalGpioReadPin:
+ 155              	.LVL11:
+ 156              	.LFB36:
+  91:../../bos/hal/b_hal_gpio.c **** }
+  92:../../bos/hal/b_hal_gpio.c **** 
+  93:../../bos/hal/b_hal_gpio.c **** uint8_t bHalGpioReadPin(bHalGPIOPort_t port, bHalGPIOPin_t pin)
+  94:../../bos/hal/b_hal_gpio.c **** {
+ 157              		.loc 1 94 1 is_stmt 1 view -0
+ 158              		.cfi_startproc
+ 159              		.loc 1 94 1 is_stmt 0 view .LVU35
+ 160 0000 F30F1EFA 		endbr64
+  95:../../bos/hal/b_hal_gpio.c ****     return bMcuGpioReadPin(port, pin);
+ 161              		.loc 1 95 5 is_stmt 1 view .LVU36
+ 162              		.loc 1 95 12 is_stmt 0 view .LVU37
+ 163 0004 E9000000 		jmp	bMcuGpioReadPin
+ 163      00
+ 164              	.LVL12:
+ 165              		.loc 1 95 12 view .LVU38
+ 166              		.cfi_endproc
+ 167              	.LFE36:
+ 169              		.section	.text.bHalGpioReadPort,"ax",@progbits
+ 170              		.p2align 4
+ 171              		.globl	bHalGpioReadPort
+ 173              	bHalGpioReadPort:
+ 174              	.LVL13:
+ 175              	.LFB37:
+  96:../../bos/hal/b_hal_gpio.c **** }
+  97:../../bos/hal/b_hal_gpio.c **** 
+  98:../../bos/hal/b_hal_gpio.c **** uint16_t bHalGpioReadPort(bHalGPIOPort_t port)
+  99:../../bos/hal/b_hal_gpio.c **** {
+ 176              		.loc 1 99 1 is_stmt 1 view -0
+ 177              		.cfi_startproc
+ 178              		.loc 1 99 1 is_stmt 0 view .LVU40
+ 179 0000 F30F1EFA 		endbr64
+ 100:../../bos/hal/b_hal_gpio.c ****     return bMcuGpioReadPort(port);
+ 180              		.loc 1 100 5 is_stmt 1 view .LVU41
+ 181              		.loc 1 100 12 is_stmt 0 view .LVU42
+ 182 0004 E9000000 		jmp	bMcuGpioReadPort
+ 182      00
+ 183              	.LVL14:
+ 184              		.loc 1 100 12 view .LVU43
+ 185              		.cfi_endproc
+ 186              	.LFE37:
+ 188              		.section	.text.bHalGpioAddExtiCallback,"ax",@progbits
+ 189              		.p2align 4
+ 190              		.globl	bHalGpioAddExtiCallback
+ 192              	bHalGpioAddExtiCallback:
+ 193              	.LVL15:
+ 194              	.LFB38:
+ 101:../../bos/hal/b_hal_gpio.c **** }
+ 102:../../bos/hal/b_hal_gpio.c **** 
+ 103:../../bos/hal/b_hal_gpio.c **** static bHalGPIOExti_t *pExtiHead = NULL;
+ 104:../../bos/hal/b_hal_gpio.c **** 
+ 105:../../bos/hal/b_hal_gpio.c **** int bHalGpioAddExtiCallback(bHalGPIOExti_t *pexti)
+ 106:../../bos/hal/b_hal_gpio.c **** {
+ 195              		.loc 1 106 1 is_stmt 1 view -0
+GAS LISTING /tmp/ccp7zTwZ.s 			page 6
+
+
+ 196              		.cfi_startproc
+ 197              		.loc 1 106 1 is_stmt 0 view .LVU45
+ 198 0000 F30F1EFA 		endbr64
+ 107:../../bos/hal/b_hal_gpio.c ****     if (pexti == NULL)
+ 199              		.loc 1 107 5 is_stmt 1 view .LVU46
+ 200              		.loc 1 107 8 is_stmt 0 view .LVU47
+ 201 0004 4885FF   		testq	%rdi, %rdi
+ 202 0007 7431     		je	.L16
+ 108:../../bos/hal/b_hal_gpio.c ****     {
+ 109:../../bos/hal/b_hal_gpio.c ****         return -1;
+ 110:../../bos/hal/b_hal_gpio.c ****     }
+ 111:../../bos/hal/b_hal_gpio.c ****     if (pExtiHead == NULL)
+ 203              		.loc 1 111 5 is_stmt 1 view .LVU48
+ 204              		.loc 1 111 19 is_stmt 0 view .LVU49
+ 205 0009 488B0500 		movq	pExtiHead(%rip), %rax
+ 205      000000
+ 206              		.loc 1 111 8 view .LVU50
+ 207 0010 4885C0   		testq	%rax, %rax
+ 208 0013 7413     		je	.L17
+ 112:../../bos/hal/b_hal_gpio.c ****     {
+ 113:../../bos/hal/b_hal_gpio.c ****         pExtiHead       = pexti;
+ 114:../../bos/hal/b_hal_gpio.c ****         pExtiHead->next = NULL;
+ 115:../../bos/hal/b_hal_gpio.c ****     }
+ 116:../../bos/hal/b_hal_gpio.c ****     else
+ 117:../../bos/hal/b_hal_gpio.c ****     {
+ 118:../../bos/hal/b_hal_gpio.c ****         pexti->next     = pExtiHead->next;
+ 209              		.loc 1 118 9 is_stmt 1 view .LVU51
+ 210              		.loc 1 118 36 is_stmt 0 view .LVU52
+ 211 0015 488B5018 		movq	24(%rax), %rdx
+ 212              		.loc 1 118 25 view .LVU53
+ 213 0019 48895718 		movq	%rdx, 24(%rdi)
+ 119:../../bos/hal/b_hal_gpio.c ****         pExtiHead->next = pexti;
+ 214              		.loc 1 119 9 is_stmt 1 view .LVU54
+ 215              		.loc 1 119 25 is_stmt 0 view .LVU55
+ 216 001d 48897818 		movq	%rdi, 24(%rax)
+ 120:../../bos/hal/b_hal_gpio.c ****     }
+ 121:../../bos/hal/b_hal_gpio.c ****     return 0;
+ 217              		.loc 1 121 12 view .LVU56
+ 218 0021 31C0     		xorl	%eax, %eax
+ 219 0023 C3       		ret
+ 220              		.p2align 4,,10
+ 221 0024 0F1F4000 		.p2align 3
+ 222              	.L17:
+ 113:../../bos/hal/b_hal_gpio.c ****         pExtiHead->next = NULL;
+ 223              		.loc 1 113 9 is_stmt 1 view .LVU57
+ 113:../../bos/hal/b_hal_gpio.c ****         pExtiHead->next = NULL;
+ 224              		.loc 1 113 25 is_stmt 0 view .LVU58
+ 225 0028 48893D00 		movq	%rdi, pExtiHead(%rip)
+ 225      000000
+ 114:../../bos/hal/b_hal_gpio.c ****     }
+ 226              		.loc 1 114 9 is_stmt 1 view .LVU59
+ 227              		.loc 1 121 12 is_stmt 0 view .LVU60
+ 228 002f 31C0     		xorl	%eax, %eax
+ 114:../../bos/hal/b_hal_gpio.c ****     }
+ 229              		.loc 1 114 25 view .LVU61
+ 230 0031 48C74718 		movq	$0, 24(%rdi)
+ 230      00000000 
+GAS LISTING /tmp/ccp7zTwZ.s 			page 7
+
+
+ 231 0039 C3       		ret
+ 232              	.L16:
+ 109:../../bos/hal/b_hal_gpio.c ****     }
+ 233              		.loc 1 109 16 view .LVU62
+ 234 003a B8FFFFFF 		movl	$-1, %eax
+ 234      FF
+ 122:../../bos/hal/b_hal_gpio.c **** }
+ 235              		.loc 1 122 1 view .LVU63
+ 236 003f C3       		ret
+ 237              		.cfi_endproc
+ 238              	.LFE38:
+ 240              		.section	.text.bHalGpioNotifyExti,"ax",@progbits
+ 241              		.p2align 4
+ 242              		.globl	bHalGpioNotifyExti
+ 244              	bHalGpioNotifyExti:
+ 245              	.LVL16:
+ 246              	.LFB39:
+ 123:../../bos/hal/b_hal_gpio.c **** 
+ 124:../../bos/hal/b_hal_gpio.c **** void bHalGpioNotifyExti(bHalGPIOExtiLine_t line, bHalGPIOExtiTrig_t trig)
+ 125:../../bos/hal/b_hal_gpio.c **** {
+ 247              		.loc 1 125 1 is_stmt 1 view -0
+ 248              		.cfi_startproc
+ 249              		.loc 1 125 1 is_stmt 0 view .LVU65
+ 250 0000 F30F1EFA 		endbr64
+ 126:../../bos/hal/b_hal_gpio.c ****     bHalGPIOExti_t *p = pExtiHead;
+ 251              		.loc 1 126 5 is_stmt 1 view .LVU66
+ 252              		.loc 1 126 21 is_stmt 0 view .LVU67
+ 253 0004 488B1500 		movq	pExtiHead(%rip), %rdx
+ 253      000000
+ 254              	.LVL17:
+ 127:../../bos/hal/b_hal_gpio.c ****     while (p != NULL)
+ 255              		.loc 1 127 5 is_stmt 1 view .LVU68
+ 256 000b 4885D2   		testq	%rdx, %rdx
+ 257 000e 7420     		je	.L18
+ 258 0010 8B02     		movl	(%rdx), %eax
+ 259              		.p2align 4,,10
+ 260 0012 660F1F44 		.p2align 3
+ 260      0000
+ 261              	.L22:
+ 262              		.loc 1 127 14 view .LVU69
+ 128:../../bos/hal/b_hal_gpio.c ****     {
+ 129:../../bos/hal/b_hal_gpio.c ****         if (p->line == line && p->trig == trig)
+ 263              		.loc 1 129 9 view .LVU70
+ 264              		.loc 1 129 12 is_stmt 0 view .LVU71
+ 265 0018 39C7     		cmpl	%eax, %edi
+ 266 001a 75FC     		jne	.L22
+ 267              		.loc 1 129 29 discriminator 1 view .LVU72
+ 268 001c 397204   		cmpl	%esi, 4(%rdx)
+ 269 001f 75F7     		jne	.L22
+ 130:../../bos/hal/b_hal_gpio.c ****         {
+ 131:../../bos/hal/b_hal_gpio.c ****             if (p->cb != NULL)
+ 270              		.loc 1 131 13 is_stmt 1 view .LVU73
+ 271              		.loc 1 131 18 is_stmt 0 view .LVU74
+ 272 0021 488B4208 		movq	8(%rdx), %rax
+ 273              		.loc 1 131 16 view .LVU75
+ 274 0025 4885C0   		testq	%rax, %rax
+ 275 0028 7406     		je	.L18
+GAS LISTING /tmp/ccp7zTwZ.s 			page 8
+
+
+ 132:../../bos/hal/b_hal_gpio.c ****             {
+ 133:../../bos/hal/b_hal_gpio.c ****                 p->cb(line, trig, p->arg);
+ 276              		.loc 1 133 17 is_stmt 1 view .LVU76
+ 277 002a 488B5210 		movq	16(%rdx), %rdx
+ 278              	.LVL18:
+ 279              		.loc 1 133 17 is_stmt 0 view .LVU77
+ 280 002e FFE0     		jmp	*%rax
+ 281              	.LVL19:
+ 282              		.p2align 4,,10
+ 283              		.p2align 3
+ 284              	.L18:
+ 134:../../bos/hal/b_hal_gpio.c ****             }
+ 135:../../bos/hal/b_hal_gpio.c ****             break;
+ 136:../../bos/hal/b_hal_gpio.c ****         }
+ 137:../../bos/hal/b_hal_gpio.c ****     }
+ 138:../../bos/hal/b_hal_gpio.c **** }
+ 285              		.loc 1 138 1 view .LVU78
+ 286 0030 C3       		ret
+ 287              		.cfi_endproc
+ 288              	.LFE39:
+ 290              		.section	.bss.pExtiHead,"aw",@nobits
+ 291              		.align 8
+ 294              	pExtiHead:
+ 295 0000 00000000 		.zero	8
+ 295      00000000 
+ 296              		.text
+ 297              	.Letext0:
+ 298              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 299              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 300              		.file 4 "../../bos/hal/inc/b_hal_gpio.h"
+ 2255              		.section	.note.gnu.property,"a"
+ 2256              		.align 8
+ 2257 0000 04000000 		.long	1f - 0f
+ 2258 0004 10000000 		.long	4f - 1f
+ 2259 0008 05000000 		.long	5
+ 2260              	0:
+ 2261 000c 474E5500 		.string	"GNU"
+ 2262              	1:
+ 2263              		.align 8
+ 2264 0010 020000C0 		.long	0xc0000002
+ 2265 0014 04000000 		.long	3f - 2f
+ 2266              	2:
+ 2267 0018 03000000 		.long	0x3
+ 2268              	3:
+ 2269 001c 00000000 		.align 8
+ 2270              	4:
+GAS LISTING /tmp/ccp7zTwZ.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_gpio.c
+     /tmp/ccp7zTwZ.s:9      .text.bMcuGpioConfig:0000000000000000 bMcuGpioConfig
+     /tmp/ccp7zTwZ.s:26     .text.bMcuGpioWritePin:0000000000000000 bMcuGpioWritePin
+     /tmp/ccp7zTwZ.s:43     .text.bMcuGpioWritePort:0000000000000000 bMcuGpioWritePort
+     /tmp/ccp7zTwZ.s:60     .text.bMcuGpioReadPin:0000000000000000 bMcuGpioReadPin
+     /tmp/ccp7zTwZ.s:78     .text.bMcuGpioReadPort:0000000000000000 bMcuGpioReadPort
+     /tmp/ccp7zTwZ.s:96     .text.bHalGpioConfig:0000000000000000 bHalGpioConfig
+     /tmp/ccp7zTwZ.s:114    .text.bHalGpioWritePin:0000000000000000 bHalGpioWritePin
+     /tmp/ccp7zTwZ.s:134    .text.bHalGpioWritePort:0000000000000000 bHalGpioWritePort
+     /tmp/ccp7zTwZ.s:154    .text.bHalGpioReadPin:0000000000000000 bHalGpioReadPin
+     /tmp/ccp7zTwZ.s:173    .text.bHalGpioReadPort:0000000000000000 bHalGpioReadPort
+     /tmp/ccp7zTwZ.s:192    .text.bHalGpioAddExtiCallback:0000000000000000 bHalGpioAddExtiCallback
+     /tmp/ccp7zTwZ.s:294    .bss.pExtiHead:0000000000000000 pExtiHead
+     /tmp/ccp7zTwZ.s:244    .text.bHalGpioNotifyExti:0000000000000000 bHalGpioNotifyExti
+
+NO UNDEFINED SYMBOLS

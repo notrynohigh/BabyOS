@@ -1,0 +1,463 @@
+GAS LISTING /tmp/cc873OdP.s 			page 1
+
+
+   1              		.file	"b_hal_dma.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_dma.c"
+   5              		.section	.text.bMcuDmaConfig,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuDmaConfig
+   9              	bMcuDmaConfig:
+  10              	.LVL0:
+  11              	.LFB28:
+   1:../../bos/hal/b_hal_dma.c **** /**
+   2:../../bos/hal/b_hal_dma.c ****  *!
+   3:../../bos/hal/b_hal_dma.c ****  * \file        b_hal_dma.c
+   4:../../bos/hal/b_hal_dma.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_dma.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_dma.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_dma.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_dma.c ****  * @attention
+   9:../../bos/hal/b_hal_dma.c ****  *
+  10:../../bos/hal/b_hal_dma.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_dma.c ****  *
+  12:../../bos/hal/b_hal_dma.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_dma.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_dma.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_dma.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_dma.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_dma.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_dma.c ****  *
+  19:../../bos/hal/b_hal_dma.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_dma.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_dma.c ****  *
+  22:../../bos/hal/b_hal_dma.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_dma.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_dma.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_dma.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_dma.c ****  * LIABILITY, WHDMAER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_dma.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_dma.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_dma.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_dma.c ****  */
+  31:../../bos/hal/b_hal_dma.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_dma.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_dma.c **** 
+  34:../../bos/hal/b_hal_dma.c **** /**
+  35:../../bos/hal/b_hal_dma.c ****  * \addtogroup B_HAL
+  36:../../bos/hal/b_hal_dma.c ****  * \{
+  37:../../bos/hal/b_hal_dma.c ****  */
+  38:../../bos/hal/b_hal_dma.c **** 
+  39:../../bos/hal/b_hal_dma.c **** /**
+  40:../../bos/hal/b_hal_dma.c ****  * \addtogroup DMA
+  41:../../bos/hal/b_hal_dma.c ****  * \{
+  42:../../bos/hal/b_hal_dma.c ****  */
+  43:../../bos/hal/b_hal_dma.c **** 
+  44:../../bos/hal/b_hal_dma.c **** /**
+  45:../../bos/hal/b_hal_dma.c ****  * \addtogroup DMA_Exported_Functions
+  46:../../bos/hal/b_hal_dma.c ****  * \{
+  47:../../bos/hal/b_hal_dma.c ****  */
+GAS LISTING /tmp/cc873OdP.s 			page 2
+
+
+  48:../../bos/hal/b_hal_dma.c **** #if defined(__WEAKDEF)
+  49:../../bos/hal/b_hal_dma.c **** 
+  50:../../bos/hal/b_hal_dma.c **** __WEAKDEF int bMcuDmaConfig(bHalDmaConfig_t *pconf)
+  51:../../bos/hal/b_hal_dma.c **** {
+  12              		.loc 1 51 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 51 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+  52:../../bos/hal/b_hal_dma.c ****     return -1;
+  16              		.loc 1 52 5 is_stmt 1 view .LVU2
+  53:../../bos/hal/b_hal_dma.c **** }
+  17              		.loc 1 53 1 is_stmt 0 view .LVU3
+  18 0004 B8FFFFFF 		movl	$-1, %eax
+  18      FF
+  19 0009 C3       		ret
+  20              		.cfi_endproc
+  21              	.LFE28:
+  23              		.section	.text.bMcuDmaStart,"ax",@progbits
+  24              		.p2align 4
+  25              		.weak	bMcuDmaStart
+  27              	bMcuDmaStart:
+  28              	.LVL1:
+  29              	.LFB29:
+  54:../../bos/hal/b_hal_dma.c **** 
+  55:../../bos/hal/b_hal_dma.c **** __WEAKDEF int bMcuDmaStart(bHalDmaChlNumber_t chl)
+  56:../../bos/hal/b_hal_dma.c **** {
+  30              		.loc 1 56 1 is_stmt 1 view -0
+  31              		.cfi_startproc
+  32              		.loc 1 56 1 is_stmt 0 view .LVU5
+  33 0000 F30F1EFA 		endbr64
+  57:../../bos/hal/b_hal_dma.c ****     return -1;
+  34              		.loc 1 57 5 is_stmt 1 view .LVU6
+  58:../../bos/hal/b_hal_dma.c **** }
+  35              		.loc 1 58 1 is_stmt 0 view .LVU7
+  36 0004 B8FFFFFF 		movl	$-1, %eax
+  36      FF
+  37 0009 C3       		ret
+  38              		.cfi_endproc
+  39              	.LFE29:
+  41              		.section	.text.bMcuDmaStop,"ax",@progbits
+  42              		.p2align 4
+  43              		.weak	bMcuDmaStop
+  45              	bMcuDmaStop:
+  46              	.LFB41:
+  47              		.cfi_startproc
+  59:../../bos/hal/b_hal_dma.c **** 
+  60:../../bos/hal/b_hal_dma.c **** __WEAKDEF int bMcuDmaStop(bHalDmaChlNumber_t chl)
+  48              		.loc 1 60 15 is_stmt 1 view -0
+  49 0000 F30F1EFA 		endbr64
+  50 0004 B8FFFFFF 		movl	$-1, %eax
+  50      FF
+  51 0009 C3       		ret
+  52              		.cfi_endproc
+  53              	.LFE41:
+  55              		.section	.text.bMcuDmaSetDest,"ax",@progbits
+  56              		.p2align 4
+  57              		.weak	bMcuDmaSetDest
+GAS LISTING /tmp/cc873OdP.s 			page 3
+
+
+  59              	bMcuDmaSetDest:
+  60              	.LVL2:
+  61              	.LFB31:
+  61:../../bos/hal/b_hal_dma.c **** {
+  62:../../bos/hal/b_hal_dma.c ****     return -1;
+  63:../../bos/hal/b_hal_dma.c **** }
+  64:../../bos/hal/b_hal_dma.c **** 
+  65:../../bos/hal/b_hal_dma.c **** __WEAKDEF int bMcuDmaSetDest(bHalDmaChlNumber_t chl, uint32_t addr)
+  66:../../bos/hal/b_hal_dma.c **** {
+  62              		.loc 1 66 1 view -0
+  63              		.cfi_startproc
+  64              		.loc 1 66 1 is_stmt 0 view .LVU10
+  65 0000 F30F1EFA 		endbr64
+  67:../../bos/hal/b_hal_dma.c ****     return -1;
+  66              		.loc 1 67 5 is_stmt 1 view .LVU11
+  68:../../bos/hal/b_hal_dma.c **** }
+  67              		.loc 1 68 1 is_stmt 0 view .LVU12
+  68 0004 B8FFFFFF 		movl	$-1, %eax
+  68      FF
+  69 0009 C3       		ret
+  70              		.cfi_endproc
+  71              	.LFE31:
+  73              		.section	.text.bMcuDmaSetCount,"ax",@progbits
+  74              		.p2align 4
+  75              		.weak	bMcuDmaSetCount
+  77              	bMcuDmaSetCount:
+  78              	.LFB45:
+  79              		.cfi_startproc
+  69:../../bos/hal/b_hal_dma.c **** __WEAKDEF int bMcuDmaSetCount(bHalDmaChlNumber_t chl, uint32_t count)
+  80              		.loc 1 69 15 is_stmt 1 view -0
+  81 0000 F30F1EFA 		endbr64
+  82 0004 B8FFFFFF 		movl	$-1, %eax
+  82      FF
+  83 0009 C3       		ret
+  84              		.cfi_endproc
+  85              	.LFE45:
+  87              		.section	.text.bMcuDmaGetCount,"ax",@progbits
+  88              		.p2align 4
+  89              		.weak	bMcuDmaGetCount
+  91              	bMcuDmaGetCount:
+  92              	.LFB43:
+  93              		.cfi_startproc
+  70:../../bos/hal/b_hal_dma.c **** {
+  71:../../bos/hal/b_hal_dma.c ****     return -1;
+  72:../../bos/hal/b_hal_dma.c **** }
+  73:../../bos/hal/b_hal_dma.c **** __WEAKDEF int bMcuDmaGetCount(bHalDmaChlNumber_t chl)
+  94              		.loc 1 73 15 view -0
+  95 0000 F30F1EFA 		endbr64
+  96 0004 B8FFFFFF 		movl	$-1, %eax
+  96      FF
+  97 0009 C3       		ret
+  98              		.cfi_endproc
+  99              	.LFE43:
+ 101              		.section	.text.bHalDmaConfig,"ax",@progbits
+ 102              		.p2align 4
+ 103              		.globl	bHalDmaConfig
+ 105              	bHalDmaConfig:
+GAS LISTING /tmp/cc873OdP.s 			page 4
+
+
+ 106              	.LVL3:
+ 107              	.LFB34:
+  74:../../bos/hal/b_hal_dma.c **** {
+  75:../../bos/hal/b_hal_dma.c ****     return -1;
+  76:../../bos/hal/b_hal_dma.c **** }
+  77:../../bos/hal/b_hal_dma.c **** 
+  78:../../bos/hal/b_hal_dma.c **** #endif
+  79:../../bos/hal/b_hal_dma.c **** //---------------------------------------------------------------------------------------
+  80:../../bos/hal/b_hal_dma.c **** //---------------------------------------------------------------------------------------
+  81:../../bos/hal/b_hal_dma.c **** 
+  82:../../bos/hal/b_hal_dma.c **** int bHalDmaConfig(bHalDmaConfig_t *pconf)
+  83:../../bos/hal/b_hal_dma.c **** {
+ 108              		.loc 1 83 1 view -0
+ 109              		.cfi_startproc
+ 110              		.loc 1 83 1 is_stmt 0 view .LVU16
+ 111 0000 F30F1EFA 		endbr64
+  84:../../bos/hal/b_hal_dma.c ****     if (pconf == NULL || pconf->chl >= B_HAL_DMA_CHL_NUMBER)
+ 112              		.loc 1 84 5 is_stmt 1 view .LVU17
+ 113              		.loc 1 84 8 is_stmt 0 view .LVU18
+ 114 0004 4885FF   		testq	%rdi, %rdi
+ 115 0007 740F     		je	.L8
+ 116              		.loc 1 84 23 discriminator 1 view .LVU19
+ 117 0009 833F0F   		cmpl	$15, (%rdi)
+ 118 000c 770A     		ja	.L8
+  85:../../bos/hal/b_hal_dma.c ****     {
+  86:../../bos/hal/b_hal_dma.c ****         return -1;
+  87:../../bos/hal/b_hal_dma.c ****     }
+  88:../../bos/hal/b_hal_dma.c ****     return bMcuDmaConfig(pconf);
+ 119              		.loc 1 88 5 is_stmt 1 view .LVU20
+ 120              		.loc 1 88 12 is_stmt 0 view .LVU21
+ 121 000e E9000000 		jmp	bMcuDmaConfig
+ 121      00
+ 122              	.LVL4:
+ 123              		.p2align 4,,10
+ 124 0013 0F1F4400 		.p2align 3
+ 124      00
+ 125              	.L8:
+  89:../../bos/hal/b_hal_dma.c **** }
+ 126              		.loc 1 89 1 view .LVU22
+ 127 0018 B8FFFFFF 		movl	$-1, %eax
+ 127      FF
+ 128 001d C3       		ret
+ 129              		.cfi_endproc
+ 130              	.LFE34:
+ 132              		.section	.text.bHalDmaStart,"ax",@progbits
+ 133              		.p2align 4
+ 134              		.globl	bHalDmaStart
+ 136              	bHalDmaStart:
+ 137              	.LVL5:
+ 138              	.LFB35:
+  90:../../bos/hal/b_hal_dma.c **** 
+  91:../../bos/hal/b_hal_dma.c **** int bHalDmaStart(bHalDmaChlNumber_t chl)
+  92:../../bos/hal/b_hal_dma.c **** {
+ 139              		.loc 1 92 1 is_stmt 1 view -0
+ 140              		.cfi_startproc
+ 141              		.loc 1 92 1 is_stmt 0 view .LVU24
+ 142 0000 F30F1EFA 		endbr64
+GAS LISTING /tmp/cc873OdP.s 			page 5
+
+
+  93:../../bos/hal/b_hal_dma.c ****     if (chl >= B_HAL_DMA_CHL_NUMBER)
+ 143              		.loc 1 93 5 is_stmt 1 view .LVU25
+ 144              		.loc 1 93 8 is_stmt 0 view .LVU26
+ 145 0004 83FF0F   		cmpl	$15, %edi
+ 146 0007 7707     		ja	.L14
+  94:../../bos/hal/b_hal_dma.c ****     {
+  95:../../bos/hal/b_hal_dma.c ****         return -1;
+  96:../../bos/hal/b_hal_dma.c ****     }
+  97:../../bos/hal/b_hal_dma.c ****     return bMcuDmaStart(chl);
+ 147              		.loc 1 97 5 is_stmt 1 view .LVU27
+ 148              		.loc 1 97 12 is_stmt 0 view .LVU28
+ 149 0009 E9000000 		jmp	bMcuDmaStart
+ 149      00
+ 150              	.LVL6:
+ 151 000e 6690     		.p2align 4,,10
+ 152              		.p2align 3
+ 153              	.L14:
+  98:../../bos/hal/b_hal_dma.c **** }
+ 154              		.loc 1 98 1 view .LVU29
+ 155 0010 B8FFFFFF 		movl	$-1, %eax
+ 155      FF
+ 156 0015 C3       		ret
+ 157              		.cfi_endproc
+ 158              	.LFE35:
+ 160              		.section	.text.bHalDmaStop,"ax",@progbits
+ 161              		.p2align 4
+ 162              		.globl	bHalDmaStop
+ 164              	bHalDmaStop:
+ 165              	.LVL7:
+ 166              	.LFB36:
+  99:../../bos/hal/b_hal_dma.c **** 
+ 100:../../bos/hal/b_hal_dma.c **** int bHalDmaStop(bHalDmaChlNumber_t chl)
+ 101:../../bos/hal/b_hal_dma.c **** {
+ 167              		.loc 1 101 1 is_stmt 1 view -0
+ 168              		.cfi_startproc
+ 169              		.loc 1 101 1 is_stmt 0 view .LVU31
+ 170 0000 F30F1EFA 		endbr64
+ 102:../../bos/hal/b_hal_dma.c ****     if (chl >= B_HAL_DMA_CHL_NUMBER)
+ 171              		.loc 1 102 5 is_stmt 1 view .LVU32
+ 172              		.loc 1 102 8 is_stmt 0 view .LVU33
+ 173 0004 83FF0F   		cmpl	$15, %edi
+ 174 0007 7707     		ja	.L16
+ 103:../../bos/hal/b_hal_dma.c ****     {
+ 104:../../bos/hal/b_hal_dma.c ****         return -1;
+ 105:../../bos/hal/b_hal_dma.c ****     }
+ 106:../../bos/hal/b_hal_dma.c ****     return bMcuDmaStop(chl);
+ 175              		.loc 1 106 5 is_stmt 1 view .LVU34
+ 176              		.loc 1 106 12 is_stmt 0 view .LVU35
+ 177 0009 E9000000 		jmp	bMcuDmaStop
+ 177      00
+ 178              	.LVL8:
+ 179 000e 6690     		.p2align 4,,10
+ 180              		.p2align 3
+ 181              	.L16:
+ 107:../../bos/hal/b_hal_dma.c **** }
+ 182              		.loc 1 107 1 view .LVU36
+ 183 0010 B8FFFFFF 		movl	$-1, %eax
+GAS LISTING /tmp/cc873OdP.s 			page 6
+
+
+ 183      FF
+ 184 0015 C3       		ret
+ 185              		.cfi_endproc
+ 186              	.LFE36:
+ 188              		.section	.text.bHalDmaSetDest,"ax",@progbits
+ 189              		.p2align 4
+ 190              		.globl	bHalDmaSetDest
+ 192              	bHalDmaSetDest:
+ 193              	.LVL9:
+ 194              	.LFB37:
+ 108:../../bos/hal/b_hal_dma.c **** 
+ 109:../../bos/hal/b_hal_dma.c **** int bHalDmaSetDest(bHalDmaChlNumber_t chl, uint32_t addr)
+ 110:../../bos/hal/b_hal_dma.c **** {
+ 195              		.loc 1 110 1 is_stmt 1 view -0
+ 196              		.cfi_startproc
+ 197              		.loc 1 110 1 is_stmt 0 view .LVU38
+ 198 0000 F30F1EFA 		endbr64
+ 111:../../bos/hal/b_hal_dma.c ****     if (chl >= B_HAL_DMA_CHL_NUMBER)
+ 199              		.loc 1 111 5 is_stmt 1 view .LVU39
+ 200              		.loc 1 111 8 is_stmt 0 view .LVU40
+ 201 0004 83FF0F   		cmpl	$15, %edi
+ 202 0007 7707     		ja	.L18
+ 112:../../bos/hal/b_hal_dma.c ****     {
+ 113:../../bos/hal/b_hal_dma.c ****         return -1;
+ 114:../../bos/hal/b_hal_dma.c ****     }
+ 115:../../bos/hal/b_hal_dma.c ****     return bMcuDmaSetDest(chl, addr);
+ 203              		.loc 1 115 5 is_stmt 1 view .LVU41
+ 204              		.loc 1 115 12 is_stmt 0 view .LVU42
+ 205 0009 E9000000 		jmp	bMcuDmaSetDest
+ 205      00
+ 206              	.LVL10:
+ 207 000e 6690     		.p2align 4,,10
+ 208              		.p2align 3
+ 209              	.L18:
+ 116:../../bos/hal/b_hal_dma.c **** }
+ 210              		.loc 1 116 1 view .LVU43
+ 211 0010 B8FFFFFF 		movl	$-1, %eax
+ 211      FF
+ 212 0015 C3       		ret
+ 213              		.cfi_endproc
+ 214              	.LFE37:
+ 216              		.section	.text.bHalDmaSetCount,"ax",@progbits
+ 217              		.p2align 4
+ 218              		.globl	bHalDmaSetCount
+ 220              	bHalDmaSetCount:
+ 221              	.LVL11:
+ 222              	.LFB38:
+ 117:../../bos/hal/b_hal_dma.c **** 
+ 118:../../bos/hal/b_hal_dma.c **** int bHalDmaSetCount(bHalDmaChlNumber_t chl, uint32_t count)
+ 119:../../bos/hal/b_hal_dma.c **** {
+ 223              		.loc 1 119 1 is_stmt 1 view -0
+ 224              		.cfi_startproc
+ 225              		.loc 1 119 1 is_stmt 0 view .LVU45
+ 226 0000 F30F1EFA 		endbr64
+ 120:../../bos/hal/b_hal_dma.c ****     if (chl >= B_HAL_DMA_CHL_NUMBER)
+ 227              		.loc 1 120 5 is_stmt 1 view .LVU46
+ 228              		.loc 1 120 8 is_stmt 0 view .LVU47
+GAS LISTING /tmp/cc873OdP.s 			page 7
+
+
+ 229 0004 83FF0F   		cmpl	$15, %edi
+ 230 0007 7707     		ja	.L20
+ 121:../../bos/hal/b_hal_dma.c ****     {
+ 122:../../bos/hal/b_hal_dma.c ****         return -1;
+ 123:../../bos/hal/b_hal_dma.c ****     }
+ 124:../../bos/hal/b_hal_dma.c ****     return bMcuDmaSetCount(chl, count);
+ 231              		.loc 1 124 5 is_stmt 1 view .LVU48
+ 232              		.loc 1 124 12 is_stmt 0 view .LVU49
+ 233 0009 E9000000 		jmp	bMcuDmaSetCount
+ 233      00
+ 234              	.LVL12:
+ 235 000e 6690     		.p2align 4,,10
+ 236              		.p2align 3
+ 237              	.L20:
+ 125:../../bos/hal/b_hal_dma.c **** }
+ 238              		.loc 1 125 1 view .LVU50
+ 239 0010 B8FFFFFF 		movl	$-1, %eax
+ 239      FF
+ 240 0015 C3       		ret
+ 241              		.cfi_endproc
+ 242              	.LFE38:
+ 244              		.section	.text.bHalDmaGetCount,"ax",@progbits
+ 245              		.p2align 4
+ 246              		.globl	bHalDmaGetCount
+ 248              	bHalDmaGetCount:
+ 249              	.LVL13:
+ 250              	.LFB39:
+ 126:../../bos/hal/b_hal_dma.c **** int bHalDmaGetCount(bHalDmaChlNumber_t chl)
+ 127:../../bos/hal/b_hal_dma.c **** {
+ 251              		.loc 1 127 1 is_stmt 1 view -0
+ 252              		.cfi_startproc
+ 253              		.loc 1 127 1 is_stmt 0 view .LVU52
+ 254 0000 F30F1EFA 		endbr64
+ 128:../../bos/hal/b_hal_dma.c ****     if (chl >= B_HAL_DMA_CHL_NUMBER)
+ 255              		.loc 1 128 5 is_stmt 1 view .LVU53
+ 256              		.loc 1 128 8 is_stmt 0 view .LVU54
+ 257 0004 83FF0F   		cmpl	$15, %edi
+ 258 0007 7707     		ja	.L22
+ 129:../../bos/hal/b_hal_dma.c ****     {
+ 130:../../bos/hal/b_hal_dma.c ****         return -1;
+ 131:../../bos/hal/b_hal_dma.c ****     }
+ 132:../../bos/hal/b_hal_dma.c ****     return bMcuDmaGetCount(chl);
+ 259              		.loc 1 132 5 is_stmt 1 view .LVU55
+ 260              		.loc 1 132 12 is_stmt 0 view .LVU56
+ 261 0009 E9000000 		jmp	bMcuDmaGetCount
+ 261      00
+ 262              	.LVL14:
+ 263 000e 6690     		.p2align 4,,10
+ 264              		.p2align 3
+ 265              	.L22:
+ 133:../../bos/hal/b_hal_dma.c **** }
+ 266              		.loc 1 133 1 view .LVU57
+ 267 0010 B8FFFFFF 		movl	$-1, %eax
+ 267      FF
+ 268 0015 C3       		ret
+ 269              		.cfi_endproc
+ 270              	.LFE39:
+GAS LISTING /tmp/cc873OdP.s 			page 8
+
+
+ 272              		.text
+ 273              	.Letext0:
+ 274              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 275              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 276              		.file 4 "../../bos/hal/inc/b_hal_dma.h"
+ 1765              		.section	.note.gnu.property,"a"
+ 1766              		.align 8
+ 1767 0000 04000000 		.long	1f - 0f
+ 1768 0004 10000000 		.long	4f - 1f
+ 1769 0008 05000000 		.long	5
+ 1770              	0:
+ 1771 000c 474E5500 		.string	"GNU"
+ 1772              	1:
+ 1773              		.align 8
+ 1774 0010 020000C0 		.long	0xc0000002
+ 1775 0014 04000000 		.long	3f - 2f
+ 1776              	2:
+ 1777 0018 03000000 		.long	0x3
+ 1778              	3:
+ 1779 001c 00000000 		.align 8
+ 1780              	4:
+GAS LISTING /tmp/cc873OdP.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_dma.c
+     /tmp/cc873OdP.s:9      .text.bMcuDmaConfig:0000000000000000 bMcuDmaConfig
+     /tmp/cc873OdP.s:27     .text.bMcuDmaStart:0000000000000000 bMcuDmaStart
+     /tmp/cc873OdP.s:45     .text.bMcuDmaStop:0000000000000000 bMcuDmaStop
+     /tmp/cc873OdP.s:59     .text.bMcuDmaSetDest:0000000000000000 bMcuDmaSetDest
+     /tmp/cc873OdP.s:77     .text.bMcuDmaSetCount:0000000000000000 bMcuDmaSetCount
+     /tmp/cc873OdP.s:91     .text.bMcuDmaGetCount:0000000000000000 bMcuDmaGetCount
+     /tmp/cc873OdP.s:105    .text.bHalDmaConfig:0000000000000000 bHalDmaConfig
+     /tmp/cc873OdP.s:136    .text.bHalDmaStart:0000000000000000 bHalDmaStart
+     /tmp/cc873OdP.s:164    .text.bHalDmaStop:0000000000000000 bHalDmaStop
+     /tmp/cc873OdP.s:192    .text.bHalDmaSetDest:0000000000000000 bHalDmaSetDest
+     /tmp/cc873OdP.s:220    .text.bHalDmaSetCount:0000000000000000 bHalDmaSetCount
+     /tmp/cc873OdP.s:248    .text.bHalDmaGetCount:0000000000000000 bHalDmaGetCount
+
+NO UNDEFINED SYMBOLS

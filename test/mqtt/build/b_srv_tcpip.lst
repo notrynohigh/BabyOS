@@ -1,0 +1,712 @@
+GAS LISTING /tmp/cc1pCHlA.s 			page 1
+
+
+   1              		.file	"b_srv_tcpip.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/services/b_srv_tcpip.c"
+   5              		.section	.text.bTcpipSrvInit,"ax",@progbits
+   6              		.p2align 4
+   7              		.globl	bTcpipSrvInit
+   9              	bTcpipSrvInit:
+  10              	.LVL0:
+  11              	.LFB42:
+   1:../../bos/services/b_srv_tcpip.c **** /**
+   2:../../bos/services/b_srv_tcpip.c ****  *!
+   3:../../bos/services/b_srv_tcpip.c ****  * \file        b_srv_tcpip.c
+   4:../../bos/services/b_srv_tcpip.c ****  * \version     v0.0.1
+   5:../../bos/services/b_srv_tcpip.c ****  * \date        2023/08/27
+   6:../../bos/services/b_srv_tcpip.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/services/b_srv_tcpip.c ****  *******************************************************************************
+   8:../../bos/services/b_srv_tcpip.c ****  * @attention
+   9:../../bos/services/b_srv_tcpip.c ****  *
+  10:../../bos/services/b_srv_tcpip.c ****  * Copyright (c) 2023 Bean
+  11:../../bos/services/b_srv_tcpip.c ****  *
+  12:../../bos/services/b_srv_tcpip.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/services/b_srv_tcpip.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/services/b_srv_tcpip.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/services/b_srv_tcpip.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/services/b_srv_tcpip.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/services/b_srv_tcpip.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/services/b_srv_tcpip.c ****  *
+  19:../../bos/services/b_srv_tcpip.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/services/b_srv_tcpip.c ****  * copies or substantial portions of the Software.
+  21:../../bos/services/b_srv_tcpip.c ****  *
+  22:../../bos/services/b_srv_tcpip.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/services/b_srv_tcpip.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/services/b_srv_tcpip.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/services/b_srv_tcpip.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/services/b_srv_tcpip.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/services/b_srv_tcpip.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/services/b_srv_tcpip.c ****  * SOFTWARE.
+  29:../../bos/services/b_srv_tcpip.c ****  *******************************************************************************
+  30:../../bos/services/b_srv_tcpip.c ****  */
+  31:../../bos/services/b_srv_tcpip.c **** 
+  32:../../bos/services/b_srv_tcpip.c **** /*Includes ----------------------------------------------*/
+  33:../../bos/services/b_srv_tcpip.c **** #include "services/inc/b_srv_tcpip.h"
+  34:../../bos/services/b_srv_tcpip.c **** 
+  35:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_ENABLE) && (_TCPIP_SERVICE_ENABLE == 1))
+  36:../../bos/services/b_srv_tcpip.c **** 
+  37:../../bos/services/b_srv_tcpip.c **** #include <stdio.h>
+  38:../../bos/services/b_srv_tcpip.c **** #include <string.h>
+  39:../../bos/services/b_srv_tcpip.c **** 
+  40:../../bos/services/b_srv_tcpip.c **** #include "core/inc/b_sem.h"
+  41:../../bos/services/b_srv_tcpip.c **** #include "core/inc/b_task.h"
+  42:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
+  43:../../bos/services/b_srv_tcpip.c **** #include "modules/inc/b_mod_ssl.h"
+  44:../../bos/services/b_srv_tcpip.c **** #include "thirdparty/http-parser/http_parser.h"
+  45:../../bos/services/b_srv_tcpip.c **** #endif
+  46:../../bos/services/b_srv_tcpip.c **** #include "utils/inc/b_util_log.h"
+  47:../../bos/services/b_srv_tcpip.c **** #include "utils/inc/b_util_memp.h"
+GAS LISTING /tmp/cc1pCHlA.s 			page 2
+
+
+  48:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
+  49:../../bos/services/b_srv_tcpip.c **** #include "utils/inc/b_util_utc.h"
+  50:../../bos/services/b_srv_tcpip.c **** #endif
+  51:../../bos/services/b_srv_tcpip.c **** /**
+  52:../../bos/services/b_srv_tcpip.c ****  * \addtogroup BABYOS
+  53:../../bos/services/b_srv_tcpip.c ****  * \{
+  54:../../bos/services/b_srv_tcpip.c ****  */
+  55:../../bos/services/b_srv_tcpip.c **** 
+  56:../../bos/services/b_srv_tcpip.c **** /**
+  57:../../bos/services/b_srv_tcpip.c ****  * \addtogroup SERVICES
+  58:../../bos/services/b_srv_tcpip.c ****  * \{
+  59:../../bos/services/b_srv_tcpip.c ****  */
+  60:../../bos/services/b_srv_tcpip.c **** 
+  61:../../bos/services/b_srv_tcpip.c **** /**
+  62:../../bos/services/b_srv_tcpip.c ****  * \addtogroup TCPIP
+  63:../../bos/services/b_srv_tcpip.c ****  * \{
+  64:../../bos/services/b_srv_tcpip.c ****  */
+  65:../../bos/services/b_srv_tcpip.c **** 
+  66:../../bos/services/b_srv_tcpip.c **** /**
+  67:../../bos/services/b_srv_tcpip.c ****  * \defgroup TCPIP_Private_TypesDefinitions
+  68:../../bos/services/b_srv_tcpip.c ****  * \{
+  69:../../bos/services/b_srv_tcpip.c ****  */
+  70:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
+  71:../../bos/services/b_srv_tcpip.c **** typedef struct
+  72:../../bos/services/b_srv_tcpip.c **** {
+  73:../../bos/services/b_srv_tcpip.c ****     uint32_t seconds;
+  74:../../bos/services/b_srv_tcpip.c ****     uint32_t fraction;
+  75:../../bos/services/b_srv_tcpip.c **** } bNtpTimestamp_t;
+  76:../../bos/services/b_srv_tcpip.c **** 
+  77:../../bos/services/b_srv_tcpip.c **** typedef struct
+  78:../../bos/services/b_srv_tcpip.c **** {
+  79:../../bos/services/b_srv_tcpip.c ****     uint8_t         li_vn_mode;       // Leap indicator, version number, and mode
+  80:../../bos/services/b_srv_tcpip.c ****     uint8_t         stratum;          // Stratum level of the local clock
+  81:../../bos/services/b_srv_tcpip.c ****     uint8_t         poll;             // Maximum interval between successive messages
+  82:../../bos/services/b_srv_tcpip.c ****     uint8_t         precision;        // Precision of the local clock
+  83:../../bos/services/b_srv_tcpip.c ****     uint32_t        root_delay;       // Total round trip delay time
+  84:../../bos/services/b_srv_tcpip.c ****     uint32_t        root_dispersion;  // Max error allowed from primary clock source
+  85:../../bos/services/b_srv_tcpip.c ****     uint32_t        ref_id;           // Reference clock identifier
+  86:../../bos/services/b_srv_tcpip.c ****     bNtpTimestamp_t ref_time;         // Reference timestamp
+  87:../../bos/services/b_srv_tcpip.c ****     bNtpTimestamp_t orig_time;        // Originate timestamp
+  88:../../bos/services/b_srv_tcpip.c ****     bNtpTimestamp_t recv_time;        // Receive timestamp
+  89:../../bos/services/b_srv_tcpip.c ****     bNtpTimestamp_t trans_time;       // Transmit timestamp
+  90:../../bos/services/b_srv_tcpip.c **** } bNtpPacket_t;
+  91:../../bos/services/b_srv_tcpip.c **** 
+  92:../../bos/services/b_srv_tcpip.c **** typedef struct
+  93:../../bos/services/b_srv_tcpip.c **** {
+  94:../../bos/services/b_srv_tcpip.c ****     bTaskId_t task_id;
+  95:../../bos/services/b_srv_tcpip.c ****     int       sockfd;
+  96:../../bos/services/b_srv_tcpip.c ****     uint32_t  interval_s;
+  97:../../bos/services/b_srv_tcpip.c **** } bNtpPcb_t;
+  98:../../bos/services/b_srv_tcpip.c **** #endif
+  99:../../bos/services/b_srv_tcpip.c **** //----------------------------------------------------------------------------
+ 100:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
+ 101:../../bos/services/b_srv_tcpip.c **** typedef enum
+ 102:../../bos/services/b_srv_tcpip.c **** {
+ 103:../../bos/services/b_srv_tcpip.c ****     B_HTTP_STA_INIT,
+ 104:../../bos/services/b_srv_tcpip.c ****     B_HTTP_STA_CONNECTING,
+GAS LISTING /tmp/cc1pCHlA.s 			page 3
+
+
+ 105:../../bos/services/b_srv_tcpip.c ****     B_HTTP_STA_CONNECTED,
+ 106:../../bos/services/b_srv_tcpip.c ****     B_HTTP_STA_RECV_DATA,
+ 107:../../bos/services/b_srv_tcpip.c ****     B_HTTP_STA_DISCONNECT,
+ 108:../../bos/services/b_srv_tcpip.c ****     B_HTTP_STA_DEINIT,
+ 109:../../bos/services/b_srv_tcpip.c ****     B_HTTP_STA_DESTROY,
+ 110:../../bos/services/b_srv_tcpip.c **** } bHttpState_t;
+ 111:../../bos/services/b_srv_tcpip.c **** typedef struct
+ 112:../../bos/services/b_srv_tcpip.c **** {
+ 113:../../bos/services/b_srv_tcpip.c ****     uint8_t              is_https;
+ 114:../../bos/services/b_srv_tcpip.c ****     bHttpState_t         state;
+ 115:../../bos/services/b_srv_tcpip.c ****     char                 host[_HTTP_HOST_LEN_MAX + 1];
+ 116:../../bos/services/b_srv_tcpip.c ****     char                 path[_HTTP_PATH_LEN_MAX + 1];
+ 117:../../bos/services/b_srv_tcpip.c ****     uint16_t             port;
+ 118:../../bos/services/b_srv_tcpip.c ****     pHttpCb_t            callback;
+ 119:../../bos/services/b_srv_tcpip.c ****     void                *user_data;
+ 120:../../bos/services/b_srv_tcpip.c ****     char                *request;
+ 121:../../bos/services/b_srv_tcpip.c ****     int                  sockfd;
+ 122:../../bos/services/b_srv_tcpip.c ****     bTaskAttr_t          attr;
+ 123:../../bos/services/b_srv_tcpip.c ****     bTaskId_t            task_id;
+ 124:../../bos/services/b_srv_tcpip.c ****     http_parser          parse;
+ 125:../../bos/services/b_srv_tcpip.c ****     http_parser_settings parse_cb;
+ 126:../../bos/services/b_srv_tcpip.c ****     uint8_t             *precv;
+ 127:../../bos/services/b_srv_tcpip.c ****     uint16_t             recvbuf_len;
+ 128:../../bos/services/b_srv_tcpip.c ****     uint16_t             recvbuf_index;
+ 129:../../bos/services/b_srv_tcpip.c **** #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+ 130:../../bos/services/b_srv_tcpip.c ****     bSSLHandle_t ssl;
+ 131:../../bos/services/b_srv_tcpip.c **** #endif
+ 132:../../bos/services/b_srv_tcpip.c **** } bHttpStruct_t;
+ 133:../../bos/services/b_srv_tcpip.c **** #endif
+ 134:../../bos/services/b_srv_tcpip.c **** /**
+ 135:../../bos/services/b_srv_tcpip.c ****  * \}
+ 136:../../bos/services/b_srv_tcpip.c ****  */
+ 137:../../bos/services/b_srv_tcpip.c **** 
+ 138:../../bos/services/b_srv_tcpip.c **** /**
+ 139:../../bos/services/b_srv_tcpip.c ****  * \defgroup TCPIP_Private_Defines
+ 140:../../bos/services/b_srv_tcpip.c ****  * \{
+ 141:../../bos/services/b_srv_tcpip.c ****  */
+ 142:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
+ 143:../../bos/services/b_srv_tcpip.c **** // NTP时间的起始时间
+ 144:../../bos/services/b_srv_tcpip.c **** #define B_NTP_TIMESTAMP_DELTA 2208988800ull
+ 145:../../bos/services/b_srv_tcpip.c **** #define B_NTP_SERVER_NUM (3)
+ 146:../../bos/services/b_srv_tcpip.c **** #define B_NTP_TIMEOUT_S (20)
+ 147:../../bos/services/b_srv_tcpip.c **** #endif
+ 148:../../bos/services/b_srv_tcpip.c **** /**
+ 149:../../bos/services/b_srv_tcpip.c ****  * \}
+ 150:../../bos/services/b_srv_tcpip.c ****  */
+ 151:../../bos/services/b_srv_tcpip.c **** 
+ 152:../../bos/services/b_srv_tcpip.c **** /**
+ 153:../../bos/services/b_srv_tcpip.c ****  * \defgroup TCPIP_Private_Macros
+ 154:../../bos/services/b_srv_tcpip.c ****  * \{
+ 155:../../bos/services/b_srv_tcpip.c ****  */
+ 156:../../bos/services/b_srv_tcpip.c **** 
+ 157:../../bos/services/b_srv_tcpip.c **** /**
+ 158:../../bos/services/b_srv_tcpip.c ****  * \}
+ 159:../../bos/services/b_srv_tcpip.c ****  */
+ 160:../../bos/services/b_srv_tcpip.c **** 
+ 161:../../bos/services/b_srv_tcpip.c **** /**
+GAS LISTING /tmp/cc1pCHlA.s 			page 4
+
+
+ 162:../../bos/services/b_srv_tcpip.c ****  * \defgroup TCPIP_Private_Variables
+ 163:../../bos/services/b_srv_tcpip.c ****  * \{
+ 164:../../bos/services/b_srv_tcpip.c ****  */
+ 165:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
+ 166:../../bos/services/b_srv_tcpip.c **** static bNtpPcb_t bNtpPcb = {
+ 167:../../bos/services/b_srv_tcpip.c ****     .task_id = 0,
+ 168:../../bos/services/b_srv_tcpip.c **** };
+ 169:../../bos/services/b_srv_tcpip.c **** B_TASK_CREATE_ATTR(bNtpTask);
+ 170:../../bos/services/b_srv_tcpip.c **** static const char *bNtpServer[B_NTP_SERVER_NUM] = {_NTP_SERVER_1, _NTP_SERVER_2, _NTP_SERVER_3};
+ 171:../../bos/services/b_srv_tcpip.c **** #endif
+ 172:../../bos/services/b_srv_tcpip.c **** //------------------------------------------------------------------------------------------------
+ 173:../../bos/services/b_srv_tcpip.c **** 
+ 174:../../bos/services/b_srv_tcpip.c **** /**
+ 175:../../bos/services/b_srv_tcpip.c ****  * \}
+ 176:../../bos/services/b_srv_tcpip.c ****  */
+ 177:../../bos/services/b_srv_tcpip.c **** 
+ 178:../../bos/services/b_srv_tcpip.c **** /**
+ 179:../../bos/services/b_srv_tcpip.c ****  * \defgroup TCPIP_Private_FunctionPrototypes
+ 180:../../bos/services/b_srv_tcpip.c ****  * \{
+ 181:../../bos/services/b_srv_tcpip.c ****  */
+ 182:../../bos/services/b_srv_tcpip.c **** 
+ 183:../../bos/services/b_srv_tcpip.c **** /**
+ 184:../../bos/services/b_srv_tcpip.c ****  * \}
+ 185:../../bos/services/b_srv_tcpip.c ****  */
+ 186:../../bos/services/b_srv_tcpip.c **** 
+ 187:../../bos/services/b_srv_tcpip.c **** /**
+ 188:../../bos/services/b_srv_tcpip.c ****  * \defgroup TCPIP_Private_Functions
+ 189:../../bos/services/b_srv_tcpip.c ****  * \{
+ 190:../../bos/services/b_srv_tcpip.c ****  */
+ 191:../../bos/services/b_srv_tcpip.c **** 
+ 192:../../bos/services/b_srv_tcpip.c **** static void _bTcpipSrvFree(void *addr)
+ 193:../../bos/services/b_srv_tcpip.c **** {
+ 194:../../bos/services/b_srv_tcpip.c ****     bFree(addr);
+ 195:../../bos/services/b_srv_tcpip.c **** }
+ 196:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
+ 197:../../bos/services/b_srv_tcpip.c **** static void _bNtpConnCallback(bTransEvent_t event, void *param, void *arg)
+ 198:../../bos/services/b_srv_tcpip.c **** {
+ 199:../../bos/services/b_srv_tcpip.c ****     ;
+ 200:../../bos/services/b_srv_tcpip.c **** }
+ 201:../../bos/services/b_srv_tcpip.c **** 
+ 202:../../bos/services/b_srv_tcpip.c **** PT_THREAD(_bNtpTaskFunc)(struct pt *pt, void *arg)
+ 203:../../bos/services/b_srv_tcpip.c **** {
+ 204:../../bos/services/b_srv_tcpip.c ****     static uint8_t ntp_server_index = 0;
+ 205:../../bos/services/b_srv_tcpip.c ****     bNtpPacket_t   packet;
+ 206:../../bos/services/b_srv_tcpip.c ****     uint16_t       rlen      = 0;
+ 207:../../bos/services/b_srv_tcpip.c ****     uint64_t       ntp_time  = 0;
+ 208:../../bos/services/b_srv_tcpip.c ****     uint32_t       wait_time = 0;
+ 209:../../bos/services/b_srv_tcpip.c ****     wait_time                = 10;
+ 210:../../bos/services/b_srv_tcpip.c ****     PT_BEGIN(pt);
+ 211:../../bos/services/b_srv_tcpip.c ****     while (1)
+ 212:../../bos/services/b_srv_tcpip.c ****     {
+ 213:../../bos/services/b_srv_tcpip.c ****         if (SOCKFD_IS_INVALID(bNtpPcb.sockfd))
+ 214:../../bos/services/b_srv_tcpip.c ****         {
+ 215:../../bos/services/b_srv_tcpip.c ****             bNtpPcb.sockfd = bSocket(B_TRANS_CONN_UDP, _bNtpConnCallback, NULL);
+ 216:../../bos/services/b_srv_tcpip.c ****             if (SOCKFD_IS_INVALID(bNtpPcb.sockfd))
+ 217:../../bos/services/b_srv_tcpip.c ****             {
+ 218:../../bos/services/b_srv_tcpip.c ****                 bTaskRestart(pt);
+GAS LISTING /tmp/cc1pCHlA.s 			page 5
+
+
+ 219:../../bos/services/b_srv_tcpip.c ****             }
+ 220:../../bos/services/b_srv_tcpip.c ****             b_log("ntp sockfd: %x %d\r\n", bNtpPcb.sockfd, ntp_server_index);
+ 221:../../bos/services/b_srv_tcpip.c ****         }
+ 222:../../bos/services/b_srv_tcpip.c ****         else
+ 223:../../bos/services/b_srv_tcpip.c ****         {
+ 224:../../bos/services/b_srv_tcpip.c ****             if (bSocketIsConnected(bNtpPcb.sockfd))
+ 225:../../bos/services/b_srv_tcpip.c ****             {
+ 226:../../bos/services/b_srv_tcpip.c ****                 if (bSockIsWriteable(bNtpPcb.sockfd))
+ 227:../../bos/services/b_srv_tcpip.c ****                 {
+ 228:../../bos/services/b_srv_tcpip.c ****                     memset(&packet, 0, sizeof(bNtpPacket_t));
+ 229:../../bos/services/b_srv_tcpip.c ****                     packet.li_vn_mode = 0x1b;
+ 230:../../bos/services/b_srv_tcpip.c ****                     bSend(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), NULL);
+ 231:../../bos/services/b_srv_tcpip.c ****                     PT_WAIT_UNTIL(pt, bSockIsReadable(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000)
+ 232:../../bos/services/b_srv_tcpip.c ****                     if (PT_WAIT_IS_TIMEOUT(pt))
+ 233:../../bos/services/b_srv_tcpip.c ****                     {
+ 234:../../bos/services/b_srv_tcpip.c ****                         b_log_e("ntp recv timeout...\r\n");
+ 235:../../bos/services/b_srv_tcpip.c ****                     }
+ 236:../../bos/services/b_srv_tcpip.c ****                     else
+ 237:../../bos/services/b_srv_tcpip.c ****                     {
+ 238:../../bos/services/b_srv_tcpip.c ****                         bRecv(bNtpPcb.sockfd, (uint8_t *)&packet, sizeof(bNtpPacket_t), &rlen);
+ 239:../../bos/services/b_srv_tcpip.c ****                         b_log("ntp recv len: %d == %d\r\n", rlen, sizeof(bNtpPacket_t));
+ 240:../../bos/services/b_srv_tcpip.c ****                         if (rlen == sizeof(bNtpPacket_t))
+ 241:../../bos/services/b_srv_tcpip.c ****                         {
+ 242:../../bos/services/b_srv_tcpip.c ****                             if (packet.recv_time.seconds <= packet.trans_time.seconds &&
+ 243:../../bos/services/b_srv_tcpip.c ****                                 (packet.trans_time.seconds - packet.recv_time.seconds) <= 1)
+ 244:../../bos/services/b_srv_tcpip.c ****                             {
+ 245:../../bos/services/b_srv_tcpip.c ****                                 ntp_time =
+ 246:../../bos/services/b_srv_tcpip.c ****                                     B_SWAP_32(packet.trans_time.seconds) - B_NTP_TIMESTAMP_DELTA;
+ 247:../../bos/services/b_srv_tcpip.c ****                                 bUTC_SetTime(ntp_time);
+ 248:../../bos/services/b_srv_tcpip.c ****                                 wait_time = bNtpPcb.interval_s;
+ 249:../../bos/services/b_srv_tcpip.c ****                             }
+ 250:../../bos/services/b_srv_tcpip.c ****                         }
+ 251:../../bos/services/b_srv_tcpip.c ****                     }
+ 252:../../bos/services/b_srv_tcpip.c ****                 }
+ 253:../../bos/services/b_srv_tcpip.c ****                 PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+ 254:../../bos/services/b_srv_tcpip.c ****                 bNtpPcb.sockfd = -1;
+ 255:../../bos/services/b_srv_tcpip.c ****                 b_log_e("shutdown..\r\n");
+ 256:../../bos/services/b_srv_tcpip.c ****                 bTaskDelayMs(pt, wait_time * 1000);
+ 257:../../bos/services/b_srv_tcpip.c ****             }
+ 258:../../bos/services/b_srv_tcpip.c ****             else
+ 259:../../bos/services/b_srv_tcpip.c ****             {
+ 260:../../bos/services/b_srv_tcpip.c ****                 bConnect(bNtpPcb.sockfd, (char *)bNtpServer[ntp_server_index], 123);
+ 261:../../bos/services/b_srv_tcpip.c ****                 PT_WAIT_UNTIL(pt, bSocketIsConnected(bNtpPcb.sockfd) == 1, B_NTP_TIMEOUT_S * 1000);
+ 262:../../bos/services/b_srv_tcpip.c ****                 if (pt->retval == PT_RETVAL_TIMEOUT)
+ 263:../../bos/services/b_srv_tcpip.c ****                 {
+ 264:../../bos/services/b_srv_tcpip.c ****                     b_log_e("ntp connect fail...\r\n");
+ 265:../../bos/services/b_srv_tcpip.c ****                     PT_WAIT_UNTIL_FOREVER(pt, bShutdown(bNtpPcb.sockfd) >= 0);
+ 266:../../bos/services/b_srv_tcpip.c ****                     b_log_e("shutdown..\r\n");
+ 267:../../bos/services/b_srv_tcpip.c ****                     ntp_server_index = (ntp_server_index + 1) % B_NTP_SERVER_NUM;
+ 268:../../bos/services/b_srv_tcpip.c ****                     bNtpPcb.sockfd   = -1;
+ 269:../../bos/services/b_srv_tcpip.c ****                     bTaskDelayMs(pt, wait_time * 1000);
+ 270:../../bos/services/b_srv_tcpip.c ****                 }
+ 271:../../bos/services/b_srv_tcpip.c ****             }
+ 272:../../bos/services/b_srv_tcpip.c ****         }
+ 273:../../bos/services/b_srv_tcpip.c ****         bTaskYield(pt);
+ 274:../../bos/services/b_srv_tcpip.c ****     }
+ 275:../../bos/services/b_srv_tcpip.c ****     PT_END(pt);
+GAS LISTING /tmp/cc1pCHlA.s 			page 6
+
+
+ 276:../../bos/services/b_srv_tcpip.c **** }
+ 277:../../bos/services/b_srv_tcpip.c **** #endif
+ 278:../../bos/services/b_srv_tcpip.c **** //--------------------------------------------------------http--
+ 279:../../bos/services/b_srv_tcpip.c **** #if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
+ 280:../../bos/services/b_srv_tcpip.c **** static int _bHttpParseUrl(const char *url, char *host, char *path, uint16_t *port, uint8_t *ishttps
+ 281:../../bos/services/b_srv_tcpip.c **** {
+ 282:../../bos/services/b_srv_tcpip.c ****     // 检查是否是HTTPS
+ 283:../../bos/services/b_srv_tcpip.c ****     if (strncmp(url, "https://", 8) == 0)
+ 284:../../bos/services/b_srv_tcpip.c ****     {
+ 285:../../bos/services/b_srv_tcpip.c ****         *ishttps = 1;
+ 286:../../bos/services/b_srv_tcpip.c ****     }
+ 287:../../bos/services/b_srv_tcpip.c ****     else if (strncmp(url, "http://", 7) == 0)
+ 288:../../bos/services/b_srv_tcpip.c ****     {
+ 289:../../bos/services/b_srv_tcpip.c ****         *ishttps = 0;
+ 290:../../bos/services/b_srv_tcpip.c ****     }
+ 291:../../bos/services/b_srv_tcpip.c ****     else
+ 292:../../bos/services/b_srv_tcpip.c ****     {
+ 293:../../bos/services/b_srv_tcpip.c ****         return -1;
+ 294:../../bos/services/b_srv_tcpip.c ****     }
+ 295:../../bos/services/b_srv_tcpip.c **** 
+ 296:../../bos/services/b_srv_tcpip.c ****     // 跳过"http://"或"https://"
+ 297:../../bos/services/b_srv_tcpip.c ****     const char *start = url + (*ishttps ? 8 : 7);
+ 298:../../bos/services/b_srv_tcpip.c **** 
+ 299:../../bos/services/b_srv_tcpip.c ****     // 查找host的结束位置
+ 300:../../bos/services/b_srv_tcpip.c ****     const char *end = strchr(start, '/');
+ 301:../../bos/services/b_srv_tcpip.c ****     if (end == NULL)
+ 302:../../bos/services/b_srv_tcpip.c ****     {
+ 303:../../bos/services/b_srv_tcpip.c ****         end = url + strlen(url);
+ 304:../../bos/services/b_srv_tcpip.c ****     }
+ 305:../../bos/services/b_srv_tcpip.c ****     if ((end - start) > _HTTP_HOST_LEN_MAX)
+ 306:../../bos/services/b_srv_tcpip.c ****     {
+ 307:../../bos/services/b_srv_tcpip.c ****         return -1;
+ 308:../../bos/services/b_srv_tcpip.c ****     }
+ 309:../../bos/services/b_srv_tcpip.c ****     // 复制host到目标字符串
+ 310:../../bos/services/b_srv_tcpip.c ****     strncpy(host, start, end - start);
+ 311:../../bos/services/b_srv_tcpip.c ****     host[end - start] = '\0';
+ 312:../../bos/services/b_srv_tcpip.c **** 
+ 313:../../bos/services/b_srv_tcpip.c ****     // 解析port
+ 314:../../bos/services/b_srv_tcpip.c ****     const char *portStart = strchr(host, ':');
+ 315:../../bos/services/b_srv_tcpip.c ****     if (portStart != NULL)
+ 316:../../bos/services/b_srv_tcpip.c ****     {
+ 317:../../bos/services/b_srv_tcpip.c ****         *port = atoi(portStart + 1);
+ 318:../../bos/services/b_srv_tcpip.c ****     }
+ 319:../../bos/services/b_srv_tcpip.c ****     else
+ 320:../../bos/services/b_srv_tcpip.c ****     {
+ 321:../../bos/services/b_srv_tcpip.c ****         *port = (*ishttps ? 443 : 80);
+ 322:../../bos/services/b_srv_tcpip.c ****     }
+ 323:../../bos/services/b_srv_tcpip.c **** 
+ 324:../../bos/services/b_srv_tcpip.c ****     // 解析path
+ 325:../../bos/services/b_srv_tcpip.c ****     if (*end != '\0')
+ 326:../../bos/services/b_srv_tcpip.c ****     {
+ 327:../../bos/services/b_srv_tcpip.c ****         if (strlen(end) > _HTTP_PATH_LEN_MAX)
+ 328:../../bos/services/b_srv_tcpip.c ****         {
+ 329:../../bos/services/b_srv_tcpip.c ****             return -1;
+ 330:../../bos/services/b_srv_tcpip.c ****         }
+ 331:../../bos/services/b_srv_tcpip.c ****         strcpy(path, end);
+ 332:../../bos/services/b_srv_tcpip.c ****     }
+GAS LISTING /tmp/cc1pCHlA.s 			page 7
+
+
+ 333:../../bos/services/b_srv_tcpip.c ****     else
+ 334:../../bos/services/b_srv_tcpip.c ****     {
+ 335:../../bos/services/b_srv_tcpip.c ****         strcpy(path, "/");
+ 336:../../bos/services/b_srv_tcpip.c ****     }
+ 337:../../bos/services/b_srv_tcpip.c ****     return 0;
+ 338:../../bos/services/b_srv_tcpip.c **** }
+ 339:../../bos/services/b_srv_tcpip.c **** 
+ 340:../../bos/services/b_srv_tcpip.c **** static char *_bHttpGetRequest(bHttpStruct_t *http)
+ 341:../../bos/services/b_srv_tcpip.c **** {
+ 342:../../bos/services/b_srv_tcpip.c ****     char *request      = NULL;
+ 343:../../bos/services/b_srv_tcpip.c ****     int   request_size = 0;
+ 344:../../bos/services/b_srv_tcpip.c ****     request_size       = strlen("GET /") + strlen(http->path) + strlen(" HTTP/1.1\r\n") +
+ 345:../../bos/services/b_srv_tcpip.c ****                          strlen("Host: ") + strlen(http->host) + strlen("\r\n") +
+ 346:../../bos/services/b_srv_tcpip.c ****                          strlen("Connection: close\r\n") + strlen("\r\n") + 1;
+ 347:../../bos/services/b_srv_tcpip.c **** 
+ 348:../../bos/services/b_srv_tcpip.c ****     request = (char *)bMalloc(request_size);
+ 349:../../bos/services/b_srv_tcpip.c ****     if (request != NULL)
+ 350:../../bos/services/b_srv_tcpip.c ****     {
+ 351:../../bos/services/b_srv_tcpip.c ****         memset(request, 0, request_size);
+ 352:../../bos/services/b_srv_tcpip.c ****         snprintf(request, request_size, "GET /%s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n"
+ 353:../../bos/services/b_srv_tcpip.c ****                  http->path, http->host);
+ 354:../../bos/services/b_srv_tcpip.c ****     }
+ 355:../../bos/services/b_srv_tcpip.c ****     return request;
+ 356:../../bos/services/b_srv_tcpip.c **** }
+ 357:../../bos/services/b_srv_tcpip.c **** 
+ 358:../../bos/services/b_srv_tcpip.c **** static char *_bHttpPostRequest(bHttpStruct_t *http, const char *head, const char *body)
+ 359:../../bos/services/b_srv_tcpip.c **** {
+ 360:../../bos/services/b_srv_tcpip.c ****     char *request      = NULL;
+ 361:../../bos/services/b_srv_tcpip.c ****     int   request_size = 0;
+ 362:../../bos/services/b_srv_tcpip.c **** 
+ 363:../../bos/services/b_srv_tcpip.c ****     request_size = strlen("POST /") + strlen(http->path) + strlen(" HTTP/1.1\r\n") +
+ 364:../../bos/services/b_srv_tcpip.c ****                    strlen("Host: ") + strlen(http->host) + strlen("\r\n") +
+ 365:../../bos/services/b_srv_tcpip.c ****                    strlen("Content-Length: xxxxxx\r\n") + strlen("\r\n") + strlen(body) +
+ 366:../../bos/services/b_srv_tcpip.c ****                    strlen("\r\n") + 1;
+ 367:../../bos/services/b_srv_tcpip.c ****     if (head != NULL)
+ 368:../../bos/services/b_srv_tcpip.c ****     {
+ 369:../../bos/services/b_srv_tcpip.c ****         request_size += strlen(head);
+ 370:../../bos/services/b_srv_tcpip.c ****     }
+ 371:../../bos/services/b_srv_tcpip.c ****     request = (char *)bMalloc(request_size);
+ 372:../../bos/services/b_srv_tcpip.c ****     if (request == NULL)
+ 373:../../bos/services/b_srv_tcpip.c ****     {
+ 374:../../bos/services/b_srv_tcpip.c ****         return NULL;
+ 375:../../bos/services/b_srv_tcpip.c ****     }
+ 376:../../bos/services/b_srv_tcpip.c ****     memset(request, 0, request_size);
+ 377:../../bos/services/b_srv_tcpip.c ****     // 组装请求字符串
+ 378:../../bos/services/b_srv_tcpip.c ****     if (head != NULL)
+ 379:../../bos/services/b_srv_tcpip.c ****     {
+ 380:../../bos/services/b_srv_tcpip.c ****         snprintf(request, request_size,
+ 381:../../bos/services/b_srv_tcpip.c ****                  "POST /%s HTTP/1.1\r\nHost: %s\r\n%sContent-Length: %d\r\n\r\n"
+ 382:../../bos/services/b_srv_tcpip.c ****                  "%s\r\n",
+ 383:../../bos/services/b_srv_tcpip.c ****                  http->path, http->host, head, strlen(body), body);
+ 384:../../bos/services/b_srv_tcpip.c ****     }
+ 385:../../bos/services/b_srv_tcpip.c ****     else
+ 386:../../bos/services/b_srv_tcpip.c ****     {
+ 387:../../bos/services/b_srv_tcpip.c ****         snprintf(request, request_size,
+ 388:../../bos/services/b_srv_tcpip.c ****                  "POST /%s HTTP/1.1\r\nHost: %s\r\nContent-Length: %d\r\n\r\n"
+ 389:../../bos/services/b_srv_tcpip.c ****                  "%s\r\n",
+GAS LISTING /tmp/cc1pCHlA.s 			page 8
+
+
+ 390:../../bos/services/b_srv_tcpip.c ****                  http->path, http->host, strlen(body), body);
+ 391:../../bos/services/b_srv_tcpip.c ****     }
+ 392:../../bos/services/b_srv_tcpip.c ****     return request;
+ 393:../../bos/services/b_srv_tcpip.c **** }
+ 394:../../bos/services/b_srv_tcpip.c **** 
+ 395:../../bos/services/b_srv_tcpip.c **** static void _bHttpResult(bHttpStruct_t *http, bHttpEvent_t evt, void *param)
+ 396:../../bos/services/b_srv_tcpip.c **** {
+ 397:../../bos/services/b_srv_tcpip.c ****     if (evt < 0 || evt == B_HTTP_EVENT_RECV_DATA || evt == B_HTTP_EVENT_DESTROY)
+ 398:../../bos/services/b_srv_tcpip.c ****     {
+ 399:../../bos/services/b_srv_tcpip.c ****         if (http->request)
+ 400:../../bos/services/b_srv_tcpip.c ****         {
+ 401:../../bos/services/b_srv_tcpip.c ****             bFree(http->request);
+ 402:../../bos/services/b_srv_tcpip.c ****             http->request = NULL;
+ 403:../../bos/services/b_srv_tcpip.c ****         }
+ 404:../../bos/services/b_srv_tcpip.c ****         http->sockfd = -1;
+ 405:../../bos/services/b_srv_tcpip.c **** #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+ 406:../../bos/services/b_srv_tcpip.c ****         if (http->ssl != NULL)
+ 407:../../bos/services/b_srv_tcpip.c ****         {
+ 408:../../bos/services/b_srv_tcpip.c ****             bSSLDeinit(http->ssl);
+ 409:../../bos/services/b_srv_tcpip.c ****             http->ssl = NULL;
+ 410:../../bos/services/b_srv_tcpip.c ****         }
+ 411:../../bos/services/b_srv_tcpip.c **** #endif
+ 412:../../bos/services/b_srv_tcpip.c ****         http->state = B_HTTP_STA_DEINIT;
+ 413:../../bos/services/b_srv_tcpip.c ****     }
+ 414:../../bos/services/b_srv_tcpip.c ****     http->callback(evt, param, http->user_data);
+ 415:../../bos/services/b_srv_tcpip.c ****     if (http->precv)
+ 416:../../bos/services/b_srv_tcpip.c ****     {
+ 417:../../bos/services/b_srv_tcpip.c ****         bFree(http->precv);
+ 418:../../bos/services/b_srv_tcpip.c ****         http->precv = NULL;
+ 419:../../bos/services/b_srv_tcpip.c ****     }
+ 420:../../bos/services/b_srv_tcpip.c ****     http->recvbuf_index = 0;
+ 421:../../bos/services/b_srv_tcpip.c ****     http->recvbuf_len   = 0;
+ 422:../../bos/services/b_srv_tcpip.c **** }
+ 423:../../bos/services/b_srv_tcpip.c **** 
+ 424:../../bos/services/b_srv_tcpip.c **** static void _bHttpTransCb(bTransEvent_t event, void *param, void *arg)
+ 425:../../bos/services/b_srv_tcpip.c **** {
+ 426:../../bos/services/b_srv_tcpip.c **** }
+ 427:../../bos/services/b_srv_tcpip.c **** 
+ 428:../../bos/services/b_srv_tcpip.c **** static int _bHttpParseComplete(http_parser *parser)
+ 429:../../bos/services/b_srv_tcpip.c **** {
+ 430:../../bos/services/b_srv_tcpip.c ****     bHttpStruct_t *http = (bHttpStruct_t *)parser->data;
+ 431:../../bos/services/b_srv_tcpip.c ****     http->state         = B_HTTP_STA_RECV_DATA;
+ 432:../../bos/services/b_srv_tcpip.c ****     return 0;
+ 433:../../bos/services/b_srv_tcpip.c **** }
+ 434:../../bos/services/b_srv_tcpip.c **** 
+ 435:../../bos/services/b_srv_tcpip.c **** PT_THREAD(_bHttpTaskFunc)(struct pt *pt, void *arg)
+ 436:../../bos/services/b_srv_tcpip.c **** {
+ 437:../../bos/services/b_srv_tcpip.c ****     int             ret   = 0;
+ 438:../../bos/services/b_srv_tcpip.c ****     void           *param = NULL;
+ 439:../../bos/services/b_srv_tcpip.c ****     bHttpEvent_t    event = B_HTTP_EVENT_ERROR;
+ 440:../../bos/services/b_srv_tcpip.c ****     bHttpStruct_t  *http  = (bHttpStruct_t *)arg;
+ 441:../../bos/services/b_srv_tcpip.c ****     bHttpRecvData_t dat;
+ 442:../../bos/services/b_srv_tcpip.c ****     PT_BEGIN(pt);
+ 443:../../bos/services/b_srv_tcpip.c ****     while (1)
+ 444:../../bos/services/b_srv_tcpip.c ****     {
+ 445:../../bos/services/b_srv_tcpip.c ****         if (http->state == B_HTTP_STA_DEINIT)
+ 446:../../bos/services/b_srv_tcpip.c ****         {
+GAS LISTING /tmp/cc1pCHlA.s 			page 9
+
+
+ 447:../../bos/services/b_srv_tcpip.c ****             return 0;
+ 448:../../bos/services/b_srv_tcpip.c ****         }
+ 449:../../bos/services/b_srv_tcpip.c ****         if (http->state == B_HTTP_STA_DESTROY)
+ 450:../../bos/services/b_srv_tcpip.c ****         {
+ 451:../../bos/services/b_srv_tcpip.c ****             if (http->sockfd > 0)
+ 452:../../bos/services/b_srv_tcpip.c ****             {
+ 453:../../bos/services/b_srv_tcpip.c ****                 SOCKET_SHUTDOWN(pt, http->sockfd);
+ 454:../../bos/services/b_srv_tcpip.c ****                 _bHttpResult(http, B_HTTP_EVENT_DESTROY, NULL);
+ 455:../../bos/services/b_srv_tcpip.c ****             }
+ 456:../../bos/services/b_srv_tcpip.c ****             bTaskRemove(http->task_id);
+ 457:../../bos/services/b_srv_tcpip.c ****             bFree(http);
+ 458:../../bos/services/b_srv_tcpip.c ****             break;  // task end
+ 459:../../bos/services/b_srv_tcpip.c ****         }
+ 460:../../bos/services/b_srv_tcpip.c ****         http->sockfd = bSocket(B_TRANS_CONN_TCP, _bHttpTransCb, http);
+ 461:../../bos/services/b_srv_tcpip.c ****         if (SOCKFD_IS_INVALID(http->sockfd))
+ 462:../../bos/services/b_srv_tcpip.c ****         {
+ 463:../../bos/services/b_srv_tcpip.c ****             event = B_HTTP_EVENT_ERROR;
+ 464:../../bos/services/b_srv_tcpip.c ****             param = NULL;
+ 465:../../bos/services/b_srv_tcpip.c ****             goto http_restart;
+ 466:../../bos/services/b_srv_tcpip.c ****         }
+ 467:../../bos/services/b_srv_tcpip.c ****         b_log("sockfd: %x %s %d %s\r\n", http->sockfd, http->host, http->port, http->path);
+ 468:../../bos/services/b_srv_tcpip.c ****         bConnect(http->sockfd, http->host, http->port);
+ 469:../../bos/services/b_srv_tcpip.c ****         PT_WAIT_UNTIL(pt, bSocketIsConnected(http->sockfd) == 1, 5000);
+ 470:../../bos/services/b_srv_tcpip.c ****         if (pt->retval == PT_RETVAL_TIMEOUT)
+ 471:../../bos/services/b_srv_tcpip.c ****         {
+ 472:../../bos/services/b_srv_tcpip.c ****             event = B_HTTP_EVENT_CONN_FAIL;
+ 473:../../bos/services/b_srv_tcpip.c ****             param = NULL;
+ 474:../../bos/services/b_srv_tcpip.c ****             goto http_restart;
+ 475:../../bos/services/b_srv_tcpip.c ****         }
+ 476:../../bos/services/b_srv_tcpip.c ****         ///////////////////////////////////////////////////////////////
+ 477:../../bos/services/b_srv_tcpip.c **** #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+ 478:../../bos/services/b_srv_tcpip.c ****         static uint16_t ssl_timeout = 0;
+ 479:../../bos/services/b_srv_tcpip.c ****         ssl_timeout                 = 0;
+ 480:../../bos/services/b_srv_tcpip.c ****         while (http->is_https)
+ 481:../../bos/services/b_srv_tcpip.c ****         {
+ 482:../../bos/services/b_srv_tcpip.c ****             ret = bSSLHandshake(http->ssl, http->sockfd);
+ 483:../../bos/services/b_srv_tcpip.c ****             if (ret < 0)
+ 484:../../bos/services/b_srv_tcpip.c ****             {
+ 485:../../bos/services/b_srv_tcpip.c ****                 event = B_HTTP_EVENT_SSL_FAIL;
+ 486:../../bos/services/b_srv_tcpip.c ****                 param = &ret;
+ 487:../../bos/services/b_srv_tcpip.c ****                 goto http_restart;
+ 488:../../bos/services/b_srv_tcpip.c ****             }
+ 489:../../bos/services/b_srv_tcpip.c ****             else if (ret == 0)
+ 490:../../bos/services/b_srv_tcpip.c ****             {
+ 491:../../bos/services/b_srv_tcpip.c ****                 break;  // ssl handshake ok ...
+ 492:../../bos/services/b_srv_tcpip.c ****             }
+ 493:../../bos/services/b_srv_tcpip.c ****             else
+ 494:../../bos/services/b_srv_tcpip.c ****             {
+ 495:../../bos/services/b_srv_tcpip.c ****                 bTaskDelayMs(pt, 10);
+ 496:../../bos/services/b_srv_tcpip.c ****                 ssl_timeout++;
+ 497:../../bos/services/b_srv_tcpip.c ****                 if (ssl_timeout >= 200)
+ 498:../../bos/services/b_srv_tcpip.c ****                 {
+ 499:../../bos/services/b_srv_tcpip.c ****                     ssl_timeout = 0;
+ 500:../../bos/services/b_srv_tcpip.c ****                     event       = B_HTTP_EVENT_SSL_FAIL;
+ 501:../../bos/services/b_srv_tcpip.c ****                     param       = &ret;
+ 502:../../bos/services/b_srv_tcpip.c ****                     goto http_restart;
+ 503:../../bos/services/b_srv_tcpip.c ****                 }
+GAS LISTING /tmp/cc1pCHlA.s 			page 10
+
+
+ 504:../../bos/services/b_srv_tcpip.c ****             }
+ 505:../../bos/services/b_srv_tcpip.c ****         }
+ 506:../../bos/services/b_srv_tcpip.c **** #endif
+ 507:../../bos/services/b_srv_tcpip.c ****         //////////////////////////////////////////////////////////////
+ 508:../../bos/services/b_srv_tcpip.c ****         _bHttpResult(http, B_HTTP_EVENT_CONNECTED, NULL);
+ 509:../../bos/services/b_srv_tcpip.c ****         b_log("http req:%s\r\n", http->request);
+ 510:../../bos/services/b_srv_tcpip.c **** #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+ 511:../../bos/services/b_srv_tcpip.c ****         if (http->is_https)
+ 512:../../bos/services/b_srv_tcpip.c ****         {
+ 513:../../bos/services/b_srv_tcpip.c ****             bSSLSend(http->ssl, (uint8_t *)http->request, strlen(http->request), NULL);
+ 514:../../bos/services/b_srv_tcpip.c ****         }
+ 515:../../bos/services/b_srv_tcpip.c ****         else
+ 516:../../bos/services/b_srv_tcpip.c **** #endif
+ 517:../../bos/services/b_srv_tcpip.c ****         {
+ 518:../../bos/services/b_srv_tcpip.c ****             bSend(http->sockfd, (uint8_t *)http->request, strlen(http->request), NULL);
+ 519:../../bos/services/b_srv_tcpip.c ****         }
+ 520:../../bos/services/b_srv_tcpip.c ****         http->parse.data = http;
+ 521:../../bos/services/b_srv_tcpip.c ****         http_parser_init(&http->parse, HTTP_RESPONSE);
+ 522:../../bos/services/b_srv_tcpip.c ****         http_parser_settings_init(&http->parse_cb);
+ 523:../../bos/services/b_srv_tcpip.c ****         http->parse_cb.on_message_complete = _bHttpParseComplete;
+ 524:../../bos/services/b_srv_tcpip.c ****         int      parse_len                 = 0;
+ 525:../../bos/services/b_srv_tcpip.c ****         uint16_t readlen                   = 0;
+ 526:../../bos/services/b_srv_tcpip.c ****         for (;;)
+ 527:../../bos/services/b_srv_tcpip.c ****         {
+ 528:../../bos/services/b_srv_tcpip.c ****             PT_WAIT_UNTIL(pt, bSockIsReadable(http->sockfd) == 1, 5000);
+ 529:../../bos/services/b_srv_tcpip.c ****             if (pt->retval == PT_RETVAL_TIMEOUT)
+ 530:../../bos/services/b_srv_tcpip.c ****             {
+ 531:../../bos/services/b_srv_tcpip.c ****                 event = B_HTTP_EVENT_RECV_TIMEOUT;
+ 532:../../bos/services/b_srv_tcpip.c ****                 param = NULL;
+ 533:../../bos/services/b_srv_tcpip.c ****                 goto http_restart;
+ 534:../../bos/services/b_srv_tcpip.c ****             }
+ 535:../../bos/services/b_srv_tcpip.c ****             if ((http->recvbuf_len - http->recvbuf_index) < 128)
+ 536:../../bos/services/b_srv_tcpip.c ****             {
+ 537:../../bos/services/b_srv_tcpip.c ****                 http->recvbuf_len += 1024;
+ 538:../../bos/services/b_srv_tcpip.c ****                 http->precv = bRealloc(http->precv, http->recvbuf_len);
+ 539:../../bos/services/b_srv_tcpip.c ****                 if (http->precv == NULL)
+ 540:../../bos/services/b_srv_tcpip.c ****                 {
+ 541:../../bos/services/b_srv_tcpip.c ****                     event = B_HTTP_EVENT_ERROR;
+ 542:../../bos/services/b_srv_tcpip.c ****                     param = NULL;
+ 543:../../bos/services/b_srv_tcpip.c ****                     goto http_restart;
+ 544:../../bos/services/b_srv_tcpip.c ****                 }
+ 545:../../bos/services/b_srv_tcpip.c ****             }
+ 546:../../bos/services/b_srv_tcpip.c **** #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
+ 547:../../bos/services/b_srv_tcpip.c ****             if (http->is_https)
+ 548:../../bos/services/b_srv_tcpip.c ****             {
+ 549:../../bos/services/b_srv_tcpip.c ****                 bSSLRecv(http->ssl, http->precv + http->recvbuf_index,
+ 550:../../bos/services/b_srv_tcpip.c ****                          http->recvbuf_len - http->recvbuf_index, &readlen);
+ 551:../../bos/services/b_srv_tcpip.c ****             }
+ 552:../../bos/services/b_srv_tcpip.c ****             else
+ 553:../../bos/services/b_srv_tcpip.c **** #endif
+ 554:../../bos/services/b_srv_tcpip.c ****             {
+ 555:../../bos/services/b_srv_tcpip.c ****                 bRecv(http->sockfd, http->precv + http->recvbuf_index,
+ 556:../../bos/services/b_srv_tcpip.c ****                       http->recvbuf_len - http->recvbuf_index, &readlen);
+ 557:../../bos/services/b_srv_tcpip.c ****             }
+ 558:../../bos/services/b_srv_tcpip.c ****             if (readlen > 0)
+ 559:../../bos/services/b_srv_tcpip.c ****             {
+ 560:../../bos/services/b_srv_tcpip.c ****                 parse_len =
+GAS LISTING /tmp/cc1pCHlA.s 			page 11
+
+
+ 561:../../bos/services/b_srv_tcpip.c ****                     http_parser_execute(&http->parse, &http->parse_cb,
+ 562:../../bos/services/b_srv_tcpip.c ****                                         (const char *)(http->precv + http->recvbuf_index), readlen)
+ 563:../../bos/services/b_srv_tcpip.c ****                 b_log("parse_len %d readlen %d index:%d\r\n", parse_len, readlen,
+ 564:../../bos/services/b_srv_tcpip.c ****                       http->recvbuf_index);
+ 565:../../bos/services/b_srv_tcpip.c ****                 http->recvbuf_index += readlen;
+ 566:../../bos/services/b_srv_tcpip.c ****                 if (http->state == B_HTTP_STA_RECV_DATA)
+ 567:../../bos/services/b_srv_tcpip.c ****                 {
+ 568:../../bos/services/b_srv_tcpip.c ****                     dat.pdat    = http->precv;
+ 569:../../bos/services/b_srv_tcpip.c ****                     dat.len     = http->recvbuf_index;
+ 570:../../bos/services/b_srv_tcpip.c ****                     dat.release = NULL;
+ 571:../../bos/services/b_srv_tcpip.c **** 
+ 572:../../bos/services/b_srv_tcpip.c ****                     event = B_HTTP_EVENT_RECV_DATA;
+ 573:../../bos/services/b_srv_tcpip.c ****                     param = &dat;
+ 574:../../bos/services/b_srv_tcpip.c ****                     goto http_restart;
+ 575:../../bos/services/b_srv_tcpip.c ****                 }
+ 576:../../bos/services/b_srv_tcpip.c ****                 else if (parse_len < 0)
+ 577:../../bos/services/b_srv_tcpip.c ****                 {
+ 578:../../bos/services/b_srv_tcpip.c ****                     event = B_HTTP_EVENT_ERROR;
+ 579:../../bos/services/b_srv_tcpip.c ****                     param = NULL;
+ 580:../../bos/services/b_srv_tcpip.c ****                     goto http_restart;
+ 581:../../bos/services/b_srv_tcpip.c ****                 }
+ 582:../../bos/services/b_srv_tcpip.c ****             }
+ 583:../../bos/services/b_srv_tcpip.c ****         }
+ 584:../../bos/services/b_srv_tcpip.c ****     http_restart:
+ 585:../../bos/services/b_srv_tcpip.c ****         SOCKET_SHUTDOWN(pt, http->sockfd);
+ 586:../../bos/services/b_srv_tcpip.c ****         _bHttpResult(http, event, param);
+ 587:../../bos/services/b_srv_tcpip.c ****         bTaskRestart(pt);
+ 588:../../bos/services/b_srv_tcpip.c ****     }
+ 589:../../bos/services/b_srv_tcpip.c ****     PT_END(pt);
+ 590:../../bos/services/b_srv_tcpip.c **** }
+ 591:../../bos/services/b_srv_tcpip.c **** #endif
+ 592:../../bos/services/b_srv_tcpip.c **** /**
+ 593:../../bos/services/b_srv_tcpip.c ****  * \}
+ 594:../../bos/services/b_srv_tcpip.c ****  */
+ 595:../../bos/services/b_srv_tcpip.c **** 
+ 596:../../bos/services/b_srv_tcpip.c **** /**
+ 597:../../bos/services/b_srv_tcpip.c ****  * \addtogroup TCPIP_Exported_Functions
+ 598:../../bos/services/b_srv_tcpip.c ****  * \{
+ 599:../../bos/services/b_srv_tcpip.c ****  */
+ 600:../../bos/services/b_srv_tcpip.c **** 
+ 601:../../bos/services/b_srv_tcpip.c **** int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number)
+ 602:../../bos/services/b_srv_tcpip.c **** {
+  12              		.loc 1 602 1 view -0
+  13              		.cfi_startproc
+  14              		.loc 1 602 1 is_stmt 0 view .LVU1
+  15 0000 F30F1EFA 		endbr64
+ 603:../../bos/services/b_srv_tcpip.c ****     if (pnetcard == NULL || number == 0)
+  16              		.loc 1 603 5 is_stmt 1 view .LVU2
+  17              		.loc 1 603 8 is_stmt 0 view .LVU3
+  18 0004 4885FF   		testq	%rdi, %rdi
+  19 0007 7417     		je	.L2
+  20 0009 4084F6   		testb	%sil, %sil
+  21 000c 7412     		je	.L2
+ 604:../../bos/services/b_srv_tcpip.c ****     {
+ 605:../../bos/services/b_srv_tcpip.c ****         return -1;
+ 606:../../bos/services/b_srv_tcpip.c ****     }
+ 607:../../bos/services/b_srv_tcpip.c ****     return bTcpIpInit(pnetcard, number);
+GAS LISTING /tmp/cc1pCHlA.s 			page 12
+
+
+  22              		.loc 1 607 5 is_stmt 1 view .LVU4
+  23              		.loc 1 607 12 is_stmt 0 view .LVU5
+  24 000e 400FB6F6 		movzbl	%sil, %esi
+  25              		.loc 1 607 12 view .LVU6
+  26 0012 E9000000 		jmp	bTcpIpInit@PLT
+  26      00
+  27              	.LVL1:
+  28 0017 660F1F84 		.p2align 4,,10
+  28      00000000 
+  28      00
+  29              		.p2align 3
+  30              	.L2:
+ 608:../../bos/services/b_srv_tcpip.c **** }
+  31              		.loc 1 608 1 view .LVU7
+  32 0020 B8FFFFFF 		movl	$-1, %eax
+  32      FF
+  33 0025 C3       		ret
+  34              		.cfi_endproc
+  35              	.LFE42:
+  37              		.text
+  38              	.Letext0:
+  39              		.file 2 "/usr/include/x86_64-linux-gnu/bits/types.h"
+  40              		.file 3 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+  41              		.file 4 "../../bos/modules/inc/b_mod_tcpip.h"
+ 629              		.section	.note.gnu.property,"a"
+ 630              		.align 8
+ 631 0000 04000000 		.long	1f - 0f
+ 632 0004 10000000 		.long	4f - 1f
+ 633 0008 05000000 		.long	5
+ 634              	0:
+ 635 000c 474E5500 		.string	"GNU"
+ 636              	1:
+ 637              		.align 8
+ 638 0010 020000C0 		.long	0xc0000002
+ 639 0014 04000000 		.long	3f - 2f
+ 640              	2:
+ 641 0018 03000000 		.long	0x3
+ 642              	3:
+ 643 001c 00000000 		.align 8
+ 644              	4:
+GAS LISTING /tmp/cc1pCHlA.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_srv_tcpip.c
+     /tmp/cc1pCHlA.s:9      .text.bTcpipSrvInit:0000000000000000 bTcpipSrvInit
+
+UNDEFINED SYMBOLS
+bTcpIpInit

@@ -1,0 +1,541 @@
+GAS LISTING /tmp/ccJdQbhU.s 			page 1
+
+
+   1              		.file	"b_hal_it.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 1 "../../bos/hal/b_hal_it.c"
+   5              		.section	.text.bMcuIntEnable,"ax",@progbits
+   6              		.p2align 4
+   7              		.weak	bMcuIntEnable
+   9              	bMcuIntEnable:
+  10              	.LFB28:
+   1:../../bos/hal/b_hal_it.c **** /**
+   2:../../bos/hal/b_hal_it.c ****  *!
+   3:../../bos/hal/b_hal_it.c ****  * \file        b_hal_it.c
+   4:../../bos/hal/b_hal_it.c ****  * \version     v0.0.1
+   5:../../bos/hal/b_hal_it.c ****  * \date        2020/03/25
+   6:../../bos/hal/b_hal_it.c ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/hal/b_hal_it.c ****  *******************************************************************************
+   8:../../bos/hal/b_hal_it.c ****  * @attention
+   9:../../bos/hal/b_hal_it.c ****  *
+  10:../../bos/hal/b_hal_it.c ****  * Copyright (c) 2020 Bean
+  11:../../bos/hal/b_hal_it.c ****  *
+  12:../../bos/hal/b_hal_it.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/hal/b_hal_it.c ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/hal/b_hal_it.c ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/hal/b_hal_it.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/hal/b_hal_it.c ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/hal/b_hal_it.c ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/hal/b_hal_it.c ****  *
+  19:../../bos/hal/b_hal_it.c ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/hal/b_hal_it.c ****  * copies or substantial portions of the Software.
+  21:../../bos/hal/b_hal_it.c ****  *
+  22:../../bos/hal/b_hal_it.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/hal/b_hal_it.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/hal/b_hal_it.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SUARTL THE
+  25:../../bos/hal/b_hal_it.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/hal/b_hal_it.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/hal/b_hal_it.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/hal/b_hal_it.c ****  * SOFTWARE.
+  29:../../bos/hal/b_hal_it.c ****  *******************************************************************************
+  30:../../bos/hal/b_hal_it.c ****  */
+  31:../../bos/hal/b_hal_it.c **** /*Includes ----------------------------------------------*/
+  32:../../bos/hal/b_hal_it.c **** #include "hal/inc/b_hal.h"
+  33:../../bos/hal/b_hal_it.c **** 
+  34:../../bos/hal/b_hal_it.c **** /**
+  35:../../bos/hal/b_hal_it.c ****  * \addtogroup B_HAL
+  36:../../bos/hal/b_hal_it.c ****  * \{
+  37:../../bos/hal/b_hal_it.c ****  */
+  38:../../bos/hal/b_hal_it.c **** 
+  39:../../bos/hal/b_hal_it.c **** /**
+  40:../../bos/hal/b_hal_it.c ****  * \addtogroup IT
+  41:../../bos/hal/b_hal_it.c ****  * \{
+  42:../../bos/hal/b_hal_it.c ****  */
+  43:../../bos/hal/b_hal_it.c **** 
+  44:../../bos/hal/b_hal_it.c **** /**
+  45:../../bos/hal/b_hal_it.c ****  * \defgroup IT_Private_Variables
+  46:../../bos/hal/b_hal_it.c ****  * \{
+  47:../../bos/hal/b_hal_it.c ****  */
+  48:../../bos/hal/b_hal_it.c **** 
+GAS LISTING /tmp/ccJdQbhU.s 			page 2
+
+
+  49:../../bos/hal/b_hal_it.c **** static LIST_HEAD(bHalItListHead);
+  50:../../bos/hal/b_hal_it.c **** 
+  51:../../bos/hal/b_hal_it.c **** /**
+  52:../../bos/hal/b_hal_it.c ****  * \}
+  53:../../bos/hal/b_hal_it.c ****  */
+  54:../../bos/hal/b_hal_it.c **** 
+  55:../../bos/hal/b_hal_it.c **** /**
+  56:../../bos/hal/b_hal_it.c ****  * \addtogroup IT_Exported_Functions
+  57:../../bos/hal/b_hal_it.c ****  * \{
+  58:../../bos/hal/b_hal_it.c ****  */
+  59:../../bos/hal/b_hal_it.c **** #if defined(__WEAKDEF)
+  60:../../bos/hal/b_hal_it.c **** __WEAKDEF void bMcuIntEnable()
+  61:../../bos/hal/b_hal_it.c **** {
+  11              		.loc 1 61 1 view -0
+  12              		.cfi_startproc
+  13 0000 F30F1EFA 		endbr64
+  62:../../bos/hal/b_hal_it.c ****     ;
+  14              		.loc 1 62 5 view .LVU1
+  63:../../bos/hal/b_hal_it.c **** }
+  15              		.loc 1 63 1 is_stmt 0 view .LVU2
+  16 0004 C3       		ret
+  17              		.cfi_endproc
+  18              	.LFE28:
+  20              		.section	.text.bMcuIntDisable,"ax",@progbits
+  21              		.p2align 4
+  22              		.weak	bMcuIntDisable
+  24              	bMcuIntDisable:
+  25              	.LFB35:
+  26              		.cfi_startproc
+  64:../../bos/hal/b_hal_it.c **** 
+  65:../../bos/hal/b_hal_it.c **** __WEAKDEF void bMcuIntDisable()
+  27              		.loc 1 65 16 is_stmt 1 view -0
+  28 0000 F30F1EFA 		endbr64
+  29 0004 C3       		ret
+  30              		.cfi_endproc
+  31              	.LFE35:
+  33              		.section	.text.bHalIntEnable,"ax",@progbits
+  34              		.p2align 4
+  35              		.globl	bHalIntEnable
+  37              	bHalIntEnable:
+  38              	.LFB30:
+  66:../../bos/hal/b_hal_it.c **** {
+  67:../../bos/hal/b_hal_it.c ****     ;
+  68:../../bos/hal/b_hal_it.c **** }
+  69:../../bos/hal/b_hal_it.c **** #endif
+  70:../../bos/hal/b_hal_it.c **** //---------------------------------------------------------------------------------------
+  71:../../bos/hal/b_hal_it.c **** //---------------------------------------------------------------------------------------
+  72:../../bos/hal/b_hal_it.c **** 
+  73:../../bos/hal/b_hal_it.c **** void bHalIntEnable()
+  74:../../bos/hal/b_hal_it.c **** {
+  39              		.loc 1 74 1 view -0
+  40              		.cfi_startproc
+  41 0000 F30F1EFA 		endbr64
+  75:../../bos/hal/b_hal_it.c ****     bMcuIntEnable();
+  42              		.loc 1 75 5 view .LVU5
+  43 0004 E9000000 		jmp	bMcuIntEnable
+  43      00
+GAS LISTING /tmp/ccJdQbhU.s 			page 3
+
+
+  44              	.LVL0:
+  45              		.cfi_endproc
+  46              	.LFE30:
+  48              		.section	.text.bHalIntDisable,"ax",@progbits
+  49              		.p2align 4
+  50              		.globl	bHalIntDisable
+  52              	bHalIntDisable:
+  53              	.LFB31:
+  76:../../bos/hal/b_hal_it.c **** }
+  77:../../bos/hal/b_hal_it.c **** 
+  78:../../bos/hal/b_hal_it.c **** void bHalIntDisable()
+  79:../../bos/hal/b_hal_it.c **** {
+  54              		.loc 1 79 1 view -0
+  55              		.cfi_startproc
+  56 0000 F30F1EFA 		endbr64
+  80:../../bos/hal/b_hal_it.c ****     bMcuIntDisable();
+  57              		.loc 1 80 5 view .LVU7
+  58 0004 E9000000 		jmp	bMcuIntDisable
+  58      00
+  59              	.LVL1:
+  60              		.cfi_endproc
+  61              	.LFE31:
+  63              		.section	.text.bHalItRegister,"ax",@progbits
+  64              		.p2align 4
+  65              		.globl	bHalItRegister
+  67              	bHalItRegister:
+  68              	.LVL2:
+  69              	.LFB32:
+  81:../../bos/hal/b_hal_it.c **** }
+  82:../../bos/hal/b_hal_it.c **** 
+  83:../../bos/hal/b_hal_it.c **** /**
+  84:../../bos/hal/b_hal_it.c ****  * 注册中断处理函数。
+  85:../../bos/hal/b_hal_it.c ****  * index : 例如，当int 为 B_HAL_IT_EXTI， index可以表示外部中断号
+  86:../../bos/hal/b_hal_it.c ****  *         例如  当int 为 B_HAL_IT_UART_RX，index可以表示串口号
+  87:../../bos/hal/b_hal_it.c ****  * 推荐使用：bHAL_IT_REGISTER(name, _interrupt, _index, _handler)
+  88:../../bos/hal/b_hal_it.c ****  */
+  89:../../bos/hal/b_hal_it.c **** int bHalItRegister(bHalIt_t *pit)
+  90:../../bos/hal/b_hal_it.c **** {
+  70              		.loc 1 90 1 view -0
+  71              		.cfi_startproc
+  72              		.loc 1 90 1 is_stmt 0 view .LVU9
+  73 0000 F30F1EFA 		endbr64
+  91:../../bos/hal/b_hal_it.c ****     if (pit == NULL)
+  74              		.loc 1 91 5 is_stmt 1 view .LVU10
+  75              		.loc 1 91 8 is_stmt 0 view .LVU11
+  76 0004 4885FF   		testq	%rdi, %rdi
+  77 0007 742F     		je	.L9
+  92:../../bos/hal/b_hal_it.c ****     {
+  93:../../bos/hal/b_hal_it.c ****         return -1;
+  94:../../bos/hal/b_hal_it.c ****     }
+  95:../../bos/hal/b_hal_it.c ****     if (pit->handler == NULL)
+  78              		.loc 1 95 5 is_stmt 1 view .LVU12
+  79              		.loc 1 95 8 is_stmt 0 view .LVU13
+  80 0009 48837F08 		cmpq	$0, 8(%rdi)
+  80      00
+  81 000e 7428     		je	.L9
+  96:../../bos/hal/b_hal_it.c ****     {
+GAS LISTING /tmp/ccJdQbhU.s 			page 4
+
+
+  97:../../bos/hal/b_hal_it.c ****         return -1;
+  98:../../bos/hal/b_hal_it.c ****     }
+  99:../../bos/hal/b_hal_it.c ****     list_add(&pit->head, &bHalItListHead);
+  82              		.loc 1 99 5 is_stmt 1 view .LVU14
+  83              	.LBB10:
+  84              	.LBB11:
+  85              		.file 2 "../../bos/utils/inc/b_util_list.h"
+   1:../../bos/utils/inc/b_util_list.h **** /**
+   2:../../bos/utils/inc/b_util_list.h ****  *!
+   3:../../bos/utils/inc/b_util_list.h ****  * \file        b_util_list.h
+   4:../../bos/utils/inc/b_util_list.h ****  * \version     v0.0.1
+   5:../../bos/utils/inc/b_util_list.h ****  * \date        2019/12/23
+   6:../../bos/utils/inc/b_util_list.h ****  * \author      Bean(notrynohigh@outlook.com)
+   7:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+   8:../../bos/utils/inc/b_util_list.h ****  * @attention
+   9:../../bos/utils/inc/b_util_list.h ****  *
+  10:../../bos/utils/inc/b_util_list.h ****  * Copyright (c) 2019 Bean
+  11:../../bos/utils/inc/b_util_list.h ****  *
+  12:../../bos/utils/inc/b_util_list.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  13:../../bos/utils/inc/b_util_list.h ****  * of this software and associated documentation files (the "Software"), to deal
+  14:../../bos/utils/inc/b_util_list.h ****  * in the Software without restriction, including without limitation the rights
+  15:../../bos/utils/inc/b_util_list.h ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  16:../../bos/utils/inc/b_util_list.h ****  * copies of the Software, and to permit persons to whom the Software is
+  17:../../bos/utils/inc/b_util_list.h ****  * furnished to do so, subject to the following conditions:
+  18:../../bos/utils/inc/b_util_list.h ****  *
+  19:../../bos/utils/inc/b_util_list.h ****  * The above copyright notice and this permission notice shall be included in all
+  20:../../bos/utils/inc/b_util_list.h ****  * copies or substantial portions of the Software.
+  21:../../bos/utils/inc/b_util_list.h ****  *
+  22:../../bos/utils/inc/b_util_list.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  23:../../bos/utils/inc/b_util_list.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  24:../../bos/utils/inc/b_util_list.h ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  25:../../bos/utils/inc/b_util_list.h ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  26:../../bos/utils/inc/b_util_list.h ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  27:../../bos/utils/inc/b_util_list.h ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  28:../../bos/utils/inc/b_util_list.h ****  * SOFTWARE.
+  29:../../bos/utils/inc/b_util_list.h ****  *******************************************************************************
+  30:../../bos/utils/inc/b_util_list.h ****  */
+  31:../../bos/utils/inc/b_util_list.h **** #ifndef __B_UTIL_LIST_H__
+  32:../../bos/utils/inc/b_util_list.h **** #define __B_UTIL_LIST_H__
+  33:../../bos/utils/inc/b_util_list.h **** 
+  34:../../bos/utils/inc/b_util_list.h **** #ifdef __cplusplus
+  35:../../bos/utils/inc/b_util_list.h **** extern "C" {
+  36:../../bos/utils/inc/b_util_list.h **** #endif
+  37:../../bos/utils/inc/b_util_list.h **** 
+  38:../../bos/utils/inc/b_util_list.h **** /*Includes ----------------------------------------------*/
+  39:../../bos/utils/inc/b_util_list.h **** #include "b_type.h"
+  40:../../bos/utils/inc/b_util_list.h **** /**
+  41:../../bos/utils/inc/b_util_list.h ****  * \addtogroup B_UTILS
+  42:../../bos/utils/inc/b_util_list.h ****  * \{
+  43:../../bos/utils/inc/b_util_list.h ****  */
+  44:../../bos/utils/inc/b_util_list.h **** 
+  45:../../bos/utils/inc/b_util_list.h **** /**
+  46:../../bos/utils/inc/b_util_list.h ****  * \addtogroup LIST
+  47:../../bos/utils/inc/b_util_list.h ****  * \{
+  48:../../bos/utils/inc/b_util_list.h ****  */
+  49:../../bos/utils/inc/b_util_list.h **** 
+  50:../../bos/utils/inc/b_util_list.h **** struct list_head
+GAS LISTING /tmp/ccJdQbhU.s 			page 5
+
+
+  51:../../bos/utils/inc/b_util_list.h **** {
+  52:../../bos/utils/inc/b_util_list.h ****     struct list_head *next, *prev;
+  53:../../bos/utils/inc/b_util_list.h **** };
+  54:../../bos/utils/inc/b_util_list.h **** 
+  55:../../bos/utils/inc/b_util_list.h **** #define WRITE_ONCE(var, val) (var) = (val)
+  56:../../bos/utils/inc/b_util_list.h **** 
+  57:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD_INIT(name) \
+  58:../../bos/utils/inc/b_util_list.h ****     {                        \
+  59:../../bos/utils/inc/b_util_list.h ****         &(name), &(name)     \
+  60:../../bos/utils/inc/b_util_list.h ****     }
+  61:../../bos/utils/inc/b_util_list.h **** 
+  62:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD(name) struct list_head name = LIST_HEAD_INIT(name)
+  63:../../bos/utils/inc/b_util_list.h **** 
+  64:../../bos/utils/inc/b_util_list.h **** #define INIT_LIST_HEAD(ptr)  \
+  65:../../bos/utils/inc/b_util_list.h ****     do                       \
+  66:../../bos/utils/inc/b_util_list.h ****     {                        \
+  67:../../bos/utils/inc/b_util_list.h ****         (ptr)->next = (ptr); \
+  68:../../bos/utils/inc/b_util_list.h ****         (ptr)->prev = (ptr); \
+  69:../../bos/utils/inc/b_util_list.h ****     } while (0)
+  70:../../bos/utils/inc/b_util_list.h **** 
+  71:../../bos/utils/inc/b_util_list.h **** /**
+  72:../../bos/utils/inc/b_util_list.h ****  * list_entry - get the struct for this entry
+  73:../../bos/utils/inc/b_util_list.h ****  * @ptr: the &struct list_head pointer.
+  74:../../bos/utils/inc/b_util_list.h ****  * @type: the type of the struct this is embedded in.
+  75:../../bos/utils/inc/b_util_list.h ****  * @member: the name of the list_struct within the struct.
+  76:../../bos/utils/inc/b_util_list.h ****  */
+  77:../../bos/utils/inc/b_util_list.h **** #define list_entry(ptr, type, member) \
+  78:../../bos/utils/inc/b_util_list.h ****     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
+  79:../../bos/utils/inc/b_util_list.h **** 
+  80:../../bos/utils/inc/b_util_list.h **** #define list_first_entry(ptr, type, member) list_entry((ptr)->next, type, member)
+  81:../../bos/utils/inc/b_util_list.h **** 
+  82:../../bos/utils/inc/b_util_list.h **** #define list_next_entry(pos, type, member) list_entry((pos)->member.next, type, member)
+  83:../../bos/utils/inc/b_util_list.h **** 
+  84:../../bos/utils/inc/b_util_list.h **** /*
+  85:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry between two known consecutive entries.
+  86:../../bos/utils/inc/b_util_list.h ****  *
+  87:../../bos/utils/inc/b_util_list.h ****  * This is only for internal list manipulation where we know
+  88:../../bos/utils/inc/b_util_list.h ****  * the prev/next entries already!
+  89:../../bos/utils/inc/b_util_list.h ****  */
+  90:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void __list_add(struct list_head *newItem, struct list_head *prev,
+  91:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+  92:../../bos/utils/inc/b_util_list.h **** {
+  93:../../bos/utils/inc/b_util_list.h ****     next->prev    = newItem;
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+  95:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+  96:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+  97:../../bos/utils/inc/b_util_list.h **** }
+  98:../../bos/utils/inc/b_util_list.h **** 
+  99:../../bos/utils/inc/b_util_list.h **** /**
+ 100:../../bos/utils/inc/b_util_list.h ****  * list_add - add a new entry
+ 101:../../bos/utils/inc/b_util_list.h ****  * @new: new entry to be added
+ 102:../../bos/utils/inc/b_util_list.h ****  * @head: list head to add it after
+ 103:../../bos/utils/inc/b_util_list.h ****  *
+ 104:../../bos/utils/inc/b_util_list.h ****  * Insert a new entry after the specified head.
+ 105:../../bos/utils/inc/b_util_list.h ****  * This is good for implementing stacks.
+ 106:../../bos/utils/inc/b_util_list.h ****  */
+ 107:../../bos/utils/inc/b_util_list.h **** static __INLINE_DEF void list_add(struct list_head *newItem, struct list_head *head)
+GAS LISTING /tmp/ccJdQbhU.s 			page 6
+
+
+ 108:../../bos/utils/inc/b_util_list.h **** {
+ 109:../../bos/utils/inc/b_util_list.h ****     __list_add(newItem, head, head->next);
+  86              		.loc 2 109 5 is_stmt 0 view .LVU15
+  87 0010 488B1500 		movq	bHalItListHead(%rip), %rdx
+  87      000000
+  88              	.LBE11:
+  89              	.LBE10:
+  90              		.loc 1 99 5 view .LVU16
+  91 0017 488D4718 		leaq	24(%rdi), %rax
+  92              	.LVL3:
+  93              	.LBB18:
+  94              	.LBI10:
+ 107:../../bos/utils/inc/b_util_list.h **** {
+  95              		.loc 2 107 26 is_stmt 1 view .LVU17
+  96              	.LBB16:
+  97              		.loc 2 109 5 view .LVU18
+  98              	.LBB12:
+  99              	.LBI12:
+  90:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
+ 100              		.loc 2 90 26 view .LVU19
+ 101              	.LBB13:
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 102              		.loc 2 93 5 view .LVU20
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 103              		.loc 2 95 19 is_stmt 0 view .LVU21
+ 104 001b 488D0D00 		leaq	bHalItListHead(%rip), %rcx
+ 104      000000
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 105              		.loc 2 96 5 view .LVU22
+ 106 0022 48890500 		movq	%rax, bHalItListHead(%rip)
+ 106      000000
+  93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
+ 107              		.loc 2 93 19 view .LVU23
+ 108 0029 48894208 		movq	%rax, 8(%rdx)
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 109              		.loc 2 94 5 is_stmt 1 view .LVU24
+ 110              	.LBE13:
+ 111              	.LBE12:
+ 112              	.LBE16:
+ 113              	.LBE18:
+ 100:../../bos/hal/b_hal_it.c ****     return 0;
+ 114              		.loc 1 100 12 is_stmt 0 view .LVU25
+ 115 002d 31C0     		xorl	%eax, %eax
+ 116              	.LVL4:
+ 117              	.LBB19:
+ 118              	.LBB17:
+ 119              	.LBB15:
+ 120              	.LBB14:
+  94:../../bos/utils/inc/b_util_list.h ****     newItem->prev = prev;
+ 121              		.loc 2 94 19 view .LVU26
+ 122 002f 48895718 		movq	%rdx, 24(%rdi)
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 123              		.loc 2 95 5 is_stmt 1 view .LVU27
+  95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
+ 124              		.loc 2 95 19 is_stmt 0 view .LVU28
+ 125 0033 48894F20 		movq	%rcx, 32(%rdi)
+  96:../../bos/utils/inc/b_util_list.h **** }
+GAS LISTING /tmp/ccJdQbhU.s 			page 7
+
+
+ 126              		.loc 2 96 5 is_stmt 1 view .LVU29
+ 127              	.LVL5:
+  96:../../bos/utils/inc/b_util_list.h **** }
+ 128              		.loc 2 96 5 is_stmt 0 view .LVU30
+ 129              	.LBE14:
+ 130              	.LBE15:
+ 131              	.LBE17:
+ 132              	.LBE19:
+ 133              		.loc 1 100 5 is_stmt 1 view .LVU31
+ 134              		.loc 1 100 12 is_stmt 0 view .LVU32
+ 135 0037 C3       		ret
+ 136              	.L9:
+  93:../../bos/hal/b_hal_it.c ****     }
+ 137              		.loc 1 93 16 view .LVU33
+ 138 0038 B8FFFFFF 		movl	$-1, %eax
+ 138      FF
+ 101:../../bos/hal/b_hal_it.c **** }
+ 139              		.loc 1 101 1 view .LVU34
+ 140 003d C3       		ret
+ 141              		.cfi_endproc
+ 142              	.LFE32:
+ 144              		.section	.text.bHalItInvoke,"ax",@progbits
+ 145              		.p2align 4
+ 146              		.globl	bHalItInvoke
+ 148              	bHalItInvoke:
+ 149              	.LVL6:
+ 150              	.LFB33:
+ 102:../../bos/hal/b_hal_it.c **** 
+ 103:../../bos/hal/b_hal_it.c **** /**
+ 104:../../bos/hal/b_hal_it.c ****  * MCU触发中断后，通过此函数告诉BOS有中断发生，并将数据传给BOS
+ 105:../../bos/hal/b_hal_it.c ****  */
+ 106:../../bos/hal/b_hal_it.c **** int bHalItInvoke(bHalItNumber_t it, uint8_t index, bHalItParam_t *param)
+ 107:../../bos/hal/b_hal_it.c **** {
+ 151              		.loc 1 107 1 is_stmt 1 view -0
+ 152              		.cfi_startproc
+ 153              		.loc 1 107 1 is_stmt 0 view .LVU36
+ 154 0000 F30F1EFA 		endbr64
+ 108:../../bos/hal/b_hal_it.c ****     bHalIt_t         *phalit = NULL;
+ 155              		.loc 1 108 5 is_stmt 1 view .LVU37
+ 156              	.LVL7:
+ 109:../../bos/hal/b_hal_it.c ****     struct list_head *pos;
+ 157              		.loc 1 109 5 view .LVU38
+ 110:../../bos/hal/b_hal_it.c ****     list_for_each(pos, &bHalItListHead)
+ 158              		.loc 1 110 5 view .LVU39
+ 159 0004 488B0500 		movq	bHalItListHead(%rip), %rax
+ 159      000000
+ 160              	.LVL8:
+ 161              		.loc 1 110 5 discriminator 1 view .LVU40
+ 162              		.loc 1 110 5 is_stmt 0 view .LVU41
+ 163 000b 488D0D00 		leaq	bHalItListHead(%rip), %rcx
+ 163      000000
+ 164              		.loc 1 110 5 discriminator 1 view .LVU42
+ 165 0012 4839C8   		cmpq	%rcx, %rax
+ 166 0015 7441     		je	.L14
+ 167 0017 4189F0   		movl	%esi, %r8d
+ 168 001a EB0C     		jmp	.L13
+ 169              	.LVL9:
+GAS LISTING /tmp/ccJdQbhU.s 			page 8
+
+
+ 170 001c 0F1F4000 		.p2align 4,,10
+ 171              		.p2align 3
+ 172              	.L12:
+ 173              		.loc 1 110 5 is_stmt 1 discriminator 2 view .LVU43
+ 174 0020 488B00   		movq	(%rax), %rax
+ 175              	.LVL10:
+ 176              		.loc 1 110 5 discriminator 1 view .LVU44
+ 177 0023 4839C8   		cmpq	%rcx, %rax
+ 178 0026 7430     		je	.L14
+ 179              	.LVL11:
+ 180              	.L13:
+ 111:../../bos/hal/b_hal_it.c ****     {
+ 112:../../bos/hal/b_hal_it.c ****         phalit = list_entry(pos, bHalIt_t, head);
+ 181              		.loc 1 112 9 view .LVU45
+ 113:../../bos/hal/b_hal_it.c ****         if (it == phalit->it && index == phalit->index)
+ 182              		.loc 1 113 9 view .LVU46
+ 183              		.loc 1 113 12 is_stmt 0 view .LVU47
+ 184 0028 3978E8   		cmpl	%edi, -24(%rax)
+ 185 002b 75F3     		jne	.L12
+ 186              		.loc 1 113 30 discriminator 1 view .LVU48
+ 187 002d 443840EC 		cmpb	%r8b, -20(%rax)
+ 188 0031 75ED     		jne	.L12
+ 114:../../bos/hal/b_hal_it.c ****         {
+ 115:../../bos/hal/b_hal_it.c ****             if (phalit->handler)
+ 189              		.loc 1 115 13 is_stmt 1 view .LVU49
+ 190              		.loc 1 115 23 is_stmt 0 view .LVU50
+ 191 0033 4C8B48F0 		movq	-16(%rax), %r9
+ 192              		.loc 1 115 16 view .LVU51
+ 193 0037 4D85C9   		testq	%r9, %r9
+ 194 003a 74E4     		je	.L12
+ 116:../../bos/hal/b_hal_it.c ****             {
+ 117:../../bos/hal/b_hal_it.c ****                 phalit->handler(it, index, param, phalit->user_data);
+ 195              		.loc 1 117 17 is_stmt 1 view .LVU52
+ 107:../../bos/hal/b_hal_it.c ****     bHalIt_t         *phalit = NULL;
+ 196              		.loc 1 107 1 is_stmt 0 view .LVU53
+ 197 003c 4883EC08 		subq	$8, %rsp
+ 198              	.LCFI0:
+ 199              		.cfi_def_cfa_offset 16
+ 200              		.loc 1 117 17 view .LVU54
+ 201 0040 400FB6F6 		movzbl	%sil, %esi
+ 202              	.LVL12:
+ 203              		.loc 1 117 17 view .LVU55
+ 204 0044 488B48F8 		movq	-8(%rax), %rcx
+ 205 0048 41FFD1   		call	*%r9
+ 206              	.LVL13:
+ 118:../../bos/hal/b_hal_it.c ****                 return 0;
+ 207              		.loc 1 118 17 is_stmt 1 view .LVU56
+ 208              		.loc 1 118 24 is_stmt 0 view .LVU57
+ 209 004b 31C0     		xorl	%eax, %eax
+ 119:../../bos/hal/b_hal_it.c ****             }
+ 120:../../bos/hal/b_hal_it.c ****         }
+ 121:../../bos/hal/b_hal_it.c ****     }
+ 122:../../bos/hal/b_hal_it.c ****     return -1;
+ 123:../../bos/hal/b_hal_it.c **** }
+ 210              		.loc 1 123 1 view .LVU58
+ 211 004d 4883C408 		addq	$8, %rsp
+ 212              	.LCFI1:
+GAS LISTING /tmp/ccJdQbhU.s 			page 9
+
+
+ 213              		.cfi_def_cfa_offset 8
+ 214 0051 C3       		ret
+ 215              	.LVL14:
+ 216              		.p2align 4,,10
+ 217 0052 660F1F44 		.p2align 3
+ 217      0000
+ 218              	.L14:
+ 122:../../bos/hal/b_hal_it.c **** }
+ 219              		.loc 1 122 12 view .LVU59
+ 220 0058 B8FFFFFF 		movl	$-1, %eax
+ 220      FF
+ 221              	.LVL15:
+ 222              		.loc 1 123 1 view .LVU60
+ 223 005d C3       		ret
+ 224              		.cfi_endproc
+ 225              	.LFE33:
+ 227              		.section	.data.rel.local.bHalItListHead,"aw"
+ 228              		.align 16
+ 231              	bHalItListHead:
+ 232 0000 00000000 		.quad	bHalItListHead
+ 232      00000000 
+ 233 0008 00000000 		.quad	bHalItListHead
+ 233      00000000 
+ 234              		.text
+ 235              	.Letext0:
+ 236              		.file 3 "/usr/include/x86_64-linux-gnu/bits/types.h"
+ 237              		.file 4 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"
+ 238              		.file 5 "../../bos/hal/inc/b_hal_it.h"
+ 1807              		.section	.note.gnu.property,"a"
+ 1808              		.align 8
+ 1809 0000 04000000 		.long	1f - 0f
+ 1810 0004 10000000 		.long	4f - 1f
+ 1811 0008 05000000 		.long	5
+ 1812              	0:
+ 1813 000c 474E5500 		.string	"GNU"
+ 1814              	1:
+ 1815              		.align 8
+ 1816 0010 020000C0 		.long	0xc0000002
+ 1817 0014 04000000 		.long	3f - 2f
+ 1818              	2:
+ 1819 0018 03000000 		.long	0x3
+ 1820              	3:
+ 1821 001c 00000000 		.align 8
+ 1822              	4:
+GAS LISTING /tmp/ccJdQbhU.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 b_hal_it.c
+     /tmp/ccJdQbhU.s:9      .text.bMcuIntEnable:0000000000000000 bMcuIntEnable
+     /tmp/ccJdQbhU.s:24     .text.bMcuIntDisable:0000000000000000 bMcuIntDisable
+     /tmp/ccJdQbhU.s:37     .text.bHalIntEnable:0000000000000000 bHalIntEnable
+     /tmp/ccJdQbhU.s:52     .text.bHalIntDisable:0000000000000000 bHalIntDisable
+     /tmp/ccJdQbhU.s:67     .text.bHalItRegister:0000000000000000 bHalItRegister
+     /tmp/ccJdQbhU.s:231    .data.rel.local.bHalItListHead:0000000000000000 bHalItListHead
+     /tmp/ccJdQbhU.s:148    .text.bHalItInvoke:0000000000000000 bHalItInvoke
+
+NO UNDEFINED SYMBOLS
