@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccX7ljow.s 			page 1
+GAS LISTING /tmp/ccJ2Gsop.s 			page 1
 
 
    1              		.file	"b_util_tools.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
   38              		.cfi_def_cfa_offset 56
   39              		.cfi_offset 3, -56
   40 000e 4883EC58 		subq	$88, %rsp
-GAS LISTING /tmp/ccX7ljow.s 			page 2
+GAS LISTING /tmp/ccJ2Gsop.s 			page 2
 
 
   41              	.LCFI6:
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
   76              		.loc 1 28 31 is_stmt 0 view .LVU14
   77 0062 41C70600 		movl	$0, (%r14)
   77      000000
-GAS LISTING /tmp/ccX7ljow.s 			page 3
+GAS LISTING /tmp/ccJ2Gsop.s 			page 3
 
 
   27:../../bos/utils/b_util_tools.c ****     uint8_t     current_index = 0;       // 当前遍历到的段索引
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
  114              		.loc 1 36 27 is_stmt 0 view .LVU29
  115 0095 488D1C38 		leaq	(%rax,%rdi), %rbx
   37:../../bos/utils/b_util_tools.c ****             segment_start = current_pos;            // 更新段起始位置
-GAS LISTING /tmp/ccX7ljow.s 			page 4
+GAS LISTING /tmp/ccJ2Gsop.s 			page 4
 
 
  116              		.loc 1 37 13 is_stmt 1 view .LVU30
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
   40:../../bos/utils/b_util_tools.c ****         {
  142              		.loc 1 40 9 view .LVU40
  143              		.loc 1 60 9 view .LVU41
-GAS LISTING /tmp/ccX7ljow.s 			page 5
+GAS LISTING /tmp/ccJ2Gsop.s 			page 5
 
 
  144              		.loc 1 60 9 is_stmt 0 view .LVU42
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
   43:../../bos/utils/b_util_tools.c ****             size_t segment_len  = delim_pos - segment_start;
  180              		.loc 1 43 20 view .LVU60
  181 00db 0F294424 		movaps	%xmm0, 48(%rsp)
-GAS LISTING /tmp/ccX7ljow.s 			page 6
+GAS LISTING /tmp/ccJ2Gsop.s 			page 6
 
 
  181      30
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
   44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
   45:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___mempcpy_chk (__dest, __src, __len,
   46:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				  __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccX7ljow.s 			page 7
+GAS LISTING /tmp/ccJ2Gsop.s 			page 7
 
 
   47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
  194 00e0 488D6C24 		leaq	32(%rsp), %rbp
  194      20
  195              	.LVL12:
-GAS LISTING /tmp/ccX7ljow.s 			page 8
+GAS LISTING /tmp/ccJ2Gsop.s 			page 8
 
 
  196              		.loc 2 95 10 discriminator 1 view .LVU67
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
   62:../../bos/utils/b_util_tools.c ****             if (current_index == index)
   63:../../bos/utils/b_util_tools.c ****             {
   64:../../bos/utils/b_util_tools.c ****                 *pstr               = segment_start;
-GAS LISTING /tmp/ccX7ljow.s 			page 9
+GAS LISTING /tmp/ccJ2Gsop.s 			page 9
 
 
   65:../../bos/utils/b_util_tools.c ****                 char   temp_buf[32] = {0};
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
  259 013b 0F1F4400 		.p2align 4,,10
  259      00
  260              		.p2align 3
-GAS LISTING /tmp/ccX7ljow.s 			page 10
+GAS LISTING /tmp/ccJ2Gsop.s 			page 10
 
 
  261              	.L38:
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
  298 016e 488918   		movq	%rbx, (%rax)
   65:../../bos/utils/b_util_tools.c ****                 size_t segment_len  = strlen(segment_start);
  299              		.loc 1 65 17 is_stmt 1 view .LVU93
-GAS LISTING /tmp/ccX7ljow.s 			page 11
+GAS LISTING /tmp/ccJ2Gsop.s 			page 11
 
 
   65:../../bos/utils/b_util_tools.c ****                 size_t segment_len  = strlen(segment_start);
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
  336              	.LVL23:
  337              	.L39:
  338              		.loc 1 87 1 view .LVU107
-GAS LISTING /tmp/ccX7ljow.s 			page 12
+GAS LISTING /tmp/ccJ2Gsop.s 			page 12
 
 
  339 019a E8000000 		call	__stack_chk_fail@PLT
@@ -691,12 +691,12 @@ GAS LISTING /tmp/ccX7ljow.s 			page 1
  1934              	3:
  1935 001c 00000000 		.align 8
  1936              	4:
-GAS LISTING /tmp/ccX7ljow.s 			page 13
+GAS LISTING /tmp/ccJ2Gsop.s 			page 13
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_util_tools.c
-     /tmp/ccX7ljow.s:9      .text.bParseString:0000000000000000 bParseString
+     /tmp/ccJ2Gsop.s:9      .text.bParseString:0000000000000000 bParseString
 
 UNDEFINED SYMBOLS
 strlen

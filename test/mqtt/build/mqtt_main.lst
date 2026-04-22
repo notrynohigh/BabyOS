@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccwo9hOv.s 			page 1
+GAS LISTING /tmp/cclXI7dE.s 			page 1
 
 
    1              		.file	"mqtt_main.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
   30              	.LFB125:
    1:mqtt_main.c   **** /**
    2:mqtt_main.c   ****  * \file kv_main.c
-GAS LISTING /tmp/ccwo9hOv.s 			page 2
+GAS LISTING /tmp/cclXI7dE.s 			page 2
 
 
    3:mqtt_main.c   ****  * \brief
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
   50      00
   51 0018 48898424 		movq	%rax, 136(%rsp)
   51      88000000 
-GAS LISTING /tmp/ccwo9hOv.s 			page 3
+GAS LISTING /tmp/cclXI7dE.s 			page 3
 
 
   52 0020 31C0     		xorl	%eax, %eax
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
   24:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #endif
   25:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
   26:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifdef __va_arg_pack
-GAS LISTING /tmp/ccwo9hOv.s 			page 4
+GAS LISTING /tmp/cclXI7dE.s 			page 4
 
 
   27:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
   90 0070 4889DF   		movq	%rbx, %rdi
   91 0073 4C8D0500 		leaq	.LC2(%rip), %r8
   91      000000
-GAS LISTING /tmp/ccwo9hOv.s 			page 5
+GAS LISTING /tmp/cclXI7dE.s 			page 5
 
 
   92 007a BA020000 		movl	$2, %edx
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  133      00
  134              	.LBE22:
   45:mqtt_main.c   ****             }
-GAS LISTING /tmp/ccwo9hOv.s 			page 6
+GAS LISTING /tmp/cclXI7dE.s 			page 6
 
 
   46:mqtt_main.c   ****             break;
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  170              	.LCFI13:
  171              		.cfi_def_cfa_offset 192
  172 0107 4C8D2500 		leaq	__func__.1(%rip), %r12
-GAS LISTING /tmp/ccwo9hOv.s 			page 7
+GAS LISTING /tmp/cclXI7dE.s 			page 7
 
 
  172      000000
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
   48:mqtt_main.c   ****             break;
  211              		.loc 1 48 13 is_stmt 1 view .LVU25
  212 0170 488B8424 		movq	136(%rsp), %rax
-GAS LISTING /tmp/ccwo9hOv.s 			page 8
+GAS LISTING /tmp/cclXI7dE.s 			page 8
 
 
  212      88000000 
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  253      3D3D3D3D 
  253      3D3D3D3D 
  253      3D3D3D3D 
-GAS LISTING /tmp/ccwo9hOv.s 			page 9
+GAS LISTING /tmp/cclXI7dE.s 			page 9
 
 
  253      3D3D3D3D 
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  288      73736167 
  288      6500
  289              		.section	.rodata.main.str1.8
-GAS LISTING /tmp/ccwo9hOv.s 			page 10
+GAS LISTING /tmp/cclXI7dE.s 			page 10
 
 
  290 0057 00       		.align 8
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  313      74537276 
  313      47657453 
  313      74617475 
-GAS LISTING /tmp/ccwo9hOv.s 			page 11
+GAS LISTING /tmp/cclXI7dE.s 			page 11
 
 
  313      73282920 
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  344              		.loc 1 60 1 view .LVU43
  345 0014 4883EC08 		subq	$8, %rsp
  346              	.LCFI25:
-GAS LISTING /tmp/ccwo9hOv.s 			page 12
+GAS LISTING /tmp/cclXI7dE.s 			page 12
 
 
  347              		.cfi_def_cfa_offset 32
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  382 005f 31F6     		xorl	%esi, %esi
  383 0061 488D3D00 		leaq	.LC10(%rip), %rdi
  383      000000
-GAS LISTING /tmp/ccwo9hOv.s 			page 13
+GAS LISTING /tmp/cclXI7dE.s 			page 13
 
 
  384 0068 E8000000 		call	bMqttSrvSubscribe@PLT
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  421              		.loc 1 75 5 is_stmt 0 view .LVU64
  422 00be E8000000 		call	bLogOut@PLT
  422      00
-GAS LISTING /tmp/ccwo9hOv.s 			page 14
+GAS LISTING /tmp/cclXI7dE.s 			page 14
 
 
  423              	.LVL15:
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  459 0117 E8000000 		call	bLogOut@PLT
  459      00
  460              	.LVL21:
-GAS LISTING /tmp/ccwo9hOv.s 			page 15
+GAS LISTING /tmp/cclXI7dE.s 			page 15
 
 
   84:mqtt_main.c   ****     b_log_i("bMqttSrvPublish(topic, payload, len, qos) - Publish message\r\n");
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  498 0188 4C8D0500 		leaq	.LC21(%rip), %r8
  498      000000
  499 018f 31FF     		xorl	%edi, %edi
-GAS LISTING /tmp/ccwo9hOv.s 			page 16
+GAS LISTING /tmp/cclXI7dE.s 			page 16
 
 
  500 0191 31C0     		xorl	%eax, %eax
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  543      61696C65 
  543      64486F6F 
  543      6B00
-GAS LISTING /tmp/ccwo9hOv.s 			page 17
+GAS LISTING /tmp/cclXI7dE.s 			page 17
 
 
  544              		.section	.bss.g_publish_count,"aw",@nobits
@@ -1004,42 +1004,42 @@ GAS LISTING /tmp/ccwo9hOv.s 			page 1
  2961              	3:
  2962 001c 00000000 		.align 8
  2963              	4:
-GAS LISTING /tmp/ccwo9hOv.s 			page 18
+GAS LISTING /tmp/cclXI7dE.s 			page 18
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 mqtt_main.c
-     /tmp/ccwo9hOv.s:29     .text.bMqttCallback:0000000000000000 bMqttCallback
-     /tmp/ccwo9hOv.s:536    .rodata.__func__.1:0000000000000000 __func__.1
-     /tmp/ccwo9hOv.s:548    .bss.g_publish_count:0000000000000000 g_publish_count
-     /tmp/ccwo9hOv.s:258    .text.bMallocFailedHook:0000000000000000 bMallocFailedHook
-     /tmp/ccwo9hOv.s:542    .rodata.__func__.2:0000000000000000 __func__.2
-     /tmp/ccwo9hOv.s:324    .text.startup.main:0000000000000000 main
-     /tmp/ccwo9hOv.s:530    .rodata.__func__.0:0000000000000000 __func__.0
-     /tmp/ccwo9hOv.s:554    .rodata.bNetCardInfo:0000000000000000 bNetCardInfo
-     /tmp/ccwo9hOv.s:8      .rodata.bMqttCallback.str1.1:0000000000000017 .LC1
-     /tmp/ccwo9hOv.s:6      .rodata.bMqttCallback.str1.1:0000000000000000 .LC0
-     /tmp/ccwo9hOv.s:10     .rodata.bMqttCallback.str1.1:0000000000000023 .LC2
-     /tmp/ccwo9hOv.s:12     .rodata.bMqttCallback.str1.1:0000000000000040 .LC3
-     /tmp/ccwo9hOv.s:16     .rodata.bMqttCallback.str1.8:0000000000000000 .LC4
-     /tmp/ccwo9hOv.s:21     .rodata.bMqttCallback.str1.1:0000000000000065 .LC6
-     /tmp/ccwo9hOv.s:23     .rodata.bMqttCallback.str1.1:0000000000000072 .LC7
-     /tmp/ccwo9hOv.s:19     .rodata.bMqttCallback.str1.1:000000000000004b .LC5
-     /tmp/ccwo9hOv.s:252    .rodata.bMallocFailedHook.str1.1:0000000000000000 .LC8
-     /tmp/ccwo9hOv.s:277    .rodata.main.str1.8:0000000000000000 .LC9
-     /tmp/ccwo9hOv.s:280    .rodata.main.str1.1:0000000000000000 .LC10
-     /tmp/ccwo9hOv.s:284    .rodata.main.str1.8:0000000000000028 .LC11
-     /tmp/ccwo9hOv.s:287    .rodata.main.str1.1:000000000000000d .LC12
-     /tmp/ccwo9hOv.s:291    .rodata.main.str1.8:0000000000000058 .LC13
-     /tmp/ccwo9hOv.s:294    .rodata.main.str1.8:0000000000000080 .LC14
-     /tmp/ccwo9hOv.s:297    .rodata.main.str1.8:00000000000000a8 .LC15
-     /tmp/ccwo9hOv.s:300    .rodata.main.str1.8:00000000000000c8 .LC16
-     /tmp/ccwo9hOv.s:303    .rodata.main.str1.8:0000000000000110 .LC17
-     /tmp/ccwo9hOv.s:306    .rodata.main.str1.8:0000000000000150 .LC18
-     /tmp/ccwo9hOv.s:309    .rodata.main.str1.8:0000000000000188 .LC19
-     /tmp/ccwo9hOv.s:312    .rodata.main.str1.8:00000000000001c0 .LC20
-     /tmp/ccwo9hOv.s:315    .rodata.main.str1.8:00000000000001f0 .LC21
-     /tmp/ccwo9hOv.s:318    .rodata.main.str1.8:0000000000000220 .LC22
+     /tmp/cclXI7dE.s:29     .text.bMqttCallback:0000000000000000 bMqttCallback
+     /tmp/cclXI7dE.s:536    .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/cclXI7dE.s:548    .bss.g_publish_count:0000000000000000 g_publish_count
+     /tmp/cclXI7dE.s:258    .text.bMallocFailedHook:0000000000000000 bMallocFailedHook
+     /tmp/cclXI7dE.s:542    .rodata.__func__.2:0000000000000000 __func__.2
+     /tmp/cclXI7dE.s:324    .text.startup.main:0000000000000000 main
+     /tmp/cclXI7dE.s:530    .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/cclXI7dE.s:554    .rodata.bNetCardInfo:0000000000000000 bNetCardInfo
+     /tmp/cclXI7dE.s:8      .rodata.bMqttCallback.str1.1:0000000000000017 .LC1
+     /tmp/cclXI7dE.s:6      .rodata.bMqttCallback.str1.1:0000000000000000 .LC0
+     /tmp/cclXI7dE.s:10     .rodata.bMqttCallback.str1.1:0000000000000023 .LC2
+     /tmp/cclXI7dE.s:12     .rodata.bMqttCallback.str1.1:0000000000000040 .LC3
+     /tmp/cclXI7dE.s:16     .rodata.bMqttCallback.str1.8:0000000000000000 .LC4
+     /tmp/cclXI7dE.s:21     .rodata.bMqttCallback.str1.1:0000000000000065 .LC6
+     /tmp/cclXI7dE.s:23     .rodata.bMqttCallback.str1.1:0000000000000072 .LC7
+     /tmp/cclXI7dE.s:19     .rodata.bMqttCallback.str1.1:000000000000004b .LC5
+     /tmp/cclXI7dE.s:252    .rodata.bMallocFailedHook.str1.1:0000000000000000 .LC8
+     /tmp/cclXI7dE.s:277    .rodata.main.str1.8:0000000000000000 .LC9
+     /tmp/cclXI7dE.s:280    .rodata.main.str1.1:0000000000000000 .LC10
+     /tmp/cclXI7dE.s:284    .rodata.main.str1.8:0000000000000028 .LC11
+     /tmp/cclXI7dE.s:287    .rodata.main.str1.1:000000000000000d .LC12
+     /tmp/cclXI7dE.s:291    .rodata.main.str1.8:0000000000000058 .LC13
+     /tmp/cclXI7dE.s:294    .rodata.main.str1.8:0000000000000080 .LC14
+     /tmp/cclXI7dE.s:297    .rodata.main.str1.8:00000000000000a8 .LC15
+     /tmp/cclXI7dE.s:300    .rodata.main.str1.8:00000000000000c8 .LC16
+     /tmp/cclXI7dE.s:303    .rodata.main.str1.8:0000000000000110 .LC17
+     /tmp/cclXI7dE.s:306    .rodata.main.str1.8:0000000000000150 .LC18
+     /tmp/cclXI7dE.s:309    .rodata.main.str1.8:0000000000000188 .LC19
+     /tmp/cclXI7dE.s:312    .rodata.main.str1.8:00000000000001c0 .LC20
+     /tmp/cclXI7dE.s:315    .rodata.main.str1.8:00000000000001f0 .LC21
+     /tmp/cclXI7dE.s:318    .rodata.main.str1.8:0000000000000220 .LC22
 
 UNDEFINED SYMBOLS
 bLogOut

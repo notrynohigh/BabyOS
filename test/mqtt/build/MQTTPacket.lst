@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc3YwPWP.s 			page 1
+GAS LISTING /tmp/ccH9lvDo.s 			page 1
 
 
    1              		.file	"MQTTPacket.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
   36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		char d = length % 128;
   21              		.loc 1 36 3 view .LVU5
   22              		.loc 1 36 19 is_stmt 0 view .LVU6
-GAS LISTING /tmp/cc3YwPWP.s 			page 2
+GAS LISTING /tmp/ccH9lvDo.s 			page 2
 
 
   23 0004 89F2     		movl	%esi, %edx
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
   60              		.loc 1 36 3 view .LVU20
   36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
   61              		.loc 1 36 8 is_stmt 0 view .LVU21
-GAS LISTING /tmp/cc3YwPWP.s 			page 3
+GAS LISTING /tmp/ccH9lvDo.s 			page 3
 
 
   62 003d 89F0     		movl	%esi, %eax
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  105              	.LVL12:
  106              	.LFB21:
   46:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
-GAS LISTING /tmp/cc3YwPWP.s 			page 4
+GAS LISTING /tmp/ccH9lvDo.s 			page 4
 
 
   47:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  143      00
  144 0027 48894424 		movq	%rax, 8(%rsp)
  144      08
-GAS LISTING /tmp/cc3YwPWP.s 			page 5
+GAS LISTING /tmp/ccH9lvDo.s 			page 5
 
 
  145 002c 31C0     		xorl	%eax, %eax
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  175 0049 41FFD4   		call	*%r12
  176              	.LVL16:
   73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if (rc != 1)
-GAS LISTING /tmp/cc3YwPWP.s 			page 6
+GAS LISTING /tmp/ccH9lvDo.s 			page 6
 
 
  177              		.loc 1 73 3 is_stmt 1 view .LVU59
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  217              	.LCFI7:
  218              		.cfi_def_cfa_offset 40
  219              	.LVL21:
-GAS LISTING /tmp/cc3YwPWP.s 			page 7
+GAS LISTING /tmp/ccH9lvDo.s 			page 7
 
 
  220              		.loc 1 81 1 view .LVU71
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  267 0007 83F87F   		cmpl	$127, %eax
  268 000a 7F04     		jg	.L20
   90:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		rem_len += 1;
-GAS LISTING /tmp/cc3YwPWP.s 			page 8
+GAS LISTING /tmp/ccH9lvDo.s 			page 8
 
 
  269              		.loc 1 90 3 is_stmt 1 view .LVU82
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  102:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
  103:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** int bufchar(unsigned char* c, int count)
  104:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
-GAS LISTING /tmp/cc3YwPWP.s 			page 9
+GAS LISTING /tmp/ccH9lvDo.s 			page 9
 
 
  311              		.loc 1 104 1 is_stmt 1 view -0
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  352              		.cfi_endproc
  353              	.LFE23:
  355              		.section	.text.MQTTPacket_decodeBuf,"ax",@progbits
-GAS LISTING /tmp/cc3YwPWP.s 			page 10
+GAS LISTING /tmp/ccH9lvDo.s 			page 10
 
 
  356              		.p2align 4
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
   62:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
  395              		.loc 1 62 2 view .LVU123
   63:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
-GAS LISTING /tmp/cc3YwPWP.s 			page 11
+GAS LISTING /tmp/ccH9lvDo.s 			page 11
 
 
  396              		.loc 1 63 2 view .LVU124
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  431              		.loc 1 107 16 discriminator 1 view .LVU143
  108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
  432              		.loc 1 108 3 view .LVU144
-GAS LISTING /tmp/cc3YwPWP.s 			page 12
+GAS LISTING /tmp/ccH9lvDo.s 			page 12
 
 
  108:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return count;
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  468              		.loc 1 108 8 is_stmt 0 view .LVU163
  469 0037 0FB67702 		movzbl	2(%rdi), %esi
  470              	.LVL43:
-GAS LISTING /tmp/cc3YwPWP.s 			page 13
+GAS LISTING /tmp/ccH9lvDo.s 			page 13
 
 
  107:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		*c = *bufptr++;
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
   67:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		{
  507              		.loc 1 67 3 view .LVU181
  508              	.LBB52:
-GAS LISTING /tmp/cc3YwPWP.s 			page 14
+GAS LISTING /tmp/ccH9lvDo.s 			page 14
 
 
  509              	.LBB44:
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
   76:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
  546              		.loc 1 76 3 is_stmt 0 view .LVU199
  547              	.LBE59:
-GAS LISTING /tmp/cc3YwPWP.s 			page 15
+GAS LISTING /tmp/ccH9lvDo.s 			page 15
 
 
   77:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** exit:
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  588              	.LBE62:
  589              	.LBE64:
  590              		.cfi_endproc
-GAS LISTING /tmp/cc3YwPWP.s 			page 16
+GAS LISTING /tmp/ccH9lvDo.s 			page 16
 
 
  591              	.LFE24:
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  632              		.p2align 4
  633              		.globl	readChar
  635              	readChar:
-GAS LISTING /tmp/cc3YwPWP.s 			page 17
+GAS LISTING /tmp/ccH9lvDo.s 			page 17
 
 
  636              	.LVL59:
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  154:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	**pptr = c;
  670              		.loc 1 154 2 is_stmt 1 view .LVU236
  671              		.loc 1 154 3 is_stmt 0 view .LVU237
-GAS LISTING /tmp/cc3YwPWP.s 			page 18
+GAS LISTING /tmp/ccH9lvDo.s 			page 18
 
 
  672 0004 488B07   		movq	(%rdi), %rax
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  713 0020 C1F81F   		sarl	$31, %eax
  714 0023 C1E818   		shrl	$24, %eax
  715 0026 01C6     		addl	%eax, %esi
-GAS LISTING /tmp/cc3YwPWP.s 			page 19
+GAS LISTING /tmp/ccH9lvDo.s 			page 19
 
 
  716              	.LVL63:
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  758              	.LCFI15:
  759              		.cfi_def_cfa_offset 32
  760              		.cfi_offset 3, -32
-GAS LISTING /tmp/cc3YwPWP.s 			page 20
+GAS LISTING /tmp/ccH9lvDo.s 			page 20
 
 
  761              		.loc 1 180 12 view .LVU265
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  797 0043 885601   		movb	%dl, 1(%rsi)
  169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
  798              		.loc 1 169 2 is_stmt 1 view .LVU282
-GAS LISTING /tmp/cc3YwPWP.s 			page 21
+GAS LISTING /tmp/ccH9lvDo.s 			page 21
 
 
  169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  820              		.loc 1 169 9 view .LVU287
  821 0054 48897D00 		movq	%rdi, 0(%rbp)
  822              	.LVL67:
-GAS LISTING /tmp/cc3YwPWP.s 			page 22
+GAS LISTING /tmp/ccH9lvDo.s 			page 22
 
 
  169:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  870              		.cfi_startproc
  871              		.loc 1 188 1 is_stmt 0 view .LVU301
  872 0000 F30F1EFA 		endbr64
-GAS LISTING /tmp/cc3YwPWP.s 			page 23
+GAS LISTING /tmp/ccH9lvDo.s 			page 23
 
 
  189:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int len = 256*((unsigned char)(*ptr)) + (unsigned char)(*(ptr+1));
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  196:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	if (mqttstring.lenstring.len > 0)
  917              		.loc 1 196 2 is_stmt 1 view .LVU311
  918              	.LBB91:
-GAS LISTING /tmp/cc3YwPWP.s 			page 24
+GAS LISTING /tmp/ccH9lvDo.s 			page 24
 
 
  919              	.LBB92:
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  953              		.loc 1 168 33 view .LVU325
  954 0034 89C1     		movl	%eax, %ecx
  166:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	(*pptr)++;
-GAS LISTING /tmp/cc3YwPWP.s 			page 25
+GAS LISTING /tmp/ccH9lvDo.s 			page 25
 
 
  955              		.loc 1 166 33 view .LVU326
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  997              	.LBE109:
  998              	.LBB110:
  999              	.LBB107:
-GAS LISTING /tmp/cc3YwPWP.s 			page 26
+GAS LISTING /tmp/ccH9lvDo.s 			page 26
 
 
  1000              		.loc 2 29 10 discriminator 1 view .LVU340
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1042              	.LVL83:
  1043              		.loc 1 206 1 view .LVU353
  1044 007f 415C     		popq	%r12
-GAS LISTING /tmp/cc3YwPWP.s 			page 27
+GAS LISTING /tmp/ccH9lvDo.s 			page 27
 
 
  1045              	.LCFI24:
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1085 00a4 5B       		popq	%rbx
  1086              	.LCFI26:
  1087              		.cfi_remember_state
-GAS LISTING /tmp/cc3YwPWP.s 			page 28
+GAS LISTING /tmp/ccH9lvDo.s 			page 28
 
 
  1088              		.cfi_def_cfa_offset 24
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1129 00c2 488B37   		movq	(%rdi), %rsi
  1130              	.LBE94:
  1131              	.LBE116:
-GAS LISTING /tmp/cc3YwPWP.s 			page 29
+GAS LISTING /tmp/ccH9lvDo.s 			page 29
 
 
  1132              	.LBB117:
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1176 00e1 48894500 		movq	%rax, 0(%rbp)
  1177              		.loc 1 206 1 view .LVU395
  1178 00e5 5B       		popq	%rbx
-GAS LISTING /tmp/cc3YwPWP.s 			page 30
+GAS LISTING /tmp/ccH9lvDo.s 			page 30
 
 
  1179              	.LCFI30:
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1218              		.loc 1 223 3 is_stmt 1 view .LVU406
  1219              	.LVL97:
  1220              	.LBB125:
-GAS LISTING /tmp/cc3YwPWP.s 			page 31
+GAS LISTING /tmp/ccH9lvDo.s 			page 31
 
 
  1221              	.LBI125:
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  229:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		}
  230:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	}
  231:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	mqttstring->cstring = NULL;
-GAS LISTING /tmp/cc3YwPWP.s 			page 32
+GAS LISTING /tmp/ccH9lvDo.s 			page 32
 
 
  1257              		.loc 1 231 22 view .LVU424
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1296              	MQTTstrlen:
  1297              	.LFB33:
  235:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
-GAS LISTING /tmp/cc3YwPWP.s 			page 33
+GAS LISTING /tmp/ccH9lvDo.s 			page 33
 
 
  236:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1331              		.loc 1 250 2 is_stmt 1 view .LVU450
  1332              		.loc 1 251 1 is_stmt 0 view .LVU451
  1333 0024 4883C408 		addq	$8, %rsp
-GAS LISTING /tmp/cc3YwPWP.s 			page 34
+GAS LISTING /tmp/ccH9lvDo.s 			page 34
 
 
  1334              	.LCFI36:
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  267:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
  268:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		aptr = a->cstring;
  1374              		.loc 1 268 3 is_stmt 1 view .LVU460
-GAS LISTING /tmp/cc3YwPWP.s 			page 35
+GAS LISTING /tmp/ccH9lvDo.s 			page 35
 
 
  1375              	.LVL111:
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1415              	.LCFI40:
  1416              		.cfi_remember_state
  1417              		.cfi_def_cfa_offset 24
-GAS LISTING /tmp/cc3YwPWP.s 			page 36
+GAS LISTING /tmp/ccH9lvDo.s 			page 36
 
 
  1418              	.LVL119:
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  291:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
  1457              		.loc 1 291 1 is_stmt 1 view -0
  1458              		.cfi_startproc
-GAS LISTING /tmp/cc3YwPWP.s 			page 37
+GAS LISTING /tmp/ccH9lvDo.s 			page 37
 
 
  1459              		.loc 1 291 1 is_stmt 0 view .LVU483
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1499      18
  1500 0036 31C0     		xorl	%eax, %eax
  292:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = -1;
-GAS LISTING /tmp/cc3YwPWP.s 			page 38
+GAS LISTING /tmp/ccH9lvDo.s 			page 38
 
 
  1501              		.loc 1 292 2 is_stmt 1 view .LVU487
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1540              	.LVL130:
   73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
  1541              		.loc 1 73 3 is_stmt 1 view .LVU502
-GAS LISTING /tmp/cc3YwPWP.s 			page 39
+GAS LISTING /tmp/ccH9lvDo.s 			page 39
 
 
   73:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1575              		.loc 1 304 2 is_stmt 1 view .LVU516
  1576              	.LBB139:
  1577              	.LBI139:
-GAS LISTING /tmp/cc3YwPWP.s 			page 40
+GAS LISTING /tmp/ccH9lvDo.s 			page 40
 
 
   29:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** {
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1612 00a6 418D4502 		leal	2(%r13), %eax
  1613              		.loc 1 307 4 view .LVU534
  1614 00aa 39E8     		cmpl	%ebp, %eax
-GAS LISTING /tmp/cc3YwPWP.s 			page 41
+GAS LISTING /tmp/ccH9lvDo.s 			page 41
 
 
  1615 00ac 7F79     		jg	.L70
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1655              	.LCFI55:
  1656              		.cfi_def_cfa_offset 24
  1657 00d9 415E     		popq	%r14
-GAS LISTING /tmp/cc3YwPWP.s 			page 42
+GAS LISTING /tmp/ccH9lvDo.s 			page 42
 
 
  1658              	.LCFI56:
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1699              	.LBB143:
   36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
  1700              		.loc 1 36 3 view .LVU556
-GAS LISTING /tmp/cc3YwPWP.s 			page 43
+GAS LISTING /tmp/ccH9lvDo.s 			page 43
 
 
  1701              	.LVL146:
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1741              		.loc 1 42 18 is_stmt 1 view .LVU569
   43:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	return rc;
  1742              		.loc 1 43 18 view .LVU570
-GAS LISTING /tmp/cc3YwPWP.s 			page 44
+GAS LISTING /tmp/ccH9lvDo.s 			page 44
 
 
   44:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** }
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1786              	MQTTPacket_readnb:
  1787              	.LVL157:
  1788              	.LFB37:
-GAS LISTING /tmp/cc3YwPWP.s 			page 45
+GAS LISTING /tmp/ccH9lvDo.s 			page 45
 
 
  317:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1796              		.cfi_offset 13, -16
  1797 0006 4189F5   		movl	%esi, %r13d
  1798 0009 4154     		pushq	%r12
-GAS LISTING /tmp/cc3YwPWP.s 			page 46
+GAS LISTING /tmp/ccH9lvDo.s 			page 46
 
 
  1799              	.LCFI60:
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1838 0043 488B7B08 		movq	8(%rbx), %rdi
  1839              	.LVL159:
  1840              		.loc 1 373 13 view .LVU592
-GAS LISTING /tmp/cc3YwPWP.s 			page 47
+GAS LISTING /tmp/ccH9lvDo.s 			page 47
 
 
  1841 0047 BA010000 		movl	$1, %edx
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  331:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->rem_len = 0;
  1875              		.loc 1 331 19 is_stmt 0 view .LVU610
  1876 0069 48C74310 		movq	$1, 16(%rbx)
-GAS LISTING /tmp/cc3YwPWP.s 			page 48
+GAS LISTING /tmp/ccH9lvDo.s 			page 48
 
 
  1876      01000000 
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  345:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->multiplier *= 128;
  1913              		.loc 1 345 29 view .LVU623
  1914 00ae 0FAFCA   		imull	%edx, %ecx
-GAS LISTING /tmp/cc3YwPWP.s 			page 49
+GAS LISTING /tmp/ccH9lvDo.s 			page 49
 
 
  346:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	} while ((c & 128) != 0);
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  386:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		trp->len = 1 + MQTTPacket_encode(buf + 1, trp->rem_len); /* put the original remaining length bac
  387:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if((trp->rem_len + trp->len) > buflen)
  388:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
-GAS LISTING /tmp/cc3YwPWP.s 			page 50
+GAS LISTING /tmp/ccH9lvDo.s 			page 50
 
 
  389:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		++trp->state;
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  1977 00f5 415D     		popq	%r13
  1978              	.LCFI68:
  1979              		.cfi_def_cfa_offset 8
-GAS LISTING /tmp/cc3YwPWP.s 			page 51
+GAS LISTING /tmp/ccH9lvDo.s 			page 51
 
 
  1980              	.LVL172:
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  2019 012d 660F6FCA 		movdqa	%xmm2, %xmm1
  2020 0131 660FFAC8 		psubd	%xmm0, %xmm1
  399:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			if(trp->rem_len)
-GAS LISTING /tmp/cc3YwPWP.s 			page 52
+GAS LISTING /tmp/ccH9lvDo.s 			page 52
 
 
  2021              		.loc 1 399 4 is_stmt 1 view .LVU656
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  2059              		.loc 1 324 12 view .LVU669
  2060              	.LBB162:
  326:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	int rc = MQTTPACKET_READ_ERROR;
-GAS LISTING /tmp/cc3YwPWP.s 			page 53
+GAS LISTING /tmp/ccH9lvDo.s 			page 53
 
 
  2061              		.loc 1 326 2 view .LVU670
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
   33:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	do
  2097              		.loc 1 33 12 view .LVU686
   34:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 	{
-GAS LISTING /tmp/cc3YwPWP.s 			page 54
+GAS LISTING /tmp/ccH9lvDo.s 			page 54
 
 
  2098              		.loc 1 34 2 view .LVU687
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  386:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		if((trp->rem_len + trp->len) > buflen)
  2136              		.loc 1 386 12 discriminator 1 view .LVU702
  2137 01a7 895318   		movl	%edx, 24(%rbx)
-GAS LISTING /tmp/cc3YwPWP.s 			page 55
+GAS LISTING /tmp/ccH9lvDo.s 			page 55
 
 
  387:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 			goto exit;
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  2175              		.loc 1 34 2 view .LVU715
  2176              	.LBB168:
   36:../../bos/thirdparty/mqtt-pack/MQTTPacket.c **** 		length /= 128;
-GAS LISTING /tmp/cc3YwPWP.s 			page 56
+GAS LISTING /tmp/ccH9lvDo.s 			page 56
 
 
  2177              		.loc 1 36 3 view .LVU716
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  2219              	.LFE37:
  2221              		.section	.bss.bufptr,"aw",@nobits
  2222              		.align 8
-GAS LISTING /tmp/cc3YwPWP.s 			page 57
+GAS LISTING /tmp/ccH9lvDo.s 			page 57
 
 
  2225              	bufptr:
@@ -3386,29 +3386,29 @@ GAS LISTING /tmp/cc3YwPWP.s 			page 1
  8539              	3:
  8540 001c 00000000 		.align 8
  8541              	4:
-GAS LISTING /tmp/cc3YwPWP.s 			page 58
+GAS LISTING /tmp/ccH9lvDo.s 			page 58
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 MQTTPacket.c
-     /tmp/cc3YwPWP.s:9      .text.MQTTPacket_encode:0000000000000000 MQTTPacket_encode
-     /tmp/cc3YwPWP.s:104    .text.MQTTPacket_decode:0000000000000000 MQTTPacket_decode
-     /tmp/cc3YwPWP.s:254    .text.MQTTPacket_len:0000000000000000 MQTTPacket_len
-     /tmp/cc3YwPWP.s:308    .text.bufchar:0000000000000000 bufchar
-     /tmp/cc3YwPWP.s:2225   .bss.bufptr:0000000000000000 bufptr
-     /tmp/cc3YwPWP.s:359    .text.MQTTPacket_decodeBuf:0000000000000000 MQTTPacket_decodeBuf
-     /tmp/cc3YwPWP.s:597    .text.readInt:0000000000000000 readInt
-     /tmp/cc3YwPWP.s:635    .text.readChar:0000000000000000 readChar
-     /tmp/cc3YwPWP.s:663    .text.writeChar:0000000000000000 writeChar
-     /tmp/cc3YwPWP.s:687    .text.writeInt:0000000000000000 writeInt
-     /tmp/cc3YwPWP.s:734    .text.writeCString:0000000000000000 writeCString
-     /tmp/cc3YwPWP.s:866    .text.getLenStringLen:0000000000000000 getLenStringLen
-     /tmp/cc3YwPWP.s:894    .text.writeMQTTString:0000000000000000 writeMQTTString
-     /tmp/cc3YwPWP.s:1199   .text.readMQTTLenString:0000000000000000 readMQTTLenString
-     /tmp/cc3YwPWP.s:1296   .text.MQTTstrlen:0000000000000000 MQTTstrlen
-     /tmp/cc3YwPWP.s:1344   .text.MQTTPacket_equals:0000000000000000 MQTTPacket_equals
-     /tmp/cc3YwPWP.s:1454   .text.MQTTPacket_read:0000000000000000 MQTTPacket_read
-     /tmp/cc3YwPWP.s:1786   .text.MQTTPacket_readnb:0000000000000000 MQTTPacket_readnb
+     /tmp/ccH9lvDo.s:9      .text.MQTTPacket_encode:0000000000000000 MQTTPacket_encode
+     /tmp/ccH9lvDo.s:104    .text.MQTTPacket_decode:0000000000000000 MQTTPacket_decode
+     /tmp/ccH9lvDo.s:254    .text.MQTTPacket_len:0000000000000000 MQTTPacket_len
+     /tmp/ccH9lvDo.s:308    .text.bufchar:0000000000000000 bufchar
+     /tmp/ccH9lvDo.s:2225   .bss.bufptr:0000000000000000 bufptr
+     /tmp/ccH9lvDo.s:359    .text.MQTTPacket_decodeBuf:0000000000000000 MQTTPacket_decodeBuf
+     /tmp/ccH9lvDo.s:597    .text.readInt:0000000000000000 readInt
+     /tmp/ccH9lvDo.s:635    .text.readChar:0000000000000000 readChar
+     /tmp/ccH9lvDo.s:663    .text.writeChar:0000000000000000 writeChar
+     /tmp/ccH9lvDo.s:687    .text.writeInt:0000000000000000 writeInt
+     /tmp/ccH9lvDo.s:734    .text.writeCString:0000000000000000 writeCString
+     /tmp/ccH9lvDo.s:866    .text.getLenStringLen:0000000000000000 getLenStringLen
+     /tmp/ccH9lvDo.s:894    .text.writeMQTTString:0000000000000000 writeMQTTString
+     /tmp/ccH9lvDo.s:1199   .text.readMQTTLenString:0000000000000000 readMQTTLenString
+     /tmp/ccH9lvDo.s:1296   .text.MQTTstrlen:0000000000000000 MQTTstrlen
+     /tmp/ccH9lvDo.s:1344   .text.MQTTPacket_equals:0000000000000000 MQTTPacket_equals
+     /tmp/ccH9lvDo.s:1454   .text.MQTTPacket_read:0000000000000000 MQTTPacket_read
+     /tmp/ccH9lvDo.s:1786   .text.MQTTPacket_readnb:0000000000000000 MQTTPacket_readnb
 
 UNDEFINED SYMBOLS
 __stack_chk_fail

@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc0DmMpA.s 			page 1
+GAS LISTING /tmp/ccihw18K.s 			page 1
 
 
    1              		.file	"b_device.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
   46:../../bos/core/b_device.c **** 
   47:../../bos/core/b_device.c **** /**
   48:../../bos/core/b_device.c ****  * \addtogroup DEVICE
-GAS LISTING /tmp/cc0DmMpA.s 			page 2
+GAS LISTING /tmp/ccihw18K.s 			page 2
 
 
   49:../../bos/core/b_device.c ****  * \{
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  103:../../bos/core/b_device.c **** /**
  104:../../bos/core/b_device.c ****  * \defgroup DEVICE_Private_FunctionPrototypes
  105:../../bos/core/b_device.c ****  * \{
-GAS LISTING /tmp/cc0DmMpA.s 			page 3
+GAS LISTING /tmp/ccihw18K.s 			page 3
 
 
  106:../../bos/core/b_device.c ****  */
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
   36 0042 25640909 		.string	"%d\t\t%16s\t%d\r\n"
   36      25313673 
   36      0925640D 
-GAS LISTING /tmp/cc0DmMpA.s 			page 4
+GAS LISTING /tmp/ccihw18K.s 			page 4
 
 
   36      0A00
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
    2:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    This file is part of the GNU C Library.
    3:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
    4:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is free software; you can redistribute it and/or
-GAS LISTING /tmp/cc0DmMpA.s 			page 5
+GAS LISTING /tmp/ccihw18K.s 			page 5
 
 
    5:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    modify it under the terms of the GNU Lesser General Public
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
   57              	.LBB7:
   58:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
   59:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****   return __builtin___memset_chk (__dest, __ch, __len,
-GAS LISTING /tmp/cc0DmMpA.s 			page 6
+GAS LISTING /tmp/ccihw18K.s 			page 6
 
 
   58              		.loc 2 59 3 view .LVU10
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  104              		.loc 2 59 10 discriminator 1 view .LVU16
  105 002d 488D1D00 		leaq	bDriverInterfaceTable(%rip), %rbx
  105      000000
-GAS LISTING /tmp/cc0DmMpA.s 			page 7
+GAS LISTING /tmp/ccihw18K.s 			page 7
 
 
  106 0034 4889DF   		movq	%rbx, %rdi
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  147              		.loc 1 167 51 is_stmt 0 view .LVU31
  148 0061 4889DF   		movq	%rbx, %rdi
  166:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].pdes   = bDeviceDescTable[i];
-GAS LISTING /tmp/cc0DmMpA.s 			page 8
+GAS LISTING /tmp/ccihw18K.s 			page 8
 
 
  149              		.loc 1 166 49 view .LVU32
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  185              	.L8:
  161:../../bos/core/b_device.c ****         {
  186              		.loc 1 161 44 is_stmt 1 discriminator 2 view .LVU50
-GAS LISTING /tmp/cc0DmMpA.s 			page 9
+GAS LISTING /tmp/ccihw18K.s 			page 9
 
 
  161:../../bos/core/b_device.c ****         {
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  217              		.loc 1 176 13 view .LVU61
  176:../../bos/core/b_device.c ****             {
  218              		.loc 1 176 54 is_stmt 0 view .LVU62
-GAS LISTING /tmp/cc0DmMpA.s 			page 10
+GAS LISTING /tmp/ccihw18K.s 			page 10
 
 
  219 00d0 418B0424 		movl	(%r12), %eax
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  255 0100 890D0000 		movl	%ecx, 192+bDriverInterfaceTable(%rip)
  255      0000
  179:../../bos/core/b_device.c ****                 bDriverInterfaceTable[i].status = pdriver_init->init(&bDriverInterfaceTable[i]);
-GAS LISTING /tmp/cc0DmMpA.s 			page 11
+GAS LISTING /tmp/ccihw18K.s 			page 11
 
 
  256              		.loc 1 179 17 is_stmt 1 view .LVU81
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  289      000000
  290 0146 4C89EA   		movq	%r13, %rdx
  291 0149 BF030000 		movl	$3, %edi
-GAS LISTING /tmp/cc0DmMpA.s 			page 12
+GAS LISTING /tmp/ccihw18K.s 			page 12
 
 
  291      00
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  330              		.cfi_def_cfa_offset 72
  331 0197 5A       		popq	%rdx
  332              	.LCFI10:
-GAS LISTING /tmp/cc0DmMpA.s 			page 13
+GAS LISTING /tmp/ccihw18K.s 			page 13
 
 
  333              		.cfi_def_cfa_offset 64
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  372      000000
  373 01dc BF030000 		movl	$3, %edi
  373      00
-GAS LISTING /tmp/cc0DmMpA.s 			page 14
+GAS LISTING /tmp/ccihw18K.s 			page 14
 
 
  374 01e1 E8000000 		call	bLogOut@PLT
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  205:../../bos/core/b_device.c ****     }
  206:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].init == NULL)
  421              		.loc 1 206 5 is_stmt 1 view .LVU118
-GAS LISTING /tmp/cc0DmMpA.s 			page 15
+GAS LISTING /tmp/ccihw18K.s 			page 15
 
 
  422              		.loc 1 206 38 is_stmt 0 view .LVU119
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  204:../../bos/core/b_device.c ****     }
  465              		.loc 1 204 16 view .LVU132
  466 0040 B8FFFFFF 		movl	$-1, %eax
-GAS LISTING /tmp/cc0DmMpA.s 			page 16
+GAS LISTING /tmp/ccihw18K.s 			page 16
 
 
  466      FF
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  508 0012 4889F8   		movq	%rdi, %rax
  509 0015 48C1E004 		salq	$4, %rax
  510 0019 4829F8   		subq	%rdi, %rax
-GAS LISTING /tmp/cc0DmMpA.s 			page 17
+GAS LISTING /tmp/ccihw18K.s 			page 17
 
 
  511 001c 488D04C2 		leaq	(%rdx,%rax,8), %rax
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  549      00
  550 005d 4C8B0CF8 		movq	(%rax,%rdi,8), %r9
  551 0061 488D1500 		leaq	__func__.5(%rip), %rdx
-GAS LISTING /tmp/cc0DmMpA.s 			page 18
+GAS LISTING /tmp/ccihw18K.s 			page 18
 
 
  551      000000
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  592 0004 83FF01   		cmpl	$1, %edi
  593 0007 773F     		ja	.L48
  594 0009 4885D2   		testq	%rdx, %rdx
-GAS LISTING /tmp/cc0DmMpA.s 			page 19
+GAS LISTING /tmp/ccihw18K.s 			page 19
 
 
  595 000c 743A     		je	.L48
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  252:../../bos/core/b_device.c ****     else
  253:../../bos/core/b_device.c ****     {
  254:../../bos/core/b_device.c ****         b_log_e("%s err\r\n", bDeviceDescTable[dev_no]);
-GAS LISTING /tmp/cc0DmMpA.s 			page 20
+GAS LISTING /tmp/ccihw18K.s 			page 20
 
 
  634              		.loc 1 254 9 is_stmt 1 view .LVU181
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  673              		.cfi_endproc
  674              	.LFE32:
  676              		.section	.text.bDeviceWrite,"ax",@progbits
-GAS LISTING /tmp/cc0DmMpA.s 			page 21
+GAS LISTING /tmp/ccihw18K.s 			page 21
 
 
  677              		.p2align 4
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  718              		.loc 1 271 58 view .LVU207
  719 0039 83E778   		andl	$120, %edi
  720              	.LVL57:
-GAS LISTING /tmp/cc0DmMpA.s 			page 22
+GAS LISTING /tmp/ccihw18K.s 			page 22
 
 
  721              		.loc 1 271 58 view .LVU208
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  757              		.loc 1 278 9 is_stmt 1 view .LVU218
  758              		.loc 1 278 16 is_stmt 0 view .LVU219
  759 0083 B801FFFF 		movl	$-255, %eax
-GAS LISTING /tmp/cc0DmMpA.s 			page 23
+GAS LISTING /tmp/ccihw18K.s 			page 23
 
 
  759      FF
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  800 001c 488D04C2 		leaq	(%rdx,%rax,8), %rax
  801              		.loc 1 290 8 view .LVU231
  802 0020 8B08     		movl	(%rax), %ecx
-GAS LISTING /tmp/cc0DmMpA.s 			page 24
+GAS LISTING /tmp/ccihw18K.s 			page 24
 
 
  803 0022 85C9     		testl	%ecx, %ecx
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  840      000000
  841 0068 31C0     		xorl	%eax, %eax
  842 006a 488D3500 		leaq	.LC2(%rip), %rsi
-GAS LISTING /tmp/cc0DmMpA.s 			page 25
+GAS LISTING /tmp/ccihw18K.s 			page 25
 
 
  842      000000
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  310:../../bos/core/b_device.c ****         return -1;
  311:../../bos/core/b_device.c ****     }
  312:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].status == 0)
-GAS LISTING /tmp/cc0DmMpA.s 			page 26
+GAS LISTING /tmp/ccihw18K.s 			page 26
 
 
  883              		.loc 1 312 5 is_stmt 1 view .LVU255
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  924      000000
  306:../../bos/core/b_device.c ****     int retval = B_DEVICE_FUNC_NULL;
  925              		.loc 1 306 1 is_stmt 0 view .LVU270
-GAS LISTING /tmp/cc0DmMpA.s 			page 27
+GAS LISTING /tmp/ccihw18K.s 			page 27
 
 
  926 004d 4883EC08 		subq	$8, %rsp
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  969              	.LFB36:
  326:../../bos/core/b_device.c **** 
  327:../../bos/core/b_device.c **** int bDeviceModifyHalIf(uint32_t dev_no, uint32_t offset, const uint8_t *pVal, uint8_t size)
-GAS LISTING /tmp/cc0DmMpA.s 			page 28
+GAS LISTING /tmp/ccihw18K.s 			page 28
 
 
  328:../../bos/core/b_device.c **** {
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  336:../../bos/core/b_device.c ****         return -2;
  337:../../bos/core/b_device.c ****     }
  338:../../bos/core/b_device.c ****     halif_addr = ((uint32_t)bDriverInterfaceTable[dev_no].hal_if) + offset;
-GAS LISTING /tmp/cc0DmMpA.s 			page 29
+GAS LISTING /tmp/ccihw18K.s 			page 29
 
 
  339:../../bos/core/b_device.c **** #if (defined(_HALIF_VARIABLE_ENABLE) && (_HALIF_VARIABLE_ENABLE == 1))
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1043      000000
  1044 0022 488D3500 		leaq	.LC2(%rip), %rsi
  1044      000000
-GAS LISTING /tmp/cc0DmMpA.s 			page 30
+GAS LISTING /tmp/ccihw18K.s 			page 30
 
 
  1045 0029 48C1E004 		salq	$4, %rax
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1092              		.globl	bDeviceReadMessage
  1094              	bDeviceReadMessage:
  1095              	.LVL93:
-GAS LISTING /tmp/cc0DmMpA.s 			page 31
+GAS LISTING /tmp/ccihw18K.s 			page 31
 
 
  1096              	.LFB38:
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1130              		.cfi_endproc
  1131              	.LFE38:
  1133              		.section	.text.bDeviceWriteMessage,"ax",@progbits
-GAS LISTING /tmp/cc0DmMpA.s 			page 32
+GAS LISTING /tmp/ccihw18K.s 			page 32
 
 
  1134              		.p2align 4
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1169              		.loc 1 388 1 view .LVU330
  1170 0035 C3       		ret
  1171              		.cfi_endproc
-GAS LISTING /tmp/cc0DmMpA.s 			page 33
+GAS LISTING /tmp/ccihw18K.s 			page 33
 
 
  1172              	.LFE39:
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1211 0037 488D14D1 		leaq	(%rcx,%rdx,8), %rdx
  1212              		.loc 1 398 8 view .LVU343
  1213 003b 48837A30 		cmpq	$0, 48(%rdx)
-GAS LISTING /tmp/cc0DmMpA.s 			page 34
+GAS LISTING /tmp/ccihw18K.s 			page 34
 
 
  1213      00
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1244      25280000 
  1244      00
  1245 007a 7505     		jne	.L101
-GAS LISTING /tmp/cc0DmMpA.s 			page 35
+GAS LISTING /tmp/ccihw18K.s 			page 35
 
 
  1246 007c 4883C418 		addq	$24, %rsp
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  420:../../bos/core/b_device.c ****         return retval;
  421:../../bos/core/b_device.c ****     }
  422:../../bos/core/b_device.c ****     if (bDriverInterfaceTable[dev_no].write == NULL)
-GAS LISTING /tmp/cc0DmMpA.s 			page 36
+GAS LISTING /tmp/ccihw18K.s 			page 36
 
 
  1288              		.loc 1 422 5 is_stmt 1 view .LVU366
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1323 0063 66837C24 		cmpw	$0, 6(%rsp)
  1323      0600
  1324 0069 0F95C0   		setne	%al
-GAS LISTING /tmp/cc0DmMpA.s 			page 37
+GAS LISTING /tmp/ccihw18K.s 			page 37
 
 
  1325              	.LVL107:
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1363              		.loc 1 445 5 is_stmt 1 view .LVU389
  1364              		.loc 1 445 42 is_stmt 0 view .LVU390
  1365 000e 89FF     		movl	%edi, %edi
-GAS LISTING /tmp/cc0DmMpA.s 			page 38
+GAS LISTING /tmp/ccihw18K.s 			page 38
 
 
  1366              		.loc 1 445 50 view .LVU391
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1409 0018 C3       		ret
  1410              		.cfi_endproc
  1411              	.LFE43:
-GAS LISTING /tmp/cc0DmMpA.s 			page 39
+GAS LISTING /tmp/ccihw18K.s 			page 39
 
 
  1413              		.section	.rodata.__func__.0,"a"
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  1465              		.section	.driver_init_0,"aw"
  1466              		.align 16
  1469              	init0_bDriverNullInit:
-GAS LISTING /tmp/cc0DmMpA.s 			page 40
+GAS LISTING /tmp/ccihw18K.s 			page 40
 
 
  1470 0000 00000000 		.long	0
@@ -2385,48 +2385,48 @@ GAS LISTING /tmp/cc0DmMpA.s 			page 1
  6338              	3:
  6339 001c 00000000 		.align 8
  6340              	4:
-GAS LISTING /tmp/cc0DmMpA.s 			page 41
+GAS LISTING /tmp/ccihw18K.s 			page 41
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_device.c
-     /tmp/cc0DmMpA.s:8      .text._bDriverNullInit:0000000000000000 _bDriverNullInit
-     /tmp/cc0DmMpA.s:45     .text.bDeviceInit:0000000000000000 bDeviceInit
-     /tmp/cc0DmMpA.s:1477   .bss.bDriverInterfaceTable:0000000000000000 bDriverInterfaceTable
-     /tmp/cc0DmMpA.s:1453   .rodata.__func__.6:0000000000000000 __func__.6
-     /tmp/cc0DmMpA.s:410    .text.bDeviceReinit:0000000000000000 bDeviceReinit
-     /tmp/cc0DmMpA.s:490    .text.bDeviceOpen:0000000000000000 bDeviceOpen
-     /tmp/cc0DmMpA.s:1483   .data.rel.ro.local.bDeviceDescTable:0000000000000000 bDeviceDescTable
-     /tmp/cc0DmMpA.s:1447   .rodata.__func__.5:0000000000000000 __func__.5
-     /tmp/cc0DmMpA.s:581    .text.bDeviceRead:0000000000000000 bDeviceRead
-     /tmp/cc0DmMpA.s:1441   .rodata.__func__.4:0000000000000000 __func__.4
-     /tmp/cc0DmMpA.s:680    .text.bDeviceWrite:0000000000000000 bDeviceWrite
-     /tmp/cc0DmMpA.s:1435   .rodata.__func__.3:0000000000000000 __func__.3
-     /tmp/cc0DmMpA.s:779    .text.bDeviceClose:0000000000000000 bDeviceClose
-     /tmp/cc0DmMpA.s:1429   .rodata.__func__.2:0000000000000000 __func__.2
-     /tmp/cc0DmMpA.s:870    .text.bDeviceCtl:0000000000000000 bDeviceCtl
-     /tmp/cc0DmMpA.s:1423   .rodata.__func__.1:0000000000000000 __func__.1
-     /tmp/cc0DmMpA.s:967    .text.bDeviceModifyHalIf:0000000000000000 bDeviceModifyHalIf
-     /tmp/cc0DmMpA.s:1021   .text.bDeviceISNormal:0000000000000000 bDeviceISNormal
-     /tmp/cc0DmMpA.s:1417   .rodata.__func__.0:0000000000000000 __func__.0
-     /tmp/cc0DmMpA.s:1094   .text.bDeviceReadMessage:0000000000000000 bDeviceReadMessage
-     /tmp/cc0DmMpA.s:1137   .text.bDeviceWriteMessage:0000000000000000 bDeviceWriteMessage
-     /tmp/cc0DmMpA.s:1178   .text.bDeviceIsReadable:0000000000000000 bDeviceIsReadable
-     /tmp/cc0DmMpA.s:1263   .text.bDeviceIsWritable:0000000000000000 bDeviceIsWritable
-     /tmp/cc0DmMpA.s:1348   .text.bDeviceIsAbnormal:0000000000000000 bDeviceIsAbnormal
-     /tmp/cc0DmMpA.s:1387   .text.bDeviceDescription:0000000000000000 bDeviceDescription
-     /tmp/cc0DmMpA.s:1460   .driver_init:0000000000000000 init_bDriverNullInit
-     /tmp/cc0DmMpA.s:1469   .driver_init_0:0000000000000000 init0_bDriverNullInit
-     /tmp/cc0DmMpA.s:31     .rodata.bDeviceInit.str1.1:0000000000000035 .LC3
-     /tmp/cc0DmMpA.s:33     .rodata.bDeviceInit.str1.1:000000000000003a .LC4
-     /tmp/cc0DmMpA.s:29     .rodata.bDeviceInit.str1.1:000000000000001b .LC2
-     /tmp/cc0DmMpA.s:25     .rodata.bDeviceInit.str1.1:0000000000000000 .LC0
-     /tmp/cc0DmMpA.s:27     .rodata.bDeviceInit.str1.1:0000000000000004 .LC1
-     /tmp/cc0DmMpA.s:35     .rodata.bDeviceInit.str1.1:0000000000000042 .LC5
-     /tmp/cc0DmMpA.s:37     .rodata.bDeviceInit.str1.1:0000000000000050 .LC6
-     /tmp/cc0DmMpA.s:39     .rodata.bDeviceInit.str1.1:0000000000000059 .LC7
-     /tmp/cc0DmMpA.s:484    .rodata.bDeviceOpen.str1.1:0000000000000000 .LC8
-     /tmp/cc0DmMpA.s:1015   .rodata.bDeviceISNormal.str1.1:0000000000000000 .LC9
+     /tmp/ccihw18K.s:8      .text._bDriverNullInit:0000000000000000 _bDriverNullInit
+     /tmp/ccihw18K.s:45     .text.bDeviceInit:0000000000000000 bDeviceInit
+     /tmp/ccihw18K.s:1477   .bss.bDriverInterfaceTable:0000000000000000 bDriverInterfaceTable
+     /tmp/ccihw18K.s:1453   .rodata.__func__.6:0000000000000000 __func__.6
+     /tmp/ccihw18K.s:410    .text.bDeviceReinit:0000000000000000 bDeviceReinit
+     /tmp/ccihw18K.s:490    .text.bDeviceOpen:0000000000000000 bDeviceOpen
+     /tmp/ccihw18K.s:1483   .data.rel.ro.local.bDeviceDescTable:0000000000000000 bDeviceDescTable
+     /tmp/ccihw18K.s:1447   .rodata.__func__.5:0000000000000000 __func__.5
+     /tmp/ccihw18K.s:581    .text.bDeviceRead:0000000000000000 bDeviceRead
+     /tmp/ccihw18K.s:1441   .rodata.__func__.4:0000000000000000 __func__.4
+     /tmp/ccihw18K.s:680    .text.bDeviceWrite:0000000000000000 bDeviceWrite
+     /tmp/ccihw18K.s:1435   .rodata.__func__.3:0000000000000000 __func__.3
+     /tmp/ccihw18K.s:779    .text.bDeviceClose:0000000000000000 bDeviceClose
+     /tmp/ccihw18K.s:1429   .rodata.__func__.2:0000000000000000 __func__.2
+     /tmp/ccihw18K.s:870    .text.bDeviceCtl:0000000000000000 bDeviceCtl
+     /tmp/ccihw18K.s:1423   .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/ccihw18K.s:967    .text.bDeviceModifyHalIf:0000000000000000 bDeviceModifyHalIf
+     /tmp/ccihw18K.s:1021   .text.bDeviceISNormal:0000000000000000 bDeviceISNormal
+     /tmp/ccihw18K.s:1417   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccihw18K.s:1094   .text.bDeviceReadMessage:0000000000000000 bDeviceReadMessage
+     /tmp/ccihw18K.s:1137   .text.bDeviceWriteMessage:0000000000000000 bDeviceWriteMessage
+     /tmp/ccihw18K.s:1178   .text.bDeviceIsReadable:0000000000000000 bDeviceIsReadable
+     /tmp/ccihw18K.s:1263   .text.bDeviceIsWritable:0000000000000000 bDeviceIsWritable
+     /tmp/ccihw18K.s:1348   .text.bDeviceIsAbnormal:0000000000000000 bDeviceIsAbnormal
+     /tmp/ccihw18K.s:1387   .text.bDeviceDescription:0000000000000000 bDeviceDescription
+     /tmp/ccihw18K.s:1460   .driver_init:0000000000000000 init_bDriverNullInit
+     /tmp/ccihw18K.s:1469   .driver_init_0:0000000000000000 init0_bDriverNullInit
+     /tmp/ccihw18K.s:31     .rodata.bDeviceInit.str1.1:0000000000000035 .LC3
+     /tmp/ccihw18K.s:33     .rodata.bDeviceInit.str1.1:000000000000003a .LC4
+     /tmp/ccihw18K.s:29     .rodata.bDeviceInit.str1.1:000000000000001b .LC2
+     /tmp/ccihw18K.s:25     .rodata.bDeviceInit.str1.1:0000000000000000 .LC0
+     /tmp/ccihw18K.s:27     .rodata.bDeviceInit.str1.1:0000000000000004 .LC1
+     /tmp/ccihw18K.s:35     .rodata.bDeviceInit.str1.1:0000000000000042 .LC5
+     /tmp/ccihw18K.s:37     .rodata.bDeviceInit.str1.1:0000000000000050 .LC6
+     /tmp/ccihw18K.s:39     .rodata.bDeviceInit.str1.1:0000000000000059 .LC7
+     /tmp/ccihw18K.s:484    .rodata.bDeviceOpen.str1.1:0000000000000000 .LC8
+     /tmp/ccihw18K.s:1015   .rodata.bDeviceISNormal.str1.1:0000000000000000 .LC9
 
 UNDEFINED SYMBOLS
 __start_driver_init_0

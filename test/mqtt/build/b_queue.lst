@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccAWTiLc.s 			page 1
+GAS LISTING /tmp/ccGsT5ir.s 			page 1
 
 
    1              		.file	"b_queue.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
   45:../../bos/core/b_queue.c ****  * \{
   46:../../bos/core/b_queue.c ****  */
   47:../../bos/core/b_queue.c **** 
-GAS LISTING /tmp/ccAWTiLc.s 			page 2
+GAS LISTING /tmp/ccGsT5ir.s 			page 2
 
 
   48:../../bos/core/b_queue.c **** /**
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  102:../../bos/core/b_queue.c ****  * \{
  103:../../bos/core/b_queue.c ****  */
  104:../../bos/core/b_queue.c **** 
-GAS LISTING /tmp/ccAWTiLc.s 			page 3
+GAS LISTING /tmp/ccGsT5ir.s 			page 3
 
 
  105:../../bos/core/b_queue.c **** static bQueueAttr_t *_bQueueFind(bQueueId_t id)
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  105:../../bos/core/b_queue.c **** {
   35              		.loc 1 105 22 view .LVU9
   36              	.LBB39:
-GAS LISTING /tmp/ccAWTiLc.s 			page 4
+GAS LISTING /tmp/ccGsT5ir.s 			page 4
 
 
  107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
   73              	.LVL7:
   74              	.L4:
  116:../../bos/core/b_queue.c ****     }
-GAS LISTING /tmp/ccAWTiLc.s 			page 5
+GAS LISTING /tmp/ccGsT5ir.s 			page 5
 
 
   75              		.loc 1 116 9 is_stmt 1 view .LVU26
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  107              		.file 2 "../../bos/utils/inc/b_util_list.h"
    1:../../bos/utils/inc/b_util_list.h **** /**
    2:../../bos/utils/inc/b_util_list.h ****  *!
-GAS LISTING /tmp/ccAWTiLc.s 			page 6
+GAS LISTING /tmp/ccGsT5ir.s 			page 6
 
 
    3:../../bos/utils/inc/b_util_list.h ****  * \file        b_util_list.h
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
   57:../../bos/utils/inc/b_util_list.h **** #define LIST_HEAD_INIT(name) \
   58:../../bos/utils/inc/b_util_list.h ****     {                        \
   59:../../bos/utils/inc/b_util_list.h ****         &(name), &(name)     \
-GAS LISTING /tmp/ccAWTiLc.s 			page 7
+GAS LISTING /tmp/ccGsT5ir.s 			page 7
 
 
   60:../../bos/utils/inc/b_util_list.h ****     }
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
   90:../../bos/utils/inc/b_util_list.h ****                                     struct list_head *next)
  112              		.loc 2 90 26 view .LVU44
  113              	.LBB42:
-GAS LISTING /tmp/ccAWTiLc.s 			page 8
+GAS LISTING /tmp/ccGsT5ir.s 			page 8
 
 
   93:../../bos/utils/inc/b_util_list.h ****     newItem->next = next;
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  149:../../bos/core/b_queue.c **** {
  154              		.loc 1 149 1 is_stmt 1 view -0
  155              		.cfi_startproc
-GAS LISTING /tmp/ccAWTiLc.s 			page 9
+GAS LISTING /tmp/ccGsT5ir.s 			page 9
 
 
  156              		.loc 1 149 1 is_stmt 0 view .LVU59
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  192              	.LBB46:
  193              	.LBB45:
  111:../../bos/core/b_queue.c ****         if (pattr == ((bQueueAttr_t *)id))
-GAS LISTING /tmp/ccAWTiLc.s 			page 10
+GAS LISTING /tmp/ccGsT5ir.s 			page 10
 
 
  194              		.loc 1 111 15 view .LVU74
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  166:../../bos/core/b_queue.c ****     memcpy(&pbuf[attr->w_index * attr->msg_size], msg_ptr, attr->msg_size);
  167:../../bos/core/b_queue.c ****     attr->w_index = (attr->w_index + 1) % attr->msg_count;
  168:../../bos/core/b_queue.c ****     attr->number += 1;
-GAS LISTING /tmp/ccAWTiLc.s 			page 11
+GAS LISTING /tmp/ccGsT5ir.s 			page 11
 
 
  169:../../bos/core/b_queue.c ****     return 0;
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
   21:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _STRING_H
   22:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** # error "Never use <bits/string_fortified.h> directly; include <string.h> instead."
   23:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
-GAS LISTING /tmp/ccAWTiLc.s 			page 12
+GAS LISTING /tmp/ccGsT5ir.s 			page 12
 
 
   24:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  289              		.loc 1 168 5 is_stmt 1 view .LVU106
  169:../../bos/core/b_queue.c **** }
  290              		.loc 1 169 5 view .LVU107
-GAS LISTING /tmp/ccAWTiLc.s 			page 13
+GAS LISTING /tmp/ccGsT5ir.s 			page 13
 
 
  291              		.loc 1 170 1 is_stmt 0 view .LVU108
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  336 0007 4885FF   		testq	%rdi, %rdi
  337 000a 7472     		je	.L31
  338 000c 4889F7   		movq	%rsi, %rdi
-GAS LISTING /tmp/ccAWTiLc.s 			page 14
+GAS LISTING /tmp/ccGsT5ir.s 			page 14
 
 
  339              	.LVL31:
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  375 002c 4839DA   		cmpq	%rbx, %rdx
  376 002f 7510     		jne	.L28
  377 0031 EB1D     		jmp	.L27
-GAS LISTING /tmp/ccAWTiLc.s 			page 15
+GAS LISTING /tmp/ccGsT5ir.s 			page 15
 
 
  378              	.LVL35:
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  408              		.cfi_def_cfa_offset 8
  409 004f C3       		ret
  410              	.LVL40:
-GAS LISTING /tmp/ccAWTiLc.s 			page 16
+GAS LISTING /tmp/ccGsT5ir.s 			page 16
 
 
  411              		.p2align 4,,10
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  191:../../bos/core/b_queue.c ****     attr->number -= 1;
  453              		.loc 1 191 41 view .LVU157
  454 006c 31D2     		xorl	%edx, %edx
-GAS LISTING /tmp/ccAWTiLc.s 			page 17
+GAS LISTING /tmp/ccGsT5ir.s 			page 17
 
 
  192:../../bos/core/b_queue.c ****     return 0;
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  500              	.LFB32:
  195:../../bos/core/b_queue.c **** 
  196:../../bos/core/b_queue.c **** uint32_t bQueueGetCapacity(bQueueId_t id)
-GAS LISTING /tmp/ccAWTiLc.s 			page 18
+GAS LISTING /tmp/ccGsT5ir.s 			page 18
 
 
  197:../../bos/core/b_queue.c **** {
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  109:../../bos/core/b_queue.c ****     {
  537              		.loc 1 109 5 discriminator 1 view .LVU185
  538 0023 4839C8   		cmpq	%rcx, %rax
-GAS LISTING /tmp/ccAWTiLc.s 			page 19
+GAS LISTING /tmp/ccGsT5ir.s 			page 19
 
 
  539 0026 7410     		je	.L43
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  213:../../bos/core/b_queue.c ****     bQueueAttr_t *attr = NULL;
  580              		.loc 1 213 5 is_stmt 1 view .LVU197
  581              	.LVL59:
-GAS LISTING /tmp/ccAWTiLc.s 			page 20
+GAS LISTING /tmp/ccGsT5ir.s 			page 20
 
 
  214:../../bos/core/b_queue.c ****     if (id == NULL)
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  617              		.loc 1 111 15 is_stmt 0 view .LVU212
  618 0028 488D50D8 		leaq	-40(%rax), %rdx
  619              	.LVL64:
-GAS LISTING /tmp/ccAWTiLc.s 			page 21
+GAS LISTING /tmp/ccGsT5ir.s 			page 21
 
 
  112:../../bos/core/b_queue.c ****         {
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  230:../../bos/core/b_queue.c ****     {
  231:../../bos/core/b_queue.c ****         return 0;
  232:../../bos/core/b_queue.c ****     }
-GAS LISTING /tmp/ccAWTiLc.s 			page 22
+GAS LISTING /tmp/ccGsT5ir.s 			page 22
 
 
  233:../../bos/core/b_queue.c ****     attr = _bQueueFind(id);
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  698 002f 75EF     		jne	.L60
  699              	.LVL75:
  112:../../bos/core/b_queue.c ****         {
-GAS LISTING /tmp/ccAWTiLc.s 			page 23
+GAS LISTING /tmp/ccGsT5ir.s 			page 23
 
 
  700              		.loc 1 112 12 view .LVU240
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  105:../../bos/core/b_queue.c **** {
  740              		.loc 1 105 22 view .LVU251
  741              	.LBB66:
-GAS LISTING /tmp/ccAWTiLc.s 			page 24
+GAS LISTING /tmp/ccGsT5ir.s 			page 24
 
 
  107:../../bos/core/b_queue.c ****     bQueueAttr_t     *pattr = NULL;
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  251:../../bos/core/b_queue.c ****         return 0;
  252:../../bos/core/b_queue.c ****     }
  253:../../bos/core/b_queue.c ****     return (attr->msg_count - attr->number);
-GAS LISTING /tmp/ccAWTiLc.s 			page 25
+GAS LISTING /tmp/ccGsT5ir.s 			page 25
 
 
  778              		.loc 1 253 5 is_stmt 1 view .LVU266
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  108:../../bos/core/b_queue.c ****     list_for_each(pos, &bQueueListHead)
  819              		.loc 1 108 5 view .LVU278
  109:../../bos/core/b_queue.c ****     {
-GAS LISTING /tmp/ccAWTiLc.s 			page 26
+GAS LISTING /tmp/ccGsT5ir.s 			page 26
 
 
  820              		.loc 1 109 5 view .LVU279
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  855              		.loc 1 269 5 view .LVU292
  268:../../bos/core/b_queue.c ****     attr->r_index = 0;
  856              		.loc 1 268 19 is_stmt 0 view .LVU293
-GAS LISTING /tmp/ccAWTiLc.s 			page 27
+GAS LISTING /tmp/ccGsT5ir.s 			page 27
 
 
  857 0031 48C70200 		movq	$0, (%rdx)
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  895              		.loc 1 281 5 is_stmt 1 view .LVU306
  896              	.LVL100:
  897              	.LBB69:
-GAS LISTING /tmp/ccAWTiLc.s 			page 28
+GAS LISTING /tmp/ccGsT5ir.s 			page 28
 
 
  898              	.LBI69:
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  935              	.LBE70:
  936              	.LBE69:
  282:../../bos/core/b_queue.c ****     if (attr == NULL)
-GAS LISTING /tmp/ccAWTiLc.s 			page 29
+GAS LISTING /tmp/ccGsT5ir.s 			page 29
 
 
  283:../../bos/core/b_queue.c ****     {
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  960              	.LVL109:
  961              		.p2align 4,,10
  962 0043 0F1F4400 		.p2align 3
-GAS LISTING /tmp/ccAWTiLc.s 			page 30
+GAS LISTING /tmp/ccGsT5ir.s 			page 30
 
 
  962      00
@@ -1783,21 +1783,21 @@ GAS LISTING /tmp/ccAWTiLc.s 			page 1
  4077              	3:
  4078 001c 00000000 		.align 8
  4079              	4:
-GAS LISTING /tmp/ccAWTiLc.s 			page 31
+GAS LISTING /tmp/ccGsT5ir.s 			page 31
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_queue.c
-     /tmp/ccAWTiLc.s:9      .text.bQueueCreate:0000000000000000 bQueueCreate
-     /tmp/ccAWTiLc.s:976    .data.rel.local.bQueueListHead:0000000000000000 bQueueListHead
-     /tmp/ccAWTiLc.s:151    .text.bQueuePutNonblock:0000000000000000 bQueuePutNonblock
-     /tmp/ccAWTiLc.s:322    .text.bQueueGetNonblock:0000000000000000 bQueueGetNonblock
-     /tmp/ccAWTiLc.s:498    .text.bQueueGetCapacity:0000000000000000 bQueueGetCapacity
-     /tmp/ccAWTiLc.s:573    .text.bQueueGetMsgSize:0000000000000000 bQueueGetMsgSize
-     /tmp/ccAWTiLc.s:648    .text.bQueueGetCount:0000000000000000 bQueueGetCount
-     /tmp/ccAWTiLc.s:723    .text.bQueueGetSpace:0000000000000000 bQueueGetSpace
-     /tmp/ccAWTiLc.s:799    .text.bQueueReset:0000000000000000 bQueueReset
-     /tmp/ccAWTiLc.s:882    .text.bQueueDelete:0000000000000000 bQueueDelete
+     /tmp/ccGsT5ir.s:9      .text.bQueueCreate:0000000000000000 bQueueCreate
+     /tmp/ccGsT5ir.s:976    .data.rel.local.bQueueListHead:0000000000000000 bQueueListHead
+     /tmp/ccGsT5ir.s:151    .text.bQueuePutNonblock:0000000000000000 bQueuePutNonblock
+     /tmp/ccGsT5ir.s:322    .text.bQueueGetNonblock:0000000000000000 bQueueGetNonblock
+     /tmp/ccGsT5ir.s:498    .text.bQueueGetCapacity:0000000000000000 bQueueGetCapacity
+     /tmp/ccGsT5ir.s:573    .text.bQueueGetMsgSize:0000000000000000 bQueueGetMsgSize
+     /tmp/ccGsT5ir.s:648    .text.bQueueGetCount:0000000000000000 bQueueGetCount
+     /tmp/ccGsT5ir.s:723    .text.bQueueGetSpace:0000000000000000 bQueueGetSpace
+     /tmp/ccGsT5ir.s:799    .text.bQueueReset:0000000000000000 bQueueReset
+     /tmp/ccGsT5ir.s:882    .text.bQueueDelete:0000000000000000 bQueueDelete
 
 UNDEFINED SYMBOLS
 memcpy

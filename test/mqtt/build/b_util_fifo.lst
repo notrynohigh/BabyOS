@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccuzk9kC.s 			page 1
+GAS LISTING /tmp/ccMLzKI5.s 			page 1
 
 
    1              		.file	"b_util_fifo.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
   45:../../bos/utils/b_util_fifo.c ****  * \addtogroup FIFO
   46:../../bos/utils/b_util_fifo.c ****  * \{
   47:../../bos/utils/b_util_fifo.c ****  */
-GAS LISTING /tmp/ccuzk9kC.s 			page 2
+GAS LISTING /tmp/ccMLzKI5.s 			page 2
 
 
   48:../../bos/utils/b_util_fifo.c **** 
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
   31 001b 66895708 		movw	%dx, 8(%rdi)
   82:../../bos/utils/b_util_fifo.c ****     pinstance->w_index = 0;
   32              		.loc 1 82 24 view .LVU8
-GAS LISTING /tmp/ccuzk9kC.s 			page 3
+GAS LISTING /tmp/ccMLzKI5.s 			page 3
 
 
   33 001f 31D2     		xorl	%edx, %edx
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
   89:../../bos/utils/b_util_fifo.c ****     {
   90:../../bos/utils/b_util_fifo.c ****         return -1;
   91:../../bos/utils/b_util_fifo.c ****     }
-GAS LISTING /tmp/ccuzk9kC.s 			page 4
+GAS LISTING /tmp/ccMLzKI5.s 			page 4
 
 
   92:../../bos/utils/b_util_fifo.c ****     pinstance->pbuf    = NULL;
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  100:../../bos/utils/b_util_fifo.c **** {
  113              		.loc 1 100 1 is_stmt 1 view -0
  114              		.cfi_startproc
-GAS LISTING /tmp/ccuzk9kC.s 			page 5
+GAS LISTING /tmp/ccMLzKI5.s 			page 5
 
 
  115              		.loc 1 100 1 is_stmt 0 view .LVU41
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  158              		.loc 1 103 16 view .LVU58
  159 0040 B8FFFFFF 		movl	$-1, %eax
  159      FF
-GAS LISTING /tmp/ccuzk9kC.s 			page 6
+GAS LISTING /tmp/ccMLzKI5.s 			page 6
 
 
  107:../../bos/utils/b_util_fifo.c **** }
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  203              		.p2align 4
  204              		.globl	bFIFO_Write
  206              	bFIFO_Write:
-GAS LISTING /tmp/ccuzk9kC.s 			page 7
+GAS LISTING /tmp/ccMLzKI5.s 			page 7
 
 
  207              	.LVL6:
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  242 003e 440FB749 		movzwl	10(%rcx), %r9d
  242      0A
  243              		.loc 1 130 15 view .LVU89
-GAS LISTING /tmp/ccuzk9kC.s 			page 8
+GAS LISTING /tmp/ccMLzKI5.s 			page 8
 
 
  244 0043 727B     		jb	.L19
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  287 007a 743D     		je	.L21
  288 007c 418D40FE 		leal	-2(%r8), %eax
  289 0080 488D7701 		leaq	1(%rdi), %rsi
-GAS LISTING /tmp/ccuzk9kC.s 			page 9
+GAS LISTING /tmp/ccMLzKI5.s 			page 9
 
 
  290 0084 0FB7C0   		movzwl	%ax, %eax
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  329              	.LVL17:
  330 00be 6690     		.p2align 4,,10
  331              		.p2align 3
-GAS LISTING /tmp/ccuzk9kC.s 			page 10
+GAS LISTING /tmp/ccMLzKI5.s 			page 10
 
 
  332              	.L19:
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  372 001f 4885F6   		testq	%rsi, %rsi
  373 0022 0F84A200 		je	.L41
  373      0000
-GAS LISTING /tmp/ccuzk9kC.s 			page 11
+GAS LISTING /tmp/ccMLzKI5.s 			page 11
 
 
  151:../../bos/utils/b_util_fifo.c ****     {
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  415 006b F7FE     		idivl	%esi
  416              		.loc 1 160 28 view .LVU158
  417 006d 6689510A 		movw	%dx, 10(%rcx)
-GAS LISTING /tmp/ccuzk9kC.s 			page 12
+GAS LISTING /tmp/ccMLzKI5.s 			page 12
 
 
  161:../../bos/utils/b_util_fifo.c ****         index += 1;
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  455              		.loc 1 161 9 is_stmt 1 view .LVU173
  456              	.LVL26:
  157:../../bos/utils/b_util_fifo.c ****     {
-GAS LISTING /tmp/ccuzk9kC.s 			page 13
+GAS LISTING /tmp/ccMLzKI5.s 			page 13
 
 
  457              		.loc 1 157 18 view .LVU174
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  170:../../bos/utils/b_util_fifo.c ****     {
  171:../../bos/utils/b_util_fifo.c ****         return -1;
  172:../../bos/utils/b_util_fifo.c ****     }
-GAS LISTING /tmp/ccuzk9kC.s 			page 14
+GAS LISTING /tmp/ccMLzKI5.s 			page 14
 
 
  173:../../bos/utils/b_util_fifo.c ****     if (pinstance->pbuf == NULL)
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  536 0054 0FB60410 		movzbl	(%rax,%rdx), %eax
  537              		.loc 1 183 21 view .LVU203
  538 0058 8806     		movb	%al, (%rsi)
-GAS LISTING /tmp/ccuzk9kC.s 			page 15
+GAS LISTING /tmp/ccMLzKI5.s 			page 15
 
 
  184:../../bos/utils/b_util_fifo.c ****         f_index     = (f_index + 1) % pinstance->size;
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  580 0094 0FB7C2   		movzwl	%dx, %eax
  184:../../bos/utils/b_util_fifo.c ****         index += 1;
  581              		.loc 1 184 48 view .LVU219
-GAS LISTING /tmp/ccuzk9kC.s 			page 16
+GAS LISTING /tmp/ccMLzKI5.s 			page 16
 
 
  582 0097 0FB77708 		movzwl	8(%rdi), %esi
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  624              		.loc 1 191 1 is_stmt 0 view .LVU230
  625 0000 F30F1EFA 		endbr64
  192:../../bos/utils/b_util_fifo.c ****     uint16_t fifo_len;
-GAS LISTING /tmp/ccuzk9kC.s 			page 17
+GAS LISTING /tmp/ccMLzKI5.s 			page 17
 
 
  626              		.loc 1 192 5 is_stmt 1 view .LVU231
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  671 003f 6689510A 		movw	%dx, 10(%rcx)
  200:../../bos/utils/b_util_fifo.c ****     return size;
  672              		.loc 1 200 5 is_stmt 1 view .LVU251
-GAS LISTING /tmp/ccuzk9kC.s 			page 18
+GAS LISTING /tmp/ccMLzKI5.s 			page 18
 
 
  673              	.LVL48:
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  208:../../bos/utils/b_util_fifo.c ****         return -1;
  209:../../bos/utils/b_util_fifo.c ****     }
  210:../../bos/utils/b_util_fifo.c ****     pinstance->pbuf = (uint8_t *)bMalloc(size);
-GAS LISTING /tmp/ccuzk9kC.s 			page 19
+GAS LISTING /tmp/ccMLzKI5.s 			page 19
 
 
  715              		.loc 1 210 5 is_stmt 1 view .LVU261
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  754              	.L69:
  219:../../bos/utils/b_util_fifo.c **** #else
  220:../../bos/utils/b_util_fifo.c ****     return -1;
-GAS LISTING /tmp/ccuzk9kC.s 			page 20
+GAS LISTING /tmp/ccMLzKI5.s 			page 20
 
 
  221:../../bos/utils/b_util_fifo.c **** #endif
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  227:../../bos/utils/b_util_fifo.c ****     if (pinstance == NULL)
  802              		.loc 1 227 5 is_stmt 1 view .LVU287
  803              		.loc 1 227 8 is_stmt 0 view .LVU288
-GAS LISTING /tmp/ccuzk9kC.s 			page 21
+GAS LISTING /tmp/ccMLzKI5.s 			page 21
 
 
  804 0004 4885FF   		testq	%rdi, %rdi
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  840              		.loc 1 240 1 view .LVU300
  841 002a C3       		ret
  842              		.cfi_endproc
-GAS LISTING /tmp/ccuzk9kC.s 			page 22
+GAS LISTING /tmp/ccMLzKI5.s 			page 22
 
 
  843              	.LFE26:
@@ -1284,21 +1284,21 @@ GAS LISTING /tmp/ccuzk9kC.s 			page 1
  2649              	3:
  2650 001c 00000000 		.align 8
  2651              	4:
-GAS LISTING /tmp/ccuzk9kC.s 			page 23
+GAS LISTING /tmp/ccMLzKI5.s 			page 23
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_util_fifo.c
-     /tmp/ccuzk9kC.s:9      .text.bFIFO_Init:0000000000000000 bFIFO_Init
-     /tmp/ccuzk9kC.s:64     .text.bFIFO_Deinit:0000000000000000 bFIFO_Deinit
-     /tmp/ccuzk9kC.s:110    .text.bFIFO_Length:0000000000000000 bFIFO_Length
-     /tmp/ccuzk9kC.s:169    .text.bFIFO_Flush:0000000000000000 bFIFO_Flush
-     /tmp/ccuzk9kC.s:206    .text.bFIFO_Write:0000000000000000 bFIFO_Write
-     /tmp/ccuzk9kC.s:348    .text.bFIFO_Read:0000000000000000 bFIFO_Read
-     /tmp/ccuzk9kC.s:484    .text.bFIFO_Copy:0000000000000000 bFIFO_Copy
-     /tmp/ccuzk9kC.s:619    .text.bFIFO_RemoveData:0000000000000000 bFIFO_RemoveData
-     /tmp/ccuzk9kC.s:698    .text.bFIFO_DynCreate:0000000000000000 bFIFO_DynCreate
-     /tmp/ccuzk9kC.s:795    .text.bFIFO_DynDelete:0000000000000000 bFIFO_DynDelete
+     /tmp/ccMLzKI5.s:9      .text.bFIFO_Init:0000000000000000 bFIFO_Init
+     /tmp/ccMLzKI5.s:64     .text.bFIFO_Deinit:0000000000000000 bFIFO_Deinit
+     /tmp/ccMLzKI5.s:110    .text.bFIFO_Length:0000000000000000 bFIFO_Length
+     /tmp/ccMLzKI5.s:169    .text.bFIFO_Flush:0000000000000000 bFIFO_Flush
+     /tmp/ccMLzKI5.s:206    .text.bFIFO_Write:0000000000000000 bFIFO_Write
+     /tmp/ccMLzKI5.s:348    .text.bFIFO_Read:0000000000000000 bFIFO_Read
+     /tmp/ccMLzKI5.s:484    .text.bFIFO_Copy:0000000000000000 bFIFO_Copy
+     /tmp/ccMLzKI5.s:619    .text.bFIFO_RemoveData:0000000000000000 bFIFO_RemoveData
+     /tmp/ccMLzKI5.s:698    .text.bFIFO_DynCreate:0000000000000000 bFIFO_DynCreate
+     /tmp/ccMLzKI5.s:795    .text.bFIFO_DynDelete:0000000000000000 bFIFO_DynDelete
 
 UNDEFINED SYMBOLS
 bMalloc

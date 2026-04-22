@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccyZymHJ.s 			page 1
+GAS LISTING /tmp/cc2Tu715.s 			page 1
 
 
    1              		.file	"sha512.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #include "thirdparty/mbedtls/bos_mbedtls/mbedtls/platform.h"
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #if defined(__aarch64__)
-GAS LISTING /tmp/ccyZymHJ.s 			page 2
+GAS LISTING /tmp/cc2Tu715.s 			page 2
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #  if defined(MBEDTLS_SHA512_USE_A64_CRYPTO_IF_PRESENT) || \
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  102:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #      if defined(__linux__)
  103:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** /* Our preferred method of detection is getauxval() */
  104:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #        include <sys/auxv.h>
-GAS LISTING /tmp/ccyZymHJ.s 			page 3
+GAS LISTING /tmp/cc2Tu715.s 			page 3
 
 
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #        if !defined(HWCAP_SHA512)
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  159:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #include <signal.h>
  160:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #include <setjmp.h>
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
-GAS LISTING /tmp/ccyZymHJ.s 			page 4
+GAS LISTING /tmp/cc2Tu715.s 			page 4
 
 
  162:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** static jmp_buf return_from_sigill;
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  216:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** }
  217:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #else
  218:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #define sha512_put_uint64_be    MBEDTLS_PUT_UINT64_BE
-GAS LISTING /tmp/ccyZymHJ.s 			page 5
+GAS LISTING /tmp/cc2Tu715.s 			page 5
 
 
  219:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #endif /* MBEDTLS_SHA512_SMALLER */
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
   41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
   42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
   43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
-GAS LISTING /tmp/ccyZymHJ.s 			page 6
+GAS LISTING /tmp/cc2Tu715.s 			page 6
 
 
   44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
   54              		.section	.text.mbedtls_sha512_free,"ax",@progbits
   55              		.p2align 4
   56              		.globl	mbedtls_sha512_free
-GAS LISTING /tmp/ccyZymHJ.s 			page 7
+GAS LISTING /tmp/cc2Tu715.s 			page 7
 
 
   58              	mbedtls_sha512_free:
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
   97              		.cfi_startproc
   98              		.loc 1 237 1 is_stmt 0 view .LVU21
   99 0000 F30F1EFA 		endbr64
-GAS LISTING /tmp/ccyZymHJ.s 			page 8
+GAS LISTING /tmp/cc2Tu715.s 			page 8
 
 
  238:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     *dst = *src;
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  133              	.LFE43:
  135              		.section	.text.mbedtls_sha512_starts,"ax",@progbits
  136              		.p2align 4
-GAS LISTING /tmp/ccyZymHJ.s 			page 9
+GAS LISTING /tmp/cc2Tu715.s 			page 9
 
 
  137              		.globl	mbedtls_sha512_starts
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  163      05C15D9D 
  163      BBCB
  245:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #if defined(MBEDTLS_SHA384_C) && defined(MBEDTLS_SHA512_C)
-GAS LISTING /tmp/ccyZymHJ.s 			page 10
+GAS LISTING /tmp/cc2Tu715.s 			page 10
 
 
  164              		.loc 1 245 1 view .LVU35
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  182              		.loc 1 263 8 view .LVU41
  183 0053 48B917DD 		movabsq	$-7973340178411365097, %rcx
  183      70305A01 
-GAS LISTING /tmp/ccyZymHJ.s 			page 11
+GAS LISTING /tmp/cc2Tu715.s 			page 11
 
 
  183      5991
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  210      831F
  211              	.LVL11:
  263:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #if defined(MBEDTLS_SHA512_C)
-GAS LISTING /tmp/ccyZymHJ.s 			page 12
+GAS LISTING /tmp/cc2Tu715.s 			page 12
 
 
  212              		.loc 1 263 8 view .LVU51
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  250              	.LFE44:
  252              		.section	.text.mbedtls_internal_sha512_process,"ax",@progbits
  253              		.p2align 4
-GAS LISTING /tmp/ccyZymHJ.s 			page 13
+GAS LISTING /tmp/cc2Tu715.s 			page 13
 
 
  254              		.globl	mbedtls_internal_sha512_process
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  343:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
  344:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #if defined(MBEDTLS_SHA512_USE_A64_CRYPTO_IF_PRESENT) || \
  345:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     defined(MBEDTLS_SHA512_USE_A64_CRYPTO_ONLY)
-GAS LISTING /tmp/ccyZymHJ.s 			page 14
+GAS LISTING /tmp/cc2Tu715.s 			page 14
 
 
  346:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  400:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         uint64x2_t ef_orig = ef;
  401:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         uint64x2_t gh_orig = gh;
  402:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
-GAS LISTING /tmp/ccyZymHJ.s 			page 15
+GAS LISTING /tmp/cc2Tu715.s 			page 15
 
 
  403:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         uint64x2_t s0 = (uint64x2_t) vld1q_u8(msg + 16 * 0);
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  457:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
  458:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         /* Rounds 10 and 11 */
  459:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         initial_sum = vaddq_u64(s5, vld1q_u64(&K[10]));
-GAS LISTING /tmp/ccyZymHJ.s 			page 16
+GAS LISTING /tmp/cc2Tu715.s 			page 16
 
 
  460:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         sum = vaddq_u64(vextq_u64(initial_sum, initial_sum, 1), ef);
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  514:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****             initial_sum = vaddq_u64(s4, vld1q_u64(&K[t + 8]));
  515:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****             sum = vaddq_u64(vextq_u64(initial_sum, initial_sum, 1), gh);
  516:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****             intermed = vsha512hq_u64(sum, vextq_u64(ef, gh, 1), vextq_u64(cd, ef, 1));
-GAS LISTING /tmp/ccyZymHJ.s 			page 17
+GAS LISTING /tmp/cc2Tu715.s 			page 17
 
 
  517:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****             gh = vsha512h2q_u64(intermed, cd, ab);
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  571:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****             SHA512_BLOCK_SIZE) ? 0 : -1;
  572:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** }
  573:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
-GAS LISTING /tmp/ccyZymHJ.s 			page 18
+GAS LISTING /tmp/cc2Tu715.s 			page 18
 
 
  574:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #endif /* MBEDTLS_SHA512_USE_A64_CRYPTO_IF_PRESENT || MBEDTLS_SHA512_USE_A64_CRYPTO_ONLY */
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  283 000d 4889FD   		movq	%rdi, %rbp
  284 0010 53       		pushq	%rbx
  285              	.LCFI9:
-GAS LISTING /tmp/ccyZymHJ.s 			page 19
+GAS LISTING /tmp/cc2Tu715.s 			page 19
 
 
  286              		.cfi_def_cfa_offset 56
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  630:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         local.A[i] = ctx->state[i];
  302              		.loc 1 630 19 discriminator 1 view .LVU70
  632:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     }
-GAS LISTING /tmp/ccyZymHJ.s 			page 20
+GAS LISTING /tmp/cc2Tu715.s 			page 20
 
 
  633:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
   29:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  * __ARM_FEATURE_UNALIGNED is defined where appropriate by armcc, gcc 7, clang 9
   30:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  * (and later versions) for Arm v7 and later; all x86 platforms should have
   31:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  * efficient unaligned access.
-GAS LISTING /tmp/ccyZymHJ.s 			page 21
+GAS LISTING /tmp/cc2Tu715.s 			page 21
 
 
   32:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  *
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
   86:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** typedef struct {
   87:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****     uint16_t x;
   88:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** } __attribute__((packed)) mbedtls_uint16_unaligned_t;
-GAS LISTING /tmp/ccyZymHJ.s 			page 22
+GAS LISTING /tmp/cc2Tu715.s 			page 22
 
 
   89:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** typedef struct {
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  143:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** {
  144:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #if defined(UINT_UNALIGNED)
  145:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****     mbedtls_uint16_unaligned_t *p16 = (mbedtls_uint16_unaligned_t *) p;
-GAS LISTING /tmp/ccyZymHJ.s 			page 23
+GAS LISTING /tmp/cc2Tu715.s 			page 23
 
 
  146:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****     *p16 = x;
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  200:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****     mbedtls_uint32_unaligned_t *p32 = (mbedtls_uint32_unaligned_t *) p;
  201:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****     p32->x = x;
  202:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #else
-GAS LISTING /tmp/ccyZymHJ.s 			page 24
+GAS LISTING /tmp/cc2Tu715.s 			page 24
 
 
  203:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****     memcpy(p, &x, sizeof(x));
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  327 003d 0F29AC24 		movaps	%xmm5, 656(%rsp)
  327      90020000 
  328 0045 F30F6F6F 		movdqu	64(%rdi), %xmm5
-GAS LISTING /tmp/ccyZymHJ.s 			page 25
+GAS LISTING /tmp/cc2Tu715.s 			page 25
 
 
  328      40
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  367              	.LBB167:
  221:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #if defined(UINT_UNALIGNED)
  368              		.loc 3 221 5 view .LVU103
-GAS LISTING /tmp/ccyZymHJ.s 			page 26
+GAS LISTING /tmp/cc2Tu715.s 			page 26
 
 
  229:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #endif
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  408              	.LBE183:
  409              		.loc 1 654 22 discriminator 1 view .LVU125
  410 007a 488B5618 		movq	24(%rsi), %rdx
-GAS LISTING /tmp/ccyZymHJ.s 			page 27
+GAS LISTING /tmp/cc2Tu715.s 			page 27
 
 
  631:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     }
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  449              		.loc 3 221 5 view .LVU146
  229:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #endif
  450              		.loc 3 229 5 view .LVU147
-GAS LISTING /tmp/ccyZymHJ.s 			page 28
+GAS LISTING /tmp/cc2Tu715.s 			page 28
 
 
  451              	.LBB155:
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  653:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         local.W[i] = MBEDTLS_GET_UINT64_BE(data, i << 3);
  492              		.loc 1 653 26 is_stmt 1 discriminator 3 view .LVU168
  493              	.LVL22:
-GAS LISTING /tmp/ccyZymHJ.s 			page 29
+GAS LISTING /tmp/cc2Tu715.s 			page 29
 
 
  653:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         local.W[i] = MBEDTLS_GET_UINT64_BE(data, i << 3);
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  532              	.LBE158:
  533              		.loc 3 231 5 is_stmt 1 view .LVU190
  534              		.loc 3 231 5 is_stmt 0 view .LVU191
-GAS LISTING /tmp/ccyZymHJ.s 			page 30
+GAS LISTING /tmp/cc2Tu715.s 			page 30
 
 
  535              	.LBE173:
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  575              		.loc 1 653 19 discriminator 1 view .LVU210
  576              		.loc 1 654 9 view .LVU211
  577              	.LBB190:
-GAS LISTING /tmp/ccyZymHJ.s 			page 31
+GAS LISTING /tmp/cc2Tu715.s 			page 31
 
 
  219:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** {
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  617              	.LBE191:
  618              		.loc 1 654 22 discriminator 1 view .LVU233
  619 00f9 488B5658 		movq	88(%rsi), %rdx
-GAS LISTING /tmp/ccyZymHJ.s 			page 32
+GAS LISTING /tmp/cc2Tu715.s 			page 32
 
 
  620 00fd 480FCA   		bswap	%rdx
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  658              		.loc 2 26 1 view .LVU254
  659              	.LBB148:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccyZymHJ.s 			page 33
+GAS LISTING /tmp/cc2Tu715.s 			page 33
 
 
  660              		.loc 2 29 3 view .LVU255
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  701              		.loc 1 654 9 view .LVU276
  702              	.LBB195:
  219:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** {
-GAS LISTING /tmp/ccyZymHJ.s 			page 34
+GAS LISTING /tmp/cc2Tu715.s 			page 34
 
 
  703              		.loc 3 219 24 view .LVU277
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  738 016c 660F73F3 		psllq	$63, %xmm3
  738      3F
  739 0171 660F73D2 		psrlq	$7, %xmm2
-GAS LISTING /tmp/ccyZymHJ.s 			page 35
+GAS LISTING /tmp/cc2Tu715.s 			page 35
 
 
  739      07
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  775      10
  776 01f9 488BBC24 		movq	704(%rsp), %rdi
  776      C0020000 
-GAS LISTING /tmp/ccyZymHJ.s 			page 36
+GAS LISTING /tmp/cc2Tu715.s 			page 36
 
 
  777              	.LVL32:
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  818              		.loc 1 664 9 view .LVU305
  819 0277 4D31F1   		xorq	%r14, %r9
  820 027a 4D89DE   		movq	%r11, %r14
-GAS LISTING /tmp/ccyZymHJ.s 			page 37
+GAS LISTING /tmp/cc2Tu715.s 			page 37
 
 
  821 027d 49C1C619 		rolq	$25, %r14
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  870 02fb 4D21DE   		andq	%r11, %r14
  871 02fe 4D09DD   		orq	%r11, %r13
  872 0301 4921D5   		andq	%rdx, %r13
-GAS LISTING /tmp/ccyZymHJ.s 			page 38
+GAS LISTING /tmp/cc2Tu715.s 			page 38
 
 
  873 0304 4D09F5   		orq	%r14, %r13
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  668:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****           local.A[3], local.A[4], local.A[5], local.W[i], K[i]); i++;
  920              		.loc 1 668 9 view .LVU325
  921 0378 4C01E9   		addq	%r13, %rcx
-GAS LISTING /tmp/ccyZymHJ.s 			page 39
+GAS LISTING /tmp/cc2Tu715.s 			page 39
 
 
  668:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****           local.A[3], local.A[4], local.A[5], local.W[i], K[i]); i++;
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  969              		.loc 1 672 9 view .LVU337
  970              		.loc 1 672 9 view .LVU338
  971 03e9 4C8B6B20 		movq	32(%rbx), %r13
-GAS LISTING /tmp/ccyZymHJ.s 			page 40
+GAS LISTING /tmp/cc2Tu715.s 			page 40
 
 
  972 03ed 4D036A20 		addq	32(%r10), %r13
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1021 046c 4C21CE   		andq	%r9, %rsi
  1022 046f 4831D6   		xorq	%rdx, %rsi
  1023 0472 4901F5   		addq	%rsi, %r13
-GAS LISTING /tmp/ccyZymHJ.s 			page 41
+GAS LISTING /tmp/cc2Tu715.s 			page 41
 
 
  1024 0475 4C89CE   		movq	%r9, %rsi
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1070 04e3 4901D5   		addq	%rdx, %r13
  1071 04e6 4889FA   		movq	%rdi, %rdx
  1072 04e9 48C1CA0E 		rorq	$14, %rdx
-GAS LISTING /tmp/ccyZymHJ.s 			page 42
+GAS LISTING /tmp/cc2Tu715.s 			page 42
 
 
  1073 04ed 4C31F2   		xorq	%r14, %rdx
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1115 054c 4921D7   		andq	%rdx, %r15
  1116 054f 4931FB   		xorq	%rdi, %r11
  1117 0552 4921CB   		andq	%rcx, %r11
-GAS LISTING /tmp/ccyZymHJ.s 			page 43
+GAS LISTING /tmp/cc2Tu715.s 			page 43
 
 
  1118 0555 4D31CB   		xorq	%r9, %r11
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1157              		.loc 1 684 9 is_stmt 1 view .LVU379
  1158              		.loc 1 684 23 is_stmt 0 view .LVU380
  1159 05c6 660FD484 		paddq	656(%rsp), %xmm0
-GAS LISTING /tmp/ccyZymHJ.s 			page 44
+GAS LISTING /tmp/cc2Tu715.s 			page 44
 
 
  1159      24900200 
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1185              		.loc 1 684 23 view .LVU392
  1186 062b 0F114530 		movups	%xmm0, 48(%rbp)
  683:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         ctx->state[i] += local.A[i];
-GAS LISTING /tmp/ccyZymHJ.s 			page 45
+GAS LISTING /tmp/cc2Tu715.s 			page 45
 
 
  1187              		.loc 1 683 25 is_stmt 1 discriminator 3 view .LVU393
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1224              		.cfi_def_cfa_offset 24
  1225 0671 415E     		popq	%r14
  1226              	.LCFI16:
-GAS LISTING /tmp/ccyZymHJ.s 			page 46
+GAS LISTING /tmp/cc2Tu715.s 			page 46
 
 
  1227              		.cfi_def_cfa_offset 16
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  725:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     static int supported = 0;
  726:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
  727:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     if (!done) {
-GAS LISTING /tmp/ccyZymHJ.s 			page 47
+GAS LISTING /tmp/cc2Tu715.s 			page 47
 
 
  728:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         supported = mbedtls_a64_crypto_sha512_determine_support();
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  763:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  1261              		.loc 1 763 1 view .LVU411
  1262 000d 4157     		pushq	%r15
-GAS LISTING /tmp/ccyZymHJ.s 			page 48
+GAS LISTING /tmp/cc2Tu715.s 			page 48
 
 
  1263              	.LCFI19:
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  775:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     ctx->total[0] += (uint64_t) ilen;
  1307              		.loc 1 775 19 view .LVU419
  1308 0039 488907   		movq	%rax, (%rdi)
-GAS LISTING /tmp/ccyZymHJ.s 			page 49
+GAS LISTING /tmp/cc2Tu715.s 			page 49
 
 
  773:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1349              		.loc 2 29 10 discriminator 1 view .LVU434
  1350 006a 4889EE   		movq	%rbp, %rsi
  1351              	.LVL55:
-GAS LISTING /tmp/ccyZymHJ.s 			page 50
+GAS LISTING /tmp/cc2Tu715.s 			page 50
 
 
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  792:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
  793:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     while (ilen >= SHA512_BLOCK_SIZE) {
  1389              		.loc 1 793 17 view .LVU447
-GAS LISTING /tmp/ccyZymHJ.s 			page 51
+GAS LISTING /tmp/cc2Tu715.s 			page 51
 
 
  1390 00a2 4531FF   		xorl	%r15d, %r15d
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1425              	.L80:
  708:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****         len  -= SHA512_BLOCK_SIZE;
  1426              		.loc 1 708 9 is_stmt 1 view .LVU454
-GAS LISTING /tmp/ccyZymHJ.s 			page 52
+GAS LISTING /tmp/cc2Tu715.s 			page 52
 
 
  709:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1462 0109 5B       		popq	%rbx
  1463              	.LCFI27:
  1464              		.cfi_def_cfa_offset 48
-GAS LISTING /tmp/ccyZymHJ.s 			page 53
+GAS LISTING /tmp/cc2Tu715.s 			page 53
 
 
  1465 010a 5D       		popq	%rbp
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1510 0129 EB35     		jmp	.L44
  1511              	.LVL76:
  1512              	.L78:
-GAS LISTING /tmp/ccyZymHJ.s 			page 54
+GAS LISTING /tmp/cc2Tu715.s 			page 54
 
 
  1513              	.LBB206:
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1551 016e 4183E604 		andl	$4, %r14d
  1552              	.LVL78:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccyZymHJ.s 			page 55
+GAS LISTING /tmp/cc2Tu715.s 			page 55
 
 
  1553              		.loc 2 29 10 discriminator 1 view .LVU485
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1595 01d0 F348A5   		rep movsq
  1596              	.LVL80:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccyZymHJ.s 			page 56
+GAS LISTING /tmp/cc2Tu715.s 			page 56
 
 
  1597              		.loc 2 29 10 discriminator 1 view .LVU490
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1645              	.LBE212:
  1646              	.LBE217:
  769:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     }
-GAS LISTING /tmp/ccyZymHJ.s 			page 57
+GAS LISTING /tmp/cc2Tu715.s 			page 57
 
 
  1647              		.loc 1 769 16 view .LVU496
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1685              	.LCFI39:
  1686              		.cfi_def_cfa_offset 40
  1687              		.cfi_offset 3, -40
-GAS LISTING /tmp/ccyZymHJ.s 			page 58
+GAS LISTING /tmp/cc2Tu715.s 			page 58
 
 
  1688 000d 4889FB   		movq	%rdi, %rbx
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1731 003d 0F827D01 		jb	.L113
  1731      0000
  1732 0043 488D7808 		leaq	8(%rax), %rdi
-GAS LISTING /tmp/ccyZymHJ.s 			page 59
+GAS LISTING /tmp/cc2Tu715.s 			page 59
 
 
  1733              	.LVL91:
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1761 0072 4C89EE   		movq	%r13, %rsi
  1762 0075 4889DF   		movq	%rbx, %rdi
  846:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****            | (ctx->total[1] <<  3);
-GAS LISTING /tmp/ccyZymHJ.s 			page 60
+GAS LISTING /tmp/cc2Tu715.s 			page 60
 
 
  1763              		.loc 1 846 10 view .LVU530
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  254:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #else
  255:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****     memcpy(p, &x, sizeof(x));
  1788              		.loc 3 255 5 view .LVU537
-GAS LISTING /tmp/ccyZymHJ.s 			page 61
+GAS LISTING /tmp/cc2Tu715.s 			page 61
 
 
  1789              	.LBB280:
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  855:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     }
  856:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
  857:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****     /*
-GAS LISTING /tmp/ccyZymHJ.s 			page 62
+GAS LISTING /tmp/cc2Tu715.s 			page 62
 
 
  858:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c ****      * Output final state
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  1869              		.loc 2 29 10 discriminator 1 view .LVU572
  1870              	.LBE288:
-GAS LISTING /tmp/ccyZymHJ.s 			page 63
+GAS LISTING /tmp/cc2Tu715.s 			page 63
 
 
  1871              	.LBE287:
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1913              		.loc 2 29 10 discriminator 1 view .LVU590
  1914              	.LBE294:
  1915              	.LBE293:
-GAS LISTING /tmp/ccyZymHJ.s 			page 64
+GAS LISTING /tmp/cc2Tu715.s 			page 64
 
 
  1916              	.LBE292:
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1958              	.LBE300:
  1959              	.LBE299:
  1960              	.LBE298:
-GAS LISTING /tmp/ccyZymHJ.s 			page 65
+GAS LISTING /tmp/cc2Tu715.s 			page 65
 
 
  1961              		.loc 1 865 52 is_stmt 1 discriminator 4 view .LVU609
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  1993              	.LCFI42:
  1994              		.cfi_def_cfa_offset 32
  1995              	.LVL117:
-GAS LISTING /tmp/ccyZymHJ.s 			page 66
+GAS LISTING /tmp/cc2Tu715.s 			page 66
 
 
  1996              		.loc 1 880 1 view .LVU618
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2043              		.loc 2 59 10 discriminator 1 view .LVU629
  2044 0127 48C70000 		movq	$0, (%rax)
  2044      000000
-GAS LISTING /tmp/ccyZymHJ.s 			page 67
+GAS LISTING /tmp/cc2Tu715.s 			page 67
 
 
  2045 012e 48C74408 		movq	$0, -8(%rax,%rcx)
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2091 0170 498D7D08 		leaq	8(%r13), %rdi
  2092 0174 4C89E9   		movq	%r13, %rcx
  2093 0177 31C0     		xorl	%eax, %eax
-GAS LISTING /tmp/ccyZymHJ.s 			page 68
+GAS LISTING /tmp/cc2Tu715.s 			page 68
 
 
  2094              	.LVL131:
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2142 01d0 F6C202   		testb	$2, %dl
  2143 01d3 0F8492FE 		je	.L89
  2143      FFFF
-GAS LISTING /tmp/ccyZymHJ.s 			page 69
+GAS LISTING /tmp/cc2Tu715.s 			page 69
 
 
  2144 01d9 31F6     		xorl	%esi, %esi
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2185              	.LBB317:
  2186              	.LBI317:
  246:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** {
-GAS LISTING /tmp/ccyZymHJ.s 			page 70
+GAS LISTING /tmp/cc2Tu715.s 			page 70
 
 
  2187              		.loc 3 246 20 view .LVU661
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2225              		.loc 2 59 10 discriminator 1 view .LVU674
  2226              	.LBE308:
  2227              	.LBE321:
-GAS LISTING /tmp/ccyZymHJ.s 			page 71
+GAS LISTING /tmp/cc2Tu715.s 			page 71
 
 
  2228              	.LBB322:
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2269      000000
  2270              	.LCFI52:
  2271              		.cfi_def_cfa_offset 272
-GAS LISTING /tmp/ccyZymHJ.s 			page 72
+GAS LISTING /tmp/cc2Tu715.s 			page 72
 
 
  2272              		.loc 1 891 1 view .LVU677
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2302              	.LBI334:
   57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
  2303              		.loc 2 57 1 view .LVU687
-GAS LISTING /tmp/ccyZymHJ.s 			page 73
+GAS LISTING /tmp/cc2Tu715.s 			page 73
 
 
  2304              	.LBB336:
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2344 005b 48BB3BA7 		movabsq	$-4942790177534073029, %rbx
  2344      CA8485AE 
  2344      67BB
-GAS LISTING /tmp/ccyZymHJ.s 			page 74
+GAS LISTING /tmp/cc2Tu715.s 			page 74
 
 
  2345 0065 49BB2BF8 		movabsq	$4354685564936845355, %r11
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  263:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #if defined(MBEDTLS_SHA512_C)
  2373              		.loc 1 263 8 view .LVU709
  2374 00ce 48B96BBD 		movabsq	$2270897969802886507, %rcx
-GAS LISTING /tmp/ccyZymHJ.s 			page 75
+GAS LISTING /tmp/cc2Tu715.s 			page 75
 
 
  2374      41FBABD9 
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  272:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** #endif /* MBEDTLS_SHA512_C */
  2404              		.loc 1 272 23 view .LVU719
  2405 013a 48894424 		movq	%rax, 72(%rsp)
-GAS LISTING /tmp/ccyZymHJ.s 			page 76
+GAS LISTING /tmp/cc2Tu715.s 			page 76
 
 
  2405      48
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2439              	.LBE352:
  2440              	.LBE351:
  2441              	.LBE350:
-GAS LISTING /tmp/ccyZymHJ.s 			page 77
+GAS LISTING /tmp/cc2Tu715.s 			page 77
 
 
  925:../../bos/thirdparty/mbedtls/bos_mbedtls/sha512.c **** 
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2484              		.loc 1 923 1 view .LVU738
  2485 018d EBBB     		jmp	.L121
  2486              	.LVL161:
-GAS LISTING /tmp/ccyZymHJ.s 			page 78
+GAS LISTING /tmp/cc2Tu715.s 			page 78
 
 
  2487 018f 90       		.p2align 4,,10
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2523      8647BEEF 
  2524 0090 B5D58C8B 		.quad	1135362057144423861
  2524      C69DC10F 
-GAS LISTING /tmp/ccyZymHJ.s 			page 79
+GAS LISTING /tmp/cc2Tu715.s 			page 79
 
 
  2525 0098 659CAC77 		.quad	2597628984639134821
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2552 0170 2A207157 		.quad	-860691631967231958
  2552      85350EF4 
  2553 0178 B8D1BB32 		.quad	1182934255886127544
-GAS LISTING /tmp/ccyZymHJ.s 			page 80
+GAS LISTING /tmp/cc2Tu715.s 			page 80
 
 
  2553      70A06A10 
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  2580      0ABE9E3C 
  2581 0258 4C0D109C 		.quad	4836135668995329356
  2581      C4671D43 
-GAS LISTING /tmp/ccyZymHJ.s 			page 81
+GAS LISTING /tmp/cc2Tu715.s 			page 81
 
 
  2582 0260 B6423ECB 		.quad	5532061633213252278
@@ -4832,20 +4832,20 @@ GAS LISTING /tmp/ccyZymHJ.s 			page 1
  8745              	3:
  8746 001c 00000000 		.align 8
  8747              	4:
-GAS LISTING /tmp/ccyZymHJ.s 			page 82
+GAS LISTING /tmp/cc2Tu715.s 			page 82
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 sha512.c
-     /tmp/ccyZymHJ.s:9      .text.mbedtls_sha512_init:0000000000000000 mbedtls_sha512_init
-     /tmp/ccyZymHJ.s:58     .text.mbedtls_sha512_free:0000000000000000 mbedtls_sha512_free
-     /tmp/ccyZymHJ.s:93     .text.mbedtls_sha512_clone:0000000000000000 mbedtls_sha512_clone
-     /tmp/ccyZymHJ.s:139    .text.mbedtls_sha512_starts:0000000000000000 mbedtls_sha512_starts
-     /tmp/ccyZymHJ.s:256    .text.mbedtls_internal_sha512_process:0000000000000000 mbedtls_internal_sha512_process
-     /tmp/ccyZymHJ.s:2505   .rodata.K:0000000000000000 K
-     /tmp/ccyZymHJ.s:1246   .text.mbedtls_sha512_update:0000000000000000 mbedtls_sha512_update
-     /tmp/ccyZymHJ.s:1657   .text.mbedtls_sha512_finish:0000000000000000 mbedtls_sha512_finish
-     /tmp/ccyZymHJ.s:2242   .text.mbedtls_sha512:0000000000000000 mbedtls_sha512
+     /tmp/cc2Tu715.s:9      .text.mbedtls_sha512_init:0000000000000000 mbedtls_sha512_init
+     /tmp/cc2Tu715.s:58     .text.mbedtls_sha512_free:0000000000000000 mbedtls_sha512_free
+     /tmp/cc2Tu715.s:93     .text.mbedtls_sha512_clone:0000000000000000 mbedtls_sha512_clone
+     /tmp/cc2Tu715.s:139    .text.mbedtls_sha512_starts:0000000000000000 mbedtls_sha512_starts
+     /tmp/cc2Tu715.s:256    .text.mbedtls_internal_sha512_process:0000000000000000 mbedtls_internal_sha512_process
+     /tmp/cc2Tu715.s:2505   .rodata.K:0000000000000000 K
+     /tmp/cc2Tu715.s:1246   .text.mbedtls_sha512_update:0000000000000000 mbedtls_sha512_update
+     /tmp/cc2Tu715.s:1657   .text.mbedtls_sha512_finish:0000000000000000 mbedtls_sha512_finish
+     /tmp/cc2Tu715.s:2242   .text.mbedtls_sha512:0000000000000000 mbedtls_sha512
 
 UNDEFINED SYMBOLS
 mbedtls_platform_zeroize

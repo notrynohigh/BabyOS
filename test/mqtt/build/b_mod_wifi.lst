@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccumMMsB.s 			page 1
+GAS LISTING /tmp/ccY0I7Ss.s 			page 1
 
 
    1              		.file	"b_mod_wifi.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
   33:../../bos/modules/b_mod_wifi.c **** #include "modules/inc/b_mod_wifi.h"
   34:../../bos/modules/b_mod_wifi.c **** 
   35:../../bos/modules/b_mod_wifi.c **** #if (defined(_WIFI_ENABLE) && (_WIFI_ENABLE == 1))
-GAS LISTING /tmp/ccumMMsB.s 			page 2
+GAS LISTING /tmp/ccY0I7Ss.s 			page 2
 
 
   36:../../bos/modules/b_mod_wifi.c **** #include "core/inc/b_core.h"
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
   90:../../bos/modules/b_mod_wifi.c ****  * \}
   91:../../bos/modules/b_mod_wifi.c ****  */
   92:../../bos/modules/b_mod_wifi.c **** 
-GAS LISTING /tmp/ccumMMsB.s 			page 3
+GAS LISTING /tmp/ccY0I7Ss.s 			page 3
 
 
   93:../../bos/modules/b_mod_wifi.c **** /**
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
   31 000d 488D1500 		leaq	__func__.1(%rip), %rdx
   31      000000
   32              	.LVL2:
-GAS LISTING /tmp/ccumMMsB.s 			page 4
+GAS LISTING /tmp/ccY0I7Ss.s 			page 4
 
 
  130:../../bos/modules/b_mod_wifi.c ****     uint8_t result = 0;
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
   71 005e 83FBA1   		cmpl	$-95, %ebx
   72 0061 0F8C9900 		jl	.L38
   72      0000
-GAS LISTING /tmp/ccumMMsB.s 			page 5
+GAS LISTING /tmp/ccY0I7Ss.s 			page 5
 
 
   73 0067 85DB     		testl	%ebx, %ebx
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  159:../../bos/modules/b_mod_wifi.c ****             if (bWifiModule.mode == B_WIFI_MODE_STA_AP)
  160:../../bos/modules/b_mod_wifi.c ****             {
  161:../../bos/modules/b_mod_wifi.c ****                 result               = 1;
-GAS LISTING /tmp/ccumMMsB.s 			page 6
+GAS LISTING /tmp/ccY0I7Ss.s 			page 6
 
 
  162:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  105 00b0 0F85F300 		jne	.L39
  105      0000
  106 00b6 4883C410 		addq	$16, %rsp
-GAS LISTING /tmp/ccumMMsB.s 			page 7
+GAS LISTING /tmp/ccY0I7Ss.s 			page 7
 
 
  107              	.LCFI5:
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  133:../../bos/modules/b_mod_wifi.c ****     {
  147              		.loc 1 133 5 view .LVU32
  148 0100 83C363   		addl	$99, %ebx
-GAS LISTING /tmp/ccumMMsB.s 			page 8
+GAS LISTING /tmp/ccY0I7Ss.s 			page 8
 
 
  149              	.LVL10:
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  182      000002
  183 0147 0F8555FF 		jne	.L1
  183      FFFF
-GAS LISTING /tmp/ccumMMsB.s 			page 9
+GAS LISTING /tmp/ccY0I7Ss.s 			page 9
 
 
  161:../../bos/modules/b_mod_wifi.c ****                 bWifiModule.cur_mode = bWifiModule.mode;
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  211      0000
  152:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
  212              		.loc 1 152 17 is_stmt 1 view .LVU60
-GAS LISTING /tmp/ccumMMsB.s 			page 10
+GAS LISTING /tmp/ccY0I7Ss.s 			page 10
 
 
  152:../../bos/modules/b_mod_wifi.c ****                               bWifiModule.user_data);
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  250              	.LCFI9:
  251              		.cfi_def_cfa_offset 24
  252              		.cfi_offset 6, -24
-GAS LISTING /tmp/ccumMMsB.s 			page 11
+GAS LISTING /tmp/ccY0I7Ss.s 			page 11
 
 
  253 0007 53       		pushq	%rbx
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  225:../../bos/modules/b_mod_wifi.c ****                 {
  226:../../bos/modules/b_mod_wifi.c ****                     PT_WAIT_UNTIL(pt, bWifiModule.cur_mode == bWifiModule.mode, MS2TICKS(5000));
  227:../../bos/modules/b_mod_wifi.c ****                 }
-GAS LISTING /tmp/ccumMMsB.s 			page 12
+GAS LISTING /tmp/ccY0I7Ss.s 			page 12
 
 
  228:../../bos/modules/b_mod_wifi.c ****             }
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  287              		.loc 1 278 5 view .LVU80
  288              		.loc 1 278 5 view .LVU81
  289 003d 31C0     		xorl	%eax, %eax
-GAS LISTING /tmp/ccumMMsB.s 			page 13
+GAS LISTING /tmp/ccY0I7Ss.s 			page 13
 
 
  290 003f 31D2     		xorl	%edx, %edx
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  212:../../bos/modules/b_mod_wifi.c ****         {
  337              		.loc 1 212 9 view .LVU98
  212:../../bos/modules/b_mod_wifi.c ****         {
-GAS LISTING /tmp/ccumMMsB.s 			page 14
+GAS LISTING /tmp/ccY0I7Ss.s 			page 14
 
 
  338              		.loc 1 212 24 is_stmt 0 view .LVU99
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  222:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
  369              		.loc 1 222 17 is_stmt 1 view .LVU112
  222:../../bos/modules/b_mod_wifi.c ****                 bClose(fd);
-GAS LISTING /tmp/ccumMMsB.s 			page 15
+GAS LISTING /tmp/ccY0I7Ss.s 			page 15
 
 
  370              		.loc 1 222 23 is_stmt 0 view .LVU113
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  405      0000
  406 00f4 7412     		je	.L75
  407              	.L56:
-GAS LISTING /tmp/ccumMMsB.s 			page 16
+GAS LISTING /tmp/ccY0I7Ss.s 			page 16
 
 
  226:../../bos/modules/b_mod_wifi.c ****                 }
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  443 0127 B9140100 		movl	$276, %ecx
  443      00
  276:../../bos/modules/b_mod_wifi.c ****     }
-GAS LISTING /tmp/ccumMMsB.s 			page 17
+GAS LISTING /tmp/ccY0I7Ss.s 			page 17
 
 
  444              		.loc 1 276 9 is_stmt 0 discriminator 2 view .LVU140
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  265:../../bos/modules/b_mod_wifi.c ****                     }
  484              		.loc 1 265 25 is_stmt 1 view .LVU150
  265:../../bos/modules/b_mod_wifi.c ****                     }
-GAS LISTING /tmp/ccumMMsB.s 			page 18
+GAS LISTING /tmp/ccY0I7Ss.s 			page 18
 
 
  485              		.loc 1 265 25 view .LVU151
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  523              	.LCFI21:
  524              		.cfi_def_cfa_offset 8
  525 0180 C3       		ret
-GAS LISTING /tmp/ccumMMsB.s 			page 19
+GAS LISTING /tmp/ccY0I7Ss.s 			page 19
 
 
  526              	.LVL39:
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  561 01b5 89C7     		movl	%eax, %edi
  562 01b7 488D1500 		leaq	115+bWifiModule(%rip), %rdx
  562      000000
-GAS LISTING /tmp/ccumMMsB.s 			page 20
+GAS LISTING /tmp/ccY0I7Ss.s 			page 20
 
 
  563 01be BE040000 		movl	$4, %esi
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  597      0000
  598              	.L52:
  229:../../bos/modules/b_mod_wifi.c ****             {
-GAS LISTING /tmp/ccumMMsB.s 			page 21
+GAS LISTING /tmp/ccY0I7Ss.s 			page 21
 
 
  599              		.loc 1 229 18 view .LVU191
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  633 0248 66448913 		movw	%r10w, (%rbx)
  634 024c E997FEFF 		jmp	.L42
  634      FF
-GAS LISTING /tmp/ccumMMsB.s 			page 22
+GAS LISTING /tmp/ccY0I7Ss.s 			page 22
 
 
  635              	.LVL51:
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  233:../../bos/modules/b_mod_wifi.c ****                 {
  669              		.loc 1 233 17 view .LVU212
  233:../../bos/modules/b_mod_wifi.c ****                 {
-GAS LISTING /tmp/ccumMMsB.s 			page 23
+GAS LISTING /tmp/ccY0I7Ss.s 			page 23
 
 
  670              		.loc 1 233 20 is_stmt 0 view .LVU213
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  706 02e9 C7430888 		movl	$5000, 8(%rbx)
  706      130000
  707 02f0 894304   		movl	%eax, 4(%rbx)
-GAS LISTING /tmp/ccumMMsB.s 			page 24
+GAS LISTING /tmp/ccY0I7Ss.s 			page 24
 
 
  244:../../bos/modules/b_mod_wifi.c ****                 }
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  741      FF
  742              	.LBE18:
  743              		.cfi_endproc
-GAS LISTING /tmp/ccumMMsB.s 			page 25
+GAS LISTING /tmp/ccY0I7Ss.s 			page 25
 
 
  744              	.LFE29:
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  783 001e 4885F6   		testq	%rsi, %rsi
  784 0021 0F847E00 		je	.L104
  784      0000
-GAS LISTING /tmp/ccumMMsB.s 			page 26
+GAS LISTING /tmp/ccY0I7Ss.s 			page 26
 
 
  785 0027 4889F5   		movq	%rsi, %rbp
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  816              		.loc 1 304 5 view .LVU256
  304:../../bos/modules/b_mod_wifi.c ****     drv_cb.cb             = _bWifiDrvCb;
  817              		.loc 1 304 27 is_stmt 0 view .LVU257
-GAS LISTING /tmp/ccumMMsB.s 			page 27
+GAS LISTING /tmp/ccY0I7Ss.s 			page 27
 
 
  818 005c 4C892D00 		movq	%r13, 224+bWifiModule(%rip)
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  851 0098 5B       		popq	%rbx
  852              	.LCFI29:
  853              		.cfi_def_cfa_offset 32
-GAS LISTING /tmp/ccumMMsB.s 			page 28
+GAS LISTING /tmp/ccY0I7Ss.s 			page 28
 
 
  854 0099 5D       		popq	%rbp
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  899              		.loc 1 318 5 is_stmt 1 view .LVU276
  319:../../bos/modules/b_mod_wifi.c ****     bWifiModule.mode     = mode;
  320:../../bos/modules/b_mod_wifi.c ****     if (bWifiModule.task_id == NULL)
-GAS LISTING /tmp/ccumMMsB.s 			page 29
+GAS LISTING /tmp/ccY0I7Ss.s 			page 29
 
 
  900              		.loc 1 320 8 is_stmt 0 view .LVU277
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  932 0048 48890500 		movq	%rax, 296+bWifiModule(%rip)
  932      000000
  324:../../bos/modules/b_mod_wifi.c **** }
-GAS LISTING /tmp/ccumMMsB.s 			page 30
+GAS LISTING /tmp/ccY0I7Ss.s 			page 30
 
 
  933              		.loc 1 324 5 is_stmt 1 view .LVU290
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  980              	.LCFI37:
  981              		.cfi_def_cfa_offset 24
  982              		.cfi_offset 6, -24
-GAS LISTING /tmp/ccumMMsB.s 			page 31
+GAS LISTING /tmp/ccY0I7Ss.s 			page 31
 
 
  983 0010 4889F5   		movq	%rsi, %rbp
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  353:../../bos/modules/b_mod_wifi.c ****     memset(&bWifiModule.soft_ap, 0, sizeof(bWifiModule.soft_ap));
  1013              		.loc 1 353 5 is_stmt 1 view .LVU311
  1014              	.LVL82:
-GAS LISTING /tmp/ccumMMsB.s 			page 32
+GAS LISTING /tmp/ccY0I7Ss.s 			page 32
 
 
  1015              	.LBB19:
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
   52:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    where the second and third parameter are transposed.  This is
   53:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    especially problematic if the intended fill value is zero.  In this
   54:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    case no work is done at all.  We detect these problems by referring
-GAS LISTING /tmp/ccumMMsB.s 			page 33
+GAS LISTING /tmp/ccY0I7Ss.s 			page 33
 
 
   55:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    non-existing functions.  */
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1059              		.loc 2 26 1 is_stmt 1 view .LVU322
  1060              	.LBB27:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccumMMsB.s 			page 34
+GAS LISTING /tmp/ccY0I7Ss.s 			page 34
 
 
  1061              		.loc 2 29 3 view .LVU323
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1094      00
  1095              	.LVL90:
  1096              	.L124:
-GAS LISTING /tmp/ccumMMsB.s 			page 35
+GAS LISTING /tmp/ccY0I7Ss.s 			page 35
 
 
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1138 00ce 31D2     		xorl	%edx, %edx
  1139 00d0 4889EF   		movq	%rbp, %rdi
  1140 00d3 F348AB   		rep stosq
-GAS LISTING /tmp/ccumMMsB.s 			page 36
+GAS LISTING /tmp/ccY0I7Ss.s 			page 36
 
 
  1141 00d6 668917   		movw	%dx, (%rdi)
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1180              		.loc 1 357 40 is_stmt 0 view .LVU360
  1181 00fb C6050000 		movb	$0, 114+bWifiModule(%rip)
  1181      000000
-GAS LISTING /tmp/ccumMMsB.s 			page 37
+GAS LISTING /tmp/ccY0I7Ss.s 			page 37
 
 
  1182 0102 EBA2     		jmp	.L124
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1227              	.LCFI45:
  1228              		.cfi_def_cfa_offset 24
  1229              		.cfi_offset 6, -24
-GAS LISTING /tmp/ccumMMsB.s 			page 38
+GAS LISTING /tmp/ccY0I7Ss.s 			page 38
 
 
  1230 0010 4889F5   		movq	%rsi, %rbp
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  389:../../bos/modules/b_mod_wifi.c ****     }
  390:../../bos/modules/b_mod_wifi.c ****     memset(&bWifiModule.ap, 0, sizeof(bWifiModule.ap));
  1260              		.loc 1 390 5 is_stmt 1 view .LVU381
-GAS LISTING /tmp/ccumMMsB.s 			page 39
+GAS LISTING /tmp/ccY0I7Ss.s 			page 39
 
 
  1261              	.LVL104:
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1303              	.LBB44:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  1304              		.loc 2 29 3 view .LVU391
-GAS LISTING /tmp/ccumMMsB.s 			page 40
+GAS LISTING /tmp/ccY0I7Ss.s 			page 40
 
 
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1338              	.LVL112:
  1339              	.L140:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccumMMsB.s 			page 41
+GAS LISTING /tmp/ccY0I7Ss.s 			page 41
 
 
  1340              		.loc 2 29 10 discriminator 1 view .LVU404
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1382 00f0 4889E9   		movq	%rbp, %rcx
  1383 00f3 48C70500 		movq	$0, 206+bWifiModule(%rip)
  1383      00000000 
-GAS LISTING /tmp/ccumMMsB.s 			page 42
+GAS LISTING /tmp/ccY0I7Ss.s 			page 42
 
 
  1383      000000
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1423              	.LVL120:
  1424              		.p2align 4,,10
  1425 0132 660F1F44 		.p2align 3
-GAS LISTING /tmp/ccumMMsB.s 			page 43
+GAS LISTING /tmp/ccY0I7Ss.s 			page 43
 
 
  1425      0000
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  1474              		.file 13 "/usr/include/string.h"
  1475              		.file 14 "../../bos/core/inc/b_core.h"
  1476              		.file 15 "../../bos/hal/inc/b_hal.h"
-GAS LISTING /tmp/ccumMMsB.s 			page 44
+GAS LISTING /tmp/ccY0I7Ss.s 			page 44
 
 
  1477              		.file 16 "../../bos/utils/inc/b_util_log.h"
@@ -2599,26 +2599,26 @@ GAS LISTING /tmp/ccumMMsB.s 			page 1
  5892              	3:
  5893 001c 00000000 		.align 8
  5894              	4:
-GAS LISTING /tmp/ccumMMsB.s 			page 45
+GAS LISTING /tmp/ccY0I7Ss.s 			page 45
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_mod_wifi.c
-     /tmp/ccumMMsB.s:15     .text._bWifiDrvCb:0000000000000000 _bWifiDrvCb
-     /tmp/ccumMMsB.s:1454   .rodata.__func__.1:0000000000000000 __func__.1
-     /tmp/ccumMMsB.s:1460   .bss.bWifiModule:0000000000000000 bWifiModule
-     /tmp/ccumMMsB.s:233    .text._bWifiTask:0000000000000000 _bWifiTask
-     /tmp/ccumMMsB.s:1448   .rodata.__func__.0:0000000000000000 __func__.0
-     /tmp/ccumMMsB.s:750    .text.bWifiInit:0000000000000000 bWifiInit
-     /tmp/ccumMMsB.s:892    .text.bWifiSetMode:0000000000000000 bWifiSetMode
-     /tmp/ccumMMsB.s:947    .text.bWifiDeinit:0000000000000000 bWifiDeinit
-     /tmp/ccumMMsB.s:963    .text.bWifiApConfig:0000000000000000 bWifiApConfig
-     /tmp/ccumMMsB.s:1208   .text.bWifiJoinAp:0000000000000000 bWifiJoinAp
-     /tmp/ccumMMsB.s:6      .rodata._bWifiDrvCb.str1.1:0000000000000000 .LC0
-     /tmp/ccumMMsB.s:10     .rodata._bWifiDrvCb.str1.8:0000000000000000 .LC1
-     /tmp/ccumMMsB.s:226    .rodata._bWifiTask.str1.1:0000000000000000 .LC2
-     /tmp/ccumMMsB.s:228    .rodata._bWifiTask.str1.1:0000000000000015 .LC3
-     /tmp/ccumMMsB.s:886    .rodata.bWifiSetMode.str1.1:0000000000000000 .LC4
+     /tmp/ccY0I7Ss.s:15     .text._bWifiDrvCb:0000000000000000 _bWifiDrvCb
+     /tmp/ccY0I7Ss.s:1454   .rodata.__func__.1:0000000000000000 __func__.1
+     /tmp/ccY0I7Ss.s:1460   .bss.bWifiModule:0000000000000000 bWifiModule
+     /tmp/ccY0I7Ss.s:233    .text._bWifiTask:0000000000000000 _bWifiTask
+     /tmp/ccY0I7Ss.s:1448   .rodata.__func__.0:0000000000000000 __func__.0
+     /tmp/ccY0I7Ss.s:750    .text.bWifiInit:0000000000000000 bWifiInit
+     /tmp/ccY0I7Ss.s:892    .text.bWifiSetMode:0000000000000000 bWifiSetMode
+     /tmp/ccY0I7Ss.s:947    .text.bWifiDeinit:0000000000000000 bWifiDeinit
+     /tmp/ccY0I7Ss.s:963    .text.bWifiApConfig:0000000000000000 bWifiApConfig
+     /tmp/ccY0I7Ss.s:1208   .text.bWifiJoinAp:0000000000000000 bWifiJoinAp
+     /tmp/ccY0I7Ss.s:6      .rodata._bWifiDrvCb.str1.1:0000000000000000 .LC0
+     /tmp/ccY0I7Ss.s:10     .rodata._bWifiDrvCb.str1.8:0000000000000000 .LC1
+     /tmp/ccY0I7Ss.s:226    .rodata._bWifiTask.str1.1:0000000000000000 .LC2
+     /tmp/ccY0I7Ss.s:228    .rodata._bWifiTask.str1.1:0000000000000015 .LC3
+     /tmp/ccY0I7Ss.s:886    .rodata.bWifiSetMode.str1.1:0000000000000000 .LC4
 
 UNDEFINED SYMBOLS
 bLogOut

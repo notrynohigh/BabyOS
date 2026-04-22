@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccLZuulq.s 			page 1
+GAS LISTING /tmp/ccejFz1N.s 			page 1
 
 
    1              		.file	"MQTTFormat.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
   34:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
   22              		.loc 1 34 1 view .LVU5
   23 0012 C3       		ret
-GAS LISTING /tmp/ccLZuulq.s 			page 2
+GAS LISTING /tmp/ccejFz1N.s 			page 2
 
 
   24              		.cfi_endproc
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
   56              		.cfi_def_cfa_offset 16
   57              		.cfi_offset 13, -16
   58 0006 4863F6   		movslq	%esi, %rsi
-GAS LISTING /tmp/ccLZuulq.s 			page 3
+GAS LISTING /tmp/ccejFz1N.s 			page 3
 
 
   38:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = 0;
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
   48:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #if defined __USE_ISOC99 || defined __USE_UNIX98
   49:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** # ifdef __va_arg_pack
   50:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __fortify_function int
-GAS LISTING /tmp/ccLZuulq.s 			page 4
+GAS LISTING /tmp/ccejFz1N.s 			page 4
 
 
   51:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** __NTH (snprintf (char *__restrict __s, size_t __n,
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  109              	.LCFI5:
  110              		.cfi_def_cfa_offset 56
  111              	.LBE28:
-GAS LISTING /tmp/ccLZuulq.s 			page 5
+GAS LISTING /tmp/ccejFz1N.s 			page 5
 
 
  112              	.LBE33:
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
   48:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				data->will.qos, data->will.retained,
   49:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				data->will.topicName.lenstring.len, data->will.topicName.lenstring.data,
   50:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				data->will.message.lenstring.len, data->will.message.lenstring.data);
-GAS LISTING /tmp/ccLZuulq.s 			page 6
+GAS LISTING /tmp/ccejFz1N.s 			page 6
 
 
   51:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	if (data->username.lenstring.data && data->username.lenstring.len > 0)
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  199              	.LVL11:
  200              		.loc 1 58 1 view .LVU43
  201 0091 415D     		popq	%r13
-GAS LISTING /tmp/ccLZuulq.s 			page 7
+GAS LISTING /tmp/ccejFz1N.s 			page 7
 
 
  202              	.LCFI14:
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  248 00b2 BA020000 		movl	$2, %edx
  248      00
  249 00b7 4C8D0500 		leaq	.LC3(%rip), %r8
-GAS LISTING /tmp/ccLZuulq.s 			page 8
+GAS LISTING /tmp/ccejFz1N.s 			page 8
 
 
  249      000000
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  297              		.cfi_restore_state
   52:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", user name %.*s", data->username.lenstring.len, data->username.lenstring.data);
  298              		.loc 1 52 3 is_stmt 1 view .LVU63
-GAS LISTING /tmp/ccLZuulq.s 			page 9
+GAS LISTING /tmp/ccejFz1N.s 			page 9
 
 
  299              	.LBB42:
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  343              	.LVL25:
  344              		.loc 2 54 10 discriminator 1 view .LVU75
  345              	.LBE46:
-GAS LISTING /tmp/ccLZuulq.s 			page 10
+GAS LISTING /tmp/ccejFz1N.s 			page 10
 
 
  346              	.LBE49:
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  390 012f 8B4358   		movl	88(%rbx), %eax
  391              	.LVL28:
  392              		.loc 2 54 10 discriminator 1 view .LVU86
-GAS LISTING /tmp/ccLZuulq.s 			page 11
+GAS LISTING /tmp/ccejFz1N.s 			page 11
 
 
  393              	.LBE53:
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
   46:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 				", will QoS %d, will retain %d, will topic %.*s, will message %.*s",
  439              		.loc 1 46 12 discriminator 1 view .LVU94
  440 0164 4883C430 		addq	$48, %rsp
-GAS LISTING /tmp/ccLZuulq.s 			page 12
+GAS LISTING /tmp/ccejFz1N.s 			page 12
 
 
  441              	.LCFI36:
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  484              	.LBE64:
  485              	.LBE66:
  486              		.loc 1 63 17 view .LVU104
-GAS LISTING /tmp/ccLZuulq.s 			page 13
+GAS LISTING /tmp/ccejFz1N.s 			page 13
 
 
  487 000f 4863F6   		movslq	%esi, %rsi
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  528              		.loc 1 70 1 is_stmt 1 view -0
  529              		.cfi_startproc
  530              		.loc 1 70 1 is_stmt 0 view .LVU112
-GAS LISTING /tmp/ccLZuulq.s 			page 14
+GAS LISTING /tmp/ccejFz1N.s 			page 14
 
 
  531 0000 F30F1EFA 		endbr64
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  579              	.LBE75:
  580              		.loc 1 71 17 view .LVU125
  581 002a B9140000 		movl	$20, %ecx
-GAS LISTING /tmp/ccLZuulq.s 			page 15
+GAS LISTING /tmp/ccejFz1N.s 			page 15
 
 
  581      00
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
   77:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
  626              		.loc 1 77 1 is_stmt 0 view .LVU134
  627 0061 4883C448 		addq	$72, %rsp
-GAS LISTING /tmp/ccLZuulq.s 			page 16
+GAS LISTING /tmp/ccejFz1N.s 			page 16
 
 
  628              	.LCFI49:
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  670              		.cfi_offset 12, -24
  671 0016 4863F6   		movslq	%esi, %rsi
   81:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	int strindex = snprintf(strbuf, strbuflen, "%s, packet id %d", MQTTPacket_names[packettype], packe
-GAS LISTING /tmp/ccLZuulq.s 			page 17
+GAS LISTING /tmp/ccejFz1N.s 			page 17
 
 
  672              		.loc 1 81 1 view .LVU143
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  719              	.LVL52:
  720              		.loc 2 54 10 discriminator 1 view .LVU153
  721 0043 E8000000 		call	__snprintf_chk@PLT
-GAS LISTING /tmp/ccLZuulq.s 			page 18
+GAS LISTING /tmp/ccejFz1N.s 			page 18
 
 
  721      00
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  771              	.L24:
  772              	.LCFI63:
  773              		.cfi_restore_state
-GAS LISTING /tmp/ccLZuulq.s 			page 19
+GAS LISTING /tmp/ccejFz1N.s 			page 19
 
 
   84:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		strindex += snprintf(strbuf + strindex, strbuflen - strindex, ", dup %d", dup);
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  817              	.LVL65:
   85:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
  818              		.loc 1 85 2 is_stmt 1 view .LVU176
-GAS LISTING /tmp/ccLZuulq.s 			page 20
+GAS LISTING /tmp/ccejFz1N.s 			page 20
 
 
  819              		.loc 1 86 1 is_stmt 0 view .LVU177
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  864              	.LBE92:
   91:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 	return snprintf(strbuf, strbuflen,
  865              		.loc 1 91 1 is_stmt 0 view .LVU185
-GAS LISTING /tmp/ccLZuulq.s 			page 21
+GAS LISTING /tmp/ccejFz1N.s 			page 21
 
 
  866 0004 4883EC10 		subq	$16, %rsp
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
   95:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		topicFilters[0].lenstring.len, topicFilters[0].lenstring.data,
   96:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** 		requestedQoSs[0]);
   97:../../bos/thirdparty/mqtt-pack/MQTTFormat.c **** }
-GAS LISTING /tmp/ccLZuulq.s 			page 22
+GAS LISTING /tmp/ccejFz1N.s 			page 22
 
 
  913              		.loc 1 97 1 view .LVU194
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  958              	.LVL78:
  959              	.LBB101:
  960              	.LBB99:
-GAS LISTING /tmp/ccLZuulq.s 			page 23
+GAS LISTING /tmp/ccejFz1N.s 			page 23
 
 
  961              		.loc 2 54 10 discriminator 1 view .LVU203
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  1002              		.loc 1 109 1 is_stmt 1 view -0
  1003              		.cfi_startproc
  1004              		.loc 1 109 1 is_stmt 0 view .LVU210
-GAS LISTING /tmp/ccLZuulq.s 			page 24
+GAS LISTING /tmp/ccejFz1N.s 			page 24
 
 
  1005 0000 F30F1EFA 		endbr64
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  1054      000000
  1055              	.LVL88:
  1056              		.loc 2 54 10 discriminator 1 view .LVU222
-GAS LISTING /tmp/ccLZuulq.s 			page 25
+GAS LISTING /tmp/ccejFz1N.s 			page 25
 
 
  1057 002b 51       		pushq	%rcx
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  1095      4500
  1096              	.LC20:
  1097 0048 53554241 		.string	"SUBACK"
-GAS LISTING /tmp/ccLZuulq.s 			page 26
+GAS LISTING /tmp/ccejFz1N.s 			page 26
 
 
  1097      434B00
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  1129              	.Letext0:
  1130              		.file 3 "/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h"
  1131              		.file 4 "../../bos/thirdparty/mqtt-pack/MQTTPacket.h"
-GAS LISTING /tmp/ccLZuulq.s 			page 27
+GAS LISTING /tmp/ccejFz1N.s 			page 27
 
 
  1132              		.file 5 "../../bos/thirdparty/mqtt-pack/MQTTConnect.h"
@@ -1579,31 +1579,31 @@ GAS LISTING /tmp/ccLZuulq.s 			page 1
  5848              	3:
  5849 001c 00000000 		.align 8
  5850              	4:
-GAS LISTING /tmp/ccLZuulq.s 			page 28
+GAS LISTING /tmp/ccejFz1N.s 			page 28
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 MQTTFormat.c
-     /tmp/ccLZuulq.s:9      .text.MQTTPacket_getName:0000000000000000 MQTTPacket_getName
-     /tmp/ccLZuulq.s:1112   .data.rel.local.MQTTPacket_names:0000000000000000 MQTTPacket_names
-     /tmp/ccLZuulq.s:43     .text.MQTTStringFormat_connect:0000000000000000 MQTTStringFormat_connect
-     /tmp/ccLZuulq.s:458    .text.MQTTStringFormat_connack:0000000000000000 MQTTStringFormat_connack
-     /tmp/ccLZuulq.s:525    .text.MQTTStringFormat_publish:0000000000000000 MQTTStringFormat_publish
-     /tmp/ccLZuulq.s:643    .text.MQTTStringFormat_ack:0000000000000000 MQTTStringFormat_ack
-     /tmp/ccLZuulq.s:849    .text.MQTTStringFormat_subscribe:0000000000000000 MQTTStringFormat_subscribe
-     /tmp/ccLZuulq.s:929    .text.MQTTStringFormat_suback:0000000000000000 MQTTStringFormat_suback
-     /tmp/ccLZuulq.s:999    .text.MQTTStringFormat_unsubscribe:0000000000000000 MQTTStringFormat_unsubscribe
-     /tmp/ccLZuulq.s:29     .rodata.MQTTStringFormat_connect.str1.8:0000000000000000 .LC0
-     /tmp/ccLZuulq.s:37     .rodata.MQTTStringFormat_connect.str1.1:0000000000000011 .LC3
-     /tmp/ccLZuulq.s:35     .rodata.MQTTStringFormat_connect.str1.1:0000000000000000 .LC2
-     /tmp/ccLZuulq.s:32     .rodata.MQTTStringFormat_connect.str1.8:0000000000000050 .LC1
-     /tmp/ccLZuulq.s:452    .rodata.MQTTStringFormat_connack.str1.8:0000000000000000 .LC4
-     /tmp/ccLZuulq.s:519    .rodata.MQTTStringFormat_publish.str1.8:0000000000000000 .LC5
-     /tmp/ccLZuulq.s:635    .rodata.MQTTStringFormat_ack.str1.1:0000000000000000 .LC6
-     /tmp/ccLZuulq.s:637    .rodata.MQTTStringFormat_ack.str1.1:0000000000000011 .LC7
-     /tmp/ccLZuulq.s:843    .rodata.MQTTStringFormat_subscribe.str1.8:0000000000000000 .LC8
-     /tmp/ccLZuulq.s:923    .rodata.MQTTStringFormat_suback.str1.8:0000000000000000 .LC9
-     /tmp/ccLZuulq.s:993    .rodata.MQTTStringFormat_unsubscribe.str1.8:0000000000000000 .LC10
+     /tmp/ccejFz1N.s:9      .text.MQTTPacket_getName:0000000000000000 MQTTPacket_getName
+     /tmp/ccejFz1N.s:1112   .data.rel.local.MQTTPacket_names:0000000000000000 MQTTPacket_names
+     /tmp/ccejFz1N.s:43     .text.MQTTStringFormat_connect:0000000000000000 MQTTStringFormat_connect
+     /tmp/ccejFz1N.s:458    .text.MQTTStringFormat_connack:0000000000000000 MQTTStringFormat_connack
+     /tmp/ccejFz1N.s:525    .text.MQTTStringFormat_publish:0000000000000000 MQTTStringFormat_publish
+     /tmp/ccejFz1N.s:643    .text.MQTTStringFormat_ack:0000000000000000 MQTTStringFormat_ack
+     /tmp/ccejFz1N.s:849    .text.MQTTStringFormat_subscribe:0000000000000000 MQTTStringFormat_subscribe
+     /tmp/ccejFz1N.s:929    .text.MQTTStringFormat_suback:0000000000000000 MQTTStringFormat_suback
+     /tmp/ccejFz1N.s:999    .text.MQTTStringFormat_unsubscribe:0000000000000000 MQTTStringFormat_unsubscribe
+     /tmp/ccejFz1N.s:29     .rodata.MQTTStringFormat_connect.str1.8:0000000000000000 .LC0
+     /tmp/ccejFz1N.s:37     .rodata.MQTTStringFormat_connect.str1.1:0000000000000011 .LC3
+     /tmp/ccejFz1N.s:35     .rodata.MQTTStringFormat_connect.str1.1:0000000000000000 .LC2
+     /tmp/ccejFz1N.s:32     .rodata.MQTTStringFormat_connect.str1.8:0000000000000050 .LC1
+     /tmp/ccejFz1N.s:452    .rodata.MQTTStringFormat_connack.str1.8:0000000000000000 .LC4
+     /tmp/ccejFz1N.s:519    .rodata.MQTTStringFormat_publish.str1.8:0000000000000000 .LC5
+     /tmp/ccejFz1N.s:635    .rodata.MQTTStringFormat_ack.str1.1:0000000000000000 .LC6
+     /tmp/ccejFz1N.s:637    .rodata.MQTTStringFormat_ack.str1.1:0000000000000011 .LC7
+     /tmp/ccejFz1N.s:843    .rodata.MQTTStringFormat_subscribe.str1.8:0000000000000000 .LC8
+     /tmp/ccejFz1N.s:923    .rodata.MQTTStringFormat_suback.str1.8:0000000000000000 .LC9
+     /tmp/ccejFz1N.s:993    .rodata.MQTTStringFormat_unsubscribe.str1.8:0000000000000000 .LC10
 
 UNDEFINED SYMBOLS
 __snprintf_chk

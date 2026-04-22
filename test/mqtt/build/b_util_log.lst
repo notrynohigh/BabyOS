@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc0WmQqb.s 			page 1
+GAS LISTING /tmp/ccEJToge.s 			page 1
 
 
    1              		.file	"b_util_log.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
   45:../../bos/utils/b_util_log.c ****  * \{
   46:../../bos/utils/b_util_log.c ****  */
   47:../../bos/utils/b_util_log.c **** 
-GAS LISTING /tmp/cc0WmQqb.s 			page 2
+GAS LISTING /tmp/ccEJToge.s 			page 2
 
 
   48:../../bos/utils/b_util_log.c **** /**
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  102:../../bos/utils/b_util_log.c **** 
  103:../../bos/utils/b_util_log.c **** /**
  104:../../bos/utils/b_util_log.c ****  * \}
-GAS LISTING /tmp/cc0WmQqb.s 			page 3
+GAS LISTING /tmp/ccEJToge.s 			page 3
 
 
  105:../../bos/utils/b_util_log.c ****  */
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  135:../../bos/utils/b_util_log.c ****     {
  136:../../bos/utils/b_util_log.c ****         pbLogOutputBytes(pbuf, len);
  137:../../bos/utils/b_util_log.c ****     }
-GAS LISTING /tmp/cc0WmQqb.s 			page 4
+GAS LISTING /tmp/ccEJToge.s 			page 4
 
 
  138:../../bos/utils/b_util_log.c **** }
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
   62              		.loc 1 163 1 is_stmt 0 view .LVU17
   63 0011 89D8     		movl	%ebx, %eax
   64 0013 5B       		popq	%rbx
-GAS LISTING /tmp/cc0WmQqb.s 			page 5
+GAS LISTING /tmp/ccEJToge.s 			page 5
 
 
   65              	.LCFI1:
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
   89              		.cfi_def_cfa_offset 16
   90              		.cfi_offset 15, -16
   91 0006 4989F7   		movq	%rsi, %r15
-GAS LISTING /tmp/cc0WmQqb.s 			page 6
+GAS LISTING /tmp/ccEJToge.s 			page 6
 
 
   92 0009 4156     		pushq	%r14
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  133      38
  134 0077 31C0     		xorl	%eax, %eax
  196:../../bos/utils/b_util_log.c ****     uint32_t buf_len  = 0;
-GAS LISTING /tmp/cc0WmQqb.s 			page 7
+GAS LISTING /tmp/ccEJToge.s 			page 7
 
 
  135              		.loc 1 196 5 is_stmt 1 view .LVU22
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  237:../../bos/utils/b_util_log.c ****         if (param & B_LOG_PARAM_LINE)
  238:../../bos/utils/b_util_log.c ****         {
  239:../../bos/utils/b_util_log.c ****             str_len = snprintf(line_number, sizeof(line_number), "%u", line);
-GAS LISTING /tmp/cc0WmQqb.s 			page 8
+GAS LISTING /tmp/ccEJToge.s 			page 8
 
 
  240:../../bos/utils/b_util_log.c ****             if (str_len < 0)
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  180              	.LVL15:
  181              		.p2align 4,,10
  182 00a4 0F1F4000 		.p2align 3
-GAS LISTING /tmp/cc0WmQqb.s 			page 9
+GAS LISTING /tmp/ccEJToge.s 			page 9
 
 
  183              	.L56:
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
   47:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
   48:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #endif
   49:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
-GAS LISTING /tmp/cc0WmQqb.s 			page 10
+GAS LISTING /tmp/ccEJToge.s 			page 10
 
 
   50:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  221              		.loc 1 213 41 view .LVU48
  222 00d8 0FB61418 		movzbl	(%rax,%rbx), %edx
  223              	.LVL21:
-GAS LISTING /tmp/cc0WmQqb.s 			page 11
+GAS LISTING /tmp/ccEJToge.s 			page 11
 
 
  214:../../bos/utils/b_util_log.c ****         pbuf[buf_len++] = ':';
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  256 0116 8D7802   		leal	2(%rax), %edi
  227:../../bos/utils/b_util_log.c ****         }
  257              		.loc 1 227 25 view .LVU65
-GAS LISTING /tmp/cc0WmQqb.s 			page 12
+GAS LISTING /tmp/ccEJToge.s 			page 12
 
 
  258 0119 8D5803   		leal	3(%rax), %ebx
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  295      20
  296              	.LVL27:
  297              	.L9:
-GAS LISTING /tmp/cc0WmQqb.s 			page 13
+GAS LISTING /tmp/ccEJToge.s 			page 13
 
 
  229:../../bos/utils/b_util_log.c ****         {
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
   15:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    You should have received a copy of the GNU Lesser General Public
   16:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    License along with the GNU C Library; if not, see
   17:/usr/include/x86_64-linux-gnu/bits/stdio2.h ****    <https://www.gnu.org/licenses/>.  */
-GAS LISTING /tmp/cc0WmQqb.s 			page 14
+GAS LISTING /tmp/ccEJToge.s 			page 14
 
 
   18:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  327 018d 4D89E0   		movq	%r12, %r8
  328 0190 BA020000 		movl	$2, %edx
  328      00
-GAS LISTING /tmp/cc0WmQqb.s 			page 15
+GAS LISTING /tmp/ccEJToge.s 			page 15
 
 
  329              	.LBE35:
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  365              	.LVL33:
  170:../../bos/utils/b_util_log.c **** #else
  366              		.loc 1 170 5 discriminator 1 view .LVU99
-GAS LISTING /tmp/cc0WmQqb.s 			page 16
+GAS LISTING /tmp/ccEJToge.s 			page 16
 
 
  367 01c9 4C89F6   		movq	%r14, %rsi
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  403              		.loc 1 244 13 view .LVU108
  404              	.LBB42:
  405              	.LBI42:
-GAS LISTING /tmp/cc0WmQqb.s 			page 17
+GAS LISTING /tmp/ccEJToge.s 			page 17
 
 
   26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  444 0242 BE9F8601 		movl	$99999, %esi
  444      00
  445 0247 B9A08601 		movl	$100000, %ecx
-GAS LISTING /tmp/cc0WmQqb.s 			page 18
+GAS LISTING /tmp/ccEJToge.s 			page 18
 
 
  445      00
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  483      0F
  484 027b 0FB6C8   		movzbl	%al, %ecx
  485              	.LBE50:
-GAS LISTING /tmp/cc0WmQqb.s 			page 19
+GAS LISTING /tmp/ccEJToge.s 			page 19
 
 
  486              	.LBE54:
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  235:../../bos/utils/b_util_log.c ****         }
  525              		.loc 1 235 25 view .LVU141
  526 02bd E9A4FEFF 		jmp	.L18
-GAS LISTING /tmp/cc0WmQqb.s 			page 20
+GAS LISTING /tmp/ccEJToge.s 			page 20
 
 
  526      FF
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  566 0324 4D890431 		movq	%r8, (%r9,%rsi)
  567 0328 39C1     		cmpl	%eax, %ecx
  568 032a 72EF     		jb	.L16
-GAS LISTING /tmp/cc0WmQqb.s 			page 21
+GAS LISTING /tmp/ccEJToge.s 			page 21
 
 
  569 032c E927FEFF 		jmp	.L13
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  607 0380 C1E903   		shrl	$3, %ecx
  608 0383 F348A5   		rep movsq
  609 0386 E925FFFF 		jmp	.L20
-GAS LISTING /tmp/cc0WmQqb.s 			page 22
+GAS LISTING /tmp/ccEJToge.s 			page 22
 
 
  609      FF
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  652      0000
  653 03e5 418B4C07 		movl	-4(%r15,%rax), %ecx
  653      FC
-GAS LISTING /tmp/cc0WmQqb.s 			page 23
+GAS LISTING /tmp/ccEJToge.s 			page 23
 
 
  654 03ea 894C06FC 		movl	%ecx, -4(%rsi,%rax)
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  708 0000 00000000 		.zero	100000
  708      00000000 
  708      00000000 
-GAS LISTING /tmp/cc0WmQqb.s 			page 24
+GAS LISTING /tmp/ccEJToge.s 			page 24
 
 
  708      00000000 
@@ -1408,18 +1408,18 @@ GAS LISTING /tmp/cc0WmQqb.s 			page 1
  3984              	3:
  3985 001c 00000000 		.align 8
  3986              	4:
-GAS LISTING /tmp/cc0WmQqb.s 			page 25
+GAS LISTING /tmp/ccEJToge.s 			page 25
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_util_log.c
-     /tmp/cc0WmQqb.s:9      .text.bLogOutputBytes:0000000000000000 bLogOutputBytes
-     /tmp/cc0WmQqb.s:34     .text._write:0000000000000000 _write
-     /tmp/cc0WmQqb.s:80     .text.bLogOut:0000000000000000 bLogOut
-     /tmp/cc0WmQqb.s:707    .bss.bLogBuff:0000000000000000 bLogBuff
-     /tmp/cc0WmQqb.s:700    .rodata.bLogParamTable:0000000000000000 bLogParamTable
-     /tmp/cc0WmQqb.s:695    .rodata.bLogPrefix:0000000000000000 bLogPrefix
-     /tmp/cc0WmQqb.s:74     .rodata.bLogOut.str1.1:0000000000000000 .LC0
+     /tmp/ccEJToge.s:9      .text.bLogOutputBytes:0000000000000000 bLogOutputBytes
+     /tmp/ccEJToge.s:34     .text._write:0000000000000000 _write
+     /tmp/ccEJToge.s:80     .text.bLogOut:0000000000000000 bLogOut
+     /tmp/ccEJToge.s:707    .bss.bLogBuff:0000000000000000 bLogBuff
+     /tmp/ccEJToge.s:700    .rodata.bLogParamTable:0000000000000000 bLogParamTable
+     /tmp/ccEJToge.s:695    .rodata.bLogPrefix:0000000000000000 bLogPrefix
+     /tmp/ccEJToge.s:74     .rodata.bLogOut.str1.1:0000000000000000 .LC0
 
 UNDEFINED SYMBOLS
 bHalUartSend

@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccxuwAz9.s 			page 1
+GAS LISTING /tmp/ccDvPpwP.s 			page 1
 
 
    1              		.file	"b_task.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
   47:../../bos/core/b_task.c **** /**
   48:../../bos/core/b_task.c ****  * \addtogroup TASK
   49:../../bos/core/b_task.c ****  * \{
-GAS LISTING /tmp/ccxuwAz9.s 			page 2
+GAS LISTING /tmp/ccDvPpwP.s 			page 2
 
 
   50:../../bos/core/b_task.c ****  */
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  104:../../bos/core/b_task.c **** static bTaskAttr_t *_bTaskFind(bTaskId_t id)
  105:../../bos/core/b_task.c **** {
  106:../../bos/core/b_task.c ****     struct list_head *pos   = NULL;
-GAS LISTING /tmp/ccxuwAz9.s 			page 3
+GAS LISTING /tmp/ccDvPpwP.s 			page 3
 
 
  107:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  125:../../bos/core/b_task.c ****     {
  126:../../bos/core/b_task.c ****         pattr = list_entry(pos, bTaskAttr_t, list);
   42              		.loc 1 126 9 view .LVU9
-GAS LISTING /tmp/ccxuwAz9.s 			page 4
+GAS LISTING /tmp/ccDvPpwP.s 			page 4
 
 
  127:../../bos/core/b_task.c ****         if (pattr != NULL && pattr->func != NULL && pattr->enable == 1)
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
   85 0052 C3       		ret
   86              		.cfi_endproc
   87              	.LFE29:
-GAS LISTING /tmp/ccxuwAz9.s 			page 5
+GAS LISTING /tmp/ccDvPpwP.s 			page 5
 
 
   89              		.section	.rodata.bTaskCreate.str1.1,"aMS",@progbits,1
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  115              		.loc 1 104 21 view .LVU29
  116              	.LBB25:
  106:../../bos/core/b_task.c ****     bTaskAttr_t      *pattr = NULL;
-GAS LISTING /tmp/ccxuwAz9.s 			page 6
+GAS LISTING /tmp/ccDvPpwP.s 			page 6
 
 
  117              		.loc 1 106 5 view .LVU30
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  153              	.LVL15:
  154              	.L14:
  115:../../bos/core/b_task.c ****     }
-GAS LISTING /tmp/ccxuwAz9.s 			page 7
+GAS LISTING /tmp/ccDvPpwP.s 			page 7
 
 
  155              		.loc 1 115 9 is_stmt 1 view .LVU46
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  164:../../bos/core/b_task.c ****     attr->task_pt.init = 0;
  189              		.loc 1 164 5 view .LVU62
  164:../../bos/core/b_task.c ****     attr->task_pt.init = 0;
-GAS LISTING /tmp/ccxuwAz9.s 			page 8
+GAS LISTING /tmp/ccDvPpwP.s 			page 8
 
 
  190              		.loc 1 164 24 is_stmt 0 view .LVU63
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
   18:../../bos/utils/inc/b_util_list.h ****  *
   19:../../bos/utils/inc/b_util_list.h ****  * The above copyright notice and this permission notice shall be included in all
   20:../../bos/utils/inc/b_util_list.h ****  * copies or substantial portions of the Software.
-GAS LISTING /tmp/ccxuwAz9.s 			page 9
+GAS LISTING /tmp/ccDvPpwP.s 			page 9
 
 
   21:../../bos/utils/inc/b_util_list.h ****  *
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
   75:../../bos/utils/inc/b_util_list.h ****  * @member: the name of the list_struct within the struct.
   76:../../bos/utils/inc/b_util_list.h ****  */
   77:../../bos/utils/inc/b_util_list.h **** #define list_entry(ptr, type, member) \
-GAS LISTING /tmp/ccxuwAz9.s 			page 10
+GAS LISTING /tmp/ccDvPpwP.s 			page 10
 
 
   78:../../bos/utils/inc/b_util_list.h ****     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  226              		.loc 2 95 5 is_stmt 1 view .LVU86
   95:../../bos/utils/inc/b_util_list.h ****     WRITE_ONCE(prev->next, newItem);
  227              		.loc 2 95 19 is_stmt 0 view .LVU87
-GAS LISTING /tmp/ccxuwAz9.s 			page 11
+GAS LISTING /tmp/ccDvPpwP.s 			page 11
 
 
  228 0096 4C894138 		movq	%r8, 56(%rcx)
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  179:../../bos/core/b_task.c ****     pattr = _bTaskFind(id);
  269              		.loc 1 179 5 is_stmt 1 view .LVU99
  270              	.LVL24:
-GAS LISTING /tmp/ccxuwAz9.s 			page 12
+GAS LISTING /tmp/ccDvPpwP.s 			page 12
 
 
  271              	.LBB29:
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  308              		.loc 1 111 12 view .LVU114
  309              	.LBE30:
  310              	.LBE29:
-GAS LISTING /tmp/ccxuwAz9.s 			page 13
+GAS LISTING /tmp/ccDvPpwP.s 			page 13
 
 
  180:../../bos/core/b_task.c ****     if (pattr != NULL)
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  333 0048 C6421800 		movb	$0, 24(%rdx)
  185:../../bos/core/b_task.c ****         pattr->func   = NULL;
  334              		.loc 1 185 9 is_stmt 1 view .LVU125
-GAS LISTING /tmp/ccxuwAz9.s 			page 14
+GAS LISTING /tmp/ccDvPpwP.s 			page 14
 
 
  335              		.loc 1 185 23 is_stmt 0 view .LVU126
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  376              		.loc 1 106 5 view .LVU136
  107:../../bos/core/b_task.c ****     list_for_each(pos, &bTaskListHead)
  377              		.loc 1 107 5 view .LVU137
-GAS LISTING /tmp/ccxuwAz9.s 			page 15
+GAS LISTING /tmp/ccDvPpwP.s 			page 15
 
 
  108:../../bos/core/b_task.c ****     {
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  415              	.L30:
  201:../../bos/core/b_task.c ****     }
  202:../../bos/core/b_task.c **** }
-GAS LISTING /tmp/ccxuwAz9.s 			page 16
+GAS LISTING /tmp/ccDvPpwP.s 			page 16
 
 
  416              		.loc 1 202 1 view .LVU152
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  456              		.loc 1 108 5 view .LVU163
  457 0009 488B0500 		movq	bTaskListHead(%rip), %rax
  457      000000
-GAS LISTING /tmp/ccxuwAz9.s 			page 17
+GAS LISTING /tmp/ccDvPpwP.s 			page 17
 
 
  458              	.LVL45:
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  495 0035 C3       		ret
  496              	.LVL50:
  497 0036 662E0F1F 		.p2align 4,,10
-GAS LISTING /tmp/ccxuwAz9.s 			page 18
+GAS LISTING /tmp/ccDvPpwP.s 			page 18
 
 
  497      84000000 
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  108:../../bos/core/b_task.c ****     {
  537              		.loc 1 108 5 discriminator 1 view .LVU189
  108:../../bos/core/b_task.c ****     {
-GAS LISTING /tmp/ccxuwAz9.s 			page 19
+GAS LISTING /tmp/ccDvPpwP.s 			page 19
 
 
  538              		.loc 1 108 5 is_stmt 0 view .LVU190
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  576              	.LVL59:
  577 0038 0F1F8400 		.p2align 4,,10
  577      00000000 
-GAS LISTING /tmp/ccxuwAz9.s 			page 20
+GAS LISTING /tmp/ccDvPpwP.s 			page 20
 
 
  578              		.p2align 3
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  617              		.section	.text.bTaskGetId,"ax",@progbits
  618              		.p2align 4
  619              		.globl	bTaskGetId
-GAS LISTING /tmp/ccxuwAz9.s 			page 21
+GAS LISTING /tmp/ccDvPpwP.s 			page 21
 
 
  621              	bTaskGetId:
@@ -1258,28 +1258,28 @@ GAS LISTING /tmp/ccxuwAz9.s 			page 1
  3062 0010 020000C0 		.long	0xc0000002
  3063 0014 04000000 		.long	3f - 2f
  3064              	2:
-GAS LISTING /tmp/ccxuwAz9.s 			page 22
+GAS LISTING /tmp/ccDvPpwP.s 			page 22
 
 
  3065 0018 03000000 		.long	0x3
  3066              	3:
  3067 001c 00000000 		.align 8
  3068              	4:
-GAS LISTING /tmp/ccxuwAz9.s 			page 23
+GAS LISTING /tmp/ccDvPpwP.s 			page 23
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_task.c
-     /tmp/ccxuwAz9.s:8      .text._bTaskCore:0000000000000000 _bTaskCore
-     /tmp/ccxuwAz9.s:650    .data.rel.local.bTaskListHead:0000000000000000 bTaskListHead
-     /tmp/ccxuwAz9.s:644    .bss.pCurrentTaskAttr:0000000000000000 pCurrentTaskAttr
-     /tmp/ccxuwAz9.s:96     .text.bTaskCreate:0000000000000000 bTaskCreate
-     /tmp/ccxuwAz9.s:256    .text.bTaskRemove:0000000000000000 bTaskRemove
-     /tmp/ccxuwAz9.s:357    .text.bTaskSuspend:0000000000000000 bTaskSuspend
-     /tmp/ccxuwAz9.s:435    .text.bTaskResume:0000000000000000 bTaskResume
-     /tmp/ccxuwAz9.s:513    .text.bTaskGetName:0000000000000000 bTaskGetName
-     /tmp/ccxuwAz9.s:621    .text.bTaskGetId:0000000000000000 bTaskGetId
-     /tmp/ccxuwAz9.s:638    .bos_polling:0000000000000000 polling_bTaskCore
-     /tmp/ccxuwAz9.s:90     .rodata.bTaskCreate.str1.1:0000000000000000 .LC0
+     /tmp/ccDvPpwP.s:8      .text._bTaskCore:0000000000000000 _bTaskCore
+     /tmp/ccDvPpwP.s:650    .data.rel.local.bTaskListHead:0000000000000000 bTaskListHead
+     /tmp/ccDvPpwP.s:644    .bss.pCurrentTaskAttr:0000000000000000 pCurrentTaskAttr
+     /tmp/ccDvPpwP.s:96     .text.bTaskCreate:0000000000000000 bTaskCreate
+     /tmp/ccDvPpwP.s:256    .text.bTaskRemove:0000000000000000 bTaskRemove
+     /tmp/ccDvPpwP.s:357    .text.bTaskSuspend:0000000000000000 bTaskSuspend
+     /tmp/ccDvPpwP.s:435    .text.bTaskResume:0000000000000000 bTaskResume
+     /tmp/ccDvPpwP.s:513    .text.bTaskGetName:0000000000000000 bTaskGetName
+     /tmp/ccDvPpwP.s:621    .text.bTaskGetId:0000000000000000 bTaskGetId
+     /tmp/ccDvPpwP.s:638    .bos_polling:0000000000000000 polling_bTaskCore
+     /tmp/ccDvPpwP.s:90     .rodata.bTaskCreate.str1.1:0000000000000000 .LC0
 
 NO UNDEFINED SYMBOLS

@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccktxwLU.s 			page 1
+GAS LISTING /tmp/ccKwH3L0.s 			page 1
 
 
    1              		.file	"oid.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
   42:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****  * the other functions)
   43:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****  */
   44:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #define FN_OID_TYPED_FROM_ASN1(TYPE_T, NAME, LIST)                    \
-GAS LISTING /tmp/ccktxwLU.s 			page 2
+GAS LISTING /tmp/ccKwH3L0.s 			page 2
 
 
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     static const TYPE_T *oid_ ## NAME ## _from_asn1(                   \
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
   99:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     {                                                                           \
  100:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         const TYPE_T *data = oid_ ## TYPE_NAME ## _from_asn1(oid);            \
  101:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         if (data == NULL) return MBEDTLS_ERR_OID_NOT_FOUND;                 \
-GAS LISTING /tmp/ccktxwLU.s 			page 3
+GAS LISTING /tmp/ccKwH3L0.s 			page 3
 
 
  102:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         *(ATTR1) = data->ATTR1;                                                 \
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  156:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** {
  157:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     {
  158:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         OID_DESCRIPTOR(MBEDTLS_OID_AT_CN,          "id-at-commonName",               "Common Name")
-GAS LISTING /tmp/ccktxwLU.s 			page 4
+GAS LISTING /tmp/ccKwH3L0.s 			page 4
 
 
  159:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         "CN",
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  213:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         OID_DESCRIPTOR(MBEDTLS_OID_AT_INITIALS,    "id-at-initials",                 "Initials"),
  214:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         "initials",
  215:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     },
-GAS LISTING /tmp/ccktxwLU.s 			page 5
+GAS LISTING /tmp/ccKwH3L0.s 			page 5
 
 
  216:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     {
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
   24              	.LBB32:
  258:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_attr_short_name,
   25              		.loc 1 258 1 view .LVU4
-GAS LISTING /tmp/ccktxwLU.s 			page 6
+GAS LISTING /tmp/ccKwH3L0.s 			page 6
 
 
  258:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_attr_short_name,
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
   72              		.p2align 3
   73              	.L3:
  258:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_attr_short_name,
-GAS LISTING /tmp/ccktxwLU.s 			page 7
+GAS LISTING /tmp/ccKwH3L0.s 			page 7
 
 
   74              		.loc 1 258 1 is_stmt 1 discriminator 6 view .LVU13
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  119 0061 415C     		popq	%r12
  120              	.LCFI8:
  121              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/ccktxwLU.s 			page 8
+GAS LISTING /tmp/ccKwH3L0.s 			page 8
 
 
  122              	.LVL9:
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  172 0085 C3       		ret
  173              		.cfi_endproc
  174              	.LFE62:
-GAS LISTING /tmp/ccktxwLU.s 			page 9
+GAS LISTING /tmp/ccKwH3L0.s 			page 9
 
 
  176              		.section	.rodata.mbedtls_oid_get_x509_ext_type.str1.1,"aMS",@progbits,1
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  305:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****                        "id-ce-certificatePolicies",
  306:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****                        "Certificate Policies"),
  307:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         MBEDTLS_OID_X509_EXT_CERTIFICATE_POLICIES,
-GAS LISTING /tmp/ccktxwLU.s 			page 10
+GAS LISTING /tmp/ccKwH3L0.s 			page 10
 
 
  308:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     },
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  215              	.LCFI18:
  216              		.cfi_def_cfa_offset 32
  217              		.cfi_offset 6, -32
-GAS LISTING /tmp/ccktxwLU.s 			page 11
+GAS LISTING /tmp/ccKwH3L0.s 			page 11
 
 
  218 0014 53       		pushq	%rbx
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  327:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_x509_ext_type, oid_x509_ext_t, x509_ext, int, ext_type)
  260              		.loc 1 327 1 is_stmt 0 discriminator 3 view .LVU56
  261 0043 498B7510 		movq	16(%r13), %rsi
-GAS LISTING /tmp/ccktxwLU.s 			page 12
+GAS LISTING /tmp/ccKwH3L0.s 			page 12
 
 
  262 0047 4889EA   		movq	%rbp, %rdx
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  312      FF
  313              		.loc 1 328 1 view .LVU68
  314 0071 5B       		popq	%rbx
-GAS LISTING /tmp/ccktxwLU.s 			page 13
+GAS LISTING /tmp/ccKwH3L0.s 			page 13
 
 
  315              	.LCFI28:
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  340:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     OID_DESCRIPTOR(MBEDTLS_OID_EMAIL_PROTECTION, "id-kp-emailProtection", "E-mail Protection"),
  341:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     OID_DESCRIPTOR(MBEDTLS_OID_TIME_STAMPING,    "id-kp-timeStamping",    "Time Stamping"),
  342:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     OID_DESCRIPTOR(MBEDTLS_OID_OCSP_SIGNING,     "id-kp-OCSPSigning",     "OCSP Signing"),
-GAS LISTING /tmp/ccktxwLU.s 			page 14
+GAS LISTING /tmp/ccKwH3L0.s 			page 14
 
 
  343:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     OID_DESCRIPTOR(MBEDTLS_OID_WISUN_FAN,
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  397              	.LBE49:
  398              	.LBE51:
  399              		.loc 1 350 1 view .LVU83
-GAS LISTING /tmp/ccktxwLU.s 			page 15
+GAS LISTING /tmp/ccKwH3L0.s 			page 15
 
 
  400 001c 4883EC08 		subq	$8, %rsp
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  440              		.loc 1 349 1 discriminator 1 view .LVU95
  441              	.LBE50:
  442              	.LBE52:
-GAS LISTING /tmp/ccktxwLU.s 			page 16
+GAS LISTING /tmp/ccKwH3L0.s 			page 16
 
 
  443              		.loc 1 350 1 is_stmt 1 discriminator 1 view .LVU96
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  494              	.LCFI46:
  495              		.cfi_def_cfa_offset 16
  496              	.LVL47:
-GAS LISTING /tmp/ccktxwLU.s 			page 17
+GAS LISTING /tmp/ccKwH3L0.s 			page 17
 
 
  497              		.loc 1 350 1 view .LVU107
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  536              		.loc 1 362 1 view .LVU114
  537              	.LBB56:
  362:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_certificate_policies,
-GAS LISTING /tmp/ccktxwLU.s 			page 18
+GAS LISTING /tmp/ccKwH3L0.s 			page 18
 
 
  538              		.loc 1 362 1 view .LVU115
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  580 0038 89D0     		movl	%edx, %eax
  581 003a C3       		ret
  582              		.cfi_endproc
-GAS LISTING /tmp/ccktxwLU.s 			page 19
+GAS LISTING /tmp/ccKwH3L0.s 			page 19
 
 
  583              	.LFE68:
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  406:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     },
  407:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #endif /* MBEDTLS_MD_CAN_SHA256 */
  408:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #if defined(MBEDTLS_MD_CAN_SHA384)
-GAS LISTING /tmp/ccktxwLU.s 			page 20
+GAS LISTING /tmp/ccKwH3L0.s 			page 20
 
 
  409:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     {
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  463:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         OID_DESCRIPTOR(MBEDTLS_OID_RSASSA_PSS,        "RSASSA-PSS",           "RSASSA-PSS"),
  464:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         MBEDTLS_MD_NONE,     MBEDTLS_PK_RSASSA_PSS,
  465:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     },
-GAS LISTING /tmp/ccktxwLU.s 			page 21
+GAS LISTING /tmp/ccKwH3L0.s 			page 21
 
 
  466:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #endif /* MBEDTLS_RSA_C */
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  634              	.LBB68:
  473:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
  635              		.loc 1 473 1 view .LVU137
-GAS LISTING /tmp/ccktxwLU.s 			page 22
+GAS LISTING /tmp/ccKwH3L0.s 			page 22
 
 
  636 0015 488D1D00 		leaq	oid_sig_alg(%rip), %rbx
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  678 004a E8000000 		call	memcmp@PLT
  678      00
  679              	.LVL60:
-GAS LISTING /tmp/ccktxwLU.s 			page 23
+GAS LISTING /tmp/ccKwH3L0.s 			page 23
 
 
  473:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  729      FF
  730              		.loc 1 476 1 view .LVU160
  731 0079 5B       		popq	%rbx
-GAS LISTING /tmp/ccktxwLU.s 			page 24
+GAS LISTING /tmp/ccKwH3L0.s 			page 24
 
 
  732              	.LCFI60:
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  779              		.loc 1 473 1 view .LVU169
  780              	.LBB80:
  473:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
-GAS LISTING /tmp/ccktxwLU.s 			page 25
+GAS LISTING /tmp/ccKwH3L0.s 			page 25
 
 
  781              		.loc 1 473 1 view .LVU170
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  827              		.p2align 3
  828              	.L58:
  473:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
-GAS LISTING /tmp/ccktxwLU.s 			page 26
+GAS LISTING /tmp/ccKwH3L0.s 			page 26
 
 
  829              		.loc 1 473 1 is_stmt 1 discriminator 6 view .LVU178
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  874              	.LCFI70:
  875              		.cfi_def_cfa_offset 32
  876              	.LVL80:
-GAS LISTING /tmp/ccktxwLU.s 			page 27
+GAS LISTING /tmp/ccKwH3L0.s 			page 27
 
 
  877              		.loc 1 483 1 view .LVU193
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  929              		.cfi_restore 12
  930              		.cfi_restore 13
  931              		.cfi_restore 14
-GAS LISTING /tmp/ccktxwLU.s 			page 28
+GAS LISTING /tmp/ccKwH3L0.s 			page 28
 
 
  932              		.loc 1 483 1 discriminator 1 view .LVU202
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  978              		.loc 1 490 1 is_stmt 0 discriminator 2 view .LVU216
  979 002a 397020   		cmpl	%esi, 32(%rax)
  980 002d 75E9     		jne	.L69
-GAS LISTING /tmp/ccktxwLU.s 			page 29
+GAS LISTING /tmp/ccKwH3L0.s 			page 29
 
 
  981              		.loc 1 490 1 is_stmt 1 discriminator 4 view .LVU217
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  511:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     },
  512:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     {
  513:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         OID_DESCRIPTOR(MBEDTLS_OID_EC_ALG_UNRESTRICTED, "id-ecPublicKey",   "Generic EC key"),
-GAS LISTING /tmp/ccktxwLU.s 			page 30
+GAS LISTING /tmp/ccKwH3L0.s 			page 30
 
 
  514:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         MBEDTLS_PK_ECKEY,
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1050              	.LBB91:
  1051              	.LBB89:
  526:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_pk_alg, oid_pk_alg_t, pk_alg, mbedtls_pk_type_t, pk_alg)
-GAS LISTING /tmp/ccktxwLU.s 			page 31
+GAS LISTING /tmp/ccKwH3L0.s 			page 31
 
 
  1052              		.loc 1 526 1 view .LVU232
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  526:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_pk_alg, oid_pk_alg_t, pk_alg, mbedtls_pk_type_t, pk_alg)
  1093              		.loc 1 526 1 discriminator 1 view .LVU244
  1094 004f 85C0     		testl	%eax, %eax
-GAS LISTING /tmp/ccktxwLU.s 			page 32
+GAS LISTING /tmp/ccKwH3L0.s 			page 32
 
 
  1095 0051 75DD     		jne	.L76
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1147 0072 5D       		popq	%rbp
  1148              	.LCFI93:
  1149              		.cfi_def_cfa_offset 24
-GAS LISTING /tmp/ccktxwLU.s 			page 33
+GAS LISTING /tmp/ccKwH3L0.s 			page 33
 
 
  1150 0073 415C     		popq	%r12
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1202              		.loc 1 528 1 discriminator 3 view .LVU270
  1203 001c 4883C028 		addq	$40, %rax
  1204              	.LVL118:
-GAS LISTING /tmp/ccktxwLU.s 			page 34
+GAS LISTING /tmp/ccKwH3L0.s 			page 34
 
 
  1205              		.loc 1 528 1 is_stmt 1 discriminator 4 view .LVU271
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  544:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** {
  545:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #if defined(MBEDTLS_ECP_HAVE_SECP192R1)
  546:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     {
-GAS LISTING /tmp/ccktxwLU.s 			page 35
+GAS LISTING /tmp/ccKwH3L0.s 			page 35
 
 
  547:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         OID_DESCRIPTOR(MBEDTLS_OID_EC_GRP_SECP192R1, "secp192r1",    "secp192r1"),
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  601:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         OID_DESCRIPTOR(MBEDTLS_OID_EC_GRP_BP384R1,   "brainpoolP384r1", "brainpool384r1"),
  602:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         MBEDTLS_ECP_DP_BP384R1,
  603:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     },
-GAS LISTING /tmp/ccktxwLU.s 			page 36
+GAS LISTING /tmp/ccKwH3L0.s 			page 36
 
 
  604:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #endif /* MBEDTLS_ECP_HAVE_BP384R1 */
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1274 0018 0F1F8400 		.p2align 4,,10
  1274      00000000 
  1275              		.p2align 3
-GAS LISTING /tmp/ccktxwLU.s 			page 37
+GAS LISTING /tmp/ccKwH3L0.s 			page 37
 
 
  1276              	.L97:
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1321      FF
  1322              		.loc 1 619 1 discriminator 5 view .LVU306
  1323 0009 83FF03   		cmpl	$3, %edi
-GAS LISTING /tmp/ccktxwLU.s 			page 38
+GAS LISTING /tmp/ccKwH3L0.s 			page 38
 
 
  1324 000c 7401     		je	.L101
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  651:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     },
  652:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** };
  653:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
-GAS LISTING /tmp/ccktxwLU.s 			page 39
+GAS LISTING /tmp/ccKwH3L0.s 			page 39
 
 
  654:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_TYPED_FROM_ASN1(oid_ecp_grp_algid_t, grp_id_algid, oid_ecp_grp_algid)
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  664:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****                         grp_id)
  665:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #endif /* MBEDTLS_PK_HAVE_ECC_KEYS */
  666:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
-GAS LISTING /tmp/ccktxwLU.s 			page 40
+GAS LISTING /tmp/ccKwH3L0.s 			page 40
 
 
  667:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #if defined(MBEDTLS_CIPHER_C)
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  704:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_cipher_alg,
  1404              		.loc 1 704 1 view .LVU331
  1405 0004 4885FF   		testq	%rdi, %rdi
-GAS LISTING /tmp/ccktxwLU.s 			page 41
+GAS LISTING /tmp/ccKwH3L0.s 			page 41
 
 
  1406 0007 746F     		je	.L109
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1452              		.loc 1 704 1 is_stmt 0 discriminator 7 view .LVU339
  1453 0030 488B7B28 		movq	40(%rbx), %rdi
  704:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_cipher_alg,
-GAS LISTING /tmp/ccktxwLU.s 			page 42
+GAS LISTING /tmp/ccKwH3L0.s 			page 42
 
 
  1454              		.loc 1 704 1 discriminator 6 view .LVU340
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1501 0062 415D     		popq	%r13
  1502              	.LCFI105:
  1503              		.cfi_def_cfa_offset 8
-GAS LISTING /tmp/ccktxwLU.s 			page 43
+GAS LISTING /tmp/ccKwH3L0.s 			page 43
 
 
  1504              	.LVL141:
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1555      0100
  1556              		.section	.text.mbedtls_oid_get_md_alg,"ax",@progbits
  1557              		.p2align 4
-GAS LISTING /tmp/ccktxwLU.s 			page 44
+GAS LISTING /tmp/ccKwH3L0.s 			page 44
 
 
  1558              		.globl	mbedtls_oid_get_md_alg
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  756:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     },
  757:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #endif
  758:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #if defined(MBEDTLS_MD_CAN_RIPEMD160)
-GAS LISTING /tmp/ccktxwLU.s 			page 45
+GAS LISTING /tmp/ccKwH3L0.s 			page 45
 
 
  759:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     {
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1576 0004 4885FF   		testq	%rdi, %rdi
  1577 0007 746F     		je	.L121
  1578              	.LBE112:
-GAS LISTING /tmp/ccktxwLU.s 			page 46
+GAS LISTING /tmp/ccKwH3L0.s 			page 46
 
 
  1579              	.LBE111:
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  794:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_md_alg, oid_md_alg_t, md_alg, mbedtls_md_type_t, md_alg)
  1625              		.loc 1 794 1 discriminator 6 view .LVU377
  1626 0034 4883C328 		addq	$40, %rbx
-GAS LISTING /tmp/ccktxwLU.s 			page 47
+GAS LISTING /tmp/ccKwH3L0.s 			page 47
 
 
  1627              	.LVL152:
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1674              		.cfi_def_cfa_offset 8
  1675              	.LVL158:
  1676              		.loc 1 795 1 view .LVU390
-GAS LISTING /tmp/ccktxwLU.s 			page 48
+GAS LISTING /tmp/ccKwH3L0.s 			page 48
 
 
  1677 0064 C3       		ret
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  796:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_OID_BY_ATTR1(mbedtls_oid_get_oid_by_md,
  1731              		.loc 1 796 1 is_stmt 1 view -0
  1732              		.cfi_startproc
-GAS LISTING /tmp/ccktxwLU.s 			page 49
+GAS LISTING /tmp/ccKwH3L0.s 			page 49
 
 
  1733              		.loc 1 796 1 is_stmt 0 view .LVU400
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1782              		.cfi_endproc
  1783              	.LFE86:
  1785              		.section	.rodata.mbedtls_oid_get_md_hmac.str1.1,"aMS",@progbits,1
-GAS LISTING /tmp/ccktxwLU.s 			page 50
+GAS LISTING /tmp/ccKwH3L0.s 			page 50
 
 
  1786              	.LC9:
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  841:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #endif /* MBEDTLS_MD_CAN_SHA512 */
  842:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** #if defined(MBEDTLS_MD_CAN_SHA3_224)
  843:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     {
-GAS LISTING /tmp/ccktxwLU.s 			page 51
+GAS LISTING /tmp/ccKwH3L0.s 			page 51
 
 
  844:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         OID_DESCRIPTOR(MBEDTLS_OID_HMAC_SHA3_224,    "hmacSHA3-224",    "HMAC-SHA3-224"),
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1809 0007 746F     		je	.L139
  1810              	.LBE120:
  1811              	.LBE119:
-GAS LISTING /tmp/ccktxwLU.s 			page 52
+GAS LISTING /tmp/ccKwH3L0.s 			page 52
 
 
  1812              		.loc 1 879 1 is_stmt 0 view .LVU425
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1857              		.loc 1 878 1 discriminator 6 view .LVU433
  1858 0034 4883C328 		addq	$40, %rbx
  1859              	.LVL177:
-GAS LISTING /tmp/ccktxwLU.s 			page 53
+GAS LISTING /tmp/ccKwH3L0.s 			page 53
 
 
  878:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** FN_OID_GET_ATTR1(mbedtls_oid_get_md_hmac, oid_md_hmac_t, md_hmac, mbedtls_md_type_t, md_hmac)
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1907              	.LVL183:
  1908              		.loc 1 879 1 view .LVU446
  1909 0064 C3       		ret
-GAS LISTING /tmp/ccktxwLU.s 			page 54
+GAS LISTING /tmp/ccKwH3L0.s 			page 54
 
 
  1910              	.LVL184:
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  1962              		.p2align 4
  1963              		.globl	mbedtls_oid_get_numeric_string
  1965              	mbedtls_oid_get_numeric_string:
-GAS LISTING /tmp/ccktxwLU.s 			page 55
+GAS LISTING /tmp/ccKwH3L0.s 			page 55
 
 
  1966              	.LVL190:
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  926:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     char *p = buf;
  1974              		.loc 1 926 5 view .LVU458
  927:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     size_t n = size;
-GAS LISTING /tmp/ccktxwLU.s 			page 56
+GAS LISTING /tmp/ccKwH3L0.s 			page 56
 
 
  1975              		.loc 1 927 5 view .LVU459
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2015 0033 4989F4   		movq	%rsi, %r12
  2016              	.LBB125:
  936:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         /* OID must not be empty */
-GAS LISTING /tmp/ccktxwLU.s 			page 57
+GAS LISTING /tmp/ccKwH3L0.s 			page 57
 
 
  937:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         return MBEDTLS_ERR_ASN1_OUT_OF_DATA;
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  954:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****             /* Last byte */
  955:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****             if (n == size) {
  2049              		.loc 1 955 13 is_stmt 1 view .LVU482
-GAS LISTING /tmp/ccktxwLU.s 			page 58
+GAS LISTING /tmp/ccKwH3L0.s 			page 58
 
 
  2050              		.loc 1 955 16 is_stmt 0 view .LVU483
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
   19:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _BITS_STDIO2_H
   20:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #define _BITS_STDIO2_H 1
   21:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** 
-GAS LISTING /tmp/ccktxwLU.s 			page 59
+GAS LISTING /tmp/ccKwH3L0.s 			page 59
 
 
   22:/usr/include/x86_64-linux-gnu/bits/stdio2.h **** #ifndef _STDIO_H
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2087 0095 31C0     		xorl	%eax, %eax
  2088              	.LVL200:
  2089              		.loc 2 54 10 discriminator 1 view .LVU493
-GAS LISTING /tmp/ccktxwLU.s 			page 60
+GAS LISTING /tmp/ccKwH3L0.s 			page 60
 
 
  2090 0097 E8000000 		call	__snprintf_chk@PLT
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2128              		.loc 1 940 26 discriminator 1 view .LVU507
  2129 00c0 4839D3   		cmpq	%rdx, %rbx
  2130 00c3 0F83AB00 		jnb	.L158
-GAS LISTING /tmp/ccktxwLU.s 			page 61
+GAS LISTING /tmp/ccKwH3L0.s 			page 61
 
 
  2130      0000
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2165 00f4 4183F927 		cmpl	$39, %r9d
  2166 00f8 0F8675FF 		jbe	.L156
  2166      FFFF
-GAS LISTING /tmp/ccktxwLU.s 			page 62
+GAS LISTING /tmp/ccKwH3L0.s 			page 62
 
 
  963:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****                     component2 = value - 40;
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2197 0126 5B       		popq	%rbx
  2198              	.LCFI153:
  2199              		.cfi_remember_state
-GAS LISTING /tmp/ccktxwLU.s 			page 63
+GAS LISTING /tmp/ccKwH3L0.s 			page 63
 
 
  2200              		.cfi_def_cfa_offset 40
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2247      00
  2248 0153 E8000000 		call	__snprintf_chk@PLT
  2248      00
-GAS LISTING /tmp/ccktxwLU.s 			page 64
+GAS LISTING /tmp/ccKwH3L0.s 			page 64
 
 
  2249              	.LVL219:
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  987:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** }
  2295              		.loc 1 987 5 is_stmt 1 view .LVU555
  987:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** }
-GAS LISTING /tmp/ccktxwLU.s 			page 65
+GAS LISTING /tmp/ccKwH3L0.s 			page 65
 
 
  2296              		.loc 1 987 24 is_stmt 0 view .LVU556
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2345      FF
  2346              		.loc 1 988 1 view .LVU566
  2347 018e C3       		ret
-GAS LISTING /tmp/ccktxwLU.s 			page 66
+GAS LISTING /tmp/ccKwH3L0.s 			page 66
 
 
  2348              		.cfi_endproc
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
 1035:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     }
 1036:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     *p += num_bytes;
 1037:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
-GAS LISTING /tmp/ccktxwLU.s 			page 67
+GAS LISTING /tmp/ccKwH3L0.s 			page 67
 
 
 1038:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     return 0;
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2392              		.cfi_offset 6, -32
  2393 000d 53       		pushq	%rbx
  2394              	.LCFI175:
-GAS LISTING /tmp/ccktxwLU.s 			page 68
+GAS LISTING /tmp/ccKwH3L0.s 			page 68
 
 
  2395              		.cfi_def_cfa_offset 40
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2437 0080 660F64D0 		pcmpgtb	%xmm0, %xmm2
  2438 0084 660F6FC8 		movdqa	%xmm0, %xmm1
  2439 0088 660F60CA 		punpcklbw	%xmm2, %xmm1
-GAS LISTING /tmp/ccktxwLU.s 			page 69
+GAS LISTING /tmp/ccKwH3L0.s 			page 69
 
 
  2440 008c 660F68C2 		punpckhbw	%xmm2, %xmm0
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2470 011c 66410FFB 		psubq	%xmm9, %xmm1
  2470      C9
  2471 0121 66440F6F 		movdqa	%xmm4, %xmm9
-GAS LISTING /tmp/ccktxwLU.s 			page 70
+GAS LISTING /tmp/ccKwH3L0.s 			page 70
 
 
  2471      CC
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2508              		.loc 1 1056 12 is_stmt 0 view .LVU598
  2509 0181 807C1301 		cmpb	$46, 1(%rbx,%rdx)
  2509      2E
-GAS LISTING /tmp/ccktxwLU.s 			page 71
+GAS LISTING /tmp/ccKwH3L0.s 			page 71
 
 
  2510 0186 0F84C403 		je	.L262
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2543 01ce 0F84AC03 		je	.L265
  2543      0000
 1055:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         if (oid_str[i] == '.') {
-GAS LISTING /tmp/ccktxwLU.s 			page 72
+GAS LISTING /tmp/ccKwH3L0.s 			page 72
 
 
  2544              		.loc 1 1055 35 is_stmt 1 discriminator 2 view .LVU611
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2582              		.loc 1 1056 12 is_stmt 0 view .LVU626
  2583 0211 807C1307 		cmpb	$46, 7(%rbx,%rdx)
  2583      2E
-GAS LISTING /tmp/ccktxwLU.s 			page 73
+GAS LISTING /tmp/ccKwH3L0.s 			page 73
 
 
  2584 0216 7504     		jne	.L187
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
 1056:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         if (oid_str[i] == '.') {
  2623              		.loc 1 1056 12 is_stmt 0 view .LVU642
  2624 0251 807C130A 		cmpb	$46, 10(%rbx,%rdx)
-GAS LISTING /tmp/ccktxwLU.s 			page 74
+GAS LISTING /tmp/ccKwH3L0.s 			page 74
 
 
  2624      2E
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2660              		.loc 1 1057 21 is_stmt 0 view .LVU656
  2661 0294 4883C001 		addq	$1, %rax
  2662              	.LVL258:
-GAS LISTING /tmp/ccktxwLU.s 			page 75
+GAS LISTING /tmp/ccKwH3L0.s 			page 75
 
 
  2663              	.L193:
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
 1074:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     oid->p = mbedtls_calloc(max_possible_bytes, 1);
  2695              		.loc 1 1074 5 is_stmt 1 view .LVU670
  2696              		.loc 1 1074 14 is_stmt 0 view .LVU671
-GAS LISTING /tmp/ccktxwLU.s 			page 76
+GAS LISTING /tmp/ccKwH3L0.s 			page 76
 
 
  2697 02c2 BE010000 		movl	$1, %esi
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2730 02ec E92F0200 		jmp	.L247
  2730      00
  2731              	.LVL266:
-GAS LISTING /tmp/ccktxwLU.s 			page 77
+GAS LISTING /tmp/ccKwH3L0.s 			page 77
 
 
  2732              		.p2align 4,,10
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2768              	.LBE157:
  2769              	.LBE156:
 1082:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     if (ret != 0) {
-GAS LISTING /tmp/ccktxwLU.s 			page 78
+GAS LISTING /tmp/ccKwH3L0.s 			page 78
 
 
  2770              		.loc 1 1082 5 is_stmt 1 view .LVU702
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  994:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
  2800              		.loc 1 994 10 is_stmt 0 view .LVU717
  2801 034e 31C9     		xorl	%ecx, %ecx
-GAS LISTING /tmp/ccktxwLU.s 			page 79
+GAS LISTING /tmp/ccKwH3L0.s 			page 79
 
 
  992:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2837              		.loc 1 996 26 is_stmt 0 discriminator 1 view .LVU731
  2838 0383 0FBE03   		movsbl	(%rbx), %eax
  996:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         ret = 0;
-GAS LISTING /tmp/ccktxwLU.s 			page 80
+GAS LISTING /tmp/ccKwH3L0.s 			page 80
 
 
  2839              		.loc 1 996 37 discriminator 2 view .LVU732
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2869 03bb 8D0492   		leal	(%rdx,%rdx,4), %eax
 1107:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****             str_ptr++;
  2870              		.loc 1 1107 20 view .LVU745
-GAS LISTING /tmp/ccktxwLU.s 			page 81
+GAS LISTING /tmp/ccKwH3L0.s 			page 81
 
 
  2871 03be 4883C301 		addq	$1, %rbx
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2911              		.loc 1 1014 9 view .LVU759
  2912 03d0 4889D6   		movq	%rdx, %rsi
 1014:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****     } while (value != 0);
-GAS LISTING /tmp/ccktxwLU.s 			page 82
+GAS LISTING /tmp/ccKwH3L0.s 			page 82
 
 
  2913              		.loc 1 1014 18 is_stmt 0 view .LVU760
@@ -4918,7 +4918,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  2951 0402 660F1F44 		.p2align 3
  2951      0000
  2952              	.L212:
-GAS LISTING /tmp/ccktxwLU.s 			page 83
+GAS LISTING /tmp/ccKwH3L0.s 			page 83
 
 
 1033:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         value >>= 7;
@@ -4978,7 +4978,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  996:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         ret = 0;
  2988              		.loc 1 996 37 is_stmt 1 view .LVU790
  992:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
-GAS LISTING /tmp/ccktxwLU.s 			page 84
+GAS LISTING /tmp/ccKwH3L0.s 			page 84
 
 
  2989              		.loc 1 992 9 is_stmt 0 view .LVU791
@@ -5038,7 +5038,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3026              	.LVL301:
  3027              	.L224:
  996:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         ret = 0;
-GAS LISTING /tmp/ccktxwLU.s 			page 85
+GAS LISTING /tmp/ccKwH3L0.s 			page 85
 
 
  3028              		.loc 1 996 26 is_stmt 0 discriminator 1 view .LVU804
@@ -5098,7 +5098,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3062              	.LBB175:
 1024:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
  3063              		.loc 1 1024 5 view .LVU818
-GAS LISTING /tmp/ccktxwLU.s 			page 86
+GAS LISTING /tmp/ccKwH3L0.s 			page 86
 
 
  3064              	.LBB176:
@@ -5158,7 +5158,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3101 04ab 4189F1   		movl	%esi, %r9d
 1030:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
  3102              		.loc 1 1030 11 view .LVU835
-GAS LISTING /tmp/ccktxwLU.s 			page 87
+GAS LISTING /tmp/ccKwH3L0.s 			page 87
 
 
  3103 04ae C1EE07   		shrl	$7, %esi
@@ -5218,7 +5218,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3141              	.L223:
 1032:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         (*p)[num_bytes - i] = 0x80 | (unsigned char) (value & 0x7f);
  3142              		.loc 1 1032 26 is_stmt 0 discriminator 1 view .LVU849
-GAS LISTING /tmp/ccktxwLU.s 			page 88
+GAS LISTING /tmp/ccKwH3L0.s 			page 88
 
 
  3143              	.LBE178:
@@ -5278,7 +5278,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3179              		.loc 1 1114 5 is_stmt 1 view .LVU864
 1114:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         ret = MBEDTLS_ERR_ASN1_INVALID_DATA;
  3180              		.loc 1 1114 46 is_stmt 0 view .LVU865
-GAS LISTING /tmp/ccktxwLU.s 			page 89
+GAS LISTING /tmp/ccKwH3L0.s 			page 89
 
 
  3181 050e B8500000 		movl	$80, %eax
@@ -5338,7 +5338,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3202              		.loc 1 1163 5 is_stmt 1 view .LVU872
  3203              	.LVL321:
  3204              	.L175:
-GAS LISTING /tmp/ccktxwLU.s 			page 90
+GAS LISTING /tmp/ccKwH3L0.s 			page 90
 
 
 1164:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** }
@@ -5398,7 +5398,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3249 0564 E93BFCFF 		jmp	.L182
  3249      FF
  3250 0569 0F1F8000 		.p2align 4,,10
-GAS LISTING /tmp/ccktxwLU.s 			page 91
+GAS LISTING /tmp/ccKwH3L0.s 			page 91
 
 
  3250      000000
@@ -5458,7 +5458,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
 1057:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****         }
  3285              		.loc 1 1057 21 is_stmt 0 view .LVU894
  3286 05a9 4883C001 		addq	$1, %rax
-GAS LISTING /tmp/ccktxwLU.s 			page 92
+GAS LISTING /tmp/ccKwH3L0.s 			page 92
 
 
  3287              	.LVL331:
@@ -5518,7 +5518,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3328 05d7 415D     		popq	%r13
  3329              	.LCFI187:
  3330              		.cfi_def_cfa_offset 8
-GAS LISTING /tmp/ccktxwLU.s 			page 93
+GAS LISTING /tmp/ccKwH3L0.s 			page 93
 
 
  3331              	.LVL335:
@@ -5578,7 +5578,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3368 0602 83F927   		cmpl	$39, %ecx
  3369 0605 0F8715FF 		ja	.L247
  3369      FFFF
-GAS LISTING /tmp/ccktxwLU.s 			page 94
+GAS LISTING /tmp/ccKwH3L0.s 			page 94
 
 
  3370              	.L203:
@@ -5638,7 +5638,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
    7:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    version 2.1 of the License, or (at your option) any later version.
    8:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
    9:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    The GNU C Library is distributed in the hope that it will be useful,
-GAS LISTING /tmp/ccktxwLU.s 			page 95
+GAS LISTING /tmp/ccKwH3L0.s 			page 95
 
 
   10:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -5698,7 +5698,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3426      10
 1153:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
  3427              		.loc 1 1153 5 is_stmt 1 view .LVU938
-GAS LISTING /tmp/ccktxwLU.s 			page 96
+GAS LISTING /tmp/ccKwH3L0.s 			page 96
 
 
 1155:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c **** 
@@ -5758,7 +5758,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3460              	.L242:
 1118:../../bos/thirdparty/mbedtls/bos_mbedtls/oid.c ****                                         (component1 * 40) + component2);
  3461              		.loc 1 1118 11 view .LVU951
-GAS LISTING /tmp/ccktxwLU.s 			page 97
+GAS LISTING /tmp/ccKwH3L0.s 			page 97
 
 
  3462 068e BBF5FFFF 		movl	$-11, %ebx
@@ -5818,7 +5818,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3494 0018 00000000 		.quad	.LC15
  3494      00000000 
  3495 0020 09000000 		.long	9
-GAS LISTING /tmp/ccktxwLU.s 			page 98
+GAS LISTING /tmp/ccKwH3L0.s 			page 98
 
 
  3496 0024 00000000 		.zero	4
@@ -5878,7 +5878,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3528              	.LC28:
  3529 0092 69642D73 		.string	"id-sha512"
  3529      68613531 
-GAS LISTING /tmp/ccktxwLU.s 			page 99
+GAS LISTING /tmp/ccKwH3L0.s 			page 99
 
 
  3529      3200
@@ -5938,7 +5938,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3566              	.LC32:
  3567 00b3 2A864886 		.string	"*\206H\206\367\r\003\007"
  3567      F70D0307 
-GAS LISTING /tmp/ccktxwLU.s 			page 100
+GAS LISTING /tmp/ccKwH3L0.s 			page 100
 
 
  3567      00
@@ -5998,7 +5998,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3597 0010 00000000 		.quad	.LC30
  3597      00000000 
  3598 0018 00000000 		.quad	.LC31
-GAS LISTING /tmp/ccktxwLU.s 			page 101
+GAS LISTING /tmp/ccKwH3L0.s 			page 101
 
 
  3598      00000000 
@@ -6058,7 +6058,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3632              	.LC44:
  3633 0136 72736145 		.string	"rsaEncryption"
  3633      6E637279 
-GAS LISTING /tmp/ccktxwLU.s 			page 102
+GAS LISTING /tmp/ccKwH3L0.s 			page 102
 
 
  3633      7074696F 
@@ -6118,7 +6118,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3666      00000000 
  3667 0060 00000000 		.quad	.LC50
  3667      00000000 
-GAS LISTING /tmp/ccktxwLU.s 			page 103
+GAS LISTING /tmp/ccKwH3L0.s 			page 103
 
 
  3668 0068 00000000 		.quad	.LC51
@@ -6178,7 +6178,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3693 020a 52534120 		.string	"RSA with SHA-512"
  3693      77697468 
  3693      20534841 
-GAS LISTING /tmp/ccktxwLU.s 			page 104
+GAS LISTING /tmp/ccKwH3L0.s 			page 104
 
 
  3693      2D353132 
@@ -6238,7 +6238,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3714              	.LC70:
  3715 02ac 52534153 		.string	"RSASSA-PSS"
  3715      53412D50 
-GAS LISTING /tmp/ccktxwLU.s 			page 105
+GAS LISTING /tmp/ccKwH3L0.s 			page 105
 
 
  3715      535300
@@ -6298,7 +6298,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3751 00c8 00000000 		.quad	.LC66
  3751      00000000 
  3752 00d0 08000000 		.quad	8
-GAS LISTING /tmp/ccktxwLU.s 			page 106
+GAS LISTING /tmp/ccKwH3L0.s 			page 106
 
 
  3752      00000000 
@@ -6358,7 +6358,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3779      6E742041 
  3779      75746865 
  3780              	.LC76:
-GAS LISTING /tmp/ccktxwLU.s 			page 107
+GAS LISTING /tmp/ccKwH3L0.s 			page 107
 
 
  3781 031e 2B060105 		.string	"+\006\001\005\005\007\003\003"
@@ -6418,7 +6418,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3801      6700
  3802              	.LC87:
  3803 03bc 4F435350 		.string	"OCSP Signing"
-GAS LISTING /tmp/ccktxwLU.s 			page 108
+GAS LISTING /tmp/ccKwH3L0.s 			page 108
 
 
  3803      20536967 
@@ -6478,7 +6478,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3832 0078 00000000 		.quad	.LC81
  3832      00000000 
  3833 0080 00000000 		.quad	.LC82
-GAS LISTING /tmp/ccktxwLU.s 			page 109
+GAS LISTING /tmp/ccKwH3L0.s 			page 109
 
 
  3833      00000000 
@@ -6538,7 +6538,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3859      6500
  3860              	.LC96:
  3861 0430 551D2500 		.string	"U\035%"
-GAS LISTING /tmp/ccktxwLU.s 			page 110
+GAS LISTING /tmp/ccKwH3L0.s 			page 110
 
 
  3862              	.LC97:
@@ -6598,7 +6598,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3883      506F6C69 
  3883      63696573 
  3884              	.LC108:
-GAS LISTING /tmp/ccktxwLU.s 			page 111
+GAS LISTING /tmp/ccKwH3L0.s 			page 111
 
 
  3885 04ef 551D0E00 		.string	"U\035\016"
@@ -6658,7 +6658,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3915 0060 00000000 		.quad	.LC97
  3915      00000000 
  3916 0068 00000000 		.quad	.LC98
-GAS LISTING /tmp/ccktxwLU.s 			page 112
+GAS LISTING /tmp/ccKwH3L0.s 			page 112
 
 
  3916      00000000 
@@ -6718,7 +6718,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3949      00000000 
  3950 0148 00000000 		.quad	0
  3950      00000000 
-GAS LISTING /tmp/ccktxwLU.s 			page 113
+GAS LISTING /tmp/ccKwH3L0.s 			page 113
 
 
  3951 0150 00000000 		.quad	0
@@ -6778,7 +6778,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  3984              	.LC128:
  3985 05d3 535400   		.string	"ST"
  3986              	.LC129:
-GAS LISTING /tmp/ccktxwLU.s 			page 114
+GAS LISTING /tmp/ccKwH3L0.s 			page 114
 
 
  3987 05d6 55040A00 		.string	"U\004\n"
@@ -6838,7 +6838,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  4013      7200
  4014              	.LC143:
  4015 0678 73657269 		.string	"serialNumber"
-GAS LISTING /tmp/ccktxwLU.s 			page 115
+GAS LISTING /tmp/ccKwH3L0.s 			page 115
 
 
  4015      616C4E75 
@@ -6898,7 +6898,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  4043      76656E4E 
  4043      616D6500 
  4044              	.LC158:
-GAS LISTING /tmp/ccktxwLU.s 			page 116
+GAS LISTING /tmp/ccKwH3L0.s 			page 116
 
 
  4045 0717 47697665 		.string	"Given name"
@@ -6958,7 +6958,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  4074              	.LC173:
  4075 07b1 69642D61 		.string	"id-at-dnQualifier"
  4075      742D646E 
-GAS LISTING /tmp/ccktxwLU.s 			page 117
+GAS LISTING /tmp/ccKwH3L0.s 			page 117
 
 
  4075      5175616C 
@@ -7018,7 +7018,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  4101      6E656E74 
  4101      00
  4102              	.LC187:
-GAS LISTING /tmp/ccktxwLU.s 			page 118
+GAS LISTING /tmp/ccKwH3L0.s 			page 118
 
 
  4103 0861 444300   		.string	"DC"
@@ -7078,7 +7078,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  4132 0078 00000000 		.quad	.LC125
  4132      00000000 
  4133 0080 03000000 		.quad	3
-GAS LISTING /tmp/ccktxwLU.s 			page 119
+GAS LISTING /tmp/ccKwH3L0.s 			page 119
 
 
  4133      00000000 
@@ -7138,7 +7138,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  4160      00000000 
  4161 0160 00000000 		.quad	.LC147
  4161      00000000 
-GAS LISTING /tmp/ccktxwLU.s 			page 120
+GAS LISTING /tmp/ccKwH3L0.s 			page 120
 
 
  4162 0168 00000000 		.quad	.LC148
@@ -7198,7 +7198,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  4189 0240 00000000 		.quad	.LC169
  4189      00000000 
  4190 0248 00000000 		.quad	.LC170
-GAS LISTING /tmp/ccktxwLU.s 			page 121
+GAS LISTING /tmp/ccKwH3L0.s 			page 121
 
 
  4190      00000000 
@@ -7258,7 +7258,7 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  4217      00000000 
  4218 0328 00000000 		.quad	0
  4218      00000000 
-GAS LISTING /tmp/ccktxwLU.s 			page 122
+GAS LISTING /tmp/ccKwH3L0.s 			page 122
 
 
  4219 0330 00000000 		.quad	0
@@ -7318,57 +7318,57 @@ GAS LISTING /tmp/ccktxwLU.s 			page 1
  14291              	2:
  14292 0018 03000000 		.long	0x3
  14293              	3:
-GAS LISTING /tmp/ccktxwLU.s 			page 123
+GAS LISTING /tmp/ccKwH3L0.s 			page 123
 
 
  14294 001c 00000000 		.align 8
  14295              	4:
-GAS LISTING /tmp/ccktxwLU.s 			page 124
+GAS LISTING /tmp/ccKwH3L0.s 			page 124
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 oid.c
-     /tmp/ccktxwLU.s:12     .text.mbedtls_oid_get_attr_short_name:0000000000000000 mbedtls_oid_get_attr_short_name
-     /tmp/ccktxwLU.s:4116   .data.rel.ro.local.oid_x520_attr_type:0000000000000000 oid_x520_attr_type
-     /tmp/ccktxwLU.s:183    .text.mbedtls_oid_get_x509_ext_type:0000000000000000 mbedtls_oid_get_x509_ext_type
-     /tmp/ccktxwLU.s:3900   .data.rel.ro.local.oid_x509_ext:0000000000000000 oid_x509_ext
-     /tmp/ccktxwLU.s:354    .text.mbedtls_oid_get_extended_key_usage:0000000000000000 mbedtls_oid_get_extended_key_usage
-     /tmp/ccktxwLU.s:3816   .data.rel.ro.local.oid_ext_key_usage:0000000000000000 oid_ext_key_usage
-     /tmp/ccktxwLU.s:525    .text.mbedtls_oid_get_certificate_policies:0000000000000000 mbedtls_oid_get_certificate_policies
-     /tmp/ccktxwLU.s:592    .text.mbedtls_oid_get_sig_alg_desc:0000000000000000 mbedtls_oid_get_sig_alg_desc
-     /tmp/ccktxwLU.s:3720   .data.rel.ro.local.oid_sig_alg:0000000000000000 oid_sig_alg
-     /tmp/ccktxwLU.s:768    .text.mbedtls_oid_get_sig_alg:0000000000000000 mbedtls_oid_get_sig_alg
-     /tmp/ccktxwLU.s:944    .text.mbedtls_oid_get_oid_by_sig_alg:0000000000000000 mbedtls_oid_get_oid_by_sig_alg
-     /tmp/ccktxwLU.s:1011   .text.mbedtls_oid_get_pk_alg:0000000000000000 mbedtls_oid_get_pk_alg
-     /tmp/ccktxwLU.s:3652   .data.rel.ro.local.oid_pk_alg:0000000000000000 oid_pk_alg
-     /tmp/ccktxwLU.s:1179   .text.mbedtls_oid_get_oid_by_pk_alg:0000000000000000 mbedtls_oid_get_oid_by_pk_alg
-     /tmp/ccktxwLU.s:1240   .text.mbedtls_oid_get_ec_grp:0000000000000000 mbedtls_oid_get_ec_grp
-     /tmp/ccktxwLU.s:1308   .text.mbedtls_oid_get_oid_by_ec_grp:0000000000000000 mbedtls_oid_get_oid_by_ec_grp
-     /tmp/ccktxwLU.s:1344   .text.mbedtls_oid_get_ec_grp_algid:0000000000000000 mbedtls_oid_get_ec_grp_algid
-     /tmp/ccktxwLU.s:1365   .text.mbedtls_oid_get_oid_by_ec_grp_algid:0000000000000000 mbedtls_oid_get_oid_by_ec_grp_algid
-     /tmp/ccktxwLU.s:1389   .text.mbedtls_oid_get_cipher_alg:0000000000000000 mbedtls_oid_get_cipher_alg
-     /tmp/ccktxwLU.s:3594   .data.rel.ro.local.oid_cipher_alg:0000000000000000 oid_cipher_alg
-     /tmp/ccktxwLU.s:1560   .text.mbedtls_oid_get_md_alg:0000000000000000 mbedtls_oid_get_md_alg
-     /tmp/ccktxwLU.s:3536   .data.rel.ro.local.oid_md_alg:0000000000000000 oid_md_alg
-     /tmp/ccktxwLU.s:1728   .text.mbedtls_oid_get_oid_by_md:0000000000000000 mbedtls_oid_get_oid_by_md
-     /tmp/ccktxwLU.s:1792   .text.mbedtls_oid_get_md_hmac:0000000000000000 mbedtls_oid_get_md_hmac
-     /tmp/ccktxwLU.s:3490   .data.rel.ro.local.oid_md_hmac:0000000000000000 oid_md_hmac
-     /tmp/ccktxwLU.s:1965   .text.mbedtls_oid_get_numeric_string:0000000000000000 mbedtls_oid_get_numeric_string
-     /tmp/ccktxwLU.s:2355   .text.mbedtls_oid_from_numeric_string:0000000000000000 mbedtls_oid_from_numeric_string
-     /tmp/ccktxwLU.s:6      .rodata.mbedtls_oid_get_attr_short_name.str1.1:0000000000000000 .LC0
-     /tmp/ccktxwLU.s:177    .rodata.mbedtls_oid_get_x509_ext_type.str1.1:0000000000000000 .LC1
-     /tmp/ccktxwLU.s:348    .rodata.mbedtls_oid_get_extended_key_usage.str1.1:0000000000000000 .LC2
-     /tmp/ccktxwLU.s:519    .rodata.mbedtls_oid_get_certificate_policies.str1.1:0000000000000000 .LC3
-     /tmp/ccktxwLU.s:586    .rodata.mbedtls_oid_get_sig_alg_desc.str1.1:0000000000000000 .LC4
-     /tmp/ccktxwLU.s:1005   .rodata.mbedtls_oid_get_pk_alg.str1.1:0000000000000000 .LC5
-     /tmp/ccktxwLU.s:1302   .rodata.mbedtls_oid_get_oid_by_ec_grp.str1.1:0000000000000000 .LC6
-     /tmp/ccktxwLU.s:1383   .rodata.mbedtls_oid_get_cipher_alg.str1.1:0000000000000000 .LC7
-     /tmp/ccktxwLU.s:1554   .rodata.mbedtls_oid_get_md_alg.str1.1:0000000000000000 .LC8
-     /tmp/ccktxwLU.s:1786   .rodata.mbedtls_oid_get_md_hmac.str1.1:0000000000000000 .LC9
-     /tmp/ccktxwLU.s:1957   .rodata.mbedtls_oid_get_numeric_string.str1.1:0000000000000000 .LC10
-     /tmp/ccktxwLU.s:1959   .rodata.mbedtls_oid_get_numeric_string.str1.1:0000000000000006 .LC11
-     /tmp/ccktxwLU.s:4242   .rodata.cst16:0000000000000010 .LC13
-     /tmp/ccktxwLU.s:4224   .rodata.cst16:0000000000000000 .LC12
+     /tmp/ccKwH3L0.s:12     .text.mbedtls_oid_get_attr_short_name:0000000000000000 mbedtls_oid_get_attr_short_name
+     /tmp/ccKwH3L0.s:4116   .data.rel.ro.local.oid_x520_attr_type:0000000000000000 oid_x520_attr_type
+     /tmp/ccKwH3L0.s:183    .text.mbedtls_oid_get_x509_ext_type:0000000000000000 mbedtls_oid_get_x509_ext_type
+     /tmp/ccKwH3L0.s:3900   .data.rel.ro.local.oid_x509_ext:0000000000000000 oid_x509_ext
+     /tmp/ccKwH3L0.s:354    .text.mbedtls_oid_get_extended_key_usage:0000000000000000 mbedtls_oid_get_extended_key_usage
+     /tmp/ccKwH3L0.s:3816   .data.rel.ro.local.oid_ext_key_usage:0000000000000000 oid_ext_key_usage
+     /tmp/ccKwH3L0.s:525    .text.mbedtls_oid_get_certificate_policies:0000000000000000 mbedtls_oid_get_certificate_policies
+     /tmp/ccKwH3L0.s:592    .text.mbedtls_oid_get_sig_alg_desc:0000000000000000 mbedtls_oid_get_sig_alg_desc
+     /tmp/ccKwH3L0.s:3720   .data.rel.ro.local.oid_sig_alg:0000000000000000 oid_sig_alg
+     /tmp/ccKwH3L0.s:768    .text.mbedtls_oid_get_sig_alg:0000000000000000 mbedtls_oid_get_sig_alg
+     /tmp/ccKwH3L0.s:944    .text.mbedtls_oid_get_oid_by_sig_alg:0000000000000000 mbedtls_oid_get_oid_by_sig_alg
+     /tmp/ccKwH3L0.s:1011   .text.mbedtls_oid_get_pk_alg:0000000000000000 mbedtls_oid_get_pk_alg
+     /tmp/ccKwH3L0.s:3652   .data.rel.ro.local.oid_pk_alg:0000000000000000 oid_pk_alg
+     /tmp/ccKwH3L0.s:1179   .text.mbedtls_oid_get_oid_by_pk_alg:0000000000000000 mbedtls_oid_get_oid_by_pk_alg
+     /tmp/ccKwH3L0.s:1240   .text.mbedtls_oid_get_ec_grp:0000000000000000 mbedtls_oid_get_ec_grp
+     /tmp/ccKwH3L0.s:1308   .text.mbedtls_oid_get_oid_by_ec_grp:0000000000000000 mbedtls_oid_get_oid_by_ec_grp
+     /tmp/ccKwH3L0.s:1344   .text.mbedtls_oid_get_ec_grp_algid:0000000000000000 mbedtls_oid_get_ec_grp_algid
+     /tmp/ccKwH3L0.s:1365   .text.mbedtls_oid_get_oid_by_ec_grp_algid:0000000000000000 mbedtls_oid_get_oid_by_ec_grp_algid
+     /tmp/ccKwH3L0.s:1389   .text.mbedtls_oid_get_cipher_alg:0000000000000000 mbedtls_oid_get_cipher_alg
+     /tmp/ccKwH3L0.s:3594   .data.rel.ro.local.oid_cipher_alg:0000000000000000 oid_cipher_alg
+     /tmp/ccKwH3L0.s:1560   .text.mbedtls_oid_get_md_alg:0000000000000000 mbedtls_oid_get_md_alg
+     /tmp/ccKwH3L0.s:3536   .data.rel.ro.local.oid_md_alg:0000000000000000 oid_md_alg
+     /tmp/ccKwH3L0.s:1728   .text.mbedtls_oid_get_oid_by_md:0000000000000000 mbedtls_oid_get_oid_by_md
+     /tmp/ccKwH3L0.s:1792   .text.mbedtls_oid_get_md_hmac:0000000000000000 mbedtls_oid_get_md_hmac
+     /tmp/ccKwH3L0.s:3490   .data.rel.ro.local.oid_md_hmac:0000000000000000 oid_md_hmac
+     /tmp/ccKwH3L0.s:1965   .text.mbedtls_oid_get_numeric_string:0000000000000000 mbedtls_oid_get_numeric_string
+     /tmp/ccKwH3L0.s:2355   .text.mbedtls_oid_from_numeric_string:0000000000000000 mbedtls_oid_from_numeric_string
+     /tmp/ccKwH3L0.s:6      .rodata.mbedtls_oid_get_attr_short_name.str1.1:0000000000000000 .LC0
+     /tmp/ccKwH3L0.s:177    .rodata.mbedtls_oid_get_x509_ext_type.str1.1:0000000000000000 .LC1
+     /tmp/ccKwH3L0.s:348    .rodata.mbedtls_oid_get_extended_key_usage.str1.1:0000000000000000 .LC2
+     /tmp/ccKwH3L0.s:519    .rodata.mbedtls_oid_get_certificate_policies.str1.1:0000000000000000 .LC3
+     /tmp/ccKwH3L0.s:586    .rodata.mbedtls_oid_get_sig_alg_desc.str1.1:0000000000000000 .LC4
+     /tmp/ccKwH3L0.s:1005   .rodata.mbedtls_oid_get_pk_alg.str1.1:0000000000000000 .LC5
+     /tmp/ccKwH3L0.s:1302   .rodata.mbedtls_oid_get_oid_by_ec_grp.str1.1:0000000000000000 .LC6
+     /tmp/ccKwH3L0.s:1383   .rodata.mbedtls_oid_get_cipher_alg.str1.1:0000000000000000 .LC7
+     /tmp/ccKwH3L0.s:1554   .rodata.mbedtls_oid_get_md_alg.str1.1:0000000000000000 .LC8
+     /tmp/ccKwH3L0.s:1786   .rodata.mbedtls_oid_get_md_hmac.str1.1:0000000000000000 .LC9
+     /tmp/ccKwH3L0.s:1957   .rodata.mbedtls_oid_get_numeric_string.str1.1:0000000000000000 .LC10
+     /tmp/ccKwH3L0.s:1959   .rodata.mbedtls_oid_get_numeric_string.str1.1:0000000000000006 .LC11
+     /tmp/ccKwH3L0.s:4242   .rodata.cst16:0000000000000010 .LC13
+     /tmp/ccKwH3L0.s:4224   .rodata.cst16:0000000000000000 .LC12
 
 UNDEFINED SYMBOLS
 memcmp

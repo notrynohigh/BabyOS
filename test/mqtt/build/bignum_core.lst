@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc8r0ZYU.s 			page 1
+GAS LISTING /tmp/cc61jssi.s 			page 1
 
 
    1              		.file	"bignum_core.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   37:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** #else
   38:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     size_t j;
   39:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     mbedtls_mpi_uint mask = (mbedtls_mpi_uint) 1 << (biL - 1);
-GAS LISTING /tmp/cc8r0ZYU.s 			page 2
+GAS LISTING /tmp/cc61jssi.s 			page 2
 
 
   40:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   57 0014 83FEFF   		cmpl	$-1, %esi
   58 0017 7427     		je	.L9
   59              	.LVL6:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 3
+GAS LISTING /tmp/cc61jssi.s 			page 3
 
 
   60              	.L6:
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   64:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
   65:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     return 0;
  104              		.loc 1 65 12 view .LVU30
-GAS LISTING /tmp/cc8r0ZYU.s 			page 4
+GAS LISTING /tmp/cc61jssi.s 			page 4
 
 
  105 0041 31C0     		xorl	%eax, %eax
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   93:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      * - adapt byte-order in each limb
   94:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      * - swap the limbs themselves.
   95:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      * For that, simultaneously traverse the limbs from left to right
-GAS LISTING /tmp/cc8r0ZYU.s 			page 5
+GAS LISTING /tmp/cc61jssi.s 			page 5
 
 
   96:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      * and from right to left, as long as the left index is not bigger
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  168              	.LVL17:
  169              	.LBB249:
  170              	.LBB247:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 6
+GAS LISTING /tmp/cc61jssi.s 			page 6
 
 
  171              	.LBB243:
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  214              	mbedtls_mpi_core_uint_le_mpi:
  215              	.LVL21:
  216              	.LFB70:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 7
+GAS LISTING /tmp/cc61jssi.s 			page 7
 
 
  111:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   33:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  */
   34:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(MBEDTLS_COMPILER_IS_GCC) && (__GNUC__ > 4)
   35:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     #pragma GCC diagnostic push
-GAS LISTING /tmp/cc8r0ZYU.s 			page 8
+GAS LISTING /tmp/cc61jssi.s 			page 8
 
 
   36:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     #pragma GCC diagnostic ignored "-Wredundant-decls"
@@ -478,7 +478,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   90:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * \param x        The value to hide from the compiler.
   91:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  * \return         The same value that was passed in, such that the compiler
   92:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *                 cannot prove its value (even for calls of the form
-GAS LISTING /tmp/cc8r0ZYU.s 			page 9
+GAS LISTING /tmp/cc61jssi.s 			page 9
 
 
   93:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****  *                 x = mbedtls_ct_compiler_opaque(1), x will be unknown).
@@ -538,7 +538,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  147:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     asm volatile ("neg %x[s], %x[x]                               \n\t"
  148:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "orr %x[x], %x[s], %x[x]                        \n\t"
  149:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   "asr %x[x], %x[x], 63                           \n\t"
-GAS LISTING /tmp/cc8r0ZYU.s 			page 10
+GAS LISTING /tmp/cc61jssi.s 			page 10
 
 
  150:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
@@ -598,7 +598,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  204:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #pragma warning( disable : 4146 )
  205:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
  206:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     // y is negative (i.e., top bit set) iff x is non-zero
-GAS LISTING /tmp/cc8r0ZYU.s 			page 11
+GAS LISTING /tmp/cc61jssi.s 			page 11
 
 
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     mbedtls_ct_int_t y = (-xo) | -(xo >> 1);
@@ -658,7 +658,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  261:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   [if0] "+&a" (if0)
  262:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
  263:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   :
-GAS LISTING /tmp/cc8r0ZYU.s 			page 12
+GAS LISTING /tmp/cc61jssi.s 			page 12
 
 
  264:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                   );
@@ -718,7 +718,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  318:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         "asrs    %[x], %[x], #31                                  \n\t"
  319:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         RESTORE_ASM_SYNTAX
  320:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         :
-GAS LISTING /tmp/cc8r0ZYU.s 			page 13
+GAS LISTING /tmp/cc61jssi.s 			page 13
 
 
  321:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         [s1] "=&l" (s1),
@@ -778,7 +778,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  375:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     mbedtls_ct_condition_t cond = mbedtls_ct_bool((xo ^ yo) >> (MBEDTLS_CT_SIZE - 1));
  376:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
  377:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /*
-GAS LISTING /tmp/cc8r0ZYU.s 			page 14
+GAS LISTING /tmp/cc61jssi.s 			page 14
 
 
  378:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * If the MSB are the same then the difference x-y will be negative (and
@@ -838,7 +838,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  432:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
  433:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline unsigned mbedtls_ct_uint_if(mbedtls_ct_condition_t condition,
  434:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                           unsigned if1,
-GAS LISTING /tmp/cc8r0ZYU.s 			page 15
+GAS LISTING /tmp/cc61jssi.s 			page 15
 
 
  435:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                           unsigned if0)
@@ -898,7 +898,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  489:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     /* Coverting int -> uint -> int here is safe, because we require if1 and if0 to be
  490:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * in the range -32767..0, and we require 32-bit int and uint types.
  491:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      *
-GAS LISTING /tmp/cc8r0ZYU.s 			page 16
+GAS LISTING /tmp/cc61jssi.s 			page 16
 
 
  492:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****      * This means that (0 <= -if0 < INT_MAX), so negating if0 is safe, and similarly for
@@ -958,7 +958,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  248              	.LBE297:
  249              	.LBE296:
  250              	.LBE295:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 17
+GAS LISTING /tmp/cc61jssi.s 			page 17
 
 
  251              	.LBE294:
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  294 0021 488B1500 		movq	mbedtls_ct_zero(%rip), %rdx
  294      000000
  295              	.LVL27:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 18
+GAS LISTING /tmp/cc61jssi.s 			page 18
 
 
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
  339              		.loc 2 106 14 view .LVU97
  340              	.LBE310:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 19
+GAS LISTING /tmp/cc61jssi.s 			page 19
 
 
  341              	.LBE312:
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  382              	.LBB338:
  383              	.LBB315:
  213:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(_MSC_VER)
-GAS LISTING /tmp/cc8r0ZYU.s 			page 20
+GAS LISTING /tmp/cc61jssi.s 			page 20
 
 
  384              		.loc 2 213 12 view .LVU109
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  423              	.LBE340:
  424              	.LBB341:
  425              	.LBB326:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 21
+GAS LISTING /tmp/cc61jssi.s 			page 21
 
 
  280:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         (mbedtls_ct_condition_t) (~mbedtls_ct_compiler_opaque(condition));
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  469              		.loc 2 207 5 is_stmt 1 view .LVU134
  210:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
  470              		.loc 2 210 5 view .LVU135
-GAS LISTING /tmp/cc8r0ZYU.s 			page 22
+GAS LISTING /tmp/cc61jssi.s 			page 22
 
 
  213:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #if defined(_MSC_VER)
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  511 008f 4983F801 		cmpq	$1, %r8
  512 0093 7634     		jbe	.L18
  513 0095 488D7108 		leaq	8(%rcx), %rsi
-GAS LISTING /tmp/cc8r0ZYU.s 			page 23
+GAS LISTING /tmp/cc61jssi.s 			page 23
 
 
  514 0099 4E8D04C1 		leaq	(%rcx,%r8,8), %r8
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  531:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****     return (mbedtls_ct_condition_t) (x ^ y);
  532:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** }
  533:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 24
+GAS LISTING /tmp/cc61jssi.s 			page 24
 
 
  534:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline mbedtls_ct_condition_t mbedtls_ct_bool_and(mbedtls_ct_condition_t x,
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  580              		.loc 1 123 38 is_stmt 1 discriminator 3 view .LVU175
  123:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         msll_mask = mbedtls_ct_bool_or(msll_mask, mbedtls_ct_bool(A[i]));
  581              		.loc 1 123 26 discriminator 1 view .LVU176
-GAS LISTING /tmp/cc8r0ZYU.s 			page 25
+GAS LISTING /tmp/cc61jssi.s 			page 25
 
 
  582 00c4 4C39C6   		cmpq	%r8, %rsi
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  622              		.loc 2 106 5 view .LVU188
  623              	.LBE427:
  624              	.LBE426:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 26
+GAS LISTING /tmp/cc61jssi.s 			page 26
 
 
  135:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     mbedtls_ct_condition_t ret = MBEDTLS_CT_FALSE, cond = MBEDTLS_CT_FALSE, done = MBEDTLS_CT_FALSE
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  662      0000
  663              	.LBE434:
  135:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     mbedtls_ct_condition_t ret = MBEDTLS_CT_FALSE, cond = MBEDTLS_CT_FALSE, done = MBEDTLS_CT_FALSE
-GAS LISTING /tmp/cc8r0ZYU.s 			page 27
+GAS LISTING /tmp/cc61jssi.s 			page 27
 
 
  664              		.loc 1 135 1 is_stmt 0 view .LVU203
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  704              	.LBE487:
  705              	.LBE491:
  706              		.loc 1 146 16 view .LVU208
-GAS LISTING /tmp/cc8r0ZYU.s 			page 28
+GAS LISTING /tmp/cc61jssi.s 			page 28
 
 
  707 0043 4C8B5CD1 		movq	-8(%rcx,%rdx,8), %r11
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  748              	.LBE443:
  749              	.LBE457:
  375:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 29
+GAS LISTING /tmp/cc61jssi.s 			page 29
 
 
  750              		.loc 2 375 5 is_stmt 1 view .LVU220
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  790 0068 48F7D8   		negq	%rax
  791              	.LVL65:
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 30
+GAS LISTING /tmp/cc61jssi.s 			page 30
 
 
  792              		.loc 2 207 39 view .LVU235
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  835              		.loc 2 280 5 view .LVU244
  836              	.LBB465:
  837              	.LBI462:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 31
+GAS LISTING /tmp/cc61jssi.s 			page 31
 
 
  100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  876 0092 4809D8   		orq	%rbx, %rax
  877              	.LBE467:
  878              	.LBE483:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 32
+GAS LISTING /tmp/cc61jssi.s 			page 32
 
 
  390:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  920              		.loc 2 207 34 view .LVU274
  921 00a5 49F7D9   		negq	%r9
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 33
+GAS LISTING /tmp/cc61jssi.s 			page 33
 
 
  922              		.loc 2 207 32 view .LVU275
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  969              		.loc 2 543 12 view .LVU281
  970 00c0 4D09C1   		orq	%r8, %r9
  971              	.LVL76:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 34
+GAS LISTING /tmp/cc61jssi.s 			page 34
 
 
  972              		.loc 2 543 12 view .LVU282
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1006 00c9 4D89D0   		movq	%r10, %r8
  1007              	.LVL78:
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
-GAS LISTING /tmp/cc8r0ZYU.s 			page 35
+GAS LISTING /tmp/cc61jssi.s 			page 35
 
 
  1008              		.loc 2 106 14 view .LVU296
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1047 00dd 4989C2   		movq	%rax, %r10
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
  1048              		.loc 2 207 27 view .LVU311
-GAS LISTING /tmp/cc8r0ZYU.s 			page 36
+GAS LISTING /tmp/cc61jssi.s 			page 36
 
 
  1049 00e0 48F7D8   		negq	%rax
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1092              		.loc 2 220 33 view .LVU320
  1093              	.LBB526:
  280:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****         (mbedtls_ct_condition_t) (~mbedtls_ct_compiler_opaque(condition));
-GAS LISTING /tmp/cc8r0ZYU.s 			page 37
+GAS LISTING /tmp/cc61jssi.s 			page 37
 
 
  1094              		.loc 2 280 5 view .LVU321
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1133              		.loc 2 280 28 view .LVU336
  1134 0107 48F7D0   		notq	%rax
  282:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
-GAS LISTING /tmp/cc8r0ZYU.s 			page 38
+GAS LISTING /tmp/cc61jssi.s 			page 38
 
 
  1135              		.loc 2 282 63 view .LVU337
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  544:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** }
  545:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
  546:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** static inline mbedtls_ct_condition_t mbedtls_ct_bool_not(mbedtls_ct_condition_t x)
-GAS LISTING /tmp/cc8r0ZYU.s 			page 39
+GAS LISTING /tmp/cc61jssi.s 			page 39
 
 
  547:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1219 012d 49F7D0   		notq	%r8
  1220              	.LBE555:
  1221              	.LBE564:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 40
+GAS LISTING /tmp/cc61jssi.s 			page 40
 
 
  1222              	.LBB565:
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  163:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      */
  164:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
  165:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     return ret;
-GAS LISTING /tmp/cc8r0ZYU.s 			page 41
+GAS LISTING /tmp/cc61jssi.s 			page 41
 
 
  166:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** }
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  174:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         return;
  175:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
  176:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 42
+GAS LISTING /tmp/cc61jssi.s 			page 42
 
 
  177:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     /* This function is very performance-sensitive for RSA. For this reason
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1339 0023 4831C8   		xorq	%rcx, %rax
  282:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
  1340              		.loc 2 282 44 view .LVU398
-GAS LISTING /tmp/cc8r0ZYU.s 			page 43
+GAS LISTING /tmp/cc61jssi.s 			page 43
 
 
  1341 0026 4921C9   		andq	%rcx, %r9
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1381 0004 4989D0   		movq	%rdx, %r8
  1382 0007 4989C9   		movq	%rcx, %r9
  1383              		.loc 1 192 8 view .LVU410
-GAS LISTING /tmp/cc8r0ZYU.s 			page 44
+GAS LISTING /tmp/cc61jssi.s 			page 44
 
 
  1384 000a 4839F7   		cmpq	%rsi, %rdi
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1424              	.LBB594:
  1425              	.LBI591:
  100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
-GAS LISTING /tmp/cc8r0ZYU.s 			page 45
+GAS LISTING /tmp/cc61jssi.s 			page 45
 
 
  1426              		.loc 2 100 33 view .LVU421
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1468              	.LBI600:
  450:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                       mbedtls_mpi_uint if1,
  1469              		.loc 2 450 32 view .LVU434
-GAS LISTING /tmp/cc8r0ZYU.s 			page 46
+GAS LISTING /tmp/cc61jssi.s 			page 46
 
 
  454:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                             (mbedtls_ct_uint_t) if1,
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1509              	.LBE586:
  200:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
  201:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** }
-GAS LISTING /tmp/cc8r0ZYU.s 			page 47
+GAS LISTING /tmp/cc61jssi.s 			page 47
 
 
  1510              		.loc 1 201 1 view .LVU449
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1552              		.loc 1 208 18 view .LVU459
  1553 001c 4801D0   		addq	%rdx, %rax
  1554              		.loc 1 210 8 view .LVU460
-GAS LISTING /tmp/cc8r0ZYU.s 			page 48
+GAS LISTING /tmp/cc61jssi.s 			page 48
 
 
  1555 001f 4839C6   		cmpq	%rax, %rsi
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   38:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** }
   39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
   40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
-GAS LISTING /tmp/cc8r0ZYU.s 			page 49
+GAS LISTING /tmp/cc61jssi.s 			page 49
 
 
   41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1597              	.LVL120:
  1598              		.p2align 4,,10
  1599 0045 0F1F00   		.p2align 3
-GAS LISTING /tmp/cc8r0ZYU.s 			page 50
+GAS LISTING /tmp/cc61jssi.s 			page 50
 
 
  1600              	.L49:
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1639              	.LCFI9:
  1640              		.cfi_remember_state
  1641              		.cfi_def_cfa_offset 24
-GAS LISTING /tmp/cc8r0ZYU.s 			page 51
+GAS LISTING /tmp/cc61jssi.s 			page 51
 
 
  1642 0075 5B       		popq	%rbx
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1685              	.LVL129:
  230:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     const size_t limbs = CHARS_TO_LIMBS(input_length);
  1686              		.loc 1 230 1 view .LVU500
-GAS LISTING /tmp/cc8r0ZYU.s 			page 52
+GAS LISTING /tmp/cc61jssi.s 			page 52
 
 
  1687 000e 4154     		pushq	%r12
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  252:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     mbedtls_mpi_core_bigendian_to_host(X, X_limbs);
  253:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
  254:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     return 0;
-GAS LISTING /tmp/cc8r0ZYU.s 			page 53
+GAS LISTING /tmp/cc61jssi.s 			page 53
 
 
  255:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** }
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1767              		.loc 1 246 5 is_stmt 1 view .LVU516
  246:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         size_t overhead = (X_limbs * ciL) - input_length;
  1768              		.loc 1 246 8 is_stmt 0 view .LVU517
-GAS LISTING /tmp/cc8r0ZYU.s 			page 54
+GAS LISTING /tmp/cc61jssi.s 			page 54
 
 
  1769 0058 4D85E4   		testq	%r12, %r12
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1805              		.loc 1 77 16 is_stmt 0 view .LVU532
  1806 0070 488B13   		movq	(%rbx), %rdx
  1807              	.LBE638:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 55
+GAS LISTING /tmp/cc61jssi.s 			page 55
 
 
  1808              	.LBE637:
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  101:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****          cur_limb_left++, cur_limb_right--) {
  1849              		.loc 1 101 24 view .LVU546
  1850 008c 4839D8   		cmpq	%rbx, %rax
-GAS LISTING /tmp/cc8r0ZYU.s 			page 56
+GAS LISTING /tmp/cc61jssi.s 			page 56
 
 
  1851 008f 73DF     		jnb	.L61
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  1892              	.LVL146:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  1893              		.loc 3 29 10 view .LVU558
-GAS LISTING /tmp/cc8r0ZYU.s 			page 57
+GAS LISTING /tmp/cc61jssi.s 			page 57
 
 
  1894 00ac EBAF     		jmp	.L59
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  268:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         bytes_to_copy = output_length;
  269:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
  270:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         /* The output buffer is smaller than the allocated size of A.
-GAS LISTING /tmp/cc8r0ZYU.s 			page 58
+GAS LISTING /tmp/cc61jssi.s 			page 58
 
 
  271:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****          * However A may fit if its leading bytes are zero. */
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  272:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             if (GET_BYTE(A, i) != 0) {
  1977              		.loc 1 272 42 is_stmt 0 discriminator 1 view .LVU581
  1978              	.LBE653:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 59
+GAS LISTING /tmp/cc61jssi.s 			page 59
 
 
  274:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                 return MBEDTLS_ERR_MPI_BUFFER_TOO_SMALL;
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  285:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         memset(output + stored_bytes, 0, output_length - stored_bytes);
  286:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
  287:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 60
+GAS LISTING /tmp/cc61jssi.s 			page 60
 
 
  288:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     return 0;
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  285:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
  2059              		.loc 1 285 9 view .LVU608
  2060 00bb 4829F2   		subq	%rsi, %rdx
-GAS LISTING /tmp/cc8r0ZYU.s 			page 61
+GAS LISTING /tmp/cc61jssi.s 			page 61
 
 
  2061              	.LVL163:
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2107              		.globl	mbedtls_mpi_core_write_be
  2109              	mbedtls_mpi_core_write_be:
  2110              	.LVL168:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 62
+GAS LISTING /tmp/cc61jssi.s 			page 62
 
 
  2111              	.LFB77:
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2147              	.LBB663:
  303:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         /* There is enough space in the output buffer. Write initial
  304:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****          * null bytes and record the position at which to start
-GAS LISTING /tmp/cc8r0ZYU.s 			page 63
+GAS LISTING /tmp/cc61jssi.s 			page 63
 
 
  305:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****          * writing the significant bytes. In this case, the execution
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  316:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             if (GET_BYTE(X, i) != 0) {
  2186              		.loc 1 316 59 is_stmt 1 discriminator 2 view .LVU642
  2187 006a 4883C001 		addq	$1, %rax
-GAS LISTING /tmp/cc8r0ZYU.s 			page 64
+GAS LISTING /tmp/cc61jssi.s 			page 64
 
 
  2188              	.LVL175:
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2229              		.loc 1 323 44 is_stmt 1 discriminator 3 view .LVU657
  2230              	.LVL180:
  323:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         p[bytes_to_copy - i - 1] = GET_BYTE(X, i);
-GAS LISTING /tmp/cc8r0ZYU.s 			page 65
+GAS LISTING /tmp/cc61jssi.s 			page 65
 
 
  2231              		.loc 1 323 26 discriminator 1 view .LVU658
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2275 00b5 4D8D2438 		leaq	(%r8,%rdi), %r12
  2276              	.LVL186:
  310:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     } else {
-GAS LISTING /tmp/cc8r0ZYU.s 			page 66
+GAS LISTING /tmp/cc61jssi.s 			page 66
 
 
  2277              		.loc 1 310 9 is_stmt 1 view .LVU670
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2324              	.LCFI35:
  2325              		.cfi_def_cfa_offset 8
  2326 00d9 C3       		ret
-GAS LISTING /tmp/cc8r0ZYU.s 			page 67
+GAS LISTING /tmp/cc61jssi.s 			page 67
 
 
  2327              		.cfi_endproc
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2368 0015 4889F5   		movq	%rsi, %rbp
  2369 0018 53       		pushq	%rbx
  2370              	.LCFI38:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 68
+GAS LISTING /tmp/cc61jssi.s 			page 68
 
 
  2371              		.cfi_def_cfa_offset 32
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  355:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
  356:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
  357:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     /*
-GAS LISTING /tmp/cc8r0ZYU.s 			page 69
+GAS LISTING /tmp/cc61jssi.s 			page 69
 
 
  358:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      * shift by count % limb_size
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2443 0052 4889E9   		movq	%rbp, %rcx
  2444 0055 4829C1   		subq	%rax, %rcx
  348:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             X[i] = X[i + v0];
-GAS LISTING /tmp/cc8r0ZYU.s 			page 70
+GAS LISTING /tmp/cc61jssi.s 			page 70
 
 
  2445              		.loc 1 348 23 discriminator 1 view .LVU717
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  348:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             X[i] = X[i + v0];
  2485              		.loc 1 348 23 discriminator 1 view .LVU729
  2486              	.L115:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 71
+GAS LISTING /tmp/cc61jssi.s 			page 71
 
 
  352:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             X[i] = 0;
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  360:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         for (i = limbs; i > 0; i--) {
  2534              		.loc 1 360 5 is_stmt 1 view .LVU738
  360:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         for (i = limbs; i > 0; i--) {
-GAS LISTING /tmp/cc8r0ZYU.s 			page 72
+GAS LISTING /tmp/cc61jssi.s 			page 72
 
 
  2535              		.loc 1 360 8 is_stmt 0 view .LVU739
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2574 0116 4489D1   		movl	%r10d, %ecx
  2575 0119 48D3E8   		shrq	%cl, %rax
  364:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             r0 = r1;
-GAS LISTING /tmp/cc8r0ZYU.s 			page 73
+GAS LISTING /tmp/cc61jssi.s 			page 73
 
 
  2576              		.loc 1 364 22 view .LVU753
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2621              		.loc 1 349 18 view .LVU765
  2622 0144 488914C3 		movq	%rdx, (%rbx,%rax,8)
  348:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             X[i] = X[i + v0];
-GAS LISTING /tmp/cc8r0ZYU.s 			page 74
+GAS LISTING /tmp/cc61jssi.s 			page 74
 
 
  2623              		.loc 1 348 38 is_stmt 1 discriminator 3 view .LVU766
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  376:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     v0 = count / (biL);
  2663              		.loc 1 376 5 view .LVU775
  372:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     size_t i, v0, v1;
-GAS LISTING /tmp/cc8r0ZYU.s 			page 75
+GAS LISTING /tmp/cc61jssi.s 			page 75
 
 
  2664              		.loc 1 372 1 is_stmt 0 view .LVU776
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2704 003c 4889CA   		movq	%rcx, %rdx
  2705              	.LVL237:
  2706              		.loc 1 383 27 is_stmt 0 discriminator 1 view .LVU788
-GAS LISTING /tmp/cc8r0ZYU.s 			page 76
+GAS LISTING /tmp/cc61jssi.s 			page 76
 
 
  2707 003f 4C8D44CF 		leaq	-16(%rdi,%rcx,8), %r8
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2747 008a 4889EA   		movq	%rbp, %rdx
  2748              	.LVL242:
  2749              	.L147:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 77
+GAS LISTING /tmp/cc61jssi.s 			page 77
 
 
  388:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             X[i - 1] = 0;
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2789 00c9 4883C208 		addq	$8, %rdx
  2790              		.loc 1 397 16 view .LVU815
  2791 00cd 4889C6   		movq	%rax, %rsi
-GAS LISTING /tmp/cc8r0ZYU.s 			page 78
+GAS LISTING /tmp/cc61jssi.s 			page 78
 
 
  2792              	.LVL248:
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2836              		.loc 1 403 1 view .LVU828
  2837 00f0 488D0CED 		leaq	0(,%rbp,8), %rcx
  2837      00000000 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 79
+GAS LISTING /tmp/cc61jssi.s 			page 79
 
 
  2838 00f8 488D44F7 		leaq	-8(%rdi,%rsi,8), %rax
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  406:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                       const mbedtls_mpi_uint *A,
  407:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                       const mbedtls_mpi_uint *B,
  408:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                       size_t limbs)
-GAS LISTING /tmp/cc8r0ZYU.s 			page 80
+GAS LISTING /tmp/cc61jssi.s 			page 80
 
 
  409:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** {
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  416:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         c += (t < B[i]);
  2923              		.loc 1 416 11 view .LVU856
  2924 0029 4883D000 		adcq	$0, %rax
-GAS LISTING /tmp/cc8r0ZYU.s 			page 81
+GAS LISTING /tmp/cc61jssi.s 			page 81
 
 
  2925              	.LVL266:
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  2962              		.loc 1 430 5 view .LVU867
  2963              	.LBB681:
  2964              	.LBI681:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 82
+GAS LISTING /tmp/cc61jssi.s 			page 82
 
 
  135:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
@@ -4918,7 +4918,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3004 001c 49D1E8   		shrq	%r8
  3005              	.LVL274:
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 83
+GAS LISTING /tmp/cc61jssi.s 			page 83
 
 
  3006              		.loc 2 207 34 view .LVU883
@@ -4978,7 +4978,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3047              	.LBB694:
  3048              	.LBB693:
  482:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** }
-GAS LISTING /tmp/cc8r0ZYU.s 			page 84
+GAS LISTING /tmp/cc61jssi.s 			page 84
 
 
  3049              		.loc 2 482 12 view .LVU898
@@ -5038,7 +5038,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3092              		.loc 1 428 22 view .LVU914
  3093 0068 31C0     		xorl	%eax, %eax
  439:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
-GAS LISTING /tmp/cc8r0ZYU.s 			page 85
+GAS LISTING /tmp/cc61jssi.s 			page 85
 
 
  440:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
@@ -5098,7 +5098,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3135              	.LBB700:
  3136              	.LBB697:
  452:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         mbedtls_mpi_uint z = (A[i] < c);
-GAS LISTING /tmp/cc8r0ZYU.s 			page 86
+GAS LISTING /tmp/cc61jssi.s 			page 86
 
 
  3137              		.loc 1 452 9 is_stmt 1 view .LVU928
@@ -5158,7 +5158,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  458:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     return c;
  459:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** }
  3179              		.loc 1 459 1 is_stmt 0 view .LVU945
-GAS LISTING /tmp/cc8r0ZYU.s 			page 87
+GAS LISTING /tmp/cc61jssi.s 			page 87
 
 
  3180 0047 4C89C0   		movq	%r8, %rax
@@ -5218,7 +5218,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3220              		.cfi_offset 13, -24
  3221 000e 4154     		pushq	%r12
  3222              	.LCFI60:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 88
+GAS LISTING /tmp/cc61jssi.s 			page 88
 
 
  3223              		.cfi_def_cfa_offset 32
@@ -5278,7 +5278,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3265 0038 4D8D5C24 		leaq	-1(%r12), %r11
  3265      FF
  3266              	.LVL307:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 89
+GAS LISTING /tmp/cc61jssi.s 			page 89
 
 
  3267              		.loc 1 478 12 view .LVU970
@@ -5338,7 +5338,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3317              		.loc 1 480 9 view .LVU992
  3318 006b 48894424 		movq	%rax, -16(%rsp)
  3318      F0
-GAS LISTING /tmp/cc8r0ZYU.s 			page 90
+GAS LISTING /tmp/cc61jssi.s 			page 90
 
 
  3319 0070 488B4424 		movq	-16(%rsp), %rax
@@ -5398,7 +5398,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3370              	.LVL333:
  3371              		.loc 1 480 9 is_stmt 1 view .LVU1012
  3372 00b3 31FF     		xorl	%edi, %edi
-GAS LISTING /tmp/cc8r0ZYU.s 			page 91
+GAS LISTING /tmp/cc61jssi.s 			page 91
 
 
  3373              	.LVL334:
@@ -5458,7 +5458,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3425 00ee 49F76120 		mulq	32(%r9)
  3426              	.LVL348:
  3427              		.loc 1 480 9 is_stmt 1 view .LVU1036
-GAS LISTING /tmp/cc8r0ZYU.s 			page 92
+GAS LISTING /tmp/cc61jssi.s 			page 92
 
 
  3428              		.loc 1 480 9 view .LVU1037
@@ -5518,7 +5518,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3478              		.loc 1 480 9 is_stmt 0 view .LVU1056
  3479 0133 4C89C0   		movq	%r8, %rax
  3480 0136 4983D500 		adcq	$0, %r13
-GAS LISTING /tmp/cc8r0ZYU.s 			page 93
+GAS LISTING /tmp/cc61jssi.s 			page 93
 
 
  3481              	.LVL363:
@@ -5578,7 +5578,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3533              	.LVL377:
  3534              		.loc 1 480 9 view .LVU1079
  3535 0176 48895130 		movq	%rdx, 48(%rcx)
-GAS LISTING /tmp/cc8r0ZYU.s 			page 94
+GAS LISTING /tmp/cc61jssi.s 			page 94
 
 
  3536              	.LVL378:
@@ -5638,7 +5638,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3583 01ba 4C01E3   		addq	%r12, %rbx
  3584 01bd 4D01E2   		addq	%r12, %r10
  3585              	.LVL391:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 95
+GAS LISTING /tmp/cc61jssi.s 			page 95
 
 
  3586              	.L188:
@@ -5698,7 +5698,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  485:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         MULADDC_X1_INIT
  3630              		.loc 1 485 9 is_stmt 1 view .LVU1117
  485:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         MULADDC_X1_INIT
-GAS LISTING /tmp/cc8r0ZYU.s 			page 96
+GAS LISTING /tmp/cc61jssi.s 			page 96
 
 
  3631              		.loc 1 485 9 view .LVU1118
@@ -5758,7 +5758,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3680 0221 4883D200 		adcq	$0, %rdx
  3681              	.LVL412:
  3682              		.loc 1 486 9 view .LVU1140
-GAS LISTING /tmp/cc8r0ZYU.s 			page 97
+GAS LISTING /tmp/cc61jssi.s 			page 97
 
 
  3683              		.loc 1 486 9 view .LVU1141
@@ -5818,7 +5818,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3732              	.LBE705:
  484:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         MULADDC_X1_INIT
  3733              		.loc 1 484 12 is_stmt 1 view .LVU1163
-GAS LISTING /tmp/cc8r0ZYU.s 			page 98
+GAS LISTING /tmp/cc61jssi.s 			page 98
 
 
  484:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         MULADDC_X1_INIT
@@ -5878,7 +5878,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3781              	.LVL433:
  3782              		.loc 1 486 9 view .LVU1186
  3783 0287 48F76328 		mulq	40(%rbx)
-GAS LISTING /tmp/cc8r0ZYU.s 			page 99
+GAS LISTING /tmp/cc61jssi.s 			page 99
 
 
  3784              	.LVL434:
@@ -5938,7 +5938,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3834 02bd 4889D7   		movq	%rdx, %rdi
  3835              	.LVL446:
  3836              		.loc 1 486 9 view .LVU1209
-GAS LISTING /tmp/cc8r0ZYU.s 			page 100
+GAS LISTING /tmp/cc61jssi.s 			page 100
 
 
  3837 02c0 4883D700 		adcq	$0, %rdi
@@ -5998,7 +5998,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3878 02eb 73EB     		jnb	.L255
  3879              	.LVL455:
  3880              	.L187:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 101
+GAS LISTING /tmp/cc61jssi.s 			page 101
 
 
  494:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
@@ -6058,7 +6058,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3924 0000 F30F1EFA 		endbr64
  503:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     memset(X, 0, (A_limbs + B_limbs) * ciL);
  3925              		.loc 1 503 5 is_stmt 1 view .LVU1232
-GAS LISTING /tmp/cc8r0ZYU.s 			page 102
+GAS LISTING /tmp/cc61jssi.s 			page 102
 
 
  3926              	.LVL459:
@@ -6118,7 +6118,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  3974      08
  3975              	.LBB712:
  3976              	.LBB711:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 103
+GAS LISTING /tmp/cc61jssi.s 			page 103
 
 
  3977              		.loc 3 59 10 discriminator 1 view .LVU1241
@@ -6178,7 +6178,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4019              	.L284:
  505:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         (void) mbedtls_mpi_core_mla(X + i, A_limbs + 1, A, A_limbs, B[i]);
  4020              		.loc 1 505 26 is_stmt 0 discriminator 1 view .LVU1254
-GAS LISTING /tmp/cc8r0ZYU.s 			page 104
+GAS LISTING /tmp/cc61jssi.s 			page 104
 
 
  4021              	.LBE713:
@@ -6238,7 +6238,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4068              	.LVL472:
  516:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
  517:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     x += ((N[0] + 2) & 4) << 1;
-GAS LISTING /tmp/cc8r0ZYU.s 			page 105
+GAS LISTING /tmp/cc61jssi.s 			page 105
 
 
  4069              		.loc 1 517 5 is_stmt 1 view .LVU1263
@@ -6298,7 +6298,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4110 0032 4829FE   		subq	%rdi, %rsi
  4111              		.loc 1 520 25 view .LVU1284
  4112 0035 4889C7   		movq	%rax, %rdi
-GAS LISTING /tmp/cc8r0ZYU.s 			page 106
+GAS LISTING /tmp/cc61jssi.s 			page 106
 
 
  4113              		.loc 1 520 11 view .LVU1285
@@ -6358,7 +6358,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4157              	.LVL481:
  4158              	.LFB86:
  525:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 107
+GAS LISTING /tmp/cc61jssi.s 			page 107
 
 
  526:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** void mbedtls_mpi_core_montmul(mbedtls_mpi_uint *X,
@@ -6418,7 +6418,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4204 0020 488B4424 		movq	112(%rsp), %rax
  4204      70
  4205 0025 4C8B4C24 		movq	120(%rsp), %r9
-GAS LISTING /tmp/cc8r0ZYU.s 			page 108
+GAS LISTING /tmp/cc61jssi.s 			page 108
 
 
  4205      78
@@ -6478,7 +6478,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4251              	.LBB731:
  4252              	.LBB723:
  4253              		.loc 3 59 10 discriminator 1 view .LVU1323
-GAS LISTING /tmp/cc8r0ZYU.s 			page 109
+GAS LISTING /tmp/cc61jssi.s 			page 109
 
 
  4254 0055 4989C1   		movq	%rax, %r9
@@ -6538,7 +6538,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  539:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         mbedtls_mpi_uint u1 = (T[0] + u0 * B[0]) * mm;
  4294              		.loc 1 539 9 is_stmt 1 view .LVU1335
  539:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         mbedtls_mpi_uint u1 = (T[0] + u0 * B[0]) * mm;
-GAS LISTING /tmp/cc8r0ZYU.s 			page 110
+GAS LISTING /tmp/cc61jssi.s 			page 110
 
 
  4295              		.loc 1 539 26 is_stmt 0 view .LVU1336
@@ -6598,7 +6598,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4333              		.loc 1 543 16 view .LVU1352
  4334 00d3 E8000000 		call	mbedtls_mpi_core_mla
  4334      00
-GAS LISTING /tmp/cc8r0ZYU.s 			page 111
+GAS LISTING /tmp/cc61jssi.s 			page 111
 
 
  4335              	.LVL499:
@@ -6658,7 +6658,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  551:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      * For better constant-time properties in this function, we always do the
  552:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      * subtraction, with the result in X.
  553:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      *
-GAS LISTING /tmp/cc8r0ZYU.s 			page 112
+GAS LISTING /tmp/cc61jssi.s 			page 112
 
 
  554:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****      * We also look to see if there was any carry in the final additions in the
@@ -6718,7 +6718,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4408 011d 4839C8   		cmpq	%rcx, %rax
  454:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         X[i] = t - B[i];
  4409              		.loc 1 454 11 view .LVU1378
-GAS LISTING /tmp/cc8r0ZYU.s 			page 113
+GAS LISTING /tmp/cc61jssi.s 			page 113
 
 
  4410 0120 4C89C7   		movq	%r8, %rdi
@@ -6778,7 +6778,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4440              		.loc 1 458 5 is_stmt 1 view .LVU1387
  458:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** }
  4441              		.loc 1 458 5 is_stmt 0 view .LVU1388
-GAS LISTING /tmp/cc8r0ZYU.s 			page 114
+GAS LISTING /tmp/cc61jssi.s 			page 114
 
 
  4442              	.LBE741:
@@ -6838,7 +6838,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
  4483              		.loc 2 106 14 view .LVU1400
  4484 0155 4831D0   		xorq	%rdx, %rax
-GAS LISTING /tmp/cc8r0ZYU.s 			page 115
+GAS LISTING /tmp/cc61jssi.s 			page 115
 
 
  4485              	.LVL512:
@@ -6898,7 +6898,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4528 016c 48F7DF   		negq	%rdi
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
  4529              		.loc 2 207 32 view .LVU1415
-GAS LISTING /tmp/cc8r0ZYU.s 			page 116
+GAS LISTING /tmp/cc61jssi.s 			page 116
 
 
  4530 016f 4809C7   		orq	%rax, %rdi
@@ -6958,7 +6958,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4570              		.loc 1 584 1 view -0
  4571              		.cfi_startproc
  4572              		.loc 1 584 1 is_stmt 0 view .LVU1427
-GAS LISTING /tmp/cc8r0ZYU.s 			page 117
+GAS LISTING /tmp/cc61jssi.s 			page 117
 
 
  4573 0000 F30F1EFA 		endbr64
@@ -7018,7 +7018,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4613              		.loc 1 594 1 view .LVU1437
  4614 0023 5D       		popq	%rbp
  4615              	.LCFI103:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 118
+GAS LISTING /tmp/cc61jssi.s 			page 118
 
 
  4616              		.cfi_def_cfa_offset 8
@@ -7078,7 +7078,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4657              		.cfi_def_cfa_offset 24
  590:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
  4658              		.loc 1 590 5 view .LVU1451
-GAS LISTING /tmp/cc8r0ZYU.s 			page 119
+GAS LISTING /tmp/cc61jssi.s 			page 119
 
 
  4659 005b 4889DF   		movq	%rbx, %rdi
@@ -7138,7 +7138,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4687 0000 F30F1EFA 		endbr64
  620:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  4688              		.loc 1 620 5 is_stmt 1 view .LVU1458
-GAS LISTING /tmp/cc8r0ZYU.s 			page 120
+GAS LISTING /tmp/cc61jssi.s 			page 120
 
 
  4689              	.LVL530:
@@ -7198,7 +7198,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4737 0035 4C89E9   		movq	%r13, %rcx
  4738              	.LVL532:
  4739              		.loc 1 622 18 view .LVU1469
-GAS LISTING /tmp/cc8r0ZYU.s 			page 121
+GAS LISTING /tmp/cc61jssi.s 			page 121
 
 
  4740 0038 4829D1   		subq	%rdx, %rcx
@@ -7258,7 +7258,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4783              	.LBI779:
   57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
  4784              		.loc 3 57 1 view .LVU1482
-GAS LISTING /tmp/cc8r0ZYU.s 			page 122
+GAS LISTING /tmp/cc61jssi.s 			page 122
 
 
  4785              	.LBB780:
@@ -7318,7 +7318,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4829              	.LBB785:
  4830              	.LBI785:
   82:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                         size_t A_limbs)
-GAS LISTING /tmp/cc8r0ZYU.s 			page 123
+GAS LISTING /tmp/cc61jssi.s 			page 123
 
 
  4831              		.loc 1 82 6 is_stmt 1 view .LVU1499
@@ -7378,7 +7378,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   77:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** #endif
  4872              		.loc 1 77 16 view .LVU1511
  4873 00ae 480FC9   		bswap	%rcx
-GAS LISTING /tmp/cc8r0ZYU.s 			page 124
+GAS LISTING /tmp/cc61jssi.s 			page 124
 
 
  4874              	.LVL548:
@@ -7438,7 +7438,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4912 00c5 5B       		popq	%rbx
  4913              	.LCFI116:
  4914              		.cfi_def_cfa_offset 48
-GAS LISTING /tmp/cc8r0ZYU.s 			page 125
+GAS LISTING /tmp/cc61jssi.s 			page 125
 
 
  4915 00c6 5D       		popq	%rbp
@@ -7498,7 +7498,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  4960              	.LBB842:
  4961              	.LBI842:
  100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
-GAS LISTING /tmp/cc8r0ZYU.s 			page 126
+GAS LISTING /tmp/cc61jssi.s 			page 126
 
 
  4962              		.loc 2 100 33 view .LVU1532
@@ -7558,7 +7558,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
  5010              		.loc 2 106 5 view .LVU1538
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
-GAS LISTING /tmp/cc8r0ZYU.s 			page 127
+GAS LISTING /tmp/cc61jssi.s 			page 127
 
 
  5011              		.loc 2 106 14 is_stmt 0 view .LVU1539
@@ -7618,7 +7618,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
   58:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         if (A[i] != 0) {
  5047              		.loc 1 58 44 is_stmt 1 discriminator 2 view .LVU1551
   58:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         if (A[i] != 0) {
-GAS LISTING /tmp/cc8r0ZYU.s 			page 128
+GAS LISTING /tmp/cc61jssi.s 			page 128
 
 
  5048              		.loc 1 58 37 discriminator 1 view .LVU1552
@@ -7678,7 +7678,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5087              		.loc 1 61 30 view .LVU1566
  5088 0076 4C29CF   		subq	%r9, %rdi
  5089              	.LBE854:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 129
+GAS LISTING /tmp/cc61jssi.s 			page 129
 
 
  5090              	.LBE857:
@@ -7738,7 +7738,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  680:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         mbedtls_mpi_core_shift_r(X, limbs, 8 * n_bytes - n_bits);
  5108              		.loc 1 680 46 view .LVU1574
  5109 0093 4883E0F8 		andq	$-8, %rax
-GAS LISTING /tmp/cc8r0ZYU.s 			page 130
+GAS LISTING /tmp/cc61jssi.s 			page 130
 
 
  5110 0097 4C894C24 		movq	%r9, 24(%rsp)
@@ -7798,7 +7798,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5145              		.loc 1 682 9 is_stmt 1 view .LVU1582
  5146              		.loc 1 682 12 is_stmt 0 view .LVU1583
  5147 00ed 83EB01   		subl	$1, %ebx
-GAS LISTING /tmp/cc8r0ZYU.s 			page 131
+GAS LISTING /tmp/cc61jssi.s 			page 131
 
 
  5148              	.LVL574:
@@ -7858,7 +7858,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5184              	.LBB866:
  5185 0109 49333F   		xorq	(%r15), %rdi
  5186              	.LVL576:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 132
+GAS LISTING /tmp/cc61jssi.s 			page 132
 
 
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
@@ -7918,7 +7918,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5229              	.LBE885:
  375:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** 
  5230              		.loc 2 375 55 is_stmt 0 view .LVU1606
-GAS LISTING /tmp/cc8r0ZYU.s 			page 133
+GAS LISTING /tmp/cc61jssi.s 			page 133
 
 
  5231 0116 4889F8   		movq	%rdi, %rax
@@ -7978,7 +7978,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5271      000000
  5272              	.LVL583:
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
-GAS LISTING /tmp/cc8r0ZYU.s 			page 134
+GAS LISTING /tmp/cc61jssi.s 			page 134
 
 
  5273              		.loc 2 106 14 view .LVU1620
@@ -8038,7 +8038,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5314              		.loc 2 393 5 view .LVU1632
  5315              	.LBB907:
  5316              	.LBI895:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 135
+GAS LISTING /tmp/cc61jssi.s 			page 135
 
 
  135:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
@@ -8098,7 +8098,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5359 015d 48C1E83F 		shrq	$63, %rax
  5360              	.LBB909:
  5361              	.LBB904:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 136
+GAS LISTING /tmp/cc61jssi.s 			page 136
 
 
  5362              	.LBB902:
@@ -8158,7 +8158,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5401              	.LBB915:
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
  5402              		.loc 2 106 5 view .LVU1659
-GAS LISTING /tmp/cc8r0ZYU.s 			page 137
+GAS LISTING /tmp/cc61jssi.s 			page 137
 
 
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
@@ -8218,7 +8218,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5441              	.LBB924:
  5442              	.LBI924:
  540:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                         mbedtls_ct_condition_t y)
-GAS LISTING /tmp/cc8r0ZYU.s 			page 138
+GAS LISTING /tmp/cc61jssi.s 			page 138
 
 
  5443              		.loc 2 540 38 is_stmt 1 view .LVU1675
@@ -8278,7 +8278,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  123:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         msll_mask = mbedtls_ct_bool_or(msll_mask, mbedtls_ct_bool(A[i]));
  5484              		.loc 1 123 26 is_stmt 0 discriminator 1 view .LVU1689
  5485              	.LBE918:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 139
+GAS LISTING /tmp/cc61jssi.s 			page 139
 
 
  129:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** }
@@ -8338,7 +8338,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5524      000000
  5525              	.LVL600:
  106:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** #endif
-GAS LISTING /tmp/cc8r0ZYU.s 			page 140
+GAS LISTING /tmp/cc61jssi.s 			page 140
 
 
  5526              		.loc 2 106 14 view .LVU1705
@@ -8398,7 +8398,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5573              	.LVL606:
  5574              	.L332:
  5575              	.LCFI137:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 141
+GAS LISTING /tmp/cc61jssi.s 			page 141
 
 
  5576              		.cfi_restore_state
@@ -8458,7 +8458,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5614      00
  5615              	.LVL613:
  646:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-GAS LISTING /tmp/cc8r0ZYU.s 			page 142
+GAS LISTING /tmp/cc61jssi.s 			page 142
 
 
  5616              		.loc 1 646 30 view .LVU1724
@@ -8518,7 +8518,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5651              	.LVL617:
  702:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** #else
  5652              		.loc 1 702 52 view .LVU1732
-GAS LISTING /tmp/cc8r0ZYU.s 			page 143
+GAS LISTING /tmp/cc61jssi.s 			page 143
 
 
  5653              	.LBE941:
@@ -8578,7 +8578,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  744:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         mbedtls_mpi_core_montmul(Wcur, Wprev, W1, AN_limbs, N, AN_limbs, mm, temp);
  745:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         Wprev = Wcur;
  746:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
-GAS LISTING /tmp/cc8r0ZYU.s 			page 144
+GAS LISTING /tmp/cc61jssi.s 			page 144
 
 
  747:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** }
@@ -8638,7 +8638,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5705 0019 55       		pushq	%rbp
  5706              	.LCFI142:
  5707              		.cfi_def_cfa_offset 48
-GAS LISTING /tmp/cc8r0ZYU.s 			page 145
+GAS LISTING /tmp/cc61jssi.s 			page 145
 
 
  5708              		.cfi_offset 6, -48
@@ -8698,7 +8698,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5742              		.loc 1 769 1 view .LVU1753
  5743 0042 4C894424 		movq	%r8, 56(%rsp)
  5743      38
-GAS LISTING /tmp/cc8r0ZYU.s 			page 146
+GAS LISTING /tmp/cc61jssi.s 			page 146
 
 
  770:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     const size_t welem = ((size_t) 1) << wsize;
@@ -8758,7 +8758,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  775:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     const size_t select_limbs = AN_limbs;
  5783              		.loc 1 775 18 view .LVU1768
  5784 0072 48D3E0   		salq	%cl, %rax
-GAS LISTING /tmp/cc8r0ZYU.s 			page 147
+GAS LISTING /tmp/cc61jssi.s 			page 147
 
 
  5785              	.LBB1008:
@@ -8818,7 +8818,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5822              	.LVL629:
  517:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
  5823              		.loc 1 517 5 is_stmt 1 view .LVU1780
-GAS LISTING /tmp/cc8r0ZYU.s 			page 148
+GAS LISTING /tmp/cc61jssi.s 			page 148
 
 
  517:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
@@ -8878,7 +8878,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  520:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
  5859              		.loc 1 520 17 view .LVU1799
  5860 00b3 4829FE   		subq	%rdi, %rsi
-GAS LISTING /tmp/cc8r0ZYU.s 			page 149
+GAS LISTING /tmp/cc61jssi.s 			page 149
 
 
  520:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     }
@@ -8938,7 +8938,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5902              	.LBB1019:
  5903              	.LBB1015:
  5904              		.loc 3 59 10 is_stmt 0 discriminator 1 view .LVU1813
-GAS LISTING /tmp/cc8r0ZYU.s 			page 150
+GAS LISTING /tmp/cc61jssi.s 			page 150
 
 
  5905 00d3 31F6     		xorl	%esi, %esi
@@ -8998,7 +8998,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5946              	.LBE1003:
  5947              	.LBE1037:
  5948              	.LBB1038:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 151
+GAS LISTING /tmp/cc61jssi.s 			page 151
 
 
  5949              	.LBB1031:
@@ -9058,7 +9058,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  5991      A8000000 
  5992 0112 4C8B4424 		movq	24(%rsp), %r8
  5992      18
-GAS LISTING /tmp/cc8r0ZYU.s 			page 152
+GAS LISTING /tmp/cc61jssi.s 			page 152
 
 
  5993 0117 488B9424 		movq	160(%rsp), %rdx
@@ -9118,7 +9118,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6030              	.LCFI147:
  6031              		.cfi_def_cfa_offset 152
  6032 0146 415A     		popq	%r10
-GAS LISTING /tmp/cc8r0ZYU.s 			page 153
+GAS LISTING /tmp/cc61jssi.s 			page 153
 
 
  6033              	.LCFI148:
@@ -9178,7 +9178,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6072 018b 4157     		pushq	%r15
  6073              	.LCFI150:
  6074              		.cfi_def_cfa_offset 160
-GAS LISTING /tmp/cc8r0ZYU.s 			page 154
+GAS LISTING /tmp/cc61jssi.s 			page 154
 
 
  6075 018d 4C8B4424 		movq	24(%rsp), %r8
@@ -9238,7 +9238,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  791:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                               mm, RR,
  792:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                               welem, Wtable, temp);
  793:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** 
-GAS LISTING /tmp/cc8r0ZYU.s 			page 155
+GAS LISTING /tmp/cc61jssi.s 			page 155
 
 
  794:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     /*
@@ -9298,7 +9298,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6142 01e5 48C70424 		movq	$0, (%rsp)
  6142      00000000 
  6143 01ed 4989E9   		movq	%rbp, %r9
-GAS LISTING /tmp/cc8r0ZYU.s 			page 156
+GAS LISTING /tmp/cc61jssi.s 			page 156
 
 
  6144 01f0 4C89DD   		movq	%r11, %rbp
@@ -9358,7 +9358,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6175              		.cfi_def_cfa_offset 152
  6176 0225 5E       		popq	%rsi
  6177              	.LCFI156:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 157
+GAS LISTING /tmp/cc61jssi.s 			page 157
 
 
  6178              		.cfi_def_cfa_offset 144
@@ -9418,7 +9418,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6213 0264 0F1F4000 		.p2align 3
  6214              	.L341:
  820:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****         }
-GAS LISTING /tmp/cc8r0ZYU.s 			page 158
+GAS LISTING /tmp/cc61jssi.s 			page 158
 
 
  6215              		.loc 1 820 13 is_stmt 1 view .LVU1896
@@ -9478,7 +9478,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6250 02a5 4531FF   		xorl	%r15d, %r15d
  6251              	.LVL665:
  6252              	.L345:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 159
+GAS LISTING /tmp/cc61jssi.s 			page 159
 
 
  831:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****             /* Select Wtable[window] without leaking window through
@@ -9538,7 +9538,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6284              	.LBE1054:
  6285              	.LBB1056:
  6286              	.LBI1056:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 160
+GAS LISTING /tmp/cc61jssi.s 			page 160
 
 
  100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
@@ -9598,7 +9598,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6323              		.loc 1 605 9 is_stmt 1 view .LVU1937
  6324              	.LBB1076:
  6325              	.LBI1076:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 161
+GAS LISTING /tmp/cc61jssi.s 			page 161
 
 
  168:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                   const mbedtls_mpi_uint *A,
@@ -9658,7 +9658,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6373              	.LBB1075:
  6374              	.LBB1073:
  6375              	.LBB1071:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 162
+GAS LISTING /tmp/cc61jssi.s 			page 162
 
 
  6376              	.LBB1069:
@@ -9718,7 +9718,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6419              	.LBB1080:
  6420              	.LBI1080:
  450:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h ****                                                       mbedtls_mpi_uint if1,
-GAS LISTING /tmp/cc8r0ZYU.s 			page 163
+GAS LISTING /tmp/cc61jssi.s 			page 163
 
 
  6421              		.loc 2 450 32 view .LVU1956
@@ -9778,7 +9778,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6460              		.loc 1 182 26 discriminator 1 view .LVU1970
  6461 0320 4939D1   		cmpq	%rdx, %r9
  6462 0323 75DB     		jne	.L350
-GAS LISTING /tmp/cc8r0ZYU.s 			page 164
+GAS LISTING /tmp/cc61jssi.s 			page 164
 
 
  6463              	.LVL676:
@@ -9838,7 +9838,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6504 0359 58       		popq	%rax
  6505              	.LCFI159:
  6506              		.cfi_def_cfa_offset 152
-GAS LISTING /tmp/cc8r0ZYU.s 			page 165
+GAS LISTING /tmp/cc61jssi.s 			page 165
 
 
  6507 035a 5A       		popq	%rdx
@@ -9898,7 +9898,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6553              		.cfi_def_cfa_offset 16
  6554 0391 415F     		popq	%r15
  6555              	.LCFI167:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 166
+GAS LISTING /tmp/cc61jssi.s 			page 166
 
 
  6556              		.cfi_def_cfa_offset 8
@@ -9958,7 +9958,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6600              		.loc 1 852 9 view .LVU1996
  6601              		.loc 1 852 16 is_stmt 0 view .LVU1997
  6602 0010 4E8B0CC6 		movq	(%rsi,%r8,8), %r9
-GAS LISTING /tmp/cc8r0ZYU.s 			page 167
+GAS LISTING /tmp/cc61jssi.s 			page 167
 
 
  6603 0014 4929C1   		subq	%rax, %r9
@@ -10018,7 +10018,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6645              		.loc 1 861 1 is_stmt 0 view .LVU2010
  6646 0000 F30F1EFA 		endbr64
  862:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****     volatile const mbedtls_mpi_uint *force_read_A = A;
-GAS LISTING /tmp/cc8r0ZYU.s 			page 168
+GAS LISTING /tmp/cc61jssi.s 			page 168
 
 
  6647              		.loc 1 862 5 is_stmt 1 view .LVU2011
@@ -10078,7 +10078,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6687              	.LBB1107:
  6688              	.LBI1107:
  100:../../bos/thirdparty/mbedtls/bos_mbedtls/constant_time_impl.h **** {
-GAS LISTING /tmp/cc8r0ZYU.s 			page 169
+GAS LISTING /tmp/cc61jssi.s 			page 169
 
 
  6689              		.loc 2 100 33 view .LVU2027
@@ -10138,7 +10138,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  872:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c **** void mbedtls_mpi_core_to_mont_rep(mbedtls_mpi_uint *X,
  873:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                   const mbedtls_mpi_uint *A,
  874:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                   const mbedtls_mpi_uint *N,
-GAS LISTING /tmp/cc8r0ZYU.s 			page 170
+GAS LISTING /tmp/cc61jssi.s 			page 170
 
 
  875:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                   size_t AN_limbs,
@@ -10198,7 +10198,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  885:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                     const mbedtls_mpi_uint *N,
  886:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                     size_t AN_limbs,
  887:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                     mbedtls_mpi_uint mm,
-GAS LISTING /tmp/cc8r0ZYU.s 			page 171
+GAS LISTING /tmp/cc61jssi.s 			page 171
 
 
  888:../../bos/thirdparty/mbedtls/bos_mbedtls/bignum_core.c ****                                     mbedtls_mpi_uint *T)
@@ -10258,7 +10258,7 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  6815 003c 488B4424 		movq	8(%rsp), %rax
  6815      08
  6816 0041 64482B04 		subq	%fs:40, %rax
-GAS LISTING /tmp/cc8r0ZYU.s 			page 172
+GAS LISTING /tmp/cc61jssi.s 			page 172
 
 
  6816      25280000 
@@ -10302,40 +10302,40 @@ GAS LISTING /tmp/cc8r0ZYU.s 			page 1
  30574              	3:
  30575 001c 00000000 		.align 8
  30576              	4:
-GAS LISTING /tmp/cc8r0ZYU.s 			page 173
+GAS LISTING /tmp/cc61jssi.s 			page 173
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 bignum_core.c
-     /tmp/cc8r0ZYU.s:9      .text.mbedtls_mpi_core_clz:0000000000000000 mbedtls_mpi_core_clz
-     /tmp/cc8r0ZYU.s:29     .text.mbedtls_mpi_core_bitlen:0000000000000000 mbedtls_mpi_core_bitlen
-     /tmp/cc8r0ZYU.s:115    .text.mbedtls_mpi_core_bigendian_to_host:0000000000000000 mbedtls_mpi_core_bigendian_to_host
-     /tmp/cc8r0ZYU.s:214    .text.mbedtls_mpi_core_uint_le_mpi:0000000000000000 mbedtls_mpi_core_uint_le_mpi
-     /tmp/cc8r0ZYU.s:609    .text.mbedtls_mpi_core_lt_ct:0000000000000000 mbedtls_mpi_core_lt_ct
-     /tmp/cc8r0ZYU.s:1289   .text.mbedtls_mpi_core_cond_assign:0000000000000000 mbedtls_mpi_core_cond_assign
-     /tmp/cc8r0ZYU.s:1372   .text.mbedtls_mpi_core_cond_swap:0000000000000000 mbedtls_mpi_core_cond_swap
-     /tmp/cc8r0ZYU.s:1519   .text.mbedtls_mpi_core_read_le:0000000000000000 mbedtls_mpi_core_read_le
-     /tmp/cc8r0ZYU.s:1665   .text.mbedtls_mpi_core_read_be:0000000000000000 mbedtls_mpi_core_read_be
-     /tmp/cc8r0ZYU.s:1911   .text.mbedtls_mpi_core_write_le:0000000000000000 mbedtls_mpi_core_write_le
-     /tmp/cc8r0ZYU.s:2109   .text.mbedtls_mpi_core_write_be:0000000000000000 mbedtls_mpi_core_write_be
-     /tmp/cc8r0ZYU.s:2334   .text.mbedtls_mpi_core_shift_r:0000000000000000 mbedtls_mpi_core_shift_r
-     /tmp/cc8r0ZYU.s:2653   .text.mbedtls_mpi_core_shift_l:0000000000000000 mbedtls_mpi_core_shift_l
-     /tmp/cc8r0ZYU.s:2876   .text.mbedtls_mpi_core_add:0000000000000000 mbedtls_mpi_core_add
-     /tmp/cc8r0ZYU.s:2953   .text.mbedtls_mpi_core_add_if:0000000000000000 mbedtls_mpi_core_add_if
-     /tmp/cc8r0ZYU.s:3104   .text.mbedtls_mpi_core_sub:0000000000000000 mbedtls_mpi_core_sub
-     /tmp/cc8r0ZYU.s:3199   .text.mbedtls_mpi_core_mla:0000000000000000 mbedtls_mpi_core_mla
-     /tmp/cc8r0ZYU.s:3918   .text.mbedtls_mpi_core_mul:0000000000000000 mbedtls_mpi_core_mul
-     /tmp/cc8r0ZYU.s:4058   .text.mbedtls_mpi_core_montmul_init:0000000000000000 mbedtls_mpi_core_montmul_init
-     /tmp/cc8r0ZYU.s:4156   .text.mbedtls_mpi_core_montmul:0000000000000000 mbedtls_mpi_core_montmul
-     /tmp/cc8r0ZYU.s:4567   .text.mbedtls_mpi_core_get_mont_r2_unsafe:0000000000000000 mbedtls_mpi_core_get_mont_r2_unsafe
-     /tmp/cc8r0ZYU.s:4681   .text.mbedtls_mpi_core_fill_random:0000000000000000 mbedtls_mpi_core_fill_random
-     /tmp/cc8r0ZYU.s:4951   .text.mbedtls_mpi_core_random:0000000000000000 mbedtls_mpi_core_random
-     /tmp/cc8r0ZYU.s:5625   .text.mbedtls_mpi_core_exp_mod_working_limbs:0000000000000000 mbedtls_mpi_core_exp_mod_working_limbs
-     /tmp/cc8r0ZYU.s:5674   .text.mbedtls_mpi_core_exp_mod:0000000000000000 mbedtls_mpi_core_exp_mod
-     /tmp/cc8r0ZYU.s:6572   .text.mbedtls_mpi_core_sub_int:0000000000000000 mbedtls_mpi_core_sub_int
-     /tmp/cc8r0ZYU.s:6640   .text.mbedtls_mpi_core_check_zero_ct:0000000000000000 mbedtls_mpi_core_check_zero_ct
-     /tmp/cc8r0ZYU.s:6727   .text.mbedtls_mpi_core_to_mont_rep:0000000000000000 mbedtls_mpi_core_to_mont_rep
-     /tmp/cc8r0ZYU.s:6770   .text.mbedtls_mpi_core_from_mont_rep:0000000000000000 mbedtls_mpi_core_from_mont_rep
+     /tmp/cc61jssi.s:9      .text.mbedtls_mpi_core_clz:0000000000000000 mbedtls_mpi_core_clz
+     /tmp/cc61jssi.s:29     .text.mbedtls_mpi_core_bitlen:0000000000000000 mbedtls_mpi_core_bitlen
+     /tmp/cc61jssi.s:115    .text.mbedtls_mpi_core_bigendian_to_host:0000000000000000 mbedtls_mpi_core_bigendian_to_host
+     /tmp/cc61jssi.s:214    .text.mbedtls_mpi_core_uint_le_mpi:0000000000000000 mbedtls_mpi_core_uint_le_mpi
+     /tmp/cc61jssi.s:609    .text.mbedtls_mpi_core_lt_ct:0000000000000000 mbedtls_mpi_core_lt_ct
+     /tmp/cc61jssi.s:1289   .text.mbedtls_mpi_core_cond_assign:0000000000000000 mbedtls_mpi_core_cond_assign
+     /tmp/cc61jssi.s:1372   .text.mbedtls_mpi_core_cond_swap:0000000000000000 mbedtls_mpi_core_cond_swap
+     /tmp/cc61jssi.s:1519   .text.mbedtls_mpi_core_read_le:0000000000000000 mbedtls_mpi_core_read_le
+     /tmp/cc61jssi.s:1665   .text.mbedtls_mpi_core_read_be:0000000000000000 mbedtls_mpi_core_read_be
+     /tmp/cc61jssi.s:1911   .text.mbedtls_mpi_core_write_le:0000000000000000 mbedtls_mpi_core_write_le
+     /tmp/cc61jssi.s:2109   .text.mbedtls_mpi_core_write_be:0000000000000000 mbedtls_mpi_core_write_be
+     /tmp/cc61jssi.s:2334   .text.mbedtls_mpi_core_shift_r:0000000000000000 mbedtls_mpi_core_shift_r
+     /tmp/cc61jssi.s:2653   .text.mbedtls_mpi_core_shift_l:0000000000000000 mbedtls_mpi_core_shift_l
+     /tmp/cc61jssi.s:2876   .text.mbedtls_mpi_core_add:0000000000000000 mbedtls_mpi_core_add
+     /tmp/cc61jssi.s:2953   .text.mbedtls_mpi_core_add_if:0000000000000000 mbedtls_mpi_core_add_if
+     /tmp/cc61jssi.s:3104   .text.mbedtls_mpi_core_sub:0000000000000000 mbedtls_mpi_core_sub
+     /tmp/cc61jssi.s:3199   .text.mbedtls_mpi_core_mla:0000000000000000 mbedtls_mpi_core_mla
+     /tmp/cc61jssi.s:3918   .text.mbedtls_mpi_core_mul:0000000000000000 mbedtls_mpi_core_mul
+     /tmp/cc61jssi.s:4058   .text.mbedtls_mpi_core_montmul_init:0000000000000000 mbedtls_mpi_core_montmul_init
+     /tmp/cc61jssi.s:4156   .text.mbedtls_mpi_core_montmul:0000000000000000 mbedtls_mpi_core_montmul
+     /tmp/cc61jssi.s:4567   .text.mbedtls_mpi_core_get_mont_r2_unsafe:0000000000000000 mbedtls_mpi_core_get_mont_r2_unsafe
+     /tmp/cc61jssi.s:4681   .text.mbedtls_mpi_core_fill_random:0000000000000000 mbedtls_mpi_core_fill_random
+     /tmp/cc61jssi.s:4951   .text.mbedtls_mpi_core_random:0000000000000000 mbedtls_mpi_core_random
+     /tmp/cc61jssi.s:5625   .text.mbedtls_mpi_core_exp_mod_working_limbs:0000000000000000 mbedtls_mpi_core_exp_mod_working_limbs
+     /tmp/cc61jssi.s:5674   .text.mbedtls_mpi_core_exp_mod:0000000000000000 mbedtls_mpi_core_exp_mod
+     /tmp/cc61jssi.s:6572   .text.mbedtls_mpi_core_sub_int:0000000000000000 mbedtls_mpi_core_sub_int
+     /tmp/cc61jssi.s:6640   .text.mbedtls_mpi_core_check_zero_ct:0000000000000000 mbedtls_mpi_core_check_zero_ct
+     /tmp/cc61jssi.s:6727   .text.mbedtls_mpi_core_to_mont_rep:0000000000000000 mbedtls_mpi_core_to_mont_rep
+     /tmp/cc61jssi.s:6770   .text.mbedtls_mpi_core_from_mont_rep:0000000000000000 mbedtls_mpi_core_from_mont_rep
 
 UNDEFINED SYMBOLS
 mbedtls_ct_zero

@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccKwbuK8.s 			page 1
+GAS LISTING /tmp/ccp2L8gx.s 			page 1
 
 
    1              		.file	"sha256.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** /* Ensure that SIG_SETMASK is defined when -std=c99 is used. */
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #define _GNU_SOURCE
-GAS LISTING /tmp/ccKwbuK8.s 			page 2
+GAS LISTING /tmp/ccp2L8gx.s 			page 2
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  102:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #        endif
  103:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #      else
  104:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #        error "Only GCC and Clang supported for MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_*"
-GAS LISTING /tmp/ccKwbuK8.s 			page 3
+GAS LISTING /tmp/ccp2L8gx.s 			page 3
 
 
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #      endif
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  159:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     return IsProcessorFeaturePresent(PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE) ?
  160:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****            1 : 0;
  161:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** }
-GAS LISTING /tmp/ccKwbuK8.s 			page 4
+GAS LISTING /tmp/ccp2L8gx.s 			page 4
 
 
  162:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #elif defined(__unix__) && defined(SIG_SETMASK)
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  216:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
  217:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #if !defined(MBEDTLS_SHA256_ALT)
  218:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
-GAS LISTING /tmp/ccKwbuK8.s 			page 5
+GAS LISTING /tmp/ccp2L8gx.s 			page 5
 
 
  219:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #define SHA256_BLOCK_SIZE 64
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
   41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
   42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
   43:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 		size_t __len))
-GAS LISTING /tmp/ccKwbuK8.s 			page 6
+GAS LISTING /tmp/ccp2L8gx.s 			page 6
 
 
   44:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
   56              		.globl	mbedtls_sha256_free
   58              	mbedtls_sha256_free:
   59              	.LVL5:
-GAS LISTING /tmp/ccKwbuK8.s 			page 7
+GAS LISTING /tmp/ccp2L8gx.s 			page 7
 
 
   60              	.LFB73:
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
   99 0000 F30F1EFA 		endbr64
  238:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     *dst = *src;
  100              		.loc 1 238 5 is_stmt 1 view .LVU22
-GAS LISTING /tmp/ccKwbuK8.s 			page 8
+GAS LISTING /tmp/ccp2L8gx.s 			page 8
 
 
  101              		.loc 1 238 10 is_stmt 0 view .LVU23
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  255:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     if (is224 == 0) {
  256:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         return MBEDTLS_ERR_SHA256_BAD_INPUT_DATA;
  257:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     }
-GAS LISTING /tmp/ccKwbuK8.s 			page 9
+GAS LISTING /tmp/ccp2L8gx.s 			page 9
 
 
  258:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #endif
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  289:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #endif
  290:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
  291:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     return 0;
-GAS LISTING /tmp/ccKwbuK8.s 			page 10
+GAS LISTING /tmp/ccp2L8gx.s 			page 10
 
 
  154              		.loc 1 291 12 view .LVU42
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  315:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #endif
  316:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
  317:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #if defined(MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT) || \
-GAS LISTING /tmp/ccKwbuK8.s 			page 11
+GAS LISTING /tmp/ccp2L8gx.s 			page 11
 
 
  318:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     defined(MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY)
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  372:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         efgh = vsha256h2q_u32(efgh, abcd_prev, tmp);
  373:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
  374:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         /* Rounds 12 to 15 */
-GAS LISTING /tmp/ccKwbuK8.s 			page 12
+GAS LISTING /tmp/ccp2L8gx.s 			page 12
 
 
  375:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         tmp = vaddq_u32(sched3, vld1q_u32(&K[12]));
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  429:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** {
  430:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     return (mbedtls_internal_sha256_process_many_a64_crypto(ctx, data,
  431:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****                                                             SHA256_BLOCK_SIZE) ==
-GAS LISTING /tmp/ccKwbuK8.s 			page 13
+GAS LISTING /tmp/ccp2L8gx.s 			page 13
 
 
  432:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****             SHA256_BLOCK_SIZE) ? 0 : -1;
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  486:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** static
  487:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** #endif
  488:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** int mbedtls_internal_sha256_process_c(mbedtls_sha256_context *ctx,
-GAS LISTING /tmp/ccKwbuK8.s 			page 14
+GAS LISTING /tmp/ccp2L8gx.s 			page 14
 
 
  489:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****                                       const unsigned char data[SHA256_BLOCK_SIZE])
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  218      70
  219              		.loc 1 499 20 view .LVU55
  220 002e 488DBC24 		leaq	128(%rsp), %rdi
-GAS LISTING /tmp/ccKwbuK8.s 			page 15
+GAS LISTING /tmp/ccp2L8gx.s 			page 15
 
 
  220      80000000 
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  242              		.loc 1 521 20 discriminator 2 view .LVU65
  243 0060 89942488 		movl	%edx, 136(%rsp)
  243      000000
-GAS LISTING /tmp/ccKwbuK8.s 			page 16
+GAS LISTING /tmp/ccp2L8gx.s 			page 16
 
 
  244              		.loc 1 521 22 discriminator 1 view .LVU66
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
   21:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  *
   22:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  * All functions defined here will behave correctly regardless, but might be less
   23:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  * efficient when this is not defined.
-GAS LISTING /tmp/ccKwbuK8.s 			page 17
+GAS LISTING /tmp/ccp2L8gx.s 			page 17
 
 
   24:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  */
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
   78:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  *
   79:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  * Previous implementations used __attribute__((__aligned__(1)), but had issues with a gcc bug:
   80:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94662
-GAS LISTING /tmp/ccKwbuK8.s 			page 18
+GAS LISTING /tmp/ccp2L8gx.s 			page 18
 
 
   81:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  *
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  135:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  * \param   x data to write
  136:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****  */
  137:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #if defined(__IAR_SYSTEMS_ICC__)
-GAS LISTING /tmp/ccKwbuK8.s 			page 19
+GAS LISTING /tmp/ccp2L8gx.s 			page 19
 
 
  138:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #pragma inline = forced
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  282              	.LBE134:
  178:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #endif
  179:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h ****     return r;
-GAS LISTING /tmp/ccKwbuK8.s 			page 20
+GAS LISTING /tmp/ccp2L8gx.s 			page 20
 
 
  283              		.loc 3 179 5 is_stmt 1 view .LVU83
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  321              		.loc 3 179 5 is_stmt 1 view .LVU105
  322              		.loc 3 179 5 is_stmt 0 view .LVU106
  323              	.LBE167:
-GAS LISTING /tmp/ccKwbuK8.s 			page 21
+GAS LISTING /tmp/ccp2L8gx.s 			page 21
 
 
  324              	.LBE182:
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  362              		.loc 2 29 3 is_stmt 0 view .LVU128
  363              	.LBE139:
-GAS LISTING /tmp/ccKwbuK8.s 			page 22
+GAS LISTING /tmp/ccp2L8gx.s 			page 22
 
 
  364              	.LBE154:
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  406              	.LBB186:
  167:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** {
  407              		.loc 3 167 24 view .LVU149
-GAS LISTING /tmp/ccKwbuK8.s 			page 23
+GAS LISTING /tmp/ccp2L8gx.s 			page 23
 
 
  408              	.LBB171:
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  448              	.LBE172:
  449              	.LBE187:
  450              		.loc 1 521 22 discriminator 1 view .LVU170
-GAS LISTING /tmp/ccKwbuK8.s 			page 24
+GAS LISTING /tmp/ccp2L8gx.s 			page 24
 
 
  451 00e3 8B561C   		movl	28(%rsi), %edx
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  490              		.loc 3 177 5 view .LVU190
  491              	.LBB159:
   26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
-GAS LISTING /tmp/ccKwbuK8.s 			page 25
+GAS LISTING /tmp/ccp2L8gx.s 			page 25
 
 
  492              		.loc 2 26 1 view .LVU191
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  520:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         local.W[i] = MBEDTLS_GET_UINT32_BE(data, 4 * i);
  534              		.loc 1 520 26 is_stmt 1 discriminator 3 view .LVU211
  535              	.LVL21:
-GAS LISTING /tmp/ccKwbuK8.s 			page 26
+GAS LISTING /tmp/ccp2L8gx.s 			page 26
 
 
  520:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         local.W[i] = MBEDTLS_GET_UINT32_BE(data, 4 * i);
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  574              	.LBE147:
  575              	.LBE162:
  576              		.loc 3 179 5 is_stmt 1 view .LVU233
-GAS LISTING /tmp/ccKwbuK8.s 			page 27
+GAS LISTING /tmp/ccp2L8gx.s 			page 27
 
 
  577              		.loc 3 179 5 is_stmt 0 view .LVU234
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  618              	.LBB179:
  169:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #if defined(UINT_UNALIGNED)
  619              		.loc 3 169 5 view .LVU254
-GAS LISTING /tmp/ccKwbuK8.s 			page 28
+GAS LISTING /tmp/ccp2L8gx.s 			page 28
 
 
  177:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** #endif
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  520:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         local.W[i] = MBEDTLS_GET_UINT32_BE(data, 4 * i);
  660              		.loc 1 520 26 is_stmt 1 discriminator 3 view .LVU275
  661              	.LVL26:
-GAS LISTING /tmp/ccKwbuK8.s 			page 29
+GAS LISTING /tmp/ccp2L8gx.s 			page 29
 
 
  520:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         local.W[i] = MBEDTLS_GET_UINT32_BE(data, 4 * i);
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  701 01e8 89CA     		movl	%ecx, %edx
  702 01ea C1CA02   		rorl	$2, %edx
  526:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****           local.A[5], local.A[6], local.A[7], local.W[i+0], K[i+0]);
-GAS LISTING /tmp/ccKwbuK8.s 			page 30
+GAS LISTING /tmp/ccp2L8gx.s 			page 30
 
 
  527:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         P(local.A[7], local.A[0], local.A[1], local.A[2], local.A[3],
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  752 025f 4431D8   		xorl	%r11d, %eax
  753 0262 4189D3   		movl	%edx, %r11d
  754 0265 01F8     		addl	%edi, %eax
-GAS LISTING /tmp/ccKwbuK8.s 			page 31
+GAS LISTING /tmp/ccp2L8gx.s 			page 31
 
 
  755 0267 89D7     		movl	%edx, %edi
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  803 02d0 4489FD   		movl	%r15d, %ebp
  529:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****           local.A[3], local.A[4], local.A[5], local.W[i+2], K[i+2]);
  804              		.loc 1 529 9 view .LVU304
-GAS LISTING /tmp/ccKwbuK8.s 			page 32
+GAS LISTING /tmp/ccp2L8gx.s 			page 32
 
 
  805 02d3 4401DF   		addl	%r11d, %edi
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  854 0340 4589CB   		movl	%r9d, %r11d
  855 0343 4531FB   		xorl	%r15d, %r11d
  856 0346 4121F3   		andl	%esi, %r11d
-GAS LISTING /tmp/ccKwbuK8.s 			page 33
+GAS LISTING /tmp/ccp2L8gx.s 			page 33
 
 
  857 0349 C1CD0B   		rorl	$11, %ebp
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  907 03ce 4531D9   		xorl	%r11d, %r9d
  908 03d1 4501C8   		addl	%r9d, %r8d
  909              		.loc 1 535 9 view .LVU324
-GAS LISTING /tmp/ccKwbuK8.s 			page 34
+GAS LISTING /tmp/ccp2L8gx.s 			page 34
 
 
  910              		.loc 1 535 9 view .LVU325
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  958              		.loc 1 537 9 view .LVU337
  959 0448 428D2C07 		leal	(%rdi,%r8), %ebp
  960              		.loc 1 537 9 view .LVU338
-GAS LISTING /tmp/ccKwbuK8.s 			page 35
+GAS LISTING /tmp/ccp2L8gx.s 			page 35
 
 
  961 044c 89C7     		movl	%eax, %edi
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1009 04b7 C1C902   		rorl	$2, %ecx
  1010 04ba 4431C1   		xorl	%r8d, %ecx
  1011 04bd 4589F8   		movl	%r15d, %r8d
-GAS LISTING /tmp/ccKwbuK8.s 			page 36
+GAS LISTING /tmp/ccp2L8gx.s 			page 36
 
 
  1012 04c0 41C1C00A 		roll	$10, %r8d
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1052      20
  1053 0546 897C2438 		movl	%edi, 56(%rsp)
  1054 054a 8B7C2468 		movl	104(%rsp), %edi
-GAS LISTING /tmp/ccKwbuK8.s 			page 37
+GAS LISTING /tmp/ccp2L8gx.s 			page 37
 
 
  1055 054e 44894424 		movl	%r8d, 92(%rsp)
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1100 05d3 41034D40 		addl	64(%r13), %ecx
  1101 05d7 4401C1   		addl	%r8d, %ecx
  1102 05da 01CF     		addl	%ecx, %edi
-GAS LISTING /tmp/ccKwbuK8.s 			page 38
+GAS LISTING /tmp/ccp2L8gx.s 			page 38
 
 
  1103 05dc 448D043A 		leal	(%rdx,%rdi), %r8d
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1152 064c 89C8     		movl	%ecx, %eax
  1153 064e 897D4C   		movl	%edi, 76(%rbp)
  1154 0651 31F0     		xorl	%esi, %eax
-GAS LISTING /tmp/ccKwbuK8.s 			page 39
+GAS LISTING /tmp/ccp2L8gx.s 			page 39
 
 
  1155 0653 4421C0   		andl	%r8d, %eax
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1203 06ba 4489E1   		movl	%r12d, %ecx
  1204 06bd 448B6424 		movl	56(%rsp), %r12d
  1204      38
-GAS LISTING /tmp/ccKwbuK8.s 			page 40
+GAS LISTING /tmp/ccp2L8gx.s 			page 40
 
 
  1205 06c2 31F9     		xorl	%edi, %ecx
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1257 075e 41C1C40A 		roll	$10, %r12d
  1258 0762 4431E7   		xorl	%r12d, %edi
  1259 0765 4189D4   		movl	%edx, %r12d
-GAS LISTING /tmp/ccKwbuK8.s 			page 41
+GAS LISTING /tmp/ccp2L8gx.s 			page 41
 
 
  1260 0768 4109C4   		orl	%eax, %r12d
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1306      54
  1307 07ec 4431C1   		xorl	%r8d, %ecx
  1308 07ef 4189C9   		movl	%ecx, %r9d
-GAS LISTING /tmp/ccKwbuK8.s 			page 42
+GAS LISTING /tmp/ccp2L8gx.s 			page 42
 
 
  1309 07f2 89F1     		movl	%esi, %ecx
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1358 086f 4401F6   		addl	%r14d, %esi
  1359 0872 448B7424 		movl	72(%rsp), %r14d
  1359      48
-GAS LISTING /tmp/ccKwbuK8.s 			page 43
+GAS LISTING /tmp/ccp2L8gx.s 			page 43
 
 
  1360 0877 4101F1   		addl	%esi, %r9d
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  554:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         P(local.A[3], local.A[4], local.A[5], local.A[6], local.A[7],
  1411              		.loc 1 554 9 is_stmt 0 view .LVU393
  1412 0911 448B7424 		movl	48(%rsp), %r14d
-GAS LISTING /tmp/ccKwbuK8.s 			page 44
+GAS LISTING /tmp/ccp2L8gx.s 			page 44
 
 
  1412      30
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1462              		.loc 1 554 9 view .LVU399
  1463 09a5 41C1CA02 		rorl	$2, %r10d
  1464 09a9 4189C8   		movl	%ecx, %r8d
-GAS LISTING /tmp/ccKwbuK8.s 			page 45
+GAS LISTING /tmp/ccp2L8gx.s 			page 45
 
 
  1465 09ac 448D2430 		leal	(%rax,%rsi), %r12d
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1514 0a2b 44894560 		movl	%r8d, 96(%rbp)
  1515 0a2f 31DE     		xorl	%ebx, %esi
  1516 0a31 44894424 		movl	%r8d, 96(%rsp)
-GAS LISTING /tmp/ccKwbuK8.s 			page 46
+GAS LISTING /tmp/ccp2L8gx.s 			page 46
 
 
  1516      60
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1561              		.loc 1 556 9 view .LVU414
  1562 0aa3 4101C7   		addl	%eax, %r15d
  556:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****           local.A[7], local.A[0], local.A[1], R(i+6), K[i+6]);
-GAS LISTING /tmp/ccKwbuK8.s 			page 47
+GAS LISTING /tmp/ccp2L8gx.s 			page 47
 
 
  1563              		.loc 1 556 9 is_stmt 1 view .LVU415
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1614 0b29 895C246C 		movl	%ebx, 108(%rsp)
  1615              		.loc 1 558 9 is_stmt 1 view .LVU421
  1616 0b2d 4131C6   		xorl	%eax, %r14d
-GAS LISTING /tmp/ccKwbuK8.s 			page 48
+GAS LISTING /tmp/ccp2L8gx.s 			page 48
 
 
  1617 0b30 4489F8   		movl	%r15d, %eax
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1658 0bbd 44899424 		movl	%r10d, 400(%rsp)
  1658      90010000 
  1659 0bc5 89842484 		movl	%eax, 132(%rsp)
-GAS LISTING /tmp/ccKwbuK8.s 			page 49
+GAS LISTING /tmp/ccp2L8gx.s 			page 49
 
 
  1659      000000
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1686 0c22 4489A424 		movl	%r12d, 416(%rsp)
  1686      A0010000 
  1687 0c2a 89AC249C 		movl	%ebp, 412(%rsp)
-GAS LISTING /tmp/ccKwbuK8.s 			page 50
+GAS LISTING /tmp/ccp2L8gx.s 			page 50
 
 
  1687      010000
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1725              		.cfi_def_cfa_offset 16
  1726 0c77 415F     		popq	%r15
  1727              	.LCFI13:
-GAS LISTING /tmp/ccKwbuK8.s 			page 51
+GAS LISTING /tmp/ccp2L8gx.s 			page 51
 
 
  1728              		.cfi_def_cfa_offset 8
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  610:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     }
  611:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
  612:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     return supported;
-GAS LISTING /tmp/ccKwbuK8.s 			page 52
+GAS LISTING /tmp/ccp2L8gx.s 			page 52
 
 
  613:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** }
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1760              		.cfi_def_cfa_offset 16
  1761              		.cfi_offset 15, -16
  1762 000f 4156     		pushq	%r14
-GAS LISTING /tmp/ccKwbuK8.s 			page 53
+GAS LISTING /tmp/ccp2L8gx.s 			page 53
 
 
  1763              	.LCFI16:
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1805              		.loc 1 654 10 view .LVU462
  1806 003c 89D3     		movl	%edx, %ebx
  1807              	.LVL40:
-GAS LISTING /tmp/ccKwbuK8.s 			page 54
+GAS LISTING /tmp/ccp2L8gx.s 			page 54
 
 
  1808              		.loc 1 656 5 is_stmt 1 view .LVU463
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1848 0073 488B4C1D 		movq	-8(%rbp,%rbx), %rcx
  1848      F8
  1849 0078 48894C18 		movq	%rcx, -8(%rax,%rbx)
-GAS LISTING /tmp/ccKwbuK8.s 			page 55
+GAS LISTING /tmp/ccp2L8gx.s 			page 55
 
 
  1849      F8
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  672:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         left = 0;
  1891              		.loc 1 672 9 view .LVU487
  673:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     }
-GAS LISTING /tmp/ccKwbuK8.s 			page 56
+GAS LISTING /tmp/ccp2L8gx.s 			page 56
 
 
  674:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1926 00ec 0F1F4000 		.p2align 4,,10
  1927              		.p2align 3
  1928              	.L80:
-GAS LISTING /tmp/ccKwbuK8.s 			page 57
+GAS LISTING /tmp/ccp2L8gx.s 			page 57
 
 
  588:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         len  -= SHA256_BLOCK_SIZE;
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  1964              		.cfi_def_cfa_offset 56
  1965 0116 5B       		popq	%rbx
  1966              	.LCFI23:
-GAS LISTING /tmp/ccKwbuK8.s 			page 58
+GAS LISTING /tmp/ccp2L8gx.s 			page 58
 
 
  1967              		.cfi_def_cfa_offset 48
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2011 0139 EB35     		jmp	.L42
  2012              	.LVL63:
  2013              	.L78:
-GAS LISTING /tmp/ccKwbuK8.s 			page 59
+GAS LISTING /tmp/ccp2L8gx.s 			page 59
 
 
  2014              	.LBB206:
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2053              	.LVL65:
  2054              	.LBB214:
  2055              	.LBB210:
-GAS LISTING /tmp/ccKwbuK8.s 			page 60
+GAS LISTING /tmp/ccp2L8gx.s 			page 60
 
 
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2096              	.LVL69:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  2097              		.loc 2 29 10 discriminator 1 view .LVU531
-GAS LISTING /tmp/ccKwbuK8.s 			page 61
+GAS LISTING /tmp/ccp2L8gx.s 			page 61
 
 
  2098 01d6 83E0F8   		andl	$-8, %eax
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2145 0208 8B541DFC 		movl	-4(%rbp,%rbx), %edx
  2146 020c 895418FC 		movl	%edx, -4(%rax,%rbx)
  2147 0210 E98EFEFF 		jmp	.L25
-GAS LISTING /tmp/ccKwbuK8.s 			page 62
+GAS LISTING /tmp/ccp2L8gx.s 			page 62
 
 
  2147      FF
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  698:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  2184              		.loc 1 698 1 is_stmt 0 view .LVU546
  2185 0004 4154     		pushq	%r12
-GAS LISTING /tmp/ccKwbuK8.s 			page 63
+GAS LISTING /tmp/ccp2L8gx.s 			page 63
 
 
  2186              	.LCFI32:
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2230              	.LVL78:
  2231              	.LBB274:
  2232              	.LBB270:
-GAS LISTING /tmp/ccKwbuK8.s 			page 64
+GAS LISTING /tmp/ccp2L8gx.s 			page 64
 
 
  2233              		.loc 2 59 10 discriminator 1 view .LVU561
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2280              	.LBE275:
  714:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     } else {
  715:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         /* We'll need an extra block */
-GAS LISTING /tmp/ccKwbuK8.s 			page 65
+GAS LISTING /tmp/ccp2L8gx.s 			page 65
 
 
  716:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****         memset(ctx->buffer + used, 0, SHA256_BLOCK_SIZE - used);
@@ -3898,7 +3898,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2329              	.LBB281:
  2330              	.LBI281:
  226:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** {
-GAS LISTING /tmp/ccKwbuK8.s 			page 66
+GAS LISTING /tmp/ccp2L8gx.s 			page 66
 
 
  2331              		.loc 1 226 6 is_stmt 1 view .LVU581
@@ -3958,7 +3958,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  758:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
  759:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** exit:
  760:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     mbedtls_sha256_free(ctx);
-GAS LISTING /tmp/ccKwbuK8.s 			page 67
+GAS LISTING /tmp/ccp2L8gx.s 			page 67
 
 
  761:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     return ret;
@@ -4018,7 +4018,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2388              		.loc 1 722 9 is_stmt 1 view .LVU591
  2389              	.LBB284:
  2390              	.LBI284:
-GAS LISTING /tmp/ccKwbuK8.s 			page 68
+GAS LISTING /tmp/ccp2L8gx.s 			page 68
 
 
   57:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** {
@@ -4078,7 +4078,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2432              	.LBB288:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
  2433              		.loc 2 29 10 discriminator 1 view .LVU608
-GAS LISTING /tmp/ccKwbuK8.s 			page 69
+GAS LISTING /tmp/ccp2L8gx.s 			page 69
 
 
  2434 011e 89533C   		movl	%edx, 60(%rbx)
@@ -4138,7 +4138,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  733:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
  2458              		.loc 1 733 5 view .LVU617
  733:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
-GAS LISTING /tmp/ccKwbuK8.s 			page 70
+GAS LISTING /tmp/ccp2L8gx.s 			page 70
 
 
  2459              		.loc 1 733 5 discriminator 2 view .LVU618
@@ -4198,7 +4198,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2497              		.loc 2 26 1 view .LVU634
  2498              	.LBB297:
   29:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 				 __glibc_objsize0 (__dest));
-GAS LISTING /tmp/ccKwbuK8.s 			page 71
+GAS LISTING /tmp/ccp2L8gx.s 			page 71
 
 
  2499              		.loc 2 29 3 view .LVU635
@@ -4258,7 +4258,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2539              	.LBB302:
  2540              	.LBI302:
   26:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 	       size_t __len))
-GAS LISTING /tmp/ccKwbuK8.s 			page 72
+GAS LISTING /tmp/ccp2L8gx.s 			page 72
 
 
  2541              		.loc 2 26 1 view .LVU652
@@ -4318,7 +4318,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  194:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** {
  2581              		.loc 3 194 20 view .LVU668
  2582              		.loc 3 203 5 view .LVU669
-GAS LISTING /tmp/ccKwbuK8.s 			page 73
+GAS LISTING /tmp/ccp2L8gx.s 			page 73
 
 
  2583              	.LBB308:
@@ -4378,7 +4378,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2622              	.LVL122:
  2623              	.LBB313:
  2624              	.LBI313:
-GAS LISTING /tmp/ccKwbuK8.s 			page 74
+GAS LISTING /tmp/ccp2L8gx.s 			page 74
 
 
  194:../../bos/thirdparty/mbedtls/bos_mbedtls/alignment.h **** {
@@ -4438,7 +4438,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2663              		.loc 1 757 5 view .LVU703
  760:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c ****     return ret;
  2664              		.loc 1 760 5 view .LVU704
-GAS LISTING /tmp/ccKwbuK8.s 			page 75
+GAS LISTING /tmp/ccp2L8gx.s 			page 75
 
 
  2665              	.LBB319:
@@ -4498,7 +4498,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2702 0006 55       		pushq	%rbp
  2703              	.LCFI40:
  2704              		.cfi_def_cfa_offset 24
-GAS LISTING /tmp/ccKwbuK8.s 			page 76
+GAS LISTING /tmp/ccp2L8gx.s 			page 76
 
 
  2705              		.cfi_offset 6, -24
@@ -4558,7 +4558,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2737              	.LBI331:
  221:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** {
  2738              		.loc 1 221 6 view .LVU718
-GAS LISTING /tmp/ccKwbuK8.s 			page 77
+GAS LISTING /tmp/ccp2L8gx.s 			page 77
 
 
  223:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** }
@@ -4618,7 +4618,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2780              	.LBE345:
  2781              	.LBB348:
  2782              	.LBB341:
-GAS LISTING /tmp/ccKwbuK8.s 			page 78
+GAS LISTING /tmp/ccp2L8gx.s 			page 78
 
 
  2783              	.LBB337:
@@ -4678,7 +4678,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  291:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** }
  2815              		.loc 1 291 5 is_stmt 0 view .LVU747
  2816              	.LBE347:
-GAS LISTING /tmp/ccKwbuK8.s 			page 79
+GAS LISTING /tmp/ccp2L8gx.s 			page 79
 
 
  2817              	.LBE349:
@@ -4738,7 +4738,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2853              	.LBE352:
  2854              	.LBE351:
  2855              	.LBE350:
-GAS LISTING /tmp/ccKwbuK8.s 			page 80
+GAS LISTING /tmp/ccp2L8gx.s 			page 80
 
 
  807:../../bos/thirdparty/mbedtls/bos_mbedtls/sha256.c **** 
@@ -4798,7 +4798,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2904 0014 F111F159 		.long	1508970993
  2905 0018 A4823F92 		.long	-1841331548
  2906 001c D55E1CAB 		.long	-1424204075
-GAS LISTING /tmp/ccKwbuK8.s 			page 81
+GAS LISTING /tmp/ccp2L8gx.s 			page 81
 
 
  2907 0020 98AA07D8 		.long	-670586216
@@ -4858,7 +4858,7 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  2961 00f8 F7A3F9BE 		.long	-1090935817
  2962 00fc F27871C6 		.long	-965641998
  2963              		.section	.rodata.cst16,"aM",@progbits,16
-GAS LISTING /tmp/ccKwbuK8.s 			page 82
+GAS LISTING /tmp/ccp2L8gx.s 			page 82
 
 
  2964              		.align 16
@@ -4909,25 +4909,25 @@ GAS LISTING /tmp/ccKwbuK8.s 			page 1
  8793              	3:
  8794 001c 00000000 		.align 8
  8795              	4:
-GAS LISTING /tmp/ccKwbuK8.s 			page 83
+GAS LISTING /tmp/ccp2L8gx.s 			page 83
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 sha256.c
-     /tmp/ccKwbuK8.s:9      .text.mbedtls_sha256_init:0000000000000000 mbedtls_sha256_init
-     /tmp/ccKwbuK8.s:58     .text.mbedtls_sha256_free:0000000000000000 mbedtls_sha256_free
-     /tmp/ccKwbuK8.s:93     .text.mbedtls_sha256_clone:0000000000000000 mbedtls_sha256_clone
-     /tmp/ccKwbuK8.s:125    .text.mbedtls_sha256_starts:0000000000000000 mbedtls_sha256_starts
-     /tmp/ccKwbuK8.s:178    .text.mbedtls_internal_sha256_process:0000000000000000 mbedtls_internal_sha256_process
-     /tmp/ccKwbuK8.s:2898   .rodata.K:0000000000000000 K
-     /tmp/ccKwbuK8.s:1742   .text.mbedtls_sha256_update:0000000000000000 mbedtls_sha256_update
-     /tmp/ccKwbuK8.s:2171   .text.mbedtls_sha256_finish:0000000000000000 mbedtls_sha256_finish
-     /tmp/ccKwbuK8.s:2691   .text.mbedtls_sha256:0000000000000000 mbedtls_sha256
+     /tmp/ccp2L8gx.s:9      .text.mbedtls_sha256_init:0000000000000000 mbedtls_sha256_init
+     /tmp/ccp2L8gx.s:58     .text.mbedtls_sha256_free:0000000000000000 mbedtls_sha256_free
+     /tmp/ccp2L8gx.s:93     .text.mbedtls_sha256_clone:0000000000000000 mbedtls_sha256_clone
+     /tmp/ccp2L8gx.s:125    .text.mbedtls_sha256_starts:0000000000000000 mbedtls_sha256_starts
+     /tmp/ccp2L8gx.s:178    .text.mbedtls_internal_sha256_process:0000000000000000 mbedtls_internal_sha256_process
+     /tmp/ccp2L8gx.s:2898   .rodata.K:0000000000000000 K
+     /tmp/ccp2L8gx.s:1742   .text.mbedtls_sha256_update:0000000000000000 mbedtls_sha256_update
+     /tmp/ccp2L8gx.s:2171   .text.mbedtls_sha256_finish:0000000000000000 mbedtls_sha256_finish
+     /tmp/ccp2L8gx.s:2691   .text.mbedtls_sha256:0000000000000000 mbedtls_sha256
                     .rodata.cst16:0000000000000038 .LC2
-     /tmp/ccKwbuK8.s:2984   .rodata.cst16:0000000000000030 .LC4
-     /tmp/ccKwbuK8.s:2965   .rodata.cst16:0000000000000000 .LC0
-     /tmp/ccKwbuK8.s:2971   .rodata.cst16:0000000000000010 .LC1
-     /tmp/ccKwbuK8.s:2978   .rodata.cst16:0000000000000020 .LC3
+     /tmp/ccp2L8gx.s:2984   .rodata.cst16:0000000000000030 .LC4
+     /tmp/ccp2L8gx.s:2965   .rodata.cst16:0000000000000000 .LC0
+     /tmp/ccp2L8gx.s:2971   .rodata.cst16:0000000000000010 .LC1
+     /tmp/ccp2L8gx.s:2978   .rodata.cst16:0000000000000020 .LC3
 
 UNDEFINED SYMBOLS
 mbedtls_platform_zeroize

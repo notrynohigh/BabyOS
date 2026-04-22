@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccP5yVFF.s 			page 1
+GAS LISTING /tmp/ccYcZZp9.s 			page 1
 
 
    1              		.file	"b_hal_spi.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
   46:../../bos/hal/b_hal_spi.c **** typedef struct
   47:../../bos/hal/b_hal_spi.c **** {
   48:../../bos/hal/b_hal_spi.c ****     bHalGPIOInstance_t miso;
-GAS LISTING /tmp/ccP5yVFF.s 			page 2
+GAS LISTING /tmp/ccYcZZp9.s 			page 2
 
 
   49:../../bos/hal/b_hal_spi.c ****     bHalGPIOInstance_t mosi;
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  103:../../bos/hal/b_hal_spi.c **** /**
  104:../../bos/hal/b_hal_spi.c ****  * \}
  105:../../bos/hal/b_hal_spi.c ****  */
-GAS LISTING /tmp/ccP5yVFF.s 			page 3
+GAS LISTING /tmp/ccYcZZp9.s 			page 3
 
 
  106:../../bos/hal/b_hal_spi.c **** 
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
   19 0002 4156     		pushq	%r14
   20              	.LCFI1:
   21              		.cfi_def_cfa_offset 24
-GAS LISTING /tmp/ccP5yVFF.s 			page 4
+GAS LISTING /tmp/ccYcZZp9.s 			page 4
 
 
   22              		.cfi_offset 14, -24
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
   65              	.LVL2:
  151:../../bos/hal/b_hal_spi.c ****         simulating_spi.miso = spi_if->_if.simulating_spi.miso;
   66              		.loc 1 151 29 view .LVU12
-GAS LISTING /tmp/ccP5yVFF.s 			page 5
+GAS LISTING /tmp/ccYcZZp9.s 			page 5
 
 
   67 0030 8B4710   		movl	16(%rdi), %eax
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
   66:../../bos/hal/b_hal_spi.c ****     uint8_t init_p   = polarity;
  107              		.loc 1 66 5 view .LVU26
   67:../../bos/hal/b_hal_spi.c ****     uint8_t i        = 0;
-GAS LISTING /tmp/ccP5yVFF.s 			page 6
+GAS LISTING /tmp/ccYcZZp9.s 			page 6
 
 
  108              		.loc 1 67 5 view .LVU27
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  142 0090 89442418 		movl	%eax, 24(%rsp)
  143              	.LVL12:
   92:../../bos/hal/b_hal_spi.c ****         }
-GAS LISTING /tmp/ccP5yVFF.s 			page 7
+GAS LISTING /tmp/ccYcZZp9.s 			page 7
 
 
  144              		.loc 1 92 13 view .LVU42
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
   79:../../bos/hal/b_hal_spi.c ****         bHalGpioWritePin(spi.clk.port, spi.clk.pin, polarity);
  181              		.loc 1 79 9 view .LVU54
   80:../../bos/hal/b_hal_spi.c **** 
-GAS LISTING /tmp/ccP5yVFF.s 			page 8
+GAS LISTING /tmp/ccYcZZp9.s 			page 8
 
 
  182              		.loc 1 80 9 view .LVU55
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  220              	.L1:
  100:../../bos/hal/b_hal_spi.c **** }
  221              		.loc 1 100 5 is_stmt 0 view .LVU66
-GAS LISTING /tmp/ccP5yVFF.s 			page 9
+GAS LISTING /tmp/ccYcZZp9.s 			page 9
 
 
  222              	.LBE8:
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  266 0133 4489EE   		movl	%r13d, %esi
  267 0136 4489E7   		movl	%r12d, %edi
  268 0139 0F94C2   		sete	%dl
-GAS LISTING /tmp/ccP5yVFF.s 			page 10
+GAS LISTING /tmp/ccYcZZp9.s 			page 10
 
 
  269 013c 0F944424 		sete	30(%rsp)
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  309              	.LFE29:
  311              		.section	.text.bMcuSpiTransfer,"ax",@progbits
  312              		.p2align 4
-GAS LISTING /tmp/ccP5yVFF.s 			page 11
+GAS LISTING /tmp/ccYcZZp9.s 			page 11
 
 
  313              		.weak	bMcuSpiTransfer
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  362              		.p2align 4
  363              		.globl	bHalSpiSetSpeed
  365              	bHalSpiSetSpeed:
-GAS LISTING /tmp/ccP5yVFF.s 			page 12
+GAS LISTING /tmp/ccYcZZp9.s 			page 12
 
 
  366              	.LVL36:
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  405 0012 E9000000 		jmp	bMcuSpiTransfer
  405      00
  406              	.LVL39:
-GAS LISTING /tmp/ccP5yVFF.s 			page 13
+GAS LISTING /tmp/ccYcZZp9.s 			page 13
 
 
  407 0017 660F1F84 		.p2align 4,,10
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  170:../../bos/hal/b_hal_spi.c ****     {
  171:../../bos/hal/b_hal_spi.c ****         return -1;
  172:../../bos/hal/b_hal_spi.c ****     }
-GAS LISTING /tmp/ccP5yVFF.s 			page 14
+GAS LISTING /tmp/ccYcZZp9.s 			page 14
 
 
  173:../../bos/hal/b_hal_spi.c ****     if (spi_if->is_simulation == 1)
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  497              	.L33:
  498              	.LVL46:
  148:../../bos/hal/b_hal_spi.c ****     {
-GAS LISTING /tmp/ccP5yVFF.s 			page 15
+GAS LISTING /tmp/ccYcZZp9.s 			page 15
 
 
  499              		.loc 1 148 15 view .LVU127
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  532              		.loc 1 185 1 is_stmt 0 view .LVU140
  533 005d 5B       		popq	%rbx
  534              	.LCFI18:
-GAS LISTING /tmp/ccP5yVFF.s 			page 16
+GAS LISTING /tmp/ccYcZZp9.s 			page 16
 
 
  535              		.cfi_remember_state
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  582              	.LFE35:
  584              		.section	.text.bHalSpiReceive,"ax",@progbits
  585              		.p2align 4
-GAS LISTING /tmp/ccP5yVFF.s 			page 17
+GAS LISTING /tmp/ccYcZZp9.s 			page 17
 
 
  586              		.globl	bHalSpiReceive
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  627 001f 7442     		je	.L45
  628 0021 0FB7D2   		movzwl	%dx, %edx
  629              		.loc 1 197 23 is_stmt 0 discriminator 1 view .LVU163
-GAS LISTING /tmp/ccP5yVFF.s 			page 18
+GAS LISTING /tmp/ccYcZZp9.s 			page 18
 
 
  630 0024 4889F3   		movq	%rsi, %rbx
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  142:../../bos/hal/b_hal_spi.c ****     bHalSPIIO_t simulating_spi;
  673              		.loc 1 142 5 view .LVU175
  143:../../bos/hal/b_hal_spi.c ****     if (IS_NULL(spi_if))
-GAS LISTING /tmp/ccP5yVFF.s 			page 19
+GAS LISTING /tmp/ccYcZZp9.s 			page 19
 
 
  674              		.loc 1 143 5 view .LVU176
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  709              	.LCFI29:
  710              		.cfi_def_cfa_offset 16
  711              	.LVL66:
-GAS LISTING /tmp/ccP5yVFF.s 			page 20
+GAS LISTING /tmp/ccYcZZp9.s 			page 20
 
 
  712              		.loc 1 207 1 view .LVU189
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  4388 0000 04000000 		.long	1f - 0f
  4389 0004 10000000 		.long	4f - 1f
  4390 0008 05000000 		.long	5
-GAS LISTING /tmp/ccP5yVFF.s 			page 21
+GAS LISTING /tmp/ccYcZZp9.s 			page 21
 
 
  4391              	0:
@@ -1212,20 +1212,20 @@ GAS LISTING /tmp/ccP5yVFF.s 			page 1
  4399              	3:
  4400 001c 00000000 		.align 8
  4401              	4:
-GAS LISTING /tmp/ccP5yVFF.s 			page 22
+GAS LISTING /tmp/ccYcZZp9.s 			page 22
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_hal_spi.c
-     /tmp/ccP5yVFF.s:8      .text.bHalSpiTransfer.part.0:0000000000000000 bHalSpiTransfer.part.0
-     /tmp/ccP5yVFF.s:297    .text.bMcuSpiSetSpeed:0000000000000000 bMcuSpiSetSpeed
-     /tmp/ccP5yVFF.s:315    .text.bMcuSpiTransfer:0000000000000000 bMcuSpiTransfer
-     /tmp/ccP5yVFF.s:333    .text.bMcuSpiSend:0000000000000000 bMcuSpiSend
-     /tmp/ccP5yVFF.s:351    .text.bMcuSpiReceive:0000000000000000 bMcuSpiReceive
-     /tmp/ccP5yVFF.s:365    .text.bHalSpiSetSpeed:0000000000000000 bHalSpiSetSpeed
-     /tmp/ccP5yVFF.s:384    .text.bHalSpiTransfer:0000000000000000 bHalSpiTransfer
-     /tmp/ccP5yVFF.s:426    .text.bHalSpiSend:0000000000000000 bHalSpiSend
-     /tmp/ccP5yVFF.s:588    .text.bHalSpiReceive:0000000000000000 bHalSpiReceive
+     /tmp/ccYcZZp9.s:8      .text.bHalSpiTransfer.part.0:0000000000000000 bHalSpiTransfer.part.0
+     /tmp/ccYcZZp9.s:297    .text.bMcuSpiSetSpeed:0000000000000000 bMcuSpiSetSpeed
+     /tmp/ccYcZZp9.s:315    .text.bMcuSpiTransfer:0000000000000000 bMcuSpiTransfer
+     /tmp/ccYcZZp9.s:333    .text.bMcuSpiSend:0000000000000000 bMcuSpiSend
+     /tmp/ccYcZZp9.s:351    .text.bMcuSpiReceive:0000000000000000 bMcuSpiReceive
+     /tmp/ccYcZZp9.s:365    .text.bHalSpiSetSpeed:0000000000000000 bHalSpiSetSpeed
+     /tmp/ccYcZZp9.s:384    .text.bHalSpiTransfer:0000000000000000 bHalSpiTransfer
+     /tmp/ccYcZZp9.s:426    .text.bHalSpiSend:0000000000000000 bHalSpiSend
+     /tmp/ccYcZZp9.s:588    .text.bHalSpiReceive:0000000000000000 bHalSpiReceive
 
 UNDEFINED SYMBOLS
 bHalGpioWritePin

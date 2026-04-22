@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccOm6b3K.s 			page 1
+GAS LISTING /tmp/cc2Qg2DR.s 			page 1
 
 
    1              		.file	"ecdh.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
   41:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     /* At this time, all groups support ECDH. */
   42:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     (void) gid;
   16              		.loc 1 42 5 is_stmt 1 view .LVU2
-GAS LISTING /tmp/ccOm6b3K.s 			page 2
+GAS LISTING /tmp/cc2Qg2DR.s 			page 2
 
 
   43:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     return 1;
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
   84:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** {
   31              		.loc 1 84 1 is_stmt 1 view -0
   32              		.cfi_startproc
-GAS LISTING /tmp/ccOm6b3K.s 			page 3
+GAS LISTING /tmp/cc2Qg2DR.s 			page 3
 
 
   33              		.loc 1 84 1 is_stmt 0 view .LVU6
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
   84:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     return ecdh_gen_public_restartable(grp, d, Q, f_rng, p_rng, NULL);
   79              		.loc 1 84 1 view .LVU15
   80 001e 4889FB   		movq	%rdi, %rbx
-GAS LISTING /tmp/ccOm6b3K.s 			page 4
+GAS LISTING /tmp/cc2Qg2DR.s 			page 4
 
 
   81              	.LVL4:
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
   75:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** }
  121              		.loc 1 75 5 view .LVU28
  122              	.LVL7:
-GAS LISTING /tmp/ccOm6b3K.s 			page 5
+GAS LISTING /tmp/cc2Qg2DR.s 			page 5
 
 
  123              	.L4:
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
   99:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** {
  100:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  101:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     mbedtls_ecp_point P;
-GAS LISTING /tmp/ccOm6b3K.s 			page 6
+GAS LISTING /tmp/cc2Qg2DR.s 			page 6
 
 
  102:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** 
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  192              		.cfi_offset 6, -48
  193 0019 53       		pushq	%rbx
  194              	.LCFI19:
-GAS LISTING /tmp/ccOm6b3K.s 			page 7
+GAS LISTING /tmp/cc2Qg2DR.s 			page 7
 
 
  195              		.cfi_def_cfa_offset 56
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  234 004d 6A00     		pushq	$0
  235              	.LCFI22:
  236              		.cfi_def_cfa_offset 160
-GAS LISTING /tmp/ccOm6b3K.s 			page 8
+GAS LISTING /tmp/cc2Qg2DR.s 			page 8
 
 
  237 004f 4C8B4C24 		movq	24(%rsp), %r9
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  276 0088 5B       		popq	%rbx
  277              	.LCFI26:
  278              		.cfi_def_cfa_offset 48
-GAS LISTING /tmp/ccOm6b3K.s 			page 9
+GAS LISTING /tmp/cc2Qg2DR.s 			page 9
 
 
  279 0089 5D       		popq	%rbp
@@ -538,7 +538,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  324      00
  325              	.LVL27:
  326 00af 89C3     		movl	%eax, %ebx
-GAS LISTING /tmp/ccOm6b3K.s 			page 10
+GAS LISTING /tmp/cc2Qg2DR.s 			page 10
 
 
  327              	.LVL28:
@@ -598,7 +598,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  359              		.loc 1 148 1 is_stmt 0 view .LVU73
  360 0000 F30F1EFA 		endbr64
  149:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** #if defined(MBEDTLS_ECDH_LEGACY_CONTEXT)
-GAS LISTING /tmp/ccOm6b3K.s 			page 11
+GAS LISTING /tmp/cc2Qg2DR.s 			page 11
 
 
  150:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     return ctx->MBEDTLS_PRIVATE(grp).id;
@@ -658,7 +658,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
   15:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    License along with the GNU C Library; if not, see
   16:/usr/include/x86_64-linux-gnu/bits/string_fortified.h ****    <https://www.gnu.org/licenses/>.  */
   17:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
-GAS LISTING /tmp/ccOm6b3K.s 			page 12
+GAS LISTING /tmp/cc2Qg2DR.s 			page 12
 
 
   18:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifndef _BITS_STRING_FORTIFIED_H
@@ -718,7 +718,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  395              	.LBB36:
  396              		.loc 2 59 10 discriminator 1 view .LVU84
  397 000e 488D7F08 		leaq	8(%rdi), %rdi
-GAS LISTING /tmp/ccOm6b3K.s 			page 13
+GAS LISTING /tmp/cc2Qg2DR.s 			page 13
 
 
  398              	.LVL36:
@@ -778,7 +778,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  192:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****  */
  193:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** int mbedtls_ecdh_setup(mbedtls_ecdh_context *ctx, mbedtls_ecp_group_id grp_id)
  194:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** {
-GAS LISTING /tmp/ccOm6b3K.s 			page 14
+GAS LISTING /tmp/cc2Qg2DR.s 			page 14
 
 
  427              		.loc 1 194 1 is_stmt 1 view -0
@@ -838,7 +838,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  461      000000
  462              		.loc 1 209 13 is_stmt 1 view .LVU102
  210:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****             ecdh_init_internal(&ctx->ctx.mbed_ecdh);
-GAS LISTING /tmp/ccOm6b3K.s 			page 15
+GAS LISTING /tmp/cc2Qg2DR.s 			page 15
 
 
  463              		.loc 1 210 13 view .LVU103
@@ -898,7 +898,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  498              	.LBB49:
  180:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** 
  499              		.loc 1 180 5 view .LVU114
-GAS LISTING /tmp/ccOm6b3K.s 			page 16
+GAS LISTING /tmp/cc2Qg2DR.s 			page 16
 
 
  182:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     if (ret != 0) {
@@ -958,7 +958,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  542      FF
  543              	.LVL53:
  184:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     }
-GAS LISTING /tmp/ccOm6b3K.s 			page 17
+GAS LISTING /tmp/cc2Qg2DR.s 			page 17
 
 
  544              		.loc 1 184 16 view .LVU125
@@ -1018,7 +1018,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  568 0009 53       		pushq	%rbx
  569              	.LCFI40:
  570              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/ccOm6b3K.s 			page 18
+GAS LISTING /tmp/cc2Qg2DR.s 			page 18
 
 
  571              		.cfi_offset 3, -16
@@ -1078,7 +1078,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  596      000000
  597              	.L30:
  598              	.LCFI42:
-GAS LISTING /tmp/ccOm6b3K.s 			page 19
+GAS LISTING /tmp/cc2Qg2DR.s 			page 19
 
 
  599              		.cfi_def_cfa_offset 16
@@ -1138,7 +1138,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  267:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     ctx->var = MBEDTLS_ECDH_VARIANT_NONE;
  633              		.loc 1 267 23 is_stmt 0 view .LVU151
  634 0061 C60300   		movb	$0, (%rbx)
-GAS LISTING /tmp/ccOm6b3K.s 			page 20
+GAS LISTING /tmp/cc2Qg2DR.s 			page 20
 
 
  268:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     ctx->grp_id = MBEDTLS_ECP_DP_NONE;
@@ -1198,7 +1198,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  303:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****                                            f_rng, p_rng, rs_ctx)) != 0) {
  304:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         return ret;
  305:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     }
-GAS LISTING /tmp/ccOm6b3K.s 			page 21
+GAS LISTING /tmp/cc2Qg2DR.s 			page 21
 
 
  306:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** #else
@@ -1258,7 +1258,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  674              		.cfi_def_cfa_offset 40
  675              		.cfi_offset 12, -40
  676 000c 55       		pushq	%rbp
-GAS LISTING /tmp/ccOm6b3K.s 			page 22
+GAS LISTING /tmp/cc2Qg2DR.s 			page 22
 
 
  677              	.LCFI48:
@@ -1318,7 +1318,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  704 0039 4883BF88 		cmpq	$0, 136(%rdi)
  704      00000000 
  705 0041 4889FD   		movq	%rdi, %rbp
-GAS LISTING /tmp/ccOm6b3K.s 			page 23
+GAS LISTING /tmp/cc2Qg2DR.s 			page 23
 
 
  706              	.LBE65:
@@ -1378,7 +1378,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  747              	.LBB69:
   68:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     }
  748              		.loc 1 68 9 view .LVU177
-GAS LISTING /tmp/ccOm6b3K.s 			page 24
+GAS LISTING /tmp/cc2Qg2DR.s 			page 24
 
 
  749 0062 4C89F6   		movq	%r14, %rsi
@@ -1438,7 +1438,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  788              	.LBE86:
  362:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****                                              f_rng, p_rng,
  363:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****                                              restart_enabled);
-GAS LISTING /tmp/ccOm6b3K.s 			page 25
+GAS LISTING /tmp/cc2Qg2DR.s 			page 25
 
 
  364:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         default:
@@ -1498,7 +1498,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  830 00a0 4883EC08 		subq	$8, %rsp
  831              	.LCFI59:
  832              		.cfi_def_cfa_offset 136
-GAS LISTING /tmp/ccOm6b3K.s 			page 26
+GAS LISTING /tmp/cc2Qg2DR.s 			page 26
 
 
  833 00a4 488D4D48 		leaq	72(%rbp), %rcx
@@ -1558,7 +1558,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  875 00d3 488D7424 		leaq	40(%rsp), %rsi
  875      28
  876 00d8 4889DA   		movq	%rbx, %rdx
-GAS LISTING /tmp/ccOm6b3K.s 			page 27
+GAS LISTING /tmp/cc2Qg2DR.s 			page 27
 
 
  877 00db 4C89EF   		movq	%r13, %rdi
@@ -1618,7 +1618,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  913              		.loc 1 326 11 is_stmt 0 view .LVU216
  914 0116 488B5C24 		movq	16(%rsp), %rbx
  914      10
-GAS LISTING /tmp/ccOm6b3K.s 			page 28
+GAS LISTING /tmp/cc2Qg2DR.s 			page 28
 
 
  915              	.LVL83:
@@ -1678,7 +1678,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  379:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****  * Read the ServerKeyExchange parameters (RFC 4492)
  380:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****  *      struct {
  381:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****  *          ECParameters    curve_params;
-GAS LISTING /tmp/ccOm6b3K.s 			page 29
+GAS LISTING /tmp/cc2Qg2DR.s 			page 29
 
 
  382:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****  *          ECPoint         public;
@@ -1738,7 +1738,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  989 002c 31C0     		xorl	%eax, %eax
  389:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
  990              		.loc 1 389 5 is_stmt 1 view .LVU228
-GAS LISTING /tmp/ccOm6b3K.s 			page 30
+GAS LISTING /tmp/cc2Qg2DR.s 			page 30
 
 
  991              	.LVL89:
@@ -1798,7 +1798,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1013 0054 5B       		popq	%rbx
  1014              	.LCFI71:
  1015              		.cfi_def_cfa_offset 48
-GAS LISTING /tmp/ccOm6b3K.s 			page 31
+GAS LISTING /tmp/cc2Qg2DR.s 			page 31
 
 
  1016              	.LVL93:
@@ -1858,7 +1858,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  139:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     mbedtls_mpi_init(&ctx->z);
  1061              		.loc 1 139 5 view .LVU246
  1062 006c 4C8DBB10 		leaq	272(%rbx), %r15
-GAS LISTING /tmp/ccOm6b3K.s 			page 32
+GAS LISTING /tmp/cc2Qg2DR.s 			page 32
 
 
  1062      010000
@@ -1918,7 +1918,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1098 00a6 488DBB40 		leaq	320(%rbx), %rdi
  1098      010000
  1099 00ad E8000000 		call	mbedtls_mpi_init@PLT
-GAS LISTING /tmp/ccOm6b3K.s 			page 33
+GAS LISTING /tmp/cc2Qg2DR.s 			page 33
 
 
  1099      00
@@ -1978,7 +1978,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  374:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****                                       (size_t) (end - *buf));
  1138              		.loc 1 374 12 view .LVU272
  1139 00ca 4889EA   		movq	%rbp, %rdx
-GAS LISTING /tmp/ccOm6b3K.s 			page 34
+GAS LISTING /tmp/cc2Qg2DR.s 			page 34
 
 
  375:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** }
@@ -2038,7 +2038,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1180              	.LVL113:
  1181              	.LFB47:
  417:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** 
-GAS LISTING /tmp/ccOm6b3K.s 			page 35
+GAS LISTING /tmp/cc2Qg2DR.s 			page 35
 
 
  418:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** static int ecdh_get_params_internal(mbedtls_ecdh_context_mbed *ctx,
@@ -2098,7 +2098,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1201 0011 4154     		pushq	%r12
  1202              	.LCFI80:
  1203              		.cfi_def_cfa_offset 32
-GAS LISTING /tmp/ccOm6b3K.s 			page 36
+GAS LISTING /tmp/cc2Qg2DR.s 			page 36
 
 
  1204              		.cfi_offset 12, -32
@@ -2158,7 +2158,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  464:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         if (mbedtls_ecdh_grp_id(ctx) != key->grp.id) {
  1239              		.loc 1 464 9 is_stmt 1 view .LVU296
  1240              		.loc 1 464 12 is_stmt 0 discriminator 1 view .LVU297
-GAS LISTING /tmp/ccOm6b3K.s 			page 37
+GAS LISTING /tmp/cc2Qg2DR.s 			page 37
 
 
  1241 0028 4139C5   		cmpl	%eax, %r13d
@@ -2218,7 +2218,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1263              		.loc 1 434 16 is_stmt 0 view .LVU307
  1264 004c 488DBBE0 		leaq	224(%rbx), %rdi
  1264      000000
-GAS LISTING /tmp/ccOm6b3K.s 			page 38
+GAS LISTING /tmp/cc2Qg2DR.s 			page 38
 
 
  1265 0053 E8000000 		call	mbedtls_ecp_copy@PLT
@@ -2278,7 +2278,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1308      000000
  1309 006f 488DBBD0 		leaq	208(%rbx), %rdi
  1309      000000
-GAS LISTING /tmp/ccOm6b3K.s 			page 39
+GAS LISTING /tmp/cc2Qg2DR.s 			page 39
 
 
  1310              	.LBE125:
@@ -2338,7 +2338,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  198:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** #if defined(MBEDTLS_ECDH_VARIANT_EVEREST_ENABLED)
  1358              		.loc 1 198 5 view .LVU323
  207:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****             ctx->var = MBEDTLS_ECDH_VARIANT_MBEDTLS_2_0;
-GAS LISTING /tmp/ccOm6b3K.s 			page 40
+GAS LISTING /tmp/cc2Qg2DR.s 			page 40
 
 
  1359              		.loc 1 207 13 view .LVU324
@@ -2398,7 +2398,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1394      010000
  1395 00c1 E8000000 		call	mbedtls_ecp_point_init@PLT
  1395      00
-GAS LISTING /tmp/ccOm6b3K.s 			page 41
+GAS LISTING /tmp/cc2Qg2DR.s 			page 41
 
 
  1396              	.LVL134:
@@ -2458,7 +2458,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1433              	.LBB139:
  1434              	.LBB127:
  426:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     }
-GAS LISTING /tmp/ccOm6b3K.s 			page 42
+GAS LISTING /tmp/cc2Qg2DR.s 			page 42
 
 
  1435              		.loc 1 426 9 is_stmt 1 view .LVU348
@@ -2518,7 +2518,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1482      FF
  1483 010d E94AFFFF 		jmp	.L50
  1483      FF
-GAS LISTING /tmp/ccOm6b3K.s 			page 43
+GAS LISTING /tmp/cc2Qg2DR.s 			page 43
 
 
  1484              	.LVL143:
@@ -2578,7 +2578,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  519:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     if ((ret = ecdh_gen_public_restartable(&ctx->grp, &ctx->d, &ctx->Q,
  520:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****                                            f_rng, p_rng, rs_ctx)) != 0) {
  521:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         return ret;
-GAS LISTING /tmp/ccOm6b3K.s 			page 44
+GAS LISTING /tmp/cc2Qg2DR.s 			page 44
 
 
  522:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     }
@@ -2638,7 +2638,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1524              		.loc 1 558 13 is_stmt 1 view .LVU364
  1525              	.LVL146:
  541:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     int restart_enabled = 0;
-GAS LISTING /tmp/ccOm6b3K.s 			page 45
+GAS LISTING /tmp/cc2Qg2DR.s 			page 45
 
 
  1526              		.loc 1 541 1 is_stmt 0 view .LVU365
@@ -2698,7 +2698,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1573 002e 0F84BC00 		je	.L69
  1573      0000
  524:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****                                        f_rng, p_rng)) != 0) {
-GAS LISTING /tmp/ccOm6b3K.s 			page 46
+GAS LISTING /tmp/cc2Qg2DR.s 			page 46
 
 
  1574              		.loc 1 524 16 view .LVU373
@@ -2758,7 +2758,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1610      10
  1611 005e E8000000 		call	mbedtls_ecp_gen_privkey@PLT
  1611      00
-GAS LISTING /tmp/ccOm6b3K.s 			page 47
+GAS LISTING /tmp/cc2Qg2DR.s 			page 47
 
 
  1612              	.LVL154:
@@ -2818,7 +2818,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1655              		.cfi_restore_state
  1656              	.LBB168:
  1657              	.LBB162:
-GAS LISTING /tmp/ccOm6b3K.s 			page 48
+GAS LISTING /tmp/cc2Qg2DR.s 			page 48
 
 
  1658              	.LBB158:
@@ -2878,7 +2878,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1697 00ab 5A       		popq	%rdx
  1698              	.LCFI119:
  1699              		.cfi_def_cfa_offset 104
-GAS LISTING /tmp/ccOm6b3K.s 			page 49
+GAS LISTING /tmp/cc2Qg2DR.s 			page 49
 
 
  1700 00ac 59       		popq	%rcx
@@ -2938,7 +2938,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1748 00cf 415D     		popq	%r13
  1749              	.LCFI125:
  1750              		.cfi_restore 13
-GAS LISTING /tmp/ccOm6b3K.s 			page 50
+GAS LISTING /tmp/cc2Qg2DR.s 			page 50
 
 
  1751              		.cfi_def_cfa_offset 24
@@ -2998,7 +2998,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1794 00f5 E96DFFFF 		jmp	.L66
  1794      FF
  1795              		.cfi_endproc
-GAS LISTING /tmp/ccOm6b3K.s 			page 51
+GAS LISTING /tmp/cc2Qg2DR.s 			page 51
 
 
  1796              	.LFE49:
@@ -3058,7 +3058,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  592:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** #if defined(MBEDTLS_ECDH_LEGACY_CONTEXT)
  593:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     return ecdh_read_public_internal(ctx, buf, blen);
  594:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** #else
-GAS LISTING /tmp/ccOm6b3K.s 			page 52
+GAS LISTING /tmp/cc2Qg2DR.s 			page 52
 
 
  595:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     switch (ctx->var) {
@@ -3118,7 +3118,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1857 0043 85C0     		testl	%eax, %eax
  1858 0045 7512     		jne	.L75
  579:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
-GAS LISTING /tmp/ccOm6b3K.s 			page 53
+GAS LISTING /tmp/cc2Qg2DR.s 			page 53
 
 
  1859              		.loc 1 579 5 is_stmt 1 view .LVU435
@@ -3178,7 +3178,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1898              		.loc 1 608 1 view .LVU441
  1899 0077 E8000000 		call	__stack_chk_fail@PLT
  1899      00
-GAS LISTING /tmp/ccOm6b3K.s 			page 54
+GAS LISTING /tmp/cc2Qg2DR.s 			page 54
 
 
  1900              	.LVL178:
@@ -3238,7 +3238,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  654:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** 
  655:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     if (mbedtls_ecp_get_type(&ctx->grp) == MBEDTLS_ECP_TYPE_MONTGOMERY) {
  656:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         return mbedtls_mpi_write_binary_le(&ctx->z, buf, *olen);
-GAS LISTING /tmp/ccOm6b3K.s 			page 55
+GAS LISTING /tmp/cc2Qg2DR.s 			page 55
 
 
  657:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     }
@@ -3298,7 +3298,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1947              		.loc 1 670 5 is_stmt 1 view .LVU445
  1948              	.LVL180:
  671:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** #if defined(MBEDTLS_ECP_RESTARTABLE)
-GAS LISTING /tmp/ccOm6b3K.s 			page 56
+GAS LISTING /tmp/cc2Qg2DR.s 			page 56
 
 
  672:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****     restart_enabled = ctx->restart_enabled;
@@ -3358,7 +3358,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  1978 0052 4989CE   		movq	%rcx, %r14
  1979 0055 4D89C4   		movq	%r8, %r12
  1980              	.LBE188:
-GAS LISTING /tmp/ccOm6b3K.s 			page 57
+GAS LISTING /tmp/cc2Qg2DR.s 			page 57
 
 
  1981              	.LBE187:
@@ -3418,7 +3418,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  2020              	.LBB196:
  2021              	.LBB190:
  105:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****                                                 f_rng, p_rng, rs_ctx));
-GAS LISTING /tmp/ccOm6b3K.s 			page 58
+GAS LISTING /tmp/cc2Qg2DR.s 			page 58
 
 
  2022              		.loc 1 105 5 view .LVU467
@@ -3478,7 +3478,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  2062              	.LBE197:
  2063              	.LBE203:
  2064              	.LBE207:
-GAS LISTING /tmp/ccOm6b3K.s 			page 59
+GAS LISTING /tmp/cc2Qg2DR.s 			page 59
 
 
  2065              	.LBE214:
@@ -3538,7 +3538,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  108:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         ret = MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
  2106              		.loc 1 108 9 is_stmt 0 view .LVU482
  2107 00c0 E8000000 		call	mbedtls_ecp_is_zero@PLT
-GAS LISTING /tmp/ccOm6b3K.s 			page 60
+GAS LISTING /tmp/cc2Qg2DR.s 			page 60
 
 
  2107      00
@@ -3598,7 +3598,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  649:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
  2146              		.loc 1 649 5 is_stmt 1 view .LVU494
  649:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c ****         return MBEDTLS_ERR_ECP_BAD_INPUT_DATA;
-GAS LISTING /tmp/ccOm6b3K.s 			page 61
+GAS LISTING /tmp/cc2Qg2DR.s 			page 61
 
 
  2147              		.loc 1 649 9 is_stmt 0 view .LVU495
@@ -3658,7 +3658,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  2182 0138 488B7424 		movq	8(%rsp), %rsi
  2182      08
  2183              	.LBE208:
-GAS LISTING /tmp/ccOm6b3K.s 			page 62
+GAS LISTING /tmp/cc2Qg2DR.s 			page 62
 
 
  2184              	.LBE215:
@@ -3718,7 +3718,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  113:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** 
  2235              		.loc 1 113 5 is_stmt 1 discriminator 3 view .LVU517
  116:../../bos/thirdparty/mbedtls/bos_mbedtls/ecdh.c **** 
-GAS LISTING /tmp/ccOm6b3K.s 			page 63
+GAS LISTING /tmp/cc2Qg2DR.s 			page 63
 
 
  2236              		.loc 1 116 5 view .LVU518
@@ -3778,7 +3778,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  2275              		.loc 1 656 16 view .LVU525
  2276 018d 4C89E7   		movq	%r12, %rdi
  2277              	.LBE212:
-GAS LISTING /tmp/ccOm6b3K.s 			page 64
+GAS LISTING /tmp/cc2Qg2DR.s 			page 64
 
 
  2278              	.LBE219:
@@ -3838,7 +3838,7 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  2329              		.file 6 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/bignum.h"
  2330              		.file 7 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ecp.h"
  2331              		.file 8 "../../bos/thirdparty/mbedtls/bos_mbedtls/mbedtls/ecdh.h"
-GAS LISTING /tmp/ccOm6b3K.s 			page 65
+GAS LISTING /tmp/cc2Qg2DR.s 			page 65
 
 
  13729              		.section	.note.gnu.property,"a"
@@ -3857,24 +3857,24 @@ GAS LISTING /tmp/ccOm6b3K.s 			page 1
  13742              	3:
  13743 001c 00000000 		.align 8
  13744              	4:
-GAS LISTING /tmp/ccOm6b3K.s 			page 66
+GAS LISTING /tmp/cc2Qg2DR.s 			page 66
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 ecdh.c
-     /tmp/ccOm6b3K.s:9      .text.mbedtls_ecdh_can_do:0000000000000000 mbedtls_ecdh_can_do
-     /tmp/ccOm6b3K.s:28     .text.mbedtls_ecdh_gen_public:0000000000000000 mbedtls_ecdh_gen_public
-     /tmp/ccOm6b3K.s:162    .text.mbedtls_ecdh_compute_shared:0000000000000000 mbedtls_ecdh_compute_shared
-     /tmp/ccOm6b3K.s:354    .text.mbedtls_ecdh_get_grp_id:0000000000000000 mbedtls_ecdh_get_grp_id
-     /tmp/ccOm6b3K.s:373    .text.mbedtls_ecdh_init:0000000000000000 mbedtls_ecdh_init
-     /tmp/ccOm6b3K.s:424    .text.mbedtls_ecdh_setup:0000000000000000 mbedtls_ecdh_setup
-     /tmp/ccOm6b3K.s:556    .text.mbedtls_ecdh_free:0000000000000000 mbedtls_ecdh_free
-     /tmp/ccOm6b3K.s:653    .text.mbedtls_ecdh_make_params:0000000000000000 mbedtls_ecdh_make_params
-     /tmp/ccOm6b3K.s:946    .text.mbedtls_ecdh_read_params:0000000000000000 mbedtls_ecdh_read_params
-     /tmp/ccOm6b3K.s:1179   .text.mbedtls_ecdh_get_params:0000000000000000 mbedtls_ecdh_get_params
-     /tmp/ccOm6b3K.s:1506   .text.mbedtls_ecdh_make_public:0000000000000000 mbedtls_ecdh_make_public
-     /tmp/ccOm6b3K.s:1802   .text.mbedtls_ecdh_read_public:0000000000000000 mbedtls_ecdh_read_public
-     /tmp/ccOm6b3K.s:1908   .text.mbedtls_ecdh_calc_secret:0000000000000000 mbedtls_ecdh_calc_secret
+     /tmp/cc2Qg2DR.s:9      .text.mbedtls_ecdh_can_do:0000000000000000 mbedtls_ecdh_can_do
+     /tmp/cc2Qg2DR.s:28     .text.mbedtls_ecdh_gen_public:0000000000000000 mbedtls_ecdh_gen_public
+     /tmp/cc2Qg2DR.s:162    .text.mbedtls_ecdh_compute_shared:0000000000000000 mbedtls_ecdh_compute_shared
+     /tmp/cc2Qg2DR.s:354    .text.mbedtls_ecdh_get_grp_id:0000000000000000 mbedtls_ecdh_get_grp_id
+     /tmp/cc2Qg2DR.s:373    .text.mbedtls_ecdh_init:0000000000000000 mbedtls_ecdh_init
+     /tmp/cc2Qg2DR.s:424    .text.mbedtls_ecdh_setup:0000000000000000 mbedtls_ecdh_setup
+     /tmp/cc2Qg2DR.s:556    .text.mbedtls_ecdh_free:0000000000000000 mbedtls_ecdh_free
+     /tmp/cc2Qg2DR.s:653    .text.mbedtls_ecdh_make_params:0000000000000000 mbedtls_ecdh_make_params
+     /tmp/cc2Qg2DR.s:946    .text.mbedtls_ecdh_read_params:0000000000000000 mbedtls_ecdh_read_params
+     /tmp/cc2Qg2DR.s:1179   .text.mbedtls_ecdh_get_params:0000000000000000 mbedtls_ecdh_get_params
+     /tmp/cc2Qg2DR.s:1506   .text.mbedtls_ecdh_make_public:0000000000000000 mbedtls_ecdh_make_public
+     /tmp/cc2Qg2DR.s:1802   .text.mbedtls_ecdh_read_public:0000000000000000 mbedtls_ecdh_read_public
+     /tmp/cc2Qg2DR.s:1908   .text.mbedtls_ecdh_calc_secret:0000000000000000 mbedtls_ecdh_calc_secret
 
 UNDEFINED SYMBOLS
 mbedtls_ecp_gen_privkey

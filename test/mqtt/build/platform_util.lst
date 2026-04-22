@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccPZn7kg.s 			page 1
+GAS LISTING /tmp/cch8WVVv.s 			page 1
 
 
    1              		.file	"platform_util.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccPZn7kg.s 			page 1
   45:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #endif
   46:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
   47:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if !defined(MBEDTLS_PLATFORM_ZEROIZE_ALT)
-GAS LISTING /tmp/ccPZn7kg.s 			page 2
+GAS LISTING /tmp/cch8WVVv.s 			page 2
 
 
   48:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** 
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccPZn7kg.s 			page 1
   17              		.loc 1 96 8 is_stmt 0 view .LVU3
   18 0004 4885F6   		testq	%rsi, %rsi
   19 0007 7507     		jne	.L11
-GAS LISTING /tmp/ccPZn7kg.s 			page 3
+GAS LISTING /tmp/cch8WVVv.s 			page 3
 
 
   20 0009 C3       		ret
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccPZn7kg.s 			page 1
   39:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** 
   40:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** #ifdef __USE_GNU
   41:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __fortify_function void *
-GAS LISTING /tmp/ccPZn7kg.s 			page 4
+GAS LISTING /tmp/cch8WVVv.s 			page 4
 
 
   42:/usr/include/x86_64-linux-gnu/bits/string_fortified.h **** __NTH (mempcpy (void *__restrict __dest, const void *__restrict __src,
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccPZn7kg.s 			page 1
   52 001b E8000000 		call	__explicit_bzero_chk@PLT
   52      00
   53              	.LVL2:
-GAS LISTING /tmp/ccPZn7kg.s 			page 5
+GAS LISTING /tmp/cch8WVVv.s 			page 5
 
 
   54              		.loc 2 72 3 discriminator 1 view .LVU12
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccPZn7kg.s 			page 1
   70              		.cfi_endproc
   71              	.LFE71:
   73              		.section	.text.mbedtls_zeroize_and_free,"ax",@progbits
-GAS LISTING /tmp/ccPZn7kg.s 			page 6
+GAS LISTING /tmp/cch8WVVv.s 			page 6
 
 
   74              		.p2align 4
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccPZn7kg.s 			page 1
  113              	.LBB28:
   98:../../bos/thirdparty/mbedtls/bos_mbedtls/platform_util.c **** #if defined(HAVE_MEMORY_SANITIZER)
  114              		.loc 1 98 9 view .LVU28
-GAS LISTING /tmp/ccPZn7kg.s 			page 7
+GAS LISTING /tmp/cch8WVVv.s 			page 7
 
 
  115              	.LBB29:
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccPZn7kg.s 			page 1
  158              		.loc 1 145 5 view .LVU39
  159 0036 E9000000 		jmp	mbedtls_free@PLT
  159      00
-GAS LISTING /tmp/ccPZn7kg.s 			page 8
+GAS LISTING /tmp/cch8WVVv.s 			page 8
 
 
  160              	.LVL11:
@@ -444,13 +444,13 @@ GAS LISTING /tmp/ccPZn7kg.s 			page 1
  1266              	3:
  1267 001c 00000000 		.align 8
  1268              	4:
-GAS LISTING /tmp/ccPZn7kg.s 			page 9
+GAS LISTING /tmp/cch8WVVv.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 platform_util.c
-     /tmp/ccPZn7kg.s:9      .text.mbedtls_platform_zeroize:0000000000000000 mbedtls_platform_zeroize
-     /tmp/ccPZn7kg.s:77     .text.mbedtls_zeroize_and_free:0000000000000000 mbedtls_zeroize_and_free
+     /tmp/cch8WVVv.s:9      .text.mbedtls_platform_zeroize:0000000000000000 mbedtls_platform_zeroize
+     /tmp/cch8WVVv.s:77     .text.mbedtls_zeroize_and_free:0000000000000000 mbedtls_zeroize_and_free
 
 UNDEFINED SYMBOLS
 __explicit_bzero_chk

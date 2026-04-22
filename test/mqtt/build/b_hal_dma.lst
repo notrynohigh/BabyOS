@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc873OdP.s 			page 1
+GAS LISTING /tmp/ccAXXgOQ.s 			page 1
 
 
    1              		.file	"b_hal_dma.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc873OdP.s 			page 1
   45:../../bos/hal/b_hal_dma.c ****  * \addtogroup DMA_Exported_Functions
   46:../../bos/hal/b_hal_dma.c ****  * \{
   47:../../bos/hal/b_hal_dma.c ****  */
-GAS LISTING /tmp/cc873OdP.s 			page 2
+GAS LISTING /tmp/ccAXXgOQ.s 			page 2
 
 
   48:../../bos/hal/b_hal_dma.c **** #if defined(__WEAKDEF)
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc873OdP.s 			page 1
   55              		.section	.text.bMcuDmaSetDest,"ax",@progbits
   56              		.p2align 4
   57              		.weak	bMcuDmaSetDest
-GAS LISTING /tmp/cc873OdP.s 			page 3
+GAS LISTING /tmp/ccAXXgOQ.s 			page 3
 
 
   59              	bMcuDmaSetDest:
@@ -178,7 +178,7 @@ GAS LISTING /tmp/cc873OdP.s 			page 1
  102              		.p2align 4
  103              		.globl	bHalDmaConfig
  105              	bHalDmaConfig:
-GAS LISTING /tmp/cc873OdP.s 			page 4
+GAS LISTING /tmp/ccAXXgOQ.s 			page 4
 
 
  106              	.LVL3:
@@ -238,7 +238,7 @@ GAS LISTING /tmp/cc873OdP.s 			page 1
  140              		.cfi_startproc
  141              		.loc 1 92 1 is_stmt 0 view .LVU24
  142 0000 F30F1EFA 		endbr64
-GAS LISTING /tmp/cc873OdP.s 			page 5
+GAS LISTING /tmp/ccAXXgOQ.s 			page 5
 
 
   93:../../bos/hal/b_hal_dma.c ****     if (chl >= B_HAL_DMA_CHL_NUMBER)
@@ -298,7 +298,7 @@ GAS LISTING /tmp/cc873OdP.s 			page 1
  107:../../bos/hal/b_hal_dma.c **** }
  182              		.loc 1 107 1 view .LVU36
  183 0010 B8FFFFFF 		movl	$-1, %eax
-GAS LISTING /tmp/cc873OdP.s 			page 6
+GAS LISTING /tmp/ccAXXgOQ.s 			page 6
 
 
  183      FF
@@ -358,7 +358,7 @@ GAS LISTING /tmp/cc873OdP.s 			page 1
  120:../../bos/hal/b_hal_dma.c ****     if (chl >= B_HAL_DMA_CHL_NUMBER)
  227              		.loc 1 120 5 is_stmt 1 view .LVU46
  228              		.loc 1 120 8 is_stmt 0 view .LVU47
-GAS LISTING /tmp/cc873OdP.s 			page 7
+GAS LISTING /tmp/ccAXXgOQ.s 			page 7
 
 
  229 0004 83FF0F   		cmpl	$15, %edi
@@ -418,7 +418,7 @@ GAS LISTING /tmp/cc873OdP.s 			page 1
  268 0015 C3       		ret
  269              		.cfi_endproc
  270              	.LFE39:
-GAS LISTING /tmp/cc873OdP.s 			page 8
+GAS LISTING /tmp/ccAXXgOQ.s 			page 8
 
 
  272              		.text
@@ -442,22 +442,22 @@ GAS LISTING /tmp/cc873OdP.s 			page 1
  1778              	3:
  1779 001c 00000000 		.align 8
  1780              	4:
-GAS LISTING /tmp/cc873OdP.s 			page 9
+GAS LISTING /tmp/ccAXXgOQ.s 			page 9
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_hal_dma.c
-     /tmp/cc873OdP.s:9      .text.bMcuDmaConfig:0000000000000000 bMcuDmaConfig
-     /tmp/cc873OdP.s:27     .text.bMcuDmaStart:0000000000000000 bMcuDmaStart
-     /tmp/cc873OdP.s:45     .text.bMcuDmaStop:0000000000000000 bMcuDmaStop
-     /tmp/cc873OdP.s:59     .text.bMcuDmaSetDest:0000000000000000 bMcuDmaSetDest
-     /tmp/cc873OdP.s:77     .text.bMcuDmaSetCount:0000000000000000 bMcuDmaSetCount
-     /tmp/cc873OdP.s:91     .text.bMcuDmaGetCount:0000000000000000 bMcuDmaGetCount
-     /tmp/cc873OdP.s:105    .text.bHalDmaConfig:0000000000000000 bHalDmaConfig
-     /tmp/cc873OdP.s:136    .text.bHalDmaStart:0000000000000000 bHalDmaStart
-     /tmp/cc873OdP.s:164    .text.bHalDmaStop:0000000000000000 bHalDmaStop
-     /tmp/cc873OdP.s:192    .text.bHalDmaSetDest:0000000000000000 bHalDmaSetDest
-     /tmp/cc873OdP.s:220    .text.bHalDmaSetCount:0000000000000000 bHalDmaSetCount
-     /tmp/cc873OdP.s:248    .text.bHalDmaGetCount:0000000000000000 bHalDmaGetCount
+     /tmp/ccAXXgOQ.s:9      .text.bMcuDmaConfig:0000000000000000 bMcuDmaConfig
+     /tmp/ccAXXgOQ.s:27     .text.bMcuDmaStart:0000000000000000 bMcuDmaStart
+     /tmp/ccAXXgOQ.s:45     .text.bMcuDmaStop:0000000000000000 bMcuDmaStop
+     /tmp/ccAXXgOQ.s:59     .text.bMcuDmaSetDest:0000000000000000 bMcuDmaSetDest
+     /tmp/ccAXXgOQ.s:77     .text.bMcuDmaSetCount:0000000000000000 bMcuDmaSetCount
+     /tmp/ccAXXgOQ.s:91     .text.bMcuDmaGetCount:0000000000000000 bMcuDmaGetCount
+     /tmp/ccAXXgOQ.s:105    .text.bHalDmaConfig:0000000000000000 bHalDmaConfig
+     /tmp/ccAXXgOQ.s:136    .text.bHalDmaStart:0000000000000000 bHalDmaStart
+     /tmp/ccAXXgOQ.s:164    .text.bHalDmaStop:0000000000000000 bHalDmaStop
+     /tmp/ccAXXgOQ.s:192    .text.bHalDmaSetDest:0000000000000000 bHalDmaSetDest
+     /tmp/ccAXXgOQ.s:220    .text.bHalDmaSetCount:0000000000000000 bHalDmaSetCount
+     /tmp/ccAXXgOQ.s:248    .text.bHalDmaGetCount:0000000000000000 bHalDmaGetCount
 
 NO UNDEFINED SYMBOLS

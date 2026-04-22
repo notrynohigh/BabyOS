@@ -136,6 +136,7 @@ typedef struct
 #define MAX_PACKET_ID 65535
 #define MQTT_MAX_RETRY_COUNT 3
 #define MQTT_RETRY_TIMEOUT_MS 5000
+#define MQTT_MAX_PENDING_PUB 10  // 最多同时 pending 的 QoS 1 消息数
 /**
  * \}
  */
@@ -449,6 +450,23 @@ static int _bMqttPublish(bMqttSrvInstance_t *pinstance, const char *topic, const
     int       len    = 0;
     uint8_t  *pbuf   = NULL;
     uint16_t pack_id = _bMqttGetNextPacketId(pinstance);
+    int       pending_count = 0;
+
+    // For QoS 1, check pending list capacity
+    if (qos > 0)
+    {
+        bMqttPendingPub_t *pnode = NULL;
+        struct list_head  *pos   = NULL;
+        list_for_each(pos, &bMqttPendingPubListHead)
+        {
+            pending_count++;
+        }
+        if (pending_count >= MQTT_MAX_PENDING_PUB)
+        {
+            b_log_e("mqtt pending list full, cannot publish qos1: count=%d\r\n", pending_count);
+            return -1;
+        }
+    }
 
     // Calculate needed buffer size
     // Fixed header (2) + Variable header (topic string) + Payload
@@ -496,7 +514,8 @@ static int _bMqttPublish(bMqttSrvInstance_t *pinstance, const char *topic, const
         pnode->retry_count  = 0;
         pnode->last_send_time = bHalGetSysTick();
         list_add(&pnode->node, &bMqttPendingPubListHead);
-        b_log("mqtt publish stored: id=%d, topic=%s, qos=%d\r\n", pack_id, topic, qos);
+        b_log("mqtt publish stored: id=%d, topic=%s, qos=%d, pending=%d\r\n", 
+              pack_id, topic, qos, pending_count + 1);
     }
 
     b_log("mqtt publish success: topic=%s, len=%d, qos=%d, id=%d\r\n", topic, payload_len, qos, pack_id);

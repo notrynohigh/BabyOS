@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccJwjQgj.s 			page 1
+GAS LISTING /tmp/ccDfCNMt.s 			page 1
 
 
    1              		.file	"b_hal_flash.c"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
   46:../../bos/hal/b_hal_flash.c ****  * \{
   47:../../bos/hal/b_hal_flash.c ****  */
   48:../../bos/hal/b_hal_flash.c **** #if defined(__WEAKDEF)
-GAS LISTING /tmp/ccJwjQgj.s 			page 2
+GAS LISTING /tmp/ccDfCNMt.s 			page 2
 
 
   49:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashInit()
@@ -118,7 +118,7 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
   61:../../bos/hal/b_hal_flash.c ****     return -1;
   62:../../bos/hal/b_hal_flash.c **** }
   63:../../bos/hal/b_hal_flash.c **** 
-GAS LISTING /tmp/ccJwjQgj.s 			page 3
+GAS LISTING /tmp/ccDfCNMt.s 			page 3
 
 
   64:../../bos/hal/b_hal_flash.c **** __WEAKDEF int bMcuFlashErase(uint32_t raddr, uint32_t pages)
@@ -178,7 +178,7 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
  101              		.weak	bMcuFlashSectorSize
  103              	bMcuFlashSectorSize:
  104              	.LFB34:
-GAS LISTING /tmp/ccJwjQgj.s 			page 4
+GAS LISTING /tmp/ccDfCNMt.s 			page 4
 
 
   75:../../bos/hal/b_hal_flash.c **** {
@@ -238,7 +238,7 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
  145              	.LFE36:
  147              		.section	.text.bHalFlashInit,"ax",@progbits
  148              		.p2align 4
-GAS LISTING /tmp/ccJwjQgj.s 			page 5
+GAS LISTING /tmp/ccDfCNMt.s 			page 5
 
 
  149              		.globl	bHalFlashInit
@@ -298,7 +298,7 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
  188              		.loc 1 110 5 view .LVU29
  189              		.loc 1 110 12 is_stmt 0 view .LVU30
  190 0004 E9000000 		jmp	bMcuFlashLock
-GAS LISTING /tmp/ccJwjQgj.s 			page 6
+GAS LISTING /tmp/ccDfCNMt.s 			page 6
 
 
  190      00
@@ -358,7 +358,7 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
  233 000d E9000000 		jmp	bMcuFlashWrite
  233      00
  234              	.LVL9:
-GAS LISTING /tmp/ccJwjQgj.s 			page 7
+GAS LISTING /tmp/ccDfCNMt.s 			page 7
 
 
  235              		.p2align 4,,10
@@ -418,7 +418,7 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
  278              	bHalFlashSectorSize:
  279              	.LFB43:
  135:../../bos/hal/b_hal_flash.c **** 
-GAS LISTING /tmp/ccJwjQgj.s 			page 8
+GAS LISTING /tmp/ccDfCNMt.s 			page 8
 
 
  136:../../bos/hal/b_hal_flash.c **** uint32_t bHalFlashSectorSize()
@@ -478,7 +478,7 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
  322              	.LVL15:
  323              		.loc 1 148 12 view .LVU61
  324              		.cfi_endproc
-GAS LISTING /tmp/ccJwjQgj.s 			page 9
+GAS LISTING /tmp/ccDfCNMt.s 			page 9
 
 
  325              	.LFE45:
@@ -502,28 +502,28 @@ GAS LISTING /tmp/ccJwjQgj.s 			page 1
  1756              	3:
  1757 001c 00000000 		.align 8
  1758              	4:
-GAS LISTING /tmp/ccJwjQgj.s 			page 10
+GAS LISTING /tmp/ccDfCNMt.s 			page 10
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 b_hal_flash.c
-     /tmp/ccJwjQgj.s:9      .text.bMcuFlashInit:0000000000000000 bMcuFlashInit
-     /tmp/ccJwjQgj.s:25     .text.bMcuFlashUnlock:0000000000000000 bMcuFlashUnlock
-     /tmp/ccJwjQgj.s:39     .text.bMcuFlashLock:0000000000000000 bMcuFlashLock
-     /tmp/ccJwjQgj.s:53     .text.bMcuFlashErase:0000000000000000 bMcuFlashErase
-     /tmp/ccJwjQgj.s:71     .text.bMcuFlashWrite:0000000000000000 bMcuFlashWrite
-     /tmp/ccJwjQgj.s:89     .text.bMcuFlashRead:0000000000000000 bMcuFlashRead
-     /tmp/ccJwjQgj.s:103    .text.bMcuFlashSectorSize:0000000000000000 bMcuFlashSectorSize
-     /tmp/ccJwjQgj.s:119    .text.bMcuFlashChipSize:0000000000000000 bMcuFlashChipSize
-     /tmp/ccJwjQgj.s:133    .text.bMcuFlashReadUID:0000000000000000 bMcuFlashReadUID
-     /tmp/ccJwjQgj.s:151    .text.bHalFlashInit:0000000000000000 bHalFlashInit
-     /tmp/ccJwjQgj.s:167    .text.bHalFlashUnlock:0000000000000000 bHalFlashUnlock
-     /tmp/ccJwjQgj.s:183    .text.bHalFlashLock:0000000000000000 bHalFlashLock
-     /tmp/ccJwjQgj.s:199    .text.bHalFlashErase:0000000000000000 bHalFlashErase
-     /tmp/ccJwjQgj.s:218    .text.bHalFlashWrite:0000000000000000 bHalFlashWrite
-     /tmp/ccJwjQgj.s:248    .text.bHalFlashRead:0000000000000000 bHalFlashRead
-     /tmp/ccJwjQgj.s:278    .text.bHalFlashSectorSize:0000000000000000 bHalFlashSectorSize
-     /tmp/ccJwjQgj.s:294    .text.bHalFlashChipSize:0000000000000000 bHalFlashChipSize
-     /tmp/ccJwjQgj.s:310    .text.bHalFlashReadUID:0000000000000000 bHalFlashReadUID
+     /tmp/ccDfCNMt.s:9      .text.bMcuFlashInit:0000000000000000 bMcuFlashInit
+     /tmp/ccDfCNMt.s:25     .text.bMcuFlashUnlock:0000000000000000 bMcuFlashUnlock
+     /tmp/ccDfCNMt.s:39     .text.bMcuFlashLock:0000000000000000 bMcuFlashLock
+     /tmp/ccDfCNMt.s:53     .text.bMcuFlashErase:0000000000000000 bMcuFlashErase
+     /tmp/ccDfCNMt.s:71     .text.bMcuFlashWrite:0000000000000000 bMcuFlashWrite
+     /tmp/ccDfCNMt.s:89     .text.bMcuFlashRead:0000000000000000 bMcuFlashRead
+     /tmp/ccDfCNMt.s:103    .text.bMcuFlashSectorSize:0000000000000000 bMcuFlashSectorSize
+     /tmp/ccDfCNMt.s:119    .text.bMcuFlashChipSize:0000000000000000 bMcuFlashChipSize
+     /tmp/ccDfCNMt.s:133    .text.bMcuFlashReadUID:0000000000000000 bMcuFlashReadUID
+     /tmp/ccDfCNMt.s:151    .text.bHalFlashInit:0000000000000000 bHalFlashInit
+     /tmp/ccDfCNMt.s:167    .text.bHalFlashUnlock:0000000000000000 bHalFlashUnlock
+     /tmp/ccDfCNMt.s:183    .text.bHalFlashLock:0000000000000000 bHalFlashLock
+     /tmp/ccDfCNMt.s:199    .text.bHalFlashErase:0000000000000000 bHalFlashErase
+     /tmp/ccDfCNMt.s:218    .text.bHalFlashWrite:0000000000000000 bHalFlashWrite
+     /tmp/ccDfCNMt.s:248    .text.bHalFlashRead:0000000000000000 bHalFlashRead
+     /tmp/ccDfCNMt.s:278    .text.bHalFlashSectorSize:0000000000000000 bHalFlashSectorSize
+     /tmp/ccDfCNMt.s:294    .text.bHalFlashChipSize:0000000000000000 bHalFlashChipSize
+     /tmp/ccDfCNMt.s:310    .text.bHalFlashReadUID:0000000000000000 bHalFlashReadUID
 
 NO UNDEFINED SYMBOLS
