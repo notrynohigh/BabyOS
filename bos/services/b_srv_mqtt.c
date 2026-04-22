@@ -428,6 +428,94 @@ static uint16_t _bMqttGetNextPacketId(bMqttSrvInstance_t *pinstance)
                (pinstance->packet_id == MAX_PACKET_ID) ? 1 : pinstance->packet_id + 1;
 }
 
+static int _bMqttPublish(bMqttSrvInstance_t *pinstance, const char *topic, const uint8_t *payload,
+                         uint32_t payload_len, uint8_t qos)
+{
+    int       len    = 0;
+    uint8_t  *pbuf   = NULL;
+    uint16_t pack_id = _bMqttGetNextPacketId(pinstance);
+
+    // Calculate needed buffer size
+    // Fixed header (2) + Variable header (topic string) + Payload
+    uint32_t buf_size = 2 + strlen(topic) + 3 + payload_len;
+    pbuf = _bMqttMalloc(buf_size);
+    if (pbuf == NULL)
+    {
+        b_log_e("mqtt publish malloc failed\r\n");
+        return -1;
+    }
+
+    MQTTString topic_str  = MQTTString_initializer;
+    topic_str.cstring     = (char *)topic;
+    len = MQTTSerialize_publish(pbuf, buf_size, 0, qos, 0, pack_id, topic_str, payload, payload_len);
+    if (len <= 0)
+    {
+        b_log_e("mqtt serialize publish failed: %d\r\n", len);
+        _bMqttFree(pbuf);
+        return -1;
+    }
+
+    if (_bMqttWrite(pinstance, pbuf, len) < 0)
+    {
+        b_log_e("mqtt publish write failed\r\n");
+        _bMqttFree(pbuf);
+        return -1;
+    }
+
+    _bMqttFree(pbuf);
+    b_log("mqtt publish success: topic=%s, len=%d\r\n", topic, payload_len);
+    return 0;
+}
+
+static int _bMqttUnsubscribe(bMqttSrvInstance_t *pinstance, const char *topic)
+{
+    int         len      = 0;
+    uint8_t    *pbuf    = NULL;
+    uint16_t    pack_id = _bMqttGetNextPacketId(pinstance);
+    MQTTString  topic_str = MQTTString_initializer;
+    topic_str.cstring    = (char *)topic;
+
+    // Calculate buffer size: fixed header(2) + variable header(topic string) 
+    uint32_t buf_size = 2 + 2 + strlen(topic) + 2;
+    pbuf = _bMqttMalloc(buf_size);
+    if (pbuf == NULL)
+    {
+        return -1;
+    }
+
+    len = MQTTSerialize_unsubscribe(pbuf, buf_size, 0, pack_id, 1, &topic_str);
+    if (len <= 0)
+    {
+        _bMqttFree(pbuf);
+        return -1;
+    }
+
+    if (_bMqttWrite(pinstance, pbuf, len) < 0)
+    {
+        _bMqttFree(pbuf);
+        return -1;
+    }
+
+    // Also remove from subscription list
+    bMqttSubscribeNode_t *pnode = NULL;
+    struct list_head     *pos   = NULL;
+    struct list_head     *n     = NULL;
+    list_for_each_safe(pos, n, &bMqttSubscribeListHead)
+    {
+        pnode = list_entry(pos, bMqttSubscribeNode_t, node);
+        if (pnode->pack != NULL && strstr(pnode->pack, topic) != NULL)
+        {
+            list_del(&pnode->node);
+            _bMqttFree(pnode->pack);
+            _bMqttFree(pnode);
+            b_log("unsubscribed: %s\r\n", topic);
+        }
+    }
+
+    _bMqttFree(pbuf);
+    return 0;
+}
+
 static int _bMqttSubscribeReset()
 {
     bMqttSubscribeNode_t *pnode = NULL;
@@ -956,6 +1044,50 @@ void bMqttSrvDestroy()
     }
     pnode = NULL;
     _bMqttFree(pinstance);
+}
+
+int bMqttSrvPublish(const char *topic, const uint8_t *payload, uint32_t payload_len, uint8_t qos)
+{
+    if (pbMqttInstance == NULL || topic == NULL || payload == NULL)
+    {
+        return -1;
+    }
+    if (pbMqttInstance->stat != B_MQTT_STA_TCP_CONNECTED &&
+        pbMqttInstance->stat != B_MQTT_STA_SSL_CONNECTED)
+    {
+        b_log_e("mqtt not connected, cannot publish\r\n");
+        return -1;
+    }
+    return _bMqttPublish(pbMqttInstance, topic, payload, payload_len, qos);
+}
+
+int bMqttSrvSubscribe(const char *topic, uint8_t qos)
+{
+    if (pbMqttInstance == NULL || topic == NULL)
+    {
+        return -1;
+    }
+    const char *topics[1]   = {topic};
+    int         qos_array[1] = {qos};
+    return _bMqttAddSubscribe(pbMqttInstance, topics, qos_array, 1);
+}
+
+int bMqttSrvUnsubscribe(const char *topic)
+{
+    if (pbMqttInstance == NULL || topic == NULL)
+    {
+        return -1;
+    }
+    return _bMqttUnsubscribe(pbMqttInstance, topic);
+}
+
+int bMqttSrvGetStatus(void)
+{
+    if (pbMqttInstance == NULL)
+    {
+        return -1;
+    }
+    return pbMqttInstance->stat;
 }
 
 /**
