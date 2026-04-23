@@ -34,7 +34,8 @@ $(SOURCE_ROOT)/bos/modules/*.c \
 $(SOURCE_ROOT)/bos/modules/b_mod_netif/*.c \
 $(SOURCE_ROOT)/bos/modules/b_mod_netif/b_mod_trans/*.c \
 $(SOURCE_ROOT)/bos/utils/*.c \
-$(SOURCE_ROOT)/bos/thirdparty/mqtt-pack/*.c
+$(SOURCE_ROOT)/bos/thirdparty/mqtt-pack/*.c \
+$(SOURCE_ROOT)/bos/thirdparty/mbedtls/bos_mbedtls/*.c
 
 BOS_DRV_SOURCE_DIR = \
 $(SOURCE_ROOT)/bos/drivers/b_drv_testmac.c
