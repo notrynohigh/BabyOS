@@ -4,16 +4,18 @@ All protocol commands, UART I/O, and UI logic are implemented here.
 """
 
 import os
+import re
 import struct
 from datetime import datetime
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
     QTabWidget, QGroupBox, QLabel, QLineEdit, QPushButton,
     QComboBox, QTextEdit, QProgressBar, QCheckBox, QMessageBox,
-    QFileDialog
+    QFileDialog, QTextBrowser
 )
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QTextCursor
+import threading
 
 from uart_driver import UartDriver
 from b_protocol import (
@@ -63,7 +65,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("BabyOS_Protocol - 上位机")
-        self.setMinimumSize(700, 600)
+        self.setMinimumSize(800, 650)
 
         # UART
         self._uart = UartDriver()
@@ -94,6 +96,20 @@ class MainWindow(QMainWindow):
         self._timer = QTimer()
         self._timer.timeout.connect(self._on_timer)
         self._timer.start(100)
+
+        # UART log-to-file
+        self._log_file = None       # file handle for serial log
+        self._log_lock = threading.Lock()
+
+        # Param list (populated from shell response)
+        self._param_names = []      # list of known param names
+
+        # Param polling (定时查询)
+        self._param_polling_timer = QTimer()
+        self._param_polling_timer.timeout.connect(self._on_param_polling_tick)
+        self._param_polling_enabled = False
+        self._param_polling_interval_ms = 1000
+        self._param_polling_name = ''   # which param to poll, empty = all
 
         # UI
         self._setup_ui()
@@ -137,6 +153,19 @@ class MainWindow(QMainWindow):
             if not self._active_xfer.is_active:
                 self._active_xfer = None
             return
+
+        # For param shell commands, data comes back as plain text
+        # Try to decode as UTF-8 text first (for param responses)
+        try:
+            text = bytes(data).decode('utf-8', errors='replace')
+            # Check if it looks like a shell response (contains : or \r\n)
+            if any(c in text for c in [':', '\r', '\n']):
+                self._append_log(text)
+                # Update param list if we get a list response
+                self._handle_param_response(text)
+                return
+        except Exception:
+            pass
 
         if self._encrypt_checked():
             bProtocolDecrypt(data)
@@ -196,6 +225,11 @@ class MainWindow(QMainWindow):
     def _append_log(self, text: str):
         self._rec_text.append(text)
         self._rec_text.moveCursor(QTextCursor.End)
+        if self._log_file is not None:
+            with self._log_lock:
+                ts = datetime.now().strftime('%H:%M:%S.%f')[:-3]
+                self._log_file.write(f'[{ts}] {text}\n')
+                self._log_file.flush()
 
     # ------------------------------------------------------------------
     # UI actions
@@ -224,6 +258,29 @@ class MainWindow(QMainWindow):
 
     def _on_clear(self):
         self._rec_text.clear()
+
+    def _on_open_log_file(self):
+        with self._log_lock:
+            if self._log_file is not None:
+                self._on_close_log_file()
+                return
+        path, _ = QFileDialog.getSaveFileName(
+            self, "保存串口日志", "",
+            "Log Files (*.log);;Text Files (*.txt);;All Files (*.*)")
+        if not path:
+            return
+        with self._log_lock:
+            self._log_file = open(path, 'w', encoding='utf-8')
+        self._log_file_label.setText(path)
+        self._log_file_btn.setText("停止记录")
+
+    def _on_close_log_file(self):
+        with self._log_lock:
+            if self._log_file is not None:
+                self._log_file.close()
+                self._log_file = None
+        self._log_file_label.setText("")
+        self._log_file_btn.setText("保存到文件")
 
     def _on_test(self):
         self._pack_and_send(INVALID_ID, CMD_TEST, b'BabyOS')
@@ -420,6 +477,120 @@ class MainWindow(QMainWindow):
             self._ymodem_progress.setValue(0)
 
     # ------------------------------------------------------------------
+    # Param (参数调节) actions
+    # ------------------------------------------------------------------
+    def _send_shell_cmd(self, cmd: str):
+        """Send a raw shell command (no protocol framing) via UART."""
+        if not self._uart.uartGetOpenStatus():
+            QMessageBox.warning(self, "提示", "请先打开串口")
+            return
+        data = cmd.encode('utf-8') + b'\r\n'
+        self._uart.uartSendBuff(data)
+        self._append_log(f"[shell] >> {cmd}")
+        # Also display in param tab output
+        if hasattr(self, '_param_output'):
+            self._param_output.append(f">> {cmd}")
+            self._param_output.moveCursor(QTextCursor.End)
+
+    def _on_param_list(self):
+        """List all registered parameters: param"""
+        self._send_shell_cmd("param")
+
+    def _on_param_get(self):
+        """Read a specific parameter: param <name>"""
+        name = self._param_name.currentText().strip()
+        if not name:
+            QMessageBox.warning(self, "提示", "请输入参数名称")
+            return
+        self._send_shell_cmd(f"param {name}")
+
+    def _on_param_set(self):
+        """Set a parameter value: param <name> <value>"""
+        name = self._param_name.currentText().strip()
+        value = self._param_value.text().strip()
+        if not name:
+            QMessageBox.warning(self, "提示", "请输入参数名称")
+            return
+        if not value:
+            QMessageBox.warning(self, "提示", "请输入参数值")
+            return
+        self._send_shell_cmd(f"param {name} {value}")
+
+    def _on_param_send_raw(self):
+        """Send a raw shell command (custom command)."""
+        cmd = self._param_raw_input.text().strip()
+        if not cmd:
+            return
+        self._send_shell_cmd(cmd)
+
+    def _handle_param_response(self, text: str):
+        """Parse and display param response in the param tab output."""
+        if not hasattr(self, '_param_output'):
+            return
+        self._param_output.append(text)
+        self._param_output.moveCursor(QTextCursor.End)
+
+        # Detect read mode first: "name:value" (no leading ": ")
+        m2 = re.match(r'^\s*(\S+?)\s*:\s*(\S+)\s*$', text.strip())
+        if m2:
+            name, val = m2.group(1), m2.group(2)
+            self._param_output.append(f"{name} = {val}")
+            self._param_output.moveCursor(QTextCursor.End)
+            if name not in self._param_names:
+                self._param_names.append(name)
+                self._param_name.addItem(name)
+            return
+
+        # Detect list mode: each line matches ": <name>"
+        lines = text.strip().splitlines()
+        names = []
+        for line in lines:
+            m = re.match(r'^\s*:\s*(\S+)\s*$', line)
+            if m:
+                names.append(m.group(1))
+        if names:
+            self._param_names = names
+            self._param_name.clear()
+            self._param_name.addItems(names)
+
+    def _on_param_polling_tick(self):
+        """Called by polling timer: re-read the monitored param(s)."""
+        if not self._param_polling_name:
+            self._send_shell_cmd("param")
+        else:
+            self._send_shell_cmd(f"param {self._param_polling_name}")
+
+    def _on_param_polling_start(self):
+        """Toggle定时查询 (start/stop periodic polling)."""
+        if self._param_polling_enabled:
+            self._on_param_polling_stop()
+            return
+        if not self._uart.uartGetOpenStatus():
+            QMessageBox.warning(self, "提示", "请先打开串口")
+            return
+        try:
+            interval = int(self._param_polling_interval.text() or '1000')
+            if interval < 100:
+                interval = 100
+        except ValueError:
+            interval = 1000
+        self._param_polling_interval_ms = interval
+        self._param_polling_name = self._param_name.currentText().strip()
+        self._param_polling_enabled = True
+        self._param_polling_timer.start(self._param_polling_interval_ms)
+        self._param_polling_btn.setText("停止监控")
+        self._append_log(f"[param] 定时查询已启动 (间隔 {interval}ms)")
+
+    def _on_param_polling_stop(self):
+        """Stop定时查询 (stop polling)."""
+        if not self._param_polling_enabled:
+            return
+        self._param_polling_enabled = False
+        self._param_polling_timer.stop()
+        self._param_polling_btn.setText("定时查询")
+        self._append_log("[param] 定时查询已停止")
+
+    # ------------------------------------------------------------------
     # Build UI
     # ------------------------------------------------------------------
     def _setup_ui(self):
@@ -612,12 +783,92 @@ class MainWindow(QMainWindow):
         t5_layout.addLayout(g_info)
         t5_layout.addStretch()
 
+        # ---- Tab 6: 参数调节 ----
+        tab6 = QWidget()
+        t6_layout = QVBoxLayout(tab6)
+
+        # Instruction label
+        instructions = QLabel(
+            "<b>BabyOS参数调节</b> — 通过Shell命令读写MCU运行时变量<br/>"
+            "用法: param [name [value]]<br/>"
+            "&nbsp;&nbsp;param &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;— 列出所有参数<br/>"
+            "&nbsp;&nbsp;param &lt;name&gt; &nbsp;&nbsp;&nbsp;— 读取参数<br/>"
+            "&nbsp;&nbsp;param &lt;name&gt; &lt;val&gt; — 设置参数"
+        )
+        instructions.setStyleSheet("color: #555; padding: 5px;")
+        t6_layout.addWidget(instructions)
+
+        # Control panel
+        g_param = QGridLayout()
+
+        g_param.addWidget(QLabel("参数名称:"), 0, 0)
+        self._param_name = QComboBox()
+        self._param_name.setEditable(True)
+        self._param_name.setPlaceholderText("输入参数名，或从列表选择")
+        g_param.addWidget(self._param_name, 0, 1)
+
+        g_param.addWidget(QLabel("参数值:"), 1, 0)
+        self._param_value = QLineEdit()
+        self._param_value.setPlaceholderText("输入要设置的值（仅设置时需要）")
+        g_param.addWidget(self._param_value, 1, 1)
+
+        # Buttons row
+        btn_list = QPushButton("列出全部")
+        btn_list.clicked.connect(self._on_param_list)
+        g_param.addWidget(btn_list, 2, 0)
+
+        btn_get = QPushButton("读取参数")
+        btn_get.clicked.connect(self._on_param_get)
+        g_param.addWidget(btn_get, 2, 1)
+
+        btn_set = QPushButton("设置参数")
+        btn_set.clicked.connect(self._on_param_set)
+        g_param.addWidget(btn_set, 2, 2)
+
+        t6_layout.addLayout(g_param)
+
+        # Polling / 定时查询 row
+        polling_hbox = QHBoxLayout()
+        polling_hbox.addWidget(QLabel("定时查询:"))
+        self._param_polling_interval = QLineEdit("1000")
+        self._param_polling_interval.setPlaceholderText("间隔(ms)")
+        self._param_polling_interval.setMaximumWidth(80)
+        polling_hbox.addWidget(self._param_polling_interval)
+        polling_hbox.addWidget(QLabel("ms"))
+        self._param_polling_btn = QPushButton("定时查询")
+        self._param_polling_btn.clicked.connect(self._on_param_polling_start)
+        polling_hbox.addWidget(self._param_polling_btn)
+        polling_hbox.addStretch()
+        t6_layout.addLayout(polling_hbox)
+
+        # Raw command input
+        raw_hbox = QHBoxLayout()
+        raw_hbox.addWidget(QLabel("自定义命令:"))
+        self._param_raw_input = QLineEdit()
+        self._param_raw_input.setPlaceholderText("输入自定义Shell命令（不含换行）")
+        raw_hbox.addWidget(self._param_raw_input)
+        btn_raw_send = QPushButton("发送")
+        btn_raw_send.clicked.connect(self._on_param_send_raw)
+        raw_hbox.addWidget(btn_raw_send)
+        t6_layout.addLayout(raw_hbox)
+
+        # Output area
+        output_label = QLabel("响应输出:")
+        t6_layout.addWidget(output_label)
+        self._param_output = QTextBrowser()
+        self._param_output.setMaximumHeight(200)
+        self._param_output.setStyleSheet("background: #f5f5f5; font-family: monospace;")
+        t6_layout.addWidget(self._param_output)
+
+        t6_layout.addStretch()
+
         # ---- Assemble tabs ----
         tabs.addTab(tab1, "串口控制")
         tabs.addTab(tab2, "OTA升级")
         tabs.addTab(tab3, "文件传输")
         tabs.addTab(tab4, "Xmodem/Ymodem")
         tabs.addTab(tab5, "设备信息")
+        tabs.addTab(tab6, "参数调节")
         layout.addWidget(tabs)
 
         # ---- Bottom: Log + controls ----
@@ -628,6 +879,14 @@ class MainWindow(QMainWindow):
         clear_btn = QPushButton("清空日志")
         clear_btn.clicked.connect(self._on_clear)
         bottom.addWidget(clear_btn)
+
+        self._log_file_btn = QPushButton("保存到文件")
+        self._log_file_btn.clicked.connect(self._on_open_log_file)
+        bottom.addWidget(self._log_file_btn)
+
+        self._log_file_label = QLabel("")
+        self._log_file_label.setStyleSheet("color: #888; font-size: 11px;")
+        bottom.addWidget(self._log_file_label)
 
         bottom.addStretch()
         layout.addLayout(bottom)
