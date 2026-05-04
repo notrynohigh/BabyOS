@@ -111,6 +111,12 @@ typedef enum
 } bDnsResult_t;
 
 /**
+ * \brief Portable socket descriptor type for TCP/IP operations.
+ * On 64-bit platforms, this must be large enough to hold a pointer.
+ */
+typedef intptr_t bSocketFd_t;
+
+/**
  * \}
  */
 
@@ -120,13 +126,11 @@ typedef enum
  */
 
 #define SOCKFD_IS_INVALID(sockfd) ((sockfd) <= 0)
-#define SOCKET_SHUTDOWN(pt, sockfd)                                \
-    do                                                             \
-    {                                                              \
-        if (!SOCKFD_IS_INVALID((sockfd)))                          \
-        {                                                          \
+#define SOCKET_SHUTDOWN(pt, sockfd) \
+    do { \
+        if (!SOCKFD_IS_INVALID((sockfd))) { \
             PT_WAIT_UNTIL_FOREVER((pt), bShutdown((sockfd)) >= 0); \
-        }                                                          \
+        } \
     } while (0)
 
 /**
@@ -146,17 +150,17 @@ int      bTcpIpGetMac(uint8_t mac[6]);
 uint8_t  bTcpIpPhyIsLinked(void);
 uint32_t bTcpIpGetCurrentDevNo(void);
 
-int     bSocket(bTransType_t type, pbTransCb_t cb, void *user_data);
-int     bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data);
-int     bConnect(int sockfd, char *remote, uint16_t port);
-int     bBind(int sockfd, uint16_t port);
-int     bListen(int sockfd, int backlog);
-int     bRecv(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
-int     bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
-int     bShutdown(int sockfd);  // 建议使用 SOCKET_SHUTDOWN 一直等到关闭完成
-uint8_t bSockIsReadable(int sockfd);
-uint8_t bSockIsWriteable(int sockfd);
-uint8_t bSocketIsConnected(int sockfd);
+bSocketFd_t bSocket(bTransType_t type, pbTransCb_t cb, void *user_data);
+bSocketFd_t bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data);
+int         bConnect(bSocketFd_t sockfd, char *remote, uint16_t port);
+int         bBind(bSocketFd_t sockfd, uint16_t port);
+int         bListen(bSocketFd_t sockfd, int backlog);
+int         bRecv(bSocketFd_t sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
+int         bSend(bSocketFd_t sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
+int         bShutdown(bSocketFd_t sockfd);
+uint8_t     bSockIsReadable(bSocketFd_t sockfd);
+uint8_t     bSockIsWriteable(bSocketFd_t sockfd);
+uint8_t     bSocketIsConnected(bSocketFd_t sockfd);
 
 uint32_t bIPStr2Uint32(const char *ip);
 

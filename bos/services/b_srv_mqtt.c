@@ -79,7 +79,7 @@ typedef struct
     void            *user_data;
     bTaskId_t        task_id;
     bTimerId_t       timer_id;
-    int              sock_fd;
+    bSocketFd_t      sock_fd;
     uint32_t         last_recv;
     uint16_t         packet_id;
 #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
@@ -624,7 +624,7 @@ static void _bMqttTimerCb(void *arg)
 
 PT_THREAD(_bMqttTaskFunc)(struct pt *pt, void *arg)
 {
-    static int          sock_fd     = -1;
+    static bSocketFd_t   sock_fd     = -1;
     static uint8_t      mqtt_step_f = 0;
     int                 pack_len    = 0;
     uint8_t            *pbuf        = NULL;

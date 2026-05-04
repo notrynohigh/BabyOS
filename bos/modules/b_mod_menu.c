@@ -289,6 +289,13 @@ uint32_t bMenuCurrentID()
     return Pre_ID;
 }
 
+void bMenuReset(void)
+{
+    ItemIndex = 0;
+    pC_Item   = NULL;
+    Pre_ID    = 0;
+}
+
 /**
  * \}
  */

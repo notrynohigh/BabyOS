@@ -89,6 +89,7 @@ void     bMenuAction(uint8_t cmd);
 void     bMenuJump(uint32_t id);
 uint32_t bMenuCurrentID(void);
 int      bMenuSetVisible(uint32_t id, uint8_t s);
+void     bMenuReset(void);
 /**
  * \}
  */

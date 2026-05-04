@@ -108,10 +108,10 @@ static uint8_t            bButtonInitFlag = 0;
  */
 static bButtonInstance_t *_bButtonFindInstance(void *pflex, uint8_t id)
 {
-    uint32_t           addr_val = 0;
+    uintptr_t           addr_val = 0;
     bDeviceMsg_t       msg;
     bButtonInstance_t *p = pButtonHead;
-    addr_val             = (((uint32_t)pflex) - id * sizeof(flex_button_t));
+    addr_val             = (((uintptr_t)pflex) - id * sizeof(flex_button_t));
     while (p != NULL)
     {
         if (bDeviceReadMessage(p->dev_no, &msg) < 0 || msg.v != addr_val)

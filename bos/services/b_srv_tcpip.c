@@ -91,9 +91,9 @@ typedef struct
 
 typedef struct
 {
-    bTaskId_t task_id;
-    int       sockfd;
-    uint32_t  interval_s;
+    bTaskId_t    task_id;
+    bSocketFd_t sockfd;
+    uint32_t     interval_s;
 } bNtpPcb_t;
 #endif
 //----------------------------------------------------------------------------
@@ -118,7 +118,7 @@ typedef struct
     pHttpCb_t            callback;
     void                *user_data;
     char                *request;
-    int                  sockfd;
+    bSocketFd_t         sockfd;
     bTaskAttr_t          attr;
     bTaskId_t            task_id;
     http_parser          parse;
@@ -654,15 +654,15 @@ int bHttpInit(pHttpCb_t cb, void *user_data)
         bFree(http);
         return -3;
     }
-    return ((int)http);
+    return (bHttpFd_t)(intptr_t)http;
 }
 
-int bHttpRequest(int httpfd, bHttpReqType_t type, const char *url, const char *head,
-                 const char *body)
+bHttpFd_t bHttpRequest(bHttpFd_t httpfd, bHttpReqType_t type, const char *url, const char *head,
+                       const char *body)
 {
     int            ret     = -1;
     char          *request = NULL;
-    bHttpStruct_t *http    = (bHttpStruct_t *)httpfd;
+    bHttpStruct_t *http    = (bHttpStruct_t *)(intptr_t)httpfd;
     if (httpfd <= 0 || !HTTPREQ_TYPE_IS_VALID(type) || url == NULL || http->callback == NULL)
     {
         b_log_e("http param errror..%p %d %p\r\n", http, type, url);
@@ -714,13 +714,13 @@ int bHttpRequest(int httpfd, bHttpReqType_t type, const char *url, const char *h
     return 0;
 }
 
-int bHttpDeInit(int httpfd)
+int bHttpDeInit(bHttpFd_t httpfd)
 {
     if (httpfd <= 0)
     {
         return -1;
     }
-    bHttpStruct_t *http = (bHttpStruct_t *)httpfd;
+    bHttpStruct_t *http = (bHttpStruct_t *)(intptr_t)httpfd;
     http->state         = B_HTTP_STA_DESTROY;
     return 0;
 }

@@ -214,6 +214,7 @@ int bStateCreate(const char *name, bStateAttr_t *attr)
     {
         attr->name = name;
         attr->info = NULL;
+        INIT_LIST_HEAD(&attr->list);
         list_add(&attr->list, &bStateHead);
         INIT_LIST_HEAD(&attr->state);
         return 0;
@@ -235,6 +236,7 @@ int bStateAdd(const char *name, bStateInfo_t *pinfo)
     }
     if (_bStateFindInfo(attr, pinfo->state) == NULL)
     {
+        INIT_LIST_HEAD(&pinfo->list);
         list_add(&pinfo->list, &attr->state);
         return 0;
     }

@@ -47,6 +47,8 @@ Drivers / MCU-specific code
 
 **Section-based registration** (`bos/b_section.h`): Drivers and modules register via `bDRIVER_REG_INIT()` and `BOS_REG_POLLING_FUNC()` which place structs/function pointers into custom linker sections. The core scans these sections at boot. Supports GCC, Keil, IAR, and Renesas compilers.
 
+> **⚠ Known pitfall — sizeof vs binary entry spacing**: The section scan loop uses `sizeof(struct)` as its stride. This works for all existing sections because they store **pointers** (pointer size == binary spacing). The only exception is `.b_srv_protocol` which stores full `bProtocolInstance_t` structs. On x86_64 Linux, `.rodata` aligns to 32 bytes, but the struct's natural sizeof is 24 (3× pointer), causing the loop to skip every other entry. The fix adds `reserved[8]` on 64-bit platforms. When adding a new struct-based section, always verify that `sizeof(struct)` matches the binary entry spacing on x86_64 before merging. See `test/selftest/claude_task.md` for the full investigation and verification method.
+
 **Protothreads** (`bos/thirdparty/pt/pt.h`): Task scheduling uses lightweight protothreads (cooperative, no separate stacks), wrapped in `b_task.h`.
 
 **Polling functions** (`bExec()`): Polling-based main loop — `bExec()` iterates through registered functions in the `.bos_polling` section. All time-driven logic (tasks, timers, buttons, GUI, etc.) is driven by `bExec()`, not by interrupts directly.

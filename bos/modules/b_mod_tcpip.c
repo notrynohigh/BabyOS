@@ -924,7 +924,7 @@ static int16_t _bDnsMakequery(uint16_t op, char *name, uint8_t *buf, uint16_t le
     }
     cp = put16(cp, 0x0001); /* type */
     cp = put16(cp, 0x0001); /* class */
-    return ((int16_t)((uint32_t)(cp) - (uint32_t)(buf)));
+    return (int16_t)((intptr_t)cp - (intptr_t)buf);
 }
 
 static int _bParseName(uint8_t *msg, uint8_t *compressed, char *buf, int16_t len)
@@ -2207,7 +2207,7 @@ static void _bSocketHandler()
             uint8_t ip_addr[16];
             memset(ip_addr, 0, sizeof(ip_addr));
             _bIpInt2Str((char *)ip_addr, ptrans->remote_ip);
-            if (bConnect((int)ptrans, (char *)ip_addr, ptrans->remote_port) < 0)
+            if (bConnect((bSocketFd_t)(intptr_t)ptrans, (char *)ip_addr, ptrans->remote_port) < 0)
             {
                 return;
             }
@@ -3123,7 +3123,7 @@ static int _bSocket(bTcpIpInfo_t *pinfo, bTransType_t type, pbTransCb_t cb, void
 #endif
     _bTcpIpTransState(ptrans, B_SOCKET_STATE_INIT);
     list_add_tail(&ptrans->node, &bSocketHead);
-    return (int)ptrans;
+    return (bSocketFd_t)(intptr_t)ptrans;
 }
 
 static uint8_t _bTcpIpTransIsEnable(bTrans_t *ptrans)
@@ -3311,7 +3311,7 @@ uint8_t bTcpIpPhyIsLinked(void)
     return pinfo->netif.is_linked;
 }
 
-int bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data)
+bSocketFd_t bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data)
 {
     bTcpIpInfo_t *pinfo = _bFindNetcard(dev_no);
     if (cb == NULL || (type != B_TRANS_CONN_TCP && type != B_TRANS_CONN_UDP) || pinfo == NULL)
@@ -3321,7 +3321,7 @@ int bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data
     return _bSocket(pinfo, type, cb, user_data);
 }
 
-int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
+bSocketFd_t bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
 {
     bTcpIpInfo_t *pinfo = bTcpIpCtx.pinfo;
     if (cb == NULL || (type != B_TRANS_CONN_TCP && type != B_TRANS_CONN_UDP) || pinfo == NULL)
@@ -3331,21 +3331,21 @@ int bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
     return _bSocket(pinfo, type, cb, user_data);
 }
 
-int bSocketRegCallback(int sockfd, pbTransCb_t cb, void *user_data)
+int bSocketRegCallback(bSocketFd_t sockfd, pbTransCb_t cb, void *user_data)
 {
     if (SOCKFD_IS_INVALID(sockfd))
     {
         return -1;
     }
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     ptrans->callback = cb;
     ptrans->cb_arg   = user_data;
     return 0;
 }
 
-int bConnect(int sockfd, char *remote, uint16_t port)
+int bConnect(bSocketFd_t sockfd, char *remote, uint16_t port)
 {
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     if (SOCKFD_IS_INVALID(sockfd) || remote == NULL || strlen(remote) > REMOTE_ADDR_LEN_MAX ||
         (_bTcpIpTransIsEnable(ptrans) == 0))
     {
@@ -3386,9 +3386,9 @@ int bConnect(int sockfd, char *remote, uint16_t port)
     return 0;
 }
 
-int bBind(int sockfd, uint16_t port)
+int bBind(bSocketFd_t sockfd, uint16_t port)
 {
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     if (SOCKFD_IS_INVALID(sockfd))
     {
         return -1;
@@ -3410,11 +3410,11 @@ int bBind(int sockfd, uint16_t port)
     return 0;
 }
 
-int bListen(int sockfd, int backlog)
+int bListen(bSocketFd_t sockfd, int backlog)
 {
     void *listen_pcb = NULL;
     B_UNUSED(backlog);
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     if (SOCKFD_IS_INVALID(sockfd))
     {
         return -1;
@@ -3443,10 +3443,10 @@ int bListen(int sockfd, int backlog)
     return 0;
 }
 
-int bRecv(int sockfd, uint8_t *pbuf, uint16_t len, uint16_t *real_len)
+int bRecv(bSocketFd_t sockfd, uint8_t *pbuf, uint16_t len, uint16_t *real_len)
 {
     int       rlen   = 0;
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     if (SOCKFD_IS_INVALID(sockfd) || pbuf == NULL || len == 0 ||
         (_bTcpIpTransIsEnable(ptrans) == 0))
     {
@@ -3503,10 +3503,10 @@ int bRecv(int sockfd, uint8_t *pbuf, uint16_t len, uint16_t *real_len)
     return rlen;
 }
 
-int bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
+int bSend(bSocketFd_t sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
 {
     int       retval = 0;
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     if (SOCKFD_IS_INVALID(sockfd) || pbuf == NULL || buf_len == 0 ||
         (_bTcpIpTransIsEnable(ptrans) == 0))
     {
@@ -3545,9 +3545,9 @@ int bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen)
     return retval;
 }
 
-uint8_t bSockIsReadable(int sockfd)
+uint8_t bSockIsReadable(bSocketFd_t sockfd)
 {
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     if (SOCKFD_IS_INVALID(sockfd) || (_bTcpIpTransIsEnable(ptrans) == 0))
     {
         return 0;
@@ -3578,9 +3578,9 @@ uint8_t bSockIsReadable(int sockfd)
     return 0;
 }
 
-uint8_t bSockIsWriteable(int sockfd)
+uint8_t bSockIsWriteable(bSocketFd_t sockfd)
 {
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     if (SOCKFD_IS_INVALID(sockfd) || (_bTcpIpTransIsEnable(ptrans) == 0))
     {
         return 0;
@@ -3621,23 +3621,23 @@ uint8_t bSockIsWriteable(int sockfd)
     return 0;
 }
 
-uint8_t bSocketIsConnected(int sockfd)
+uint8_t bSocketIsConnected(bSocketFd_t sockfd)
 {
     if (SOCKFD_IS_INVALID(sockfd))
     {
         return 0;
     }
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     return (ptrans->state == B_SOCKET_STATE_CONNECTED);
 }
 
-int bShutdown(int sockfd)
+int bShutdown(bSocketFd_t sockfd)
 {
     if (SOCKFD_IS_INVALID(sockfd))
     {
         return -1;
     }
-    bTrans_t *ptrans = (bTrans_t *)sockfd;
+    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
     _bTcpIpTransState(ptrans, B_SOCKET_STATE_WAIT_DISCONNECT);
     return 0;
 }

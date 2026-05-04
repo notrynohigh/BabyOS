@@ -33,11 +33,20 @@
 #include "modules/inc/b_mod_fs.h"
 #if (defined(_FS_ENABLE) && (_FS_ENABLE == 1))
 #include <stdio.h>
+#include <string.h>
 
 #include "core/inc/b_core.h"
 #include "core/inc/b_device.h"
 #include "drivers/inc/b_driver_cmd.h"
+#include "drivers/inc/b_drv_testflash.h"
 #include "utils/inc/b_util_log.h"
+
+/* Unified FS selection: each macro is 0 or 1, never both 1.
+ * Both branches are always compiled — the preprocessor selects
+ * the active implementation at build time. */
+#if !defined(FS_FATFS) && !defined(FS_LITTLEFS)
+#error "b_mod_fs.c: either FS_FATFS or FS_LITTLEFS must be defined"
+#endif
 
 /**
  * \addtogroup BABYOS
@@ -61,18 +70,25 @@
 typedef struct
 {
     uint8_t               used;
+    uint8_t               fs_type; /* 0=FATFS, 1=LITTLEFS */
     char                  prefix[5];
     const bFSPartition_t *partition;
-#if defined(FS_FATFS)
-    FATFS bfs;
+    union
+    {
+#if FS_FATFS_
+        FATFS bfs;
 #endif
-#if defined(FS_LITTLEFS)
-    struct lfs_config cfg;
-    lfs_t             bfs;
-    uint8_t           r_buf[LFS_CACHE_SIZE];
-    uint8_t           w_buf[LFS_CACHE_SIZE];
-    uint8_t           pre_buf[LFS_LOOKAHEAD_SIZE];
+#if FS_LITTLEFS_
+        struct
+        {
+            struct lfs_config lfs_cfg;
+            lfs_t             lfs;
+            uint8_t           lfs_r_buf[LFS_CACHE_SIZE];
+            uint8_t           lfs_w_buf[LFS_CACHE_SIZE];
+            uint8_t           lfs_pre_buf[LFS_LOOKAHEAD_SIZE];
+        } lfs_ctx;
 #endif
+    };
 } bFS_t;
 /**
  * \}
@@ -109,6 +125,7 @@ const static bFSPartition_t *gpbPartition      = NULL;
 static uint8_t               gbPartitionNumber = 0;
 
 static bFS_t gbFSTable[FS_MOUNT_NUMBER];
+static int   gbFSTableInited = 0;
 
 /**
  * \}
@@ -143,24 +160,41 @@ static const bFSPartition_t *_bFSFindPartition(uint8_t index)
 
 static bFS_t *_bFSFindMounted(uint8_t index)
 {
-    int    i   = 0;
-    bFS_t *pfs = NULL;
-    for (i = 0; i < FS_MOUNT_NUMBER; i++)
+    if (!gbFSTableInited || IS_NULL(gpbPartition))
+    {
+        return NULL;
+    }
+    for (int i = 0; i < FS_MOUNT_NUMBER; i++)
     {
         if (gbFSTable[i].used != 1)
         {
             continue;
         }
-        if (gbFSTable[i].partition->index == index)
+        if (gbFSTable[i].partition != NULL && gbFSTable[i].partition->index == index)
         {
-            pfs = &gbFSTable[i];
-            break;
+            return &gbFSTable[i];
         }
     }
-    return pfs;
+    return NULL;
 }
 
-#if defined(FS_LITTLEFS)
+static bFS_t *_bFSFindFree(void)
+{
+    if (!gbFSTableInited)
+    {
+        return NULL;
+    }
+    for (int i = 0; i < FS_MOUNT_NUMBER; i++)
+    {
+        if (gbFSTable[i].used == 0)
+        {
+            return &gbFSTable[i];
+        }
+    }
+    return NULL;
+}
+
+#if FS_LITTLEFS_
 
 uint32_t lfs_crc(uint32_t crc, const void *buffer, size_t size)
 {
@@ -186,8 +220,7 @@ static int _bFSDeviceRead(const struct lfs_config *c, lfs_block_t block, lfs_off
     {
         return LFS_ERR_CORRUPT;
     }
-    int ret =
-        bFSPartitionRead(fs->partition->index, fs->cfg.block_size * block + off, buffer, size);
+    int ret = bFSPartitionRead(fs->partition->index, c->block_size * block + off, buffer, size);
     if (ret >= 0)
     {
         return LFS_ERR_OK;
@@ -203,7 +236,7 @@ static int _bFSDeviceWrite(const struct lfs_config *c, lfs_block_t block, lfs_of
     {
         return LFS_ERR_CORRUPT;
     }
-    int ret = bFSPartitionWrite(fs->partition->index, fs->cfg.block_size * block + off,
+    int ret = bFSPartitionWrite(fs->partition->index, c->block_size * block + off,
                                 (uint8_t *)buffer, size);
     if (ret >= 0)
     {
@@ -219,8 +252,7 @@ static int _bFSDeviceErase(const struct lfs_config *c, lfs_block_t block)
     {
         return LFS_ERR_CORRUPT;
     }
-    int ret =
-        bFSPartitionErase(fs->partition->index, fs->cfg.block_size * block, fs->cfg.block_size);
+    int ret = bFSPartitionErase(fs->partition->index, c->block_size * block, c->block_size);
     if (ret >= 0)
     {
         return LFS_ERR_OK;
@@ -230,26 +262,28 @@ static int _bFSDeviceErase(const struct lfs_config *c, lfs_block_t block)
 
 static int _bFSDeviceSync(const struct lfs_config *c)
 {
+    (void)c;
     return LFS_ERR_OK;
 }
 
-#endif
+#endif /* FS_LITTLEFS_ */
 
 static int _bFSGetIndex(const char *path_str)
 {
-    int   number;
-    char *endptr;
-
-    number = strtol(path_str, &endptr, 10);
-
-    if (*endptr == ':' && number >= 0 && number <= 255)
-    {
-        return number;
-    }
-    else
+    if (path_str == NULL)
     {
         return -1;
     }
+    /* FATFS style: "0:filename" or "1:filename" */
+    if (*path_str >= '0' && *path_str <= '9' && path_str[1] == ':')
+    {
+        int number = *path_str - '0';
+        return number;
+    }
+    /* LITTLEFS style: "/filename" (absolute path, no partition prefix).
+     * When called from bFSOpen, the fd table already knows which partition
+     * to use from the mount. We extract the partition from the mounted slot. */
+    return -1;
 }
 
 /**
@@ -263,20 +297,21 @@ static int _bFSGetIndex(const char *path_str)
 
 int bFSInit(const bFSPartition_t *partition, uint8_t partition_number)
 {
-    if (IS_NULL(partition) || partition_number == 0 || !IS_NULL(gpbPartition))
+    if (IS_NULL(partition) || partition_number == 0)
     {
         return -1;
     }
     gpbPartition      = partition;
     gbPartitionNumber = partition_number;
     memset(&gbFSTable[0], 0, sizeof(gbFSTable));
+    gbFSTableInited = 1;
     return 0;
 }
 
 int bFSGetPartitionState(uint8_t index)
 {
     const bFSPartition_t *partition = NULL;
-    if (IS_NULL(gpbPartition) || gbPartitionNumber == 0)
+    if (!gbFSTableInited || IS_NULL(gpbPartition) || gbPartitionNumber == 0)
     {
         return -1;
     }
@@ -295,7 +330,7 @@ int bFSGetPartitionState(uint8_t index)
 int bFSGetPartitionInfo(uint8_t index, const bFSPartition_t **p_partition)
 {
     const bFSPartition_t *partition = NULL;
-    if (IS_NULL(gpbPartition) || gbPartitionNumber == 0 || IS_NULL(p_partition))
+    if (!gbFSTableInited || IS_NULL(gpbPartition) || gbPartitionNumber == 0 || IS_NULL(p_partition))
     {
         return -1;
     }
@@ -371,13 +406,12 @@ int bFSPartitionWrite(uint8_t index, uint32_t offset, uint8_t *pbuf, uint32_t le
 int bFSPartitionErase(uint8_t index, uint32_t offset, uint32_t len)
 {
     const bFSPartition_t *partition = NULL;
-    bFlashErase_t         cmd_erase;
-    if (len == 0)
+    partition                       = _bFSFindPartition(index);
+    if (IS_NULL(partition))
     {
         return -1;
     }
-    partition = _bFSFindPartition(index);
-    if (IS_NULL(partition) || offset >= partition->total_size)
+    if (offset >= partition->total_size)
     {
         return -1;
     }
@@ -385,15 +419,11 @@ int bFSPartitionErase(uint8_t index, uint32_t offset, uint32_t len)
     fd     = bOpen(partition->dev_no, BCORE_FLAG_RW);
     if (fd < 0)
     {
-        return -2;
+        return -1;
     }
+    bFlashErase_t cmd_erase;
     cmd_erase.addr = partition->base_addr + offset;
-    if (partition->sector_size == 0)
-    {
-        bClose(fd);
-        return -2;
-    }
-    cmd_erase.num  = len / partition->sector_size;
+    cmd_erase.num  = (len + partition->sector_size - 1) / partition->sector_size;
     int ret        = bCtl(fd, bCMD_ERASE_SECTOR, &cmd_erase);
     bClose(fd);
     return ret;
@@ -404,6 +434,21 @@ int bFSMount(uint8_t index, uint8_t mkfs)
     bFS_t *fs = _bFSFindMounted(index);
     if (fs != NULL)
     {
+#if FS_FATFS_
+        /* Slot found but FatFS[] entry may have been cleared by bFSUnmount.
+         * Re-register the existing FATFS object so FatFs[vol] points back to it. */
+        if (fs->fs_type == 0 && fs->bfs.fs_type == 0)
+        {
+            FRESULT res = f_mount(&(fs->bfs), (const char *)(&(fs->prefix[0])), 1);
+            if (res == FR_OK)
+            {
+                return 0;
+            }
+            fs->used      = 0;
+            fs->partition = NULL;
+            return -1;
+        }
+#endif
         b_log_e("already mounted...\r\n");
         return -1;
     }
@@ -413,6 +458,9 @@ int bFSMount(uint8_t index, uint8_t mkfs)
         b_log_e("invalid index...\r\n");
         return -1;
     }
+    /* Look for a free slot first. If all slots are used-but-unmounted (from a
+     * prior bFSUnmount which keeps the slot), reuse the first such slot. */
+    fs = NULL;
     for (int i = 0; i < FS_MOUNT_NUMBER; i++)
     {
         if (gbFSTable[i].used == 0)
@@ -426,68 +474,86 @@ int bFSMount(uint8_t index, uint8_t mkfs)
         b_log_e("The maximum number of mounts is reached\r\n");
         return -2;
     }
-    fs->partition = partition;
-    fs->used      = 1;
     memset(&(fs->prefix[0]), 0, sizeof(fs->prefix));
     snprintf(fs->prefix, sizeof(fs->prefix), "%d:", partition->index);
-#if defined(FS_FATFS)
-    FRESULT result = FR_OK;
+    fs->partition = partition;
+    fs->used      = 1;
 
-    result = f_mount(&(fs->bfs), (const char *)(&(fs->prefix[0])), 1);
-    if ((result == FR_NO_FILESYSTEM) && (mkfs == 1))
+    /* mkfs: 0=mount existing, BFS_MKFS_FATFS=mkfs FATFS, BFS_MKFS_LITTLEFS=mkfs LITTLEFS */
+#if FS_FATFS_
+    if (mkfs == BFS_MKFS_FATFS || mkfs == 0)
     {
-        if (bFSMkfs(index) == 0)
+        fs->fs_type = 0;
+        if (mkfs == BFS_MKFS_FATFS)
         {
-            result = f_mount(&(fs->bfs), (const char *)(&(fs->prefix[0])), 1);
+            if (bFSMkfs(index) != 0)
+            {
+                fs->used      = 0;
+                fs->partition = NULL;
+                return -1;
+            }
         }
-    }
-    if (result == FR_OK)
-    {
+        memset(&fs->bfs, 0, sizeof(FATFS));
+        FRESULT result = f_mount(&(fs->bfs), (const char *)(&(fs->prefix[0])), 1);
+        if (result != FR_OK)
+        {
+            fs->used      = 0;
+            fs->partition = NULL;
+            return -1;
+        }
         return 0;
     }
-    fs->used = 0;
-    b_log_e("result:%d\r\n", result);
-    return -1;
-#elif (defined(FS_LITTLEFS))
-    memset(&(fs->cfg), 0, sizeof(fs->cfg));
-    fs->cfg.context          = fs;
-    fs->cfg.read             = _bFSDeviceRead;
-    fs->cfg.prog             = _bFSDeviceWrite;
-    fs->cfg.erase            = _bFSDeviceErase;
-    fs->cfg.sync             = _bFSDeviceSync;
-    fs->cfg.read_size        = 1;
-    fs->cfg.prog_size        = 8;
-    fs->cfg.block_size       = partition->sector_size;
-    if (partition->sector_size == 0)
-    {
-        return -1;
-    }
-    fs->cfg.block_count      = partition->total_size / partition->sector_size;
-    fs->cfg.block_cycles     = 500;
-    fs->cfg.cache_size       = LFS_CACHE_SIZE;
-    fs->cfg.lookahead_size   = LFS_LOOKAHEAD_SIZE;
-    fs->cfg.lookahead_buffer = fs->pre_buf;
-    fs->cfg.prog_buffer      = fs->w_buf;
-    fs->cfg.read_buffer      = fs->r_buf;
-
-    int result = lfs_mount(&(fs->bfs), &(fs->cfg));
-    if (result && (mkfs == 1))
-    {
-        result = bFSMkfs(index);
-        if (result == 0)
-        {
-            result = lfs_mount(&(fs->bfs), &(fs->cfg));
-        }
-    }
-    if (result != 0)
-    {
-        fs->used = 0;
-    }
-    b_log_e("result:%d\r\n", result);
-    return result;
-#else
-    return -1;
 #endif
+
+#if FS_LITTLEFS_
+    if (mkfs == BFS_MKFS_LITTLEFS || mkfs == 0)
+    {
+        fs->fs_type = 1;
+        memset(&(fs->lfs_ctx.lfs_cfg), 0, sizeof(fs->lfs_ctx.lfs_cfg));
+        fs->lfs_ctx.lfs_cfg.context    = fs;
+        fs->lfs_ctx.lfs_cfg.read       = _bFSDeviceRead;
+        fs->lfs_ctx.lfs_cfg.prog       = _bFSDeviceWrite;
+        fs->lfs_ctx.lfs_cfg.erase      = _bFSDeviceErase;
+        fs->lfs_ctx.lfs_cfg.sync       = _bFSDeviceSync;
+        fs->lfs_ctx.lfs_cfg.read_size  = 1;
+        fs->lfs_ctx.lfs_cfg.prog_size  = 8;
+        fs->lfs_ctx.lfs_cfg.block_size = partition->sector_size;
+        if (partition->sector_size == 0)
+        {
+            fs->used      = 0;
+            fs->partition = NULL;
+            return -1;
+        }
+        fs->lfs_ctx.lfs_cfg.block_count      = partition->total_size / partition->sector_size;
+        fs->lfs_ctx.lfs_cfg.block_cycles     = 500;
+        fs->lfs_ctx.lfs_cfg.cache_size       = LFS_CACHE_SIZE;
+        fs->lfs_ctx.lfs_cfg.lookahead_size   = LFS_LOOKAHEAD_SIZE;
+        fs->lfs_ctx.lfs_cfg.lookahead_buffer = fs->lfs_ctx.lfs_pre_buf;
+        fs->lfs_ctx.lfs_cfg.prog_buffer      = fs->lfs_ctx.lfs_w_buf;
+        fs->lfs_ctx.lfs_cfg.read_buffer      = fs->lfs_ctx.lfs_r_buf;
+
+        int result = lfs_mount(&(fs->lfs_ctx.lfs), &(fs->lfs_ctx.lfs_cfg));
+        if (result != 0 && mkfs == BFS_MKFS_LITTLEFS)
+        {
+            result = bFSMkfs(index);
+            if (result == 0)
+            {
+                result = lfs_mount(&(fs->lfs_ctx.lfs), &(fs->lfs_ctx.lfs_cfg));
+            }
+        }
+        if (result != 0)
+        {
+            fs->used      = 0;
+            fs->partition = NULL;
+            return result;
+        }
+        return 0;
+    }
+#endif
+
+    fs->used      = 0;
+    fs->partition = NULL;
+    return -1;
 }
 
 int bFSUnmount(uint8_t index)
@@ -498,343 +564,432 @@ int bFSUnmount(uint8_t index)
         b_log_e("Not mounted...\r\n");
         return -1;
     }
-#if defined(FS_FATFS)
-    FRESULT result = FR_OK;
-
-    result = f_mount(NULL, (const char *)(&(pfs->prefix[0])), 1);
-    if (result == FR_OK)
+    if (pfs->fs_type == 0)
     {
-        pfs->used = 0;
+#if FS_FATFS_
+        f_mount(NULL, (const char *)(&(pfs->prefix[0])), 1);
+        pfs->used = 0; /* Clear slot so bFSMount can reuse it */
         return 0;
-    }
-    b_log_e("result:%d\r\n", result);
-    return -1;
-#elif (defined(FS_LITTLEFS))
-
-    int result = lfs_unmount(&(pfs->bfs));
-    if (result == 0)
-    {
-        pfs->used        = 0;
-        pfs->cfg.context = NULL;
-    }
-    b_log_e("err:%d\r\n", result);
-    return result;
-#else
-    return -1;
 #endif
+    }
+    else
+    {
+#if FS_LITTLEFS_
+        int result                   = lfs_unmount(&(pfs->lfs_ctx.lfs));
+        pfs->used                    = 0;
+        pfs->lfs_ctx.lfs_cfg.context = NULL; /* Keep cfg but clear context */
+        if (result == 0)
+        {
+            return 0;
+        }
+        b_log_e("lfs_unmount err:%d\r\n", result);
+        return result;
+#endif
+    }
+    return -1;
 }
 
-int bFSOpen(bFSFile_t *fil, const char *path, int flag)
+bFSFd_t bFSOpen(bFSFile_t *fil, const char *path, int flag)
 {
     if (IS_NULL(path) || IS_NULL(fil))
     {
         return -1;
     }
-    int index = _bFSGetIndex(path);
-    if (index < 0)
-    {
-        b_log_e("path invalid...\r\n");
-        b_log_e("The right example: \"0:babyos.txt\" \"1:babyos.txt\" ...\r\n");
-        return -1;
+    int         index     = _bFSGetIndex(path);
+    bFS_t      *pfs       = NULL;
+    const char *file_path = path;
+
+    printf("[bFSOpen] index=%d path=%s used_slots=", index, path);
+    for (int i = 0; i < FS_MOUNT_NUMBER; i++) {
+        printf(" [%d]=%d", i, gbFSTable[i].used);
     }
-    bFS_t *pfs = _bFSFindMounted(index);
+    printf("\n"); fflush(stdout);
+
+    if (index >= 0)
+    {
+        /* FATFS style: "0:filename" or "1:filename" */
+        pfs       = _bFSFindMounted(index);
+        file_path = path + 2; /* skip "N:" prefix */
+    }
+    else
+    {
+        /* LITTLEFS style: "/filename" (no partition prefix).
+         * Find the first mounted LITTLEFS partition. */
+        for (int i = 0; i < FS_MOUNT_NUMBER; i++)
+        {
+            if (gbFSTable[i].used == 1 && gbFSTable[i].fs_type == 1)
+            {
+                pfs = &gbFSTable[i];
+                break;
+            }
+        }
+    }
+
     if (pfs == NULL)
     {
         b_log_e("Not mounted...\r\n");
         return -1;
     }
-#if defined(FS_FATFS)
-    uint8_t mode = 0;
-    if (flag & BFS_O_RD)
+    if (pfs->fs_type == 0)
     {
-        mode |= FA_READ;
-    }
-    if (flag & BFS_O_WR)
-    {
-        mode |= FA_WRITE;
-    }
-    if (flag & BFS_O_RDWR)
-    {
-        mode |= FA_READ | FA_WRITE;
-    }
-    if (flag & BFS_O_CREAT)
-    {
-        mode |= FA_OPEN_ALWAYS;
-    }
-    if (flag & BFS_O_EXCL)
-    {
-        mode |= FA_CREATE_NEW;
-    }
-    if (flag & BFS_O_TRUNC)
-    {
-        mode |= FA_CREATE_ALWAYS;
-    }
-    if (flag & BFS_O_APPEND)
-    {
-        mode |= FA_OPEN_APPEND;
-    }
-    FRESULT ret = f_open(&(fil->bfile), path, mode);
-    if (FR_OK == ret)
-    {
-        fil->reserved = pfs;
-        return ((int)fil);
-    }
-    b_log_e("ret:%d\r\n", ret);
-    return -1;
-#elif (defined(FS_LITTLEFS))
-    int lfflag = 0;
-    if (flag & BFS_O_RD)
-    {
-        lfflag |= LFS_O_RDONLY;
-    }
-    if (flag & BFS_O_WR)
-    {
-        lfflag |= LFS_O_WRONLY;
-    }
-    if (flag & BFS_O_RDWR)
-    {
-        lfflag |= LFS_O_RDWR;
-    }
-    if (flag & BFS_O_CREAT)
-    {
-        lfflag |= LFS_O_CREAT;
-    }
-    if (flag & BFS_O_EXCL)
-    {
-        lfflag |= LFS_O_EXCL;
-    }
-    if (flag & BFS_O_TRUNC)
-    {
-        lfflag |= LFS_O_TRUNC;
-    }
-    if (flag & BFS_O_APPEND)
-    {
-        lfflag |= LFS_O_APPEND;
-    }
-    fil->cfg.buffer     = fil->buf;
-    fil->cfg.attrs      = NULL;
-    fil->cfg.attr_count = 0;
-    int ret             = lfs_file_opencfg(&(pfs->bfs), &(fil->bfile), path, lfflag, &(fil->cfg));
-    if (0 == ret)
-    {
-        fil->reserved = pfs;
-        return ((int)fil);
-    }
-    b_log_e("ret:%d\r\n", ret);
-    return -1;
-#else
-    return -1;
-#endif
-}
-
-int bFSWrite(int fd, uint8_t *pbuf, uint32_t len)
-{
-    uint32_t real_len = 0;
-    if (!BFS_FD_IS_VALID(fd) || IS_NULL(pbuf) || len == 0)
-    {
-        return -1;
-    }
-    bFSFile_t *pfile = (bFSFile_t *)fd;
-    bFS_t     *pfs   = pfile->reserved;
-    if (pfs == NULL)
-    {
-        return -1;
-    }
-#if defined(FS_FATFS)
-    FRESULT ret = f_write(&(pfile->bfile), pbuf, len, &real_len);
-    if (ret == FR_OK)
-    {
-        return real_len;
-    }
-    b_log_e("ret:%d\r\n", ret);
-    return -1;
-#elif (defined(FS_LITTLEFS))
-    B_UNUSED(real_len);
-    int ret = lfs_file_write(&(pfs->bfs), &(pfile->bfile), pbuf, len);
-    b_log_e("ret:%d\r\n", ret);
-    return ret;
-#else
-    B_UNUSED(real_len);
-    return -1;
-#endif
-}
-
-int bFSRead(int fd, uint8_t *pbuf, uint32_t len)
-{
-    uint32_t real_len = 0;
-    if (!BFS_FD_IS_VALID(fd) || IS_NULL(pbuf) || len == 0)
-    {
-        return -1;
-    }
-    bFSFile_t *pfile = (bFSFile_t *)fd;
-    bFS_t     *pfs   = pfile->reserved;
-    if (pfs == NULL)
-    {
-        return -1;
-    }
-#if defined(FS_FATFS)
-    FRESULT ret = f_read(&(pfile->bfile), pbuf, len, &real_len);
-    if (ret == FR_OK)
-    {
-        return real_len;
-    }
-    b_log_e("ret:%d\r\n", ret);
-    return -1;
-#elif (defined(FS_LITTLEFS))
-    B_UNUSED(real_len);
-    int ret = lfs_file_read(&(pfs->bfs), &(pfile->bfile), pbuf, len);
-    b_log_e("ret:%d\r\n", ret);
-    return ret;
-#else
-    B_UNUSED(real_len);
-    return -1;
-#endif
-}
-
-int bFSClose(int fd)
-{
-    if (!BFS_FD_IS_VALID(fd))
-    {
-        return -1;
-    }
-    bFSFile_t *pfile = (bFSFile_t *)fd;
-    bFS_t     *pfs   = pfile->reserved;
-    if (pfs == NULL)
-    {
-        return -1;
-    }
-#if defined(FS_FATFS)
-    FRESULT ret = f_close(&(pfile->bfile));
-    if (ret == FR_OK)
-    {
-        return 0;
-    }
-    b_log_e("ret:%d\r\n", ret);
-    return -1;
-#elif (defined(FS_LITTLEFS))
-    int ret = lfs_file_close(&(pfs->bfs), &(pfile->bfile));
-    if (ret < 0)
-    {
-        b_log_e("ret:%d\r\n", ret);
-    }
-    return ret;
-#else
-    return -1;
-#endif
-}
-
-int bFSLseek(int fd, int32_t offset, int whence)
-{
-    if (!BFS_FD_IS_VALID(fd))
-    {
-        return -1;
-    }
-    bFSFile_t *pfile = (bFSFile_t *)fd;
-    bFS_t     *pfs   = pfile->reserved;
-    if (pfs == NULL)
-    {
-        return -1;
-    }
-#if defined(FS_FATFS)
-    uint32_t new_offset = 0;
-    if (whence == BFS_SEEK_CUR)
-    {
-        int32_t c_offset = f_tell(&(pfile->bfile));
-        if ((c_offset + offset) < 0)
+#if FS_FATFS_
+        uint8_t mode = 0;
+        if (flag & BFS_O_RD)
+            mode |= FA_READ;
+        if (flag & BFS_O_WR)
+            mode |= FA_WRITE;
+        if (flag & BFS_O_RDWR)
+            mode |= FA_READ | FA_WRITE;
+        if (flag & BFS_O_CREAT)
+            mode |= FA_OPEN_ALWAYS;
+        if (flag & BFS_O_EXCL)
+            mode |= FA_CREATE_NEW;
+        if (flag & BFS_O_TRUNC)
+            mode |= FA_CREATE_ALWAYS;
+        if (flag & BFS_O_APPEND)
+            mode |= FA_OPEN_APPEND;
+        fil->fs_context = pfs;
+        /* Use full path (prefix + file_path) for FatFS */
+        char full_path[64];
+        snprintf(full_path, sizeof(full_path), "%s%s", pfs->prefix, file_path);
+        FRESULT ret = f_open(&(fil->bfile), full_path, mode);
+        if (ret == FR_NO_FILE)
         {
-            new_offset = 0;
+            return -1;
         }
-        else
+        if (ret == FR_OK)
         {
-            new_offset = f_tell(&(pfile->bfile)) + offset;
+            return (bFSFd_t)(intptr_t)fil;
         }
-    }
-    else if (whence == BFS_SEEK_END)
-    {
-        int32_t c_offset = f_size(&(pfile->bfile));
-        if ((c_offset + offset) < 0)
-        {
-            new_offset = 0;
-        }
-        else
-        {
-            new_offset = f_size(&(pfile->bfile)) + offset;
-        }
+        return -1;
+#endif
     }
     else
     {
-        if (offset < 0)
+#if FS_LITTLEFS_
+        int lfflag = 0;
+        if (flag & BFS_O_RD)
+            lfflag |= LFS_O_RDONLY;
+        if (flag & BFS_O_WR)
+            lfflag |= LFS_O_WRONLY;
+        if (flag & BFS_O_RDWR)
+            lfflag |= LFS_O_RDWR;
+        if (flag & BFS_O_CREAT)
+            lfflag |= LFS_O_CREAT;
+        if (flag & BFS_O_EXCL)
+            lfflag |= LFS_O_EXCL;
+        if (flag & BFS_O_TRUNC)
+            lfflag |= LFS_O_TRUNC;
+        if (flag & BFS_O_APPEND)
+            lfflag |= LFS_O_APPEND;
+        fil->lfs_ctx.cfg.buffer     = fil->lfs_ctx.buf;
+        fil->lfs_ctx.cfg.attrs      = NULL;
+        fil->lfs_ctx.cfg.attr_count = 0;
+        int ret = lfs_file_opencfg(&(pfs->lfs_ctx.lfs), &(fil->lfs_ctx.lfp_file), file_path, lfflag,
+                                   &(fil->lfs_ctx.cfg));
+        if (0 == ret)
         {
-            new_offset = 0;
+            fil->fs_context = pfs;
+            return (bFSFd_t)(intptr_t)fil;
         }
-        else
-        {
-            new_offset = offset;
-        }
+        b_log_e("ret:%d\r\n", ret);
+        return -1;
+#endif
     }
-    FRESULT ret = f_lseek(&(pfile->bfile), new_offset);
-    if (ret == FR_OK)
-    {
-        return 0;
-    }
-    b_log_e("ret:%d\r\n", ret);
     return -1;
-#elif (defined(FS_LITTLEFS))
-    int lfswhence = 0;
-    if (whence == BFS_SEEK_CUR)
+}
+
+int bFSWrite(bFSFd_t fd, uint8_t *pbuf, uint32_t len)
+{
+    if (IS_NULL(pbuf) || len == 0)
     {
-        lfswhence = LFS_SEEK_CUR;
+        return -1;
     }
-    else if (whence == BFS_SEEK_END)
+    bFSFile_t *pfile = (bFSFile_t *)(uintptr_t)fd;
+    if (IS_NULL(pfile) || pfile->fs_context == NULL)
     {
-        lfswhence = LFS_SEEK_END;
+        return -1;
+    }
+    bFS_t *pfs = pfile->fs_context;
+    if (pfs->fs_type == 0)
+    {
+#if FS_FATFS_
+        uint32_t real_len = 0;
+        FRESULT  ret      = f_write(&(pfile->bfile), pbuf, len, &real_len);
+        if (ret == FR_OK)
+        {
+            return (int)real_len;
+        }
+        b_log_e("ret:%d\r\n", ret);
+        return -1;
+#endif
     }
     else
     {
-        lfswhence = LFS_SEEK_SET;
-    }
-    int ret = lfs_file_seek(&(pfs->bfs), &(pfile->bfile), offset, lfswhence);
-    if (ret < 0)
-    {
-        b_log_e("ret:%d\r\n", ret);
-    }
-    return ret;
-#else
-    return -1;
+#if FS_LITTLEFS_
+        int ret = lfs_file_write(&(pfs->lfs_ctx.lfs), &(pfile->lfs_ctx.lfp_file), pbuf, len);
+        if (ret < 0)
+        {
+            b_log_e("ret:%d\r\n", ret);
+        }
+        return ret;
 #endif
+    }
+    return -1;
+}
+
+int bFSRead(bFSFd_t fd, uint8_t *pbuf, uint32_t len)
+{
+    if (IS_NULL(pbuf) || len == 0)
+    {
+        return -1;
+    }
+    bFSFile_t *pfile = (bFSFile_t *)(uintptr_t)fd;
+    if (IS_NULL(pfile) || pfile->fs_context == NULL)
+    {
+        return -1;
+    }
+    bFS_t *pfs = pfile->fs_context;
+    if (pfs->fs_type == 0)
+    {
+#if FS_FATFS_
+        uint32_t real_len = 0;
+        FRESULT  ret      = f_read(&(pfile->bfile), pbuf, len, &real_len);
+        if (ret == FR_OK)
+        {
+            return (int)real_len;
+        }
+        b_log_e("ret:%d\r\n", ret);
+        return -1;
+#endif
+    }
+    else
+    {
+#if FS_LITTLEFS_
+        int ret = lfs_file_read(&(pfs->lfs_ctx.lfs), &(pfile->lfs_ctx.lfp_file), pbuf, len);
+        if (ret < 0)
+        {
+            b_log_e("ret:%d\r\n", ret);
+        }
+        return ret;
+#endif
+    }
+    return -1;
+}
+
+int bFSClose(bFSFd_t fd)
+{
+    bFSFile_t *pfile = (bFSFile_t *)(uintptr_t)fd;
+    if (IS_NULL(pfile) || pfile->fs_context == NULL)
+    {
+        return -1;
+    }
+    bFS_t *pfs = pfile->fs_context;
+    if (pfs->fs_type == 0)
+    {
+#if FS_FATFS_
+        FRESULT ret = f_close(&(pfile->bfile));
+        if (ret == FR_OK)
+        {
+            return 0;
+        }
+        b_log_e("ret:%d\r\n", ret);
+        return -1;
+#endif
+    }
+    else
+    {
+#if FS_LITTLEFS_
+        int ret = lfs_file_close(&(pfs->lfs_ctx.lfs), &(pfile->lfs_ctx.lfp_file));
+        if (ret < 0)
+        {
+            b_log_e("ret:%d\r\n", ret);
+        }
+        return ret;
+#endif
+    }
+    return -1;
+}
+
+int bFSLseek(bFSFd_t fd, int32_t offset, int whence)
+{
+    bFSFile_t *pfile = (bFSFile_t *)(uintptr_t)fd;
+    if (IS_NULL(pfile) || pfile->fs_context == NULL)
+    {
+        return -1;
+    }
+    bFS_t *pfs = pfile->fs_context;
+    if (pfs->fs_type == 0)
+    {
+#if FS_FATFS_
+        uint32_t new_offset = 0;
+        if (whence == BFS_SEEK_CUR)
+        {
+            int32_t c_offset = f_tell(&(pfile->bfile));
+            if ((c_offset + offset) < 0)
+            {
+                new_offset = 0;
+            }
+            else
+            {
+                new_offset = f_tell(&(pfile->bfile)) + offset;
+            }
+        }
+        else if (whence == BFS_SEEK_END)
+        {
+            int32_t c_offset = f_size(&(pfile->bfile));
+            if ((c_offset + offset) < 0)
+            {
+                new_offset = 0;
+            }
+            else
+            {
+                new_offset = f_size(&(pfile->bfile)) + offset;
+            }
+        }
+        else
+        {
+            if (offset < 0)
+            {
+                new_offset = 0;
+            }
+            else
+            {
+                new_offset = offset;
+            }
+        }
+        FRESULT ret = f_lseek(&(pfile->bfile), new_offset);
+        if (ret == FR_OK)
+        {
+            return 0;
+        }
+        b_log_e("ret:%d\r\n", ret);
+        return -1;
+#endif
+    }
+    else
+    {
+#if FS_LITTLEFS_
+        int lfswhence = 0;
+        if (whence == BFS_SEEK_CUR)
+        {
+            lfswhence = LFS_SEEK_CUR;
+        }
+        else if (whence == BFS_SEEK_END)
+        {
+            lfswhence = LFS_SEEK_END;
+        }
+        else
+        {
+            lfswhence = LFS_SEEK_SET;
+        }
+        int ret = lfs_file_seek(&(pfs->lfs_ctx.lfs), &(pfile->lfs_ctx.lfp_file), offset, lfswhence);
+        if (ret < 0)
+        {
+            b_log_e("ret:%d\r\n", ret);
+        }
+        return ret;
+#endif
+    }
+    return -1;
 }
 
 #if (defined(_FS_MKFS_ENABLE) && (_FS_MKFS_ENABLE == 1))
-#if defined(FS_FATFS)
+#if FS_FATFS_
 static uint8_t bMkfsBuf[FF_MAX_SS];
 #endif
+#if FS_LITTLEFS_
+static uint8_t bMkfsLfsReadBuf[LFS_CACHE_SIZE];
+static uint8_t bMkfsLfsProgBuf[LFS_CACHE_SIZE];
+static uint8_t bMkfsLfsLookahead[LFS_LOOKAHEAD_SIZE];
 #endif
+#endif
+
 int bFSMkfs(uint8_t index)
 {
 #if (defined(_FS_MKFS_ENABLE) && (_FS_MKFS_ENABLE == 1))
     bFS_t *pfs = _bFSFindMounted(index);
     if (IS_NULL(pfs))
     {
-        return -1;
+        const bFSPartition_t *part = _bFSFindPartition(index);
+        if (IS_NULL(part))
+        {
+            return -1;
+        }
+        pfs = _bFSFindFree();
+        if (IS_NULL(pfs))
+        {
+            return -1;
+        }
+        pfs->partition = part;
+        pfs->used      = 1;
+        memset(&(pfs->prefix[0]), 0, sizeof(pfs->prefix));
+        snprintf(pfs->prefix, sizeof(pfs->prefix), "%d:", part->index);
     }
-#if defined(FS_FATFS)
-    FRESULT ret = f_mkfs((const char *)pfs->prefix, NULL, bMkfsBuf, FF_MAX_SS);
-    if (ret == FR_OK)
+    else
     {
+        /* Already mounted: use existing slot (initialized by bFSMount) */
+    }
+    if (pfs->fs_type == 0)
+    {
+#if FS_FATFS_
+        pfs->fs_type = 0;
+        /* Pre-erase the entire TESTFLASH buffer so all bytes are 0xFF.
+         * FatFS f_mkfs writes the VBR to various sector offsets; if any
+         * byte in those offsets has been written by previous KV operations,
+         * TESTFLASH's 1→0-only constraint silently drops the write.
+         * Erasing the whole buffer guarantees the VBR is written correctly. */
+        /* Erase entire partition so all bytes are 0xFF before mkfs.
+         * FatFS f_mkfs writes the VBR to various sector offsets; if any
+         * byte in those offsets has been written by previous KV operations,
+         * TESTFLASH's 1→0-only constraint silently drops the write.
+         * Erasing the whole partition guarantees the VBR is written correctly. */
+        bFSPartitionErase(pfs->partition->index, 0, pfs->partition->total_size);
+        MKFS_PARM mkfs_opt = {FM_FAT | FM_FAT32, 0, 0, 0, 0};
+        FRESULT   ret      = f_mkfs((const char *)pfs->prefix, &mkfs_opt, bMkfsBuf, FF_MAX_SS);
+        if (ret != FR_OK)
+        {
+            pfs->used = 0;
+            return -1;
+        }
         return 0;
-    }
-    b_log_e("ret:%d\r\n", ret);
-    return -1;
-#elif (defined(FS_LITTLEFS))
-    int ret = lfs_format(&(pfs->bfs), &(pfs->cfg));
-    if (ret < 0)
-    {
-        b_log_e("ret:%d\r\n", ret);
-    }
-    return ret;
-#else
-    return -1;
 #endif
+    }
+    else
+    {
+#if FS_LITTLEFS_
+        pfs->fs_type = 1;
+        /* Erase entire partition so all bytes are 0xFF before mkfs. */
+        bFSPartitionErase(pfs->partition->index, 0, pfs->partition->total_size);
+        memset(&(pfs->lfs_ctx.lfs_cfg), 0, sizeof(pfs->lfs_ctx.lfs_cfg));
+        pfs->lfs_ctx.lfs_cfg.context     = pfs;
+        pfs->lfs_ctx.lfs_cfg.read        = _bFSDeviceRead;
+        pfs->lfs_ctx.lfs_cfg.prog        = _bFSDeviceWrite;
+        pfs->lfs_ctx.lfs_cfg.erase       = _bFSDeviceErase;
+        pfs->lfs_ctx.lfs_cfg.sync        = _bFSDeviceSync;
+        pfs->lfs_ctx.lfs_cfg.read_size   = 1;
+        pfs->lfs_ctx.lfs_cfg.prog_size   = 8;
+        pfs->lfs_ctx.lfs_cfg.block_size  = pfs->partition->sector_size;
+        pfs->lfs_ctx.lfs_cfg.block_count = pfs->partition->total_size / pfs->partition->sector_size;
+        pfs->lfs_ctx.lfs_cfg.block_cycles     = 500;
+        pfs->lfs_ctx.lfs_cfg.cache_size       = LFS_CACHE_SIZE;
+        pfs->lfs_ctx.lfs_cfg.lookahead_size   = LFS_LOOKAHEAD_SIZE;
+        pfs->lfs_ctx.lfs_cfg.lookahead_buffer = bMkfsLfsLookahead;
+        pfs->lfs_ctx.lfs_cfg.prog_buffer      = bMkfsLfsProgBuf;
+        pfs->lfs_ctx.lfs_cfg.read_buffer      = bMkfsLfsReadBuf;
+
+        int ret = lfs_format(&(pfs->lfs_ctx.lfs), &(pfs->lfs_ctx.lfs_cfg));
+        if (ret < 0)
+        {
+            pfs->used = 0;
+            return ret;
+        }
+        /* Do NOT mount here — bFSMount will do the final mount with fs->lfs_ctx buffers.
+         * Mounting here with bMkfsLfs* buffers and then unmounting corrupts littlefs state. */
+        return 0;
+#endif
+    }
+    return -1;
 #else
     return -1;
 #endif
@@ -851,52 +1006,70 @@ int bFSGetInfo(uint8_t index, uint32_t *ptotal_size, uint32_t *pfree_size)
     {
         return -1;
     }
-#if defined(FS_FATFS)
-    uint32_t fre_sect, tot_sect;
-    DWORD    fclst  = 0;
-    FATFS   *pfatfs = NULL;
-    FRESULT  ret    = f_getfree((const char *)pfs->prefix, &fclst, &pfatfs);
-    if (ret)
+    if (pfs->fs_type == 0)
     {
-        return -1;
-    }
-    tot_sect     = (pfatfs->n_fatent - 2) * pfatfs->csize;
-    fre_sect     = fclst * pfatfs->csize;
-    *ptotal_size = tot_sect * pfs->partition->sector_size;
-    *pfree_size  = fre_sect * pfs->partition->sector_size;
-    return 0;
-#elif (defined(FS_LITTLEFS))
-    uint32_t total_space = pfs->cfg.block_size * pfs->cfg.block_count;
-    int32_t  used_blocks = lfs_fs_size(&(pfs->bfs));
-    if (used_blocks < 0)
-    {
-        return -1;
-    }
-    uint32_t free_space = (pfs->cfg.block_count - used_blocks) * pfs->cfg.block_size;
-    *ptotal_size        = total_space;
-    *pfree_size         = free_space;
-    return 0;
-#else
-    return -1;
+#if FS_FATFS_
+        uint32_t fre_sect, tot_sect;
+        DWORD    fclst  = 0;
+        FATFS   *pfatfs = NULL;
+        FRESULT  ret    = f_getfree((const char *)pfs->prefix, &fclst, &pfatfs);
+        if (ret)
+        {
+            return -1;
+        }
+        tot_sect     = (pfatfs->n_fatent - 2) * pfatfs->csize;
+        fre_sect     = fclst * pfatfs->csize;
+        *ptotal_size = tot_sect * pfs->partition->sector_size;
+        *pfree_size  = fre_sect * pfs->partition->sector_size;
+        return 0;
 #endif
+    }
+    else
+    {
+#if FS_LITTLEFS_
+        uint32_t total_space = pfs->lfs_ctx.lfs_cfg.block_size * pfs->lfs_ctx.lfs_cfg.block_count;
+        int32_t  used_blocks = lfs_fs_size(&(pfs->lfs_ctx.lfs));
+        if (used_blocks < 0)
+        {
+            return -1;
+        }
+        uint32_t free_space =
+            (pfs->lfs_ctx.lfs_cfg.block_count - used_blocks) * pfs->lfs_ctx.lfs_cfg.block_size;
+        *ptotal_size = total_space;
+        *pfree_size  = free_space;
+        return 0;
+#endif
+    }
+    return -1;
 }
 
-int bFSFileGetInfo(int fd, uint32_t *pfile_size)
+int bFSFileGetInfo(bFSFd_t fd, uint32_t *pfile_size)
 {
-    if (!BFS_FD_IS_VALID(fd))
+    if (IS_NULL(pfile_size))
     {
         return -1;
     }
-    bFSFile_t *pfile = (bFSFile_t *)fd;
-#if defined(FS_FATFS)
-    *pfile_size = f_size(&(pfile->bfile));
-    return 0;
-#elif (defined(FS_LITTLEFS))
-    *pfile_size = lfs_max(pfile->bfile.pos, pfile->bfile.ctz.size);
-    return 0;
-#else
-    return -1;
+    bFSFile_t *pfile = (bFSFile_t *)(uintptr_t)fd;
+    if (IS_NULL(pfile) || pfile->fs_context == NULL)
+    {
+        return -1;
+    }
+    bFS_t *pfs = pfile->fs_context;
+    if (pfs->fs_type == 0)
+    {
+#if FS_FATFS_
+        *pfile_size = f_size(&(pfile->bfile));
+        return 0;
 #endif
+    }
+    else
+    {
+#if FS_LITTLEFS_
+        *pfile_size = pfile->lfs_ctx.lfp_file.ctz.size;
+        return 0;
+#endif
+    }
+    return -1;
 }
 
 /**
