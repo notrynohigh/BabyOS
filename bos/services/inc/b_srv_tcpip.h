@@ -91,6 +91,12 @@ typedef enum
 } bHttpEvent_t;
 
 typedef void (*pHttpCb_t)(bHttpEvent_t event, void *param, void *arg);
+
+/**
+ * \brief Portable HTTP descriptor type.
+ * On 64-bit platforms, this must be large enough to hold a pointer.
+ */
+typedef intptr_t bHttpFd_t;
 #endif
 /**
  * \}
@@ -115,11 +121,10 @@ int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number);
 int bSntpStart(uint32_t interval_s);
 #endif
 #if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
-int bHttpInit(pHttpCb_t cb, void *user_data);
-int bHttpDeInit(int httpfd);
-// 默认头部有Content-Length; head为自定义头部，以\r\n结尾
-int bHttpRequest(int httpfd, bHttpReqType_t type, const char *url, const char *head,
-                 const char *body);
+int         bHttpInit(pHttpCb_t cb, void *user_data);
+int         bHttpDeInit(bHttpFd_t httpfd);
+bHttpFd_t   bHttpRequest(bHttpFd_t httpfd, bHttpReqType_t type, const char *url, const char *head,
+                         const char *body);
 #endif
 /**
  * \}

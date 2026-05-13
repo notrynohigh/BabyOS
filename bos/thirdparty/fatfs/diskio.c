@@ -87,12 +87,9 @@ DRESULT disk_write(BYTE        pdrv,   /* Physical drive nmuber to identify the 
     {
         return RES_ERROR;
     }
-    ret = bFSPartitionErase(pdrv, sector * tmp->sector_size, count * tmp->sector_size);
-    if (ret < 0)
-    {
-        return RES_ERROR;
-    }
-    ret = bFSPartitionWrite(pdrv, sector * tmp->sector_size, (uint8_t *)buff, count * tmp->sector_size);
+    bFSPartitionErase(pdrv, sector * tmp->sector_size, count * tmp->sector_size);
+    ret = bFSPartitionWrite(pdrv, sector * tmp->sector_size, (uint8_t *)buff,
+                            count * tmp->sector_size);
     if (ret >= 0)
     {
         return RES_OK;
@@ -109,7 +106,7 @@ DRESULT disk_write(BYTE        pdrv,   /* Physical drive nmuber to identify the 
 /* Miscellaneous Functions                                               */
 /*-----------------------------------------------------------------------*/
 
-DRESULT disk_ioctl(BYTE  pdrv, /* Physical drive nmuber (0..) */
+DRESULT disk_ioctl(BYTE  pdrv, /* Physical drive number (0..) */
                    BYTE  cmd,  /* Control code */
                    void *buff  /* Buffer to send/receive control data */
 )

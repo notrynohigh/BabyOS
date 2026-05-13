@@ -121,8 +121,14 @@ static int _bTESTFLASHWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbu
     {
         return -1;
     }
-    len = (len + _if->w_size - 1) / _if->w_size;
-    for (i = 0; i < len; i++)
+    /* Align len down to a multiple of w_size to prevent out-of-bounds pbuf access.
+     * FatFS work buffer (FF_MAX_SS) may not be a multiple of w_size. */
+    len = (len / _if->w_size) * _if->w_size;
+    if (len == 0)
+    {
+        return 0;
+    }
+    for (i = 0; i < len / _if->w_size; i++)
     {
         if ((off + (i * _if->w_size)) >= TEST_FLASH_SIZE)
         {
@@ -135,21 +141,21 @@ static int _bTESTFLASHWrite(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbu
                 ((uint8_t *)_private->data)[off + i] = ((uint8_t *)pbuf)[i];
             }
         }
-        if (_if->w_size == 2)
+        else if (_if->w_size == 2)
         {
             if (((uint16_t *)_private->data)[off + i] == 0xffff || _if->e_size == 0)
             {
                 ((uint16_t *)_private->data)[off + i] = ((uint16_t *)pbuf)[i];
             }
         }
-        if (_if->w_size == 4)
+        else if (_if->w_size == 4)
         {
             if (((uint32_t *)_private->data)[off + i] == 0xffffffff || _if->e_size == 0)
             {
                 ((uint32_t *)_private->data)[off + i] = ((uint32_t *)pbuf)[i];
             }
         }
-        if (_if->w_size == 8)
+        else if (_if->w_size == 8)
         {
             if (((uint64_t *)_private->data)[off + i] == 0xffffffffffffffff || _if->e_size == 0)
             {
@@ -185,19 +191,16 @@ static int _bTESTFLASHCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
             if (param && (_if->e_size > 0))
             {
                 bFlashErase_t *perase_param = (bFlashErase_t *)param;
-                bHalFlashErase(perase_param->addr, perase_param->num);
-                if (perase_param->addr < TEST_FLASH_SIZE)
+                uint32_t off = perase_param->addr;
+                uint32_t num = perase_param->num;
+                off = (off / _if->e_size) * _if->e_size; /* align down to e_size boundary */
+                for (i = 0; i < num; i++)
                 {
-                    perase_param->addr = (perase_param->addr) / _if->e_size * _if->e_size;
-                    for (i = 0; i < perase_param->num; i++)
+                    if ((off + i * _if->e_size) >= TEST_FLASH_SIZE)
                     {
-                        if ((perase_param->addr + i * _if->e_size) >= TEST_FLASH_SIZE)
-                        {
-                            break;
-                        }
-                        memset((void *)&_private->data[perase_param->addr + i * _if->e_size], 0xff,
-                               _if->e_size);
+                        break;
                     }
+                    memset((void *)&_private->data[off + i * _if->e_size], 0xff, _if->e_size);
                 }
                 retval = 0;
             }
@@ -240,6 +243,7 @@ static int _bTESTFLASHCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
  * \addtogroup TESTFLASH_Exported_Functions
  * \{
  */
+
 int bTESTFLASH_Init(bDriverInterface_t *pdrv)
 {
     bTestFlashPrivate_t *pflash = NULL;
@@ -266,7 +270,7 @@ int bTESTFLASH_Init(bDriverInterface_t *pdrv)
 #endif
 bDRIVER_REG_INIT(B_DRIVER_TESTFLASH, bTESTFLASH_Init);
 #ifdef BSECTION_NEED_PRAGMA
-#pragma section 
+#pragma section
 #endif
 /**
  * \}

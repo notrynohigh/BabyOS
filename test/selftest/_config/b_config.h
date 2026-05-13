@@ -1,6 +1,9 @@
-#ifndef __B_CONFIG_H__ 
-#define __B_CONFIG_H__ 
+#ifndef __B_CONFIG_H__
+#define __B_CONFIG_H__
 
+#define LFS_CONFIG "b_lfs_config.h"
+
+#define _UNITY_ENABLE 1
 
 #define HW_VERSION 211212
 #define FW_VERSION 80106
@@ -50,7 +53,9 @@
 #define _ERROR_MANAGE_ENABLE 1
 #define _FS_ENABLE 1
 #define FS_FATFS 1
-#define FS_MOUNT_NUMBER 1
+#define FS_LITTLEFS 1
+#define FS_MOUNT_NUMBER 2
+#define _FS_MKFS_ENABLE 1
 #define FS_BLOCK_SIZE 1
 #define ERROR_Q_LENGTH 10
 #define _MODBUS_ENABLE 1

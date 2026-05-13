@@ -151,7 +151,7 @@ static int _bSockSetNonblocking(int sockfd)
 // 检查socket是否可读
 static uint8_t _bTestMacIsReadable(void *sockfd)
 {
-    int            sock = (int)sockfd;
+    int            sock = (int)(intptr_t)sockfd;
     fd_set         read_fds;
     struct timeval timeout;
 
@@ -178,7 +178,7 @@ static uint8_t _bTestMacIsReadable(void *sockfd)
 // 检查socket是否可写
 static uint8_t _bTestMacIsWriteable(void *sockfd)
 {
-    int            sock = (int)sockfd;
+    int            sock = (int)(intptr_t)sockfd;
     fd_set         write_fds;
     struct timeval timeout;
 
@@ -229,7 +229,7 @@ static void *_bTestMacUdpNew(bTcpIpNetif_t *pnetif)
 
 static int _bTestMacBind(void *sockfd, uint16_t port)
 {
-    int                sock = (int)sockfd;
+    int                sock = (int)(intptr_t)sockfd;
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family      = AF_INET;
@@ -246,7 +246,7 @@ static void *_bTestMacListen(void *sockfd, uint16_t backlog)
 
 static int _bTestMacConnect(void *sockfd, uint32_t ip, uint16_t port)
 {
-    int sock = (int)sockfd;
+    int sock = (int)(intptr_t)sockfd;
     b_log("[%d] connect %x %d\r\n", sock, ip, port);
     struct sockaddr_in serverAddr;
     serverAddr.sin_family      = AF_INET;
@@ -256,15 +256,15 @@ static int _bTestMacConnect(void *sockfd, uint32_t ip, uint16_t port)
     if (ret == -1)
     {
         b_log_e("connect error:%d\r\n", ret);
-        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, sock, bTestMacEventCbArg);
+        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, (void *)(intptr_t)sock, bTestMacEventCbArg);
         return -1;
     }
-    B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_CONNECTED, sock, bTestMacEventCbArg);
-    if (_bSockSetNonblocking(sockfd) < 0)
+    B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_CONNECTED, (void *)(intptr_t)sock, bTestMacEventCbArg);
+    if (_bSockSetNonblocking((int)(intptr_t)sockfd) < 0)
     {
-        close(sockfd);
-        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, sock, bTestMacEventCbArg);
-        return NULL;
+        close(sock);
+        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, (void *)(intptr_t)sock, bTestMacEventCbArg);
+        return -1;
     }
     return 0;
 }
@@ -275,7 +275,7 @@ static int _bTestMacRecv(void *sockfd, uint8_t *pbuf, uint16_t len)
     {
         return 0;
     }
-    int sock   = (int)sockfd;
+    int sock   = (int)(intptr_t)sockfd;
     int retval = recv(sock, pbuf, len, 0);
     if (retval > 0)
     {
@@ -307,14 +307,14 @@ static int _bTestMacSend(void *sockfd, uint8_t *pbuf, uint16_t len)
     {
         return 0;
     }
-    int sock   = (int)sockfd;
+    int sock   = (int)(intptr_t)sockfd;
     int retval = send(sock, pbuf, len, 0);
     b_log("socket send:%d %d\r\n", len, retval);
     b_log_hex(pbuf, len);
     if (retval > 0)
     {
         param.len = len;
-        param.pcb = sock;
+        param.pcb = (void *)(intptr_t)sock;
         B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_SEND_DONE, &param, bTestMacEventCbArg);
     }
     return retval;
@@ -331,7 +331,7 @@ static int _bTestMacDelete(void *sockfd)
     {
         return 0;
     }
-    int sock = (int)sockfd;
+    int sock = (int)(intptr_t)sockfd;
     close(sock);
     return 0;
 }

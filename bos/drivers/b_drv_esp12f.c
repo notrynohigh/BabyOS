@@ -1165,7 +1165,7 @@ static int _bTcpIpBind(void *pcb, uint16_t port)
     DRIVER_PRIVATE_TYPE *_priv = (DRIVER_PRIVATE_TYPE *)_pcb->private;
     if (_priv == NULL)
     {
-        return NULL;
+        return -2;
     }
     _priv->pcb_ctx[_pcb->pcb_index].local_port = port;
     return 0;
@@ -1218,7 +1218,7 @@ static int _bTcpIpConnect(void *pcb, uint32_t ip, uint16_t port)
     DRIVER_PRIVATE_TYPE *_priv = (DRIVER_PRIVATE_TYPE *)_pcb->private;
     if (_priv == NULL)
     {
-        return NULL;
+        return -2;
     }
     b_log("[%d]connect %x:%d\r\n", _pcb->pcb_index, ip, port);
     _priv->pcb_ctx[_pcb->pcb_index].ip   = ip;
@@ -1238,7 +1238,7 @@ static int _bTcpIpSend(void *pcb, const uint8_t *pbuf, uint16_t len)
     DRIVER_PRIVATE_TYPE *_priv = (DRIVER_PRIVATE_TYPE *)_pcb->private;
     if (_priv == NULL)
     {
-        return NULL;
+        return -2;
     }
     if (_priv->pcb_ctx[_pcb->pcb_index].state != WIFI_PCB_STATE_CONNECTED)
     {
@@ -1271,7 +1271,7 @@ static int _bTcpIpDelete(void *pcb)
     DRIVER_PRIVATE_TYPE *_priv = (DRIVER_PRIVATE_TYPE *)_pcb->private;
     if (_priv == NULL)
     {
-        return NULL;
+        return -2;
     }
 
     if (WIFIMODULE_LISTEN_PCB_INDEX_IS_VALID(_pcb->pcb_index))

@@ -210,12 +210,12 @@ static void *_bMempAlloc(uint32_t size)
     return pret;
 }
 
-static void _bMempFree(uint32_t addr)
+static void _bMempFree(uintptr_t addr)
 {
     bMempUnitHead_t *phead = (bMempUnitHead_t *)(addr - sizeof(bMempUnitHead_t));
     if (phead->status != MEMP_UNIT_USED ||
-        addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
-        addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+        addr < (((uintptr_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+        addr > (((uintptr_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
     {
         return;
     }
@@ -236,12 +236,12 @@ static void _bMempFree(uint32_t addr)
     }
 }
 
-static uint32_t _bGetUsableSize(uint32_t addr)
+static uint32_t _bGetUsableSize(uintptr_t addr)
 {
     bMempUnitHead_t *phead = (bMempUnitHead_t *)(addr - sizeof(bMempUnitHead_t));
     if (phead->status != MEMP_UNIT_USED ||
-        (uint32_t)addr < (((uint32_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
-        (uint32_t)addr > (((uint32_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
+        addr < (((uintptr_t)bMempBuf) + sizeof(bMempUnitHead_t)) ||
+        addr > (((uintptr_t)bMempBuf) + MEMP_SIZE - sizeof(bMempUnitHead_t)))
     {
         return 0;
     }
@@ -290,7 +290,7 @@ static void _bFree(void *paddr)
     {
         return;
     }
-    _bMempFree((uint32_t)paddr);
+    _bMempFree((uintptr_t)paddr);
 }
 
 static void *_bRealloc(void *paddr, uint32_t size)
@@ -309,7 +309,7 @@ static void *_bRealloc(void *paddr, uint32_t size)
     {
         return NULL;
     }
-    uint32_t old_size  = _bGetUsableSize((uint32_t)paddr);
+    uint32_t old_size  = _bGetUsableSize((uintptr_t)paddr);
     uint32_t copy_size = (size < old_size) ? size : old_size;
     memcpy(new_ptr, paddr, copy_size);
     bFree(paddr);
@@ -368,7 +368,7 @@ void *bRealloc(void *paddr, uint32_t size)
     {
         return NULL;
     }
-    uint32_t old_size  = _bGetUsableSize((uint32_t)paddr);
+    uint32_t old_size  = _bGetUsableSize((uintptr_t)paddr);
     uint32_t copy_size = (size < old_size) ? size : old_size;
     memcpy(new_ptr, paddr, copy_size);
     bFree(paddr);

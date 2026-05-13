@@ -11,7 +11,7 @@ TARGET = BabyOS
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -O3
+OPT = -O0 -fno-pie
 
 
 #######################################
@@ -106,7 +106,7 @@ C_INCLUDES =  \
 # compile gcc flags
 ASFLAGS = $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -std=c99
+CFLAGS = $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -std=c99 -fno-stack-protector -fno-pie -D_SELFTEST_BUILD_
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -gdwarf-2
@@ -122,7 +122,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 #######################################
 # link script
 LDSCRIPT = $(SOURCE_ROOT)/test/babyos.ld
-LDFLAGS = -T$(LDSCRIPT) -lpthread -lm
+LDFLAGS = -T$(LDSCRIPT) -lpthread -lm -no-pie
 # libraries  
 
 

@@ -164,6 +164,7 @@ bTaskId_t bTaskCreate(const char *name, bTaskFunc_t func, void *argument, bTaskA
     attr->enable       = 1;
     attr->task_pt.init = 0;
     PT_INIT(&attr->task_pt);
+    INIT_LIST_HEAD(&attr->list);
     list_add(&attr->list, &bTaskListHead);
     return attr;
 }

@@ -65,6 +65,9 @@ typedef struct
     uint8_t size;
     char*   name;
     void*   addr;
+#if defined(__LP64__) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
+    uint8_t reserved[8];
+#endif
 } bParamStruct_t;
 
 typedef bParamStruct_t bParamInstance_t;
