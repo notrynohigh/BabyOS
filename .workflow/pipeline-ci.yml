@@ -1,0 +1,50 @@
+version: '1.0'
+name: pipeline-ci
+displayName: pipeline-ci
+triggers:
+  trigger: auto
+  push:
+    branches:
+      precise:
+        - feat-ci
+  pr:
+    branches:
+      precise:
+        - feat-ci
+stages:
+  - name: stage-selftest
+    displayName: selftest
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: execute@docker
+        name: execute_by_docker
+        displayName: 基于镜像的脚本执行
+        certificate: notrynohigh
+        image: ubuntu:22.04
+        command:
+          - export DEBIAN_FRONTEND=noninteractive
+          - apt-get update -y
+          - apt-get install -y build-essential gcc make libc-dev
+          - cd test/selftest
+          - make clean
+          - make
+          - ./build/BabyOS 2>&1 | tee test_output.log
+          - |
+            if grep -q "Result: ALL PASSED" test_output.log; then
+              echo "=== TEST PASSED ==="
+              exit 0
+            else
+              echo "=== TEST FAILED ==="
+              cat test_output.log
+              exit 1
+            fi
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - test/selftest/build/BabyOS
+              - test/selftest/test_output.log
+        notify: []
+        strategy:
+          retry: '0'
