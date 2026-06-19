@@ -31,7 +31,7 @@
 
 /*Includes ----------------------------------------------*/
 #include "drivers/inc/b_drv_key.h"
-
+#include "b_os.h"
 /**
  * \addtogroup B_DRIVER
  * \{
@@ -94,12 +94,33 @@ bDRIVER_HALIF_TABLE(bKEY_HalIf_t, DRIVER_NAME);
 
 static int _bKeyRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, uint32_t len)
 {
-    if (len == 0)
+	int fd = -1;	
+	if (pbuf == NULL || len == 0)
     {
         return -1;
     }
     bDRIVER_GET_HALIF(_if, bKEY_HalIf_t, pdrv);
-    pbuf[0] = (bHalGpioReadPin(_if->port, _if->pin) == _if->level);
+
+	if (_if->port == 0xFF)
+    {
+        uint32_t tm1638_keys = 0;
+        pbuf[0] = 0; 
+        int fd = bOpen(bTM1638, BCORE_FLAG_RW); 
+        if (fd >= 0)
+        {
+            bRead(fd, (uint8_t *)&tm1638_keys, sizeof(tm1638_keys));
+            bClose(fd);
+        }
+        if (tm1638_keys & (1 << _if->pin))
+        {
+            pbuf[0] = 1; // 1 代表按下
+        }
+    }
+    else
+    {
+	    pbuf[0] = (bHalGpioReadPin(_if->port, _if->pin) == _if->level);
+    }	
+
     return 1;
 }
 
