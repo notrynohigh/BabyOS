@@ -96,6 +96,7 @@ typedef struct
 #endif
 	
 } bTm1638Private_t;
+
 /**
  * \}
  */
