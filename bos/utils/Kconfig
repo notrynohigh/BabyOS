@@ -1,92 +1,107 @@
+# Utils Configuration
 menu "Utils Configuration"
+
+#======================================== Debug/Log ========================================
 config _DEBUG_ENABLE
     bool "Debug Enable/Disable"
     default y
 
+if _DEBUG_ENABLE
+
 choice
-    prompt "log level"
-    depends on _DEBUG_ENABLE
+    prompt "Log level"
     default LOG_LEVEL_ALL
-    config LOG_LEVEL_ALL
-        bool "all"
-    config LOG_LEVEL_INFO
-        bool "info level"
-    config LOG_LEVEL_WARNING
-        bool "warning level"
-    config LOG_LEVEL_ERROR
-        bool "error level"
-    config LOG_LEVEL_CUSTOMIZE
-        bool "User-defined levels"
+config LOG_LEVEL_ALL
+    bool "All (debug + info + warning + error)"
+config LOG_LEVEL_INFO
+    bool "Info level and above"
+config LOG_LEVEL_WARNING
+    bool "Warning level and above"
+config LOG_LEVEL_ERROR
+    bool "Error level only"
+config LOG_LEVEL_CUSTOMIZE
+    bool "User-defined levels"
 endchoice
+
+if LOG_LEVEL_CUSTOMIZE
 
 config _B_LOG_ENABLE
-    bool "b_log enable"
+    bool "b_log (debug)"
     default y
-    depends on LOG_LEVEL_CUSTOMIZE
 
 config _B_LOG_I_ENABLE
-    bool "b_log_i enable"
+    bool "b_log_i (info)"
     default y
-    depends on LOG_LEVEL_CUSTOMIZE
 
 config _B_LOG_W_ENABLE
-    bool "b_log_w enable"
+    bool "b_log_w (warning)"
     default y
-    depends on LOG_LEVEL_CUSTOMIZE
 
 config _B_LOG_E_ENABLE
-    bool "b_log_e enable"
+    bool "b_log_e (error)"
     default y
-    depends on LOG_LEVEL_CUSTOMIZE
+
+endif
 
 config LOG_BUF_SIZE
-    int "Log Buffer Size (B)"
+    int "Log buffer size (bytes)"
     default 256
-    depends on _DEBUG_ENABLE
+    range 64 1024
 
 choice
-    prompt "log output channel"
-    depends on _DEBUG_ENABLE
+    prompt "Log output channel"
     default _LOG_VIA_UART
-    config _LOG_VIA_UART
-        bool "print logs via serial port"
-    config _LOG_VIA_USER_SPECIFIED
-        bool "print logs via user-specified"
+config _LOG_VIA_UART
+    bool "Serial port"
+config _LOG_VIA_USER_SPECIFIED
+    bool "User-defined"
 endchoice
 
+if _LOG_VIA_UART
+
 config LOG_UART
-    int "0-7:(B_HAL_UART_1-8) 8-11:(B_HAL_LPUART_1-4)"
+    int "UART (0-7: B_HAL_UART_1-8, 8-11: B_HAL_LPUART_1-4)"
     default 0
-    depends on _LOG_VIA_UART
     range 0 11
 
+endif
+
+endif
+
+#======================================== Memory Pool ========================================
 config _MEMP_ENABLE
-    bool "MemoryPool Enable/Disable"
+    bool "Memory Pool"
     default n
+
+if _MEMP_ENABLE
 
 config MEMP_MAX_SIZE
-    int "Memory Max Size (B)"
-    default 10240
-    depends on _MEMP_ENABLE
+    int "Maximum memory block size (bytes)"
+    default 10240 if !_MBEDTLS_ENABLE
+    default 40960
 
 config _MEMP_WATERLINE_ENABLE
-    bool "Memory Threshold Enable/Disable"
+    bool "Waterline monitoring"
     default n
-    depends on _MEMP_ENABLE
 
 config _MEMP_MONITOR_ENABLE
-    bool "MemoryPool Monitor Enable/Disable"
+    bool "Memory pool monitor"
     default n
-    depends on _MEMP_ENABLE
 
+endif
+
+#======================================== AT Command ========================================
 config _AT_ENABLE
-    bool "AT Enable/Disable"
+    bool "AT Command"
     default n
+
+if _AT_ENABLE
 
 config _AT_DYNAMIC_ENABLE
-    bool "AT Dynamically Apply For Response Data Enable/Disable"
+    bool "Dynamic response data allocation"
     default n
     select _MEMP_ENABLE if _AT_DYNAMIC_ENABLE
 
+endif
 
 endmenu

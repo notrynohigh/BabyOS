@@ -56,6 +56,30 @@ extern "C" {
 
 #define IS_NULL(p) ((p) == NULL)
 
+/**
+ * \defgroup B_SAFE_INVOKE 安全函数指针调用
+ *
+ * \brief 在调用函数指针前显式检查 NULL, 避免解引用 NULL 触发 HardFault (Cortex-M)
+ *        或 SIGSEGV (host). 用于:
+ *        - 驱动可选回调 (WiFi mode change, link state cb)
+ *        - 协议栈未初始化时 stub 调用 (lwIP default_netif)
+ *        - 用户注册但允许跳过的事件 handler
+ *
+ * \param f     函数指针 (可为 NULL, NULL 时宏展开为空)
+ * \param ...   透传给 f 的实参
+ *
+ * \note 当 f 为 NULL 时, 宏整体展开为空 do-while, 调用方代码继续执行, 不返错.
+ *       调用方负责"f=NULL 时怎么办"的语义: 通常是无操作 (no-op), 但也可能意味着
+ *       协议栈未初始化 (见 b_mod_tcpip.c 中 lwIP 路径).
+ *
+ * \warning 不要在中断上下文频繁使用 — NULL 检查 + 间接调用会比直接调用慢 5~10 ns.
+ *          MCU 上 1 MHz Cortex-M0 这 10 ns 是 ~10 个 cycle, 实测无影响.
+ *
+ * \code
+ *   // 例子: 驱动通知用户协议栈事件
+ *   B_SAFE_INVOKE(pinfo->stack_if.set_default_netif, &pinfo->netif);
+ * \endcode
+ */
 #define B_SAFE_INVOKE(f, ...) \
     do                        \
     {                         \
@@ -65,6 +89,15 @@ extern "C" {
         }                     \
     } while (0)
 
+/**
+ * \brief 同 B_SAFE_INVOKE, 但保留函数返回值到 \p ret. 用于回调可能修改状态变量时.
+ *
+ * \param ret   接收返回值的左值 (例如 int rc = 0;)
+ * \param f     函数指针
+ * \param ...   透传给 f 的实参
+ *
+ * \note f 为 NULL 时 ret 不被赋值, 保持调用方预设值.
+ */
 #define B_SAFE_INVOKE_RET(ret, f, ...) \
     do                                 \
     {                                  \
