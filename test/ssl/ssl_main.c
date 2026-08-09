@@ -1,6 +1,6 @@
 /**
- * \file kv_main.c
- * \brief
+ * \file ssl_main.c
+ * \brief SSL + HTTPS client test entry
  * \version 0.1
  * \date 2022-10-29
  * \author notrynohigh (notrynohigh@outlook.com)
@@ -11,6 +11,7 @@
 
 #include "../port.h"
 #include "b_os.h"
+#include "services/inc/b_srv_http.h"
 
 int  httpfd = -1;
 void bMallocFailedHook()

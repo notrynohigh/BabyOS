@@ -12,6 +12,9 @@
 #include "../port.h"
 #include "b_os.h"
 
+void test_http_client_start(void);
+extern volatile int test_http_client_done;
+
 static bTaskAttr_t sTaskAttrTcp;
 
 const static bNetCardInfo_t bNetCardInfo[] = {
@@ -77,10 +80,15 @@ int main()
     bTcpipSrvInit(&bNetCardInfo[0], 1);
     bSntpStart(300);
     bTaskCreate("tcp", bWifiTestTask666, NULL, &sTaskAttrTcp);
+    test_http_client_start();
     while (1)
     {
         bExec();
         BOS_PERIODIC_TASK(_MainMonitor, 5000);
+        if (test_http_client_done)
+        {
+            break;
+        }
     }
     return 0;
 }

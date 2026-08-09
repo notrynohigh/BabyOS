@@ -24,8 +24,8 @@
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  *******************************************************************************
  */
 #ifndef __B_SRV_TCPIP_H__
@@ -60,72 +60,18 @@ extern "C" {
  */
 
 /**
- * \defgroup TCPIP_Exported_TypesDefinitions
- * \{
- */
-#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
-typedef enum
-{
-    B_HTTP_GET,
-    B_HTTP_POST
-} bHttpReqType_t;
-#define HTTPREQ_TYPE_IS_VALID(t) ((t) == B_HTTP_GET || (t) == B_HTTP_POST)
-
-typedef struct
-{
-    uint8_t *pdat;
-    uint16_t len;
-    void (*release)(void *);
-} bHttpRecvData_t;
-
-typedef enum
-{
-    B_HTTP_EVENT_CONNECTED = 0,
-    B_HTTP_EVENT_RECV_DATA,  // callback param : bHttpRecvData_t
-    B_HTTP_EVENT_DESTROY,
-    B_HTTP_EVENT_ERR_BASE = -100,
-    B_HTTP_EVENT_ERROR,
-    B_HTTP_EVENT_CONN_FAIL,
-    B_HTTP_EVENT_SSL_FAIL,
-    B_HTTP_EVENT_RECV_TIMEOUT,
-} bHttpEvent_t;
-
-typedef void (*pHttpCb_t)(bHttpEvent_t event, void *param, void *arg);
-
-/**
- * \brief Portable HTTP descriptor type.
- * On 64-bit platforms, this must be large enough to hold a pointer.
- */
-typedef intptr_t bHttpFd_t;
-#endif
-/**
- * \}
- */
-
-/**
- * \defgroup TCPIP_Exported_Defines
- * \{
- */
-
-/**
- * \}
- */
-
-/**
  * \defgroup TCPIP_Exported_Functions
  * \{
  */
 
+/**
+ * @brief 初始化TCP/IP服务
+ * @param pnetcard 网卡信息数组
+ * @param number 网卡数量
+ * @return 0成功，负值失败
+ */
 int bTcpipSrvInit(const bNetCardInfo_t *pnetcard, uint8_t number);
-#if (defined(_TCPIP_SERVICE_NTP_ENABLE) && (_TCPIP_SERVICE_NTP_ENABLE == 1))
-int bSntpStart(uint32_t interval_s);
-#endif
-#if (defined(_TCPIP_SERVICE_HTTP_ENABLE) && (_TCPIP_SERVICE_HTTP_ENABLE == 1))
-int         bHttpInit(pHttpCb_t cb, void *user_data);
-int         bHttpDeInit(bHttpFd_t httpfd);
-bHttpFd_t   bHttpRequest(bHttpFd_t httpfd, bHttpReqType_t type, const char *url, const char *head,
-                         const char *body);
-#endif
+
 /**
  * \}
  */

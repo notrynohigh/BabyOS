@@ -165,9 +165,10 @@ bTcpipSrvInit(netcard_info, 2);
 
 ## NTP Service (`b_srv_ntp`)
 
-Function name is **`bSntpStart`** (with the `S`). `bNtpStop` / `bNtpSyncNow` are **not** implemented — once started, runs until reboot.
+Function name is **`bSntpStart`** (with the `S`). Use `bSntpStop()` to stop synchronization before reboot.
 ```c
 bSntpStart(3600);  // re-sync every hour
+bSntpStop();        // stop NTP task and release socket
 ```
 Server addresses: `_NTP_SERVER_1/2/3` in `bos/services/Kconfig` (defaults: `ntp1.aliyun.com`, etc.). Enable with `_NTP_SERVICE_ENABLE = 1`.
 
@@ -182,9 +183,11 @@ _HTTP_RECV_CHUNK_SIZE       256   // max bytes consumed per bExec()
 _HTTP_SEND_CHUNK_TIMEOUT_MS 5000  // per-chunk send deadline
 ```
 
-**`bHttpServerStop()`** is non-blocking: it sets `stop_requested` on the server, shuts down listen fd + client fds (synchronous), and returns immediately. The actual cleanup of sub-tasks / ctx happens in `_bHttpServerTask` (registered polling function) on the next `bExec()` round. The user's `main()` keeps running `bExec()` and the framework cleans itself up.
+**`bHttpServerStop()`** is non-blocking: it sets `stop_requested` on the server, shuts down listen fd + client fds (synchronous), and returns immediately. The actual cleanup of sub-tasks / ctx happens in `_bHttpServerTask` (registered polling function) on the next `bExec()` round. The user's `main()` must keep running `bExec()` and must not free the server memory until `_bHttpServerTask` has finished cleanup (the global `s_http_server` pointer will be cleared to `NULL`).
 
 ## Config Web Service (`b_srv_config_web`)
+
+> **Note:** The `b_srv_config_web` service is not yet merged into the current branch. The following API description is kept as a forward reference for the upcoming feature branch.
 
 ```c
 bConfigWebServiceStart(80, config_cb, user_data);

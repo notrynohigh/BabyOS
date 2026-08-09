@@ -97,6 +97,14 @@ bDRIVER_HALIF_TABLE(bTESTMAC_HalIf_t, DRIVER_NAME);
 static pTcpIpCallback_t bTestMacEventCb    = NULL;
 static void            *bTestMacEventCbArg = NULL;
 
+// listen socket 注册表: 0 = 空槽
+// 单网卡单进程, 8 个槽够用
+#define B_TESTMAC_LISTEN_MAX 8
+static int s_listen_socks[B_TESTMAC_LISTEN_MAX];
+
+// _bSockSetNonblocking 前向声明 (定义在 _bTestMacLoop 之后, loop 内部要用)
+static int _bSockSetNonblocking(int sockfd);
+
 /**
  * \}
  */
@@ -108,6 +116,7 @@ static void            *bTestMacEventCbArg = NULL;
 
 static int _bTestMacInit(bTcpIpNetif_t *netif)
 {
+    memset(s_listen_socks, 0, sizeof(s_listen_socks));
     return 0;
 }
 
@@ -128,7 +137,41 @@ static int _bTestMacSetLinkState(uint8_t state, bTcpIpNetif_t *netif)
 
 static void _bTestMacLoop(bTcpIpNetif_t *netif)
 {
-    ;
+    (void)netif;
+    // 遍历 listen socket 数组, accept 新连接并派发 B_TCPIP_E_ACCEPT
+    for (int i = 0; i < B_TESTMAC_LISTEN_MAX; i++)
+    {
+        int listen_sock = s_listen_socks[i];
+        if (listen_sock == 0)
+        {
+            continue;
+        }
+        // 非阻塞 listen, 没连接就 EAGAIN
+        int client_sock = accept(listen_sock, NULL, NULL);
+        if (client_sock < 0)
+        {
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+            {
+                continue;  // 没新连接, 正常
+            }
+            b_log_e("testmac accept() error: %s\n", strerror(errno));
+            continue;
+        }
+        // 跟 _bTestMacConnect 行为一致, accept 出来的 fd 设非阻塞
+        if (_bSockSetNonblocking(client_sock) < 0)
+        {
+            close(client_sock);
+            continue;
+        }
+        // 派发新连接到 b_mod_tcpip, 复用 B_TCPIP_E_ACCEPT + bTcpIpAccetpArg_t
+        // 路径: b_mod_tcpip.c:2824-2849 会建 bTrans_t 并触发 B_TRANS_ACCEPTED
+        // pcb 在 testmac 路径下是 (void*)(intptr_t)sockfd (跟 _bTestMacConnect 一致)
+        bTcpIpAccetpArg_t accept_arg;
+        memset(&accept_arg, 0, sizeof(accept_arg));
+        accept_arg.netif.private = NULL;  // testmac netif.private 保持 NULL
+        accept_arg.new_pcb       = (void *)(intptr_t)client_sock;
+        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_ACCEPT, &accept_arg, bTestMacEventCbArg);
+    }
 }
 
 // 设置socket为非阻塞模式
@@ -190,9 +233,7 @@ static uint8_t _bTestMacIsWriteable(void *sockfd)
     timeout.tv_usec = 0;
 
     // 使用select检查可写性
-    b_log("check wr select\r\n");
     int ret = select(sock + 1, NULL, &write_fds, NULL, &timeout);
-    b_log("wr select:%d\r\n", ret);
     if (ret == -1)
     {
         return 0;
@@ -235,13 +276,47 @@ static int _bTestMacBind(void *sockfd, uint16_t port)
     addr.sin_family      = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port        = htons(port);
-    bind(sock, (struct sockaddr *)&addr, sizeof(addr));
+    int ret = bind(sock, (struct sockaddr *)&addr, sizeof(addr));
+    if (ret < 0)
+    {
+        b_log_e("testmac bind() port %d failed: %s\n", port, strerror(errno));
+        return -1;
+    }
     return 0;
 }
 
 static void *_bTestMacListen(void *sockfd, uint16_t backlog)
 {
-    return 0;
+    int listen_sock = (int)(intptr_t)sockfd;
+
+    int yes = 1;
+    setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+
+    b_log("[TESTMAC] listen fd=%d\r\n", listen_sock);
+
+    // 设为非阻塞, _bTestMacLoop 里的 accept 不会卡住
+    if (_bSockSetNonblocking(listen_sock) < 0)
+    {
+        b_log_e("testmac listen setnonblock error: %s\n", strerror(errno));
+        return NULL;
+    }
+
+    if (listen(listen_sock, backlog) < 0)
+    {
+        b_log_e("testmac listen() error: %s\n", strerror(errno));
+        return NULL;
+    }
+
+    for (int i = 0; i < B_TESTMAC_LISTEN_MAX; i++)
+    {
+        if (s_listen_socks[i] == 0)
+        {
+            s_listen_socks[i] = listen_sock;
+            return (void *)(intptr_t)listen_sock;
+        }
+    }
+    b_log_e("testmac listen table full\n");
+    return NULL;
 }
 
 static int _bTestMacConnect(void *sockfd, uint32_t ip, uint16_t port)
@@ -256,14 +331,16 @@ static int _bTestMacConnect(void *sockfd, uint32_t ip, uint16_t port)
     if (ret == -1)
     {
         b_log_e("connect error:%d\r\n", ret);
-        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, (void *)(intptr_t)sock, bTestMacEventCbArg);
+        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, (void *)(intptr_t)sock,
+                      bTestMacEventCbArg);
         return -1;
     }
     B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_CONNECTED, (void *)(intptr_t)sock, bTestMacEventCbArg);
     if (_bSockSetNonblocking((int)(intptr_t)sockfd) < 0)
     {
         close(sock);
-        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, (void *)(intptr_t)sock, bTestMacEventCbArg);
+        B_SAFE_INVOKE(bTestMacEventCb, B_TCPIP_E_DISCONNECT, (void *)(intptr_t)sock,
+                      bTestMacEventCbArg);
         return -1;
     }
     return 0;
@@ -310,7 +387,7 @@ static int _bTestMacSend(void *sockfd, uint8_t *pbuf, uint16_t len)
     int sock   = (int)(intptr_t)sockfd;
     int retval = send(sock, pbuf, len, 0);
     b_log("socket send:%d %d\r\n", len, retval);
-    b_log_hex(pbuf, len);
+    b_log_hex(pbuf, retval > 0 ? retval : 0);
     if (retval > 0)
     {
         param.len = len;
@@ -332,6 +409,14 @@ static int _bTestMacDelete(void *sockfd)
         return 0;
     }
     int sock = (int)(intptr_t)sockfd;
+    // 如果是 listen socket, 释放数组槽, 防止下次 restart 失败
+    for (int i = 0; i < B_TESTMAC_LISTEN_MAX; i++)
+    {
+        if (s_listen_socks[i] == sock)
+        {
+            s_listen_socks[i] = 0;
+        }
+    }
     close(sock);
     return 0;
 }
@@ -394,6 +479,15 @@ static int _bTESTMACCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
     bMacAddress_t *pmac   = (bMacAddress_t *)param;
     switch (cmd)
     {
+        case bCMD_GET_DRIVER_NETIF:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            ((bDriverNetif_t *)param)->private = NULL;
+        }
+        break;
         case bCMD_GET_MAC_ADDRESS:
         {
             if (param == NULL)

@@ -5,7 +5,7 @@
 ## 安装依赖
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt pyserial
 ```
 
 ## 运行
@@ -14,12 +14,42 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## 打包成单文件 exe
+
+双击 `build_exe.bat` (首次自动 `pip install pyinstaller`)，输出 `babyos_upper_pc.exe` (~10 MB，无控制台窗口)。
+
 ## 功能
 
 - **串口控制** — 打开/关闭串口、发送测试指令、设置设备时间
 - **OTA升级** — 选择固件文件、输入固件名称、发起OTA升级、支持CRC32校验和TEA加密
 - **文件传输** — 传输任意文件至设备FLASH，支持设备号和偏移地址配置
 - **设备信息** — 获取MCU UID、根据UID生成并写入SN、获取设备版本和型号信息
+- **HTTP调试** — 启动本地Mock HTTP/HTTPS服务器，触发设备HTTP客户端请求并显示响应
+- **配网Web调试** — 一键 编译 + 烧录 + 抓日志 (Keil + OpenOCD + pyserial)，配置持久化到 `webconfig_tool.ini`
+
+### HTTP调试使用说明
+
+HTTP调试Tab包含两部分：
+
+1. **Mock HTTP/HTTPS 服务器**：
+   - 设置端口（默认8080），可选启用HTTPS（自动生成自签名证书）
+   - 配置响应内容（状态码、Content-Type、Body）
+   - 点击"启动服务器"开始监听
+   - 所有接收到的请求会显示在"请求日志"中
+
+2. **触发设备HTTP请求**：
+   - 填写URL、HTTP方法、可选headers和body
+   - 点击"初始化HTTP客户端"通过串口通知设备
+   - 点击"发送请求"让设备向目标URL发起HTTP请求
+   - 设备返回的响应会显示在底部日志中
+
+工作流程：上位机作为Mock服务器 → 设备HTTP客户端连接 → 设备发起请求 → Mock服务器记录 → 设备返回响应 → 上位机显示
+
+协议命令：
+- `0x50` HTTP_REQUEST: 触发设备HTTP请求
+- `0x51` HTTP_RESPONSE: 设备返回的HTTP响应
+- `0x52` HTTP_INIT: 初始化设备HTTP客户端
+- `0x53` HTTP_DEINIT: 反初始化设备HTTP客户端
 
 ## 协议说明
 

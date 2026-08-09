@@ -81,6 +81,19 @@ typedef struct
     } assigned_ip;
 } bNetCardInfo_t;
 
+typedef struct
+{
+    uint32_t dev_no;            // 设备号
+    uint8_t  priority;          // 优先级
+    uint8_t  is_linked : 1;     // 是否已连接
+    uint8_t  is_ignore_ip : 1;  // 是否使用DHCP
+    uint8_t  is_dhcp : 1;       // 是否使用DHCP
+    uint8_t  reserved : 5;      // 保留位
+    uint32_t ipaddr;            // IP地址
+    uint32_t netmask;           // 子网掩码
+    uint32_t gateway;           // 网关
+} bNetcardStaInfo_t;
+
 typedef enum
 {
     B_TRANS_CONN_TCP,
@@ -126,11 +139,13 @@ typedef intptr_t bSocketFd_t;
  */
 
 #define SOCKFD_IS_INVALID(sockfd) ((sockfd) <= 0)
-#define SOCKET_SHUTDOWN(pt, sockfd) \
-    do { \
-        if (!SOCKFD_IS_INVALID((sockfd))) { \
+#define SOCKET_SHUTDOWN(pt, sockfd)                                \
+    do                                                             \
+    {                                                              \
+        if (!SOCKFD_IS_INVALID((sockfd)))                          \
+        {                                                          \
             PT_WAIT_UNTIL_FOREVER((pt), bShutdown((sockfd)) >= 0); \
-        } \
+        }                                                          \
     } while (0)
 
 /**

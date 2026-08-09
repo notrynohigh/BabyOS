@@ -458,6 +458,66 @@ PT_WAIT_UNTIL(pt, condition);
 PT_WAIT_UNTIL(pt, condition || bTaskIsTimeout(pt, timeout_ms));
 ```
 
+### Protothread 变量生命周期规则
+
+PT 任务本质是 `switch-case` 状态机，函数会被反复调用。理解这一点才能避免 **"yield 后变量被覆盖"** 的隐蔽 bug：
+
+1. **PT_BEGIN 之前的代码每次调度都会执行**
+   ```c
+   PT_THREAD(task)(struct pt *pt, void *arg) {
+       int x = 10;          // ⚠️ 每次 task 被调度都会重新执行，x 会被重置为 10
+       PT_BEGIN(pt);
+       // ...
+       PT_END(pt);
+   }
+   ```
+
+2. **只有跨 yield 必须保留的变量才加 `static`**
+   ```c
+   PT_THREAD(task)(struct pt *pt, void *arg) {
+       static uint32_t wait_time = 0;  // ✅ 跨 PT_WAIT_UNTIL 保留
+       static int      retry_cnt = 0;  // ✅ 跨多次调度累计
+
+       int ret;                        // ✅ 单次调度内用完即弃
+       PT_BEGIN(pt);
+       // ...
+       PT_END(pt);
+   }
+   ```
+
+3. **禁止给 static 变量在 PT_BEGIN 前"反复赋初值"**
+   ```c
+   // ❌ 错误 - wait_time 每次 resume 都被重置为 10，状态机逻辑被破坏
+   static uint32_t wait_time = 0;
+   wait_time = 10;
+   PT_BEGIN(pt);
+
+   // ✅ 正确 - 只在第一次进入时由编译器零初始化，后续状态机分支正常赋值
+   static uint32_t wait_time = 0;
+   PT_BEGIN(pt);
+   ```
+
+4. **发送/接收进度必须持久化，不能放在局部变量里**
+   ```c
+   // ❌ 错误 - off/w 是局部变量，PT_WAIT_UNTIL 后会被重置，大 body 永远发不完
+   int off = 0;
+   while (off < len) {
+       PT_WAIT_UNTIL(pt, bSockIsWriteable(fd) == 1, 5000);
+       uint16_t w = 0;
+       bSend(fd, buf + off, len - off, &w);
+       off += w;   // 若 yield 回来，off 已丢失
+   }
+
+   // ✅ 正确 - 进度保存在 ctx 字段或 static 中，跨 yield 保留
+   ctx->send_off = 0;
+   while (ctx->send_off < len) {
+       PT_WAIT_UNTIL(pt, bSockIsWriteable(fd) == 1, 5000);
+       uint16_t w = 0;
+       bSend(fd, buf + ctx->send_off, len - ctx->send_off, &w);
+       ctx->send_off += w;
+   }
+   ```
+
 ### API 函数 vs 状态机职责分离
 
 | 操作 | 位置 | 说明 |
@@ -603,6 +663,10 @@ case HTTP_CLI_STA_PENDING:
 - [ ] 状态转换配对（设置↔处理）
 - [ ] 重入检查：判断状态后立即切换状态
 - [ ] 资源释放路径完整（成功/失败都要释放）
+- [ ] PT 任务中跨 yield 的变量已加 `static` 或保存在 ctx 字段中
+- [ ] 没有 static 变量在 `PT_BEGIN` 前被重新赋初值
+- [ ] 发送/接收循环的 offset、retry 计数等进度变量不会 yield 后丢失
+- [ ] 检查清单中新发现的 bug 模式，必须同时补充到此文档，避免下次再犯
 
 ---
 

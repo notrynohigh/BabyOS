@@ -320,6 +320,12 @@ int bWifiSetMode(bWifiMode_t mode)
     if (bWifiModule.task_id == NULL)
     {
         bWifiModule.task_id = bTaskCreate("wifi", _bWifiTask, NULL, &bWifiModule.attr);
+        // REVIEW-V3 #7 fix: 之前永远返 0, 让 config-web 的 H-NEW-5 wifi_ret 闸门形同虚设.
+        // task 创建失败 (OOM / scheduler 满) 时返回 -1, 上层可感知并报告给前端.
+        if (bWifiModule.task_id == NULL)
+        {
+            return -1;
+        }
     }
     return 0;
 }

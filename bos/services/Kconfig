@@ -176,28 +176,4 @@ config _TRANSFILE_SERVICE_ENABLE
     help
         YMODEM/XMODEM file transfer service.
 
-#======================================== Config Web ========================================
-config _CONFIG_WEB_SERVICE_ENABLE
-    bool "Config Web Service"
-    default n
-    depends on _BOS_SERVICES_ENABLE
-    select _HTTP_SERVICE_ENABLE
-    select _HTTP_SERVER_ENABLE
-    # M-NEW-15 fix: config-web 调用 bTcpIpGetNetcardInfo / bTcpIpSetActiveNetcard /
-    # bWifiJoinAp 等 API, 这些依赖 _TCPIP_SERVICE_ENABLE. 显式 select 让用户在
-    # 单独启用 _CONFIG_WEB_SERVICE_ENABLE 时不会撞 link 错误 (undefined reference).
-    # 即使间接路径 (_HTTP_SERVER_ENABLE → _TCPIP_SERVICE_ENABLE) 已经 select 了,
-    # 显式 select 让 Kconfig dependency 更清晰, 新贡献者一眼能看出.
-    select _TCPIP_SERVICE_ENABLE
-    help
-        Web-based network configuration interface.
-
-if _CONFIG_WEB_SERVICE_ENABLE
-
-config CONFIG_WEB_PORT
-    int "Web server port"
-    default 80
-
-endif
-
 endmenu

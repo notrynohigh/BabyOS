@@ -754,6 +754,15 @@ static int _bENC28J60Ctl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
     bDRIVER_GET_PRIVATE(_priv, bENC28J60Private_t, pdrv);
     switch (cmd)
     {
+        case bCMD_GET_DRIVER_NETIF:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            ((bDriverNetif_t *)param)->private = _priv;
+        }
+        break;
         case bCMD_GET_MAC_ADDRESS:
         {
             if (param == NULL)
