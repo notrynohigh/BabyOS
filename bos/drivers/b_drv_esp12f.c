@@ -64,6 +64,8 @@
 
 #define DRIVER_PRIVATE_TYPE bEsp12fPrivate_t
 
+#define DRIVER_ESP12F_DEBUG_ENABLE 0
+
 #ifndef ESP12F_CMD_TIMEOUT
 #define WIFIMODULE_CMD_TIMEOUT (5000)
 #else
@@ -309,13 +311,15 @@ const static bWifiModuleCmdUnit_t bEspCmdApMode[]    = {{"AT+CWMODE=2\r\n", "OK"
 const static bWifiModuleCmdUnit_t bEspCmdApStaMode[] = {{"AT+CWMODE=3\r\n", "OK", 300, NULL},
                                                         {NULL, NULL, 300, _bSetApInfo},
                                                         {"AT+CIPMUX=1\r\n", "OK", 300, NULL}};
-const static bWifiModuleCmdUnit_t bEspCmdJoinAp[]    = {{NULL, "OK,WIFI GOT IP", 15000, _bJoinAp}};
+const static bWifiModuleCmdUnit_t bEspCmdJoinAp[]    = {{NULL, "OK,WIFI GOT IP", 30000, _bJoinAp}};
 
 const static bWifiModuleCmdUnit_t bEspCmdConnectRemote[] = {
-    {NULL, "OK,ALREADY CONNECTED", 1000, _bConnectRemote}};
+    // ESP-12F 在 busy 状态下回复 "0,CONNECT" 可能迟于 1s, 设为 3000ms 容忍
+    // 否则 cmd_unit 超时会被误判为失败, 触发 B_TCPIP_E_DISCONNECT.
+    {NULL, "OK,ALREADY CONNECTED", 3000, _bConnectRemote}};
 
 const static bWifiModuleCmdUnit_t bEspCmdSendData[] = {{NULL, ">", 300, _bTcpUdpSendStart},
-                                                       {NULL, "SEND OK", 1000, _bTcpUdpSendData}};
+                                                       {NULL, "SEND OK", 3000, _bTcpUdpSendData}};
 
 const static bWifiModuleCmdUnit_t bEspCmdDisconnectRemote[] = {
     {NULL, "OK,UNLINK", 300, _bDisconnectRemote}};
@@ -404,10 +408,11 @@ static void _bEsp12fDataParse(bDriverInterface_t *pdrv, char *pdata, uint16_t le
                 if (_priv->pcb_ctx[conn_index].state >= WIFI_PCB_STATE_CONNECTED &&
                     _priv->pcb_ctx[conn_index].state < WIFI_PCB_STATE_WAIT_DISCONNECT)
                 {
+#if DRIVER_ESP12F_DEBUG_ENABLE
                     b_log("recv:%d bytes\r\n    %s\r\n", recv_len, pstr);
                     b_log_hex(pstr, recv_len);
                     b_log("\r\n");
-
+#endif
                     bTcpIpNewDataArg_t new_data;
                     new_data.pcb     = _priv->pcb_ctx[conn_index].pcb;
                     new_data.pbuf    = (uint8_t *)pstr;
@@ -845,8 +850,25 @@ static void _bWifiPrivCmdResultHandle(uint8_t cmd, uint8_t isok, DRIVER_PRIVATE_
                 }
                 else
                 {
-                    _bWifiSetPcbStatus(_priv, i, WIFI_PCB_STATE_ASSIGNED);
-                    _bWifiInvokeTcpIpCb(_priv, B_TCPIP_E_DISCONNECT, _priv->pcb_ctx[i].pcb);
+                    // SENDDATA 失败 (例如 AT+CIPSEND 后 SEND OK 响应超时)
+                    // 真实场景: HTTPS 关闭时 ESP-12F 内部状态机混乱, SEND OK
+                    // 可能迟到几秒才返回, 但 cmd_unit 超时 1s 后被判失败.
+                    // 旧实现错误地把 TCP 推入 DISCONNECT 会导致:
+                    //   - 上层 HTTP client task 卡在 SSL 等待里
+                    //   - send_busy 永远不被清零 (只在 SEND_DONE 时清)
+                    //   - 上层下一次 bHttpRequest 报 "client busy" 死锁
+                    //
+                    // 修复: 不上报 DISCONNECT (TCP 还活着), 只把 pcb state
+                    // 退回 CONNECTED, 并上报 SEND_DONE(len=0) 让 tcpip 释放
+                    // send_busy 锁. 真实数据此时大概率已被 ESP 收到 (日志显示
+                    // ESP 已 echo "Recv N bytes"), 上层通过 SSL 状态机自然
+                    // 完成后续 close_notify 流程.
+                    b_log_w("SENDDATA timeout (AT cmd ack late), idx=%d\r\n", i);
+                    _bWifiSetPcbStatus(_priv, i, WIFI_PCB_STATE_CONNECTED);
+                    bTcpIpSendDoneArg_t sendone_arg;
+                    sendone_arg.pcb = _priv->pcb_ctx[i].pcb;
+                    sendone_arg.len = 0;  // 表示 send 流程已结束 (不论成功失败)
+                    _bWifiInvokeTcpIpCb(_priv, B_TCPIP_E_SEND_DONE, &sendone_arg);
                 }
                 _priv->pcb_ctx[i].send_data.pbuf = NULL;
                 _priv->pcb_ctx[i].send_data.len  = 0;
@@ -1330,7 +1352,6 @@ static int _bESP12FCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
     bMacAddress_t *pmac = NULL;
     bDRIVER_GET_PRIVATE(_priv, DRIVER_PRIVATE_TYPE, pdrv);
-    b_log("ctl:%d\r\n", cmd);
     switch (cmd)
     {
         case bCMD_GET_DRIVER_NETIF:

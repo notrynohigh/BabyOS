@@ -441,6 +441,235 @@ struct list_head {
 
 ---
 
+## 异步编程规范（重要）
+
+### Protothread 必须规则
+
+BabyOS 所有异步操作必须使用 Protothread 模式，**禁止使用 while 循环等待**：
+
+```c
+// ❌ 错误 - 阻塞等待，会卡死主循环
+while (!condition) { }
+
+// ✅ 正确 - 使用 PT 宏等待
+PT_WAIT_UNTIL(pt, condition);
+
+// ✅ 正确 - 超时等待
+PT_WAIT_UNTIL(pt, condition || bTaskIsTimeout(pt, timeout_ms));
+```
+
+### Protothread 变量生命周期规则
+
+PT 任务本质是 `switch-case` 状态机，函数会被反复调用。理解这一点才能避免 **"yield 后变量被覆盖"** 的隐蔽 bug：
+
+1. **PT_BEGIN 之前的代码每次调度都会执行**
+   ```c
+   PT_THREAD(task)(struct pt *pt, void *arg) {
+       int x = 10;          // ⚠️ 每次 task 被调度都会重新执行，x 会被重置为 10
+       PT_BEGIN(pt);
+       // ...
+       PT_END(pt);
+   }
+   ```
+
+2. **只有跨 yield 必须保留的变量才加 `static`**
+   ```c
+   PT_THREAD(task)(struct pt *pt, void *arg) {
+       static uint32_t wait_time = 0;  // ✅ 跨 PT_WAIT_UNTIL 保留
+       static int      retry_cnt = 0;  // ✅ 跨多次调度累计
+
+       int ret;                        // ✅ 单次调度内用完即弃
+       PT_BEGIN(pt);
+       // ...
+       PT_END(pt);
+   }
+   ```
+
+3. **禁止给 static 变量在 PT_BEGIN 前"反复赋初值"**
+   ```c
+   // ❌ 错误 - wait_time 每次 resume 都被重置为 10，状态机逻辑被破坏
+   static uint32_t wait_time = 0;
+   wait_time = 10;
+   PT_BEGIN(pt);
+
+   // ✅ 正确 - 只在第一次进入时由编译器零初始化，后续状态机分支正常赋值
+   static uint32_t wait_time = 0;
+   PT_BEGIN(pt);
+   ```
+
+4. **发送/接收进度必须持久化，不能放在局部变量里**
+   ```c
+   // ❌ 错误 - off/w 是局部变量，PT_WAIT_UNTIL 后会被重置，大 body 永远发不完
+   int off = 0;
+   while (off < len) {
+       PT_WAIT_UNTIL(pt, bSockIsWriteable(fd) == 1, 5000);
+       uint16_t w = 0;
+       bSend(fd, buf + off, len - off, &w);
+       off += w;   // 若 yield 回来，off 已丢失
+   }
+
+   // ✅ 正确 - 进度保存在 ctx 字段或 static 中，跨 yield 保留
+   ctx->send_off = 0;
+   while (ctx->send_off < len) {
+       PT_WAIT_UNTIL(pt, bSockIsWriteable(fd) == 1, 5000);
+       uint16_t w = 0;
+       bSend(fd, buf + ctx->send_off, len - ctx->send_off, &w);
+       ctx->send_off += w;
+   }
+   ```
+
+### API 函数 vs 状态机职责分离
+
+| 操作 | 位置 | 说明 |
+|------|------|------|
+| 数据准备 | API 函数 | 解析参数、构建请求、分配内存 |
+| Socket 创建 | 状态机 IDLE | 异步操作必须在任务中执行 |
+| 连接操作 | 状态机 CONNECTING | bConnect 是异步的 |
+| 发送数据 | 状态机 SENDING | 在状态机中执行 |
+| 接收数据 | 状态机 RECVING | 使用 PT_WAIT_UNTIL |
+
+```c
+// API 函数 - 只做数据准备和重入检查
+int bHttpClientRequest(void *handle, ...) {
+    // 用状态判断重入
+    if (ctx->state != HTTP_CLI_STA_IDLE) {
+        return -1;
+    }
+
+    // 解析 URL
+    // 构建请求头（动态分配）
+
+    // 状态仍为 IDLE，由 send_buf != NULL 信号触发状态机
+    return 0;
+}
+
+// 状态机 - HTTP内部逻辑都在这里
+PT_THREAD(http_client_task(...)) {
+    PT_BEGIN(pt);
+    while (1) {
+        switch (ctx->state) {
+        case HTTP_CLI_STA_IDLE:
+            // 等待请求信号
+            PT_WAIT_UNTIL(pt, ctx->send_buf != NULL, 0);
+
+            // HTTP内部逻辑：创建socket + bConnect
+            ctx->sockfd = bSocket(...);
+            bConnect(ctx->sockfd, ...);
+            ctx->state = HTTP_CLI_STA_CONNECTING;
+            break;
+
+        case HTTP_CLI_STA_CONNECTING:
+            PT_WAIT_UNTIL(pt, bSocketIsConnected(ctx->sockfd) == 1, 5000);
+            if (PT_WAIT_IS_TIMEOUT(pt)) {
+                ctx->state = HTTP_CLI_STA_IDLE;
+                break;
+            }
+            ctx->state = HTTP_CLI_STA_SENDING;
+            break;
+        }
+    }
+    PT_END(pt);
+}
+```
+
+**关键点**:
+- API 只做数据准备 + 重入检查（用状态判断）
+- Socket 创建和 bConnect 都在状态机 IDLE case 中
+- API 返回后状态仍为 IDLE，由 `send_buf != NULL` 信号触发状态机
+
+### MCU 栈空间保护
+
+MCU 栈空间有限（通常 2KB-16KB），**禁止在函数内定义大数组**：
+
+```c
+// ❌ 错误 - 栈溢出风险
+void func() {
+    char buf[1024];      // 太大
+    char req_header[256]; // 太大
+    char host[64];       // 太大
+}
+
+// ✅ 正确 - 使用 static 或动态分配
+static char s_buf[256];  // static 在 .data/.bss 段
+// 或者
+char *buf = bMalloc(size);  // 动态分配
+```
+
+### 异步指针有效期问题
+
+API 函数接收的指针在异步执行时可能已失效，**必须复制数据到分配的缓冲区**：
+
+```c
+// ❌ 错误 - 用户指针可能在 API 返回后失效
+int bHttpClientRequest(void *handle, const char *url) {
+    ctx->url = url;  // 危险！用户可能释放了 url
+}
+
+// ✅ 正确 - 分配内存复制数据
+int bHttpClientRequest(void *handle, const char *url) {
+    int url_len = strlen(url) + 1;
+    char *allocated_url = bMalloc(url_len);
+    if (!allocated_url) return -1;
+    memcpy(allocated_url, url, url_len);
+    ctx->url = allocated_url;  // 安全的副本
+}
+```
+
+### 重入检查必须切换状态
+
+**错误写法**：判断状态但不切换，API 执行完状态没变
+```c
+// ❌ 错误 - 判断了状态但不切换，没有意义
+if (ctx->state != HTTP_CLI_STA_IDLE) {
+    return -1;  // 重入返回
+}
+// ... 数据准备 ...
+return 0;  // 状态没变，重入检查形同虚设
+```
+
+**正确写法**：判断状态后立即切换
+```c
+// ✅ 正确 - 判断 + 切换
+if (ctx->state != HTTP_CLI_STA_IDLE) {
+    return -1;
+}
+// ... 数据准备 ...
+
+// 在返回前切换状态，否则重入检查无效
+ctx->state = HTTP_CLI_STA_PENDING;
+return 0;
+```
+
+**状态机侧**：需要处理 PENDING 状态
+```c
+case HTTP_CLI_STA_IDLE:
+    PT_WAIT_UNTIL(pt, ctx->send_buf != NULL, 0);
+    /* fall through */  // 穿透到 PENDING
+
+case HTTP_CLI_STA_PENDING:
+    // HTTP内部逻辑
+    ctx->state = HTTP_CLI_STA_CONNECTING;
+    break;
+```
+
+### 代码审查检查清单
+
+**异步代码必查项**:
+- [ ] 没有使用 `while (...)` 阻塞等待
+- [ ] 所有 socket 操作在状态机中，不在 API 函数中
+- [ ] 没有大数组定义在栈上（>64 字节需谨慎）
+- [ ] 用户指针已复制到分配缓冲区
+- [ ] 每个 PT_WAIT_UNTIL 都有超时保护
+- [ ] 状态转换配对（设置↔处理）
+- [ ] 重入检查：判断状态后立即切换状态
+- [ ] 资源释放路径完整（成功/失败都要释放）
+- [ ] PT 任务中跨 yield 的变量已加 `static` 或保存在 ctx 字段中
+- [ ] 没有 static 变量在 `PT_BEGIN` 前被重新赋初值
+- [ ] 发送/接收循环的 offset、retry 计数等进度变量不会 yield 后丢失
+- [ ] 检查清单中新发现的 bug 模式，必须同时补充到此文档，避免下次再犯
+
+---
+
 ## 参考文档
 
 - `CLAUDE.md` - 项目总览
@@ -448,3 +677,4 @@ struct list_head {
 - `bos/b_section.h` - Section 机制
 - `bos/core/inc/b_device.h` - 设备接口
 - `test/selftest/docs/` - 模块设计文档
+- `bos/thirdparty/pt/pt.h` - Protothread 头文件

@@ -1,12 +1,22 @@
-#版本配置，软硬件版本
+# Version Configuration
+menu "Version Configuration"
+
 config HW_VERSION
     int "Hardware version"
     default 211212
+    help
+        Hardware version number.
 
 config FW_VERSION
     int "Firmware version"
     default 80600
+    help
+        Firmware version number.
 
 config FW_NAME
-    string "Firware Name"
+    string "Firmware name"
     default "BabyOS"
+    help
+        Firmware name string.
+
+endmenu

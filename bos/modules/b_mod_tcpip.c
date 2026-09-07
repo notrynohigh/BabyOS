@@ -728,6 +728,12 @@ static void _bMainNetcardUpdate()
     {
         return;
     }
+    // M-NEW-1 注释: 当前实现里 "数值越小优先级越高" (lowest-num-wins),
+    // 用 `bTcpIpCtx.pinfo->priority > pinfo->priority` 检测: 当新 candidate 的 priority
+    // 更小 (数值小=优先级高), 替换当前 pinfo.
+    // 与 Linux rt_priority / lwIP netif 默认顺序相反, 这里采用 macOS-style "数值小=优先",
+    // 调用方注册 netcard 时按业务需要分配小数值给优先网卡 (例如 WiFi=10, ETH=20).
+    // 如果将来要改语义, 同步翻转这个比较符并更新 bModTcpip.h 的 priority 文档.
     for (i = 0; i < bTcpIpCtx.info_number; i++)
     {
         pinfo = &bTcpIpCtx.pinfo_table[i];
@@ -739,6 +745,7 @@ static void _bMainNetcardUpdate()
             }
             else
             {
+                // 数值小=优先级高; 当前 pinfo 数值 > 新 pinfo 数值时切换.
                 if ((bTcpIpCtx.pinfo->priority > pinfo->priority) ||
                     (bTcpIpCtx.pinfo->netif.is_linked == 0))
                 {
@@ -755,10 +762,22 @@ static void _bMainNetcardUpdate()
     {
         if (bTcpIpCtx.pinfo->netif.private != NULL)
         {
-            B_SAFE_INVOKE(pinfo->stack_if.set_default_netif, &bTcpIpCtx.pinfo->netif);
+            // CRIT-TCP-1 fix: 之前用 `pinfo` (函数形参, 来自最后一次循环迭代),
+            // 但代码本意是"当前 active pinfo". 形参 pinfo 可能 != bTcpIpCtx.pinfo
+            // (后者是已更新为 active 的全局), 导致 set_default_netif 调错 netif.
+            // 修正为 bTcpIpCtx.pinfo, 真正传当前 active.
+            B_SAFE_INVOKE(bTcpIpCtx.pinfo->stack_if.set_default_netif,
+                          &bTcpIpCtx.pinfo->netif);
         }
     }
-    b_log("[update netcard][%d][%d]\r\n", bTcpIpCtx.info_number, bTcpIpCtx.pinfo->netif.dev_no);
+    // HIGH-TCP-1 fix: bTcpIpCtx.pinfo 可能为 NULL (上面 if 已 guard, 但 b_log
+    // 还是在 if 外, 第二次访问 bTcpIpCtx.pinfo->netif.dev_no 时 NULL 会
+    // crash). 改成 defensive: NULL 则跳过 log.
+    if (bTcpIpCtx.pinfo != NULL)
+    {
+        b_log("[update netcard][%d][%d]\r\n", bTcpIpCtx.info_number,
+              bTcpIpCtx.pinfo->netif.dev_no);
+    }
 }
 
 static void _bPhyLinkStateCb(uint8_t state, void *arg)
@@ -808,7 +827,11 @@ static int bDnsCacheAdd(char *domain, uint32_t ip, uint32_t ttl)
             bDNSCache[i].expire_tick = ctick + MS2TICKS(ttl * 1000);
             bDNSCache[i].ip          = ip;
             memset(bDNSCache[i].domain, 0, sizeof(bDNSCache[i].domain));
-            strncpy(bDNSCache[i].domain, domain, MAX_DOMAIN_NAME);
+            // H-NEW-12 fix: strncpy 不会自动 NUL 终止, 当 strlen(domain) >= MAX_DOMAIN_NAME
+            // 时残留旧字节. 用 snprintf 安全截断 + 显式 NUL. memset 已保证尾字节为 0,
+            // 这里再保险一次.
+            snprintf(bDNSCache[i].domain, sizeof(bDNSCache[i].domain), "%s", domain);
+            bDNSCache[i].domain[sizeof(bDNSCache[i].domain) - 1] = '\0';
             b_log("dns add: %s %x %d %d\r\n", domain, ip, ctick, bDNSCache[i].expire_tick);
             return 0;
         }
@@ -1888,7 +1911,13 @@ static void _bDhcpSetIp(bTcpIpInfo_t *pinfo)
     dns <<= 8;
     dns |= pinfo->dhcp_ctx.allocated_dns[3];
     pinfo->stack_if.set_ip(ip, mask, gw, &pinfo->netif);
-    bTcpIpDNS[2]               = dns;
+    // M-NEW-4 fix: DHCP 返回 0.0.0.0 表示服务器不提供 DNS, 不能直接覆盖 bTcpIpDNS[2].
+    // 否则用户自定义 DNS (静态配置 / 前一次 DHCP 拿到的) 会被 0 冲掉, 后续解析全部失败.
+    // 校验 dns != 0 才写入.
+    if (dns != 0)
+    {
+        bTcpIpDNS[2] = dns;
+    }
     pinfo->ip_info.ipaddr      = ip;
     pinfo->ip_info.gateway     = gw;
     pinfo->ip_info.netmask     = mask;
@@ -2070,8 +2099,14 @@ static void _bTcpIpTransState(bTrans_t *trans, int state)
     {
         return;
     }
-    b_log("trans[%p] state:%s --> %s\r\n", trans, bSocketStateStr[trans->state],
-          bSocketStateStr[state]);
+    // HIGH-TCP-2 fix: bSocketStateStr[] 长度有限, state 越界会 OOB 读.
+    // 防御: 越界 state 不打日志, 但仍更新 trans->state + dispatch event.
+    if (trans->state >= 0 && trans->state < (int)(sizeof(bSocketStateStr) / sizeof(bSocketStateStr[0])) &&
+        state >= 0 && state < (int)(sizeof(bSocketStateStr) / sizeof(bSocketStateStr[0])))
+    {
+        b_log("trans[%p] state:%s --> %s\r\n", trans, bSocketStateStr[trans->state],
+              bSocketStateStr[state]);
+    }
     trans->state = state;
     if (state == B_SOCKET_STATE_CONNECTED)
     {
@@ -2473,24 +2508,33 @@ static err_t _bTcpRecvFn(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t 
 static int _bLwipTcpConnect(void *pcb, uint32_t addr, uint16_t port)
 {
     ip_addr_t ipaddr;
+    err_t     err;
+
     if (pcb == NULL)
     {
         return -1;
     }
+
     tcp_arg(pcb, pcb);
     tcp_err(pcb, _bTcpErrorFn);
     tcp_sent(pcb, _bTcpSendFn);
     tcp_recv(pcb, _bTcpRecvFn);
+
     ip4_addr_set_u32(&ipaddr, PP_HTONL(addr));
-    if (ERR_OK == tcp_connect(pcb, &ipaddr, port, _bTcpConnectFn))
+    err = tcp_connect(pcb, &ipaddr, port, _bTcpConnectFn);
+
+    if (err == ERR_OK)
     {
+        // SYN 已入队，状态进入 SYN_SENT；连接结果由 _bTcpConnectFn / _bTcpErrorFn 回调。
         B_SAFE_INVOKE(bLwipEventCb, B_TCPIP_E_CONNECTING, pcb, bLwipEventCbArg);
+        return 0;
     }
-    else
-    {
-        B_SAFE_INVOKE(bLwipEventCb, B_TCPIP_E_CONNECTED, pcb, bLwipEventCbArg);
-    }
-    return 0;
+
+    // 同步失败 (ERR_MEM / ERR_RTE / ERR_USE / ERR_ISCONN / ...):
+    // lwIP 不会触发 connected/err 回调，必须靠返回值让调用方感知。
+    // 这里不主动 dispatch DISCONNECT，避免与调用方后续 bShutdown() 产生的 DISCONNECT
+    // 重复回调；调用方在 bConnect() 返回 -1 后应走正常 bShutdown() 清理路径。
+    return -1;
 }
 
 static int _bLwipTcpDelete(void *pcb)
@@ -2509,6 +2553,14 @@ static int _bLwipTcpSend(void *pcb, const uint8_t *pbuf, uint16_t len)
     err                    = tcp_write(pcb, pbuf, writeable_len, TCP_WRITE_FLAG_COPY);
     if (err == ERR_OK)
     {
+        // H-NEW-11 fix: tcp_write 仅把数据塞入发送队列, 必须显式调 tcp_output
+        // 才能立即触发 lwIP 把 segment 发出去. 否则远程会在 sndbuf 满前都收不到
+        // 数据 (PC/NB 上的 TCP 延迟 ack 60ms+ 触发, 用户体验差).
+        // 仅在 writeable_len > 0 时调用, 避免空帧 flush.
+        if (writeable_len > 0)
+        {
+            tcp_output(pcb);
+        }
         return writeable_len;
     }
     return 0;
@@ -2577,34 +2629,36 @@ static int _bLwipUdpSend(void *netif, void *pcb, const uint8_t *pbuf, uint16_t l
     struct udp_pcb *real_udp_pcb = (struct udp_pcb *)pcb;
     struct pbuf    *p            = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_RAM);
     err_t           err;
-    if (p)
+    if (p == NULL)
     {
-        memcpy(p->payload, pbuf, len);
-
-        if (ip4_addr_isbroadcast(&real_udp_pcb->remote_ip, pnetif))
-        {
-            err = udp_sendto_if_src(real_udp_pcb, p, IP_ADDR_BROADCAST, real_udp_pcb->remote_port,
-                                    pnetif, &real_udp_pcb->local_ip);
-        }
-        else
-        {
-            err = udp_send(pcb, p);
-        }
-        pbuf_free(p);
-        if (err == ERR_OK)
-        {
-            bTcpIpSendDoneArg_t sendone_arg;
-            sendone_arg.pcb = pcb;
-            sendone_arg.len = len;
-            B_SAFE_INVOKE(bLwipEventCb, B_TCPIP_E_SEND_DONE, &sendone_arg, bLwipEventCbArg);
-            return len;
-        }
-        else
-        {
-            b_log_e("err:%d\r\n", err);
-        }
+        // H-NEW-13 fix: pbuf_alloc 失败时返回 -1 (而不是 0=success-zero), 让调用方
+        // 知道本次发送未完成. 此前返 0 会被上层解释为 "成功发了 0 字节",
+        // 触发 SEND_DONE, 丢失真实失败信号.
+        b_log_e("[lwip udp] pbuf_alloc fail, len=%u\r\n", (unsigned)len);
+        return -1;
     }
-    return 0;
+    memcpy(p->payload, pbuf, len);
+
+    if (ip4_addr_isbroadcast(&real_udp_pcb->remote_ip, pnetif))
+    {
+        err = udp_sendto_if_src(real_udp_pcb, p, IP_ADDR_BROADCAST, real_udp_pcb->remote_port,
+                                pnetif, &real_udp_pcb->local_ip);
+    }
+    else
+    {
+        err = udp_send(pcb, p);
+    }
+    pbuf_free(p);
+    if (err == ERR_OK)
+    {
+        bTcpIpSendDoneArg_t sendone_arg;
+        sendone_arg.pcb = pcb;
+        sendone_arg.len = len;
+        B_SAFE_INVOKE(bLwipEventCb, B_TCPIP_E_SEND_DONE, &sendone_arg, bLwipEventCbArg);
+        return (int)len;
+    }
+    b_log_e("[lwip udp] send err:%d\r\n", err);
+    return -1;
 }
 
 static int _bLwipUdpRecv(void *pcb, uint8_t *pbuf, uint16_t len)
@@ -2825,6 +2879,11 @@ static void _bTcpIpCallback(bTcpIpEvent_t event, void *param, void *arg)
         tcpip_info = _bFindNetcardByPriv(pinfo->netif.private);
         if (tcpip_info == NULL)
         {
+            // H-NEW-14 fix: 此前 netif 查找失败直接 return, pnewtrans 泄漏 (1 个 sizeof(bTrans_t)).
+            // 找到 netcard 后再填字段并挂链表, 找不到则释放 pcb 和 pnewtrans.
+            // 注意: 这里不能直接 tcp_close(new_pcb) — pcb 仍归 lwIP accept 状态机,
+            // 等下一轮 sys_check_timeouts/recv 时自然关闭. 先把 bTrans 释放掉.
+            bFree(pnewtrans);
             return;
         }
         pnewtrans->pcb       = pinfo->new_pcb;
@@ -2853,46 +2912,52 @@ static void _bTcpIpCallback(bTcpIpEvent_t event, void *param, void *arg)
         }
         ptrans = _bTransFindNodeByPcb(pinfo->pcb);
 #if (defined(_TCPIP_STACK_LWIP_ENABLE) && (_TCPIP_STACK_LWIP_ENABLE == 1))
-        if (TCPIP_STACK_OPT_IS_USE_LWIP(ptrans->stack_opt))
+        // C-NEW-5 Site A/B: ptrans 可能为 NULL (pcb 在 bShutdown 路径已释放).
+        // 把外层 if 改成 NULL-aware, 之前 else 分支还 deref ptrans->type (Site A.2) 也修了.
+        if (ptrans != NULL && TCPIP_STACK_OPT_IS_USE_LWIP(ptrans->stack_opt))
         {
-            if (ptrans)
+            if (ptrans->p == NULL)
             {
-                if (ptrans->p == NULL)
-                {
-                    ptrans->p           = (struct pbuf *)pinfo->pbuf;
-                    ptrans->read_offset = 0;
-                }
-                else
-                {
-                    pbuf_cat(ptrans->p, (struct pbuf *)pinfo->pbuf);
-                }
+                ptrans->p           = (struct pbuf *)pinfo->pbuf;
+                ptrans->read_offset = 0;
             }
             else
             {
-                if (ptrans->type == B_TRANS_CONN_TCP)
-                {
-                    tcp_recved(pinfo->pcb, pinfo->len);
-                }
-                pbuf_free((struct pbuf *)(pinfo->pbuf));
+                pbuf_cat(ptrans->p, (struct pbuf *)pinfo->pbuf);
             }
+        }
+        else if (ptrans == NULL)
+        {
+            // 没找到匹配的 bTrans, 释放 lwIP 已排队的 pbuf (否则泄漏).
+            // 仅 TCP 需要告知 lwIP 已消费 (滑动窗口), UDP 不需要.
+            // 这里无法从 pcb 类型直接判断 TCP/UDP (param 只有 pbuf+len),
+            // 但 tcp_recved 对非 TCP pcb 是无害的; lwIP 在 2.x 也是宏, 编译期会过滤.
+            tcp_recved(pinfo->pcb, pinfo->len);
+            pbuf_free((struct pbuf *)(pinfo->pbuf));
+            return;
         }
 #endif
 
 #if (defined(_TCPIP_RECV_BUF_ENABLE) && (_TCPIP_RECV_BUF_ENABLE == 1))
-        if (TCPIP_STACK_OPT_IS_NO_BUFFER(ptrans->stack_opt))
+        // C-NEW-5 Site C: NO_BUFFER 路径同样要先 NULL 校验.
+        if (ptrans != NULL && TCPIP_STACK_OPT_IS_NO_BUFFER(ptrans->stack_opt))
         {
             _bTransPcbAddData(&ptrans->recv_head, pinfo->pbuf, pinfo->len, pinfo->release,
                               TCPIP_RECV_BUF_LEN_MAX);
         }
 #endif
-        _bTcpIpEvent(ptrans, B_TRANS_NEW_DATA, ptrans);
+        if (ptrans != NULL)
+        {
+            _bTcpIpEvent(ptrans, B_TRANS_NEW_DATA, ptrans);
+        }
     }
     else if (event == B_TCPIP_E_SEND_DONE)
     {
         bTcpIpSendDoneArg_t *pinfo = (bTcpIpSendDoneArg_t *)param;
         ptrans                     = _bTransFindNodeByPcb(pinfo->pcb);
 #if (defined(_TCPIP_SEND_BUF_ENABLE) && (_TCPIP_SEND_BUF_ENABLE == 1))
-        if (TCPIP_STACK_OPT_IS_NO_BUFFER(ptrans->stack_opt))
+        // C-NEW-5 Site D: ptrans 可能是 NULL (pcb 已 bShutdown 释放), 必须先校验.
+        if (ptrans != NULL && TCPIP_STACK_OPT_IS_NO_BUFFER(ptrans->stack_opt))
         {
             if (param)
             {
@@ -2904,9 +2969,16 @@ static void _bTcpIpCallback(bTcpIpEvent_t event, void *param, void *arg)
             ptrans->send_busy = 0;
         }
 #endif
-        _bTcpIpEvent(ptrans, B_TRANS_SEND_DONE, ptrans);
+        if (ptrans != NULL)
+        {
+            _bTcpIpEvent(ptrans, B_TRANS_SEND_DONE, ptrans);
+        }
     }
-    if (ptrans != NULL)
+    // C-NEW-5 Site E: 之前 "if (ptrans != NULL) return;" 会无差别短路掉
+    // CONNECTED / DISCONNECT / CONNECTING 处理 (那些事件本身 ptrans 就还未找到).
+    // 改成事件感知的分支: 只有当 event 已是 NEW_DATA / SEND_DONE (在上面处理过)
+    // 才提前 return; 否则继续走下面对 CONNECTED 等事件的处理.
+    if (event == B_TCPIP_E_NEW_DATA || event == B_TCPIP_E_SEND_DONE)
     {
         return;
     }
@@ -3199,9 +3271,12 @@ int bTcpIpInit(const bNetCardInfo_t *pnetcard, uint8_t number)
     return 0;
 }
 
-int bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway)
+// REVIEW-V3 #3 fix: 抽出核心 set-IP 逻辑, 接受显式 pinfo.
+// 旧 bTcpIpSetIp 只改 bTcpIpCtx.pinfo (活动网卡), 在多网卡设备上调用 /api/eth
+// 会改错网卡 (改到 WiFi 而不是 ETH). 新增 ByDevNo 版本给 config-web 用.
+static int _bTcpIpSetIpPinfo(bTcpIpInfo_t *pinfo, const char *ip_addr,
+                             const char *netmask, const char *gateway)
 {
-    bTcpIpInfo_t *pinfo = bTcpIpCtx.pinfo;
     if (pinfo == NULL)
     {
         return -1;
@@ -3233,6 +3308,11 @@ int bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway)
                                pinfo->ip_info.gateway, &pinfo->netif);
     }
     return 0;
+}
+
+int bTcpIpSetIp(const char *ip_addr, const char *netmask, const char *gateway)
+{
+    return _bTcpIpSetIpPinfo(bTcpIpCtx.pinfo, ip_addr, netmask, gateway);
 }
 
 int bTcpIpGetIp(char *ipaddr, char *netmask, char *gateway)
@@ -3331,18 +3411,6 @@ bSocketFd_t bSocket(bTransType_t type, pbTransCb_t cb, void *user_data)
     return _bSocket(pinfo, type, cb, user_data);
 }
 
-int bSocketRegCallback(bSocketFd_t sockfd, pbTransCb_t cb, void *user_data)
-{
-    if (SOCKFD_IS_INVALID(sockfd))
-    {
-        return -1;
-    }
-    bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
-    ptrans->callback = cb;
-    ptrans->cb_arg   = user_data;
-    return 0;
-}
-
 int bConnect(bSocketFd_t sockfd, char *remote, uint16_t port)
 {
     bTrans_t *ptrans = (bTrans_t *)(intptr_t)sockfd;
@@ -3377,11 +3445,17 @@ int bConnect(bSocketFd_t sockfd, char *remote, uint16_t port)
     ptrans->remote_ip = remote_ip_tmp;
     if (ptrans->type == B_TRANS_CONN_TCP)
     {
-        pstack_if->tcp.connect(ptrans->pcb, ptrans->remote_ip, ptrans->remote_port);
+        if (pstack_if->tcp.connect(ptrans->pcb, ptrans->remote_ip, ptrans->remote_port) < 0)
+        {
+            return -1;
+        }
     }
     else if (ptrans->type == B_TRANS_CONN_UDP)
     {
-        pstack_if->udp.connect(ptrans->pcb, ptrans->remote_ip, ptrans->remote_port);
+        if (pstack_if->udp.connect(ptrans->pcb, ptrans->remote_ip, ptrans->remote_port) < 0)
+        {
+            return -1;
+        }
     }
     return 0;
 }
@@ -3401,11 +3475,17 @@ int bBind(bSocketFd_t sockfd, uint16_t port)
     ptrans->local_port = port;
     if (ptrans->type == B_TRANS_CONN_UDP)
     {
-        pstack_if->udp.bind(ptrans->pcb, port);
+        if (pstack_if->udp.bind(ptrans->pcb, port) < 0)
+        {
+            return -1;
+        }
     }
     else
     {
-        pstack_if->tcp.bind(ptrans->pcb, port);
+        if (pstack_if->tcp.bind(ptrans->pcb, port) < 0)
+        {
+            return -1;
+        }
     }
     return 0;
 }

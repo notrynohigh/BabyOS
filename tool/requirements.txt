@@ -1,2 +1,10 @@
-PyQt5>=5.12
+# BabyOS_Protocol Python upper-computer — runtime dependencies.
+#
+# Pure Python standard library used by tool/:
+#   - tkinter (GUI): 由系统包 python3-tk 提供, 需另行安装 (apt install python3-tk)
+#   - http.server / ssl (MockHttpServer, HTTPS 测试用)
+#   - struct / threading / socket (协议解析)
+#   - json / hashlib (证书、签名辅助)
+#
+# 唯一第三方依赖是 pyserial (UART 链路).
 pyserial>=3.0

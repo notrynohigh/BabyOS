@@ -8,6 +8,7 @@ Length = 1 + param_size  (CMD byte + params)
 Checksum = sum of all bytes excluding the checksum byte itself
 """
 
+import os
 import struct
 from typing import Callable, Optional, Tuple
 
@@ -36,11 +37,27 @@ _protocol_info_index = 0    # number of registered instances (max 1)
 # ---------------------------------------------------------------------------
 
 _TEA_DELTA = 0x9E3779B9
-_SECRET_KEY1 = 1
-_SECRET_KEY2 = 22
-_SECRET_KEY3 = 333
-_SECRET_KEY4 = 4444
-_TEA_KEY = (_SECRET_KEY1, _SECRET_KEY2, _SECRET_KEY3, _SECRET_KEY4)
+# M-NEW-13 fix: TEA key 不能用源码硬编码默认值 — 任何拿到这份代码的人都能解密
+# 上位机 ↔ MCU 的通信. 现在从环境变量 BABYOS_TEA_KEY 读 (4 个十进制 uint32,
+# 用空格分隔), 缺失则用占位 (128, 256, 384, 512) 但打 WARNING 提醒.
+# 推荐: export BABYOS_TEA_KEY="<k1> <k2> <k3> <k4>"  # 与 MCU 端 bProtocolKey 一致.
+def _load_tea_key() -> tuple:
+    raw = os.environ.get('BABYOS_TEA_KEY')
+    if not raw:
+        # 兜底占位 key (测试用, 上线前必须替换). 打印 WARNING 提醒开发者.
+        print('[b_protocol][WARNING] BABYOS_TEA_KEY unset, using placeholder key. '
+              'Set BABYOS_TEA_KEY="<k1> <k2> <k3> <k4>" to match firmware.')
+        return (128, 256, 384, 512)
+    try:
+        parts = [int(p) & 0xFFFFFFFF for p in raw.split()]
+        if len(parts) != 4:
+            raise ValueError(f'need 4 uint32 values, got {len(parts)}')
+        return tuple(parts)
+    except ValueError as e:
+        print(f'[b_protocol][ERROR] BABYOS_TEA_KEY parse failed: {e}, using placeholder')
+        return (128, 256, 384, 512)
+
+_TEA_KEY = _load_tea_key()
 
 
 def _tea_crypt_block(v: list, key: tuple, encrypt: bool, rounds: int = 16) -> list:

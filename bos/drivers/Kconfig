@@ -1,62 +1,73 @@
-#驱动配置
-
+# Drivers Configuration
 menu "Drivers Configuration"
 
+#======================================== PCF8574 ========================================
 config PCF8574_DEFAULT_OUTPUT
-    int "PCF8574 Default Output Value"
+    int "PCF8574 default output value"
     default 0
 
+#======================================== Matrix Keys ========================================
 config MATRIX_KEYS_ROWS
-    int "Maximum number of rows of matrix keys"
+    int "Maximum number of matrix key rows"
     default 4
+    range 1 8
+
 config MATRIX_KEYS_COLUMNS
-    int "Maximum number of columns of matrix keys"
+    int "Maximum number of matrix key columns"
     default 4
+    range 1 8
 
-config ESP12F_CMD_TX_BUF_LEN  
-    int "ESP12F Cmd TX Buffer Length"
-    default 128 
+#======================================== ESP12F WiFi ========================================
+config ESP12F_CMD_TX_BUF_LEN
+    int "ESP12F command TX buffer length"
+    default 128
 
-config ESP12F_CMD_RX_BUF_LEN  
-    int "ESP12F Cmd RX Buffer Length"
-    default 1024     
+config ESP12F_CMD_RX_BUF_LEN
+    int "ESP12F command RX buffer length"
+    default 1024 if !_MBEDTLS_ENABLE
+    default 2560
 
-config ESP12F_CMD_TIMEOUT  
-    int "ESP12F Cmd Timeout (ms)"
-    default 5000    
+config ESP12F_CMD_TIMEOUT
+    int "ESP12F command timeout (ms)"
+    default 5000
 
 config ESP12F_LISTEN_PCB_NUMBER
-    int "ESP12F Listen Pcb Number"
+    int "ESP12F listen PCB number"
     default 2
 
+#======================================== RS485 ========================================
 config RS485_RX_BUF_LEN
-    int "RS485 Rx Buffer Length"
+    int "RS485 RX buffer length"
     default 128
 
 config RS485_RX_IDLE_MS
-    int "RS485 Rx Idle Ms"
+    int "RS485 RX idle timeout (ms)"
     default 50
 
-choice
-    prompt "485 receive data processing method"
-    default _485_USE_CALLBACK
-    config _485_USE_CALLBACK
-        bool "using callback"
-    config _485_USE_SELECT
-        bool "waiting for data using select"
-endchoice
-
-config RS485_CACHE_BUF_LEN
-    int "size of cached buffer"
-    default 1024
-    depends on _485_USE_SELECT
-
 config RS485_SWITCH_DELAY_US
-    int "RS485 Direction Switch Delay (us)"
+    int "RS485 direction switch delay (us)"
     default 1000
 
+choice
+    prompt "RS485 receive data processing"
+    default _485_USE_CALLBACK
+config _485_USE_CALLBACK
+    bool "Callback"
+config _485_USE_SELECT
+    bool "Select (polling)"
+endchoice
+
+if _485_USE_SELECT
+
+config RS485_CACHE_BUF_LEN
+    int "RS485 cache buffer size"
+    default 1024
+
+endif
+
+#======================================== Display ========================================
 config DISPLAY_CACHE_BUF_SIZE
-    int "Display buffer size in pixels"
+    int "Display buffer size (pixels)"
     default 8
 
 endmenu

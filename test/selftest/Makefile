@@ -123,11 +123,19 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # link script
 LDSCRIPT = $(SOURCE_ROOT)/test/babyos.ld
 LDFLAGS = -T$(LDSCRIPT) -lpthread -lm -no-pie
+
+# On Linux the linked binary is `build/BabyOS`; on Windows gcc adds `.exe`.
+# Detect host and let the linker write to whichever name applies.
+ifeq ($(OS),Windows_NT)
+TARGET_EXT := .exe
+else
+TARGET_EXT :=
+endif
 # libraries  
 
 
-# default action: build all -specs=nano.specs  
-all: $(BUILD_DIR)/$(TARGET)
+# default action: build all -specs=nano.specs
+all: $(BUILD_DIR)/$(TARGET)$(TARGET_EXT)
 
 
 #######################################
@@ -146,7 +154,7 @@ $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/$(TARGET): $(OBJECTS) Makefile
+$(BUILD_DIR)/$(TARGET)$(TARGET_EXT): $(OBJECTS) Makefile
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 	$(SZ) $@
 	

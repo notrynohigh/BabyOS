@@ -1,116 +1,108 @@
-#算法配置
+# Algorithm Configuration
 menu "Algorithm Configuration"
+
 config _BOS_ALGO_ENABLE
     bool "Algorithm Enable/Disable"
     default y
 
+#======================================== Base64 ========================================
 config _ALGO_BASE64_ENABLE
-    bool "Algorithm base64 Enable/Disable"
+    bool "Base64 Encode/Decode"
     default n
     depends on _BOS_ALGO_ENABLE
 
+#======================================== SHA1 ========================================
 config _ALGO_SHA1_ENABLE
-    bool "Algorithm SHA1 Enable/Disable"
+    bool "SHA1"
     default n
     depends on _BOS_ALGO_ENABLE
 
-
+#======================================== Sort ========================================
 config _ALGO_SORT_ENABLE
-    bool "Algorithm Sort Enable/Disable"
+    bool "Sort Algorithm"
     default n
     depends on _BOS_ALGO_ENABLE
 
-
+#======================================== Unicode ========================================
 config _ALGO_UNICODE_ENABLE
-    bool "Algorithm Unicode Enable/Disable"
+    bool "Unicode"
     default n
     depends on _BOS_ALGO_ENABLE
 
-
+#======================================== MD5 ========================================
 config _ALGO_MD5_ENABLE
-    bool "Algorithm MD5 Enable/Disable"
+    bool "MD5"
     default n
     depends on _BOS_ALGO_ENABLE
 
-
+#======================================== CRC ========================================
 config _ALGO_CRC_ENABLE
-    bool "Algorithm CRC Enable/Disable"
+    bool "CRC Algorithms"
     default n
     depends on _BOS_ALGO_ENABLE
+
+if _ALGO_CRC_ENABLE
 
 config _ALGO_CRC8_ENABLE
-    bool "Algorithm CRC8 Enable/Disable"
+    bool "CRC8"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC8_ITU_ENABLE
-    bool "Algorithm CRC8-ITU Enable/Disable"
+    bool "CRC8-ITU"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC8_ROHC_ENABLE
-    bool "Algorithm CRC8-ROHC Enable/Disable"
+    bool "CRC8-ROHC"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC8_MAXIM_ENABLE
-    bool "Algorithm CRC8-MAXIM Enable/Disable"
+    bool "CRC8-MAXIM"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_IBM_ENABLE
-    bool "Algorithm CRC16-IBM Enable/Disable"
+    bool "CRC16-IBM"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_MAXIM_ENABLE
-    bool "Algorithm CRC16-MAXIM Enable/Disable"
+    bool "CRC16-MAXIM"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_USB_ENABLE
-    bool "Algorithm CRC16-USB Enable/Disable"
+    bool "CRC16-USB"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_MODBUS_ENABLE
-    bool "Algorithm CRC16-MODBUS Enable/Disable"
+    bool "CRC16-MODBUS"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_CCITT_ENABLE
-    bool "Algorithm CRC16-CCITT Enable/Disable"
+    bool "CRC16-CCITT"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_CCITT_FALSE_ENABLE
-    bool "Algorithm CRC16-CCITT_FALSE Enable/Disable"
+    bool "CRC16-CCITT-FALSE"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_X25_ENABLE
-    bool "Algorithm CRC16-X25 Enable/Disable"
+    bool "CRC16-X25"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_XMODEM_ENABLE
-    bool "Algorithm CRC16-XMODEM Enable/Disable"
+    bool "CRC16-XMODEM"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC16_DNP_ENABLE
-    bool "Algorithm CRC16-XDNP Enable/Disable"
+    bool "CRC16-DNP"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC32_ENABLE
-    bool "Algorithm CRC32 Enable/Disable"
+    bool "CRC32"
     default n
-    depends on _ALGO_CRC_ENABLE
 
 config _ALGO_CRC32_MPEG2_ENABLE
-    bool "Algorithm CRC32-MPEG2 Enable/Disable"
+    bool "CRC32-MPEG2"
     default n
-    depends on _ALGO_CRC_ENABLE
+
+endif
 
 endmenu

@@ -19,6 +19,14 @@ class UartDriver:
         """Scan available COM ports (same logic as C++ constructor)."""
         self._com_list.clear()
         for info in serial.tools.list_ports.comports():
+            # M-NEW-14 fix: 之前无论端口是否被其他程序占用都尝试打开 (115200,0).
+            # 这会把正在跑 firmware 或 mid-flash 的 MCU 重置, 用户烧录中断.
+            # 这里: 只在"list_ports 返回该端口"且"未在我们 self._port 里打开"时才 probe.
+            # 已打开的端口 (self._port) 跳过 — 不需要再 probe 一次.
+            if self._port is not None and info.device == self._port.port:
+                # 已持有, 直接加入可用列表, 不再 open/close.
+                self._com_list.append(info.device)
+                continue
             try:
                 with serial.Serial(info.device, baudrate=115200, timeout=0) as test:
                     self._com_list.append(info.device)

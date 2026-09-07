@@ -2,19 +2,16 @@
 """
 BabyOS_Protocol — Python upper-computer (host PC software).
 Entry point.
+
+Pure stdlib GUI (tkinter). No PyQt5 / PySide / etc.
 """
 
-import sys
-from PyQt5.QtWidgets import QApplication
 from mainwindow import MainWindow
 
 
 def main():
-    app = QApplication(sys.argv)
-    app.setApplicationName("BabyOS_Protocol")
     w = MainWindow()
-    w.show()
-    sys.exit(app.exec_())
+    w.mainloop()
 
 
 if __name__ == '__main__':

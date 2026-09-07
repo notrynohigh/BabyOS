@@ -315,6 +315,18 @@ static int _bMqttRead(bMqttSrvInstance_t *pinstance, uint8_t *pbuf, uint16_t len
         {
             return ret;
         }
+        // CRIT-MQTT-SSL-CLOSE fix: bSSLRecv 返回 1 表示对端干净关闭 (peer
+        // close_notify). 这里沿用旧的"对端关闭 = 读失败"语义: 转成负值
+        // 返回给调用方, 让 _bMqttReadPacket 走 exit 分支 → MQTT 触发
+        // 重连逻辑. **不能**直接 return rlen (=0), 否则 MQTT 会认为
+        // "暂时无数据" 一直 retry, 直到 TCP 超时 (默认很长), 期间
+        // 业务层完全不知道对端已关.
+        //
+        // 注意: 这里只对 MQTTS 路径生效. 非 SSL 的 bRecv 仍走原路径.
+        if (ret == 1)
+        {
+            return -1;  // 模拟"对端断开" I/O 错误
+        }
     }
     else
 #endif

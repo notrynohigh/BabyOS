@@ -145,8 +145,9 @@
 #define _BOS_SERVICES_ENABLE 1
 #define _PROTOCOL_SERVICE_ENABLE 1
 #define _TCPIP_SERVICE_ENABLE 1
-#define _TCPIP_SERVICE_HTTP_ENABLE 1
-#define _TCPIP_SERVICE_NTP_ENABLE 1
+#define _HTTP_SERVICE_ENABLE 1
+#define _HTTP_CLIENT_ENABLE 1
+#define _NTP_SERVICE_ENABLE 1
 #define _NTP_SERVER_1 "ntp1.aliyun.com"
 #define _NTP_SERVER_2 "ntp2.aliyun.com"
 #define _NTP_SERVER_3 "ntp3.aliyun.com"
