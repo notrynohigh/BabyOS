@@ -32,6 +32,16 @@
 /*Includes ----------------------------------------------*/
 #include "drivers/inc/b_drv_testmac.h"
 
+// testmac 是 selftest 用 POSIX 套接字模拟网卡, 仅 POSIX 主机可用
+// (Linux / macOS / BSD). 非 POSIX 平台 (如 MSYS/MinGW, 缺 <arpa/inet.h> 等)
+// 编译时退化为 no-op stub, 保持 bTESTMAC 设备注册符号链接过.
+#if defined(__linux__) || defined(__APPLE__) || defined(__unix__)
+#define _TESTMAC_POSIX 1
+#endif
+
+#include "utils/inc/b_util_log.h"
+
+#if _TESTMAC_POSIX
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -46,9 +56,17 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 
-#include "utils/inc/b_util_log.h"
+// POSIX 实现主体 (Linux/macOS/BSD 主机 selftest 用). 非 POSIX 平台
+// (MSYS/MinGW) 走下方 no-op stub, 设备注册符号仍可链入.
+#define DRIVER_NAME TESTMAC  // 必须无条件定义, 非 POSIX stub 里 bDRIVER_STRUCT_INIT 宏需要 DRIVER_NAME
 
+// bHalIf_TESTMAC[] 必须在 POSIX / 非 POSIX 都声明, 让 bDRIVER_STRUCT_INIT
+// 宏里的 _bDRIVER_HALIF_INSTANCE(TESTMAC, ...) 能取地址.
+bDRIVER_HALIF_TABLE(bTESTMAC_HalIf_t, DRIVER_NAME);
+
+#if _TESTMAC_POSIX
 /**
  * \addtogroup B_DRIVER
  * \{
@@ -63,8 +81,6 @@
  * \defgroup TESTMAC_Private_Defines
  * \{
  */
-
-#define DRIVER_NAME TESTMAC
 
 /**
  * \}
@@ -92,7 +108,6 @@
  * \defgroup TESTMAC_Private_Variables
  * \{
  */
-bDRIVER_HALIF_TABLE(bTESTMAC_HalIf_t, DRIVER_NAME);
 
 static pTcpIpCallback_t bTestMacEventCb    = NULL;
 static void            *bTestMacEventCbArg = NULL;
@@ -546,12 +561,32 @@ static int _bTESTMACCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
  * \addtogroup TESTMAC_Exported_Functions
  * \{
  */
+#endif // _TESTMAC_POSIX (POSIX body end; bTESTMAC_Init follows in both branches)
+#if _TESTMAC_POSIX
 int bTESTMAC_Init(bDriverInterface_t *pdrv)
 {
     bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bTESTMAC_Init);
     pdrv->ctl = _bTESTMACCtl;
     return 0;
 }
+#else
+// 非 POSIX 主机 (MSYS/MinGW 等) 上的 no-op stub: 不支持真实套接字模拟,
+// 但保留设备注册符号, 让 bTESTMAC 仍可被 b_mod_tcpip 注册到 netcard 池.
+// selftest 中依赖实际联网的用例 (MQTT/NTP/HTTP 真连) 在该平台会失败,
+// 这是预期的 — 平台限制, 非代码 bug.
+//
+// 提供一个空的 bHalIf_TESTMAC[] 让 bDRIVER_STRUCT_INIT 宏里
+// _bDRIVER_HALIF_INSTANCE 引用可解析.
+int bTESTMAC_Init(bDriverInterface_t *pdrv)
+{
+    if (pdrv == NULL) {
+        return -1;
+    }
+    bDRIVER_STRUCT_INIT(pdrv, DRIVER_NAME, bTESTMAC_Init);
+    pdrv->ctl = NULL;
+    return 0;
+}
+#endif
 
 #ifdef BSECTION_NEED_PRAGMA
 #pragma section driver_init

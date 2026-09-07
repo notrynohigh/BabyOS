@@ -680,6 +680,9 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
             // 触发条件: HTTPS + 已有 plaintext + state != RECV_DATA + 不是
             // peer_closed (peer_closed 在前面已经处理). 这种情况下 bSSLRecv
             // 返回 WANT_READ, 我们不要傻等 5s, 而是 truncated 短等.
+            // 仅 HTTPS 路径需要; _SSL_ENABLE 关闭时此分支整段跳过 (走外层
+            // PT_WAIT_UNTIL 即可).
+#if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
             if (http->is_https && http->ssl != NULL && http->recvbuf_len > 0 &&
                 http->state != B_HTTP_STA_RECV_DATA)
             {
@@ -758,6 +761,7 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
                 param       = &dat;
                 goto http_restart;
             }
+#endif // _SSL_ENABLE
             // 等待 socket 可读. HTTPS 响应可能跨越多个 IP 包, 单包间隔有时 >10ms
             // (esp. AT 通道 busy 时), 短超时会被误触为 RECV_TIMEOUT 然后 goto
             // http_restart, 残留数据 +IPD,0,N 晚到时没人接收.
