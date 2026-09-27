@@ -35,6 +35,12 @@ config _ALGO_MD5_ENABLE
     default n
     depends on _BOS_ALGO_ENABLE
 
+#======================================== ML ========================================
+config _ALGO_ML_ENABLE
+    bool "ML Basic Primitives (AutoML)"
+    default y
+    depends on _BOS_ALGO_ENABLE
+
 #======================================== CRC ========================================
 config _ALGO_CRC_ENABLE
     bool "CRC Algorithms"

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSP: connect-src is informational only — all backend requests go through Electron IPC (http:request), not direct fetch/XHR from the renderer. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src http://127.0.0.1:*;">
+  <title>BabyOS Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">B</div>
+        <span class="logo-text">BabyOS Studio</span>
+      </div>
+      <nav class="menu">
+        <a href="#" class="menu-item active" data-page="home">
+          <span class="menu-icon">🏠</span>
+          <span>首页</span>
+        </a>
+        <a href="#" class="menu-item" data-page="projects">
+          <span class="menu-icon">📁</span>
+          <span>AutoML 项目</span>
+        </a>
+        <div class="menu-divider"></div>
+        <div class="menu-group-title">调试工具</div>
+        <a href="#" class="menu-item" data-page="serial">
+          <span class="menu-icon">🔌</span>
+          <span>串口控制</span>
+        </a>
+        <a href="#" class="menu-item" data-page="ota">
+          <span class="menu-icon">📤</span>
+          <span>OTA 升级</span>
+        </a>
+        <a href="#" class="menu-item" data-page="xmodem">
+          <span class="menu-icon">🔄</span>
+          <span>Xmodem/Ymodem</span>
+        </a>
+        <a href="#" class="menu-item" data-page="http">
+          <span class="menu-icon">🌐</span>
+          <span>HTTP 调试</span>
+        </a>
+        <a href="#" class="menu-item" data-page="params">
+          <span class="menu-icon">⚙️</span>
+          <span>参数调节</span>
+        </a>
+        <a href="#" class="menu-item" data-page="device">
+          <span class="menu-icon">📱</span>
+          <span>设备信息</span>
+        </a>
+        <div class="menu-divider"></div>
+        <a href="#" class="menu-item" id="gitee-link">
+          <span class="menu-icon">🔗</span>
+          <span>Gitee 仓库 ↗</span>
+        </a>
+      </nav>
+    </aside>
+
+    <div class="main-column">
+    <!-- 主内容区 -->
+    <main class="content">
+      <!-- 首页 -->
+      <div id="page-home" class="page active">
+        <h1>BabyOS Studio</h1>
+        <p class="subtitle">BabyOS 统一调试工具 — 串口控制、OTA升级、AutoML 一站式桌面应用</p>
+        <div class="card-grid">
+          <div class="card" data-page="projects">
+            <div class="card-icon" style="color:#409eff">📁</div>
+            <div class="card-title">AutoML 项目</div>
+            <div class="card-desc">数据导入、标注、训练、导出</div>
+          </div>
+          <div class="card" data-page="serial">
+            <div class="card-icon" style="color:#67c23a">🔌</div>
+            <div class="card-title">串口控制</div>
+            <div class="card-desc">串口连接、协议测试</div>
+          </div>
+          <div class="card" data-page="ota">
+            <div class="card-icon" style="color:#e6a23c">📤</div>
+            <div class="card-title">OTA 升级</div>
+            <div class="card-desc">固件升级、进度监控</div>
+          </div>
+          <div class="card" data-page="xmodem">
+            <div class="card-icon" style="color:#f56c6c">🔄</div>
+            <div class="card-title">Xmodem/Ymodem</div>
+            <div class="card-desc">文件传输协议</div>
+          </div>
+          <div class="card" data-page="http">
+            <div class="card-icon" style="color:#909399">🌐</div>
+            <div class="card-title">HTTP 调试</div>
+            <div class="card-desc">Mock 服务器、请求触发</div>
+          </div>
+          <div class="card" data-page="params">
+            <div class="card-icon" style="color:#909399">⚙️</div>
+            <div class="card-title">参数调节</div>
+            <div class="card-desc">Shell 参数读写</div>
+          </div>
+          <div class="card" data-page="device">
+            <div class="card-icon" style="color:#909399">📱</div>
+            <div class="card-title">设备信息</div>
+            <div class="card-desc">UID、SN、设备信息</div>
+          </div>
+          <div class="card" id="gitee-card">
+            <div class="card-icon" style="color:#c71d23">🔗</div>
+            <div class="card-title">Gitee 仓库</div>
+            <div class="card-desc">查看源码、提交 Issue (外部链接 ↗)</div>
+          </div>
+        </div>
+        <div class="info-box">
+          <h3>系统信息 <button class="btn btn-sm" id="btn-refresh-status" style="margin-left:8px;">刷新</button></h3>
+          <table class="info-table">
+            <tr><td>版本</td><td id="version-text">加载中...</td></tr>
+            <tr><td>Python 后端</td><td id="python-status">检测中...</td></tr>
+            <tr><td>串口状态</td><td id="serial-status">未连接</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- AutoML 项目列表 -->
+      <div id="page-projects" class="page">
+        <h2>AutoML 项目</h2>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="btn-create-project">+ 新建项目</button>
+          <button class="btn" id="btn-import-project">📥 导入 .bosml</button>
+          <button class="btn btn-danger" id="btn-clear-all-projects" style="margin-left:auto;">🗑 清空所有项目</button>
+        </div>
+        <!-- 新建项目表单（默认隐藏） -->
+        <div id="create-project-form" class="section form-collapsible">
+          <h3>新建项目 <span style="font-size:12px;color:#909399;font-weight:normal;">(按 Esc 取消)</span></h3>
+          <div class="form-row">
+            <label>项目名称:</label>
+            <input type="text" id="project-name" placeholder="请输入项目名称" style="width:300px" maxlength="50">
+            <span class="hint" id="project-name-hint" style="margin:0;"></span>
+          </div>
+          <div class="hint" style="margin:0 0 12px 88px;color:#909399;font-size:12px;">支持中英文、数字、连字符、下划线，最长50字符</div>
+          <div class="form-row">
+            <label>工程模式:</label>
+            <div style="display:flex;gap:16px;align-items:center;">
+              <label class="feature-check"><input type="radio" name="project-mode" value="timeseries" checked> 📈 时序分析</label>
+              <label class="feature-check"><input type="radio" name="project-mode" value="table"> 📊 表格分类</label>
+            </div>
+          </div>
+          <div class="hint" style="margin:0 0 12px 88px;color:#909399;font-size:12px;">时序：含时间戳的传感器数据；表格：每行一个独立样本</div>
+          <div class="form-row">
+            <label>任务类型:</label>
+            <div style="display:flex;gap:16px;align-items:center;">
+              <label class="feature-check"><input type="radio" name="project-task-type" value="classification" checked> 🏷️ 分类</label>
+              <label class="feature-check"><input type="radio" name="project-task-type" value="regression"> 📐 回归</label>
+            </div>
+          </div>
+          <div class="hint" style="margin:0 0 12px 88px;color:#909399;font-size:12px;">分类：离散标签预测；回归：连续值预测</div>
+          <div class="form-row" id="sampling-rate-row">
+            <label>采样率(Hz):</label>
+            <input type="number" id="project-sampling-rate" placeholder="如 100" style="width:120px" min="0" step="any">
+            <span class="hint" style="margin:0;color:#909399;font-size:12px;">时序模式必填，导入含时间戳的CSV时可自动推算</span>
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-confirm-create">确认创建</button>
+            <button class="btn" id="btn-cancel-create">取消</button>
+          </div>
+        </div>
+        <div id="project-list">
+          <div class="project-empty empty-hint">暂无项目，点击"新建项目"开始</div>
+        </div>
+      </div>
+
+      <!-- AutoML — 数据管理 -->
+      <div id="page-automl-data" class="page">
+        <div class="page-header">
+          <button class="btn" data-action="goToProjects">← 返回项目列表</button>
+          <h2>数据管理 — <span class="project-title"></span></h2>
+        </div>
+        <div class="wizard-stepper" id="wizard-data">
+          <div class="wizard-step active" tabindex="0" role="button" aria-label="步骤1: 数据"><span class="wizard-step-num">1</span> 数据</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤2: 标注"><span class="wizard-step-num">2</span> 标注</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤3: 特征"><span class="wizard-step-num">3</span> 特征</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤4: 训练"><span class="wizard-step-num">4</span> 训练</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤5: 导出"><span class="wizard-step-num">5</span> 导出</div>
+        </div>
+        <div class="section">
+          <div class="toolbar">
+            <button class="btn btn-primary" id="btn-import-dataset">📥 导入数据</button>
+            <button class="btn" id="btn-download-sample">📄 下载示例CSV</button>
+          </div>
+          <div id="dataset-list">
+            <div class="empty-hint" style="padding:40px 20px;">
+              <div style="font-size:32px;margin-bottom:12px;">📂</div>
+              <div style="margin-bottom:12px;">暂无数据文件</div>
+              <button class="btn btn-primary" data-action="importDataset">📥 导入数据</button>
+              <div style="margin-top:8px;"><span class="hint" style="margin:0;">支持 CSV / NPZ 格式</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 数据预览（点击文件后显示） -->
+        <div class="section" id="data-preview-section" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 id="data-preview-title">数据预览</h3>
+            <button class="btn btn-sm" data-action="hideDataPreview">✕ 关闭</button>
+          </div>
+          <div id="data-preview-wrapper" style="overflow-x:auto;max-height:400px;overflow-y:auto;"></div>
+        </div>
+
+        <!-- CSV格式说明（可折叠，默认收起） -->
+        <div class="section">
+          <h3 class="collapse-toggle" data-action="toggleCollapse"><span class="collapse-arrow">▾</span> CSV 文件格式说明</h3>
+          <div class="collapse-body">
+          <p class="hint">上传的 CSV 文件应包含以下格式：第一行为列名，后续行为数据。如需自动分段，请包含 label 列。</p>
+
+          <h4>时序模式 (timeseries) 示例：</h4>
+          <div class="sample-table-wrapper">
+            <table class="data-table sample-table">
+              <thead>
+                <tr>
+                  <th>timestamp</th>
+                  <th>accel_x</th>
+                  <th>accel_y</th>
+                  <th>accel_z</th>
+                  <th>gyro_x</th>
+                  <th>gyro_y</th>
+                  <th>gyro_z</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>0.000</td><td>0.12</td><td>-0.45</td><td>9.81</td><td>0.01</td><td>-0.02</td><td>0.00</td></tr>
+                <tr><td>0.010</td><td>0.15</td><td>-0.42</td><td>9.79</td><td>0.02</td><td>-0.01</td><td>0.01</td></tr>
+                <tr><td>0.020</td><td>0.18</td><td>-0.38</td><td>9.82</td><td>0.01</td><td>0.00</td><td>-0.01</td></tr>
+                <tr><td>0.030</td><td>0.21</td><td>-0.35</td><td>9.80</td><td>0.00</td><td>0.01</td><td>0.02</td></tr>
+                <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="hint">• 第一列通常为时间戳（可选）<br>• 中间列为传感器数据（加速度、陀螺仪等）<br>• 采样率应保持一致</p>
+
+          <h4>表格模式 (table) 示例：</h4>
+          <div class="sample-table-wrapper">
+            <table class="data-table sample-table">
+              <thead>
+                <tr>
+                  <th>feature_1</th>
+                  <th>feature_2</th>
+                  <th>feature_3</th>
+                  <th>feature_4</th>
+                  <th>label</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1.23</td><td>4.56</td><td>7.89</td><td>0.12</td><td>normal</td></tr>
+                <tr><td>2.34</td><td>5.67</td><td>8.90</td><td>0.23</td><td>normal</td></tr>
+                <tr><td>3.45</td><td>6.78</td><td>9.01</td><td>0.34</td><td>abnormal</td></tr>
+                <tr><td>4.56</td><td>7.89</td><td>0.12</td><td>0.45</td><td>abnormal</td></tr>
+                <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="hint">• 每行为一个样本<br>• 前几列为特征列<br>• 最后一列为标签列（可选）</p>
+          </div><!-- /collapse-body -->
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;align-items:center;gap:8px;">
+          <span class="hint" id="btn-next-to-labels-hint" style="margin:0;display:none;">请先导入至少一个数据文件</span>
+          <button class="btn btn-primary" id="btn-next-to-labels" data-action="goToAutomlLabels" disabled title="请先导入数据文件">下一步: 标注 →</button>
+        </div>
+      </div>
+
+      <!-- AutoML — 标注管理 -->
+      <div id="page-automl-labels" class="page">
+        <div class="page-header">
+          <button class="btn" data-action="goToProjects">← 返回项目列表</button>
+          <h2>标注管理 — <span class="project-title"></span></h2>
+        </div>
+        <div class="wizard-stepper" id="wizard-labels">
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤1: 数据"><span class="wizard-step-num">1</span> 数据</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step active" tabindex="0" role="button" aria-label="步骤2: 标注"><span class="wizard-step-num">2</span> 标注</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤3: 特征"><span class="wizard-step-num">3</span> 特征</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤4: 训练"><span class="wizard-step-num">4</span> 训练</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤5: 导出"><span class="wizard-step-num">5</span> 导出</div>
+        </div>
+
+        <!-- 波形图 + 控制栏（紧凑）— 时序模式 -->
+        <div id="labels-ts-panel" class="section" style="padding:10px 12px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <select id="chart-file-select" style="width:180px">
+                <option value="">-- 选择文件 --</option>
+              </select>
+              <input type="number" id="chart-start" min="0" value="0" style="width:70px">
+              <span style="color:#999;">~</span>
+              <input type="number" id="chart-end" min="1" value="500" style="width:70px">
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <button class="btn btn-sm" data-action="chartZoomIn">＋</button>
+              <button class="btn btn-sm" data-action="chartZoomOut">−</button>
+              <button class="btn btn-sm" data-action="chartFitAll">全部</button>
+              <button class="btn btn-sm" id="chart-mode-btn" data-action="toggleChartMode" title="切换平移/选择模式">平移</button>
+            </div>
+            <span class="hint" id="chart-info" style="margin:0;"></span>
+          </div>
+          <canvas id="waveform-canvas" style="width:100%;min-height:300px;height:40vh;background:#1a1a2e;border-radius:4px;"></canvas>
+          <div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center;">
+            <span class="hint" style="margin:0;">滚轮缩放 | 切换模式后拖拽选取范围</span>
+            <button class="btn btn-sm" data-action="clearChartSelection">清除选区</button>
+          </div>
+        </div>
+
+        <!-- 表格模式数据摘要面板（默认隐藏） -->
+        <div id="labels-table-panel" class="section" style="padding:16px;display:none;">
+          <h3 style="margin-bottom:8px;">📊 数据摘要</h3>
+          <div id="table-data-summary" style="color:#909399;font-size:13px;">加载中...</div>
+        </div>
+
+        <!-- 下方：标注 + 分段 并排 -->
+        <div id="labels-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <!-- 左：标注管理 -->
+          <div class="section" style="margin-bottom:0;">
+            <h3 style="margin-bottom:8px;">标注</h3>
+            <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;">
+              <input type="text" id="label-name-input" placeholder="标注名称" style="flex:1;" maxlength="30">
+              <input type="color" id="label-color-picker" value="#409eff" style="width:32px;height:28px;border:1px solid #dcdfe6;border-radius:4px;cursor:pointer;padding:2px;" title="选择标注颜色">
+              <button class="btn btn-primary btn-sm" id="btn-add-label">+ 添加标注</button>
+            </div>
+            <div id="label-list" style="max-height:200px;overflow-y:auto;"><div class="empty-hint" style="padding:12px;">暂无标注</div></div>
+          </div>
+          <!-- 右：分段管理（时序模式显示） -->
+          <div id="segment-panel" class="section" style="margin-bottom:0;">
+            <h3 style="margin-bottom:8px;">分段</h3>
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+              <select id="seg-file-select" style="width:110px;">
+                <option value="">-- 选择文件 --</option>
+              </select>
+              <select id="seg-label-select" style="width:110px;">
+                <option value="">标注</option>
+              </select>
+              <input type="number" id="seg-start" min="0" value="0" style="width:65px;" placeholder="起始">
+              <span style="color:#999;">~</span>
+              <input type="number" id="seg-end" min="1" value="100" style="width:65px;" placeholder="结束">
+              <span class="hint" id="seg-range-hint" style="margin:0;"></span>
+              <button class="btn btn-primary btn-sm" id="btn-add-segment">+ 添加</button>
+            </div>
+            <div id="segment-list" style="max-height:180px;overflow-y:auto;"><div class="empty-hint" style="padding:12px;">暂无分段</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+          <button class="btn btn-primary" id="btn-next-to-features" data-action="goToAutomlFeatures" disabled title="请先添加标注和分段">下一步: 特征 →</button>
+        </div>
+      </div>
+
+      <!-- AutoML — 特征工程 -->
+      <div id="page-automl-features" class="page">
+        <div class="page-header">
+          <button class="btn" data-action="goToProjects">← 返回项目列表</button>
+          <h2>特征工程 — <span class="project-title"></span></h2>
+        </div>
+        <div class="wizard-stepper" id="wizard-features">
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤1: 数据"><span class="wizard-step-num">1</span> 数据</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤2: 标注"><span class="wizard-step-num">2</span> 标注</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step active" tabindex="0" role="button" aria-label="步骤3: 特征"><span class="wizard-step-num">3</span> 特征</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤4: 训练"><span class="wizard-step-num">4</span> 训练</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤5: 导出"><span class="wizard-step-num">5</span> 导出</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <!-- 左列：特征选择 -->
+          <div>
+            <!-- 时序模式：分类特征面板（由 JS 动态生成） -->
+            <div id="feat-ts-left">
+              <div id="feature-categories-container"></div>
+              <!-- 频域全局开关 + 频带数（保留在分类面板外） -->
+              <div class="section" id="freq-global-section" style="margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <label class="feature-check"><input type="checkbox" id="freq-enabled"> 启用频域特征</label>
+                  <div id="freq-bands-row" style="display:none;align-items:center;gap:4px;">
+                    <label style="min-width:auto;font-size:12px;">频带数:</label>
+                    <input type="number" id="freq-bands" value="5" min="1" max="20" style="width:50px;font-size:12px;">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 表格模式：特征列选择 -->
+            <div id="feat-table-left" style="display:none;">
+              <div class="section" style="margin-bottom:12px;">
+                <h3 style="margin-bottom:8px;">📊 特征列选择</h3>
+                <div style="margin-bottom:8px;padding:8px 12px;background:#ecf5ff;border-radius:4px;color:#409eff;font-size:12px;">
+                  表格模式直接使用原始列值作为特征，无需滑窗提取。选择要用作特征的列：
+                </div>
+                <div style="margin-bottom:6px;">
+                  <label class="feature-check"><input type="checkbox" id="table-select-all" checked> 全选/全不选</label>
+                </div>
+                <div id="table-feature-columns" style="max-height:250px;overflow-y:auto;">
+                  <div class="empty-hint" style="padding:12px;">请先导入数据</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右列：窗口参数（时序） / 归一化（通用） -->
+          <div>
+            <!-- 时序模式：窗口参数 -->
+            <div id="feat-ts-right">
+              <div class="section" style="margin-bottom:12px;">
+                <h3 style="margin-bottom:8px;">窗口参数</h3>
+                <div class="form-row">
+                  <label style="min-width:80px;">采样率(Hz):</label>
+                  <input type="number" id="feat-sampling-rate" value="100" min="1" style="width:80px;">
+                  <span class="hint" id="feat-window-info"></span>
+                </div>
+                <div class="form-row">
+                  <label style="min-width:80px;">窗长(秒):</label>
+                  <input type="number" id="feat-window-s" value="2.0" min="0.1" step="0.1" style="width:80px;">
+                </div>
+                <div class="form-row">
+                  <label style="min-width:80px;">窗口点数:</label>
+                  <input type="number" id="feat-n-per-window" value="512" min="2" style="width:80px;" readonly>
+                  <span class="hint">(采样率×窗长，自动计算)</span>
+                </div>
+                <div class="form-row">
+                  <label style="min-width:80px;">步进:</label>
+                  <input type="number" id="feat-step" value="1" min="1" style="width:80px;">
+                </div>
+              </div>
+            </div>
+            <!-- 归一化（两种模式通用） -->
+            <div class="section" style="margin-bottom:12px;">
+              <h3 style="margin-bottom:8px;">归一化</h3>
+              <div class="form-row">
+                <select id="feat-norm">
+                  <option value="none">无</option>
+                  <option value="minmax">Min-Max 归一化</option>
+                  <option value="zscore" selected>Z-Score 标准化</option>
+                  <option value="robust">Robust 鲁棒归一化</option>
+                </select>
+              </div>
+            </div>
+            <div class="section">
+              <button class="btn btn-primary" id="btn-run-features" style="width:100%;">▶ 计算特征</button>
+              <div id="feature-result" style="margin-top:8px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 特征评分结果 -->
+        <div class="section" id="feature-scoring-section" style="display:none;margin-top:12px;">
+          <h3 style="margin-bottom:8px;">特征评分 <span class="hint">（按重要性排序）</span></h3>
+          <div id="feature-scoring-list"></div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;align-items:center;gap:8px;">
+          <span class="hint" id="btn-next-to-training-hint" style="margin:0;display:none;">请先计算特征</span>
+          <button class="btn btn-primary" id="btn-next-to-training" data-action="goToAutomlTraining" disabled title="请先计算特征">下一步: 训练 →</button>
+        </div>
+      </div>
+
+      <!-- AutoML — 训练 -->
+      <div id="page-automl-training" class="page">
+        <div class="page-header">
+          <button class="btn" data-action="goToProjects">← 返回项目列表</button>
+          <h2>模型训练 — <span class="project-title"></span></h2>
+        </div>
+        <div class="wizard-stepper" id="wizard-training">
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤1: 数据"><span class="wizard-step-num">1</span> 数据</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤2: 标注"><span class="wizard-step-num">2</span> 标注</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤3: 特征"><span class="wizard-step-num">3</span> 特征</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step active" tabindex="0" role="button" aria-label="步骤4: 训练"><span class="wizard-step-num">4</span> 训练</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤5: 导出"><span class="wizard-step-num">5</span> 导出</div>
+        </div>
+        <div class="section">
+          <h3>训练配置</h3>
+          <div class="form-row">
+            <label>搜索轮数 <span class="param-help" title="AutoML 自动搜索最优模型+超参的迭代次数。每轮随机采样一种模型配置并用交叉验证评估。轮次越多找到更优模型的概率越高，但耗时也越长。推荐: 30~100">❓</span></label>
+            <input type="number" id="train-epochs" value="30" min="1" max="500" style="width:80px">
+            <label>超时时间(秒) <span class="param-help" title="训练的最大运行时间（秒）。超时后自动停止搜索，已找到的候选模型仍保留。与搜索轮数配合使用：实际轮数 = min(轮数上限, 超时前能跑完的轮数)。推荐: 600（10分钟）">❓</span></label>
+            <input type="number" id="train-timeout" value="600" min="10" style="width:100px">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-start-training">▶ 开始训练</button>
+            <button class="btn btn-danger" id="btn-stop-training" disabled title="请先开始训练">⏹ 停止训练</button>
+          </div>
+          <div class="form-row">
+            <label>状态:</label>
+            <span id="training-status" class="status-badge status-idle">未开始</span>
+          </div>
+          <div class="form-row">
+            <label>进度:</label>
+            <div class="progress-bar" style="flex:1">
+              <div class="progress-fill" id="training-progress" style="width:0%"></div>
+            </div>
+            <span id="training-progress-text">0%</span>
+          </div>
+        </div>
+        <div class="section">
+          <h3>训练日志 <span id="training-log-indicator" style="display:none;font-size:12px;font-weight:normal;color:#67c23a;"><span class="pulse-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#67c23a;margin-right:4px;animation:pulse 1.5s ease-in-out infinite;"></span>训练进行中...</span></h3>
+          <div class="log-area" id="training-log"><div class="log-empty">训练开始后将在此显示日志</div></div>
+        </div>
+        <!-- 训练结果摘要 (训练完成后显示) -->
+        <div class="section" id="training-results-section" style="display:none;">
+          <h3>训练结果</h3>
+          <div id="training-results"></div>
+        </div>
+        <!-- 训练报告 (训练完成后显示) -->
+        <div class="section" id="training-report-section" style="display:none;">
+          <h3>📋 训练报告</h3>
+          <div id="training-report"></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+          <button class="btn btn-primary" id="btn-next-to-export" data-action="goToAutomlExport" disabled title="请先完成训练">下一步: 导出 →</button>
+        </div>
+      </div>
+
+      <!-- AutoML — 导出 -->
+      <div id="page-automl-export" class="page">
+        <div class="page-header">
+          <button class="btn" data-action="goToProjects">← 返回项目列表</button>
+          <h2>项目导出 — <span class="project-title"></span></h2>
+        </div>
+        <div class="wizard-stepper" id="wizard-export">
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤1: 数据"><span class="wizard-step-num">1</span> 数据</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤2: 标注"><span class="wizard-step-num">2</span> 标注</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤3: 特征"><span class="wizard-step-num">3</span> 特征</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step" tabindex="0" role="button" aria-label="步骤4: 训练"><span class="wizard-step-num">4</span> 训练</div>
+          <span class="wizard-arrow">→</span>
+          <div class="wizard-step active" tabindex="0" role="button" aria-label="步骤5: 导出"><span class="wizard-step-num">5</span> 导出</div>
+        </div>
+        <div class="section">
+          <div id="export-info">
+            <div class="empty-hint" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+              <div class="spinner" style="width:16px;height:16px;border:2px solid #dcdfe6;border-top-color:#409eff;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+              加载中...
+            </div>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-primary" id="btn-export-project" title="请先完成训练后再导出">📦 导出 C 代码</button>
+          </div>
+          <div class="hint" style="text-align:center;padding:12px 0;color:#909399;">导出深度绑定 BabyOS 的 C 代码包，可直接编译集成到固件中</div>
+        </div>
+      </div>
+
+      <!-- 串口控制 -->
+      <div id="page-serial" class="page">
+        <h2>串口控制</h2>
+        <div class="section">
+          <h3>串口设置</h3>
+          <div class="form-row">
+            <label>串口:</label>
+            <select id="serial-port"></select>
+            <button class="btn" id="btn-refresh-port">刷新</button>
+          </div>
+          <div class="form-row">
+            <label>波特率:</label>
+            <select id="serial-baud">
+              <option value="9600">9600</option>
+              <option value="19200">19200</option>
+              <option value="38400">38400</option>
+              <option value="57600">57600</option>
+              <option value="115200" selected>115200</option>
+              <option value="230400">230400</option>
+              <option value="460800">460800</option>
+              <option value="921600">921600</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-open-serial">打开串口</button>
+          </div>
+        </div>
+        <div class="section">
+          <h3>协议测试</h3>
+          <div class="form-row">
+            <button class="btn" id="btn-test">发送测试指令</button>
+            <button class="btn" id="btn-set-time">设置时间</button>
+            <label><input type="checkbox" id="encrypt-mode"> 加密传输</label>
+          </div>
+        </div>
+        <div class="section">
+          <h3>接收日志</h3>
+          <div class="log-area" id="serial-log"></div>
+          <button class="btn" id="btn-clear-log">清空</button>
+        </div>
+      </div>
+
+      <!-- OTA 升级 -->
+      <div id="page-ota" class="page">
+        <h2>OTA 升级</h2>
+        <div class="section">
+          <h3>固件升级</h3>
+          <div class="form-row">
+            <label>固件文件:</label>
+            <input type="text" id="firmware-path" readonly placeholder="请选择固件文件">
+            <button class="btn" id="btn-select-firmware">选择文件</button>
+          </div>
+          <div class="form-row">
+            <label>固件名称:</label>
+            <input type="text" id="firmware-name" placeholder="输入固件名称">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-start-ota">开始 OTA 升级</button>
+          </div>
+          <div class="form-row">
+            <label>进度:</label>
+            <div class="progress-bar">
+              <div class="progress-fill" id="ota-progress" style="width:0%"></div>
+            </div>
+            <span id="ota-progress-text">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Xmodem/Ymodem -->
+      <div id="page-xmodem" class="page">
+        <h2>Xmodem/Ymodem 传输</h2>
+        <div class="two-col">
+          <div class="section">
+            <h3>Xmodem-128</h3>
+            <p class="hint">128字节块 + Checksum</p>
+            <div class="form-row">
+              <label>文件:</label>
+              <input type="text" id="xmodem-file" readonly>
+              <button class="btn" id="btn-select-xmodem">选择</button>
+            </div>
+            <div class="form-row">
+              <div class="progress-bar">
+                <div class="progress-fill" id="xmodem-progress" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <button class="btn btn-primary" id="btn-xmodem-send">开始发送</button>
+              <button class="btn" id="btn-xmodem-cancel">取消</button>
+            </div>
+          </div>
+          <div class="section">
+            <h3>Ymodem-1K</h3>
+            <p class="hint">1K块 + CRC16 + 文件名</p>
+            <div class="form-row">
+              <label>文件:</label>
+              <input type="text" id="ymodem-file" readonly>
+              <button class="btn" id="btn-select-ymodem">选择</button>
+            </div>
+            <div class="form-row">
+              <div class="progress-bar">
+                <div class="progress-fill" id="ymodem-progress" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="form-row">
+              <button class="btn btn-primary" id="btn-ymodem-send">开始发送</button>
+              <button class="btn" id="btn-ymodem-cancel">取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HTTP 调试 -->
+      <div id="page-http" class="page">
+        <h2>HTTP 调试</h2>
+        <div class="section">
+          <h3>Mock HTTP/HTTPS 服务器</h3>
+          <div class="form-row">
+            <label>端口:</label>
+            <input type="text" id="http-port" value="8080" style="width:80px">
+            <label><input type="checkbox" id="use-https"> HTTPS (自签名)</label>
+            <button class="btn btn-primary" id="btn-http-server">启动服务器</button>
+            <span id="http-server-status" class="status-text">未运行</span>
+          </div>
+          <div class="form-row">
+            <label>响应内容:</label>
+            <input type="text" id="http-response-body" value='{"status":"ok","msg":"hello from BabyOS"}' style="flex:1">
+          </div>
+          <div class="form-row">
+            <label>Content-Type:</label>
+            <input type="text" id="http-content-type" value="application/json" style="width:200px">
+            <label>状态码:</label>
+            <input type="text" id="http-status-code" value="200" style="width:60px">
+          </div>
+        </div>
+        <div class="section">
+          <h3>触发设备发送 HTTP 请求</h3>
+          <div class="form-row">
+            <label>URL:</label>
+            <input type="text" id="http-url" value="http://192.168.1.100:8080/test" style="flex:1">
+          </div>
+          <div class="form-row">
+            <label>Method:</label>
+            <select id="http-method">
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+            <label>Body:</label>
+            <input type="text" id="http-body" style="flex:1">
+          </div>
+          <div class="form-row">
+            <button class="btn" id="btn-http-init">初始化客户端</button>
+            <button class="btn btn-primary" id="btn-http-send">发送请求</button>
+            <button class="btn" id="btn-http-deinit">反初始化</button>
+          </div>
+        </div>
+        <div class="section">
+          <h3>请求日志</h3>
+          <div class="log-area" id="http-log"></div>
+          <button class="btn" id="btn-http-clear">清空</button>
+        </div>
+      </div>
+
+      <!-- 参数调节 -->
+      <div id="page-params" class="page">
+        <h2>参数调节</h2>
+        <div class="section">
+          <h3>参数读写</h3>
+          <p class="hint">用法: param [name [value]] — param 列出全部 | param name 读取 | param name value 设置</p>
+          <div class="form-row">
+            <label>参数名称:</label>
+            <input type="text" id="param-name" list="param-list" style="width:200px">
+            <datalist id="param-list"></datalist>
+          </div>
+          <div class="form-row">
+            <label>参数值:</label>
+            <input type="text" id="param-value">
+          </div>
+          <div class="form-row">
+            <button class="btn" id="btn-param-list">列出全部</button>
+            <button class="btn" id="btn-param-get">读取参数</button>
+            <button class="btn btn-primary" id="btn-param-set">设置参数</button>
+          </div>
+          <div class="form-row">
+            <label>自定义命令:</label>
+            <input type="text" id="param-cmd" style="flex:1">
+            <button class="btn" id="btn-param-send">发送</button>
+          </div>
+        </div>
+        <div class="section">
+          <h3>响应输出</h3>
+          <div class="log-area" id="param-output"></div>
+        </div>
+      </div>
+
+      <!-- 设备信息 -->
+      <div id="page-device" class="page">
+        <h2>设备信息</h2>
+        <div class="section">
+          <div class="form-row">
+            <label>UID:</label>
+            <input type="text" id="device-uid" readonly style="flex:1">
+            <button class="btn" id="btn-get-uid">获取 UID</button>
+          </div>
+          <div class="form-row">
+            <label>Orval:</label>
+            <input type="text" id="device-orval" value="0" style="width:80px">
+          </div>
+          <div class="form-row">
+            <label>SN:</label>
+            <input type="text" id="device-sn" readonly style="flex:1">
+            <button class="btn" id="btn-set-sn">写入 SN</button>
+          </div>
+          <div class="form-row">
+            <label>固件版本:</label>
+            <input type="text" id="device-version" readonly style="width:200px">
+            <label>设备型号:</label>
+            <input type="text" id="device-model" readonly style="width:200px">
+            <button class="btn" id="btn-get-device-info">获取设备信息</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 底部日志面板 -->
+    <footer class="log-panel" id="log-panel">
+      <div class="log-header" id="log-header" style="cursor:pointer;">
+        <span id="log-toggle-icon" style="transition:transform 0.2s;">▾</span>
+        <span>📋 日志输出</span>
+        <div class="log-actions">
+          <button class="btn btn-sm" id="btn-log-clear">清空</button>
+          <button class="btn btn-sm" id="btn-log-export">导出</button>
+        </div>
+      </div>
+      <div class="log-content" id="global-log">
+        <div class="log-empty">暂无日志</div>
+      </div>
+    </footer>
+    </div><!-- /main-column -->
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

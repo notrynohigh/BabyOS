@@ -11,6 +11,7 @@
 
 extern int test_drivers_runner(void);
 extern int test_algo_runner(void);
+extern int test_algo_ml_runner(void);
 extern int test_core_runner(void);
 extern int test_utils_runner(void);
 extern int test_modules_runner(void);
@@ -33,6 +34,9 @@ int main(void)
 
     b_log("\n[MAIN] ====== Batch 1: Algorithms ======\n");
     total_failed += test_algo_runner();
+
+    b_log("\n[MAIN] ====== Batch 1b: ML Primitives ======\n");
+    total_failed += test_algo_ml_runner();
 
     b_log("\n[MAIN] ====== Batch 2: Core ======\n");
     total_failed += test_core_runner();
