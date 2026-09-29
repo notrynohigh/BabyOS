@@ -781,7 +781,10 @@ function navigateTo(page, projectId) {
   // Clean up training refresh timer when navigating away from training page
   const prevActive = document.querySelector('.page.active');
   if (prevActive && prevActive.id === 'page-automl-training' && page !== 'automl-training') {
-    if (trainingRefreshTimer) {
+    // 仅在训练确实还在跑时才弹确认——后端状态不是 running 时静默离开。
+    // （之前只看 timer 引用，对 cleared-but-not-nulled 的句柄会误触发。）
+    const stillRunning = trainingRefreshTimer !== null && _lastTrainingStatus === 'running';
+    if (stillRunning) {
       showConfirm('训练仍在进行中，离开此页面将停止进度监控。是否继续？').then(confirmed => {
         if (confirmed) {
           clearInterval(trainingRefreshTimer);
@@ -790,6 +793,11 @@ function navigateTo(page, projectId) {
         }
       });
       return;
+    }
+    // 不再跑——清掉残留 timer 引用并直接走
+    if (trainingRefreshTimer !== null) {
+      clearInterval(trainingRefreshTimer);
+      trainingRefreshTimer = null;
     }
   }
 
@@ -917,7 +925,20 @@ async function loadProjects() {
   }
 
   try {
-    const projects = await apiGet('/api/projects');
+    // 后端刚启动时偶发 fetch failed：再试 2 次（每次间隔 1s）
+    let projects;
+    let _lastErr;
+    for (let _i = 0; _i < 3; _i++) {
+      try {
+        projects = await apiGet('/api/projects');
+        _lastErr = null;
+        break;
+      } catch (e) {
+        _lastErr = e;
+        if (_i < 2) await new Promise(r => setTimeout(r, 1000));
+      }
+    }
+    if (_lastErr) throw _lastErr;
     debug(`loadProjects: 获取到 ${projects.length} 个项目`);
 
     // 清空列表（保留空提示元素）
@@ -2166,6 +2187,7 @@ function updateWindowInfo() {
   }
   // 自动调整步进：步进不得小于窗口点数的 1/10
   const stepEl = document.getElementById('feat-step');
+  const stepHint = document.getElementById('feat-step-hint');
   if (stepEl && n > 0) {
     const minStep = Math.max(1, Math.floor(n / 10));
     const curStep = parseInt(stepEl.value) || 1;
@@ -2175,6 +2197,11 @@ function updateWindowInfo() {
       window._stepAutoAdjusting = false;
     }
     stepEl.min = minStep;
+    // 更新步进提示，显示最小值
+    if (stepHint) {
+      const minStepSec = (minStep / sr).toFixed(2);
+      stepHint.textContent = `(点数，最小 ${minStep} 点 ≈ ${minStepSec}s)`;
+    }
   }
   if (freqEnabled && !isPow2) {
     info.innerHTML = calcText + ' <span style="padding:2px 6px;background:#fdf6ec;border-radius:3px;color:#e6a23c;margin-left:6px;">频域特征要求窗口点数为2的幂</span>';
@@ -2623,6 +2650,21 @@ async function startTraining() {
   const origText = btn?.textContent;
   if (btn) { btn.disabled = true; btn.textContent = '启动中...'; }
 
+  // 立刻重置进度条/状态文本——避免上一个训练轮的"已完成/100%"在 POST 返回前残留。
+  // 后端 start() 会先 write_state('running', done=0) 再返回，所以 POST 一回来就是新值。
+  const statusEl = document.getElementById('training-status');
+  if (statusEl) {
+    statusEl.textContent = '训练中...';
+    statusEl.className = 'status-badge status-running';
+  }
+  const progressEl = document.getElementById('training-progress');
+  if (progressEl) progressEl.style.width = '0%';
+  const progressTextEl = document.getElementById('training-progress-text');
+  if (progressTextEl) progressTextEl.textContent = '0%';
+  // 隐藏上一轮的 metrics summary
+  const resultsSection = document.getElementById('training-results-section');
+  if (resultsSection) resultsSection.style.display = 'none';
+
   const epochs = parseInt(document.getElementById('train-epochs')?.value || '30');
   const timeout = parseInt(document.getElementById('train-timeout')?.value || '600');
 
@@ -2659,6 +2701,9 @@ async function startTraining() {
     });
     addLog('训练任务已启动', 'AutoML');
     if (btn) btn.textContent = '训练中...';
+    // 立刻同步一次 UI（不依赖 3s 轮询）：后端 start() 已先 write_state('running',done=0)
+    // 再返回，POST 一回来文件里就是新值。loadTrainingStatus 还会接管进度条/按钮。
+    loadTrainingStatus(currentProject).catch(() => {});
     refreshTrainingStatus();
   } catch (err) {
     addLog(`启动训练失败: ${err.message}`, 'AutoML');
@@ -2678,17 +2723,24 @@ async function stopTraining() {
 }
 
 let trainingRefreshTimer = null;
+// 跟踪后端报告的最新训练状态——navigateTo 离开训练页时只有真正在跑才弹确认
+let _lastTrainingStatus = null;
 function refreshTrainingStatus() {
   if (trainingRefreshTimer) clearInterval(trainingRefreshTimer);
   trainingRefreshTimer = setInterval(async () => {
     if (!currentProject) {
       clearInterval(trainingRefreshTimer);
+      trainingRefreshTimer = null;
       return;
     }
     try {
       const status = await apiGet(`/api/projects/${currentProject}/training`);
+      _lastTrainingStatus = status.status;
       if (status.status !== 'running') {
         clearInterval(trainingRefreshTimer);
+        trainingRefreshTimer = null;  // 必须清零，否则 navigateTo 的 showConfirm 守卫
+                                       // 看到的是已清空 interval 的句柄（truthy），仍会弹窗
+                                       // 挡住离开，导致 loadExportInfo 永远不被调用。
         addLog(`训练完成: ${status.status}`, 'AutoML');
         // Show a brief toast notification
         showToast(`训练${status.status === 'done' ? '完成' : status.status === 'failed' ? '失败' : '已' + status.status}`, status.status === 'done' ? '#67c23a' : '#f56c6c');
@@ -2712,19 +2764,36 @@ async function loadExportInfo(pid) {
     const infoEl = document.getElementById('export-info');
     const exportBtn = document.getElementById('btn-export-project');
 
-    // Check if project is ready for export (training done + features exist)
+    // 区分 readiness 失败原因，避免静默吞错后误导用户"还在训练中"
     let projectReady = false;
+    let blockReason = '';
     try {
-      const [scoring, training] = await Promise.all([
+      const [scoring, training, project] = await Promise.all([
         apiGet(`/api/projects/${pid}/features/scoring`),
         apiGet(`/api/projects/${pid}/training`),
+        apiGet(`/api/projects/${pid}`),
       ]);
-      projectReady = !!(training.status === 'done' && scoring.ranking && scoring.ranking.length > 0);
-    } catch (e) { /* not ready */ }
+      if (training.status !== 'done') {
+        blockReason = `训练未完成（当前状态: ${training.status || '未知'}）`;
+      } else if (!scoring.ranking || scoring.ranking.length === 0) {
+        blockReason = '特征评分结果为空，请回到特征页重新计算';
+      } else if (project.stage !== 'trained' && project.stage !== 'exported') {
+        // 训练文件说 done 但项目元数据落后——通常是训练中途异常，
+        // 真实导出后端会拒（require_stage）。此处直接提示而非误导。
+        blockReason = `项目阶段未到 trained（当前: ${project.stage}），请重新训练`;
+      } else {
+        projectReady = true;
+      }
+    } catch (e) {
+      // 任何一个端点失败——显示真实错误而非固定文案
+      const detail = e?.message || String(e);
+      addLog(`导出就绪检查失败: ${detail}`, 'AutoML');
+      blockReason = `就绪检查失败: ${detail}`;
+    }
 
     if (exportBtn) {
       exportBtn.disabled = !projectReady;
-      exportBtn.title = projectReady ? '' : '请先完成训练后再导出';
+      exportBtn.title = projectReady ? '' : blockReason || '请先完成训练后再导出';
     }
 
     if (infoEl) {
@@ -2758,7 +2827,7 @@ async function loadExportInfo(pid) {
       } else if (info.report && info.report.errors && info.report.errors.length > 0) {
         infoEl.innerHTML = `<div style="color:#f56c6c;">导出失败: ${escapeHtml(info.report.errors[0])}</div>`;
       } else if (!projectReady) {
-        infoEl.innerHTML = '<div class="empty-hint" style="color:#e6a23c;">请先完成训练后再导出</div>';
+        infoEl.innerHTML = `<div class="empty-hint" style="color:#e6a23c;">${escapeHtml(blockReason || '请先完成训练后再导出')}</div>`;
       } else {
         infoEl.innerHTML = '<div class="empty-hint">暂无导出记录</div>';
       }
@@ -3512,7 +3581,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // _stepAutoAdjusting 标记防止 updateWindowInfo 自动调整时触发重复 toast
   window._stepAutoAdjusting = false;
   if (stepEl) {
-    stepEl.addEventListener('input', () => {
+    stepEl.addEventListener('change', () => {
       if (window._stepAutoAdjusting) return;
       const sr = parseFloat(document.getElementById('feat-sampling-rate')?.value) || _projectSamplingRate;
       const ws = parseFloat(document.getElementById('feat-window-s')?.value) || 2.0;
@@ -3523,7 +3592,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isNaN(curStep) || curStep < 1) {
         showToast('步进最小为 1', '#e6a23c');
       } else if (curStep < minStep) {
-        showToast(`步进不允许，最小为窗长的 1/10（即 ${minStep}）`, '#e6a23c');
+        const minStepSec = (minStep / sr).toFixed(2);
+        showToast(`步进不允许，最小为窗口点数的 1/10（即 ${minStep} 点 ≈ ${minStepSec}s）`, '#e6a23c');
       }
     });
   }

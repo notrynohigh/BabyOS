@@ -36,7 +36,7 @@ FEATURE_CATEGORIES = {
 DEFAULT_CONFIG = FeatureConfig(
     window_len_s=2.0,
     n_per_window=512,
-    step=1,
+    step=64,  # ≥ n_per_window/10；API 强制约束（旧值 1 在 n_per_window≥10 时会被拒为 STEP_TOO_SMALL）
     feature_ids=[f"{f}" for f in ["mean", "std", "rms", "ptp", "zcr"]],
     freq_enabled=False,
     freq_bands=5,
@@ -118,8 +118,9 @@ def _validate(meta: ProjectMeta, cfg: FeatureConfig) -> None:
     step = max(cfg.step, 1)
     min_step = max(1, eff_n // 10)
     if step < min_step:
+        min_step_sec = round(min_step / meta.sampling_rate, 2) if meta.sampling_rate > 0 else 0
         raise AppError(422, "STEP_TOO_SMALL",
-                       f"步进 {step} 不允许，最小为窗长的 1/10（即 {min_step}）")
+                       f"步进 {step} 不允许，最小为窗口点数的 1/10（即 {min_step} 点 ≈ {min_step_sec}s）")
     # 窗口长度必须与分段长度兼容：至少有 1 个分段能容纳完整窗口
     segs = read_json(project_dir(meta.project_id) / "labeling" / "segments.json", default=[])
     if segs:

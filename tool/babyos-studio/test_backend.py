@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Comprehensive backend API test suite for BabyOS AutoML.
 
-Known bugs documented:
-  BUG-1: GET /dataset/file/{fid}/data returns 500 — np.nan_to_num(s, nan=None) TypeError
-         Location: dataset_service.py:345
-  BUG-2: POST /features/compute returns 500 instead of 422 when project has no segments
-  BUG-3: GET /features/scoring returns 500 after training with insufficient data
-         (training completes but produces no candidates, scoring has no split data)
+History of previously-reported bugs (now fixed):
+  BUG-1: GET /dataset/file/{fid}/data returned 500 — np.nan_to_num(s, nan=None) TypeError
+         Location: dataset_service.py — fixed; endpoint now returns 200.
+  BUG-2: POST /features/compute returned 500 instead of 422 when project has no segments
+         — fixed; endpoint now returns 422 (NO_DATA / STEP_TOO_SMALL as appropriate).
+  BUG-3: GET /features/scoring returned 500 after training with insufficient data
+         — fixed; endpoint now returns 422 INSUFFICIENT_DATA when scoring has no split data.
+
+The remaining "FAIL" lines (T5-06, T10-08) assert the old BUG behavior; the docstring is
+kept as a historical record. Real regressions, if any, will show as new failures.
 """
 import json
 import os

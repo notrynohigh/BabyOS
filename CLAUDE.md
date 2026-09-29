@@ -26,6 +26,51 @@ Each `test/<name>/` has its own `Makefile` and `_config/` (with `b_device_list.h
 
 `tool/` holds Python utilities for protocol testing (`b_protocol.py`, `xmodem_ydmodem.py`, `http_server.py`) — **NOT compiled into firmware**.
 
+For the host-side desktop debugging tool (Electron + AutoML backend), see **§ BabyOS Studio (Desktop Tooling)** below.
+
+## BabyOS Studio (Desktop Tooling)
+
+`tool/babyos-studio/` is the unified **host-side debugging tool** — an Electron desktop app with an optional Python FastAPI backend for AutoML. It bundles every diagnostic surface for BabyOS firmware into one installer. **It is never compiled into firmware** (host-only).
+
+**Capabilities:**
+- Serial control (data send/receive over real COM ports)
+- OTA firmware upgrade with progress
+- Xmodem / Ymodem file transfer
+- HTTP mock server + request replay
+- KV parameter read/write + timed polling
+- Device info (UID/SN)
+- **AutoML**: project lifecycle → dataset import → label/edit → feature engineering → model training → C-export
+- Quick links to BabyOS Gitee repo
+
+**Develop / run:**
+```bash
+cd tool/babyos-studio
+./start_dev.sh        # Linux/macOS — checks Node + Python, sets up venv, launches Electron
+start_dev.bat         # Windows
+```
+
+**Build installers:**
+```bash
+cd tool/babyos-studio
+npm install
+npm run build           # all platforms
+npm run build:win       # NSIS .exe
+npm run build:mac       # DMG
+npm run build:linux     # AppImage
+```
+
+**Tech stack:** Electron 28 · vanilla HTML/CSS/JS UI · `serialport` (Node) · FastAPI + httpx (Python, AutoML only).
+
+**Layout:**
+- `electron/` — main + preload (`electron/main.js`, `electron/preload.js`)
+- `ui/` — `index.html`, `style.css`, `app.js`
+- `python/app/api/` — FastAPI routers (`projects.py`, `datasets.py`, `labels.py`, `features.py`, `training.py`, `export.py`, `segments.py`, `templates.py`)
+- `python/app/services/` — ML services (`automl.py`, `trainer.py`, `simple_nn.py`, `scaler.py`, `*_service.py`)
+- `python/` — top-level test scripts targeting `http://127.0.0.1:18080` (e.g. `python test_automl.py`)
+- `test/` — pytest suites under `test/datasets/` (regression / table-classification / time-series-classification)
+
+> The BabyOS_Example repo has its own `tool/` directory with ad-hoc experiment scripts (`repro_*.py`, `verify_*.py`) — those are unrelated to this tool and live outside the firmware build.
+
 ## Architecture
 
 ```
@@ -38,7 +83,23 @@ Core (device abstraction, tasks, timers, queues, semaphores, select)
 HAL (GPIO/UART/SPI/I2C/DMA/QSPI/SDIO/Ethernet/Flash/Watchdog/RNG)
     ↓
 Drivers / MCU-specific porting
+
+Algorithm modules (bos/algorithm/, gated by Kconfig — see below) live alongside core
+and can be called from anywhere via their public headers (e.g. algo_ml.h).
 ```
+
+## Algorithm Modules (`bos/algorithm/`)
+
+Pure-C building blocks, each gated by a Kconfig flag (e.g. `_ALGO_ML_ENABLE`):
+
+| Module | Header | Kconfig flag | Purpose |
+|---|---|---|---|
+| CRC | `algo_crc.h` | `_ALGO_CRC_ENABLE` | CRC8/16/32 variants |
+| MD5 / SHA1 / HMAC / Base64 / UTF-8 | `algo_md5.h`, `algo_hmac_sha1.h`, `algo_base64.h`, `algo_utf8_unicode.h` | per-module | Hashing / encoding |
+| Sort | `algo_sort.h` | `_ALGO_SORT_ENABLE` | qsort / heap helpers |
+| **ML** | `algo_ml.h` | `_ALGO_ML_ENABLE` | Tiny on-device ML: feature normalization, simple inference, model loading — paired with BabyOS Studio's AutoML export pipeline |
+
+The ML module is the firmware-side counterpart of BabyOS Studio's AutoML: train on host → export weights/params via Studio → embed via `algo_ml.h` API → run inference on MCU.
 
 ## Architecture & Programming Constraints (READ FIRST)
 
@@ -121,6 +182,8 @@ while (bHalGpioReadPin(port, pin)) {
 
 **Encrypt loop silent failures** (`b_mod_kv.c`): return immediately on first error, do not continue.
 
+**Windows `ctypes.CDLL` + `tempfile.TemporaryDirectory` lock** (`tool/babyos-studio/python/app/services/export_service.py`, `.../export/selfcheck.py`): `ctypes.CDLL("_selfcheck.so")` calls `LoadLibrary` on Windows and keeps the file mapped until `FreeLibrary`. When the surrounding tempdir context exits, `rmtree` raises `NotADirectoryError: [WinError 267]` on the locked file. Use `ignore_cleanup_errors=True` on the tempdir (Py 3.10+) **and** wrap each CDLL site in `try/finally` that calls `ctypes.windll.kernel32.FreeLibrary(lib._handle)` on `sys.platform == "win32"`. Without this, `%TEMP%\automl_export_*` orphans pile up and the global FastAPI exception handler swallows successful-export results as 422.
+
 **YMODEM CRC precedence**: `crc = (crc ^ pbuf[i]) << 8` (parens required).
 
 **`bWifiModule.dev_no`**: must be wrapped with `#if (defined(_WIFI_ENABLE) && (_WIFI_ENABLE == 1))`.
@@ -132,6 +195,10 @@ while (bHalGpioReadPin(port, pin)) {
 **NTP 2036 era**: `b_srv_ntp.c` handles era rollover by checking high bit and ORing `0xFFFFFFFF00000000ULL` before subtracting the NTP-to-Unix offset.
 
 **Config-web `_bParseParams(NULL, ...)`**: underflows `dest_len - 1`. Guard with `if (dest == NULL || dest_len == 0) return;`.
+
+**`algo_ml` argmax tie-break** (`bos/algorithm/algo_ml.c`): uses strict `>`, so an exact tie returns the **smallest** index (sklearn-aligned). Don't assume leftmost-wins-of-the-last-occurrence semantics.
+
+**`algo_ml` softmax numerical stability** (`bos/algorithm/algo_ml.c`): subtracts the max element before `exp()`. Any new port must keep this — without it, large logits produce NaN on `float`.
 
 ## Network Module Architecture
 

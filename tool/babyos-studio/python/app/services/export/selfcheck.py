@@ -10,6 +10,7 @@ import hashlib
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -73,37 +74,45 @@ def step_predict_consistency(workdir: Path, symbol: str, payload: dict,
 def _predict_consistency_impl(so_path: str, symbol: str, payload: dict,
                               X_tr: np.ndarray, X_te: np.ndarray) -> dict:
     lib = ctypes.CDLL(so_path)
-    fn = getattr(lib, f"algo_{symbol}_predict")
-    fn.argtypes = [ctypes.POINTER(ctypes.c_float), ctypes.c_uint32, ctypes.POINTER(ctypes.c_float)]
-    fn.restype = ctypes.c_int
-    nc = len(payload["labels"])
+    try:
+        fn = getattr(lib, f"algo_{symbol}_predict")
+        fn.argtypes = [ctypes.POINTER(ctypes.c_float), ctypes.c_uint32, ctypes.POINTER(ctypes.c_float)]
+        fn.restype = ctypes.c_int
+        nc = len(payload["labels"])
 
-    ref_proba = reference.predict_proba_ref(payload, np.vstack([X_tr, X_te]))
-    ref_id = np.argmax(ref_proba, axis=1)
+        ref_proba = reference.predict_proba_ref(payload, np.vstack([X_tr, X_te]))
+        ref_id = np.argmax(ref_proba, axis=1)
 
-    X_all = np.vstack([X_tr, X_te]).astype(np.float32)
-    c_id = np.empty(len(X_all), dtype=np.int64)
-    c_proba = np.empty((len(X_all), nc), dtype=np.float32)
-    for i in range(len(X_all)):
-        xin = np.ascontiguousarray(X_all[i], dtype=np.float32)
-        pout = np.empty(nc, dtype=np.float32)
-        r = fn(xin.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), xin.shape[0],
-               pout.ctypes.data_as(ctypes.POINTER(ctypes.c_float)))
-        if r < 0:
-            return {"ok": False, "error": f"sample {i}: C predict 返回 {r}"}
-        c_id[i] = r
-        c_proba[i] = pout
+        X_all = np.vstack([X_tr, X_te]).astype(np.float32)
+        c_id = np.empty(len(X_all), dtype=np.int64)
+        c_proba = np.empty((len(X_all), nc), dtype=np.float32)
+        for i in range(len(X_all)):
+            xin = np.ascontiguousarray(X_all[i], dtype=np.float32)
+            pout = np.empty(nc, dtype=np.float32)
+            r = fn(xin.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), xin.shape[0],
+                   pout.ctypes.data_as(ctypes.POINTER(ctypes.c_float)))
+            if r < 0:
+                return {"ok": False, "error": f"sample {i}: C predict 返回 {r}"}
+            c_id[i] = r
+            c_proba[i] = pout
 
-    id_match = float((c_id == ref_id).mean())
-    max_proba_diff = float(np.max(np.abs(c_proba - ref_proba))) if len(X_all) else 0.0
-    ok = id_match == 1.0 and max_proba_diff <= 2e-2
-    return {
-        "ok": ok,
-        "n_samples": int(len(X_all)),
-        "id_match_rate": id_match,
-        "max_proba_diff": max_proba_diff,
-        "proba_tol": 2e-2,
-    }
+        id_match = float((c_id == ref_id).mean())
+        max_proba_diff = float(np.max(np.abs(c_proba - ref_proba))) if len(X_all) else 0.0
+        ok = id_match == 1.0 and max_proba_diff <= 2e-2
+        return {
+            "ok": ok,
+            "n_samples": int(len(X_all)),
+            "id_match_rate": id_match,
+            "max_proba_diff": max_proba_diff,
+            "proba_tol": 2e-2,
+        }
+    finally:
+        # Windows: ctypes.CDLL 持锁 .so 文件，须显式 FreeLibrary 才能 rmtree
+        if hasattr(lib, "_handle") and sys.platform == "win32":
+            try:
+                ctypes.windll.kernel32.FreeLibrary(lib._handle)
+            except Exception:  # noqa: BLE001 - 释放失败不阻塞结果
+                pass
 
 
 def step_feature_chain(workdir: Path, symbol: str, windows: np.ndarray,
@@ -114,31 +123,39 @@ def step_feature_chain(workdir: Path, symbol: str, windows: np.ndarray,
     windows: (n_win, n_ch*N) float32 通道分离；expected: (n_win, n_feat) float32。
     """
     lib = ctypes.CDLL(str(workdir / "_selfcheck.so"))
-    fn = getattr(lib, f"algo_{symbol}_feat_extract")
-    fn.argtypes = [ctypes.POINTER(ctypes.c_float), ctypes.c_uint32, ctypes.POINTER(ctypes.c_float)]
-    fn.restype = ctypes.c_int
+    try:
+        fn = getattr(lib, f"algo_{symbol}_feat_extract")
+        fn.argtypes = [ctypes.POINTER(ctypes.c_float), ctypes.c_uint32, ctypes.POINTER(ctypes.c_float)]
+        fn.restype = ctypes.c_int
 
-    n_win, nf = expected.shape
-    got = np.empty((n_win, nf), dtype=np.float32)
-    for i in range(n_win):
-        w = np.ascontiguousarray(windows[i], dtype=np.float32)
-        out = np.empty(nf, dtype=np.float32)
-        r = fn(w.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), win_len,
-               out.ctypes.data_as(ctypes.POINTER(ctypes.c_float)))
-        if r != 0:
-            return {"ok": False, "error": f"window {i}: feat_extract 返回 {r}"}
-        got[i] = out
+        n_win, nf = expected.shape
+        got = np.empty((n_win, nf), dtype=np.float32)
+        for i in range(n_win):
+            w = np.ascontiguousarray(windows[i], dtype=np.float32)
+            out = np.empty(nf, dtype=np.float32)
+            r = fn(w.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), win_len,
+                   out.ctypes.data_as(ctypes.POINTER(ctypes.c_float)))
+            if r != 0:
+                return {"ok": False, "error": f"window {i}: feat_extract 返回 {r}"}
+            got[i] = out
 
-    tol = np.maximum(1e-3 * np.abs(expected), 5e-6)
-    diff = np.abs(got.astype(np.float64) - expected.astype(np.float64))
-    bad = diff > tol
-    return {
-        "ok": bool(not bad.any()),
-        "n_windows": int(n_win),
-        "max_violation": float(diff.max()) if n_win else 0.0,
-        "n_violations": int(bad.sum()),
-        "tol_rule": "|a-b| <= max(1e-3*|b|, 5e-6)",
-    }
+        tol = np.maximum(1e-3 * np.abs(expected), 5e-6)
+        diff = np.abs(got.astype(np.float64) - expected.astype(np.float64))
+        bad = diff > tol
+        return {
+            "ok": bool(not bad.any()),
+            "n_windows": int(n_win),
+            "max_violation": float(diff.max()) if n_win else 0.0,
+            "n_violations": int(bad.sum()),
+            "tol_rule": "|a-b| <= max(1e-3*|b|, 5e-6)",
+        }
+    finally:
+        # Windows: ctypes.CDLL 持锁 .so 文件，须显式 FreeLibrary 才能 rmtree
+        if hasattr(lib, "_handle") and sys.platform == "win32":
+            try:
+                ctypes.windll.kernel32.FreeLibrary(lib._handle)
+            except Exception:  # noqa: BLE001 - 释放失败不阻塞结果
+                pass
 
 
 def step_static_scan(workdir: Path) -> dict:

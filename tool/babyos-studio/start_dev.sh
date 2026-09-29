@@ -103,8 +103,17 @@ if [ ! -d node_modules ]; then
     log_info "安装 Node.js 依赖 ..."
     export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
     export electron_config_cache="$HOME/.electron-cache"
-    npm install
-    log_ok "依赖安装完成"
+    if npm install; then
+        log_ok "依赖安装完成"
+    else
+        log_warn "npm install 失败，尝试使用国内镜像..."
+        if npm install --registry=https://registry.npmmirror.com; then
+            log_ok "依赖安装完成（使用国内镜像）"
+        else
+            log_err "依赖安装失败，请检查网络后重试"
+            exit 1
+        fi
+    fi
 else
     log_ok "依赖已安装"
 fi

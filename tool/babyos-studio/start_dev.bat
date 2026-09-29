@@ -1,4 +1,12 @@
 @echo off
+REM 强制 UTF-8 代码页（bat 文件以 UTF-8 保存，无 BOM；不加 chcp 在非中文 Windows 上中文会乱码）
+chcp 65001 >nul 2>&1
+REM 强制 Python 子进程使用 UTF-8（pip 读 requirements.txt 含中文注释时不再 GBK 报错）
+set "PYTHONUTF8=1"
+set "PYTHONIOENCODING=utf-8"
+REM pip 用清华源，避免默认 PyPI 在国内超时（ReadTimeoutError）
+set "PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple"
+set "PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn"
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
@@ -71,7 +79,7 @@ if %NODE_OK% equ 0 (
     )
 
     REM 最终检查
-    if %NODE_OK% equ 0 (
+    if !NODE_OK! equ 0 (
         echo.
         echo ==========================================
         echo  安装 Node.js 后，请执行以下操作:
@@ -112,14 +120,15 @@ REM 2. 检查 Python（可选）
 REM ============================================
 set PYTHON_CMD=
 
-where python3 >nul 2>nul
-if !errorlevel! equ 0 (
-    set PYTHON_CMD=python3
-    goto :python_found
-)
+REM Windows 上优先用 python（python3 在 Windows 上常是 MS Store shim，venv 会假成功）
 where python >nul 2>nul
 if !errorlevel! equ 0 (
     set PYTHON_CMD=python
+    goto :python_found
+)
+where python3 >nul 2>nul
+if !errorlevel! equ 0 (
+    set PYTHON_CMD=python3
     goto :python_found
 )
 echo [WARN] 未找到 Python（AutoML 后端需要，可选）
@@ -132,7 +141,12 @@ echo [OK] Python 已安装
 %PYTHON_CMD% --version
 echo.
 
-if not exist "python\.venv" (
+if not exist "python\.venv\Scripts\python.exe" (
+    REM venv 不存在或已损坏（仅 .venv 目录但无 Scripts\python.exe）→ 重建
+    if exist "python\.venv" (
+        echo [WARN] 检测到破损的虚拟环境，正在清理重建 ...
+        rmdir /s /q "python\.venv"
+    )
     echo [INFO] 创建 Python 虚拟环境 ...
     %PYTHON_CMD% -m venv python\.venv
     if exist "python\.venv\Scripts\pip.exe" (
@@ -193,4 +207,4 @@ echo   启动 BabyOS Studio
 echo ==========================================
 echo.
 
-call npx cross-env ELECTRON_DEV=true electron .
+call npm run dev

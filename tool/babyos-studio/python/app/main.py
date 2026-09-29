@@ -1,8 +1,11 @@
 """FastAPI 应用入口：路由注册、CORS、启动对账（design.md §3）。"""
+import logging
 import shutil
+import traceback
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api import datasets, export, features, labels, projects, segments, templates, training
@@ -10,6 +13,7 @@ from .config import projects_root
 from .deps import AppError, atomic_write_json, read_json
 
 __version__ = "1.0.0"
+log = logging.getLogger("babyos.automl")
 
 
 def create_app() -> FastAPI:
@@ -20,6 +24,16 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.exception_handler(Exception)
+    async def _unhandled(_request: Request, exc: Exception):
+        """兜底：未捕获异常 → 422 + 结构化 detail，避免裸 500（评审 P1-5）。"""
+        log.exception("unhandled exception: %s", exc)
+        return JSONResponse(
+            status_code=422,
+            content={"detail": {"code": "UNHANDLED", "detail": str(exc),
+                               "trace": traceback.format_exc(limit=8).splitlines()[-12:]}},
+        )
 
     @app.get("/api/version")
     async def get_version():
@@ -69,7 +83,6 @@ def create_app() -> FastAPI:
     index_html = fe_dist / "index.html" if fe_dist.is_dir() else None
 
     if index_html and index_html.is_file():
-        from starlette.requests import Request
         from starlette.responses import FileResponse
 
         @app.get("/{full_path:path}", include_in_schema=False)

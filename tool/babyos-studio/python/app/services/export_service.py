@@ -96,7 +96,11 @@ def export(pid: str) -> dict:
     split = feature_service.get_or_create_split(meta, seed=payload["seed"])
     date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
-    with tempfile.TemporaryDirectory(prefix="automl_export_") as td:
+    # Windows 上 ctypes.CDLL 会 LoadLibrary("_selfcheck.so")，文件被锁，
+    # rmtree 在 __exit__ 时无法删除并抛 NotADirectoryError/WinError 267。
+    # ignore_cleanup_errors=True 让 tempdir 静默清理（孤儿目录由 OS 回收）。
+    with tempfile.TemporaryDirectory(prefix="automl_export_",
+                                     ignore_cleanup_errors=True) as td:
         workdir = Path(td) / "bundle"
         info = generator.build_bundle(workdir, meta.name, payload,
                                       _feature_meta(meta, payload, matrix, cfg), date)

@@ -57,17 +57,29 @@ function startPythonBackend() {
     return;
   }
 
-  const venvPython = path.join(pythonDir, '.venv', 'bin', 'python');
-  const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
+  // Windows venv: .venv\Scripts\python.exe
+  // Linux/macOS venv: .venv/bin/python
+  const isWindows = process.platform === 'win32';
+  const venvPython = isWindows
+    ? path.join(pythonDir, '.venv', 'Scripts', 'python.exe')
+    : path.join(pythonDir, '.venv', 'bin', 'python');
+  const pythonCmd = fs.existsSync(venvPython)
+    ? venvPython
+    : (isWindows ? 'python' : 'python3');
+
+  const spawnOptions = {
+    cwd: pythonDir,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  };
+  if (isWindows) {
+    spawnOptions.windowsHide = true;
+  }
 
   pythonProcess = spawn(pythonCmd, [
     '-m', 'uvicorn', 'app.main:app',
     '--host', '127.0.0.1',
     '--port', String(PYTHON_PORT),
-  ], {
-    cwd: pythonDir,
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
+  ], spawnOptions);
 
   pythonProcess.stdout.on('data', (data) => {
     const msg = data.toString().trim();
@@ -95,7 +107,8 @@ function startPythonBackend() {
 
 function stopPythonBackend() {
   if (pythonProcess) {
-    pythonProcess.kill('SIGTERM');
+    // Windows: SIGTERM is ignored, kill() always TerminateProcess. POSIX: graceful.
+    pythonProcess.kill();
     pythonProcess = null;
   }
 }
@@ -416,24 +429,21 @@ function registerIpcHandlers() {
     await shell.openPath(p);
   });
 
-  // Python 后端状态（同时检测端口是否可达）
+  // Python 后端状态（必须 HTTP 实测可达，不能只看进程是否存在——spawn 已返回但 uvicorn 还在启动中）
   ipcMain.handle('python:status', async () => {
-    let running = pythonProcess !== null;
-    // 如果子进程不存在，尝试检测端口
-    if (!running) {
-      try {
-        const http = require('http');
-        await new Promise((resolve, reject) => {
-          const req = http.get(`http://127.0.0.1:${PYTHON_PORT}/api/projects`, { timeout: 2000 }, (res) => {
-            res.resume();
-            running = res.statusCode === 200;
-            resolve();
-          });
-          req.on('error', () => resolve());
-          req.on('timeout', () => { req.destroy(); resolve(); });
+    let running = false;
+    try {
+      const http = require('http');
+      await new Promise((resolve) => {
+        const req = http.get(`http://127.0.0.1:${PYTHON_PORT}/api/version`, { timeout: 1500 }, (res) => {
+          res.resume();
+          running = res.statusCode === 200;
+          resolve();
         });
-      } catch (e) { /* 忽略 */ }
-    }
+        req.on('error', () => resolve());
+        req.on('timeout', () => { req.destroy(); resolve(); });
+      });
+    } catch (e) { /* 忽略 */ }
     return { running, port: PYTHON_PORT };
   });
 }
