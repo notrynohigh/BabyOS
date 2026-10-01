@@ -87,6 +87,7 @@ SOURCE_TMPL = """/**
 #include "algo_{name}.h"
 #include "b_os.h"
 #include "algo_ml.h"          /* BabyOS 预置 ML 原语（FR-10，需 _ALGO_ML_ENABLE=1） */
+{signal_include}{fft_include}
 #include <math.h>
 
 {scaler_decls}
@@ -352,9 +353,9 @@ MAKEFILE_SNIPPET_TMPL = """# BabyOS AutoML bundle ({name}) 集成片段
 BUNDLE_SRC := bundle/algo_{name}.c
 BUNDLE_SRC += $(wildcard bundle/example/*.c)
 BUNDLE_SRC += $(BUNDLE_SRC_DIR)/bos/algorithm/algo_ml.c
-
+{extra_src}
 CFLAGS  += -D_ALGO_ML_ENABLE=1
-CFLAGS  += -ffp-contract=off
+{extra_cflags}CFLAGS  += -ffp-contract=off
 INCLUDES += -Ibundle
 INCLUDES += -I$(BUNDLE_SRC_DIR)/bos/algorithm
 INCLUDES += -I$(BUNDLE_SRC_DIR)/bos/algorithm/inc
@@ -378,6 +379,7 @@ BCONFIG_SNIPPET_TMPL = """/* BabyOS AutoML bundle ({name}) — b_config.h 最小
  *   (c) 直接编辑 bos/algorithm/Kconfig 行 39，default 改为 y
  *
  * 注：_ALGO_ML_ENABLE 默认已 y；但若上游 menuconfig 曾显式置 n，必须重新启用。
+ *     深度绑定（2026-10-01）：时序工程需启用 _ALGO_SIGNAL_ENABLE 和 _ALGO_FFT_ENABLE。
  */
 
 #ifndef _BOS_ALGO_ENABLE
@@ -387,7 +389,7 @@ BCONFIG_SNIPPET_TMPL = """/* BabyOS AutoML bundle ({name}) — b_config.h 最小
 #ifndef _ALGO_ML_ENABLE
 #define _ALGO_ML_ENABLE    1   /* 启用 ML 原语（Kconfig 默认 y） */
 #endif
-"""
+{extra_config}"""
 
 # 链接段说明（评审 B3）
 SECTION_TXT_TMPL = """BabyOS 链接段约定（评审 B3）
@@ -487,6 +489,8 @@ def build_bundle(
     feat_doc = ""
     example = ""
     n_ch = 0
+    signal_include = ""
+    fft_include = ""
     if is_ts:
         n = feature_meta["n"]
         n_ch = feature_meta["n_channels"]
@@ -502,6 +506,15 @@ def build_bundle(
         )
         feat_doc = f"int algo_{name}_feat_extract(const float *ch_buf, uint32_t n, float *out);"
         example = EXAMPLE_TMPL_TS.format(name=name, NAME=NAME, n_ch=n_ch, date=date)
+
+        # 深度绑定：根据特征类型添加预置原语 include
+        signal_include = '#include "algo_signal.h"      /* BabyOS 预置信号统计原语（需 _ALGO_SIGNAL_ENABLE=1） */\n'
+        has_freq = feature_meta["freq_enabled"] and any(
+            f in ("spec_centroid", "spec_energy", "dominant_freq") or f.startswith("band")
+            for _, f in feature_meta["exported"]
+        )
+        if has_freq:
+            fft_include = '#include "algo_fft.h"         /* BabyOS 预置 FFT 原语（需 _ALGO_FFT_ENABLE=1） */\n'
     else:
         # 表格工程 example 必含（FR-8.7，每次导出必生成）
         example = EXAMPLE_TMPL_TABLE.format(name=name, NAME=NAME, date=date)
@@ -521,6 +534,8 @@ def build_bundle(
         helpers=emitted["helpers"],
         predict_core=emitted["predict_core"],
         feat_impl=feat_impl,
+        signal_include=signal_include,
+        fft_include=fft_include,
     )
 
     # 文件落盘（v1.6：公共 ML 原语由 BabyOS algo_ml 模块提供，bundle 不再带
@@ -553,8 +568,38 @@ def build_bundle(
     # 评审 B1/B3：bundle 内带 main.c + Makefile snippet + b_config.h + section.txt
     # 让用户拿到 bundle 就能在已有 BabyOS 工程里编译运行
     files["main.c"] = MAIN_C_TMPL.format(proj=proj_name, date=date, name=name)
-    files["Makefile.snippet"] = MAKEFILE_SNIPPET_TMPL.format(name=name)
-    files["b_config_snippet.h"] = BCONFIG_SNIPPET_TMPL.format(name=name)
+
+    # 深度绑定：根据特征类型添加预置原语的编译配置
+    extra_src = ""
+    extra_cflags = ""
+    extra_config = ""
+    if is_ts:
+        has_freq = feature_meta["freq_enabled"] and any(
+            f in ("spec_centroid", "spec_energy", "dominant_freq") or f.startswith("band")
+            for _, f in feature_meta["exported"]
+        )
+        extra_src = "BUNDLE_SRC += $(BUNDLE_SRC_DIR)/bos/algorithm/algo_signal.c\n"
+        extra_cflags = "CFLAGS  += -D_ALGO_SIGNAL_ENABLE=1\n"
+        extra_config = """
+#ifndef _ALGO_SIGNAL_ENABLE
+#define _ALGO_SIGNAL_ENABLE 1  /* 启用信号统计原语（时序工程需要） */
+#endif
+"""
+        if has_freq:
+            extra_src += "BUNDLE_SRC += $(BUNDLE_SRC_DIR)/bos/algorithm/algo_fft.c\n"
+            extra_cflags += "CFLAGS  += -D_ALGO_FFT_ENABLE=1\n"
+            extra_config += """
+#ifndef _ALGO_FFT_ENABLE
+#define _ALGO_FFT_ENABLE    1  /* 启用 FFT 原语（频域特征需要） */
+#endif
+"""
+
+    files["Makefile.snippet"] = MAKEFILE_SNIPPET_TMPL.format(
+        name=name, extra_src=extra_src, extra_cflags=extra_cflags
+    )
+    files["b_config_snippet.h"] = BCONFIG_SNIPPET_TMPL.format(
+        name=name, extra_config=extra_config
+    )
     files["section.txt"] = SECTION_TXT_TMPL.format(name=name)
 
     for rel, content in files.items():

@@ -32,6 +32,7 @@ def step_compile(workdir: Path, repo_root: Path | None = None) -> dict:
 
     自检锚点：编译清单包含**仓库真实 algo_ml.c**（非 bundle 复制），保证生成代码与
     模块契约同源。example 文件独立 compile 一遍（见 step_symbol_map）。
+    深度绑定（2026-10-01）：同时注入 algo_signal.c 和 algo_fft.c（如果导出代码使用了这些原语）。
     """
     from .c_common import STUB_B_OS_H, find_babyos_root
 
@@ -40,6 +41,10 @@ def step_compile(workdir: Path, repo_root: Path | None = None) -> dict:
     if not algo_ml_c.is_file():
         return {"ok": False, "compiler": "",
                 "stderr": f"仓库 algo_ml.c 不存在: {algo_ml_c}"}
+
+    # 检查是否需要注入 algo_signal.c 和 algo_fft.c
+    algo_signal_c = root / "bos" / "algorithm" / "algo_signal.c"
+    algo_fft_c = root / "bos" / "algorithm" / "algo_fft.c"
 
     stub = workdir / "stub"
     stub.mkdir(exist_ok=True)
@@ -50,14 +55,38 @@ def step_compile(workdir: Path, repo_root: Path | None = None) -> dict:
     # 例外：example 单独处理；仓库 algo_ml.c 注入以保证符号契约同源
     c_files = [p for p in c_files if not p.endswith("/algo_ml_common.c")]
     c_files.append(str(algo_ml_c))
+
+    # 深度绑定：注入 algo_signal.c 和 algo_fft.c（如果存在且导出代码使用了这些原语）
+    compile_defs = ["-D_ALGO_ML_ENABLE=1"]
+    if algo_signal_c.is_file():
+        # 检查导出代码是否使用了 algo_signal.h
+        uses_signal = any(
+            "algo_signal.h" in p.read_text(encoding="utf-8", errors="ignore")
+            for p in workdir.rglob("*.c")
+            if "example" not in p.parts and p.name != "main.c"
+        )
+        if uses_signal:
+            c_files.append(str(algo_signal_c))
+            compile_defs.append("-D_ALGO_SIGNAL_ENABLE=1")
+
+    if algo_fft_c.is_file():
+        # 检查导出代码是否使用了 algo_fft.h
+        uses_fft = any(
+            "algo_fft.h" in p.read_text(encoding="utf-8", errors="ignore")
+            for p in workdir.rglob("*.c")
+            if "example" not in p.parts and p.name != "main.c"
+        )
+        if uses_fft:
+            c_files.append(str(algo_fft_c))
+            compile_defs.append("-D_ALGO_FFT_ENABLE=1")
+
     so = workdir / "_selfcheck.so"
     cmd = ["gcc", "-std=c99", "-Wall", "-Wextra", "-Werror", "-ffp-contract=off",
            "-shared", "-fPIC", "-O2",
            "-I", str(stub), "-I", str(workdir),
            "-I", str(root / "bos" / "algorithm"),
            "-I", str(root / "bos" / "algorithm" / "inc"),
-           "-D_ALGO_ML_ENABLE=1",
-           "-lm", "-o", str(so)] + c_files
+           ] + compile_defs + ["-lm", "-o", str(so)] + c_files
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
     ver = subprocess.run(["gcc", "--version"], capture_output=True, text=True).stdout.splitlines()[0]
     if r.returncode != 0:

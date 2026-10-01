@@ -41,6 +41,18 @@ config _ALGO_ML_ENABLE
     default y
     depends on _BOS_ALGO_ENABLE
 
+#======================================== Signal ========================================
+config _ALGO_SIGNAL_ENABLE
+    bool "Signal Processing Primitives (mean/std/rms/zcr/skew/kurt)"
+    default n
+    depends on _BOS_ALGO_ENABLE
+
+#======================================== FFT ========================================
+config _ALGO_FFT_ENABLE
+    bool "FFT (Radix-2 DIT)"
+    default n
+    depends on _BOS_ALGO_ENABLE
+
 #======================================== CRC ========================================
 config _ALGO_CRC_ENABLE
     bool "CRC Algorithms"

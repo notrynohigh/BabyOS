@@ -5,7 +5,12 @@
 - zcr = 变号次数 / (N-1)（np.mean(w[:-1]*w[1:]<0) 的分母是 N-1，易错点）
 - skew/kurt 零方差防护（m2<=0 → 0）；m2 = 总体二阶中心矩
 - FFT：迭代 radix-2 DIT，旋转因子与位反转表全部烘焙 static const
-- ch_buf 布局：通道分离 [ch0_N 点][ch1_N 点]...
+- ch_buf 布局：通道分离 [ch0_N 点][ch1_N 点]
+
+深度绑定（2026-10-01）：
+- 信号统计原语预置到 bos/algorithm/algo_signal.h（bAlgoSignal*）
+- FFT 原语预置到 bos/algorithm/algo_fft.h（bAlgoFft*）
+- 本文件只生成：旋转因子表/位反转表（烘焙常量）+ feat_extract 编排逻辑
 """
 from __future__ import annotations
 
@@ -13,12 +18,10 @@ import numpy as np
 
 from ..feature_service import TIME_FEATURES  # noqa: F401  (文档可见性)
 
-TIME_C = {
-    "mean": "({sum_x} / (float)N)",
-}
-
 
 def _emit_twiddles(n: int, prefix: str) -> str:
+    """烘焙旋转因子表和位反转表（预计算，调用 bAlgoFftGenTwiddle/bAlgoFftGenBitReverse 生成）。"""
+    # 旋转因子
     k = np.arange(n // 2)
     w_re = np.cos(2.0 * np.pi * k / n)
     w_im = -np.sin(2.0 * np.pi * k / n)
@@ -54,113 +57,54 @@ def _emit_twiddles(n: int, prefix: str) -> str:
     )
 
 
-def _fft_helper(n: int, prefix: str) -> str:
-    return f"""static void {prefix}_fft(float *re, float *im)
-{{
-    uint16_t i, j, len, half;
-    /* 位反转置换 */
-    for (i = 0; i < {n}; i++)
-    {{
-        j = {prefix}_rev[i];
-        if (j > i)
-        {{
-            float t;
-            t = re[i]; re[i] = re[j]; re[j] = t;
-            t = im[i]; im[i] = im[j]; im[j] = t;
-        }}
-    }}
-    /* 迭代 DIT 蝶形：tw 索引 = j * ({n} / len) */
-    for (len = 2; len <= {n}; len <<= 1)
-    {{
-        half = len >> 1;
-        for (i = 0; i < {n}; i += len)
-        {{
-            for (j = 0; j < half; j++)
-            {{
-                uint32_t tw = (uint32_t)j * ({n} / len);
-                uint16_t a = (uint16_t)(i + j);
-                uint16_t b = (uint16_t)(i + j + half);
-                float wr = {prefix}_tw_re[tw];
-                float wi = {prefix}_tw_im[tw];
-                float tr = re[b] * wr - im[b] * wi;
-                float ti = re[b] * wi + im[b] * wr;
-                re[b] = re[a] - tr;
-                im[b] = im[a] - ti;
-                re[a] = re[a] + tr;
-                im[a] = im[a] + ti;
-            }}
-        }}
-    }}
-}}
-"""
+def _time_feature_c(fname: str) -> str:
+    """时域特征 C 表达式（调用预置 bAlgoSignal* 原语）。返回赋值语句。
 
-
-def _time_feature_c(fname: str, x: str, n: str) -> str:
-    """单特征 C 表达式（基于已算好的统计量变量）。返回赋值语句。"""
+    统计量变量命名约定（调用 bAlgoSignalStats 后）：
+    - s_stats: bAlgoSignalStats_t 结构体
+    - N: 信号长度
+    """
     if fname == "mean":
-        return "out[oi++] = s_sum / (float)N;"
+        return "out[oi++] = bAlgoSignalMean(&s_stats, N);"
     if fname == "std":
-        return "out[oi++] = sqrtf(s_m2 / (float)N);"
+        return "out[oi++] = bAlgoSignalStd(&s_stats, N);"
     if fname == "min":
-        return "out[oi++] = s_min;"
+        return "out[oi++] = s_stats.min;"
     if fname == "max":
-        return "out[oi++] = s_max;"
+        return "out[oi++] = s_stats.max;"
     if fname == "rms":
-        return "out[oi++] = sqrtf(s_sq / (float)N);"
+        return "out[oi++] = bAlgoSignalRms(&s_stats, N);"
     if fname == "ptp":
-        return "out[oi++] = s_max - s_min;"
+        return "out[oi++] = bAlgoSignalPtp(&s_stats);"
     if fname == "zcr":
-        return "out[oi++] = (float)s_zcr / (float)(N - 1);"
+        return "out[oi++] = bAlgoSignalZcr(&s_stats, N);"
     if fname == "skew":
-        return "out[oi++] = (s_m2 > 0.0f) ? ((s_m3 / (float)N) / powf(s_m2 / (float)N, 1.5f)) : 0.0f;"
+        return "out[oi++] = bAlgoSignalSkew(&s_stats, N);"
     if fname == "kurt":
-        return "out[oi++] = (s_m2 > 0.0f) ? ((s_m4 / (float)N) / ((s_m2 / (float)N) * (s_m2 / (float)N)) - 3.0f) : 0.0f;"
+        return "out[oi++] = bAlgoSignalKurt(&s_stats, N);"
     raise ValueError(f"未知时域特征: {fname}")
 
 
 def _freq_feature_c(fname: str, prefix: str, n: int, fs: float, bands: int) -> str:
+    """频域特征 C 表达式（调用预置 bAlgoFft* 原语）。返回赋值语句。
+
+    频域变量命名约定（调用 bAlgoFftMagnitude 后）：
+    - s_mag: 幅度数组
+    - N: FFT 点数
+    - FS: 采样率（烘焙常量）
+    """
     m = n // 2 + 1  # rfft bin 数
     if fname == "spec_centroid":
-        return (
-            "{\n"
-            "        float num = 0.0f, den = 0.0f;\n"
-            f"        for (k = 0; k < {m}; k++)\n"
-            "        {\n"
-            "            float f = (float)k * FS / (float)N;\n"
-            "            num += f * s_mag[k];\n"
-            "            den += s_mag[k];\n"
-            "        }\n"
-            "        out[oi++] = (den > 0.0f) ? (num / den) : 0.0f;\n"
-            "    }"
-        ).replace("FS", f"{np.format_float_scientific(np.float32(fs), unique=True, trim='-')}F")
+        return "out[oi++] = bAlgoFftCentroid(s_mag, N, FS);"
     if fname == "spec_energy":
-        return (
-            "{\n"
-            "        float e = 0.0f;\n"
-            f"        for (k = 0; k < {m}; k++) {{ e += s_mag[k] * s_mag[k]; }}\n"
-            "        out[oi++] = e;\n"
-            "    }"
-        )
+        return "out[oi++] = bAlgoFftEnergy(s_mag, N);"
     if fname == "dominant_freq":
-        return (
-            "{\n"
-            "        uint16_t best = 0;\n"
-            f"        for (k = 1; k < {m}; k++) {{ if (s_mag[k] > s_mag[best]) {{ best = k; }} }}\n"
-            f"        out[oi++] = (float)best * {np.format_float_scientific(np.float32(fs), unique=True, trim='-')}F / (float)N;\n"
-            "    }"
-        )
+        return "out[oi++] = bAlgoFftDominantFreq(s_mag, N, FS);"
     if fname.startswith("band") and fname.endswith("_ratio"):
         idx = int(fname[len("band") : -len("_ratio")])
         edges = np.linspace(0, m, bands + 1).astype(int)
         lo, hi = int(edges[idx]), int(edges[idx + 1])
-        return (
-            "{\n"
-            "        float e = 0.0f, tot = 0.0f;\n"
-            f"        for (k = {lo}; k < {hi}; k++) {{ e += s_mag[k] * s_mag[k]; }}\n"
-            f"        for (k = 0; k < {m}; k++) {{ tot += s_mag[k] * s_mag[k]; }}\n"
-            "        out[oi++] = (tot > 0.0f) ? (e / tot) : 0.0f;\n"
-            "    }"
-        )
+        return f"out[oi++] = bAlgoFftBandRatio(s_mag, N, {lo}, {hi});"
     raise ValueError(f"未知频域特征: {fname}")
 
 
@@ -173,82 +117,76 @@ def emit_feat_extract(
     freq_enabled: bool,
     freq_bands: int,
 ) -> dict:
-    """生成 feat_extract 实现。返回 {"decls": str, "helpers": str, "body": str}。"""
+    """生成 feat_extract 实现。返回 {"decls": str, "helpers": str, "body": str}。
+
+    深度绑定后：
+    - decls: 烘焙常量（旋转因子表、位反转表、采样率）
+    - helpers: 空字符串（统计/FFT 逻辑已预置到 algo_signal.h/algo_fft.h）
+    - body: feat_extract 编排逻辑（调用预置原语）
+    """
     n_ch = len(channels)
     m = n // 2 + 1
-    decls = _emit_twiddles(n, prefix) if freq_enabled else ""
-    helpers = _fft_helper(n, prefix) if freq_enabled else ""
+    has_freq = freq_enabled and any(
+        f in ("spec_centroid", "spec_energy", "dominant_freq") or f.startswith("band")
+        for _, f in exported
+    )
 
-    # 统计量计算（每通道一次遍历 + 二次中心矩遍历）
-    stats = f"""static void {prefix}_stats(const float *x, uint16_t N,
-                          float *p_sum, float *p_sq, float *p_min, float *p_max,
-                          float *p_m2, float *p_m3, float *p_m4, uint32_t *p_zcr)
-{{
-    uint16_t i;
-    float s = 0.0f, q = 0.0f, mn, mx;
-    uint32_t zc = 0;
-    s = x[0]; q = x[0] * x[0]; mn = x[0]; mx = x[0];
-    for (i = 1; i < N; i++)
-    {{
-        s += x[i];
-        q += x[i] * x[i];
-        if (x[i] < mn) {{ mn = x[i]; }}
-        if (x[i] > mx) {{ mx = x[i]; }}
-        if (x[i - 1] * x[i] < 0.0f) {{ zc++; }}
-    }}
-    {{
-        float mu = s / (float)N;
-        float m2 = 0.0f, m3 = 0.0f, m4 = 0.0f;
-        for (i = 0; i < N; i++)
-        {{
-            float d = x[i] - mu;
-            float d2 = d * d;
-            m2 += d2;
-            m3 += d2 * d;
-            m4 += d2 * d2;
-        }}
-        *p_m2 = m2; *p_m3 = m3; *p_m4 = m4;
-    }}
-    *p_sum = s; *p_sq = q; *p_min = mn; *p_max = mx; *p_zcr = zc;
-}}
-"""
+    # 烘焙常量：旋转因子表和位反转表（仅频域特征需要）
+    decls = _emit_twiddles(n, prefix) if has_freq else ""
+    # 采样率烘焙常量
+    if has_freq:
+        fs_str = np.format_float_scientific(np.float32(fs), unique=True, trim="-") + "F"
+        decls += f"\n#define {prefix}_FS ({fs_str})"
+
+    # helpers 为空：统计和 FFT 逻辑已预置到 bos/algorithm/
+    helpers = ""
 
     # 按通道分组导出特征
     by_ch: dict[str, list[str]] = {}
     for ch, f in exported:
         by_ch.setdefault(ch, []).append(f)
 
+    # 生成 feat_extract 函数体
     body_parts = []
     body_parts.append(f"    uint16_t N = (uint16_t){n};")
-    body_parts.append("    uint16_t ch, i, k;")
+    body_parts.append("    uint16_t ch, i;")
     body_parts.append("    uint32_t oi = 0;")
-    body_parts.append("    (void)i; (void)k;")
+    body_parts.append("    bAlgoSignalStats_t s_stats;")
+    body_parts.append(f"    (void)i;")
     body_parts.append("    for (ch = 0; ch < %d; ch++)" % n_ch)
     body_parts.append("    {")
     body_parts.append("        const float *x = &ch_buf[(uint32_t)ch * %d];" % n)
-    body_parts.append("        float s_sum, s_sq, s_min, s_max, s_m2, s_m3, s_m4;")
-    body_parts.append("        uint32_t s_zcr;")
-    body_parts.append(f"        {prefix}_stats(x, N, &s_sum, &s_sq, &s_min, &s_max, &s_m2, &s_m3, &s_m4, &s_zcr);")
-    if freq_enabled:
+
+    # 调用预置原语计算统计量
+    body_parts.append("        bAlgoSignalStats(x, N, &s_stats);")
+
+    # 频域特征：声明静态缓冲区，调用预置 FFT 原语
+    if has_freq:
         body_parts.append(f"        static float s_re[{n}];")
         body_parts.append(f"        static float s_im[{n}];")
         body_parts.append(f"        static float s_mag[{m}];")
         body_parts.append("        for (i = 0; i < N; i++) { s_re[i] = x[i]; s_im[i] = 0.0f; }")
-        body_parts.append(f"        {prefix}_fft(s_re, s_im);")
-        body_parts.append(f"        for (k = 0; k < {m}; k++) {{ s_mag[k] = sqrtf(s_re[k] * s_re[k] + s_im[k] * s_im[k]); }}")
+        # 调用预置 FFT 原语
+        body_parts.append(f"        bAlgoFft(s_re, s_im, N, {prefix}_tw_re, {prefix}_tw_im, {prefix}_rev);")
+        # 计算幅度谱
+        body_parts.append("        bAlgoFftMagnitude(s_re, s_im, s_mag, N);")
+
     body_parts.append("        switch (ch)")
     body_parts.append("        {")
     for ci, ch in enumerate(channels):
         feats = by_ch.get(ch, [])
         body_parts.append(f"        case {ci}: /* {ch} */")
         body_parts.append("        {")
-        # 频域缓冲只在有频域特征时声明——已在外层统一声明，无频域特征时 s_mag 不存在，
-        # 因此按特征类型发射时须区分；频域特征仅当 freq_enabled（配置校验保证）
         for f in feats:
             if f in ("spec_centroid", "spec_energy", "dominant_freq") or f.startswith("band"):
-                body_parts.append("    " + _freq_feature_c(f, prefix, n, fs, freq_bands))
+                # 频域特征：使用烘焙的采样率常量
+                feat_c = _freq_feature_c(f, prefix, n, fs, freq_bands)
+                # 替换 FS 为烘焙常量
+                feat_c = feat_c.replace("FS", f"{prefix}_FS")
+                body_parts.append("    " + feat_c)
             else:
-                body_parts.append("    " + _time_feature_c(f, "x", "N"))
+                # 时域特征：调用预置 bAlgoSignal* 原语
+                body_parts.append("    " + _time_feature_c(f))
         body_parts.append("            break;")
         body_parts.append("        }")
     body_parts.append("        default:")
@@ -257,4 +195,4 @@ def emit_feat_extract(
     body_parts.append("    }")
     body = "\n".join(body_parts)
 
-    return {"decls": decls, "helpers": helpers + "\n" + stats, "body": body}
+    return {"decls": decls, "helpers": helpers, "body": body}
