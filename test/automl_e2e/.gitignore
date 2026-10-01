@@ -1,0 +1,18 @@
+# 编译输出
+build/
+*.o
+*.so
+*.zip
+
+# 测试生成的代码
+build/generated_code/
+
+# IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
