@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+import sys
 import tempfile
 import zipfile
 from datetime import datetime, timezone
@@ -99,77 +100,92 @@ def export(pid: str) -> dict:
     # Windows 上 ctypes.CDLL 会 LoadLibrary("_selfcheck.so")，文件被锁，
     # rmtree 在 __exit__ 时无法删除并抛 NotADirectoryError/WinError 267。
     # ignore_cleanup_errors=True 让 tempdir 静默清理（孤儿目录由 OS 回收）。
-    with tempfile.TemporaryDirectory(prefix="automl_export_",
-                                     ignore_cleanup_errors=True) as td:
-        workdir = Path(td) / "bundle"
-        info = generator.build_bundle(workdir, meta.name, payload,
-                                      _feature_meta(meta, payload, matrix, cfg), date)
-        symbol = info["name"]
-        report: dict = {"ok": False, "errors": []}
+    # Python 3.8 不支持 ignore_cleanup_errors，需要兼容处理
+    if sys.version_info >= (3, 10):
+        with tempfile.TemporaryDirectory(prefix="automl_export_",
+                                         ignore_cleanup_errors=True) as td:
+            workdir = Path(td) / "bundle"
+            result = _export_inner(workdir, pid, meta, payload, matrix, cfg, split, date)
+    else:
+        td = tempfile.mkdtemp(prefix="automl_export_")
+        try:
+            workdir = Path(td) / "bundle"
+            result = _export_inner(workdir, pid, meta, payload, matrix, cfg, split, date)
+        finally:
+            shutil.rmtree(td, ignore_errors=True)
+    return result
 
-        # ① 编译
-        comp = selfcheck.step_compile(workdir)
-        report["compile"] = {"ok": comp["ok"], "compiler": comp.get("compiler", "")}
-        report["compiler"] = comp.get("compiler", "")
-        if not comp["ok"]:
-            report["errors"].append(f"编译失败: {comp.get('stderr', '')[:2000]}")
-            return _finish(pid, meta, workdir, payload, report, info)
 
-        # ② predict 一致性（train+test 全集，限导出特征子集——scaler 仅覆盖该子集）
-        fidx = payload["feature_indices"]
-        X_tr = matrix["X"][split["train_idx"]][:, fidx]
-        X_te = matrix["X"][split["test_idx"]][:, fidx]
-        pred = selfcheck.step_predict_consistency(workdir, symbol, payload, X_tr, X_te)
-        report["predict_consistency"] = pred
-        if not pred["ok"]:
+def _export_inner(workdir: Path, pid: str, meta, payload, matrix, cfg, split, date: str) -> dict:
+    """导出内部逻辑。"""
+    info = generator.build_bundle(workdir, meta.name, payload,
+                                  _feature_meta(meta, payload, matrix, cfg), date)
+    symbol = info["name"]
+    report: dict = {"ok": False, "errors": []}
+
+    # ① 编译
+    comp = selfcheck.step_compile(workdir)
+    report["compile"] = {"ok": comp["ok"], "compiler": comp.get("compiler", "")}
+    report["compiler"] = comp.get("compiler", "")
+    if not comp["ok"]:
+        report["errors"].append(f"编译失败: {comp.get('stderr', '')[:2000]}")
+        return _finish(pid, meta, workdir, payload, report, info)
+
+    # ② predict 一致性（train+test 全集，限导出特征子集——scaler 仅覆盖该子集）
+    fidx = payload["feature_indices"]
+    X_tr = matrix["X"][split["train_idx"]][:, fidx]
+    X_te = matrix["X"][split["test_idx"]][:, fidx]
+    pred = selfcheck.step_predict_consistency(workdir, symbol, payload, X_tr, X_te)
+    report["predict_consistency"] = pred
+    if not pred["ok"]:
+        report["errors"].append(
+            f"predict 一致性失败: id_match={pred.get('id_match_rate')}, {pred.get('error', '')}"
+        )
+        return _finish(pid, meta, workdir, payload, report, info)
+
+    # ③ 特征链一致性（时序）
+    if info["is_ts"]:
+        windows, expected = _windows_for_chain(meta, payload, matrix, cfg)
+        feat = selfcheck.step_feature_chain(workdir, symbol, windows, expected,
+                                            windows.shape[1] // info["n_ch"], info["n_ch"])
+        report["feature_consistency"] = feat
+        if not feat["ok"]:
             report["errors"].append(
-                f"predict 一致性失败: id_match={pred.get('id_match_rate')}, {pred.get('error', '')}"
+                f"特征链一致性失败: {feat.get('n_violations')} 处超阈, max={feat.get('max_violation')}"
             )
             return _finish(pid, meta, workdir, payload, report, info)
+    else:
+        report["feature_consistency"] = {"ok": True, "note": "表格工程无时序特征链"}
 
-        # ③ 特征链一致性（时序）
-        if info["is_ts"]:
-            windows, expected = _windows_for_chain(meta, payload, matrix, cfg)
-            feat = selfcheck.step_feature_chain(workdir, symbol, windows, expected,
-                                                windows.shape[1] // info["n_ch"], info["n_ch"])
-            report["feature_consistency"] = feat
-            if not feat["ok"]:
-                report["errors"].append(
-                    f"特征链一致性失败: {feat.get('n_violations')} 处超阈, max={feat.get('max_violation')}"
-                )
-                return _finish(pid, meta, workdir, payload, report, info)
-        else:
-            report["feature_consistency"] = {"ok": True, "note": "表格工程无时序特征链"}
+    # ④ 静态扫描
+    scan = selfcheck.step_static_scan(workdir)
+    report["static_scan"] = scan
+    if not scan["ok"]:
+        report["errors"].append(f"静态扫描命中禁词: {scan['hits']}")
+        return _finish(pid, meta, workdir, payload, report, info)
 
-        # ④ 静态扫描
-        scan = selfcheck.step_static_scan(workdir)
-        report["static_scan"] = scan
-        if not scan["ok"]:
-            report["errors"].append(f"静态扫描命中禁词: {scan['hits']}")
-            return _finish(pid, meta, workdir, payload, report, info)
+    # ⑤ 符号映射校验（FR-10.4 / R-INT-4）：必含 algo_ml 符号映射 + nm 唯一性
+    try:
+        smap = selfcheck.step_symbol_map(workdir)
+    except _AppError:
+        raise
+    except Exception as e:  # noqa: BLE001 - 防御非预期异常转 422
+        raise _AppError(422, "ALGO_ML_NOT_FOUND", str(e))
+    report["symbol_map"] = smap
+    if not smap["ok"]:
+        bits = []
+        if smap["bad_refs"]:
+            bits.append(f"bad_refs={smap['bad_refs'][:3]}")
+        if smap["defined_leaks_nm"]:
+            bits.append(f"defined_leaks_nm={smap['defined_leaks_nm'][:3]}")
+        for ex in smap["examples"]:
+            if not ex["ok"]:
+                bits.append(f"example {ex['file']} compile fail: {ex['stderr'][:500]}")
+        report["errors"].append(f"符号映射校验失败: {'; '.join(bits)}")
+        return _finish(pid, meta, workdir, payload, report, info)
 
-        # ⑤ 符号映射校验（FR-10.4 / R-INT-4）：必含 algo_ml 符号映射 + nm 唯一性
-        try:
-            smap = selfcheck.step_symbol_map(workdir)
-        except _AppError:
-            raise
-        except Exception as e:  # noqa: BLE001 - 防御非预期异常转 422
-            raise _AppError(422, "ALGO_ML_NOT_FOUND", str(e))
-        report["symbol_map"] = smap
-        if not smap["ok"]:
-            bits = []
-            if smap["bad_refs"]:
-                bits.append(f"bad_refs={smap['bad_refs'][:3]}")
-            if smap["defined_leaks_nm"]:
-                bits.append(f"defined_leaks_nm={smap['defined_leaks_nm'][:3]}")
-            for ex in smap["examples"]:
-                if not ex["ok"]:
-                    bits.append(f"example {ex['file']} compile fail: {ex['stderr'][:500]}")
-            report["errors"].append(f"符号映射校验失败: {'; '.join(bits)}")
-            return _finish(pid, meta, workdir, payload, report, info)
-
-        report["ok"] = True
-        return _finish(pid, meta, workdir, payload, report, info, cfg=cfg)
+    report["ok"] = True
+    return _finish(pid, meta, workdir, payload, report, info, cfg=cfg)
 
 
 def _finish(pid, meta, workdir: Path, payload: dict, report: dict, info: dict, cfg=None) -> dict:
