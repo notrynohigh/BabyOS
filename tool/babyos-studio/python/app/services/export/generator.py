@@ -13,12 +13,24 @@ from pathlib import Path
 from . import c_common, feature_cgen, model_cgen
 
 MODEL_DESC = {
+    # 分类
     "dt": "决策树",
     "rf": "随机森林",
     "et": "极端随机树",
     "lr": "逻辑回归",
     "nb": "高斯朴素贝叶斯",
     "mlp": "单隐层神经网络",
+    "simple_nn": "简易神经网络",
+    "xgb": "XGBoost 梯度提升树",
+    "lgbm": "LightGBM 梯度提升树",
+    # 回归
+    "dt_r": "回归决策树",
+    "rf_r": "回归随机森林",
+    "et_r": "回归极端随机树",
+    "lr_r": "线性回归",
+    "simple_nn_r": "回归简易神经网络",
+    "xgb_r": "XGBoost 回归提升树",
+    "lgbm_r": "LightGBM 回归提升树",
 }
 
 

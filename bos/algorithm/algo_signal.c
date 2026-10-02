@@ -61,6 +61,7 @@ int bAlgoSignalStats(const float *x, uint16_t n, bAlgoSignalStats_t *stats)
 {
     uint16_t i;
     float    s, q, mn, mx;
+    float    abs_sum, lag1_sum, d_prev;
     uint32_t zc;
     float    mu, m2, m3, m4;
 
@@ -70,17 +71,19 @@ int bAlgoSignalStats(const float *x, uint16_t n, bAlgoSignalStats_t *stats)
     }
 
     /* 初始化：单元素边界情况 */
-    s  = x[0];
-    q  = x[0] * x[0];
-    mn = x[0];
-    mx = x[0];
-    zc = 0;
+    s       = x[0];
+    q       = x[0] * x[0];
+    abs_sum = fabsf(x[0]);
+    mn      = x[0];
+    mx      = x[0];
+    zc      = 0;
 
-    /* 第一遍：累加和、平方和、极值、过零率 */
+    /* 第一遍：累加和、平方和、绝对值和、极值、过零率 */
     for (i = 1; i < n; i++)
     {
         s += x[i];
         q += x[i] * x[i];
+        abs_sum += fabsf(x[i]);
         if (x[i] < mn)
         {
             mn = x[i];
@@ -95,11 +98,13 @@ int bAlgoSignalStats(const float *x, uint16_t n, bAlgoSignalStats_t *stats)
         }
     }
 
-    /* 第二遍：中心矩（m2/m3/m4） */
-    mu = s / (float)n;
-    m2 = 0.0f;
-    m3 = 0.0f;
-    m4 = 0.0f;
+    /* 第二遍：中心矩（m2/m3/m4）+ lag-1 交叉项（需已知均值） */
+    mu       = s / (float)n;
+    m2       = 0.0f;
+    m3       = 0.0f;
+    m4       = 0.0f;
+    lag1_sum = 0.0f;
+    d_prev   = 0.0f;
     for (i = 0; i < n; i++)
     {
         float d  = x[i] - mu;
@@ -107,17 +112,24 @@ int bAlgoSignalStats(const float *x, uint16_t n, bAlgoSignalStats_t *stats)
         m2 += d2;
         m3 += d2 * d;
         m4 += d2 * d2;
+        if (i > 0)
+        {
+            lag1_sum += d_prev * d; /* d[i-1]*d[i], i=1..n-1 ≡ Σ d[i]*d[i+1] i=0..n-2 */
+        }
+        d_prev = d;
     }
 
     /* 填充结果 */
-    stats->sum    = s;
-    stats->sq_sum = q;
-    stats->min    = mn;
-    stats->max    = mx;
-    stats->m2     = m2;
-    stats->m3     = m3;
-    stats->m4     = m4;
-    stats->zcr    = zc;
+    stats->sum      = s;
+    stats->sq_sum   = q;
+    stats->min      = mn;
+    stats->max      = mx;
+    stats->m2       = m2;
+    stats->m3       = m3;
+    stats->m4       = m4;
+    stats->zcr      = zc;
+    stats->abs_sum  = abs_sum;
+    stats->lag1_sum = lag1_sum;
 
     return 0;
 }
@@ -196,6 +208,41 @@ float bAlgoSignalPtp(const bAlgoSignalStats_t *stats)
         return 0.0f;
     }
     return stats->max - stats->min;
+}
+
+float bAlgoSignalVariance(const bAlgoSignalStats_t *stats, uint16_t n)
+{
+    if (stats == NULL || n == 0)
+    {
+        return 0.0f;
+    }
+    return stats->m2 / (float)n;
+}
+
+float bAlgoSignalAbsMean(const bAlgoSignalStats_t *stats, uint16_t n)
+{
+    if (stats == NULL || n == 0)
+    {
+        return 0.0f;
+    }
+    return stats->abs_sum / (float)n;
+}
+
+float bAlgoSignalAutocorr(const bAlgoSignalStats_t *stats, uint16_t n)
+{
+    float m2n, lag1_mean;
+
+    if (stats == NULL || n <= 1)
+    {
+        return 0.0f;
+    }
+    m2n = stats->m2 / (float)n;
+    if (m2n <= 0.0f)
+    {
+        return 0.0f; /* 零方差防护 */
+    }
+    lag1_mean = stats->lag1_sum / (float)(n - 1);
+    return lag1_mean / m2n;
 }
 
 /**

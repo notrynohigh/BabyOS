@@ -58,14 +58,17 @@ extern "C" {
  */
 typedef struct
 {
-    float    sum;    /*!< 总和 */
-    float    sq_sum; /*!< 平方和 */
-    float    min;    /*!< 最小值 */
-    float    max;    /*!< 最大值 */
-    float    m2;     /*!< 二阶中心矩之和（方差 * N） */
-    float    m3;     /*!< 三阶中心矩之和（偏度相关） */
-    float    m4;     /*!< 四阶中心矩之和（峰度相关） */
-    uint32_t zcr;    /*!< 过零率计数 */
+    float    sum;     /*!< 总和 */
+    float    sq_sum;  /*!< 平方和 */
+    float    min;     /*!< 最小值 */
+    float    max;     /*!< 最大值 */
+    float    m2;      /*!< 二阶中心矩之和（方差 * N） */
+    float    m3;      /*!< 三阶中心矩之和（偏度相关） */
+    float    m4;      /*!< 四阶中心矩之和（峰度相关） */
+    uint32_t zcr;     /*!< 过零率计数 */
+    /* 以下为新增字段，追加到结构体末尾以保持 ABI 兼容 */
+    float    abs_sum;  /*!< Σ|x[i]| 绝对值之和 */
+    float    lag1_sum; /*!< Σ d[i]*d[i+1], i=0..n-2；n<2 时为 0（d = x - mean） */
 } bAlgoSignalStats_t;
 
 /**
@@ -142,6 +145,31 @@ float bAlgoSignalKurt(const bAlgoSignalStats_t *stats, uint16_t n);
  * \return 峰峰值
  */
 float bAlgoSignalPtp(const bAlgoSignalStats_t *stats);
+
+/**
+ * \brief  计算总体方差（m2 / N，与 Python mean((x-mean)^2) 口径一致）
+ * \param  stats 统计结果
+ * \param  n     信号长度（≥1）
+ * \return 方差；stats==NULL 或 n==0 时返回 0
+ */
+float bAlgoSignalVariance(const bAlgoSignalStats_t *stats, uint16_t n);
+
+/**
+ * \brief  计算绝对值均值（abs_sum / N = mean(|x|)）
+ * \param  stats 统计结果
+ * \param  n     信号长度（≥1）
+ * \return 绝对值均值；stats==NULL 或 n==0 时返回 0
+ */
+float bAlgoSignalAbsMean(const bAlgoSignalStats_t *stats, uint16_t n);
+
+/**
+ * \brief  计算 lag-1 自相关（与 Python 参考实现口径一致）
+ *         autocorr = (lag1_sum / (n-1)) / (m2 / n)，其中 d = x - mean
+ * \param  stats 统计结果
+ * \param  n     信号长度
+ * \return 自相关系数；stats==NULL 或 n<=1 或方差<=0 时返回 0
+ */
+float bAlgoSignalAutocorr(const bAlgoSignalStats_t *stats, uint16_t n);
 
 /**
  * \}

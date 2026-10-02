@@ -201,7 +201,8 @@ float bAlgoFftDominantFreq(const float *mag, uint16_t n, float fs)
 
     m    = (uint16_t)(n / 2 + 1);
     best = 0;
-    for (i = 1; i < m; i++)
+    /* 从 i=0 开始（含直流 bin），与 Python argmax(spec) 口径一致 */
+    for (i = 0; i < m; i++)
     {
         if (mag[i] > mag[best])
         {

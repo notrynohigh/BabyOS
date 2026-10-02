@@ -68,16 +68,22 @@ def _time_feature_c(fname: str) -> str:
         return "out[oi++] = bAlgoSignalMean(&s_stats, N);"
     if fname == "std":
         return "out[oi++] = bAlgoSignalStd(&s_stats, N);"
+    if fname == "variance":
+        return "out[oi++] = bAlgoSignalVariance(&s_stats, N);"
     if fname == "min":
         return "out[oi++] = s_stats.min;"
     if fname == "max":
         return "out[oi++] = s_stats.max;"
     if fname == "rms":
         return "out[oi++] = bAlgoSignalRms(&s_stats, N);"
+    if fname == "abs_mean":
+        return "out[oi++] = bAlgoSignalAbsMean(&s_stats, N);"
     if fname == "ptp":
         return "out[oi++] = bAlgoSignalPtp(&s_stats);"
     if fname == "zcr":
         return "out[oi++] = bAlgoSignalZcr(&s_stats, N);"
+    if fname == "autocorr":
+        return "out[oi++] = bAlgoSignalAutocorr(&s_stats, N);"
     if fname == "skew":
         return "out[oi++] = bAlgoSignalSkew(&s_stats, N);"
     if fname == "kurt":
