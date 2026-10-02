@@ -331,3 +331,186 @@ int test_fft_gen_bit_reverse(void)
 
     return 0;
 }
+
+/*------------------------------------------------------------
+ * 测试 9: bAlgoFftDominantFreq — argmax 必须包含直流 bin0（单元级）
+ * 契约：与 numpy argmax(spec) 一致，bin0 参与比较，平局取较小索引
+ *------------------------------------------------------------*/
+int test_fft_dominant_freq_includes_dc(void)
+{
+    float mag[TEST_N / 2 + 1];
+    int m = TEST_N / 2 + 1;
+    float dom;
+
+    /* 用例 1: bin0 严格最大 → 必须返回 0 Hz
+     * 若搜索从 i=1 且 best 初值未把 bin0 计入，会误报其他 bin */
+    for (int i = 0; i < m; i++) {
+        mag[i] = 0.0f;
+    }
+    mag[0] = 100.0f;
+    dom = bAlgoFftDominantFreq(mag, TEST_N, TEST_FS);
+    if (fabsf(dom - 0.0f) > 1e-6f) {
+        printf("bin0-max dominant_freq = %f, expected 0.0", dom);
+        return 1;
+    }
+
+    /* 用例 2: bin9 严格最大 → 9 * fs / n = 9*1000/64 = 140.625 Hz */
+    for (int i = 0; i < m; i++) {
+        mag[i] = 0.0f;
+    }
+    mag[9] = 50.0f;
+    dom = bAlgoFftDominantFreq(mag, TEST_N, TEST_FS);
+    float expected = 9.0f * TEST_FS / (float)TEST_N;
+    if (fabsf(dom - expected) > 1e-4f) {
+        printf("bin9-max dominant_freq = %f, expected %f", dom, expected);
+        return 1;
+    }
+
+    /* 用例 3: bin0 与 bin9 平局 → numpy argmax 取首次出现（较小索引）→ 0 Hz
+     * 若实现用 >= 或从 i=1 且 best=9 初始化，会误报 bin9 */
+    for (int i = 0; i < m; i++) {
+        mag[i] = 0.0f;
+    }
+    mag[0] = 50.0f;
+    mag[9] = 50.0f;
+    dom = bAlgoFftDominantFreq(mag, TEST_N, TEST_FS);
+    if (fabsf(dom - 0.0f) > 1e-6f) {
+        printf("tie dominant_freq = %f, expected 0.0 (bin0 wins ties)", dom);
+        return 1;
+    }
+
+    /* 用例 4: 全零谱 → 0 */
+    for (int i = 0; i < m; i++) {
+        mag[i] = 0.0f;
+    }
+    dom = bAlgoFftDominantFreq(mag, TEST_N, TEST_FS);
+    if (fabsf(dom - 0.0f) > 1e-6f) {
+        printf("zero-spectrum dominant_freq = %f, expected 0.0", dom);
+        return 1;
+    }
+
+    return 0;
+}
+
+/*------------------------------------------------------------
+ * 测试 10: DC 占优混合信号 — 端到端（真实 FFT）
+ * x[i] = 10.0 + 0.5*sin(2π*150*i/fs)
+ * DC bin 幅度 ≈ 10*N = 640，正弦 bin 幅度 ≈ 0.5*N/2 ≈ 16 → bin0 为 argmax
+ * 期望 dominant_freq ≈ 0；若 argmax 跳过 bin0 会误报 ~150Hz
+ *------------------------------------------------------------*/
+int test_fft_dominant_freq_dc_mixed(void)
+{
+    for (int i = 0; i < TEST_N; i++) {
+        float t = (float)i / TEST_FS;
+        test_re[i] = 10.0f + 0.5f * sinf(2.0f * 3.14159265f * 150.0f * t);
+        test_im[i] = 0.0f;
+    }
+    setup_fft_tables();
+
+    int ret = bAlgoFft(test_re, test_im, TEST_N, tw_re, tw_im, rev);
+    if (ret != 0) {
+        printf("bAlgoFft returned %d, expected 0", ret);
+        return 1;
+    }
+    ret = bAlgoFftMagnitude(test_re, test_im, test_mag, TEST_N);
+    if (ret != 0) {
+        printf("bAlgoFftMagnitude returned %d, expected 0", ret);
+        return 1;
+    }
+
+    /* 先验证 bin0 确实是 argmax（与 Python argmax(spec) 口径一致） */
+    int peak = 0;
+    for (int i = 1; i < TEST_N / 2 + 1; i++) {
+        if (test_mag[i] > test_mag[peak]) {
+            peak = i;
+        }
+    }
+    if (peak != 0) {
+        printf("argmax bin = %d (mag=%f), expected 0 (mag=%f)",
+               peak, test_mag[peak], test_mag[0]);
+        return 1;
+    }
+
+    float dom = bAlgoFftDominantFreq(test_mag, TEST_N, TEST_FS);
+    float freq_resolution = TEST_FS / (float)TEST_N;
+    if (dom > freq_resolution * 0.5f) {
+        printf("dc-mixed dominant_freq = %f, expected ~0 (DC dominant)", dom);
+        return 1;
+    }
+
+    return 0;
+}
+
+/*------------------------------------------------------------
+ * 测试 11: 纯直流信号 — 主频必须为 0
+ *------------------------------------------------------------*/
+int test_fft_dominant_freq_pure_dc(void)
+{
+    for (int i = 0; i < TEST_N; i++) {
+        test_re[i] = 1.0f;
+        test_im[i] = 0.0f;
+    }
+    setup_fft_tables();
+
+    int ret = bAlgoFft(test_re, test_im, TEST_N, tw_re, tw_im, rev);
+    if (ret != 0) {
+        printf("bAlgoFft returned %d, expected 0", ret);
+        return 1;
+    }
+    ret = bAlgoFftMagnitude(test_re, test_im, test_mag, TEST_N);
+    if (ret != 0) {
+        printf("bAlgoFftMagnitude returned %d, expected 0", ret);
+        return 1;
+    }
+
+    float dom = bAlgoFftDominantFreq(test_mag, TEST_N, TEST_FS);
+    if (fabsf(dom - 0.0f) > 1e-6f) {
+        printf("pure-DC dominant_freq = %f, expected 0.0", dom);
+        return 1;
+    }
+
+    return 0;
+}
+
+/*------------------------------------------------------------
+ * 测试 12: 纯正弦（无 DC）— 主频仍正确，且 bin0 不是 argmax
+ *------------------------------------------------------------*/
+int test_fft_dominant_freq_pure_sine(void)
+{
+    float freq = 100.0f;  /* 100*64/1000 = 6.4 bin（非整数，含泄漏） */
+    generate_sine(freq, 1.0f);  /* offset=0，无直流分量 */
+    setup_fft_tables();
+
+    int ret = bAlgoFft(test_re, test_im, TEST_N, tw_re, tw_im, rev);
+    if (ret != 0) {
+        printf("bAlgoFft returned %d, expected 0", ret);
+        return 1;
+    }
+    ret = bAlgoFftMagnitude(test_re, test_im, test_mag, TEST_N);
+    if (ret != 0) {
+        printf("bAlgoFftMagnitude returned %d, expected 0", ret);
+        return 1;
+    }
+
+    /* 无 DC 时 argmax 不应落在 bin0 */
+    int peak = 0;
+    for (int i = 1; i < TEST_N / 2 + 1; i++) {
+        if (test_mag[i] > test_mag[peak]) {
+            peak = i;
+        }
+    }
+    if (peak == 0) {
+        printf("pure-sine argmax bin = 0, expected non-DC bin");
+        return 1;
+    }
+
+    float dom = bAlgoFftDominantFreq(test_mag, TEST_N, TEST_FS);
+    float freq_resolution = TEST_FS / (float)TEST_N;
+    if (fabsf(dom - freq) > freq_resolution * 1.5f) {
+        printf("pure-sine dominant_freq = %f, expected %f (±%f)",
+               dom, freq, freq_resolution);
+        return 1;
+    }
+
+    return 0;
+}

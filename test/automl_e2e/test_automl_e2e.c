@@ -393,7 +393,45 @@ int test_algo_fft_basic(void)
 }
 
 /*------------------------------------------------------------
- * 测试 14: 深度绑定验证 — 生成代码调用预置原语
+ * 测试 14: 预置信号原语 — 新增特征
+ * variance / abs_mean / autocorr / 新增统计字段
+ *------------------------------------------------------------*/
+int test_algo_signal_features(void)
+{
+    extern int test_signal_variance(void);
+    extern int test_signal_abs_mean(void);
+    extern int test_signal_autocorr(void);
+    extern int test_signal_stats_new_fields(void);
+
+    if (test_signal_variance() != 0) return 1;
+    if (test_signal_abs_mean() != 0) return 1;
+    if (test_signal_autocorr() != 0) return 1;
+    if (test_signal_stats_new_fields() != 0) return 1;
+
+    return 0;
+}
+
+/*------------------------------------------------------------
+ * 测试 15: 预置 FFT 原语 — dominant_freq 含直流
+ * 单元级 argmax 契约 + DC 占优/纯 DC/纯正弦端到端
+ *------------------------------------------------------------*/
+int test_algo_fft_dominant_freq_dc(void)
+{
+    extern int test_fft_dominant_freq_includes_dc(void);
+    extern int test_fft_dominant_freq_dc_mixed(void);
+    extern int test_fft_dominant_freq_pure_dc(void);
+    extern int test_fft_dominant_freq_pure_sine(void);
+
+    if (test_fft_dominant_freq_includes_dc() != 0) return 1;
+    if (test_fft_dominant_freq_dc_mixed() != 0) return 1;
+    if (test_fft_dominant_freq_pure_dc() != 0) return 1;
+    if (test_fft_dominant_freq_pure_sine() != 0) return 1;
+
+    return 0;
+}
+
+/*------------------------------------------------------------
+ * 测试 16: 深度绑定验证 — 生成代码调用预置原语
  *------------------------------------------------------------*/
 int test_deep_binding(void)
 {

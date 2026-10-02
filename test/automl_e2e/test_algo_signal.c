@@ -256,3 +256,272 @@ int test_signal_single_element(void)
 
     return 0;
 }
+
+/*------------------------------------------------------------
+ * 测试 11: bAlgoSignalVariance（新增原语）
+ * 期望值与 Python feature_service._time_features 口径一致：
+ *   variance = mean((x - mean)^2)  （总体方差，除 N）
+ *------------------------------------------------------------*/
+int test_signal_variance(void)
+{
+    bAlgoSignalStats_t stats;
+
+    /* 正常序列 [1,2,3,4,5]：mean=3, var=10/5=2.0
+     * d=[-2,-1,0,1,2], Σd²=4+1+0+1+4=10 */
+    float known[5] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+    if (bAlgoSignalStats(known, 5, &stats) != 0) {
+        printf("bAlgoSignalStats failed");
+        return 1;
+    }
+    float var = bAlgoSignalVariance(&stats, 5);
+    if (fabsf(var - 2.0f) > 0.001f) {
+        printf("variance = %f, expected 2.0", var);
+        return 1;
+    }
+    /* 与 stats.m2/n 一致 */
+    if (fabsf(var - stats.m2 / 5.0f) > 0.000001f) {
+        printf("variance %f != m2/n %f", var, stats.m2 / 5.0f);
+        return 1;
+    }
+
+    /* 负值序列 [-2,-1,0,1,2]：mean=0, var=2.0 */
+    float neg[5] = {-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    bAlgoSignalStats(neg, 5, &stats);
+    var = bAlgoSignalVariance(&stats, 5);
+    if (fabsf(var - 2.0f) > 0.001f) {
+        printf("negative-seq variance = %f, expected 2.0", var);
+        return 1;
+    }
+
+    /* 不对称序列 [1.5,2.5,3.5,5.5]：mean=3.25, Σd²=8.75, var=8.75/4=2.1875 */
+    float asym[4] = {1.5f, 2.5f, 3.5f, 5.5f};
+    bAlgoSignalStats(asym, 4, &stats);
+    var = bAlgoSignalVariance(&stats, 4);
+    if (fabsf(var - 2.1875f) > 0.001f) {
+        printf("asym variance = %f, expected 2.1875", var);
+        return 1;
+    }
+
+    /* 零方差序列 [3,3,3,3,3] → 0 */
+    float zero[5] = {3.0f, 3.0f, 3.0f, 3.0f, 3.0f};
+    bAlgoSignalStats(zero, 5, &stats);
+    if (bAlgoSignalVariance(&stats, 5) != 0.0f) {
+        printf("zero-var variance != 0");
+        return 1;
+    }
+
+    /* NULL / n==0 防护 → 0 */
+    if (bAlgoSignalVariance(NULL, 5) != 0.0f) {
+        printf("NULL variance != 0");
+        return 1;
+    }
+    if (bAlgoSignalVariance(&stats, 0) != 0.0f) {
+        printf("n=0 variance != 0");
+        return 1;
+    }
+
+    return 0;
+}
+
+/*------------------------------------------------------------
+ * 测试 12: bAlgoSignalAbsMean（新增原语）
+ * 期望值与 Python mean(|x|) 一致
+ *------------------------------------------------------------*/
+int test_signal_abs_mean(void)
+{
+    bAlgoSignalStats_t stats;
+
+    /* 正常 [1,2,3,4,5]：(1+2+3+4+5)/5 = 3.0 */
+    float known[5] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+    if (bAlgoSignalStats(known, 5, &stats) != 0) {
+        printf("bAlgoSignalStats failed");
+        return 1;
+    }
+    float am = bAlgoSignalAbsMean(&stats, 5);
+    if (fabsf(am - 3.0f) > 0.001f) {
+        printf("abs_mean = %f, expected 3.0", am);
+        return 1;
+    }
+
+    /* 负值序列 [-2,-1,0,1,2]：(|-2|+|-1|+0+1+2)/5 = 6/5 = 1.2 */
+    float neg[5] = {-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    bAlgoSignalStats(neg, 5, &stats);
+    am = bAlgoSignalAbsMean(&stats, 5);
+    if (fabsf(am - 1.2f) > 0.001f) {
+        printf("negative-seq abs_mean = %f, expected 1.2", am);
+        return 1;
+    }
+
+    /* 全负 ramp [-5,-4,-3,-2,-1]：(5+4+3+2+1)/5 = 3.0 */
+    float negramp[5] = {-5.0f, -4.0f, -3.0f, -2.0f, -1.0f};
+    bAlgoSignalStats(negramp, 5, &stats);
+    am = bAlgoSignalAbsMean(&stats, 5);
+    if (fabsf(am - 3.0f) > 0.001f) {
+        printf("neg-ramp abs_mean = %f, expected 3.0", am);
+        return 1;
+    }
+
+    /* 常量序列 [3,3,3,3,3]：abs_mean=3.0（零方差下仍有意义，非 0） */
+    float zero[5] = {3.0f, 3.0f, 3.0f, 3.0f, 3.0f};
+    bAlgoSignalStats(zero, 5, &stats);
+    if (fabsf(bAlgoSignalAbsMean(&stats, 5) - 3.0f) > 0.001f) {
+        printf("zero-var abs_mean != 3.0");
+        return 1;
+    }
+
+    /* NULL / n==0 防护 → 0 */
+    if (bAlgoSignalAbsMean(NULL, 5) != 0.0f) {
+        printf("NULL abs_mean != 0");
+        return 1;
+    }
+    if (bAlgoSignalAbsMean(&stats, 0) != 0.0f) {
+        printf("n=0 abs_mean != 0");
+        return 1;
+    }
+
+    return 0;
+}
+
+/*------------------------------------------------------------
+ * 测试 13: bAlgoSignalAutocorr（新增原语）
+ * 口径（与 Python feature_service._time_features 完全一致）：
+ *   d = x - mean
+ *   autocorr = (Σ_{i=0}^{n-2} d[i]*d[i+1] / (n-1)) / (Σd² / n)
+ *   n<=1 或 方差<=0 → 0
+ *------------------------------------------------------------*/
+int test_signal_autocorr(void)
+{
+    bAlgoSignalStats_t stats;
+
+    /* 正常 ramp [1,2,3,4,5]：
+     * d=[-2,-1,0,1,2]
+     * lag1_sum = (-2)(-1)+(-1)(0)+(0)(1)+(1)(2) = 4
+     * lag1_mean = 4/4 = 1.0,  m2n = 10/5 = 2.0
+     * autocorr = 1.0/2.0 = 0.5 */
+    float known[5] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+    if (bAlgoSignalStats(known, 5, &stats) != 0) {
+        printf("bAlgoSignalStats failed");
+        return 1;
+    }
+    if (fabsf(stats.lag1_sum - 4.0f) > 0.001f) {
+        printf("lag1_sum = %f, expected 4.0", stats.lag1_sum);
+        return 1;
+    }
+    float ac = bAlgoSignalAutocorr(&stats, 5);
+    if (fabsf(ac - 0.5f) > 0.001f) {
+        printf("autocorr = %f, expected 0.5", ac);
+        return 1;
+    }
+
+    /* 负值对称 [-2,-1,0,1,2]：mean=0, d=x, 同样 lag1_sum=4, ac=0.5 */
+    float neg[5] = {-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    bAlgoSignalStats(neg, 5, &stats);
+    if (fabsf(stats.lag1_sum - 4.0f) > 0.001f) {
+        printf("neg lag1_sum = %f, expected 4.0", stats.lag1_sum);
+        return 1;
+    }
+    ac = bAlgoSignalAutocorr(&stats, 5);
+    if (fabsf(ac - 0.5f) > 0.001f) {
+        printf("neg autocorr = %f, expected 0.5", ac);
+        return 1;
+    }
+
+    /* 不对称 [1.5,2.5,3.5,5.5]：
+     * mean=3.25, d=[-1.75,-0.75,0.25,2.25]
+     * lag1_sum = 1.3125-0.1875+0.5625 = 1.6875
+     * lag1_mean = 1.6875/3 = 0.5625
+     * m2n = 8.75/4 = 2.1875
+     * autocorr = 0.5625/2.1875 = 9/35 ≈ 0.257142857 */
+    float asym[4] = {1.5f, 2.5f, 3.5f, 5.5f};
+    bAlgoSignalStats(asym, 4, &stats);
+    if (fabsf(stats.lag1_sum - 1.6875f) > 0.001f) {
+        printf("asym lag1_sum = %f, expected 1.6875", stats.lag1_sum);
+        return 1;
+    }
+    ac = bAlgoSignalAutocorr(&stats, 4);
+    if (fabsf(ac - 0.257142857f) > 0.001f) {
+        printf("asym autocorr = %f, expected 0.257142857", ac);
+        return 1;
+    }
+
+    /* 零方差 [3,3,3,3,3] → 0（m2n<=0 防护） */
+    float zero[5] = {3.0f, 3.0f, 3.0f, 3.0f, 3.0f};
+    bAlgoSignalStats(zero, 5, &stats);
+    if (bAlgoSignalAutocorr(&stats, 5) != 0.0f) {
+        printf("zero-var autocorr != 0");
+        return 1;
+    }
+
+    /* n=1 → 0（无 lag-1 可算） */
+    float one[1] = {42.0f};
+    bAlgoSignalStats(one, 1, &stats);
+    if (bAlgoSignalAutocorr(&stats, 1) != 0.0f) {
+        printf("n=1 autocorr != 0");
+        return 1;
+    }
+    if (stats.lag1_sum != 0.0f) {
+        printf("n=1 lag1_sum = %f, expected 0", stats.lag1_sum);
+        return 1;
+    }
+
+    /* NULL / n<=1 防护 → 0 */
+    if (bAlgoSignalAutocorr(NULL, 5) != 0.0f) {
+        printf("NULL autocorr != 0");
+        return 1;
+    }
+    if (bAlgoSignalAutocorr(&stats, 0) != 0.0f) {
+        printf("n=0 autocorr != 0");
+        return 1;
+    }
+
+    return 0;
+}
+
+/*------------------------------------------------------------
+ * 测试 14: 新增统计字段填充（abs_sum / lag1_sum）
+ *------------------------------------------------------------*/
+int test_signal_stats_new_fields(void)
+{
+    bAlgoSignalStats_t stats;
+
+    /* [1,2,3,4,5]: abs_sum=15, lag1_sum=4 */
+    float known[5] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+    if (bAlgoSignalStats(known, 5, &stats) != 0) {
+        printf("bAlgoSignalStats failed");
+        return 1;
+    }
+    if (fabsf(stats.abs_sum - 15.0f) > 0.001f) {
+        printf("abs_sum = %f, expected 15.0", stats.abs_sum);
+        return 1;
+    }
+    if (fabsf(stats.lag1_sum - 4.0f) > 0.001f) {
+        printf("lag1_sum = %f, expected 4.0", stats.lag1_sum);
+        return 1;
+    }
+
+    /* [-2,-1,0,1,2]: abs_sum=6, lag1_sum=4 */
+    float neg[5] = {-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    bAlgoSignalStats(neg, 5, &stats);
+    if (fabsf(stats.abs_sum - 6.0f) > 0.001f) {
+        printf("neg abs_sum = %f, expected 6.0", stats.abs_sum);
+        return 1;
+    }
+    if (fabsf(stats.lag1_sum - 4.0f) > 0.001f) {
+        printf("neg lag1_sum = %f, expected 4.0", stats.lag1_sum);
+        return 1;
+    }
+
+    /* n=1: lag1_sum 必须为 0 */
+    float one[1] = {7.0f};
+    bAlgoSignalStats(one, 1, &stats);
+    if (stats.lag1_sum != 0.0f) {
+        printf("n=1 lag1_sum = %f, expected 0", stats.lag1_sum);
+        return 1;
+    }
+    if (fabsf(stats.abs_sum - 7.0f) > 0.001f) {
+        printf("n=1 abs_sum = %f, expected 7.0", stats.abs_sum);
+        return 1;
+    }
+
+    return 0;
+}

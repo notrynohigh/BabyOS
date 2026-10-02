@@ -1,101 +1,35 @@
 #!/usr/bin/env python3
+"""完整流程验证：使用真实代码生成器生成C代码，验证调用预置原语。
+
+用法:
+    python3 test/automl_e2e/test_export_pipeline_simple.py
 """
-完整流程验证：使用代码生成器生成C代码，验证调用预置原语
-"""
-import sys
+from __future__ import annotations
+
 import os
-import numpy as np
+import sys
 from pathlib import Path
 
-# 内联 feature_cgen 函数（避免导入问题）
-def _time_feature_c(fname: str) -> str:
-    """时域特征 C 表达式（调用预置 bAlgoSignal* 原语）。"""
-    if fname == "mean":
-        return "out[oi++] = bAlgoSignalMean(&s_stats, N);"
-    if fname == "std":
-        return "out[oi++] = bAlgoSignalStd(&s_stats, N);"
-    if fname == "min":
-        return "out[oi++] = s_stats.min;"
-    if fname == "max":
-        return "out[oi++] = s_stats.max;"
-    if fname == "rms":
-        return "out[oi++] = bAlgoSignalRms(&s_stats, N);"
-    if fname == "ptp":
-        return "out[oi++] = bAlgoSignalPtp(&s_stats);"
-    if fname == "zcr":
-        return "out[oi++] = bAlgoSignalZcr(&s_stats, N);"
-    if fname == "skew":
-        return "out[oi++] = bAlgoSignalSkew(&s_stats, N);"
-    if fname == "kurt":
-        return "out[oi++] = bAlgoSignalKurt(&s_stats, N);"
-    raise ValueError(f"未知时域特征: {fname}")
+# 导入真实模块（与 test_regression_suite / verify_deep_binding 同一路径）
+_REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_PY = os.path.join(_REPO, "tool", "babyos-studio", "python")
+if _PY not in sys.path:
+    sys.path.insert(0, _PY)
 
-def emit_feat_extract(prefix, channels, exported, n, fs, freq_enabled, freq_bands):
-    """生成 feat_extract 实现。"""
-    n_ch = len(channels)
-    m = n // 2 + 1
-    has_freq = freq_enabled and any(
-        f in ("spec_centroid", "spec_energy", "dominant_freq") or f.startswith("band")
-        for _, f in exported
-    )
+from app.services.export import feature_cgen  # noqa: E402
 
-    # 烘焙常量
-    if has_freq:
-        fs_str = np.format_float_scientific(np.float32(fs), unique=True, trim="-") + "F"
-        decls = f"\n#define {prefix}_FS ({fs_str})"
-    else:
-        decls = ""
+# 别名，保持脚本内调用可读（真实实现，无内联副本）
+_time_feature_c = feature_cgen._time_feature_c
+_freq_feature_c = feature_cgen._freq_feature_c
+emit_feat_extract = feature_cgen.emit_feat_extract
 
-    # helpers 为空：统计和 FFT 逻辑已预置到 bos/algorithm/
-    helpers = ""
-
-    # 按通道分组导出特征
-    by_ch = {}
-    for ch, f in exported:
-        by_ch.setdefault(ch, []).append(f)
-
-    # 生成 feat_extract 函数体
-    body_parts = []
-    body_parts.append(f"    uint16_t N = (uint16_t){n};")
-    body_parts.append("    uint16_t ch, i;")
-    body_parts.append("    uint32_t oi = 0;")
-    body_parts.append("    bAlgoSignalStats_t s_stats;")
-    body_parts.append(f"    (void)i;")
-    body_parts.append("    for (ch = 0; ch < %d; ch++)" % n_ch)
-    body_parts.append("    {")
-    body_parts.append("        const float *x = &ch_buf[(uint32_t)ch * %d];" % n)
-
-    # 调用预置原语计算统计量
-    body_parts.append("        bAlgoSignalStats(x, N, &s_stats);")
-
-    body_parts.append("        switch (ch)")
-    body_parts.append("        {")
-    for ci, ch in enumerate(channels):
-        feats = by_ch.get(ch, [])
-        body_parts.append(f"        case {ci}: /* {ch} */")
-        body_parts.append("        {")
-        for f in feats:
-            if f in ("spec_centroid", "spec_energy", "dominant_freq") or f.startswith("band"):
-                feat_c = _freq_feature_c(f, prefix, n, fs, freq_bands)
-                feat_c = feat_c.replace("FS", f"{prefix}_FS")
-                body_parts.append("    " + feat_c)
-            else:
-                body_parts.append("    " + _time_feature_c(f))
-        body_parts.append("            break;")
-        body_parts.append("        }")
-    body_parts.append("        default:")
-    body_parts.append("            break;")
-    body_parts.append("        }")
-    body_parts.append("    }")
-    body = "\n".join(body_parts)
-
-    return {"decls": decls, "helpers": helpers, "body": body}
 
 def generate_test_model():
     """生成测试模型的完整C代码"""
     print("=" * 70)
     print("  BabyOS AutoML 深度绑定完整流程验证")
     print("=" * 70)
+    print(f"使用真实 feature_cgen: {feature_cgen.__file__}")
 
     # 模型参数
     prefix = "e2e_test_automl"
@@ -148,7 +82,7 @@ def generate_test_model():
         if not found:
             all_ok = False
 
-    # 验证无内联实现
+    # 验证无内联实现（负向断言：符号不存在才通过）
     print("\n[3/5] 验证无内联实现...")
     inline_checks = [
         ("s_sum / (float)N", "不应有内联 mean"),
@@ -326,7 +260,7 @@ int algo_{prefix}_predict(const float *features, uint32_t n_features, float *pro
         if not found:
             all_ok = False
 
-    # 检查无内联实现
+    # 检查无内联实现（负向断言：符号不存在才通过）
     inline_checks = [
         ("static void", "不应有内嵌 static 函数"),
         ("s_sum / (float)N", "不应有内联 mean"),
@@ -350,6 +284,7 @@ int algo_{prefix}_predict(const float *features, uint32_t n_features, float *pro
         print("  ✅ 包含 algo_signal.h 头文件")
         print("  ✅ 使用 bAlgoMl* 原语（normalize, argmax）")
         print("  ✅ 无内嵌 static 函数")
+        print("  ✅ 使用真实 feature_cgen 模块（无内联副本）")
         print()
         print("深度绑定实现正确：")
         print("  - 通用代码（信号统计）沉淀到 bos/algorithm/algo_signal.c")
@@ -361,6 +296,7 @@ int algo_{prefix}_predict(const float *features, uint32_t n_features, float *pro
     print("=" * 70)
 
     return all_ok
+
 
 if __name__ == "__main__":
     success = generate_test_model()

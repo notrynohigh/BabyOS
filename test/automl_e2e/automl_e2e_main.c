@@ -22,6 +22,8 @@ extern int test_full_pipeline(void);
 extern int test_constants(void);
 extern int test_algo_signal_basic(void);
 extern int test_algo_fft_basic(void);
+extern int test_algo_signal_features(void);
+extern int test_algo_fft_dominant_freq_dc(void);
 extern int test_deep_binding(void);
 
 typedef int (*test_func_t)(void);
@@ -36,6 +38,8 @@ static test_case_t tests[] = {
     {"test_class_names", test_class_names},
     {"test_algo_signal_basic", test_algo_signal_basic},
     {"test_algo_fft_basic", test_algo_fft_basic},
+    {"test_algo_signal_features", test_algo_signal_features},
+    {"test_algo_fft_dominant_freq_dc", test_algo_fft_dominant_freq_dc},
     {"test_deep_binding", test_deep_binding},
     {"test_feat_extract_basic", test_feat_extract_basic},
     {"test_feat_extract_null_ptr", test_feat_extract_null_ptr},
