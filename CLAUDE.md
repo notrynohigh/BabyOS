@@ -30,15 +30,15 @@ For the host-side desktop debugging tool (Electron + AutoML backend), see **§ B
 
 ## BabyOS Studio (Desktop Tooling)
 
-`tool/babyos-studio/` is the unified **host-side debugging tool** — an Electron desktop app with an optional Python FastAPI backend for AutoML. It bundles every diagnostic surface for BabyOS firmware into one installer. **It is never compiled into firmware** (host-only).
+`tool/babyos-studio/` is the unified **host-side debugging tool** — an Electron desktop app with a Python FastAPI backend for AutoML and device communication. It bundles every diagnostic surface for BabyOS firmware into one installer. **It is never compiled into firmware** (host-only).
 
 **Capabilities:**
-- Serial control (data send/receive over real COM ports)
-- OTA firmware upgrade with progress
-- Xmodem / Ymodem file transfer
+- Serial control (data send/receive over real COM ports via `pyserial`)
+- OTA firmware upgrade with chunked transfer + CRC32
+- Xmodem-128 / Ymodem-1K file transfer
 - HTTP mock server + request replay
 - KV parameter read/write + timed polling
-- Device info (UID/SN)
+- Device info (UID/SN queries)
 - **AutoML**: project lifecycle → dataset import → label/edit → feature engineering → model training → C-export
 - Quick links to BabyOS Gitee repo
 
@@ -59,15 +59,34 @@ npm run build:mac       # DMG
 npm run build:linux     # AppImage
 ```
 
-**Tech stack:** Electron 28 · vanilla HTML/CSS/JS UI · `serialport` (Node) · FastAPI + httpx (Python, AutoML only).
+**Run Python tests:**
+```bash
+cd tool/babyos-studio/python
+source .venv/bin/activate
+pytest test_automl.py -v                    # AutoML pipeline tests
+pytest test_api_pipeline.py -v              # API endpoint tests
+pytest ../test/test_regression.py -v        # Regression test suite
+```
+
+**Tech stack:** Electron 28 · vanilla HTML/CSS/JS UI · `serialport` (Node) · FastAPI + httpx (Python) · `pyserial` (UART) · scikit-learn/xgboost/lightgbm (ML).
 
 **Layout:**
 - `electron/` — main + preload (`electron/main.js`, `electron/preload.js`)
 - `ui/` — `index.html`, `style.css`, `app.js`
 - `python/app/api/` — FastAPI routers (`projects.py`, `datasets.py`, `labels.py`, `features.py`, `training.py`, `export.py`, `segments.py`, `templates.py`)
 - `python/app/services/` — ML services (`automl.py`, `trainer.py`, `simple_nn.py`, `scaler.py`, `*_service.py`)
+- `python/device/` — Device communication (UART driver, protocol stack, OTA/Xmodem/HTTP tools)
 - `python/` — top-level test scripts targeting `http://127.0.0.1:18080` (e.g. `python test_automl.py`)
 - `test/` — pytest suites under `test/datasets/` (regression / table-classification / time-series-classification)
+
+**Device tools architecture:**
+- `python/device/uart_service.py` — Singleton UART service wrapping `UartDriver` and `b_protocol`
+- `python/device/serial_page.py` — Serial port control, protocol test, set time
+- `python/device/ota_page.py` — OTA firmware upgrade with chunked transfer
+- `python/device/xmodem_page.py` — Xmodem/Ymodem file transfer
+- `python/device/http_page.py` — Mock HTTP server + device HTTP request trigger
+- `python/device/params_page.py` — Shell parameter read/write with polling
+- `python/device/device_page.py` — UID, SN, device info queries
 
 > The BabyOS_Example repo has its own `tool/` directory with ad-hoc experiment scripts (`repro_*.py`, `verify_*.py`) — those are unrelated to this tool and live outside the firmware build.
 
