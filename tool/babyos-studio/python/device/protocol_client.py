@@ -249,41 +249,48 @@ class ProtocolClient:
         return completed
 
     def _extract_one_frame(self) -> Optional[Tuple[int, int, bytes]]:
-        """Pull one valid frame from _rx_buf. Caller holds self._cv."""
+        """
+        Pull one valid frame from _rx_buf. Caller holds self._cv.
+
+        Corrupt heads (bad length / bad checksum) are dropped and the scan
+        continues so a later valid frame in the same buffer is still parsed.
+        Returns None only when the buffer is clean or incomplete (wait more).
+        """
         buf = self._rx_buf
-        # resync to HEAD
-        start = 0
-        n = len(buf)
-        while start < n and buf[start] != PROTOCOL_HEAD:
-            start += 1
-        if start:
-            del buf[:start]
+        while True:
+            # resync to HEAD
+            start = 0
             n = len(buf)
-        if n < FRAME_HEADER_SIZE + 1:
-            return None
+            while start < n and buf[start] != PROTOCOL_HEAD:
+                start += 1
+            if start:
+                del buf[:start]
+                n = len(buf)
+            if n < FRAME_HEADER_SIZE + 1:
+                return None
 
-        device_id = int.from_bytes(buf[1:5], 'little')
-        frame_len = int.from_bytes(buf[5:7], 'little')  # 1 + param
-        cmd = buf[7]
-        # total = header(8) + frame_len(=1+param)   [checksum is last of frame_len]
-        # Layout: head+id+len+cmd (8) + params + checksum → total = 8 + frame_len
-        total_len = FRAME_HEADER_SIZE + frame_len
-        if frame_len < 1 or total_len > _MAX_FRAME_SIZE:
-            # corrupt length — drop the head byte and resync
-            del buf[0]
-            return None
-        if total_len > len(buf):
-            return None  # incomplete
+            device_id = int.from_bytes(buf[1:5], 'little')
+            frame_len = int.from_bytes(buf[5:7], 'little')  # 1 + param
+            cmd = buf[7]
+            # total = header(8) + frame_len(=1+param)   [checksum is last of frame_len]
+            # Layout: head+id+len+cmd (8) + params + checksum → total = 8 + frame_len
+            total_len = FRAME_HEADER_SIZE + frame_len
+            if frame_len < 1 or total_len > _MAX_FRAME_SIZE:
+                # corrupt length — drop the head byte and keep scanning
+                del buf[0]
+                continue
+            if total_len > len(buf):
+                return None  # incomplete — wait for more data
 
-        expected = bp.calc_checksum(bytes(buf[:total_len - 1]))
-        if expected != buf[total_len - 1]:
-            # checksum fail — drop head, resync
-            del buf[0]
-            return None
+            expected = bp.calc_checksum(bytes(buf[:total_len - 1]))
+            if expected != buf[total_len - 1]:
+                # checksum fail — drop head, keep scanning
+                del buf[0]
+                continue
 
-        param = bytes(buf[8:total_len - 1])
-        del buf[:total_len]
-        return device_id, cmd, param
+            param = bytes(buf[8:total_len - 1])
+            del buf[:total_len]
+            return device_id, cmd, param
 
     def _dispatch_transfer_frame(self, cmd: int, param: bytes) -> None:
         """Handle FDATA request / OTA_RESULT while a transfer is active."""
@@ -331,7 +338,16 @@ class ProtocolClient:
             return
         chunk = self._xfer_data[index:index + FDATA_CHUNK_SIZE]
         param = bp.build_fdata_param(seq, chunk)
-        self.send_cmd(CMD_FDATA, param)
+        try:
+            self.send_cmd(CMD_FDATA, param)
+        except (IOError, OSError) as exc:
+            # Link died mid-transfer: surface structured timeout result.
+            self._emit_log('FDATA send failed: %s' % exc)
+            self._xfer_done = True
+            if self._xfer_result is None:
+                self._xfer_result = OTA_RESULT_TIMEOUT
+            self._emit_result(False, self._xfer_result)
+            return
         self._xfer_chunks_sent += 1
         sent = min(self._xfer_size, index + FDATA_CHUNK_SIZE)
         pct = int(sent * 100 / self._xfer_size) if self._xfer_size else 100
@@ -414,7 +430,13 @@ class ProtocolClient:
         for TEST / UTC / FW_INFO / GET_UID / WRITE_SN / DEVICEINFO / TRANS_FILE).
         """
         expect = cmd if expect_cmd is None else expect_cmd
-        self.send_cmd(cmd, param, device_id=device_id)
+        try:
+            self.send_cmd(cmd, param, device_id=device_id)
+        except (IOError, OSError) as exc:
+            # Device unplugged / pty broken: treat as no response so the API
+            # can return a structured timeout instead of a bare 500.
+            self._emit_log('send_cmd failed (0x%02X): %s' % (cmd & 0xFF, exc))
+            return None
         return self._wait_frame(expect, timeout, poll_interval, pred=pred)
 
     # ------------------------------------------------------------------
@@ -497,12 +519,16 @@ class ProtocolClient:
                       dev_no: int, offset: int, timeout: float,
                       poll_interval: float) -> bool:
         if self._xfer_busy:
+            # Busy rejection: surface via on_result only. Do NOT touch
+            # _xfer_result — that belongs to the in-flight transfer, which
+            # will set its own code on completion / cancel / timeout.
             self._emit_log('transfer busy — rejected')
             self._emit_result(False, OTA_RESULT_LEN_INVALID)
             return False
         size = len(data)
         if size <= 0:
             self._emit_log('empty file — rejected')
+            self._xfer_result = OTA_RESULT_LEN_INVALID
             self._emit_result(False, OTA_RESULT_LEN_INVALID)
             return False
 
@@ -542,11 +568,23 @@ class ProtocolClient:
                     time.sleep(poll_interval)
 
             if not self._xfer_done:
+                # Structured result for interrupt/timeout — never leave
+                # transfer_result as None when the job ends unsuccessfully.
+                self._xfer_done = True
+                self._xfer_result = OTA_RESULT_TIMEOUT
                 self._emit_log('transfer timeout after %.1fs' % timeout)
                 self._emit_progress(self._last_pct())
                 self._emit_result(False, OTA_RESULT_TIMEOUT)
                 return False
             return self._xfer_result == OTA_RESULT_OK
+        except (IOError, OSError) as exc:
+            # Link broken mid-transfer (pty closed / uart write failed).
+            self._emit_log('transfer aborted (io): %s' % exc)
+            self._xfer_done = True
+            if self._xfer_result is None:
+                self._xfer_result = OTA_RESULT_TIMEOUT
+            self._emit_result(False, self._xfer_result)
+            return False
         finally:
             self._xfer_busy = False
             self._xfer_data = b''

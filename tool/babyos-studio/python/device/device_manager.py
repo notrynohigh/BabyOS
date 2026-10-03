@@ -265,7 +265,9 @@ class DeviceManager:
         return len(self.ymodem_data)
 
     def start_xmodem(self, data: Optional[bytes] = None,
-                     log_fn: Optional[Any] = None) -> bool:
+                     log_fn: Optional[Any] = None,
+                     timeout_sec: Optional[float] = None,
+                     start_timeout_sec: Optional[float] = None) -> bool:
         if data is not None:
             self.xmodem_data = data
         if not self.xmodem_data:
@@ -286,7 +288,12 @@ class DeviceManager:
                 except Exception:
                     pass
 
-        self.xmodem_sender = XmodemSender(_send, log_fn=_log)
+        kwargs = {}
+        if timeout_sec is not None:
+            kwargs['timeout_sec'] = float(timeout_sec)
+        if start_timeout_sec is not None:
+            kwargs['start_timeout_sec'] = float(start_timeout_sec)
+        self.xmodem_sender = XmodemSender(_send, log_fn=_log, **kwargs)
         self.xmodem_sender.start(self.xmodem_data)
         self.active_xfer = self.xmodem_sender
         self._log('xmodem started')
@@ -294,7 +301,9 @@ class DeviceManager:
 
     def start_ymodem(self, data: Optional[bytes] = None,
                      filename: Optional[str] = None,
-                     log_fn: Optional[Any] = None) -> bool:
+                     log_fn: Optional[Any] = None,
+                     timeout_sec: Optional[float] = None,
+                     start_timeout_sec: Optional[float] = None) -> bool:
         if data is not None:
             self.ymodem_data = data
         if filename:
@@ -317,7 +326,12 @@ class DeviceManager:
                 except Exception:
                     pass
 
-        self.ymodem_sender = YmodemSender(_send, log_fn=_log)
+        kwargs = {}
+        if timeout_sec is not None:
+            kwargs['timeout_sec'] = float(timeout_sec)
+        if start_timeout_sec is not None:
+            kwargs['start_timeout_sec'] = float(start_timeout_sec)
+        self.ymodem_sender = YmodemSender(_send, log_fn=_log, **kwargs)
         self.ymodem_sender.start(self.ymodem_data,
                                   filename=self.ymodem_filename or 'file.bin')
         self.active_xfer = self.ymodem_sender

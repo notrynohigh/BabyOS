@@ -43,17 +43,23 @@ class UartService:
              timeout: float = 0.05, write_timeout: float = 1.0) -> bool:
         """
         Open a serial port. Returns True on success.
-        Re-opens after a failed previous open attempt.
+
+        Product rule: a FAILED open must not tear down an already-working
+        port. Only a successful open replaces the previous handle (after
+        closing it). Reopening the same path closes it first so pyserial
+        can re-acquire the device.
         """
         if not port:
             return False
-        self.close()
         try:
             import serial
         except ImportError:
             return False
+        # Same-path reopen requires closing the existing handle first.
+        if self._ser is not None and self._port == port:
+            self.close()
         try:
-            self._ser = serial.Serial(
+            ser = serial.Serial(
                 port=port,
                 baudrate=baudrate,
                 bytesize=serial.EIGHTBITS,
@@ -66,8 +72,15 @@ class UartService:
                 dsrdtr=False,
             )
         except Exception:
-            self._ser = None
+            # Keep any previously open port — do not drop the live link.
             return False
+        # Success: install the new handle, drop the previous one if any.
+        if self._ser is not None:
+            try:
+                self._ser.close()
+            except Exception:
+                pass
+        self._ser = ser
         self._port = port
         self._baudrate = baudrate
         # flush any stale bytes from a previous session

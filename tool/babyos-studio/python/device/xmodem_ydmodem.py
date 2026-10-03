@@ -107,11 +107,18 @@ class XmodemSender:
     BLOCK_SIZE = 128
 
     def __init__(self, uart_send: Callable[[bytes], None], log_fn: Optional[Callable] = None,
-                 timeout_sec: float = 10.0, max_retries: int = 16) -> None:
+                 timeout_sec: float = 10.0, max_retries: int = 16,
+                 start_timeout_sec: Optional[float] = None) -> None:
         self._uart_send = uart_send
         self._log = log_fn or (lambda *_: None)
         self._timeout = timeout_sec
         self._max_retries = max_retries
+        # WAIT_START (receiver never sends C/NAK) must not hang forever.
+        # Cap start wait separately so a silent peer aborts in bounded time.
+        self._start_timeout = (start_timeout_sec if start_timeout_sec is not None
+                               else min(3.0, timeout_sec))
+        self._start_retries = 0
+        self._max_start_retries = 3
 
         self._state = XferState.IDLE
         self._block_num = 1
@@ -136,7 +143,9 @@ class XmodemSender:
         self._padding_sent = False
         self._crc_mode = False
         self._retry_count = 0
+        self._start_retries = 0
         self._state = XferState.WAIT_START
+        self._last_tx_time = time.monotonic()
         self._log("[Xmodem] started, size=%d, data_blocks=%d" % (self._file_size, self._total_data_blocks))
 
     def cancel(self) -> None:
@@ -190,6 +199,17 @@ class XmodemSender:
                 self._log("[Xmodem] transfer complete!")
                 self._state = XferState.DONE
             elif byte == NAK:
+                # Repeated EOT NAK must count toward retries — otherwise a
+                # receiver that always NAKs EOT leaves the sender in SEND_EOT
+                # forever (busy-wait / hung job).
+                if self._retry_count >= self._max_retries:
+                    self._log("[Xmodem] EOT rejected too many times, aborting")
+                    self._send_cancel()
+                    self._state = XferState.ABORTED
+                    return
+                self._retry_count += 1
+                self._log("[Xmodem] EOT NAK, retry %d/%d"
+                          % (self._retry_count, self._max_retries))
                 self._send_eot()
                 self._last_tx_time = time.monotonic()
             elif byte == CAN:
@@ -200,7 +220,18 @@ class XmodemSender:
         if not self.is_active:
             return False
         if self._state == XferState.WAIT_START:
-            return True
+            elapsed = time.monotonic() - self._last_tx_time
+            if elapsed >= self._start_timeout:
+                if self._start_retries >= self._max_start_retries:
+                    self._log("[Xmodem] start timeout (receiver silent), aborting")
+                    self._send_cancel()
+                    self._state = XferState.ABORTED
+                    return False
+                self._start_retries += 1
+                self._log("[Xmodem] start wait retry %d/%d"
+                          % (self._start_retries, self._max_start_retries))
+                self._last_tx_time = time.monotonic()
+            return self.is_active
         if self._state == XferState.SEND_DATA:
             elapsed = time.monotonic() - self._last_tx_time
             if elapsed >= self._timeout:
@@ -212,6 +243,17 @@ class XmodemSender:
                 self._retry_count += 1
                 self._log("[Xmodem] timeout retry %d/%d" % (self._retry_count, self._max_retries))
                 self._resend_current()
+        elif self._state == XferState.SEND_EOT:
+            elapsed = time.monotonic() - self._last_tx_time
+            if elapsed >= self._timeout:
+                if self._retry_count >= self._max_retries:
+                    self._log("[Xmodem] EOT timeout, aborting")
+                    self._send_cancel()
+                    self._state = XferState.ABORTED
+                    return False
+                self._retry_count += 1
+                self._send_eot()
+                self._last_tx_time = time.monotonic()
         return self.is_active
 
     def _data_payload(self, blk_num: int) -> bytes:
@@ -292,11 +334,16 @@ class YmodemSender:
     BLOCK_SIZE = 1024
 
     def __init__(self, uart_send: Callable[[bytes], None], log_fn: Optional[Callable] = None,
-                 timeout_sec: float = 10.0, max_retries: int = 16) -> None:
+                 timeout_sec: float = 10.0, max_retries: int = 16,
+                 start_timeout_sec: Optional[float] = None) -> None:
         self._uart_send = uart_send
         self._log = log_fn or (lambda *_: None)
         self._timeout = timeout_sec
         self._max_retries = max_retries
+        self._start_timeout = (start_timeout_sec if start_timeout_sec is not None
+                               else min(3.0, timeout_sec))
+        self._start_retries = 0
+        self._max_start_retries = 3
 
         self._state = XferState.IDLE
         self._block_num = 0
@@ -323,7 +370,9 @@ class YmodemSender:
         self._padding_sent = False
         self._crc_mode = True
         self._retry_count = 0
+        self._start_retries = 0
         self._state = XferState.WAIT_START
+        self._last_tx_time = time.monotonic()
         self._log("[Ymodem] started, file='%s', size=%d, data_blocks=%d" % (
             filename, self._file_size, self._total_data_blocks))
 
@@ -381,6 +430,16 @@ class YmodemSender:
                 self._log("[Ymodem] transfer complete!")
                 self._state = XferState.DONE
             elif byte == NAK:
+                # Same as Xmodem: EOT NAK must consume retries or a receiver
+                # that always rejects EOT hangs the sender in SEND_EOT.
+                if self._retry_count >= self._max_retries:
+                    self._log("[Ymodem] EOT rejected too many times, aborting")
+                    self._send_cancel()
+                    self._state = XferState.ABORTED
+                    return
+                self._retry_count += 1
+                self._log("[Ymodem] EOT NAK, retry %d/%d"
+                          % (self._retry_count, self._max_retries))
                 self._send_eot()
                 self._last_tx_time = time.monotonic()
             elif byte == CAN:
@@ -389,11 +448,24 @@ class YmodemSender:
     def on_timer_tick(self) -> bool:
         if not self.is_active:
             return False
-        if self._state in (XferState.WAIT_START, XferState.SEND_BLOCK0):
+        if self._state == XferState.WAIT_START:
             elapsed = time.monotonic() - self._last_tx_time
-            if self._state == XferState.SEND_BLOCK0 and elapsed >= self._timeout:
+            if elapsed >= self._start_timeout:
+                if self._start_retries >= self._max_start_retries:
+                    self._log("[Ymodem] start timeout (receiver silent), aborting")
+                    self._send_cancel()
+                    self._state = XferState.ABORTED
+                    return False
+                self._start_retries += 1
+                self._log("[Ymodem] start wait retry %d/%d"
+                          % (self._start_retries, self._max_start_retries))
+                self._last_tx_time = time.monotonic()
+            return self.is_active
+        if self._state == XferState.SEND_BLOCK0:
+            elapsed = time.monotonic() - self._last_tx_time
+            if elapsed >= self._timeout:
                 if self._retry_count >= self._max_retries:
-                    self._log("[Ymodem] timeout, aborting")
+                    self._log("[Ymodem] block0 timeout, aborting")
                     self._send_cancel()
                     self._state = XferState.ABORTED
                     return False
@@ -412,6 +484,17 @@ class YmodemSender:
                 self._retry_count += 1
                 self._log("[Ymodem] timeout retry %d/%d" % (self._retry_count, self._max_retries))
                 self._resend_current()
+        elif self._state == XferState.SEND_EOT:
+            elapsed = time.monotonic() - self._last_tx_time
+            if elapsed >= self._timeout:
+                if self._retry_count >= self._max_retries:
+                    self._log("[Ymodem] EOT timeout, aborting")
+                    self._send_cancel()
+                    self._state = XferState.ABORTED
+                    return False
+                self._retry_count += 1
+                self._send_eot()
+                self._last_tx_time = time.monotonic()
         return self.is_active
 
     def _build_block0_payload(self) -> bytes:

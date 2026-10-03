@@ -131,8 +131,13 @@ def _run_ota_job(job_id: str, path: str, name: Optional[str],
             error="" if ok else "OTA failed (result=%s)" % result,
         )
     except Exception as exc:
+        result = pc.transfer_result if pc is not None else None
+        if result is None and not str(exc).lower().startswith("ota"):
+            # Link broken / IO error — structured timeout result, not a hang.
+            from ..device.protocol_client import OTA_RESULT_TIMEOUT
+            result = OTA_RESULT_TIMEOUT
         _job_update(job_id, state="error", ok=False, error=str(exc),
-                    finished_at=time.time())
+                    result_code=result, finished_at=time.time())
 
 
 def _run_file_job(job_id: str, path: str, dev_no: int, offset: int,
@@ -161,8 +166,12 @@ def _run_file_job(job_id: str, path: str, dev_no: int, offset: int,
             error="" if ok else "file transfer failed (result=%s)" % result,
         )
     except Exception as exc:
+        result = pc.transfer_result if pc is not None else None
+        if result is None:
+            from ..device.protocol_client import OTA_RESULT_TIMEOUT
+            result = OTA_RESULT_TIMEOUT
         _job_update(job_id, state="error", ok=False, error=str(exc),
-                    finished_at=time.time())
+                    result_code=result, finished_at=time.time())
 
 
 def _run_xmodem_pump(job_id: str, kind: str) -> None:
@@ -205,9 +214,15 @@ def _run_xmodem_pump(job_id: str, kind: str) -> None:
 def _start_transfer_job(kind: str, runner, check_busy: bool = True,
                         **meta: Any) -> Dict[str, Any]:
     dm = _dm()
-    if check_busy and dm.active_xfer is not None and getattr(
-            dm.active_xfer, "is_active", False):
-        raise AppError(409, "TRANSFER_BUSY", "已有传输任务在进行中")
+    if check_busy:
+        if dm.active_xfer is not None and getattr(
+                dm.active_xfer, "is_active", False):
+            raise AppError(409, "TRANSFER_BUSY", "已有传输任务在进行中")
+        # OTA / file transfer uses ProtocolClient._xfer_busy — reject overlap
+        pc = dm.protocol_client
+        if pc is not None and getattr(pc, "transfer_active", False):
+            raise AppError(409, "TRANSFER_BUSY",
+                           "协议传输任务进行中，请先停止或等待完成")
     job_id = _new_job_id(kind)
     job = {
         "job_id": job_id,
@@ -360,7 +375,10 @@ def protocol_test():
     """CMD 0x1 test("BabyOS") — device ACK with same cmd."""
     _require_uart()
     dm = _dm()
-    resp = dm.test_link(timeout=2.0)
+    try:
+        resp = dm.test_link(timeout=2.0)
+    except (IOError, OSError, RuntimeError) as exc:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "协议测试失败: %s" % exc)
     if resp is None:
         raise AppError(504, "PROTOCOL_TIMEOUT", "协议测试超时，无设备响应")
     device_id, cmd, param = resp
@@ -379,7 +397,10 @@ def protocol_set_time(body: SetTimeIn):
     _require_uart()
     dm = _dm()
     utc = body.utc if body.utc is not None else int(time.time())
-    resp = dm.set_time(utc, timeout=2.0)
+    try:
+        resp = dm.set_time(utc, timeout=2.0)
+    except (IOError, OSError, RuntimeError) as exc:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "设置时间失败: %s" % exc)
     if resp is None:
         raise AppError(504, "PROTOCOL_TIMEOUT", "设置时间超时，无设备响应")
     device_id, cmd, param = resp
@@ -578,7 +599,10 @@ def uid_get():
     """CMD 0x7 — device replies len(1)+uid(n)."""
     _require_uart()
     dm = _dm()
-    uid = dm.get_uid(timeout=2.0)
+    try:
+        uid = dm.get_uid(timeout=2.0)
+    except (IOError, OSError, RuntimeError) as exc:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "获取 UID 失败: %s" % exc)
     if uid is None:
         raise AppError(504, "PROTOCOL_TIMEOUT", "获取 UID 超时，无设备响应")
     return {"ok": True, "uid_hex": _hex(uid), "uid_len": len(uid)}
@@ -703,7 +727,15 @@ def http_start(body: HttpStartIn):
             content_type=body.content_type,
             status_code=body.status_code, https=bool(body.https))
     except RuntimeError as exc:
-        raise AppError(409, "HTTP_MOCK_RUNNING", str(exc))
+        msg = str(exc)
+        low = msg.lower()
+        if ("certificate" in low or "content mismatch" in low
+                or "origin/dev" in low or "sha256" in low):
+            # cert missing / content mismatch — structured, never bare 500
+            raise AppError(409, "HTTPS_CERT_MISMATCH", msg)
+        if "already running" in low:
+            raise AppError(409, "HTTP_MOCK_RUNNING", msg)
+        raise AppError(409, "HTTP_MOCK_START_FAILED", msg)
     except Exception as exc:
         raise AppError(500, "HTTP_MOCK_START_FAILED", str(exc))
     return {
@@ -751,11 +783,17 @@ def http_proxy(body: HttpProxyIn):
     action (bHttp / project code) — not a b_protocol command.
     """
     import httpx
+    from urllib.parse import urlparse
 
     url = (body.url or "").strip()
-    if not url or not (url.startswith("http://") or url.startswith("https://")):
+    # Require an absolute http(s) URL with a non-empty host.
+    # Bare "http://" / scheme-only strings are invalid requests (400),
+    # not downstream proxy failures (502).
+    parsed = urlparse(url)
+    if (not url or parsed.scheme not in ("http", "https")
+            or not parsed.netloc):
         raise AppError(400, "INVALID_REQUEST",
-                       "url 必须是 http:// 或 https:// 开头的绝对地址")
+                       "url 必须是 http:// 或 https:// 开头且包含主机的绝对地址")
     method = (body.method or "GET").upper()
     if method not in ("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"):
         raise AppError(400, "INVALID_REQUEST", "不支持的 HTTP method: %s" % method)

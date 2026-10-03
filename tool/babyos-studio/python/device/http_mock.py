@@ -8,58 +8,146 @@ returns a configurable response (body, content_type, status_code).
 GET /_requests returns the recorded log as JSON — convenient for tests
 and for FastAPI to surface mock traffic.
 
-HTTPS: optional self-signed certificate (openssl-generated, cached in a
-process temp dir). Device firmware HTTP clients typically verify nothing
-or accept self-signed certs during lab testing.
+HTTPS: loads ONLY the fixed BabyOS mock certificate content from
+origin/dev tool/mock_https_cert.pem + tool/mock_https_key.pem.
+Runtime openssl self-signed generation is forbidden. Candidate paths:
+  1. repo path  <repo>/tool/mock_https_{cert,key}.pem  (preferred)
+  2. package    python/device/certs/mock_https_{cert,key}.pem
+  3. env BABYOS_MOCK_HTTPS_CERT / BABYOS_MOCK_HTTPS_KEY (debug only;
+     content MUST still equal origin/dev tool certs — other PEMs rejected)
+Whichever path is used, file SHA256 must match the pinned origin/dev
+fingerprints below. Missing or non-matching files raise RuntimeError.
 
 Python 3.8 compatible.
 """
 
 from __future__ import print_function
 
+import hashlib
 import json
 import os
 import ssl
-import subprocess
-import tempfile
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Dict, List, Optional, Tuple
 
-# Process-wide self-signed cert cache (generated once per process)
+# Process-wide resolved cert cache (paths validated once per process)
 _https_cert_lock = threading.Lock()
 _https_cert_paths: Optional[Tuple[str, str]] = None  # (certfile, keyfile)
 
+# Documented stable locations (kept for error messages / status)
+_REPO_TOOL_CERT = 'tool/mock_https_cert.pem'
+_REPO_TOOL_KEY = 'tool/mock_https_key.pem'
+_PKG_CERTS_DIR = 'certs'
 
-def _ensure_https_cert() -> Tuple[str, str]:
+# Pinned content fingerprints of origin/dev tool/mock_https_{cert,key}.pem
+# (sha256 of PEM bytes). HTTPS must use THESE certs, not arbitrary paths.
+DEV_TOOL_CERT_SHA256 = (
+    '45020779c14d326cb5306b68687a2985f0b6c626f9587f1ce39493a77f9b034c'
+)
+DEV_TOOL_KEY_SHA256 = (
+    '24017d03c4f9b83779cc0d2d957528bf6333d7338369f1141b90e4d81dcfd689'
+)
+
+
+def _sha256_file(path: str) -> str:
+    h = hashlib.sha256()
+    try:
+        with open(path, 'rb') as f:
+            for chunk in iter(lambda: f.read(65536), b''):
+                h.update(chunk)
+    except Exception:
+        return ''
+    return h.hexdigest()
+
+
+def _candidate_cert_pairs() -> List[Tuple[str, str]]:
     """
-    Generate (once) a self-signed cert for 127.0.0.1 / localhost.
-    Returns (certfile, keyfile). Raises RuntimeError if openssl is missing.
+    Ordered (certfile, keyfile) candidates. Does not touch the filesystem.
+    Env override is last-resort debug only; content still must match origin/dev.
+    """
+    pairs: List[Tuple[str, str]] = []
+
+    here = os.path.dirname(os.path.abspath(__file__))
+
+    # 1) repo layout: walk up from this file until <root>/tool/mock_https_*.pem
+    #    package lives at <repo>/tool/babyos-studio/python/device/
+    p = here
+    for _ in range(8):
+        parent = os.path.dirname(p)
+        if parent == p:
+            break
+        p = parent
+        pairs.append((
+            os.path.join(p, 'tool', 'mock_https_cert.pem'),
+            os.path.join(p, 'tool', 'mock_https_key.pem'),
+        ))
+
+    # 2) package-relative certs/ (installer / packaged layout)
+    pairs.append((
+        os.path.join(here, _PKG_CERTS_DIR, 'mock_https_cert.pem'),
+        os.path.join(here, _PKG_CERTS_DIR, 'mock_https_key.pem'),
+    ))
+
+    # 3) env override — debug only; content must still equal origin/dev tool PEMs
+    env_c = (os.environ.get('BABYOS_MOCK_HTTPS_CERT') or '').strip()
+    env_k = (os.environ.get('BABYOS_MOCK_HTTPS_KEY') or '').strip()
+    if env_c or env_k:
+        if not (env_c and env_k):
+            raise RuntimeError(
+                'HTTPS cert env override incomplete: set BOTH '
+                'BABYOS_MOCK_HTTPS_CERT and BABYOS_MOCK_HTTPS_KEY '
+                '(got cert=%r key=%r)' % (env_c or None, env_k or None))
+        pairs.append((env_c, env_k))
+    return pairs
+
+
+def _resolve_https_cert() -> Tuple[str, str]:
+    """
+    Resolve BabyOS mock HTTPS cert files that match origin/dev tool/ content.
+
+    Search order: repo tool/mock_https_* → package certs/ → env override.
+    Content SHA256 of both PEMs must equal DEV_TOOL_*_SHA256.
+    Returns (certfile, keyfile). Raises RuntimeError if none match.
+    Never generates certificates via openssl.
     """
     global _https_cert_paths
     with _https_cert_lock:
         if _https_cert_paths is not None:
             return _https_cert_paths
-        cert_dir = tempfile.mkdtemp(prefix='babyos_https_')
-        cert = os.path.join(cert_dir, 'cert.pem')
-        key = os.path.join(cert_dir, 'key.pem')
-        cmd = [
-            'openssl', 'req', '-x509', '-newkey', 'rsa:2048',
-            '-keyout', key, '-out', cert,
-            '-days', '365', '-nodes',
-            '-subj', '/CN=127.0.0.1',
-            '-addext', 'subjectAltName=IP:127.0.0.1,DNS:localhost',
-        ]
-        try:
-            subprocess.check_call(
-                cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except Exception as exc:
-            raise RuntimeError(
-                'HTTPS mock requires openssl to generate a self-signed cert: %s'
-                % exc)
-        _https_cert_paths = (cert, key)
-        return _https_cert_paths
+        tried: List[str] = []
+        for cert, key in _candidate_cert_pairs():
+            if not (os.path.isfile(cert) and os.path.isfile(key)):
+                tried.append('%s + %s (missing)' % (cert, key))
+                continue
+            cert_sha = _sha256_file(cert)
+            key_sha = _sha256_file(key)
+            if cert_sha == DEV_TOOL_CERT_SHA256 and key_sha == DEV_TOOL_KEY_SHA256:
+                _https_cert_paths = (cert, key)
+                return _https_cert_paths
+            tried.append(
+                '%s + %s (content mismatch cert=%s key=%s)'
+                % (cert, key, cert_sha or 'unreadable', key_sha or 'unreadable'))
+        raise RuntimeError(
+            'HTTPS mock certificate not found or content mismatch. Required: '
+            'origin/dev tool/mock_https_cert.pem + tool/mock_https_key.pem '
+            '(cert sha256=%s, key sha256=%s). Lookup order: '
+            '<repo>/tool/mock_https_* → python/device/certs/mock_https_* → '
+            'env BABYOS_MOCK_HTTPS_CERT/KEY (content must still match). '
+            'Runtime openssl self-signed generation is disabled. '
+            'Tried: %s' % (
+                DEV_TOOL_CERT_SHA256, DEV_TOOL_KEY_SHA256,
+                '; '.join(tried) if tried else '(no candidates)'))
+
+
+def _x509_sha256_fingerprint(certfile: str) -> str:
+    """X.509 SHA256 fingerprint (colon-separated hex) via ssl module."""
+    try:
+        der = ssl.PEM_cert_to_DER_cert(open(certfile, 'rb').read().decode('ascii'))
+        return ':'.join('%02X' % b for b in hashlib.sha256(der).digest())
+    except Exception:
+        return ''
 
 
 def _to_bytes(body: Any) -> bytes:
@@ -195,6 +283,8 @@ class HttpMock:
         self._lock = threading.Lock()
         self._started = False
         self._https = False
+        self._https_cert: Optional[str] = None
+        self._https_key: Optional[str] = None
         # optional per-path overrides: {path_only: (body, content_type, status)}
         self._path_rules: Dict[str, Tuple[bytes, str, int]] = {}
 
@@ -229,7 +319,9 @@ class HttpMock:
 
         port=0 picks an ephemeral port (read back via .port).
         body/content_type/status_code apply to every non-/_requests path.
-        https=True wraps the listener with a self-signed TLS cert.
+        https=True wraps the listener with the fixed BabyOS mock TLS cert
+        (origin/dev tool/mock_https_*; env override or package certs/).
+        Raises RuntimeError if cert files are missing (no openssl fallback).
         Returns the bound port. Raises RuntimeError if already running.
         """
         if self.is_running:
@@ -244,6 +336,8 @@ class HttpMock:
         self._requests = []
         self._path_rules = {}
         self._https = bool(https)
+        self._https_cert = None
+        self._https_key = None
 
         server = ThreadingHTTPServer(('127.0.0.1', int(port)), _MockHandler)
         server.mock = self  # type: ignore[attr-defined]
@@ -253,10 +347,12 @@ class HttpMock:
         except Exception:
             pass
         if self._https:
-            cert, key = _ensure_https_cert()
+            cert, key = _resolve_https_cert()
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
             ctx.load_cert_chain(certfile=cert, keyfile=key)
             server.socket = ctx.wrap_socket(server.socket, server_side=True)
+            self._https_cert = cert
+            self._https_key = key
         self._server = server
         self._port = int(server.server_address[1])
 
@@ -289,6 +385,8 @@ class HttpMock:
             t.join(timeout=2.0)
         self._port = 0
         self._https = False
+        self._https_cert = None
+        self._https_key = None
 
     # ------------------------------------------------------------------
     # request log
@@ -385,7 +483,7 @@ class HttpMock:
     # ------------------------------------------------------------------
 
     def status(self) -> dict:
-        return {
+        out = {
             'running': self.is_running,
             'port': self._port,
             'base_url': self.base_url,
@@ -395,3 +493,11 @@ class HttpMock:
             'body_len': len(self._body),
             'request_count': self.request_count,
         }
+        if self._https and self._https_cert:
+            out['https_cert'] = self._https_cert
+            out['https_key'] = self._https_key
+            out['https_cert_sha256'] = _sha256_file(self._https_cert)
+            out['https_key_sha256'] = _sha256_file(self._https_key)
+            out['https_cert_x509_sha256'] = _x509_sha256_fingerprint(
+                self._https_cert)
+        return out
