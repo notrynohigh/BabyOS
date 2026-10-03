@@ -49,6 +49,17 @@ def _require_uart() -> None:
         raise AppError(409, "SERIAL_NOT_OPEN", "串口未打开，请先打开串口")
 
 
+def _require_no_transfer(dm, what: str) -> None:
+    """Shell/param/poll must not share UART with an active transfer."""
+    pc = dm.protocol_client
+    if pc is not None and getattr(pc, "transfer_active", False):
+        raise AppError(409, "TRANSFER_BUSY",
+                       "传输进行中，无法执行%s" % what)
+    if dm.active_xfer is not None and getattr(dm.active_xfer, "is_active", False):
+        raise AppError(409, "TRANSFER_BUSY",
+                       "传输进行中，无法执行%s" % what)
+
+
 def _hex(data: Optional[bytes]) -> str:
     if not data:
         return ""
@@ -78,29 +89,19 @@ def _xfer_progress(sender: Any) -> int:
 
 
 # ---------------------------------------------------------------------------
-# async job registry (OTA / file / xmodem)
-# ---------------------------------------------------------------------------
-
-_jobs: Dict[str, Dict[str, Any]] = {}
-_jobs_lock = threading.Lock()
+# async job registry (OTA / file / xmodem) — stored on DeviceManager
 
 
 def _job_put(job_id: str, job: Dict[str, Any]) -> None:
-    with _jobs_lock:
-        _jobs[job_id] = job
+    _dm().job_put(job_id, job)
 
 
 def _job_get(job_id: str) -> Optional[Dict[str, Any]]:
-    with _jobs_lock:
-        return _jobs.get(job_id)
+    return _dm().job_get(job_id)
 
 
 def _job_update(job_id: str, **fields: Any) -> None:
-    with _jobs_lock:
-        job = _jobs.get(job_id)
-        if job is not None:
-            job.update(fields)
-            job["updated_at"] = time.time()
+    _dm().job_update(job_id, **fields)
 
 
 def _new_job_id(kind: str) -> str:
@@ -310,6 +311,7 @@ class HttpStartIn(BaseModel):
     content_type: str = "application/json"
     status_code: int = 200
     https: bool = False
+    file_log: bool = True
 
 
 class HttpProxyIn(BaseModel):
@@ -320,6 +322,85 @@ class HttpProxyIn(BaseModel):
     headers: Optional[Dict[str, str]] = None
     timeout: float = Field(default=5.0, ge=0.1, le=60.0)
     verify_tls: bool = False
+
+
+class FileMergeFolderIn(BaseModel):
+    """Folder merge → allfile.bin (CMD 0x6 prep, origin/dev _load_folder)."""
+    folder_path: str
+    out_name: str = "allfile.bin"
+
+
+class FileTransferStopIn(BaseModel):
+    """Stop 0x6 transfer. notify_device=True sends all-zero CMD_TRANS_FILE."""
+    notify_device: bool = True
+
+
+class NetSetCfgnetIn(BaseModel):
+    """CMD 0x30 — cfg_type 0=AP 1=BLE; ssid 32B, passwd 64B on wire."""
+    cfg_type: int = 0
+    ssid: str = ""
+    passwd: str = ""
+
+
+class VoiceSetSwitchIn(BaseModel):
+    on: int = 1
+
+
+class VoiceSetVolumeIn(BaseModel):
+    volume: int = Field(default=50, ge=0, le=100)
+
+
+class VoiceTtsIn(BaseModel):
+    content: str
+    timeout: float = Field(default=2.0, ge=0.1, le=30.0)
+
+
+class TslInvokeIn(BaseModel):
+    content: str
+    timeout: float = Field(default=2.0, ge=0.1, le=30.0)
+
+
+class HttpDeviceRequestIn(BaseModel):
+    """CMD 0x50 — device-side HTTP request (not host proxy)."""
+    method: str = "GET"
+    url: str
+    headers: Optional[Dict[str, str]] = None
+    body: Optional[str] = None
+    timeout: float = Field(default=5.0, ge=0.1, le=60.0)
+
+
+class ParamPollStartIn(BaseModel):
+    name: str
+    interval_ms: int = Field(default=1000, ge=100, le=3600000)
+
+
+class LogFileStartIn(BaseModel):
+    path: str
+
+
+class WebConfigActionIn(BaseModel):
+    project_dir: Optional[str] = None
+    keil_uv4: Optional[str] = None
+    openocd_dir: Optional[str] = None
+    project_file_rel: Optional[str] = None
+    target_name: Optional[str] = None
+    log_dir_rel: Optional[str] = None
+    serial_port: Optional[str] = None
+    serial_baud: Optional[int] = None
+    log_seconds: Optional[int] = Field(default=None, ge=1, le=600)
+    save: bool = True
+
+
+class WebConfigBuildIn(WebConfigActionIn):
+    timeout_sec: int = Field(default=300, ge=10, le=1800)
+
+
+class WebConfigFlashIn(WebConfigActionIn):
+    timeout_sec: int = Field(default=120, ge=10, le=600)
+
+
+class WebConfigLogIn(WebConfigActionIn):
+    out_path: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
@@ -344,7 +425,7 @@ def serial_open(body: SerialOpenIn):
         raise AppError(400, "INVALID_REQUEST", "path 不能为空")
     if body.baud <= 0:
         raise AppError(400, "INVALID_REQUEST", "baud 必须为正整数")
-    # Re-open is allowed: close_port cancels transfers first.
+    # Re-open cancels in-flight transfers/polling first (open_port does this).
     ok = dm.open_port(body.path, body.baud, encrypt=body.encrypt)
     if not ok:
         raise AppError(500, "PORT_OPEN_FAILED",
@@ -414,6 +495,10 @@ def protocol_set_time(body: SetTimeIn):
 @router.post("/ota/start")
 def ota_start(body: OtaStartIn):
     _require_uart()
+    dm = _dm()
+    # param poll shells over the same UART — stop it before binary OTA
+    if dm.param_polling_status().get("enabled"):
+        dm.stop_param_polling()
     if not body.path or not os.path.isfile(body.path):
         raise AppError(404, "FILE_NOT_FOUND",
                        "固件文件不存在: %s" % body.path)
@@ -458,7 +543,11 @@ def file_status(job_id: Optional[str] = None):
 
 @router.post("/file/start")
 def file_start(body: FileStartIn):
+    """CMD 0x6 then 0x4/0x5 pump. path may be a single file or merged allfile.bin."""
     _require_uart()
+    dm = _dm()
+    if dm.param_polling_status().get("enabled"):
+        dm.stop_param_polling()
     if not body.path or not os.path.isfile(body.path):
         raise AppError(404, "FILE_NOT_FOUND", "文件不存在: %s" % body.path)
     if os.path.getsize(body.path) <= 0:
@@ -472,26 +561,37 @@ def file_start(body: FileStartIn):
     )
 
 
+@router.post("/file/merge_folder")
+def file_merge_folder(body: FileMergeFolderIn):
+    """Merge folder files into BabyOS allfile.bin (0xAA01/0xAA02 records)."""
+    folder = (body.folder_path or "").strip()
+    if not folder or not os.path.isdir(folder):
+        raise AppError(404, "FOLDER_NOT_FOUND", "目录不存在: %s" % folder)
+    out_name = (body.out_name or "allfile.bin").strip() or "allfile.bin"
+    try:
+        info = _dm().merge_folder(folder, out_name)
+    except (ValueError, OSError, IOError) as exc:
+        raise AppError(400, "MERGE_FAILED", str(exc))
+    return {"ok": True, **info}
+
+
 @router.post("/file/stop")
-def file_stop():
+def file_stop(body: Optional[FileTransferStopIn] = None):
+    """Soft-stop transfer; notify_device sends all-zero CMD 0x6 (dev tool)."""
+    notify = True if body is None else bool(body.notify_device)
     dm = _dm()
-    dm.stop_transfer_soft()
+    dm.stop_transfer(notify_device=notify)
     # mark latest ota/file job cancelled if still running
     for kind in ("ota", "file"):
         job = _latest_job(kind)
         if job and job.get("state") in ("starting", "running"):
             _job_update(job["job_id"], state="cancelled", ok=False,
                         error="stopped by host", finished_at=time.time())
-    return {"ok": True}
+    return {"ok": True, "notified_device": notify}
 
 
 def _latest_job(kind: str) -> Optional[Dict[str, Any]]:
-    with _jobs_lock:
-        candidates = [j for j in _jobs.values() if j.get("kind") == kind]
-        if not candidates:
-            return None
-        candidates.sort(key=lambda j: j.get("created_at", 0), reverse=True)
-        return dict(candidates[0])
+    return _dm().latest_job(kind)
 
 
 # ---------------------------------------------------------------------------
@@ -504,9 +604,8 @@ def xmodem_start(body: XferStartIn):
     if not body.path or not os.path.isfile(body.path):
         raise AppError(404, "FILE_NOT_FOUND", "文件不存在: %s" % body.path)
     dm = _dm()
-    if dm.active_xfer is not None and getattr(dm.active_xfer, "is_active",
-                                               False):
-        raise AppError(409, "TRANSFER_BUSY", "已有传输任务在进行中")
+    # OTA uses pc._xfer_busy and leaves dm.active_xfer None — check both
+    _require_no_transfer(dm, "Xmodem 传输")
     size = dm.load_xmodem_file(body.path)
     if size <= 0:
         raise AppError(400, "INVALID_REQUEST", "文件为空")
@@ -539,9 +638,7 @@ def ymodem_start(body: XferStartIn):
     if not body.path or not os.path.isfile(body.path):
         raise AppError(404, "FILE_NOT_FOUND", "文件不存在: %s" % body.path)
     dm = _dm()
-    if dm.active_xfer is not None and getattr(dm.active_xfer, "is_active",
-                                               False):
-        raise AppError(409, "TRANSFER_BUSY", "已有传输任务在进行中")
+    _require_no_transfer(dm, "Ymodem 传输")
     size = dm.load_ymodem_file(body.path)
     if size <= 0:
         raise AppError(400, "INVALID_REQUEST", "文件为空")
@@ -669,6 +766,7 @@ def shell_cmd(body: ShellCmdIn):
     if not body.cmd or not body.cmd.strip():
         raise AppError(400, "INVALID_REQUEST", "cmd 不能为空")
     dm = _dm()
+    _require_no_transfer(dm, "Shell 命令")
     text = dm.shell_command(body.cmd.strip(), timeout=body.timeout)
     return {"ok": True, "cmd": body.cmd.strip(), "response": text}
 
@@ -678,6 +776,7 @@ def param_list():
     """`param` — list registered parameter names (firmware b_mod_param.c)."""
     _require_uart()
     dm = _dm()
+    _require_no_transfer(dm, "参数列表")
     names = dm.param_list(timeout=1.0)
     return {"ok": True, "names": names, "count": len(names)}
 
@@ -688,6 +787,7 @@ def param_get(body: ParamGetIn):
     if not body.name or not body.name.strip():
         raise AppError(400, "INVALID_REQUEST", "name 不能为空")
     dm = _dm()
+    _require_no_transfer(dm, "参数读取")
     value = dm.param_get(body.name.strip(), timeout=body.timeout)
     if value is None:
         raise AppError(504, "PARAM_NOT_FOUND",
@@ -701,6 +801,7 @@ def param_set(body: ParamSetIn):
     if not body.name or not body.name.strip():
         raise AppError(400, "INVALID_REQUEST", "name 不能为空")
     dm = _dm()
+    _require_no_transfer(dm, "参数写入")
     ok = dm.param_set(body.name.strip(), body.value,
                       timeout=body.timeout, verify=body.verify)
     if not ok:
@@ -725,7 +826,8 @@ def http_start(body: HttpStartIn):
         port = dm.start_http_mock(
             port=body.port, body=body.body,
             content_type=body.content_type,
-            status_code=body.status_code, https=bool(body.https))
+            status_code=body.status_code, https=bool(body.https),
+            file_log=bool(body.file_log))
     except RuntimeError as exc:
         msg = str(exc)
         low = msg.lower()
@@ -815,6 +917,325 @@ def http_proxy(body: HttpProxyIn):
         "body": text[:8192],
         "body_len": len(resp.content),
     }
+
+
+# ---------------------------------------------------------------------------
+# aggregate status + logs
+# ---------------------------------------------------------------------------
+
+@router.post("/param/poll/start")
+def param_poll_start(body: ParamPollStartIn):
+    """Timed shell `param <name>` polling (origin/dev mainwindow)."""
+    _require_uart()
+    name = (body.name or "").strip()
+    if not name:
+        raise AppError(400, "INVALID_REQUEST", "name 不能为空")
+    dm = _dm()
+    _require_no_transfer(dm, "参数轮询")
+    try:
+        dm.start_param_polling(name, interval_ms=body.interval_ms)
+    except ValueError as exc:
+        raise AppError(400, "INVALID_REQUEST", str(exc))
+    except RuntimeError as exc:
+        msg = str(exc)
+        if "传输" in msg:
+            raise AppError(409, "TRANSFER_BUSY", msg)
+        raise AppError(409, "SERIAL_NOT_OPEN", msg)
+    return {"ok": True, "status": dm.param_polling_status()}
+
+
+@router.post("/param/poll/stop")
+def param_poll_stop():
+    dm = _dm()
+    was = dm.param_polling_status()["enabled"]
+    dm.stop_param_polling()
+    return {"ok": True, "was_enabled": was, "status": dm.param_polling_status()}
+
+
+@router.get("/param/poll/status")
+def param_poll_status():
+    return _dm().param_polling_status()
+
+
+# ---------------------------------------------------------------------------
+# network / voice / TSL (device protocol 0x30–0x44 / 0x09)
+# ---------------------------------------------------------------------------
+
+@router.post("/net/set_cfgnet")
+def net_set_cfgnet(body: NetSetCfgnetIn):
+    """CMD 0x30 — cfg_type 0=AP 1=BLE; empty ssid = default mode on/off."""
+    _require_uart()
+    cfg_type = int(body.cfg_type)
+    if cfg_type not in (0, 1):
+        raise AppError(400, "INVALID_REQUEST", "cfg_type 只能是 0(AP) 或 1(BLE)")
+    ssid = (body.ssid or "").strip()
+    passwd = body.passwd or ""
+    if cfg_type == 1 and not ssid:
+        # BLE mode on device: firmware uses empty ssid to mean BLE toggle
+        pass
+    elif cfg_type == 0 and not ssid:
+        raise AppError(400, "INVALID_REQUEST", "AP 模式 ssid 不能为空")
+    resp = _dm().set_cfgnet_mode(cfg_type, ssid, passwd, timeout=2.0,
+                                  wait_ack=True)
+    if resp is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "设置配网模式超时")
+    device_id, cmd, param = resp
+    return {"ok": True, "cfg_type": cfg_type, "ssid": ssid,
+            "device_id": device_id, "cmd": cmd}
+
+
+@router.post("/net/get_info")
+def net_get_info():
+    """CMD 0x31 — ssid(32)+ip+gw+mask → dotted IPs."""
+    _require_uart()
+    info = _dm().get_netinfo(timeout=2.0)
+    if info is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "获取网络信息超时")
+    return {"ok": True, **info}
+
+
+@router.post("/voice/set_switch")
+def voice_set_switch(body: VoiceSetSwitchIn):
+    """CMD 0x40 — 0=off 1=on."""
+    _require_uart()
+    on = 1 if int(body.on) else 0
+    resp = _dm().set_voice_switch(on, timeout=2.0, wait_ack=True)
+    if resp is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "设置语音开关超时")
+    device_id, cmd, param = resp
+    return {"ok": True, "on": on, "device_id": device_id, "cmd": cmd}
+
+
+@router.post("/voice/set_volume")
+def voice_set_volume(body: VoiceSetVolumeIn):
+    """CMD 0x41 — 0~100."""
+    _require_uart()
+    volume = max(0, min(100, int(body.volume)))
+    resp = _dm().set_voice_volume(volume, timeout=2.0, wait_ack=True)
+    if resp is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "设置音量超时")
+    device_id, cmd, param = resp
+    return {"ok": True, "volume": volume, "device_id": device_id, "cmd": cmd}
+
+
+@router.post("/voice/get_volume")
+def voice_get_volume():
+    """CMD 0x42 — 1-byte reply."""
+    _require_uart()
+    vol = _dm().get_voice_volume(timeout=2.0)
+    if vol is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "获取音量超时")
+    return {"ok": True, "volume": int(vol)}
+
+
+@router.post("/voice/get_stat")
+def voice_get_stat():
+    """CMD 0x43 — 0=idle 1=listening 2=playing."""
+    _require_uart()
+    st = _dm().get_voice_stat(timeout=2.0)
+    if st is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "获取语音状态超时")
+    return {"ok": True, **st}
+
+
+@router.post("/voice/tts")
+def voice_tts(body: VoiceTtsIn):
+    """CMD 0x44 — TTS content for device playback."""
+    _require_uart()
+    content = body.content or ""
+    if not content.strip():
+        raise AppError(400, "INVALID_REQUEST", "content 不能为空")
+    resp = _dm().send_tts_content(content, timeout=body.timeout, wait_ack=True)
+    if resp is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "TTS 内容发送超时")
+    device_id, cmd, param = resp
+    return {"ok": True, "device_id": device_id, "cmd": cmd,
+            "content": content}
+
+
+@router.post("/tsl/invoke")
+def tsl_invoke(body: TslInvokeIn):
+    """CMD 0x09 — 物模型方法调用内容."""
+    _require_uart()
+    content = body.content or ""
+    if not content.strip():
+        raise AppError(400, "INVALID_REQUEST", "content 不能为空")
+    resp = _dm().invoke_tsl(content, timeout=body.timeout)
+    if resp is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "物模型调用超时")
+    device_id, cmd, param = resp
+    return {"ok": True, "device_id": device_id, "cmd": cmd,
+            "param_hex": _hex(param)}
+
+
+# ---------------------------------------------------------------------------
+# HTTP via protocol (CMD 0x50–0x53) — device-side request, not host proxy
+# ---------------------------------------------------------------------------
+
+@router.post("/http/init")
+def http_device_init():
+    """CMD 0x52 — device HTTP client init."""
+    _require_uart()
+    resp = _dm().http_init(timeout=2.0)
+    if resp is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "HTTP init 超时")
+    device_id, cmd, param = resp
+    return {"ok": True, "device_id": device_id, "cmd": cmd}
+
+
+@router.post("/http/deinit")
+def http_device_deinit():
+    """CMD 0x53 — device HTTP client deinit."""
+    _require_uart()
+    resp = _dm().http_deinit(timeout=2.0)
+    if resp is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "HTTP deinit 超时")
+    device_id, cmd, param = resp
+    return {"ok": True, "device_id": device_id, "cmd": cmd}
+
+
+@router.post("/http/request")
+def http_device_request(body: HttpDeviceRequestIn):
+    """CMD 0x50 → device builds request → 0x51 response (status+body)."""
+    _require_uart()
+    url = (body.url or "").strip()
+    if not url:
+        raise AppError(400, "INVALID_REQUEST", "url 不能为空")
+    method = (body.method or "GET").upper()
+    if method not in ("GET", "POST", "PUT", "DELETE"):
+        raise AppError(400, "INVALID_REQUEST", "不支持的 HTTP method: %s" % method)
+    headers = body.headers or {}
+    header_lines = []
+    for k, v in headers.items():
+        header_lines.append("%s: %s" % (k, v))
+    header_text = "\r\n".join(header_lines)
+    raw_body = body.body.encode("utf-8") if body.body is not None else b""
+    resp = _dm().http_request(method, url, header_text, raw_body,
+                              timeout=body.timeout)
+    if resp is None:
+        raise AppError(504, "PROTOCOL_TIMEOUT", "设备 HTTP 请求超时")
+    return {"ok": True, **resp}
+
+
+# ---------------------------------------------------------------------------
+# UART log-to-file
+# ---------------------------------------------------------------------------
+
+@router.post("/log/start")
+def log_start(body: LogFileStartIn):
+    """Append all DeviceManager log lines to disk (dev tool log-to-file)."""
+    path = (body.path or "").strip()
+    if not path:
+        raise AppError(400, "INVALID_REQUEST", "path 不能为空")
+    try:
+        out = _dm().start_log_to_file(path)
+    except (ValueError, IOError, OSError) as exc:
+        raise AppError(400, "LOG_START_FAILED", str(exc))
+    return {"ok": True, "path": out}
+
+
+@router.post("/log/stop")
+def log_stop():
+    dm = _dm()
+    status = dm.log_to_file_status()
+    dm.stop_log_to_file()
+    return {"ok": True, "was": status, "status": dm.log_to_file_status()}
+
+
+@router.get("/log/status")
+def log_status():
+    return _dm().log_to_file_status()
+
+
+# ---------------------------------------------------------------------------
+# 配网 Web host tooling (Keil / OpenOCD / pyserial)
+# ---------------------------------------------------------------------------
+
+def _wc_apply(body: WebConfigActionIn):
+    """Apply webconfig path/port fields.
+
+    - None  = leave unchanged
+    - ""    = clear the field (only honored when body.save is True)
+    - other = set
+    """
+    updates = {}
+    clearable = ("project_dir", "keil_uv4", "openocd_dir",
+                 "project_file_rel", "target_name", "log_dir_rel",
+                 "serial_port")
+    for key in clearable + ("serial_baud", "log_seconds"):
+        val = getattr(body, key, None)
+        if val is None:
+            continue
+        if isinstance(val, str) and val == "" and key in clearable:
+            updates[key] = ""
+        elif val != "":
+            updates[key] = val
+    if updates and body.save:
+        try:
+            _dm().webconfig.save_config(updates)
+        except (OSError, IOError) as exc:
+            raise AppError(500, "WEBCONFIG_CONFIG_FAILED", str(exc))
+    return updates
+
+
+@router.get("/webconfig/status")
+def webconfig_status():
+    return _dm().webconfig.status()
+
+
+@router.post("/webconfig/status")
+def webconfig_set(body: WebConfigActionIn):
+    updates = _wc_apply(body)
+    return {"ok": True, "updated": updates, "status": _dm().webconfig.status()}
+
+
+@router.post("/webconfig/build")
+def webconfig_build(body: WebConfigBuildIn):
+    _wc_apply(body)
+    wc = _dm().webconfig
+    result = wc.build(timeout_sec=int(body.timeout_sec))
+    if not result.get("ok"):
+        raise AppError(400, "WEBCONFIG_BUILD_FAILED",
+                       result.get("error") or "build failed",
+                       extra={"logs": result.get("logs") or []})
+    return {"ok": True, **result}
+
+
+@router.post("/webconfig/flash")
+def webconfig_flash(body: WebConfigFlashIn):
+    _wc_apply(body)
+    wc = _dm().webconfig
+    result = wc.flash(timeout_sec=int(body.timeout_sec))
+    if not result.get("ok"):
+        raise AppError(400, "WEBCONFIG_FLASH_FAILED",
+                       result.get("error") or "flash failed",
+                       extra={"logs": result.get("logs") or []})
+    return {"ok": True, **result}
+
+
+@router.post("/webconfig/log/start")
+def webconfig_log_start(body: WebConfigLogIn):
+    _wc_apply(body)
+    wc = _dm().webconfig
+    result = wc.start_log(port=body.serial_port,
+                          baud=body.serial_baud,
+                          seconds=body.log_seconds,
+                          out_path=body.out_path)
+    if not result.get("ok"):
+        raise AppError(400, "WEBCONFIG_LOG_FAILED",
+                       result.get("error") or "log start failed",
+                       extra={"logs": result.get("logs") or []})
+    return {"ok": True, **result}
+
+
+@router.post("/webconfig/log/stop")
+def webconfig_log_stop():
+    return _dm().webconfig.stop_log()
+
+
+@router.get("/webconfig/log/status")
+def webconfig_log_status():
+    return _dm().webconfig.log_status()
 
 
 # ---------------------------------------------------------------------------

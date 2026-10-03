@@ -51,7 +51,19 @@ CMD_OTA_RESULT = bp.CMD_OTA_RESULT
 CMD_TRANS_FILE = bp.CMD_TRANS_FILE
 CMD_GET_UID = bp.CMD_GET_UID
 CMD_WRITE_SN = bp.CMD_WRITE_SN
+CMD_TSL_INVOKE = bp.CMD_TSL_INVOKE
 CMD_DEVICEINFO = bp.CMD_DEVICEINFO
+CMD_SETCFGNET_MODE = bp.CMD_SETCFGNET_MODE
+CMD_GET_NETINFO = bp.CMD_GET_NETINFO
+CMD_SET_VOICE_SWITCH = bp.CMD_SET_VOICE_SWITCH
+CMD_SET_VOICE_VOLUME = bp.CMD_SET_VOICE_VOLUME
+CMD_GET_VOICE_VOLUME = bp.CMD_GET_VOICE_VOLUME
+CMD_GET_VOICE_STAT = bp.CMD_GET_VOICE_STAT
+CMD_TTS_CONTENT = bp.CMD_TTS_CONTENT
+CMD_HTTP_REQUEST = bp.CMD_HTTP_REQUEST
+CMD_HTTP_RESPONSE = bp.CMD_HTTP_RESPONSE
+CMD_HTTP_INIT = bp.CMD_HTTP_INIT
+CMD_HTTP_DEINIT = bp.CMD_HTTP_DEINIT
 
 OTA_RESULT_OK = bp.OTA_RESULT_OK
 OTA_RESULT_CRC_ERROR = bp.OTA_RESULT_CRC_ERROR
@@ -67,6 +79,13 @@ FW_NAME_SIZE = bp.FW_NAME_SIZE
 # allocation if length field is corrupt. Max payload used is FDATA 514B.
 _MAX_PARAM_SIZE = 2048
 _MAX_FRAME_SIZE = FRAME_HEADER_SIZE + 1 + _MAX_PARAM_SIZE + 1
+
+# Ring caps for RX/TX frame logs. Unknown-cmd frames still land here when no
+# waiter is active — without a cap a long-running host session grows without
+# bound on stray device traffic.
+_RX_LOG_MAX = 256
+_RX_FRAMES_MAX = 64
+_TX_LOG_MAX = 256
 
 # Callback types
 # on_progress(pct: int 0..100)
@@ -205,6 +224,8 @@ class ProtocolClient:
         if n is not None and n < 0:
             raise IOError('uart write failed')
         self._tx_log.append(frame)
+        if len(self._tx_log) > _TX_LOG_MAX:
+            del self._tx_log[:-_TX_LOG_MAX]
         self._emit_log('s-> cmd:0x%02X len=%d data=%s' % (
             cmd & 0xFF, len(frame), ' '.join('%02X' % b for b in frame[:min(len(frame), 24)])))
         return frame
@@ -238,6 +259,8 @@ class ProtocolClient:
                     break
                 dev_id, cmd, param = frame
                 self._rx_log.append((dev_id, cmd, param))
+                if len(self._rx_log) > _RX_LOG_MAX:
+                    del self._rx_log[:-_RX_LOG_MAX]
                 self._emit_log('r-> id:0x%08X cmd:0x%02X param_len=%d' % (
                     dev_id & 0xFFFFFFFF, cmd & 0xFF, len(param)))
                 completed.append((dev_id, cmd, param))
@@ -245,6 +268,8 @@ class ProtocolClient:
                 self._dispatch_transfer_frame(cmd, param)
                 # generic waiter queue
                 self._rx_frames.append((dev_id, cmd, param))
+                if len(self._rx_frames) > _RX_FRAMES_MAX:
+                    del self._rx_frames[:-_RX_FRAMES_MAX]
             self._cv.notify_all()
         return completed
 
@@ -606,16 +631,35 @@ class ProtocolClient:
                             timeout: float = 30.0,
                             poll_interval: float = 0.005) -> bool:
         """
-        Full FLASH file-transfer host flow:
-          0x6 TRANS_FILE → device ACK / 0x4 FDATA loop → 0x5 result → 0x5 ACK.
+        Full FLASH file-transfer host flow (CMD 0x6):
+          0x6 TRANS_FILE(size+crc+dev_no+offset) → device ACK
+          → 0x4 FDATA loop → 0x5 result → 0x5 ACK.
+
+        Matches origin/dev tool `_on_trans_file` + README §1.6.
         """
         data, crc, auto_name = self._load_file(path)
         fw_name = name if name else auto_name
         return self._run_transfer('file', data, crc, fw_name, dev_no, offset,
                                   timeout, poll_interval)
 
-    def stop_transfer(self) -> None:
-        """Abort an in-flight transfer from the host side (best-effort)."""
+    def stop_transfer(self, notify_device: bool = True) -> None:
+        """
+        Abort in-flight transfer from the host side.
+
+        When notify_device=True and UART is open, also send CMD 0x6 with
+        all-zero size/crc/dev_no/offset — same as origin/dev tool
+        `_on_stop_trans_file` (host tells device to drop the transfer).
+        """
+        if notify_device:
+            try:
+                self.send_cmd(CMD_TRANS_FILE, bp.build_trans_file_stop_param())
+                self._emit_log('stop-transfer: sent 0x6 zeros to device')
+            except (IOError, OSError, RuntimeError) as exc:
+                self._emit_log('stop-transfer device notify failed: %s' % exc)
+        if not self._xfer_busy:
+            # idle transfer — device may still need the zero-frame; do not
+            # rewrite a completed result as timeout.
+            return
         self._xfer_busy = False
         self._xfer_done = True
         if self._xfer_result is None:
@@ -629,6 +673,147 @@ class ProtocolClient:
     @property
     def transfer_result(self) -> Optional[int]:
         return self._xfer_result
+
+    # ------------------------------------------------------------------
+    # network / voice / TSL / HTTP debug (dev tool + README + firmware)
+    # ------------------------------------------------------------------
+
+    def set_cfgnet_mode(self, cfg_type: int = 0, ssid: str = '',
+                        passwd: str = '', timeout: float = 2.0,
+                        wait_ack: bool = True) -> Optional[Tuple[int, int, bytes]]:
+        """
+        CMD 0x30 SETCFGNET_MODE: type(1)+ssid(32)+passwd(64).
+        type 0=AP 1=BLE. Device ACK empty per README §2.1 (firmware may
+        require app callback — wait_ack=False skips the ACK wait).
+        """
+        param = bp.build_set_cfgnet_param(cfg_type, ssid, passwd)
+        if not wait_ack:
+            self.send_cmd(CMD_SETCFGNET_MODE, param)
+            return None
+        return self.request_response(CMD_SETCFGNET_MODE, param,
+                                     expect_cmd=CMD_SETCFGNET_MODE,
+                                     timeout=timeout)
+
+    def get_netinfo(self, timeout: float = 2.0) -> Optional[dict]:
+        """
+        CMD 0x31 GET_NETINFO — device replies ssid(32)+ip+gw+mask.
+        Returns dict with dotted IPs, or None on timeout/malformed.
+        """
+        resp = self.request_response(CMD_GET_NETINFO, b'',
+                                     expect_cmd=CMD_GET_NETINFO,
+                                     timeout=timeout)
+        if resp is None:
+            return None
+        return bp.netinfo_response_dict(resp[2])
+
+    def set_voice_switch(self, on: int, timeout: float = 2.0,
+                         wait_ack: bool = True) -> Optional[Tuple[int, int, bytes]]:
+        """CMD 0x40 — voice on/off (0/1)."""
+        param = bp.build_voice_switch_param(on)
+        if not wait_ack:
+            self.send_cmd(CMD_SET_VOICE_SWITCH, param)
+            return None
+        return self.request_response(CMD_SET_VOICE_SWITCH, param,
+                                     expect_cmd=CMD_SET_VOICE_SWITCH,
+                                     timeout=timeout)
+
+    def set_voice_volume(self, volume: int, timeout: float = 2.0,
+                         wait_ack: bool = True) -> Optional[Tuple[int, int, bytes]]:
+        """CMD 0x41 — volume 0~100."""
+        param = bp.build_voice_volume_param(volume)
+        if not wait_ack:
+            self.send_cmd(CMD_SET_VOICE_VOLUME, param)
+            return None
+        return self.request_response(CMD_SET_VOICE_VOLUME, param,
+                                     expect_cmd=CMD_SET_VOICE_VOLUME,
+                                     timeout=timeout)
+
+    def get_voice_volume(self, timeout: float = 2.0) -> Optional[int]:
+        """CMD 0x42 — device replies 1-byte volume."""
+        resp = self.request_response(CMD_GET_VOICE_VOLUME, b'',
+                                     expect_cmd=CMD_GET_VOICE_VOLUME,
+                                     timeout=timeout)
+        if resp is None or not resp[2]:
+            return None
+        return int(resp[2][0])
+
+    def get_voice_stat(self, timeout: float = 2.0) -> Optional[dict]:
+        """
+        CMD 0x43 — device replies 1-byte state.
+        0=idle 1=listening 2=playing (README §3.3).
+        """
+        resp = self.request_response(CMD_GET_VOICE_STAT, b'',
+                                     expect_cmd=CMD_GET_VOICE_STAT,
+                                     timeout=timeout)
+        if resp is None or not resp[2]:
+            return None
+        code = int(resp[2][0])
+        return {
+            'code': code,
+            'state': code,
+            'name': bp.VOICE_STAT_NAMES.get(code, 'unknown'),
+        }
+
+    def send_tts_content(self, content: str, timeout: float = 2.0,
+                         wait_ack: bool = True) -> Optional[Tuple[int, int, bytes]]:
+        """CMD 0x44 TTS — host pushes play content to device."""
+        param = bp.build_tts_content_param(content)
+        if not wait_ack:
+            self.send_cmd(CMD_TTS_CONTENT, param)
+            return None
+        return self.request_response(CMD_TTS_CONTENT, param,
+                                     expect_cmd=CMD_TTS_CONTENT,
+                                     timeout=timeout)
+
+    def invoke_tsl(self, content: str, timeout: float = 2.0) -> Optional[Tuple[int, int, bytes]]:
+        """CMD 0x9 物模型方法调用 — host content → device empty ACK (README §1.9)."""
+        param = bp.build_tsl_invoke_param(content)
+        return self.request_response(CMD_TSL_INVOKE, param,
+                                     expect_cmd=CMD_TSL_INVOKE,
+                                     timeout=timeout)
+
+    def http_init(self, timeout: float = 2.0) -> Optional[Tuple[int, int, bytes]]:
+        """CMD 0x52 HTTP_INIT — initialize device HTTP client."""
+        return self.request_response(CMD_HTTP_INIT, bp.build_http_init_param(),
+                                     expect_cmd=CMD_HTTP_INIT,
+                                     timeout=timeout)
+
+    def http_deinit(self, timeout: float = 2.0) -> Optional[Tuple[int, int, bytes]]:
+        """CMD 0x53 HTTP_DEINIT — deinit device HTTP client."""
+        return self.request_response(CMD_HTTP_DEINIT, bp.build_http_deinit_param(),
+                                     expect_cmd=CMD_HTTP_DEINIT,
+                                     timeout=timeout)
+
+    def http_request(self, method: Any, url: str, headers: str = '',
+                     body: Any = b'', timeout: float = 5.0) -> Optional[dict]:
+        """
+        CMD 0x50 HTTP_REQUEST — trigger device HTTP client request.
+        Param: method(1)+url_len(2LE)+url+hdr_len(2LE)+headers+body
+        (origin/dev tool/mainwindow.py `_on_http_send`).
+        Device replies CMD 0x51: status(2 LE)+body.
+        Returns {method,url,status,body,device_id} or None on timeout.
+        """
+        param = bp.build_http_request_param(method, url, headers, body)
+        self.send_cmd(CMD_HTTP_REQUEST, param)
+        self._emit_log('HTTP request %s %s -> device' % (
+            str(method).upper(), url))
+        resp = self._wait_frame(CMD_HTTP_RESPONSE, timeout=timeout,
+                                poll_interval=0.005)
+        if resp is None:
+            return None
+        device_id, cmd, rparam = resp
+        parsed = bp.parse_http_response_param(rparam)
+        if parsed is None:
+            return None
+        status, body_text = parsed
+        return {
+            'device_id': device_id,
+            'cmd': cmd,
+            'status': status,
+            'body': body_text,
+            'method': str(method).upper(),
+            'url': url,
+        }
 
     # ------------------------------------------------------------------
     # misc

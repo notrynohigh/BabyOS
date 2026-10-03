@@ -23,6 +23,7 @@ Python 3.8 compatible.
 
 from __future__ import print_function
 
+import datetime
 import hashlib
 import json
 import os
@@ -49,6 +50,96 @@ DEV_TOOL_CERT_SHA256 = (
 DEV_TOOL_KEY_SHA256 = (
     '24017d03c4f9b83779cc0d2d957528bf6333d7338369f1141b90e4d81dcfd689'
 )
+
+# origin/dev tool/http_server.py placeholder + file log name
+SERVER_TIME_PLACEHOLDER = '${SERVER_TIME}'
+_MOCK_LOG_FILENAME = 'mock_http.log'
+_file_log_lock = threading.Lock()
+_file_log_handle: Optional[Any] = None
+_file_log_path: Optional[str] = None
+
+
+def _server_time() -> str:
+    """ISO-ish local time string embedded when body contains ${SERVER_TIME}."""
+    return datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+
+
+def _resolve_log_path() -> Optional[str]:
+    """
+    mock_http.log location (origin/dev tool/http_server.py `_resolve_log_path`):
+      1) package dir (this file's directory)
+      2) CWD fallback
+    Returns absolute path or None if unusable.
+    """
+    candidates = []
+    try:
+        candidates.append(os.path.dirname(os.path.abspath(__file__)))
+    except Exception:
+        pass
+    try:
+        candidates.append(os.getcwd())
+    except Exception:
+        pass
+    for d in candidates:
+        try:
+            if d and os.path.isdir(d) and os.access(d, os.W_OK):
+                return os.path.join(d, _MOCK_LOG_FILENAME)
+        except Exception:
+            continue
+    return None
+
+
+def _mock_log_append(line: str) -> None:
+    global _file_log_handle, _file_log_path
+    with _file_log_lock:
+        if _file_log_handle is None:
+            return
+        try:
+            _file_log_handle.write(line + '\n')
+            _file_log_handle.flush()
+        except Exception:
+            pass
+
+
+def _open_mock_log_file(path: Optional[str] = None) -> Optional[str]:
+    global _file_log_handle, _file_log_path
+    with _file_log_lock:
+        if _file_log_handle is not None:
+            return _file_log_path
+        target = path or _resolve_log_path()
+        if not target:
+            return None
+        try:
+            d = os.path.dirname(os.path.abspath(target))
+            if d and not os.path.isdir(d):
+                return None
+            _file_log_handle = open(target, 'a', encoding='utf-8')
+            _file_log_path = target
+            return target
+        except Exception:
+            _file_log_handle = None
+            _file_log_path = None
+            return None
+
+
+def _close_mock_log_file() -> None:
+    global _file_log_handle, _file_log_path
+    with _file_log_lock:
+        if _file_log_handle is not None:
+            try:
+                _file_log_handle.close()
+            except Exception:
+                pass
+        _file_log_handle = None
+        _file_log_path = None
+
+
+def mock_log_status() -> Dict[str, Any]:
+    with _file_log_lock:
+        return {
+            'enabled': _file_log_handle is not None,
+            'path': _file_log_path,
+        }
 
 
 def _sha256_file(path: str) -> str:
@@ -175,9 +266,21 @@ def _headers_to_dict(handler: BaseHTTPRequestHandler) -> Dict[str, str]:
 class _MockHandler(BaseHTTPRequestHandler):
     """Request handler bound to a parent HttpMock instance via server.mock."""
 
-    # silence default stderr logging
+    # silence default stderr logging; also mirror into mock_http.log when on
     def log_message(self, fmt: str, *args: Any) -> None:  # noqa: A003
-        return
+        try:
+            _mock_log_append('[MockHttp] ' + (fmt % args))
+        except Exception:
+            pass
+
+    def handle(self) -> None:
+        # origin/dev tool/http_server.py: force Connection: close so
+        # embedded clients that never close don't park the handler thread.
+        self.close_connection = True
+        try:
+            BaseHTTPRequestHandler.handle(self)
+        except Exception:
+            pass
 
     @property
     def mock(self) -> 'HttpMock':
@@ -233,9 +336,11 @@ class _MockHandler(BaseHTTPRequestHandler):
             self.send_header('Content-Type', content_type)
             self.send_header('Content-Length', str(len(payload)))
             self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Connection', 'close')
             self.end_headers()
             if payload:
                 self.wfile.write(payload)
+            self.wfile.flush()
         except Exception:
             pass
 
@@ -281,6 +386,9 @@ class HttpMock:
         self._status_code = 200
         self._requests: List[Dict[str, Any]] = []
         self._lock = threading.Lock()
+        # lifecycle lock: serializes start/stop so concurrent starts cannot
+        # race the is_running check and orphan a LISTEN socket.
+        self._lifecycle_lock = threading.Lock()
         self._started = False
         self._https = False
         self._https_cert: Optional[str] = None
@@ -313,17 +421,27 @@ class HttpMock:
 
     def start(self, port: int = 0, body: Any = b'{"ok":true}',
               content_type: str = 'application/json',
-              status_code: int = 200, https: bool = False) -> int:
+              status_code: int = 200, https: bool = False,
+              file_log: bool = True) -> int:
         """
         Start the mock HTTP(S) server.
 
         port=0 picks an ephemeral port (read back via .port).
         body/content_type/status_code apply to every non-/_requests path.
+        Response body may contain ${SERVER_TIME} (replaced per request).
         https=True wraps the listener with the fixed BabyOS mock TLS cert
         (origin/dev tool/mock_https_*; env override or package certs/).
         Raises RuntimeError if cert files are missing (no openssl fallback).
+        file_log=True appends traffic lines to mock_http.log (dev tool parity).
         Returns the bound port. Raises RuntimeError if already running.
         """
+        with self._lifecycle_lock:
+            return self._start_locked(
+                port=port, body=body, content_type=content_type,
+                status_code=status_code, https=https, file_log=file_log)
+
+    def _start_locked(self, port: int, body: Any, content_type: str,
+                      status_code: Any, https: bool, file_log: bool) -> int:
         if self.is_running:
             raise RuntimeError('HttpMock already running on port %d' % self._port)
 
@@ -339,6 +457,11 @@ class HttpMock:
         self._https_cert = None
         self._https_key = None
 
+        if file_log:
+            _open_mock_log_file()
+            _mock_log_append('[MockHttp] start port=%s https=%s' % (
+                port, self._https))
+
         server = ThreadingHTTPServer(('127.0.0.1', int(port)), _MockHandler)
         server.mock = self  # type: ignore[attr-defined]
         # allow fast restart on Linux
@@ -353,24 +476,35 @@ class HttpMock:
             server.socket = ctx.wrap_socket(server.socket, server_side=True)
             self._https_cert = cert
             self._https_key = key
+        # capture bound port locally — never return a shared attr that a
+        # racing start() could overwrite before this caller reads it.
+        bound_port = int(server.server_address[1])
         self._server = server
-        self._port = int(server.server_address[1])
+        self._port = bound_port
 
         t = threading.Thread(target=server.serve_forever,
                              kwargs={'poll_interval': 0.05},
-                             name='HttpMock-%d' % self._port,
+                             name='HttpMock-%d' % bound_port,
                              daemon=True)
         t.start()
         self._thread = t
         self._started = True
-        return self._port
+        return bound_port
 
     def stop(self) -> None:
         """Stop the server and join the thread. Safe to call twice."""
+        with self._lifecycle_lock:
+            self._stop_locked()
+
+    def _stop_locked(self) -> None:
         server = self._server
         self._started = False
         self._server = None
         if server is not None:
+            try:
+                _mock_log_append('[MockHttp] stop')
+            except Exception:
+                pass
             try:
                 server.shutdown()
             except Exception:
@@ -387,6 +521,12 @@ class HttpMock:
         self._https = False
         self._https_cert = None
         self._https_key = None
+        # close file_log handle — otherwise status() reports enabled=True
+        # after the mock is gone (fd leak on long sessions).
+        try:
+            _close_mock_log_file()
+        except Exception:
+            pass
 
     # ------------------------------------------------------------------
     # request log
@@ -471,11 +611,23 @@ class HttpMock:
             body, ctype, status = rule
         else:
             body, ctype, status = self._body, self._content_type, self._status_code
-        # find the live handler via the server — serve() is called from handler
-        # so we use the handler stored on the entry by _record_and_respond
+        # ${SERVER_TIME} placeholder (origin/dev tool/http_server.py)
+        # body may be bytes or str — never mix placeholder checks.
+        if isinstance(body, (bytes, bytearray)):
+            ph = SERVER_TIME_PLACEHOLDER.encode('ascii')
+            if ph in body:
+                body = bytes(body).replace(ph, _server_time().encode('utf-8'))
+        else:
+            if SERVER_TIME_PLACEHOLDER in body:
+                body = body.replace(SERVER_TIME_PLACEHOLDER, _server_time())
         handler = entry.pop('_handler', None)
         if handler is None:
             return
+        try:
+            _mock_log_append('[MockHttp] %s %s -> %s' % (
+                entry.get('method', ''), path_only, status))
+        except Exception:
+            pass
         handler._send_bytes(status, body, ctype)
 
     # ------------------------------------------------------------------
@@ -492,6 +644,8 @@ class HttpMock:
             'content_type': self._content_type,
             'body_len': len(self._body),
             'request_count': self.request_count,
+            'server_time_placeholder': SERVER_TIME_PLACEHOLDER,
+            'file_log': mock_log_status(),
         }
         if self._https and self._https_cert:
             out['https_cert'] = self._https_cert

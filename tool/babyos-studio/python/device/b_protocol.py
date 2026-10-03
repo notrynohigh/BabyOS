@@ -18,7 +18,7 @@ Frame format (little-endian fields):
 """
 
 import struct
-from typing import Callable, List, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # Frame constants (b_mod_protocol.h)
@@ -52,6 +52,11 @@ CMD_SET_VOICE_VOLUME = 0x41
 CMD_GET_VOICE_VOLUME = 0x42
 CMD_GET_VOICE_STAT = 0x43
 CMD_TTS_CONTENT = 0x44
+# HTTP debug cmds (origin/dev tool/mainwindow.py + tool/README.md §HTTP调试)
+CMD_HTTP_REQUEST = 0x50
+CMD_HTTP_RESPONSE = 0x51
+CMD_HTTP_INIT = 0x52
+CMD_HTTP_DEINIT = 0x53
 
 # OTA / transfer-file result codes (tool/README.md §1.5)
 OTA_RESULT_OK = 0
@@ -65,6 +70,21 @@ FW_NAME_SIZE = 64
 FDATA_CHUNK_SIZE = 512
 UID_MAX_SIZE = 64
 DEVINFO_FIELD_SIZE = 16
+CFGNET_TYPE_SIZE = 1
+CFGNET_SSID_SIZE = 32
+CFGNET_PASSWD_SIZE = 64
+CFGNET_PARAM_SIZE = 1 + 32 + 64  # 97
+NETINFO_SSID_SIZE = 32
+NETINFO_PARAM_SIZE = 32 + 12  # ssid + ip/gw/mask
+VOICE_VOLUME_MAX = 100
+VOICE_STAT_IDLE = 0
+VOICE_STAT_LISTEN = 1
+VOICE_STAT_PLAY = 2
+VOICE_STAT_NAMES = {0: 'idle', 1: 'listening', 2: 'playing'}
+CFGNET_TYPE_AP = 0
+CFGNET_TYPE_BLE = 1
+HTTP_METHOD_MAP = {'GET': 0, 'POST': 1, 'PUT': 2, 'DELETE': 3}
+HTTP_METHOD_NAMES = {0: 'GET', 1: 'POST', 2: 'PUT', 3: 'DELETE'}
 
 # Dispatch callback: (device_id, cmd, param, param_len) -> int
 DispatchFn = Callable[[int, int, bytes, int], int]
@@ -361,6 +381,170 @@ def parse_netinfo_response(param: bytes) -> Optional[Tuple[str, int, int, int]]:
     ssid = param[:32].split(b'\x00', 1)[0].decode('utf-8', errors='replace')
     ip, gw, mask = struct.unpack_from('<III', param, 32)
     return ssid, ip, gw, mask
+
+
+def _ip_u32_to_str(value: int) -> str:
+    """Little-endian uint32 IPv4 as dotted string (firmware stores LE bytes)."""
+    b = struct.pack('<I', value & 0xFFFFFFFF)
+    return '%d.%d.%d.%d' % (b[0], b[1], b[2], b[3])
+
+
+def netinfo_response_dict(param: bytes) -> Optional[dict]:
+    """Parse netinfo reply into JSON-friendly dict with dotted IPs."""
+    parsed = parse_netinfo_response(param)
+    if parsed is None:
+        return None
+    ssid, ip, gw, mask = parsed
+    return {
+        'ssid': ssid,
+        'ip': _ip_u32_to_str(ip),
+        'gw': _ip_u32_to_str(gw),
+        'mask': _ip_u32_to_str(mask),
+        'ip_u32': ip,
+        'gw_u32': gw,
+        'mask_u32': mask,
+    }
+
+
+def build_set_cfgnet_param(cfg_type: int, ssid: str, passwd: str) -> bytes:
+    """
+    CMD_SETCFGNET_MODE 0x30 (host→device): type(1)+ssid(32)+passwd(64).
+    type: 0=AP配网, 1=BLE配网 (origin/dev tool/README.md §2.1).
+    """
+    t = int(cfg_type) & 0xFF
+    ssid_b = (ssid or '').encode('utf-8')[:CFGNET_SSID_SIZE]
+    passwd_b = (passwd or '').encode('utf-8')[:CFGNET_PASSWD_SIZE]
+    return (bytes([t]) +
+            ssid_b.ljust(CFGNET_SSID_SIZE, b'\x00') +
+            passwd_b.ljust(CFGNET_PASSWD_SIZE, b'\x00'))
+
+
+def build_get_netinfo_param() -> bytes:
+    """CMD_GET_NETINFO 0x31 — empty request body."""
+    return b''
+
+
+def build_voice_switch_param(on: int) -> bytes:
+    """CMD_SET_VOICE_SWITCH 0x40: switch(1). 0=off 1=on."""
+    return bytes([1 if int(on) else 0])
+
+
+def build_voice_volume_param(volume: int) -> bytes:
+    """CMD_SET_VOICE_VOLUME 0x41: 0~100 (1B). Values clamped."""
+    v = int(volume)
+    if v < 0:
+        v = 0
+    if v > VOICE_VOLUME_MAX:
+        v = VOICE_VOLUME_MAX
+    return bytes([v])
+
+
+def build_tts_content_param(content: str) -> bytes:
+    """CMD_TTS_CONTENT 0x44 — UTF-8 TTS content for device playback."""
+    return (content or '').encode('utf-8')
+
+
+def build_tsl_invoke_param(content: str) -> bytes:
+    """CMD_TSL_INVOKE 0x9 — 物模型方法调用内容 (raw bytes to device)."""
+    return (content or '').encode('utf-8')
+
+
+def parse_tsl_ack_param(param: Optional[bytes]) -> bool:
+    """Device replies empty ACK for 0x9 (README §1.9)."""
+    return True
+
+
+def build_http_init_param() -> bytes:
+    """CMD_HTTP_INIT 0x52 — single dummy byte (origin/dev mainwindow)."""
+    return b'\x00'
+
+
+def build_http_deinit_param() -> bytes:
+    """CMD_HTTP_DEINIT 0x53 — single dummy byte."""
+    return b'\x00'
+
+
+def build_http_request_param(method: Any, url: str,
+                             headers: str = '', body: Any = b'') -> bytes:
+    """
+    CMD_HTTP_REQUEST 0x50 (host→device), origin/dev tool/mainwindow.py:
+      method(1) + url_len(2 LE) + url + headers_len(2 LE) + headers + body
+    method: 0=GET 1=POST 2=PUT 3=DELETE.
+    """
+    if isinstance(method, int):
+        method_byte = method & 0xFF
+    else:
+        method_byte = HTTP_METHOD_MAP.get(str(method).upper(), 0)
+    url_b = (url or '').encode('utf-8')
+    hdr_b = (headers or '').encode('utf-8') if headers else b''
+    if body is None:
+        body_b = b''
+    elif isinstance(body, (bytes, bytearray)):
+        body_b = bytes(body)
+    else:
+        body_b = str(body).encode('utf-8')
+    return (bytes([method_byte]) +
+            struct.pack('<H', len(url_b)) + url_b +
+            struct.pack('<H', len(hdr_b)) + hdr_b +
+            body_b)
+
+
+def parse_http_request_param(param: bytes) -> Optional[dict]:
+    """Inverse of build_http_request_param (mock-device / tests)."""
+    if param is None or len(param) < 1 + 2:
+        return None
+    method_byte = param[0]
+    off = 1
+    if off + 2 > len(param):
+        return None
+    url_len = struct.unpack_from('<H', param, off)[0]
+    off += 2
+    if off + url_len > len(param):
+        return None
+    url = param[off:off + url_len].decode('utf-8', errors='replace')
+    off += url_len
+    if off + 2 > len(param):
+        return None
+    hdr_len = struct.unpack_from('<H', param, off)[0]
+    off += 2
+    if off + hdr_len > len(param):
+        return None
+    headers = param[off:off + hdr_len].decode('utf-8', errors='replace')
+    off += hdr_len
+    body = param[off:]
+    return {
+        'method': HTTP_METHOD_NAMES.get(method_byte, 'GET'),
+        'method_byte': method_byte,
+        'url': url,
+        'headers': headers,
+        'body': body.decode('utf-8', errors='replace'),
+        'body_hex': body.hex(),
+    }
+
+
+def build_http_response_param(status_code: int, body: Any) -> bytes:
+    """CMD_HTTP_RESPONSE 0x51 (device→host): status(2 LE) + body."""
+    if body is None:
+        body_b = b''
+    elif isinstance(body, (bytes, bytearray)):
+        body_b = bytes(body)
+    else:
+        body_b = str(body).encode('utf-8')
+    return struct.pack('<H', int(status_code) & 0xFFFF) + body_b
+
+
+def parse_http_response_param(param: bytes) -> Optional[Tuple[int, str]]:
+    """CMD_HTTP_RESPONSE 0x51 device→host: status(2 LE) + body."""
+    if param is None or len(param) < 2:
+        return None
+    status = struct.unpack_from('<H', param, 0)[0]
+    body = bytes(param[2:]).decode('utf-8', errors='replace')
+    return status, body
+
+
+def build_trans_file_stop_param() -> bytes:
+    """Host stop-transfer frame: 0x6 with all-zero size/crc/dev_no/offset."""
+    return build_trans_file_param(0, 0, 0, 0)
 
 
 # ---------------------------------------------------------------------------
