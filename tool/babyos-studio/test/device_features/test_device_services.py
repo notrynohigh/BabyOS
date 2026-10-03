@@ -334,9 +334,9 @@ class FakeShellDevice:
                 value = int(parts[2], 10)
             except ValueError:
                 return
+            # firmware-faithful (b_mod_param.c _ShellParamHandle):
+            # only registered params are written; unknown names are no-ops.
             if name in self.params:
-                self.params[name] = value
-            else:
                 self.params[name] = value
             # firmware prints nothing on set
 
@@ -710,10 +710,12 @@ class TestShellClient(unittest.TestCase):
         self.assertTrue(ok)
         self.assertEqual(self.dev.params['g_param_test_val'], -777)
 
-    def test_param_set_missing_param_creates_and_verifies(self):
+    def test_param_set_missing_param_is_noop(self):
+        """Firmware-faithful: unknown param names are silent no-ops."""
         ok = self.sh.param_set('g_new_param', 42, verify=True)
-        self.assertTrue(ok)
-        self.assertEqual(self.dev.params['g_new_param'], 42)
+        self.assertFalse(ok, 'verify must fail when param is not registered')
+        self.assertNotIn('g_new_param', self.dev.params)
+        self.assertIsNone(self.sh.param_get('g_new_param', timeout=0.4))
 
     def test_parse_list_format(self):
         text = ': alpha\r\n: beta\r\n: gamma\r\n'
@@ -856,6 +858,100 @@ class TestHttpMock(unittest.TestCase):
         self.assertGreater(st['port'], 0)
         self.assertEqual(st['status_code'], 202)
         self.assertEqual(st['body_len'], 3)
+
+    # ------------------------------------------------------------------
+    # HTTPS cert compliance (fixed BabyOS certs from origin/dev)
+    # ------------------------------------------------------------------
+
+    def test_https_uses_fixed_repo_certs(self):
+        """https=True must load fixed certs — never openssl-generate."""
+        import ssl
+        import urllib.request
+        from device import http_mock as hm
+
+        cert, key = hm._resolve_https_cert()
+        # resolved paths must exist and be the stable repo/package certs
+        self.assertTrue(os.path.isfile(cert), cert)
+        self.assertTrue(os.path.isfile(key), key)
+        base = os.path.basename(cert)
+        self.assertEqual(base, 'mock_https_cert.pem')
+        self.assertEqual(os.path.basename(key), 'mock_https_key.pem')
+
+        port = self.mock.start(port=0, body=b'{"https":1}', https=True)
+        self.addCleanup(self.mock.stop)
+        self.assertTrue(self.mock.https)
+        st = self.mock.status()
+        self.assertTrue(st['https'])
+        self.assertEqual(st['https_cert'], cert)
+        self.assertEqual(st['https_key'], key)
+        # fingerprints present and stable
+        self.assertEqual(st['https_cert_sha256'],
+                         '45020779c14d326cb5306b68687a2985f0b6c626f9587f1ce39493a77f9b034c')
+        self.assertEqual(st['https_key_sha256'],
+                         '24017d03c4f9b83779cc0d2d957528bf6333d7338369f1141b90e4d81dcfd689')
+        self.assertEqual(
+            st['https_cert_x509_sha256'],
+            'FC:AF:94:3B:A5:9C:FC:92:95:11:FC:CE:0E:F2:EF:43:20:ED:CA:20:C5:87:BA:42:71:A4:61:27:CB:17:5E:D6')
+
+        # Decode cert identity: CN=localhost, SAN has localhost + 127.0.0.1
+        decoded = ssl._ssl._test_decode_cert(cert)
+        cn = None
+        for rdn in decoded.get('subject') or ():
+            for name, value in rdn:
+                if name == 'commonName':
+                    cn = value
+        self.assertEqual(cn, 'localhost')
+        san = decoded.get('subjectAltName') or ()
+        self.assertIn(('DNS', 'localhost'), san)
+        self.assertIn(('IP Address', '127.0.0.1'), san)
+
+        # Live TLS client: trust the fixed cert, verify IP SAN via 127.0.0.1
+        ctx = ssl.create_default_context(cafile=cert)
+        ctx.check_hostname = True
+        url = 'https://127.0.0.1:%d/api/ping' % port
+        with urllib.request.urlopen(url, context=ctx, timeout=3.0) as resp:
+            self.assertEqual(resp.status, 200)
+            self.assertEqual(resp.read(), b'{"https":1}')
+        entry = self.mock.wait_for_request(path_only='/api/ping', timeout=1.0)
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry['method'], 'GET')
+
+        # httpx client (if available) against same mock
+        try:
+            import httpx
+        except ImportError:
+            return
+        with httpx.Client(verify=cert, timeout=3.0) as client:
+            r = client.get('https://127.0.0.1:%d/api/ping2' % port)
+            self.assertEqual(r.status_code, 200)
+            self.assertEqual(r.content, b'{"https":1}')
+
+    def test_https_missing_certs_raise_no_openssl(self):
+        """Missing cert files must raise RuntimeError — no openssl fallback."""
+        from device import http_mock as hm
+        orig = hm._candidate_cert_pairs
+        hm._candidate_cert_pairs = lambda: [('/nonexistent/mock_https_cert.pem',
+                                             '/nonexistent/mock_https_key.pem')]
+        self.addCleanup(setattr, hm, '_candidate_cert_pairs', orig)
+        # also reset process-wide cache so resolver re-checks candidates
+        hm._https_cert_paths = None
+        self.addCleanup(setattr, hm, '_https_cert_paths', None)
+        with self.assertRaises(RuntimeError) as ctx:
+            hm._resolve_https_cert()
+        msg = str(ctx.exception)
+        self.assertIn('openssl self-signed generation is disabled', msg)
+        self.assertIn('mock_https_cert.pem', msg)
+
+    def test_https_incomplete_env_override_raises(self):
+        """Setting only one of BABYOS_MOCK_HTTPS_CERT/KEY must raise."""
+        from device import http_mock as hm
+        self.addCleanup(os.environ.pop, 'BABYOS_MOCK_HTTPS_CERT', None)
+        os.environ['BABYOS_MOCK_HTTPS_CERT'] = '/tmp/fake_cert.pem'
+        hm._https_cert_paths = None
+        self.addCleanup(setattr, hm, '_https_cert_paths', None)
+        with self.assertRaises(RuntimeError) as ctx:
+            hm._resolve_https_cert()
+        self.assertIn('BABYOS_MOCK_HTTPS_KEY', str(ctx.exception))
 
 
 # ---------------------------------------------------------------------------
