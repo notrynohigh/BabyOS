@@ -2,7 +2,7 @@
 
 BabyOS 统一桌面调试工具（Electron + Python FastAPI）。面向 BabyOS 固件的真实上位机能力：串口 b_protocol 协议栈、OTA / 文件传输、Xmodem/Ymodem、Shell 参数调节、HTTP Mock，以及 AutoML「训练 → 导出深度绑定 C bundle」。
 
-**本 README 描述的是仓库中已实现的真实功能。** 协议帧格式与命令以 master 分支 `tool/README.md` + `tool/b_protocol.py` + `bos/modules/b_mod_protocol.*` 为准；无串口硬件时，协议/传输可用 Mock 设备或 PTY 做主机侧验证（见 §11）。
+**本 README 描述的是仓库中已实现的真实功能。** 协议帧格式与命令以 master 分支 `tool/README.md` + `tool/b_protocol.py` + `bos/modules/b_mod_protocol.*` 为准。串口/协议能力的验收路径是**虚拟串口（pty 成对字节通道）真实双向通讯**：主机侧走 UartService / ProtocolClient / ShellClient / Xmodem / FastAPI DeviceManager 真实栈，设备侧 mock 在 pty 另一端真实解析 BabyOS 协议帧并字节级回包（见 §11.1）；内存 FakeUart/FakeDevice 仅作补充，绝不能作为主验收路径。HTTPS 证书固定使用 **dev 分支 `tool/` 目录证书**（见 §9.4）。
 
 ---
 
@@ -428,7 +428,7 @@ curl -s -X POST http://127.0.0.1:18080/api/device/shell/cmd \
 - 记录每条请求：`method / path / query / body / body_hex / headers / client`。
 - 可配置默认响应：`body / content_type / status_code`；可选 per-path 覆盖（服务层 `set_path_response`）。
 - Mock 自带 `GET /_requests` → JSON 日志。
-- HTTPS：进程内 `openssl` 生成一次自签名证书（`CN=127.0.0.1` + SAN）。
+- HTTPS：**必须使用 dev 分支 `tool/` 目录证书**（`tool/mock_https_cert.pem` + `tool/mock_https_key.pem`，与 `origin/dev` 同名同内容；包内副本 `python/device/certs/` 为同一文件的拷贝）。路径查找顺序、指纹核对方法与禁令见 **§9.4**。运行时 openssl 自签被禁止；证书缺失时明确 `RuntimeError`，绝不静默生成。
 
 ### 9.2 UI（HTTP 调试页）
 
@@ -468,6 +468,67 @@ curl -s http://127.0.0.1:18080/api/device/http/requests
 # 或直接
 curl -s http://127.0.0.1:18081/_requests
 ```
+
+### 9.4 HTTPS 证书（强制：dev 分支 `tool/` 目录证书）
+
+HTTPS Mock **必须**加载下列固定证书，内容与 `origin/dev` 分支 `tool/` 目录同名文件完全一致：
+
+| 角色 | 稳定路径（仓库内） | 权威来源 |
+|---|---|---|
+| 证书 | `tool/mock_https_cert.pem`（仓库根） | `git show origin/dev:tool/mock_https_cert.pem` |
+| 私钥 | `tool/mock_https_key.pem`（仓库根） | `git show origin/dev:tool/mock_https_key.pem` |
+| 包内副本 | `tool/babyos-studio/python/device/certs/mock_https_{cert,key}.pem` | 与上表同内容的拷贝（安装包布局用） |
+
+证书属性（实测）：`CN=localhost`；SAN = `DNS:localhost, IP Address:127.0.0.1`；`notAfter=Aug 13 16:54:36 2036 GMT`。
+
+**运行时查找顺序**（`python/device/http_mock.py` 的 `_resolve_https_cert()`）：
+
+1. 仓库布局：从 `python/device/` 向上走目录树，找 `<repo>/tool/mock_https_cert.pem` + `<repo>/tool/mock_https_key.pem`（即上表「仓库根 tool/」路径）。
+2. 包内副本：`python/device/certs/mock_https_cert.pem` + `python/device/certs/mock_https_key.pem`。
+3. 环境变量：`BABYOS_MOCK_HTTPS_CERT` + `BABYOS_MOCK_HTTPS_KEY`（**必须成对**；只设其一 → `RuntimeError`；仅调试用）。
+
+**内容强制校验（无论路径来源）**：加载的 PEM 字节 SHA256 必须等于 `origin/dev` tool 证书指纹（见下）。非 dev tool 内容 → `RuntimeError`（content mismatch），**禁止**用环境变量换成任意自签证书。运行时 openssl 自签生成被禁止。启动 `https=true` 后，`GET /api/device/http/status` 会返回实际加载的路径与指纹（见下）。
+
+**若当前分支缺失证书，从 origin/dev 提取并保留在仓库内：**
+
+```bash
+cd /home/yyds/code/BabyOS
+git show origin/dev:tool/mock_https_cert.pem > tool/mock_https_cert.pem
+git show origin/dev:tool/mock_https_key.pem  > tool/mock_https_key.pem
+mkdir -p tool/babyos-studio/python/device/certs
+cp tool/mock_https_cert.pem tool/mock_https_key.pem tool/babyos-studio/python/device/certs/
+```
+
+**指纹核对方法（三种，均可）：**
+
+```bash
+# 1) X.509 指纹（openssl）——权威口径
+openssl x509 -in tool/mock_https_cert.pem -noout -fingerprint -sha256
+# 期望: SHA256 Fingerprint=FC:AF:94:3B:A5:9C:FC:92:95:11:FC:CE:0E:F2:EF:43:20:ED:CA:20:C5:87:BA:42:71:A4:61:27:CB:17:5E:D6
+
+# 2) 文件字节 SHA256
+sha256sum tool/mock_https_cert.pem tool/mock_https_key.pem \
+          tool/babyos-studio/python/device/certs/mock_https_cert.pem \
+          tool/babyos-studio/python/device/certs/mock_https_key.pem
+# 期望（cert）: 45020779c14d326cb5306b68687a2985f0b6c626f9587f1ce39493a77f9b034c
+# 期望（key） : 24017d03c4f9b83779cc0d2d957528bf6333d7338369f1141b90e4d81dcfd689
+
+# 3) 运行时核对：启动 HTTPS Mock 后读状态接口
+#    https_cert_x509_sha256 必须等于上面 1) 的期望值
+curl -s -X POST http://127.0.0.1:18080/api/device/http/start \
+  -H 'Content-Type: application/json' \
+  -d '{"port":0,"https":true,"body":"{}","content_type":"application/json","status_code":200}'
+curl -s http://127.0.0.1:18080/api/device/http/status
+# 关注字段: https_cert / https_key / https_cert_sha256 / https_key_sha256 / https_cert_x509_sha256
+```
+
+测试覆盖（均为 origin/dev 证书权威核对，不生成新证书）：
+
+| 测试类 | 文件 |
+|---|---|
+| `TestHttpsCertsFromDev`（仓库/包内指纹、`_resolve_https_cert`、live TLS CN/SAN、live peer DER 对比 origin/dev） | `test/device_features/test_virtual_serial.py` |
+| `TestHttpsCertsOriginDev` | `test/device_features/test_virtual_serial_protocol.py` |
+| `TestApiHttpsDevCerts`（API 启动 HTTPS + 真实 TLS 握手 + 缺证书环境变量结构化报错） | `test/device_features/test_api_virtual_serial.py` |
 
 ---
 
@@ -809,22 +870,67 @@ bAlgoMlSoftmax(out, z, nc);
 
 ## 11. 测试与排错
 
-### 11.1 设备功能测试（主机侧）
+### 11.1 虚拟串口（pty）全量验收 —— 串口/协议主路径
+
+**硬性规则：串口和协议相关功能的验收必须走虚拟串口（pty 成对字节通道）的真实双向通讯。** 结构：
+
+```
+主机真实栈（一端）                     设备侧（另一端）
+UartService / ProtocolClient     ←→   mock_babyos_device.py
+ShellClient / XmodemSender       ←→   真实解析 BabyOS 协议帧
+FastAPI DeviceManager            ←→   字节级回包（含 TEA 加解密）
+        │                                      │
+        └──── pty slave ←─── 真实字节流 ───→ pty master ────┘
+```
+
+- 主机侧**必须**走真实栈：`UartService` / `ProtocolClient` / `ShellClient` / `Xmodem` / FastAPI `DeviceManager` → pty 一端。
+- 设备侧 mock 必须在 pty 另一端**真实解析** BabyOS 协议帧并回包（字节级），不允许只验证自己的接口/内存 mock。
+- 通道 `kind` 必须为 `pty`（`require_pty=True`）；socketpair 降级单独分类，**不混入**主验收结果。
+- 内存 FakeUart / FakeDevice 测试可保留为补充，**绝不能**作为串口/协议主验收路径。
+
+**运行命令（Python 3.8）：**
 
 ```bash
 cd tool/babyos-studio
-python/.venv/bin/python -m pytest test/device_features/ -v
-# 或
-python/.venv/bin/python test/device_features/test_protocol_core.py
+python/.venv/bin/python -m pytest \
+  test/device_features/test_virtual_serial.py \
+  test/device_features/test_virtual_serial_protocol.py \
+  test/device_features/test_api_virtual_serial.py -v
 ```
 
-| 测试文件 | 覆盖 |
-|---|---|
-| `test_protocol_core.py` | 帧 pack/parse、校验和、TEA、0x3/0x4/0x6/0x7/0x8/0xA 负载、CRC32、Ymodem CRC16 向量、SN |
-| `test_device_services.py` | ProtocolClient / Shell / HttpMock / DeviceManager / xmodem 状态机 |
-| `test_device_api.py` | FastAPI 路由：串口、协议、OTA/文件异步 job、param、http、xmodem、结构化错误 |
-| `test_e2e_pty.py` | PTY 环回 + `mock_babyos_device.py` 协议设备端到端 |
-| `mock_babyos_device.py` | 主机侧 BabyOS 协议模拟设备（无硬件） |
+**实测结果：virtual-serial 用例 83 / 通过 83**（`test_virtual_serial.py` 37 + `test_virtual_serial_protocol.py` 25 + `test_api_virtual_serial.py` 21）。
+
+**覆盖矩阵（全部走 pty 真实通讯）：**
+
+| 能力 | SDK/协议层 | API 层（DeviceManager → UartService → pty） | 实测 |
+|---|---|---|---|
+| serial open / close | `test_virtual_serial_protocol.py::TestSerialOpenClose` | `TestApiSerialLifecycle` | 通过 |
+| CMD 0x1 TEST | `TestProtocolCmds::test_cmd_0x1_test_link` | `TestApiProtocolCommands::test_protocol_test_cmd_0x1` | 通过 |
+| CMD 0x2 UTC | `TestProtocolCmds::test_cmd_0x2_utc` | `test_protocol_set_time_cmd_0x2` | 通过 |
+| CMD 0x3/0x4/0x5 OTA | `TestOtaSuccess` + `TestOtaFailure{CrcError,LenInvalid,NameMismatch,Timeout}` | `TestApiTransfers::test_ota_start_status_cmd_0x3_0x4_0x5` | 通过 |
+| CMD 0x6 文件传输 | `TestFileTransferCmd6` + `test_virtual_serial.py::test_file_xfer_cmd_0x6` | `TestApiTransfers::test_file_start_status_cmd_0x6` | 通过 |
+| CMD 0x7 UID | `TestProtocolCmds::test_cmd_0x7_get_uid` | `TestApiProtocolCommands::test_uid_get_cmd_0x7` | 通过 |
+| CMD 0x8 SN | `TestProtocolCmds::test_cmd_0x8_write_sn` | `TestApiProtocolCommands::test_sn_write_cmd_0x8` | 通过 |
+| CMD 0xA DEVINFO | `TestProtocolCmds::test_cmd_0xA_device_info` | `TestApiProtocolCommands::test_info_get_cmd_0xA` | 通过 |
+| Xmodem-128 | `TestXmodem128`（128/129/256 边界 + 小文件） | `TestApiXmodemYmodem::test_xmodem_start_status` | 通过 |
+| Ymodem-1K | `TestYmodem1K`（1024 整倍 / 1500 pad / name+size） | `TestApiXmodemYmodem::test_ymodem_start_status` | 通过 |
+| Shell param list/get/set | `TestShellParam` | `TestApiShellParam::test_shell_cmd_and_param_list_get_set` | 通过 |
+| TEA 加密路径 | `TestTeaEncrypt`（往返 + 密文帧 + OTA 加密） | `TestApiTeaEncrypt::test_encrypt_protocol_over_api_pty` | 通过 |
+| DeviceManager → UART 链路 | `TestDeviceManagerOverPty::test_device_manager_sdk_path` | `open_api_over_pty` 全链路用例 | 通过 |
+| HTTPS dev 分支证书 | `TestHttpsCertsOriginDev` | `TestApiHttpsDevCerts`（真实 TLS） | 通过 |
+
+对应测试文件说明：
+
+| 文件 | 性质 | 覆盖 |
+|---|---|---|
+| `test_virtual_serial.py` | **主验收（pty）** | 协议 0x1–0xA、TEA、Shell、Xmodem/Ymodem、DeviceManager、FastAPI、证书指纹与 live TLS |
+| `test_virtual_serial_protocol.py` | **主验收（pty）** | serial open/close、全部 CMD、OTA 成功/失败路径、0x6、TEA、Xmodem/Ymodem 边界、Shell、DeviceManager SDK、证书 |
+| `test_api_virtual_serial.py` | **主验收（pty）** | FastAPI TestClient → `/api/device/*` → DeviceManager → UartService → pty → mock 设备；结构化错误；HTTPS dev 证书 |
+| `mock_babyos_device.py` | 设备侧 fixture | pty 另一端真实解析协议帧并回包（含 shell 文本、Xmodem/Ymodem 接收） |
+| `test_protocol_core.py` | 补充（纯函数） | 帧 pack/parse、校验和、TEA、负载、CRC32、Ymodem CRC16 向量、SN |
+| `test_device_services.py` | 补充（含 FakeUart 等内存 mock） | 服务层单测；**不是**串口/协议主验收路径 |
+| `test_device_api.py` | 补充（内存 mock） | FastAPI 路由契约；主验收以 `test_api_virtual_serial.py` 为准 |
+| `test_e2e_pty.py` | 补充（早期 PTY 环回） | 与 `mock_babyos_device.py` 的端到端探索性用例 |
 
 AutoML / 导出相关：
 
@@ -845,12 +951,13 @@ cd tool/babyos-studio/python
 
 ### 11.2 无串口硬件时如何验证「真实功能」
 
-| 功能 | 无硬件验证方式 |
+| 功能 | 无硬件验证方式（主路径优先） |
 |---|---|
-| b_protocol 帧 | `test_protocol_core.py` 向量 + `pack/parse` 往返 |
-| OTA / 0x6 文件 | `test_device_api.py` + mock 设备状态机 |
-| Xmodem/Ymodem | CRC 向量 + PTY/mock 接收端 |
-| Shell param | mock shell 文本 |
+| 串口/协议全量（0x1–0xA、Shell、Xmodem/Ymodem、TEA、API 链路） | **虚拟串口 pty 全量验收**（§11.1 三个测试文件，83 用例） |
+| HTTPS 证书 | dev 分支 `tool/` 证书指纹核对 + live TLS（§9.4） |
+| b_protocol 帧（补充） | `test_protocol_core.py` 向量 + `pack/parse` 往返 |
+| OTA / 0x6 文件（补充） | pty 用例之外，`test_device_api.py` 契约用作对照 |
+| Xmodem/Ymodem（补充） | pty 用例之外，CRC 向量对照 |
 | HTTP Mock | 本机真实 HTTP + `/_requests` 日志 + proxy |
 | AutoML | CSV → 特征 → 训练 → 导出 bundle + 数值自检 |
 | 固件集成 | `test/automl_e2e` 编译/符号/深度绑定核对 |
@@ -869,7 +976,7 @@ cd tool/babyos-studio/python
 | SN 写入异常 | 确认未二次包长度前缀；UID 为原始字节 md5 |
 | param 设置失败 | 固件是否启用 shell；值是否为 `atoi` 可解析整数；打开 `verify` 看回读 |
 | HTTP Mock 设备访问不到 | Mock 只绑 `127.0.0.1`；设备需能路由到主机 IP，或改固件 HTTP 目标；实验室可用 proxy 验证 Mock 配置 |
-| HTTPS Mock 失败 | 需要本机 `openssl` |
+| HTTPS Mock 失败 | 确认仓库 `tool/mock_https_{cert,key}.pem` 或包内 `python/device/certs/` 证书存在，且与 `origin/dev` **内容**一致（指纹核对方法见 §9.4）；缺失或内容不匹配都会明确 `RuntimeError`，**不会**静默 openssl 自签。环境变量 `BABYOS_MOCK_HTTPS_CERT` / `BABYOS_MOCK_HTTPS_KEY`（须成对）仅能改**路径**，内容仍必须等于 dev tool 证书 |
 | 训练中改数据/特征 409 | 等待或取消训练 |
 | 导出 TREE_TOO_DEEP / WIN_LEN 超限 | 树深 >128（`ALGO_ML_TREE_MAX_DEPTH`）在 `model_cgen` 以 `ValueError(TREE_TOO_DEEP:…)` 抛出，导出失败（HTTP 422，`detail.code=UNHANDLED`，detail 含 TREE_TOO_DEEP）。FFT 点数 >1024（`ALGO_FFT_MAX_N`）**无导出期硬拦截**：固件 `bAlgoFft` 运行时返回错误，导出自检③特征链会因 `feat_extract` 非 0 而失败。频域特征要求 N 为 2 的幂（`FREQ_NEEDS_POW2` 422） |
 | Electron 原生串口协议不可用 | 必须改用 Python 后端串口（start_dev.sh 已保证后端启动） |
@@ -886,25 +993,28 @@ cd tool/babyos-studio/python
 
 | 功能 | 状态 | 真实实现位置 | 无硬件验证 |
 |---|---|---|---|
-| 串口枚举/打开/关闭 | 已实现 | `uart_service.py` + `/api/device/serial/*` | mock 串口路径校验 |
-| b_protocol 帧 pack/parse/TEA | 已实现 | `b_protocol.py` | 单元测试向量 |
-| 协议测试 0x1 / 设时间 0x2 | 已实现 | `protocol_client.py` + mock 设备 | PTY/mock E2E |
-| OTA 0x3/0x4/0x5 | 已实现 | `start_ota` + async job API | mock 设备状态机 |
-| 文件传输 0x6 + 0x4/0x5 | 已实现（API） | `start_file_transfer` + `/api/device/file/*` | mock 设备状态机 |
-| Xmodem-128 | 已实现 | `xmodem_ydmodem.py` | CRC 向量 + mock 接收 |
-| Ymodem-1K | 已实现 | 同上 | CRC 向量 + mock 接收 |
-| UID 0x7 / SN 0x8 / DEVINFO 0xA | 已实现 | `protocol_client.py` + `sn_util.py` | mock 设备 |
-| Shell 参数调节 | 已实现 | `shell_client.py` | mock shell |
+| 串口枚举/打开/关闭 | 已实现 | `uart_service.py` + `/api/device/serial/*` | **虚拟串口 pty**（`TestSerialOpenClose` / `TestApiSerialLifecycle`） |
+| b_protocol 帧 pack/parse/TEA | 已实现 | `b_protocol.py` | pty 用例 + 单元测试向量 |
+| 协议测试 0x1 / 设时间 0x2 | 已实现 | `protocol_client.py` + pty 设备 mock | **虚拟串口 pty** |
+| OTA 0x3/0x4/0x5 | 已实现 | `start_ota` + async job API | **虚拟串口 pty**（成功 + CRC/长度/名称/超时失败路径） |
+| 文件传输 0x6 + 0x4/0x5 | 已实现（API） | `start_file_transfer` + `/api/device/file/*` | **虚拟串口 pty** |
+| Xmodem-128 | 已实现 | `xmodem_ydmodem.py` | **虚拟串口 pty**（边界 128/129/256） |
+| Ymodem-1K | 已实现 | 同上 | **虚拟串口 pty**（1024 整倍 / pad / name+size） |
+| UID 0x7 / SN 0x8 / DEVINFO 0xA | 已实现 | `protocol_client.py` + `sn_util.py` | **虚拟串口 pty** |
+| Shell 参数调节 | 已实现 | `shell_client.py` | **虚拟串口 pty**（list/get/set 回读） |
+| HTTPS Mock 启动（`https=true`） | **已实现（真实）** | `http_mock.py` → `ssl.SSLContext.load_cert_chain` | 真实 TLS 握手（`TestApiHttpsDevCerts`） |
+| **HTTPS 证书（dev 分支 tool 目录）** | **已实现（真实，强制）** | 仓库 `tool/mock_https_{cert,key}.pem` + 包内 `python/device/certs/`；解析 `_resolve_https_cert()`（§9.4） | 指纹核对 origin/dev + live TLS（`TestHttpsCertsFromDev` / `TestHttpsCertsOriginDev` / `TestApiHttpsDevCerts`）；**禁止运行时 openssl 自签** |
 | HTTP Mock + 请求日志 | 已实现 | `http_mock.py` | 本机真实 HTTP |
 | 主机 HTTP 代理代发 | 已实现 | `/api/device/http/proxy` | 本机真实 HTTP |
 | 设备侧 HTTP 触发（协议命令） | **未实现为 b_protocol** | 由固件 bHttp/工程代码发起 | 需固件 |
 | UI「HTTP 初始化/反初始化客户端」按钮 | **无后端端点** | 仅 UI 按钮 | 不可用 |
+| 虚拟串口（pty）全量验收套件 | **已实现（真实）** | `test_virtual_serial*.py` + `mock_babyos_device.py` | **83/83 通过**（见 §11.1） |
 | AutoML 工程/数据/标注/特征/训练 | 已实现 | `/api/projects/*` | CSV + pytest |
 | C bundle 导出 + 自检 | 已实现 | `generator.py` / `export_service.py` | `export_report.json` |
 | 深度绑定 `bAlgoSignal*`/`bAlgoFft*`/`bAlgoMl*` | 已实现 | `feature_cgen.py` / `model_cgen.py` + 固件头文件 | `test/automl_e2e` |
 | Gitee 仓库快捷链接 | 已实现 | UI shell 打开外链 | 无需硬件 |
 
-**原则**：上表「已实现」均有对应源码与测试路径；未实现项明确标注，不在 UI/API 中假装成功。
+**原则**：上表「已实现」均有对应源码与测试路径；未实现项明确标注，不在 UI/API 中假装成功。串口/协议能力以虚拟串口（pty）真实通讯为验收主路径；HTTPS 证书为 dev 分支 `tool/` 目录固定证书的真实实现，不存在运行时自签回退。
 
 ---
 
