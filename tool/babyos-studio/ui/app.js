@@ -3234,9 +3234,53 @@ function goToAutomlExport() {
 }
 
 // ---------------------------------------------------------------------------
-// 串口操作
+// 串口操作 — 统一走 Python /api/device/serial/*（与协议栈共用同一 UART 句柄）
+// 说明: Electron 原生 serial 仅作回退（Python 后端不可用时）；两者不可同时打开
+//       同一端口，否则 OS 层会冲突。默认路径一律优先 Python API。
 // ---------------------------------------------------------------------------
+let pythonSerialOwned = false; // true = 端口由 Python DeviceManager 持有
+
 async function refreshPorts() {
+  // 优先: Python 后端枚举（与后续 open 同一服务）
+  try {
+    const info = await apiGet('/api/device/serial/ports');
+    const ports = info?.ports || [];
+    serialOpen = !!info?.open;
+    if (info?.open && info?.current) {
+      serialPortPath = info.current;
+      pythonSerialOwned = true;
+      const btn = document.getElementById('btn-open-serial');
+      if (btn) btn.textContent = '关闭串口';
+      const st = document.getElementById('serial-status');
+      if (st) {
+        st.textContent = `已连接: ${info.current} @ ${info.baudrate}`;
+        st.className = 'status-text running';
+      }
+      updateSerialStatusDisplay();
+    }
+    const select = document.getElementById('serial-port');
+    if (select) {
+      select.innerHTML = '';
+      ports.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        select.appendChild(opt);
+      });
+      if (serialPortPath && ports.includes(serialPortPath)) {
+        select.value = serialPortPath;
+      }
+    }
+    if (ports.length === 0) {
+      addLog('未检测到串口', 'Serial');
+    } else {
+      addLog(`串口列表: ${ports.join(', ')}`, 'Serial');
+    }
+    return;
+  } catch (e) {
+    addLog(`Python 串口枚举失败，回退 Electron serial: ${e.message}`, 'WARN');
+  }
+  // 回退: Electron 原生 serialport
   if (!window.electronAPI) {
     addLog('请在 Electron 桌面应用中使用', 'WARN');
     return;
@@ -3261,9 +3305,26 @@ document.getElementById('btn-refresh-port')?.addEventListener('click', refreshPo
 
 document.getElementById('btn-open-serial')?.addEventListener('click', async () => {
   if (serialOpen) {
+    // 关闭: 优先走 Python（协议栈占用的句柄）
+    if (pythonSerialOwned) {
+      try {
+        await apiPost('/api/device/serial/close', {});
+        serialOpen = false;
+        pythonSerialOwned = false;
+        document.getElementById('btn-open-serial').textContent = '打开串口';
+        document.getElementById('serial-status').textContent = '未连接';
+        document.getElementById('serial-status').className = 'status-text';
+        updateSerialStatusDisplay();
+        addLog('串口已关闭 (Python)', 'Serial');
+        return;
+      } catch (e) {
+        addLog(`Python 关闭串口失败: ${e.message}`, 'WARN');
+      }
+    }
     const result = await window.electronAPI.serial.close();
     if (result.ok) {
       serialOpen = false;
+      pythonSerialOwned = false;
       document.getElementById('btn-open-serial').textContent = '打开串口';
       document.getElementById('serial-status').textContent = '未连接';
       updateSerialStatusDisplay();
@@ -3272,26 +3333,52 @@ document.getElementById('btn-open-serial')?.addEventListener('click', async () =
   } else {
     const port = document.getElementById('serial-port').value;
     const baud = parseInt(document.getElementById('serial-baud').value);
+    const encrypt = !!document.getElementById('encrypt-mode')?.checked;
     if (!port) {
       showToast('请选择串口', '#e6a23c');
       return;
     }
+    // 优先: Python 持有串口（协议测试 / OTA / shell / xmodem 共用）
+    try {
+      const result = await apiPost('/api/device/serial/open', {
+        path: port, baud, encrypt
+      });
+      serialOpen = true;
+      pythonSerialOwned = true;
+      serialPortPath = result?.port || port;
+      document.getElementById('btn-open-serial').textContent = '关闭串口';
+      document.getElementById('serial-status').textContent =
+        `已连接: ${serialPortPath} @ ${result?.baudrate || baud}`;
+      document.getElementById('serial-status').className = 'status-text running';
+      updateSerialStatusDisplay();
+      addLog(`串口已打开(Python): ${serialPortPath} @ ${result?.baudrate || baud}` +
+        (encrypt ? ' [TEA加密]' : ''), 'Serial');
+      return;
+    } catch (e) {
+      addLog(`Python 打开串口失败，回退 Electron: ${e.message}`, 'WARN');
+    }
+    // 回退: Electron serial（仅原始收发，不支持 b_protocol）
     const result = await window.electronAPI.serial.open({ path: port, baudRate: baud });
     if (result.ok) {
       serialOpen = true;
+      pythonSerialOwned = false;
       serialPortPath = port;
       document.getElementById('btn-open-serial').textContent = '关闭串口';
       document.getElementById('serial-status').textContent = `已连接: ${port}`;
       document.getElementById('serial-status').className = 'status-text running';
       updateSerialStatusDisplay();
-      addLog(`串口已打开: ${port} @ ${baud}`, 'Serial');
+      addLog(`串口已打开(Electron原始模式): ${port} @ ${baud} — 协议功能不可用`, 'Serial');
     } else {
       addLog(`打开失败: ${result.error}`, 'Serial');
+      showToast(`打开失败: ${result.error}`, '#f56c6c');
     }
   }
 });
 
 window.electronAPI?.serial.onData((data) => {
+  // 仅当串口由 Electron 持有时才把原始字节打进日志；
+  // Python 持有端口时 UART 由 DeviceManager 消费，不会走此通道。
+  if (pythonSerialOwned) return;
   const text = new TextDecoder().decode(new Uint8Array(data));
   const logEl = document.getElementById('serial-log');
   if (logEl) {
@@ -3305,20 +3392,54 @@ document.getElementById('btn-clear-log')?.addEventListener('click', () => {
   document.getElementById('serial-log').innerHTML = '';
 });
 
+function _serialLogLine(text, cls = 'RX') {
+  const logEl = document.getElementById('serial-log');
+  if (!logEl) return;
+  const color = cls === 'TX' ? '#569cd6' : '#6a9955';
+  logEl.innerHTML += `<div><span style="color:${color}">[${cls}]</span> ${escapeHtml(text)}</div>`;
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+async function _requirePythonSerial() {
+  if (!pythonSerialOwned || !serialOpen) {
+    showToast('请先通过 Python 打开串口', '#e6a23c');
+    addLog('协议功能需要 Python 持有的串口句柄，请先打开串口', 'WARN');
+    return false;
+  }
+  return true;
+}
+
 document.getElementById('btn-test')?.addEventListener('click', async () => {
-  if (!serialOpen) { showToast('请先打开串口', '#e6a23c'); return; }
-  showToast('测试功能尚未实现', '#e6a23c');
-  addLog('[TX] 测试指令尚未实现', 'Serial');
+  if (!(await _requirePythonSerial())) return;
+  _serialLogLine('>> b_protocol CMD 0x1 test("BabyOS")', 'TX');
+  try {
+    const r = await apiPost('/api/device/protocol/test', {});
+    addLog(`协议测试 OK: device_id=0x${(r.device_id >>> 0).toString(16)} ` +
+      `param="${r.param_text}"`, 'Protocol');
+    _serialLogLine(`<< ACK cmd=0x${r.cmd.toString(16)} param=${r.param_hex}`);
+    showToast('协议测试成功', '#67c23a');
+  } catch (e) {
+    addLog(`协议测试失败: ${e.message}`, 'Protocol');
+    showToast(e.message, '#f56c6c');
+  }
 });
 
 document.getElementById('btn-set-time')?.addEventListener('click', async () => {
-  if (!serialOpen) { showToast('请先打开串口', '#e6a23c'); return; }
-  showToast('设置时间功能尚未实现', '#e6a23c');
-  addLog('[TX] 设置时间指令尚未实现', 'Serial');
+  if (!(await _requirePythonSerial())) return;
+  const utc = Math.floor(Date.now() / 1000);
+  _serialLogLine(`>> b_protocol CMD 0x2 UTC=${utc}`, 'TX');
+  try {
+    const r = await apiPost('/api/device/protocol/set_time', { utc });
+    addLog(`设置时间 OK: utc=${r.utc}`, 'Protocol');
+    showToast('时间已设置', '#67c23a');
+  } catch (e) {
+    addLog(`设置时间失败: ${e.message}`, 'Protocol');
+    showToast(e.message, '#f56c6c');
+  }
 });
 
 // ---------------------------------------------------------------------------
-// OTA 升级
+// OTA 升级 — POST /api/device/ota/start → 轮询 /api/device/ota/status
 // ---------------------------------------------------------------------------
 document.getElementById('btn-select-firmware')?.addEventListener('click', async () => {
   const path = await window.electronAPI?.dialog.openFile({
@@ -3331,13 +3452,65 @@ document.getElementById('btn-select-firmware')?.addEventListener('click', async 
   }
 });
 
-document.getElementById('btn-start-ota')?.addEventListener('click', () => {
-  showToast('OTA 升级功能尚未实现', '#e6a23c');
-  addLog('OTA 升级功能尚未实现');
+let _otaPollTimer = null;
+function _setOtaProgress(pct, text) {
+  const fill = document.getElementById('ota-progress');
+  const label = document.getElementById('ota-progress-text');
+  const p = Math.max(0, Math.min(100, pct | 0));
+  if (fill) fill.style.width = p + '%';
+  if (label) label.textContent = text || (p + '%');
+}
+
+async function _pollOtaStatus(jobId) {
+  try {
+    const st = await apiGet('/api/device/ota/status' + (jobId ? `?job_id=${encodeURIComponent(jobId)}` : ''));
+    const job = st?.job;
+    if (job) {
+      _setOtaProgress(job.progress || 0,
+        `${job.progress || 0}% (${job.state})`);
+      if (job.state === 'done') {
+        addLog(`OTA 完成: ok=${job.ok} result=${job.result_code}`, 'OTA');
+        showToast(job.ok ? 'OTA 升级成功' : 'OTA 失败', job.ok ? '#67c23a' : '#f56c6c');
+        clearInterval(_otaPollTimer); _otaPollTimer = null;
+        return;
+      }
+      if (job.state === 'error' || job.state === 'cancelled') {
+        addLog(`OTA 结束: ${job.state} ${job.error || ''}`, 'OTA');
+        showToast(job.error || `OTA ${job.state}`, '#f56c6c');
+        clearInterval(_otaPollTimer); _otaPollTimer = null;
+        return;
+      }
+    } else if (st && st.transfer_active === false && jobId) {
+      // job 记录缺失但传输已结束
+      clearInterval(_otaPollTimer); _otaPollTimer = null;
+    }
+  } catch (e) {
+    addLog(`OTA 状态轮询失败: ${e.message}`, 'OTA');
+  }
+}
+
+document.getElementById('btn-start-ota')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const path = document.getElementById('firmware-path').value.trim();
+  const name = document.getElementById('firmware-name').value.trim();
+  if (!path) { showToast('请选择固件文件', '#e6a23c'); return; }
+  try {
+    const r = await apiPost('/api/device/ota/start', {
+      path, name: name || null, timeout: 30.0
+    });
+    addLog(`OTA 已接受: job=${r.job_id} file=${path}`, 'OTA');
+    _setOtaProgress(0, '0% (starting)');
+    if (_otaPollTimer) clearInterval(_otaPollTimer);
+    _otaPollTimer = setInterval(() => _pollOtaStatus(r.job_id), 400);
+    showToast('OTA 已启动', '#409eff');
+  } catch (e) {
+    addLog(`OTA 启动失败: ${e.message}`, 'OTA');
+    showToast(e.message, '#f56c6c');
+  }
 });
 
 // ---------------------------------------------------------------------------
-// Xmodem/Ymodem
+// Xmodem/Ymodem — POST start → 轮询 /api/device/xmodem/status
 // ---------------------------------------------------------------------------
 document.getElementById('btn-select-xmodem')?.addEventListener('click', async () => {
   const path = await window.electronAPI?.dialog.openFile();
@@ -3349,98 +3522,327 @@ document.getElementById('btn-select-ymodem')?.addEventListener('click', async ()
   if (path) document.getElementById('ymodem-file').value = path;
 });
 
-document.getElementById('btn-xmodem-send')?.addEventListener('click', () => {
-  showToast('功能尚未实现', '#909399');
-  addLog('Xmodem 发送功能尚未实现');
-});
+let _xferPollTimer = null;
+function _setXferProgress(kind, pct, text) {
+  const fill = document.getElementById(kind + '-progress');
+  const p = Math.max(0, Math.min(100, pct | 0));
+  if (fill) fill.style.width = p + '%';
+  if (text) addLog(`${kind} 进度: ${text}`, 'Xfer');
+}
 
-document.getElementById('btn-xmodem-cancel')?.addEventListener('click', () => {
-  showToast('功能尚未实现', '#909399');
-  addLog('Xmodem 取消功能尚未实现');
-});
+async function _pollXferStatus(kind, jobId) {
+  try {
+    const q = `?kind=${kind}` + (jobId ? `&job_id=${encodeURIComponent(jobId)}` : '');
+    const st = await apiGet('/api/device/xmodem/status' + q);
+    _setXferProgress(kind, st?.progress || 0,
+      `${st?.progress || 0}% state=${st?.xfer_state || ''}`);
+    const job = st?.job;
+    if (job && (job.state === 'done' || job.state === 'error' || job.state === 'cancelled')) {
+      addLog(`${kind} 结束: ${job.state} ${job.error || ''}`, 'Xfer');
+      showToast(job.ok ? `${kind} 完成` : (job.error || `${kind} ${job.state}`),
+        job.ok ? '#67c23a' : '#f56c6c');
+      clearInterval(_xferPollTimer); _xferPollTimer = null;
+    } else if (job && !st?.active && job.state === 'running') {
+      // sender 已不在，但 job 还没收尾 — 再等一轮
+    }
+  } catch (e) {
+    addLog(`${kind} 状态轮询失败: ${e.message}`, 'Xfer');
+  }
+}
 
-document.getElementById('btn-ymodem-send')?.addEventListener('click', () => {
-  showToast('功能尚未实现', '#909399');
-  addLog('Ymodem 发送功能尚未实现');
-});
-
-document.getElementById('btn-ymodem-cancel')?.addEventListener('click', () => {
-  showToast('功能尚未实现', '#909399');
-  addLog('Ymodem 取消功能尚未实现');
-});
-
-// ---------------------------------------------------------------------------
-// HTTP 调试
-// ---------------------------------------------------------------------------
-let httpServerRunning = false;
-document.getElementById('btn-http-server')?.addEventListener('click', () => {
-  httpServerRunning = !httpServerRunning;
-  const btn = document.getElementById('btn-http-server');
-  const status = document.getElementById('http-server-status');
-  if (httpServerRunning) {
-    btn.textContent = '停止服务器';
-    status.textContent = '运行中';
-    status.className = 'status-text running';
-    addLog('HTTP Mock 服务器已启动');
-  } else {
-    btn.textContent = '启动服务器';
-    status.textContent = '未运行';
-    status.className = 'status-text';
-    addLog('HTTP Mock 服务器已停止');
+document.getElementById('btn-xmodem-send')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const path = document.getElementById('xmodem-file').value.trim();
+  if (!path) { showToast('请选择 Xmodem 文件', '#e6a23c'); return; }
+  try {
+    const r = await apiPost('/api/device/xmodem/start', { path });
+    addLog(`Xmodem 已接受: job=${r.job_id} file=${r.job?.filename || path}`, 'Xfer');
+    if (_xferPollTimer) clearInterval(_xferPollTimer);
+    _xferPollTimer = setInterval(() => _pollXferStatus('xmodem', r.job_id), 300);
+    showToast('Xmodem 发送已启动', '#409eff');
+  } catch (e) {
+    addLog(`Xmodem 启动失败: ${e.message}`, 'Xfer');
+    showToast(e.message, '#f56c6c');
   }
 });
 
-document.getElementById('btn-http-send')?.addEventListener('click', () => {
-  showToast('HTTP 发送功能尚未实现', '#e6a23c');
-  addLog('HTTP 发送功能尚未实现');
+document.getElementById('btn-xmodem-cancel')?.addEventListener('click', async () => {
+  try {
+    await apiPost('/api/device/xmodem/cancel', {});
+    addLog('Xmodem 已请求取消', 'Xfer');
+  } catch (e) {
+    addLog(`Xmodem 取消失败: ${e.message}`, 'Xfer');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-ymodem-send')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const path = document.getElementById('ymodem-file').value.trim();
+  if (!path) { showToast('请选择 Ymodem 文件', '#e6a23c'); return; }
+  try {
+    const r = await apiPost('/api/device/ymodem/start', { path });
+    addLog(`Ymodem 已接受: job=${r.job_id} file=${r.job?.filename || path}`, 'Xfer');
+    if (_xferPollTimer) clearInterval(_xferPollTimer);
+    _xferPollTimer = setInterval(() => _pollXferStatus('ymodem', r.job_id), 300);
+    showToast('Ymodem 发送已启动', '#409eff');
+  } catch (e) {
+    addLog(`Ymodem 启动失败: ${e.message}`, 'Xfer');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-ymodem-cancel')?.addEventListener('click', async () => {
+  try {
+    await apiPost('/api/device/ymodem/cancel', {});
+    addLog('Ymodem 已请求取消', 'Xfer');
+  } catch (e) {
+    addLog(`Ymodem 取消失败: ${e.message}`, 'Xfer');
+    showToast(e.message, '#f56c6c');
+  }
 });
 
 // ---------------------------------------------------------------------------
-// 参数调节
+// HTTP Mock — 真实本机 HTTP 服务器（记录请求 + 可配置响应）
 // ---------------------------------------------------------------------------
-document.getElementById('btn-param-list')?.addEventListener('click', () => {
-  sendShellCmd('param');
+let httpServerRunning = false;
+let httpMockBaseUrl = '';
+
+async function _syncHttpServerUi() {
+  try {
+    const st = await apiGet('/api/device/http/status');
+    httpServerRunning = !!st?.running;
+    httpMockBaseUrl = st?.base_url || '';
+    const btn = document.getElementById('btn-http-server');
+    const status = document.getElementById('http-server-status');
+    if (btn) btn.textContent = httpServerRunning ? '停止服务器' : '启动服务器';
+    if (status) {
+      status.textContent = httpServerRunning
+        ? `运行中 ${st.base_url || ''}`
+        : '未运行';
+      status.className = httpServerRunning ? 'status-text running' : 'status-text';
+    }
+  } catch (e) {
+    // 后端不可达时保持本地状态
+  }
+}
+
+document.getElementById('btn-http-server')?.addEventListener('click', async () => {
+  try {
+    if (httpServerRunning) {
+      const r = await apiPost('/api/device/http/stop', {});
+      httpServerRunning = false;
+      httpMockBaseUrl = '';
+      addLog('HTTP Mock 服务器已停止', 'HTTP');
+      showToast('Mock 服务器已停止', '#909399');
+    } else {
+      const port = parseInt(document.getElementById('http-port')?.value || '0') || 0;
+      const body = document.getElementById('http-response-body')?.value || '{"ok":true}';
+      const content_type = document.getElementById('http-content-type')?.value || 'application/json';
+      const status_code = parseInt(document.getElementById('http-status-code')?.value || '200') || 200;
+      const https = !!document.getElementById('use-https')?.checked;
+      const r = await apiPost('/api/device/http/start', {
+        port, body, content_type, status_code, https
+      });
+      httpServerRunning = true;
+      httpMockBaseUrl = r?.base_url || '';
+      addLog(`HTTP Mock 服务器已启动: ${httpMockBaseUrl} (https=${https})`, 'HTTP');
+      showToast(`Mock 已启动 ${httpMockBaseUrl}`, '#67c23a');
+    }
+    await _syncHttpServerUi();
+  } catch (e) {
+    addLog(`HTTP Mock 启停失败: ${e.message}`, 'HTTP');
+    showToast(e.message, '#f56c6c');
+    await _syncHttpServerUi();
+  }
 });
 
-document.getElementById('btn-param-get')?.addEventListener('click', () => {
+function _appendHttpLog(line, cls = 'HTTP') {
+  const logEl = document.getElementById('http-log');
+  if (!logEl) return;
+  logEl.innerHTML += `<div>${escapeHtml(line)}</div>`;
+  logEl.scrollTop = logEl.scrollHeight;
+  addLog(line, cls);
+}
+
+document.getElementById('btn-http-clear')?.addEventListener('click', () => {
+  const logEl = document.getElementById('http-log');
+  if (logEl) logEl.innerHTML = '';
+});
+
+document.getElementById('btn-http-send')?.addEventListener('click', async () => {
+  // 说明:
+  //  1) 设备侧 HTTP 请求由固件 bHttp / 工程代码发起，不是 b_protocol 命令；
+  //     此处无法用协议帧"命令设备发 HTTP"。
+  //  2) 主机侧提供"本机代发请求"用于联调 Mock：POST /api/device/http/proxy
+  //     会真实发出 HTTP 请求到指定 URL（通常是 Mock base_url），Mock 请求日志
+  //     会记录该流量，便于验证 Mock 响应配置。
+  const url = document.getElementById('http-url')?.value.trim();
+  const method = document.getElementById('http-method')?.value || 'GET';
+  const body = document.getElementById('http-body')?.value;
+  if (!url) { showToast('请输入 URL', '#e6a23c'); return; }
+
+  // 若 Mock 在运行且 URL 未显式指定到 Mock，自动提示使用 Mock base_url
+  if (httpMockBaseUrl && !url.startsWith(httpMockBaseUrl)) {
+    addLog(`提示: Mock 运行于 ${httpMockBaseUrl}，当前 URL 为 ${url}（设备侧需固件自行请求该地址）`, 'HTTP');
+  }
+  _appendHttpLog(`>> [主机代发] ${method} ${url}${body ? ' body=' + body : ''}`, 'HTTP');
+  try {
+    const r = await apiPost('/api/device/http/proxy', {
+      url, method, body: body || null, timeout: 5.0, verify_tls: false
+    });
+    _appendHttpLog(`<< [主机代发] ${r.status_code} len=${r.body_len} body=${(r.body || '').slice(0, 200)}`, 'HTTP');
+    // 拉取 Mock 请求日志（若该请求打到了 Mock）
+    try {
+      const reqs = await apiGet('/api/device/http/requests');
+      if (reqs?.count) {
+        _appendHttpLog(`Mock 已记录 ${reqs.count} 条请求`, 'HTTP');
+        (reqs.requests || []).slice(-5).forEach(req => {
+          _appendHttpLog(`  mock: ${req.method} ${req.path} from ${req.client}`, 'HTTP');
+        });
+      }
+    } catch (_) { /* mock 未运行时忽略 */ }
+    showToast(`代理请求 ${r.status_code}`, r.status_code < 400 ? '#67c23a' : '#e6a23c');
+  } catch (e) {
+    _appendHttpLog(`<< 代发失败: ${e.message}`, 'HTTP');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+// 初始化时同步 Mock 状态
+_syncHttpServerUi();
+
+// ---------------------------------------------------------------------------
+// 参数调节 — 设备 shell 文本命令 "param ..."（非 b_protocol 帧）
+// ---------------------------------------------------------------------------
+function _paramLog(text) {
+  const el = document.getElementById('param-output');
+  if (!el) { addLog(text, 'Shell'); return; }
+  el.innerHTML += `<div>${escapeHtml(text)}</div>`;
+  el.scrollTop = el.scrollHeight;
+  addLog(text, 'Shell');
+}
+
+function _fillParamDatalist(names) {
+  const dl = document.getElementById('param-list');
+  if (!dl) return;
+  dl.innerHTML = '';
+  (names || []).forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n;
+    dl.appendChild(opt);
+  });
+}
+
+document.getElementById('btn-param-list')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  _paramLog('>> param');
+  try {
+    const r = await apiPost('/api/device/param/list', {});
+    _paramLog(`<< (${r.count}) ${r.names.join(', ') || '(空)'}`);
+    _fillParamDatalist(r.names);
+  } catch (e) {
+    _paramLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-param-get')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
   const name = document.getElementById('param-name').value.trim();
   if (!name) { showToast('请输入参数名称', '#e6a23c'); return; }
-  sendShellCmd(`param ${name}`);
+  _paramLog(`>> param ${name}`);
+  try {
+    const r = await apiPost('/api/device/param/get', { name });
+    _paramLog(`<< ${r.name}=${r.value}`);
+  } catch (e) {
+    _paramLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
 });
 
-document.getElementById('btn-param-set')?.addEventListener('click', () => {
+document.getElementById('btn-param-set')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
   const name = document.getElementById('param-name').value.trim();
   const value = document.getElementById('param-value').value.trim();
   if (!name) { showToast('请输入参数名称', '#e6a23c'); return; }
   if (!value) { showToast('请输入参数值', '#e6a23c'); return; }
-  sendShellCmd(`param ${name} ${value}`);
+  _paramLog(`>> param ${name} ${value}`);
+  try {
+    const numeric = /^-?\d+$/.test(value) ? parseInt(value, 10) : value;
+    const r = await apiPost('/api/device/param/set', { name, value: numeric });
+    _paramLog(`<< 设置成功 ${r.name}=${r.value} (verify=${r.verified})`);
+  } catch (e) {
+    _paramLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
 });
 
-document.getElementById('btn-param-send')?.addEventListener('click', () => {
+document.getElementById('btn-param-send')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
   const cmd = document.getElementById('param-cmd').value.trim();
-  if (cmd) sendShellCmd(cmd);
+  if (!cmd) { showToast('请输入命令', '#e6a23c'); return; }
+  _paramLog(`>> ${cmd}`);
+  try {
+    const r = await apiPost('/api/device/shell/cmd', { cmd });
+    _paramLog(`<< ${r.response || '(无输出)'}`);
+  } catch (e) {
+    _paramLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
 });
 
 function sendShellCmd(cmd) {
-  addLog(`>> ${cmd}`, 'Shell');
+  // 兼容旧调用点：转发到 shell/cmd API
+  apiPost('/api/device/shell/cmd', { cmd }).then(r => {
+    _paramLog(`>> ${cmd}`);
+    _paramLog(`<< ${r.response || '(无输出)'}`);
+  }).catch(e => {
+    _paramLog(`>> ${cmd}`);
+    _paramLog(`<< 失败: ${e.message}`);
+  });
 }
 
 // ---------------------------------------------------------------------------
-// 设备信息
+// 设备信息 — CMD 0x7 UID / 0x8 SN / 0xA DEVINFO
 // ---------------------------------------------------------------------------
-document.getElementById('btn-get-uid')?.addEventListener('click', () => {
-  showToast('获取 UID 功能尚未实现', '#e6a23c');
-  addLog('获取 UID 功能尚未实现');
+document.getElementById('btn-get-uid')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  try {
+    const r = await apiPost('/api/device/uid/get', {});
+    document.getElementById('device-uid').value = r.uid_hex;
+    addLog(`UID: ${r.uid_hex} (${r.uid_len} bytes)`, 'Device');
+  } catch (e) {
+    addLog(`获取 UID 失败: ${e.message}`, 'Device');
+    showToast(e.message, '#f56c6c');
+  }
 });
 
-document.getElementById('btn-set-sn')?.addEventListener('click', () => {
-  showToast('写入 SN 功能尚未实现', '#e6a23c');
-  addLog('写入 SN 功能尚未实现');
+document.getElementById('btn-set-sn')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const orval = parseInt(document.getElementById('device-orval')?.value || '0', 10) || 0;
+  try {
+    const r = await apiPost('/api/device/sn/write', { orval });
+    document.getElementById('device-sn').value = r.sn_hex;
+    addLog(`SN 已写入: orval=${r.orval} sn=${r.sn_hex}`, 'Device');
+    showToast('SN 写入成功', '#67c23a');
+  } catch (e) {
+    addLog(`写入 SN 失败: ${e.message}`, 'Device');
+    showToast(e.message, '#f56c6c');
+  }
 });
 
-document.getElementById('btn-get-device-info')?.addEventListener('click', () => {
-  showToast('获取设备信息功能尚未实现', '#e6a23c');
-  addLog('获取设备信息功能尚未实现');
+document.getElementById('btn-get-device-info')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  try {
+    const r = await apiPost('/api/device/info/get', {});
+    document.getElementById('device-version').value = r.version;
+    document.getElementById('device-model').value = r.model;
+    addLog(`设备信息: version=${r.version} model=${r.model}`, 'Device');
+  } catch (e) {
+    addLog(`获取设备信息失败: ${e.message}`, 'Device');
+    showToast(e.message, '#f56c6c');
+  }
 });
 
 // ---------------------------------------------------------------------------

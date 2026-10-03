@@ -8,7 +8,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from .api import datasets, export, features, labels, projects, segments, templates, training
+from .api import (
+    datasets,
+    device,
+    export,
+    features,
+    labels,
+    projects,
+    segments,
+    templates,
+    training,
+)
 from .config import projects_root
 from .deps import AppError, atomic_write_json, read_json
 
@@ -47,6 +57,7 @@ def create_app() -> FastAPI:
     app.include_router(training.router)
     app.include_router(export.router)
     app.include_router(templates.router)
+    app.include_router(device.router)
 
     @app.on_event("startup")
     def _reconcile() -> None:
