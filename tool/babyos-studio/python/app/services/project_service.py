@@ -23,9 +23,13 @@ from ..deps import (
 from ..schemas import ProjectCreate, ProjectMeta, ProjectPatch, ProjectSummary
 
 # 级联失效产物目录（FR-1.4）：键 = 回退目标阶段，值 = 需清除的目录/文件
+# 注意：只清"派生产物"（特征矩阵 / 训练 / 导出）。features/config.json 是用户
+# 特征工程意图（窗长/步进/特征选择/频域开关），与数据内容无关，必须保留——
+# 否则片段编辑等上游变更会静默把特征配置打回默认值（评审 BUG-7）。
 _CASCADE = {
-    "data_imported": ["labeling", "features", "training", "export"],
-    "labeled": ["features", "training", "export"],
+    "data_imported": ["labeling", "features/matrix.npz", "features/matrix.meta.json",
+                      "training", "export"],
+    "labeled": ["features/matrix.npz", "features/matrix.meta.json", "training", "export"],
     "featured": ["training", "export"],
 }
 
@@ -72,6 +76,13 @@ def _sanitize_name(raw: str) -> str:
 
 class ProjectService:
     def create(self, body: ProjectCreate) -> ProjectMeta:
+        if body.mode == "timeseries" and body.task_type == "regression":
+            # timeseries 构建矩阵尚不产出 y_float，训练会按 class-id 拟合回归
+            # 却导出 N_CLASSES=1 —— 直接拒绝，避免静默错误模型。
+            raise AppError(
+                422, "UNSUPPORTED_TASK",
+                "时序模式暂不支持回归任务（特征矩阵尚未产出连续目标 y_float）",
+            )
         pid = str(uuid.uuid4())
         root = projects_root()
         root.mkdir(parents=True, exist_ok=True)

@@ -218,33 +218,65 @@ def _validate(meta, m: dict, split: dict, task_type: str = "classification") -> 
     groups = m["groups"]
 
     if task_type == "regression":
-        # 回归任务：检查目标值方差 > 0 且样本量足够
-        if len(y) < 10:
+        # 回归任务：检查目标值方差 > 0 且样本量足够（使用 y_float 原始连续目标）
+        y_check = m["y_float"] if "y_float" in m else y.astype(np.float64)
+        if len(y_check) < 10:
             raise AppError(422, "INSUFFICIENT_DATA",
-                           f"回归任务需要至少 10 个样本，当前仅有 {len(y)} 个")
-        y_float = y.astype(np.float64)
-        if np.var(y_float) == 0:
+                           f"回归任务需要至少 10 个样本，当前仅有 {len(y_check)} 个")
+        if np.var(np.asarray(y_check, dtype=np.float64)) == 0:
             raise AppError(422, "CONSTANT_TARGET",
                            "回归目标值方差为 0（所有值相同），无法训练")
         return
 
     # 分类任务
+    # y 是 label_id（导入期写入），必须按 label_id 键统计，不能假设 0..n-1 连续。
+    y_arr = np.asarray(y).ravel()
+
+    def _counts_by_label(vals) -> dict:
+        present = {int(lab.label_id): 0 for lab in meta.labels}
+        for v in vals:
+            present[int(v)] = present.get(int(v), 0) + 1
+        return present
+
+    def _present_ids(counts: dict) -> list:
+        return [lid for lid, c in counts.items() if c > 0]
+
+    def _short_rows(counts: dict, subset_train: bool) -> list:
+        rows = []
+        for lab in meta.labels:
+            c = int(counts.get(int(lab.label_id), 0))
+            if c < 5:
+                rows.append(f"「{lab.name}」{c}/{5}")
+        return rows
+
+    present_all = _counts_by_label(y_arr)
+    if len(_present_ids(present_all)) < 2:
+        raise AppError(
+            422, "SINGLE_CLASS",
+            "分类任务需要至少 2 个类，当前仅出现 1 个类。"
+            "请补充其他类别的数据/标注",
+        )
+
     if meta.mode == "timeseries":
         # GROUPS_TOO_FEW check removed: get_or_create_split handles < 3 groups
         # with fallback strategies (random split for 1 group, stratified split
         # for 2 groups), supporting single-file workflows.
-        counts = np.bincount(y, minlength=len(meta.labels))
-        for lab, c in zip(meta.labels, counts):
-            if c < 5:
-                raise AppError(422, "CLASS_TOO_FEW", f"标签「{lab.name}」窗口数不足（{c}<5），请补充标注")
+        counts = present_all
+        short = _short_rows(counts, subset_train=False)
+        if short:
+            raise AppError(422, "CLASS_TOO_FEW",
+                           "标签窗口数不足（最少 5/类）：" + "、".join(short)
+                           + "。请补充标注")
     else:
-        counts = np.bincount(y[split["train_idx"]], minlength=len(meta.labels))
-        if counts.min() < 5:
-            # 评审 A3：每类逐项提示 + 给"多少类样本算够"的可执行指引
-            short = [
-                f"「{lab.name}」{int(c)}/{5}"
-                for lab, c in zip(meta.labels, counts) if c < 5
-            ]
+        counts = _counts_by_label(y_arr[np.asarray(split["train_idx"], dtype=np.int64)])
+        if len(_present_ids(counts)) < 2:
+            raise AppError(
+                422, "SINGLE_CLASS",
+                "训练集仅含 1 个类，分类任务需要至少 2 类。"
+                "请检查标签分布或补充数据",
+            )
+        short = _short_rows(counts, subset_train=True)
+        if short:
             raise AppError(
                 422, "CLASS_TOO_FEW",
                 "训练集每类样本不足（最少 5/类）：" + "、".join(short) + "。"
@@ -256,6 +288,22 @@ def _cancelled(pid: str, tdir: Path) -> None:
     shutil.rmtree(tdir / "candidates", ignore_errors=True)
     write_state(pid, status="cancelled", current="", error="已取消（不产生结果，FR-6.6）")
     clear_cancel(pid)
+
+
+def _label_ids_from_payload(payload: dict) -> list:
+    """Extract ordered label_id list from training payload["labels"]."""
+    ids = []
+    for lab in (payload.get("labels") or []):
+        if isinstance(lab, dict):
+            ids.append(int(lab.get("label_id", lab.get("id", 0))))
+        elif hasattr(lab, "label_id"):
+            ids.append(int(lab.label_id))
+        else:
+            try:
+                ids.append(int(lab))
+            except (TypeError, ValueError):
+                continue
+    return ids
 
 
 def _write_best(pid: str, tdir: Path, best: dict, X, y, test_idx, n_classes: int,
@@ -290,7 +338,11 @@ def _write_best(pid: str, tdir: Path, best: dict, X, y, test_idx, n_classes: int
         y_test = y[test_idx].astype(np.float64) if y.dtype != np.float64 else y[test_idx]
         report = metrics_service.regression_full_report(y_test, y_pred.astype(np.float64))
     else:
-        report = metrics_service.full_report(y[test_idx], y_pred, n_classes)
+        label_ids = _label_ids_from_payload(payload)
+        if not label_ids:
+            label_ids = list(range(max(int(n_classes), 1)))
+        report = metrics_service.full_report(y[test_idx], y_pred, n_classes,
+                                             labels=label_ids)
     report["main_metric"] = best["row"]["metric"]
     report["main_value"] = report[best["row"]["metric"]]
     report["cand_id"] = best["cand_id"]

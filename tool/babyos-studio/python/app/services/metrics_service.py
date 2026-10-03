@@ -59,9 +59,16 @@ def is_lower_better(metric_name: str) -> bool:
     return metric_name in LOWER_IS_BETTER
 
 
-def full_report(y_true: np.ndarray, y_pred: np.ndarray, n_classes: int) -> dict:
-    """分类任务完整报告：混淆矩阵 + 四项分类指标。"""
-    cm = confusion_matrix(y_true, y_pred, labels=list(range(n_classes)))
+def full_report(y_true: np.ndarray, y_pred: np.ndarray, n_classes: int,
+                labels=None) -> dict:
+    """分类任务完整报告：混淆矩阵 + 四项分类指标。
+
+    labels: optional explicit class-id order (label_id may have gaps).
+    Defaults to range(n_classes).
+    """
+    if labels is None:
+        labels = list(range(max(int(n_classes), 1)))
+    cm = confusion_matrix(y_true, y_pred, labels=list(labels))
     return {
         "accuracy": metric_value("accuracy", y_true, y_pred),
         "f1_macro": metric_value("f1_macro", y_true, y_pred),
@@ -69,6 +76,7 @@ def full_report(y_true: np.ndarray, y_pred: np.ndarray, n_classes: int) -> dict:
         "recall_macro": metric_value("recall_macro", y_true, y_pred),
         "confusion_matrix": cm.tolist(),
         "n_samples": int(len(y_true)),
+        "class_labels": list(labels),
     }
 
 

@@ -96,23 +96,60 @@ def step_compile(workdir: Path, repo_root: Path | None = None) -> dict:
 
 def step_predict_consistency(workdir: Path, symbol: str, payload: dict,
                              X_tr: np.ndarray, X_te: np.ndarray) -> dict:
-    """② ctypes 调 C predict vs float32 参考实现：类别 id 100% 一致；proba 容差 2e-2。"""
+    """② ctypes 调 C predict vs float32 参考实现。
+
+    分类：类别 id 100% 一致；proba 容差 2e-2。
+    回归：预测值一致（组合容差 |a-b| <= max(1e-3*|ref|, 1e-5)），返回 id 必须为 0。
+    """
     return _predict_consistency_impl(str(workdir / "_selfcheck.so"), symbol, payload, X_tr, X_te)
 
 
 def _predict_consistency_impl(so_path: str, symbol: str, payload: dict,
                               X_tr: np.ndarray, X_te: np.ndarray) -> dict:
+    mt = payload.get("model_type", "")
+    is_regressor = bool(payload.get("task_type") == "regression") or str(mt).endswith("_r")
+    X_all = np.vstack([X_tr, X_te]).astype(np.float32)
     lib = ctypes.CDLL(so_path)
     try:
         fn = getattr(lib, f"algo_{symbol}_predict")
         fn.argtypes = [ctypes.POINTER(ctypes.c_float), ctypes.c_uint32, ctypes.POINTER(ctypes.c_float)]
         fn.restype = ctypes.c_int
-        nc = len(payload["labels"])
 
+        # ---------- 回归：比较预测值 ----------
+        if is_regressor:
+            ref_val = reference.predict_ref(payload, np.vstack([X_tr, X_te]))  # (n,)
+            c_val = np.empty(len(X_all), dtype=np.float64)
+            for i in range(len(X_all)):
+                xin = np.ascontiguousarray(X_all[i], dtype=np.float32)
+                pout = np.empty(1, dtype=np.float32)  # N_CLASSES=1
+                r = fn(xin.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), xin.shape[0],
+                       pout.ctypes.data_as(ctypes.POINTER(ctypes.c_float)))
+                if r < 0:
+                    return {"ok": False, "kind": "regression_value",
+                            "error": f"sample {i}: C predict 返回 {r}"}
+                if r != 0:
+                    return {"ok": False, "kind": "regression_value",
+                            "error": f"sample {i}: 回归 predict 返回 id={r}（N_CLASSES=1 时应为 0）"}
+                c_val[i] = float(pout[0])
+            max_abs_diff = float(np.max(np.abs(c_val - ref_val))) if len(X_all) else 0.0
+            tol = np.maximum(1e-3 * np.abs(ref_val), 1e-5)
+            bad = np.abs(c_val - ref_val) > tol
+            ok = bool(not bad.any())
+            return {
+                "ok": ok,
+                "kind": "regression_value",
+                "n_samples": int(len(X_all)),
+                "max_abs_diff": max_abs_diff,
+                "n_violations": int(bad.sum()),
+                "tol_rule": "|a-b| <= max(1e-3*|ref|, 1e-5)",
+            }
+
+        # ---------- 分类：id + proba ----------
+        labels = payload.get("labels") or []
+        nc = len(labels)
         ref_proba = reference.predict_proba_ref(payload, np.vstack([X_tr, X_te]))
         ref_id = np.argmax(ref_proba, axis=1)
 
-        X_all = np.vstack([X_tr, X_te]).astype(np.float32)
         c_id = np.empty(len(X_all), dtype=np.int64)
         c_proba = np.empty((len(X_all), nc), dtype=np.float32)
         for i in range(len(X_all)):
@@ -130,6 +167,7 @@ def _predict_consistency_impl(so_path: str, symbol: str, payload: dict,
         ok = id_match == 1.0 and max_proba_diff <= 2e-2
         return {
             "ok": ok,
+            "kind": "classification_proba",
             "n_samples": int(len(X_all)),
             "id_match_rate": id_match,
             "max_proba_diff": max_proba_diff,

@@ -7,6 +7,7 @@ import shutil
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 from fastapi import HTTPException
 
@@ -15,10 +16,18 @@ from .schemas import ProjectMeta
 
 
 class AppError(HTTPException):
-    """统一错误：{"detail": ..., "code": ...}（design.md §4.1）"""
+    """统一错误：{"detail": ..., "code": ...}（design.md §4.1）
 
-    def __init__(self, status: int, code: str, detail: str):
-        super().__init__(status_code=status, detail={"detail": detail, "code": code})
+    Optional extra keys (e.g. tool logs) are merged into the HTTP detail
+    payload so clients can surface build/flash diagnostics without a second
+    API round-trip.
+    """
+
+    def __init__(self, status: int, code: str, detail: str, extra: Optional[dict] = None):
+        payload = {"detail": detail, "code": code}
+        if extra:
+            payload.update(extra)
+        super().__init__(status_code=status, detail=payload)
         self.code = code
 
 

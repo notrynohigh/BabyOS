@@ -89,18 +89,14 @@ def delete_segment(meta: ProjectMeta, seg_id: str) -> None:
 
 def _after_segments_changed(meta: ProjectMeta, pdir) -> None:
     # 标注变更 → 级联失效（FR-1.4）
-    # BUG-6: When stage is 'featured', target 'featured' (not just 'labeled')
-    # so that features/training/export are also cleared.
-    was_featured = STAGE_INDEX[meta.stage] >= STAGE_INDEX["featured"]
-    if was_featured:
-        _svc.invalidate(meta.project_id, "featured")
-    else:
-        _svc.invalidate(meta.project_id, "labeled")
+    # 特征矩阵依赖片段划分：片段变更必须清除 features/training/export。
+    # BUG-6 修正：invalidate 到同阶段不会清目录（STAGE_INDEX 相等时跳过），
+    # 故统一 invalidate 到 labeled（清除 features/training/export），再按需 advance。
     segs = _segs(pdir)
+    _svc.invalidate(meta.project_id, "labeled")
     if segs or meta.mode == "table":
-        # BUG-6 fix: advance to 'featured' when original stage was >= featured,
-        # so the stage returns to 'featured' (not just 'labeled')
-        _svc.advance(meta.project_id, "featured" if was_featured else "labeled")
+        # 有标注数据 → 至少 labeled（特征需重算后才能回到 featured）
+        _svc.advance(meta.project_id, "labeled")
     else:
         # 片段清空 → 回到 data_imported（无标注可训练）
         _svc.invalidate(meta.project_id, "data_imported")

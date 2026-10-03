@@ -46,6 +46,8 @@ async def import_dataset(
         m = json.loads(mapping)
     except json.JSONDecodeError:
         raise AppError(422, "BAD_MAPPING", "mapping 不是合法 JSON")
+    if not isinstance(m, dict):
+        raise AppError(422, "BAD_MAPPING", "mapping 必须是 JSON 对象")
     if meta.mode == "table" and not m.get("label_col"):
         raise AppError(422, "LABEL_COL_REQUIRED", "表格模式必须指定标签列")
     if meta.mode == "table" and not (m.get("features") or m.get("channels")):

@@ -90,6 +90,20 @@ def put_config(meta: ProjectMeta, cfg: FeatureConfig) -> FeatureConfig:
 def _validate(meta: ProjectMeta, cfg: FeatureConfig) -> None:
     if meta.mode != "timeseries":
         # table 模式 feature_ids 空 = 用全部数值列（合法）
+        if cfg.feature_ids:
+            from .dataset_service import _files_json
+            pdir = project_dir(meta.project_id)
+            files = _files_json(pdir)
+            if files:
+                all_cols = set()
+                for fm in files.values():
+                    all_cols.update(fm.get("cols") or [])
+                bad = [f for f in cfg.feature_ids if f not in all_cols]
+                if bad:
+                    raise AppError(
+                        422, "FEATURE_COLUMN_MISSING",
+                        f"特征列不存在于已导入数据: {bad}",
+                    )
         return
     # 评审 P1-FX-6：timeseries 模式必须 ≥1 个时域特征，避免训练矩阵零维
     if not cfg.feature_ids:
@@ -403,16 +417,32 @@ def _build_table(meta: ProjectMeta, cfg: FeatureConfig, pdir):
         data = load_file_data(pdir, fid)
         # 表格模式：feature_ids=[] → 全列当特征（feature_names 也走同一逻辑）
         ids = cfg.feature_ids if cfg.feature_ids else list(fm["cols"])
-        col_idx = [fm["cols"].index(c) for c in ids]
+        cols = fm.get("cols") or []
+        col_idx = []
+        for c in ids:
+            if c not in cols:
+                raise AppError(
+                    422, "FEATURE_COLUMN_MISSING",
+                    f"文件 {fm.get('filename') or fid} 缺少特征列 {c!r}，"
+                    f"可用列: {cols}",
+                )
+            col_idx.append(cols.index(c))
         block = data[:, col_idx]
         keep = ~np.isnan(block).any(axis=1)
         dropped += int((~keep).sum())
         X.extend(block[keep].tolist())
         ys_arr = np.asarray(ys)[keep]
         if meta.task_type == "regression":
-            # 回归：保留浮点目标值，同时取整作为伪类别索引（兼容 int32 y）
-            y_float.extend(float(v) for v in ys_arr)
-            y.extend(int(round(float(v))) for v in ys_arr)
+            yf = fm.get("y_float")
+            if yf is not None:
+                # 回归：使用导入期保存的原始连续目标值
+                yf_arr = np.asarray(yf, dtype=np.float64)[keep]
+                y_float.extend(float(v) for v in yf_arr)
+                y.extend([0] * int(keep.sum()))  # 占位，回归不使用 int32 y
+            else:
+                # 兼容旧数据：y 为 label_id，取整作为浮点目标
+                y_float.extend(float(v) for v in ys_arr)
+                y.extend(int(round(float(v))) for v in ys_arr)
         else:
             y.extend(int(v) for v in ys_arr)
         groups.extend([fm["group_id"]] * int(keep.sum()))
@@ -554,7 +584,11 @@ def scoring(meta: ProjectMeta, method: str = "f_test", task_type: str = "classif
         raise AppError(422, "INSUFFICIENT_DATA",
                        f"训练样本不足（{len(train_idx)}条），无法评分。请增加数据量或减小窗长。")
     Xtr = m["X"][train_idx].astype(np.float64)
-    ytr = m["y"][train_idx]
+    if task_type == "regression":
+        # 回归：使用浮点目标值（y_float），而非占位 y
+        ytr = m["y_float"][train_idx] if "y_float" in m else m["y"][train_idx].astype(np.float64)
+    else:
+        ytr = m["y"][train_idx]
 
     # 回归任务使用回归专用特征选择方法
     if task_type == "regression":

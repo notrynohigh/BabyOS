@@ -473,9 +473,18 @@ def build_bundle(
     """在 workdir 生成完整 bundle。返回 {"name": slug, "files": [...], "nf": n, ...}。"""
     name = _slug(proj_name)
     NAME = name.upper()
-    nc = len(payload["labels"])
-    nf = len(payload["feature_indices"])
+    labels = payload.get("labels") or []
     mt = payload["model_type"]
+    is_regressor = bool(payload.get("task_type") == "regression") or str(mt).endswith("_r")
+    # 回归：N_CLASSES=1（predict 写 y_hat 到 out[0]，argmax(out,1)=0）
+    # 分类：N_CLASSES = len(labels)
+    if is_regressor:
+        nc = 1
+        label_names = [labels[0]["name"]] if labels else ["target"]
+    else:
+        nc = len(labels)
+        label_names = [l["name"] for l in labels]
+    nf = len(payload["feature_indices"])
     is_ts = feature_meta is not None
 
     arrs = model_cgen.extract_arrays(payload, nc)
@@ -537,7 +546,7 @@ def build_bundle(
     )
     class_names = CLASS_NAMES_TMPL.format(
         name=name, NAME=NAME,
-        items=",\n".join(f"    {_c_str(l['name'])}" for l in payload["labels"]),
+        items=",\n".join(f"    {_c_str(nm)}" for nm in label_names),
     )
     source = SOURCE_TMPL.format(
         name=name, NAME=NAME, proj=proj_name, desc=MODEL_DESC[mt], date=date,

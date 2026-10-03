@@ -122,11 +122,43 @@ def import_files(
     results = []
 
     if import_kind == "replace":
-        shutil.rmtree(pdir / "raw", ignore_errors=True)
-        shutil.rmtree(pdir / "labeling", ignore_errors=True)
-        meta.labels = []  # 标签体系随数据重来
+        # Destructive wipe is deferred: backup first, commit on any-success,
+        # restore on total failure so a bad replace cannot wipe the project.
+        bak_raw = pdir / "raw.bak_import"
+        bak_lab = pdir / "labeling.bak_import"
+        shutil.rmtree(bak_raw, ignore_errors=True)
+        shutil.rmtree(bak_lab, ignore_errors=True)
+        if (pdir / "raw").exists():
+            (pdir / "raw").rename(bak_raw)
+        if (pdir / "labeling").exists():
+            (pdir / "labeling").rename(bak_lab)
+        bak_labels = [l.model_dump() if hasattr(l, "model_dump") else dict(l)
+                      for l in (meta.labels or [])]
+        meta.labels = []  # 标签体系随数据重来（提交时 save_meta）
+    else:
+        bak_raw = bak_lab = None
+        bak_labels = None
     (pdir / "raw").mkdir(parents=True, exist_ok=True)
     files_meta = _files_json(pdir)
+
+    want_channels = list(mapping.get("channels") or [])
+    if import_kind == "append" and meta.channels and want_channels:
+        if meta.mode == "table":
+            if set(want_channels) != set(meta.channels):
+                raise AppError(
+                    422, "CHANNEL_SET_MISMATCH",
+                    f"追加导入特征列与已导入不一致: {sorted(set(want_channels))} "
+                    f"≠ {sorted(set(meta.channels))}。请用「替换导入」更换数据",
+                )
+        else:
+            if not set(want_channels).issubset(set(meta.channels)):
+                extra = sorted(set(want_channels) - set(meta.channels))
+                missing = sorted(set(meta.channels) - set(want_channels))
+                raise AppError(
+                    422, "CHANNEL_SET_MISMATCH",
+                    f"追加导入通道集与已导入不一致。多出: {extra}；缺少: {missing}。"
+                    f"请用「替换导入」更换数据",
+                )
 
     for uf in files:
         try:
@@ -152,15 +184,27 @@ def import_files(
                 }
             )
 
-    _save_files_json(pdir, files_meta)
     ok_any = any(r["ok"] for r in results)
     if ok_any:
+        _save_files_json(pdir, files_meta)
+        # replace 成功：丢弃备份，并标记导出已过期
+        if import_kind == "replace" and bak_raw is not None:
+            shutil.rmtree(bak_raw, ignore_errors=True)
+            shutil.rmtree(bak_lab, ignore_errors=True)
+            meta.export_stale = True
         save_meta(meta)
         if import_kind == "replace":
             # replace 导入已清空 raw/labeling 并重建了 segments，
-            # 只清理 features/training/export 残留，不动 labeling/（刚创建的）
-            for d in ("features", "training", "export"):
+            # 只清理训练/导出与特征矩阵等派生产物；保留 features/config.json
+            #（用户特征工程意图，与数据内容无关——评审 BUG-7）
+            for d in ("training", "export"):
                 shutil.rmtree(pdir / d, ignore_errors=True)
+            feat_dir = pdir / "features"
+            if feat_dir.is_dir():
+                for fn in ("matrix.npz", "matrix.meta.json"):
+                    fp = feat_dir / fn
+                    if fp.exists():
+                        fp.unlink()
             # 回退 stage 到 created，让 advance 推进到正确阶段
             meta.stage = "created"
             save_meta(meta)
@@ -175,6 +219,21 @@ def import_files(
         # 时序模式：CSV 自动切片产生 segments 后也应进入 labeled 阶段
         if meta.mode == "timeseries" and any(r.get("segments_added", 0) > 0 for r in results):
             _svc.advance(meta.project_id, "labeled")
+    else:
+        # total failure: restore backup (replace) or leave files_meta untouched
+        if import_kind == "replace" and bak_raw is not None:
+            shutil.rmtree(pdir / "raw", ignore_errors=True)
+            shutil.rmtree(pdir / "labeling", ignore_errors=True)
+            if bak_raw.exists():
+                bak_raw.rename(pdir / "raw")
+            if bak_lab.exists():
+                bak_lab.rename(pdir / "labeling")
+            # restore labels in memory so callers see pre-replace state
+            from ..schemas import LabelDef
+            meta.labels = [LabelDef(**d) if isinstance(d, dict) else d
+                           for d in (bak_labels or [])]
+        else:
+            _save_files_json(pdir, files_meta)
     return {"results": results, "imported": sum(1 for r in results if r["ok"])}
 
 
@@ -223,9 +282,17 @@ def _import_one(
     if label_col and meta.mode == "timeseries":
         segments_added = _rle_segments(meta, pdir, fid, df[label_col])
     elif label_col and meta.mode == "table":
-        for v in df[label_col].dropna().unique():
-            _find_or_add_label(meta, str(v))
-        files_meta[fid]["y"] = [_find_or_add_label(meta, str(v)) for v in df[label_col]]
+        if meta.task_type == "regression":
+            # 回归：保存原始连续目标值到 y_float；y 为占位全 0（满足矩阵 ys 非空检查）。
+            # 标签体系只登记目标列名一个标签 → 导出 N_CLASSES=1，避免按唯一值展开。
+            raw = pd.to_numeric(df[label_col], errors="coerce").to_numpy(dtype=np.float64)
+            files_meta[fid]["y_float"] = [float(v) for v in raw]
+            files_meta[fid]["y"] = [0] * len(raw)
+            _find_or_add_label(meta, label_col)
+        else:
+            for v in df[label_col].dropna().unique():
+                _find_or_add_label(meta, str(v))
+            files_meta[fid]["y"] = [_find_or_add_label(meta, str(v)) for v in df[label_col]]
         # 表格标签行 → segments.json 中以整文件行区间表达，供统一查询（start/end 为行号）
         segs = read_json(pdir / "labeling" / "segments.json", default=[])
         segs.append(
@@ -322,7 +389,8 @@ def dataset_info(meta: ProjectMeta) -> dict:
             lbl = next((l.name for l in meta.labels if l.label_id == s["label_id"]), None)
             if lbl:
                 per_class[lbl] = per_class.get(lbl, 0) + 1
-    else:
+    elif meta.task_type != "regression":
+        # 回归无类别概念（y 为占位），不统计 per_class
         for fid, fm in files.items():
             for y in fm.get("y", []):
                 lbl = next((l.name for l in meta.labels if l.label_id == y), None)

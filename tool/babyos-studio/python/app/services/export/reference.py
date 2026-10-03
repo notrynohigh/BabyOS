@@ -129,9 +129,21 @@ def predict_proba_ref(payload: dict, X: np.ndarray) -> np.ndarray:
     且已限导出特征子集——与 C algo_<name>_predict 的 features 入参同语义）。
 
     回归模型：返回 (n, 1) 标量预测值（C 侧 predict 将预测写入 out[0]，
-    返回 argmax(out,1)=0；本参考使 selfcheck 的 id/值比较与 C 对齐）。
+    N_CLASSES=1，返回 argmax(out,1)=0）。
+    分类模型：返回 (n, nc) 概率矩阵。
     """
-    nc = len(payload["labels"])
+    labels = payload.get("labels") or []
+    mt = payload.get("model_type", "")
+    is_regressor = (
+        bool(payload.get("task_type") == "regression")
+        or str(mt).endswith("_r")
+    )
+    # 回归 N_CLASSES=1（y_hat 写 out[0]）；分类沿用 len(labels)。
+    # 全函数统一用 nc 这一个名字（下方分类分支大量使用 nc）。
+    if is_regressor:
+        nc = 1
+    else:
+        nc = len(labels)
     arrs = extract_arrays(payload, nc)
     mt = arrs["model_type"]
     out = np.empty((X.shape[0], nc), dtype=np.float32)
@@ -286,8 +298,9 @@ def predict_proba_ref(payload: dict, X: np.ndarray) -> np.ndarray:
 def predict_ref(payload: dict, X: np.ndarray) -> np.ndarray:
     """分类：argmax（并列最小索引，与 C algo_ml_argmax 对齐）；回归：返回预测值。"""
     mt = payload.get("model_type", "")
+    is_regressor = bool(payload.get("task_type") == "regression") or str(mt).endswith("_r")
     proba = predict_proba_ref(payload, X)
-    if mt.endswith("_r"):
+    if is_regressor:
         return proba.reshape(-1).astype(np.float64)
     # np.argmax 首最大值 = 最小索引，与 C 严格 > 扫描一致
     return np.argmax(proba, axis=1).astype(np.int64)

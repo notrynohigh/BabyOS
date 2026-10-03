@@ -42,19 +42,35 @@ SELFCHECK_STEPS = ("compile", "predict_consistency", "feature_consistency",
 
 
 def _feature_meta(meta, payload: dict, matrix: dict, cfg) -> dict | None:
-    """时序工程：组装 feat_extract 元数据（exported = [(ch, feat)] 导出序）。"""
+    """时序工程：组装 feat_extract 元数据（exported = [(ch, feat)] 导出序）。
+
+    Feature names are `channel__feature`. Channel names may themselves contain
+    `__`, so match by longest channel prefix instead of naive split("__", 1).
+    """
     if meta.mode != "timeseries":
         return None
     names = feature_service.feature_names(meta, cfg)
+    channels = list(meta.channels or [])
     exported = []
     for i in payload["feature_indices"]:
-        ch, f = names[i].split("__", 1)
+        name = names[i]
+        ch = None
+        for c in channels:
+            if name == c or name.startswith(c + "__"):
+                if ch is None or len(c) > len(ch):
+                    ch = c
+        if ch is None:
+            raise _AppError(
+                422, "FEATURE_NAME_MISMATCH",
+                f"特征名 {name!r} 无法解析出通道，请重新计算特征矩阵",
+            )
+        f = name[len(ch) + 2:] if name.startswith(ch + "__") else ""
         exported.append((ch, f))
     return {
         "n": feature_service.effective_n(meta, cfg),
         "fs": meta.sampling_rate,
-        "channels": meta.channels,
-        "n_channels": len(meta.channels),
+        "channels": channels,
+        "n_channels": len(channels),
         "exported": exported,
         "freq_enabled": cfg.freq_enabled,
         "freq_bands": cfg.freq_bands,
@@ -138,9 +154,15 @@ def _export_inner(workdir: Path, pid: str, meta, payload, matrix, cfg, split, da
     pred = selfcheck.step_predict_consistency(workdir, symbol, payload, X_tr, X_te)
     report["predict_consistency"] = pred
     if not pred["ok"]:
-        report["errors"].append(
-            f"predict 一致性失败: id_match={pred.get('id_match_rate')}, {pred.get('error', '')}"
-        )
+        if pred.get("kind") == "regression_value":
+            report["errors"].append(
+                f"predict 一致性失败(回归): max_abs_diff={pred.get('max_abs_diff')}, "
+                f"violations={pred.get('n_violations')}, {pred.get('error', '')}"
+            )
+        else:
+            report["errors"].append(
+                f"predict 一致性失败: id_match={pred.get('id_match_rate')}, {pred.get('error', '')}"
+            )
         return _finish(pid, meta, workdir, payload, report, info)
 
     # ③ 特征链一致性（时序）
