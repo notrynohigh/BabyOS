@@ -88,7 +88,19 @@ CMD_OTA_RESULT = bp.CMD_OTA_RESULT
 CMD_TRANS_FILE = bp.CMD_TRANS_FILE
 CMD_GET_UID = bp.CMD_GET_UID
 CMD_WRITE_SN = bp.CMD_WRITE_SN
+CMD_TSL_INVOKE = bp.CMD_TSL_INVOKE
 CMD_DEVICEINFO = bp.CMD_DEVICEINFO
+CMD_SETCFGNET_MODE = bp.CMD_SETCFGNET_MODE
+CMD_GET_NETINFO = bp.CMD_GET_NETINFO
+CMD_SET_VOICE_SWITCH = bp.CMD_SET_VOICE_SWITCH
+CMD_SET_VOICE_VOLUME = bp.CMD_SET_VOICE_VOLUME
+CMD_GET_VOICE_VOLUME = bp.CMD_GET_VOICE_VOLUME
+CMD_GET_VOICE_STAT = bp.CMD_GET_VOICE_STAT
+CMD_TTS_CONTENT = bp.CMD_TTS_CONTENT
+CMD_HTTP_REQUEST = bp.CMD_HTTP_REQUEST
+CMD_HTTP_RESPONSE = bp.CMD_HTTP_RESPONSE
+CMD_HTTP_INIT = bp.CMD_HTTP_INIT
+CMD_HTTP_DEINIT = bp.CMD_HTTP_DEINIT
 
 OTA_RESULT_OK = bp.OTA_RESULT_OK
 OTA_RESULT_CRC_ERROR = bp.OTA_RESULT_CRC_ERROR
@@ -793,6 +805,21 @@ class MockBabyOSDevice:
         self.last_ota_result = None      # type: Optional[int]
         self.frames_handled = 0
 
+        # network / voice / TSL / HTTP state (Studio protocol extensions)
+        self.last_tsl = b''
+        self.last_cfgnet = None          # type: Optional[Tuple[int, str, str]]
+        self.netinfo_ssid = 'BabyOSNet'
+        self.netinfo_ip = 0x0102A8C0     # 192.168.2.1 LE
+        self.netinfo_gw = 0x0101A8C0     # 192.168.1.1 LE
+        self.netinfo_mask = 0x00FFFFFF   # 255.255.255.0
+        self.voice_switch = 1
+        self.voice_volume = 50
+        self.voice_stat = bp.VOICE_STAT_IDLE
+        self.last_tts = ''
+        self.http_inited = False
+        self.last_http_request = None    # type: Optional[dict]
+        self.http_response_hook = None   # type: Optional[Callable[[dict], Tuple[int, str]]]
+
         # shell state (b_mod_param.c)
         self.shell_params = dict(shell_params if shell_params is not None
                                  else DEFAULT_SHELL_PARAMS)
@@ -1080,6 +1107,73 @@ class MockBabyOSDevice:
         elif cmd == CMD_DEVICEINFO:
             self._send_frame(CMD_DEVICEINFO,
                              bp.build_devinfo_param(self.version, self.model))
+        elif cmd == CMD_TSL_INVOKE:
+            with self._lock:
+                self.last_tsl = bytes(param) if param is not None else b''
+                self.written_cmds.append(cmd)
+            self._send_frame(CMD_TSL_INVOKE, b'')
+        elif cmd == CMD_SETCFGNET_MODE:
+            parsed = bp.parse_set_cfgnet_param(param)
+            with self._lock:
+                self.last_cfgnet = parsed
+                self.written_cmds.append(cmd)
+            self._send_frame(CMD_SETCFGNET_MODE, b'')
+        elif cmd == CMD_GET_NETINFO:
+            ssid_b = self.netinfo_ssid.encode('utf-8')[:bp.CFGNET_SSID_SIZE]
+            ssid_b = ssid_b.ljust(bp.CFGNET_SSID_SIZE, b'\x00')
+            body = (ssid_b +
+                    struct.pack('<III', self.netinfo_ip, self.netinfo_gw,
+                                self.netinfo_mask))
+            self._send_frame(CMD_GET_NETINFO, body)
+        elif cmd == CMD_SET_VOICE_SWITCH:
+            on = param[0] if param else 0
+            with self._lock:
+                self.voice_switch = 1 if on else 0
+                self.written_cmds.append(cmd)
+            self._send_frame(CMD_SET_VOICE_SWITCH, b'')
+        elif cmd == CMD_SET_VOICE_VOLUME:
+            vol = param[0] if param else 0
+            with self._lock:
+                self.voice_volume = vol
+                self.written_cmds.append(cmd)
+            self._send_frame(CMD_SET_VOICE_VOLUME, b'')
+        elif cmd == CMD_GET_VOICE_VOLUME:
+            self._send_frame(CMD_GET_VOICE_VOLUME,
+                             bytes([self.voice_volume & 0xFF]))
+        elif cmd == CMD_GET_VOICE_STAT:
+            self._send_frame(CMD_GET_VOICE_STAT,
+                             bytes([self.voice_stat & 0xFF]))
+        elif cmd == CMD_TTS_CONTENT:
+            content = (param or b'').decode('utf-8', errors='replace')
+            with self._lock:
+                self.last_tts = content
+                self.written_cmds.append(cmd)
+            self._send_frame(CMD_TTS_CONTENT, b'')
+        elif cmd == CMD_HTTP_INIT:
+            with self._lock:
+                self.http_inited = True
+            self._send_frame(CMD_HTTP_INIT, b'')
+        elif cmd == CMD_HTTP_DEINIT:
+            with self._lock:
+                self.http_inited = False
+            self._send_frame(CMD_HTTP_DEINIT, b'')
+        elif cmd == CMD_HTTP_REQUEST:
+            parsed = bp.parse_http_request_param(param)
+            status, body_text = 404, 'not found'
+            if parsed is not None:
+                with self._lock:
+                    self.last_http_request = parsed
+                # Default mock: 200 + echo method/url; override via http_response_hook
+                if self.http_response_hook is not None:
+                    status, body_text = self.http_response_hook(parsed)
+                else:
+                    status = 200
+                    body_text = '{"mock":"ok","url":"%s","method":"%s"}' % (
+                        parsed['url'], parsed['method'])
+            else:
+                status, body_text = 400, 'bad request'
+            self._send_frame(CMD_HTTP_RESPONSE,
+                             bp.build_http_response_param(status, body_text))
         else:
             self._send_frame(cmd, b'')
 
