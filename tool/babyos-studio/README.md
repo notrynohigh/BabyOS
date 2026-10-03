@@ -1,8 +1,8 @@
 # BabyOS Studio
 
-BabyOS 统一桌面调试工具（Electron + Python FastAPI）。面向 BabyOS 固件的真实上位机能力：串口 b_protocol 协议栈、OTA / 文件传输、Xmodem/Ymodem、Shell 参数调节、HTTP Mock，以及 AutoML「训练 → 导出深度绑定 C bundle」。
+BabyOS 统一桌面调试工具（Electron + Python FastAPI）。面向 BabyOS 固件的真实上位机能力：串口 b_protocol 协议栈、OTA / 文件传输（0x6 + 目录合并 + 全零停止）、Xmodem/Ymodem、Shell 参数调节与定时轮询、日志落盘、网络配置/网卡信息/语音/物模型协议、设备侧 HTTP（0x50–0x53）+ HTTP Mock（SERVER_TIME / 文件日志）、配网 Web 主机工具（Keil 构建 / OpenOCD 烧录 / 串口抓包），以及 AutoML「训练 → 导出深度绑定 C bundle」。
 
-**本 README 描述的是仓库中已实现的真实功能。** 协议帧格式与命令以 master 分支 `tool/README.md` + `tool/b_protocol.py` + `bos/modules/b_mod_protocol.*` 为准。串口/协议能力的验收路径是**虚拟串口（pty 成对字节通道）真实双向通讯**：主机侧走 UartService / ProtocolClient / ShellClient / Xmodem / FastAPI DeviceManager 真实栈，设备侧 mock 在 pty 另一端真实解析 BabyOS 协议帧并字节级回包（见 §11.1）；内存 FakeUart/FakeDevice 仅作补充，绝不能作为主验收路径。HTTPS 证书固定使用 **dev 分支 `tool/` 目录证书**（见 §9.4）。
+**本 README 描述的是仓库中已实现的真实功能。** 协议帧格式与命令以 master 分支 `tool/README.md` + `tool/b_protocol.py` + `bos/modules/b_mod_protocol.*` 为准。串口/协议能力的验收路径是**虚拟串口（pty 成对字节通道）真实双向通讯**：主机侧走 UartService / ProtocolClient / ShellClient / Xmodem / FastAPI DeviceManager 真实栈，设备侧 mock 在 pty 另一端真实解析 BabyOS 协议帧并字节级回包（见 §13.1）；主机工具 gap 套件 `test_devtool_gaps.py` 同样走 pty。内存 FakeUart/FakeDevice 仅作补充，绝不能作为主验收路径。HTTPS 证书固定使用 **dev 分支 `tool/` 目录证书**（见 §9.4）。
 
 ---
 
@@ -12,13 +12,16 @@ BabyOS 统一桌面调试工具（Electron + Python FastAPI）。面向 BabyOS �
 
 | 能力 | UI 页面 | 后端 API 前缀 | 实现 |
 |---|---|---|---|
-| 串口连接 / 协议测试 / 设时间 | 串口控制 | `/api/device/serial/*` `/api/device/protocol/*` | `python/device/uart_service.py` + `protocol_client.py` |
+| 串口连接 / 协议测试 / 设时间 / 日志落盘 | 串口控制 | `/api/device/serial/*` `/api/device/protocol/*` `/api/device/log/*` | `python/device/uart_service.py` + `protocol_client.py` |
 | OTA 固件升级（0x3/0x4/0x5） | OTA 升级 | `/api/device/ota/*` | `ProtocolClient.start_ota` |
-| 任意文件写 FLASH（0x6 + 0x4/0x5） | （API） | `/api/device/file/*` | `ProtocolClient.start_file_transfer` |
+| 任意文件写 FLASH（0x6 + 0x4/0x5）+ 全零停止 + 目录合并 | 文件传输 | `/api/device/file/*` | `ProtocolClient.start_file_transfer` + `file_util.py` |
 | Xmodem-128 / Ymodem-1K | Xmodem/Ymodem | `/api/device/xmodem/*` `/api/device/ymodem/*` | `python/device/xmodem_ydmodem.py` |
 | UID / SN / 设备信息（0x7/0x8/0xA） | 设备信息 | `/api/device/uid|sn|info` | `protocol_client.py` + `sn_util.py` |
-| Shell 参数调节（非协议） | 参数调节 | `/api/device/param/*` `/api/device/shell/cmd` | `python/device/shell_client.py` |
-| HTTP Mock + 主机代发 | HTTP 调试 | `/api/device/http/*` | `python/device/http_mock.py` |
+| Shell 参数调节 + 定时轮询 | 参数调节 | `/api/device/param/*` `/api/device/shell/cmd` | `python/device/shell_client.py` |
+| 物模型 0x9 / 配网 0x30 / 网卡信息 0x31 | 网络与语音 | `/api/device/tsl/*` `/api/device/net/*` | `protocol_client.py` |
+| 语音 0x40–0x44（开关/音量/状态/TTS） | 网络与语音 | `/api/device/voice/*` | `protocol_client.py` |
+| 设备侧 HTTP 0x50–0x53 + Mock + 主机代发 | HTTP 调试 | `/api/device/http/*` | `http_mock.py` + `protocol_client.http_request` |
+| 配网 Web 主机工具（Keil/OpenOCD/抓包） | 配网 Web 调试 | `/api/device/webconfig/*` | `python/device/webconfig_tool.py` |
 | AutoML 全流程 | 工程向导 | `/api/projects/*` `/api/templates/*` | FastAPI AutoML 服务 + 导出生成器 |
 
 ### 1.2 进程与数据流
@@ -31,10 +34,12 @@ FastAPI (python/app/main.py)
     │
     ├─ DeviceManager (python/device/device_manager.py)  ← 进程级单例
     │     ├─ UartService      pyserial 真实串口
-    │     ├─ ProtocolClient   b_protocol 帧 + OTA/文件状态机
-    │     ├─ ShellClient      文本 shell（param ...）
-    │     ├─ HttpMock         本机 ThreadingHTTPServer
-    │     └─ XmodemSender / YmodemSender
+    │     ├─ ProtocolClient   b_protocol 帧 + OTA/文件/网络/语音/HTTP
+    │     ├─ ShellClient      文本 shell（param ...）+ 定时轮询线程
+    │     ├─ HttpMock         本机 ThreadingHTTPServer（SERVER_TIME/文件日志）
+    │     ├─ XmodemSender / YmodemSender
+    │     ├─ file_util        目录合并 allfile.bin（0xAA01/0xAA02）
+    │     └─ WebConfigTool    Keil UV4 / OpenOCD / pyserial auto_log
     │
     └─ AutoML 工程服务 (projects/datasets/labels/features/training/export)
           └─ 导出 bundle → bos/algorithm 深度绑定 C 代码
@@ -43,18 +48,20 @@ FastAPI (python/app/main.py)
 要点：
 
 - **串口句柄唯一**：UI 打开串口优先走 Python `DeviceManager`；协议、OTA、Shell、Xmodem **共用同一 UART**。Electron 原生 serial 仅作回退（原始收发，**不支持 b_protocol**）。
-- **协议命令与 Shell 分离**：0x1–0xA 走 b_protocol 帧；参数调节走 `nr_micro_shell` 文本命令 `param ...`。
-- **HTTP 设备侧触发**：设备 HTTP 由固件 `bHttp` / 工程代码发起，**不是** b_protocol 命令。Studio 提供真实 Mock 服务器 + 主机侧 `/api/device/http/proxy` 代发，用于联调 Mock；固件请求 Mock 地址后，`GET /api/device/http/requests` 可查看流量。
+- **协议命令与 Shell 分离**：0x1–0xA / 0x30–0x31 / 0x40–0x44 / 0x50–0x53 走 b_protocol 帧；参数调节走 `nr_micro_shell` 文本命令 `param ...`。
+- **HTTP 设备侧有两条真实路径**：① 协议命令 0x50–0x53（设备 HTTP 客户端 init/request/deinit）；② 固件 `bHttp` 自发请求打到 Studio Mock。Mock 地址后 `GET /api/device/http/requests` 可查看流量；主机侧另有 `/api/device/http/proxy` 代发用于联调 Mock 配置。
 
 ### 1.3 关键源码路径
 
 | 路径 | 作用 |
 |---|---|
 | `python/device/b_protocol.py` | 帧 pack/parse、TEA、命令常量、负载构造 |
-| `python/device/protocol_client.py` | 请求响应、OTA/文件传输泵 |
+| `python/device/protocol_client.py` | 请求响应、OTA/文件/网络/语音/HTTP 泵 |
 | `python/device/xmodem_ydmodem.py` | Xmodem-128 / Ymodem-1K 状态机 |
 | `python/device/shell_client.py` | `param` 列表/读/写（写后回读校验） |
-| `python/device/http_mock.py` | 真实 HTTP(S) Mock + 请求日志 |
+| `python/device/file_util.py` | 目录合并 / 解析（0xAA01/0xAA02） |
+| `python/device/http_mock.py` | 真实 HTTP(S) Mock + SERVER_TIME + 文件日志 |
+| `python/device/webconfig_tool.py` | Keil UV4 构建 / OpenOCD 烧录 / 串口 auto_log |
 | `python/app/api/device.py` | 设备相关 FastAPI 路由 |
 | `python/app/services/export/generator.py` | bundle 组装（文件名 / Makefile / b_config） |
 | `python/app/services/export/feature_cgen.py` | 特征 C 生成（绑定 `bAlgoSignal*` / `bAlgoFft*`） |
@@ -140,7 +147,7 @@ TEA：16 轮，key = `(1, 22, 333, 4444)`，delta = `0x9E3779B9`。打开串口�
 
 固件侧接受条件（主机侧约定）：`id == host_id || id == INVALID_ID || device_id == INVALID_ID`。主机→设备帧常用 `INVALID_ID`。
 
-### 3.2 命令表（Studio 主机客户端实现 0x1–0xA）
+### 3.2 命令表（Studio 主机客户端）
 
 | CMD | 名称 | 方向 | 参数 |
 |---|---|---|---|
@@ -152,13 +159,24 @@ TEA：16 轮，key = `(1, 22, 333, 4444)`，delta = `0x9E3779B9`。打开串口�
 | 0x4 | FDATA 数据 | H→D | `seq(2) + data[512]`（不足补 0） |
 | 0x5 | OTA/传输结果 | D→H | 1B：`0`成功 `1`CRC 错 `2`名不匹配 `3`长度不合理 `4`超时 |
 | 0x5 | 结果 ACK | H→D | 无参数 |
-| 0x6 | TRANS_FILE | H→D | `size(4)+crc32(4)+dev_no(4)+offset(4)`，数据仍走 0x4 |
+| 0x6 | TRANS_FILE | H→D | `size(4)+crc32(4)+dev_no(4)+offset(4)`；**停止 = 16 字节全 0**；数据仍走 0x4 |
 | 0x7 | GET_UID | H→D / D→H | 回复：`uid_len(1) + uid[n]` |
 | 0x8 | WRITE_SN | H→D / D→H | 参数：`sn_len(1) + sn[n]`；回复无参数 |
-| 0x9 | TSL 调用 | H→D / D→H | 方法调用内容（Studio 主机侧保留常量，无独立 UI） |
+| 0x9 | TSL 调用 | H→D / D→H | 物模型方法调用内容（JSON 文本） |
 | 0xA | DEVICEINFO | H→D / D→H | 回复：`version[16] + name/model[16]` |
+| 0x30 | SETCFGNET | H→D | `type(1)+ssid[32]+passwd[64]`；type 0=AP 1=BLE |
+| 0x31 | GET_NETINFO | H→D / D→H | 回复：`ssid[32]+ip+gw+mask`（LE u32 → 点分 IP） |
+| 0x40 | 语音开关 | H→D | 1B：0/1 |
+| 0x41 | 语音音量 | H→D | 1B：0–100（越界钳制） |
+| 0x42 | 音量查询回复 | D→H | 1B 音量 |
+| 0x43 | 语音状态 | H→D / D→H | 1B：0=idle 1=listening 2=playing |
+| 0x44 | TTS 内容 | H→D | UTF-8 文本 |
+| 0x50 | HTTP 请求 | H→D | `method(1)+url_len(2LE)+url+hdr_len(2LE)+headers+body` |
+| 0x51 | HTTP 响应 | D→H | `status(2LE)+body` |
+| 0x52 | HTTP init | H→D / D→H | param=`b'\x00'` |
+| 0x53 | HTTP deinit | H→D / D→H | param=`b'\x00'` |
 
-文档中另有网络/语音指令（0x30/0x31、0x40–0x44）；**当前 Studio 主机客户端聚焦 0x1–0xA**。
+实现入口：`python/device/b_protocol.py`（builders/parsers）+ `protocol_client.py`（请求响应）；UI 见「文件传输」「网络与语音」「HTTP 调试」「参数调节」「串口控制」「配网 Web 调试」页。
 
 ### 3.3 CRC
 
@@ -239,6 +257,25 @@ curl -s -X POST http://127.0.0.1:18080/api/device/serial/close
 
 > Electron 原生串口回退仅用于原始收发调试；**协议/OTA/Shell/Xmodem 在 Python 持有串口时才可用**。
 
+
+### 4.4 日志落盘（origin/dev tool 串口自动记录）
+
+UI「串口控制」页可选择路径并开启落盘；DeviceManager 将协议/Shell/传输日志以文本追加写入文件。
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| POST | `/api/device/log/start` | `{path}`；成功返回落盘绝对路径 |
+| POST | `/api/device/log/stop` | 停止落盘 |
+| GET | `/api/device/log/status` | `{enabled, path}` |
+
+```bash
+curl -s -X POST http://127.0.0.1:18080/api/device/log/start \
+  -H 'Content-Type: application/json' \
+  -d '{"path":"/tmp/babyos_auto_log.txt"}'
+curl -s http://127.0.0.1:18080/api/device/log/status
+curl -s -X POST http://127.0.0.1:18080/api/device/log/stop
+```
+
 ---
 
 ## 5. OTA 升级（CMD 0x3 / 0x4 / 0x5）
@@ -297,22 +334,48 @@ curl -s "http://127.0.0.1:18080/api/device/ota/status?job_id=<job_id>"
 | 方向 | CMD | 参数 |
 |---|---|---|
 | H→D | 0x6 | `size(4) + crc32(4) + dev_no(4) + offset(4)` |
+| H→D | 0x6 停止 | **16 字节全 0**（与 origin/dev tool 停止语义一致） |
 | D→H | 0x4 | 请求分包序号 |
 | H→D | 0x4 | `seq(2)+data[512]` |
 | D→H | 0x5 | 结果码 |
 
-**API 已实现**（UI 无独立 0x6 页面，可直接调 API）：
+**UI「文件传输」页**（真实 0x6 传输，非 UI 壳）：
+
+1. 选择文件 → **开始传输** → `POST /api/device/file/start`
+2. UI 轮询 `GET /api/device/file/status?job_id=...` 更新进度
+3. **停止 (0x6 全零)** → `POST /api/device/file/stop`（默认 `notify_device=1`，向设备发 0x6 全零）
+4. **合并目录** → `POST /api/device/file/merge_folder` → 再传输生成的 `allfile.bin`
+
+**目录合并格式**（authority：origin/dev `tool/mainwindow.py` `_load_folder`）：
+
+```
+name record : 0xAA01 (2B BE) + name_len(4B BE) + name_bytes
+data record : 0xAA02 (2B BE) + data_len(4B BE) + data_bytes
+```
+
+文件按文件名排序后打包；默认输出 `folder/allfile.bin`；CRC32 与协议同口径（`python/device/file_util.py`）。
 
 ```bash
-POST /api/device/file/start   {"path": "...", "dev_no": 0, "offset": 0, "timeout": 30.0}
+POST /api/device/file/start         {"path": "...", "dev_no": 0, "offset": 0, "timeout": 30.0}
 GET  /api/device/file/status?job_id=...
-POST /api/device/file/stop
+POST /api/device/file/stop          {"notify_device": 1}
+POST /api/device/file/merge_folder  {"folder_path": "...", "out_name": "allfile.bin"}
 ```
 
 ```bash
+# 传输单文件
 curl -s -X POST http://127.0.0.1:18080/api/device/file/start \
   -H 'Content-Type: application/json' \
   -d '{"path":"/path/to/config.bin","dev_no":0,"offset":0,"timeout":30}'
+
+# 目录合并（生成 allfile.bin 并返回 size/crc）
+curl -s -X POST http://127.0.0.1:18080/api/device/file/merge_folder \
+  -H 'Content-Type: application/json' \
+  -d '{"folder_path":"/path/to/assets"}'
+
+# 停止（设备侧应收到 CMD 0x6 全零）
+curl -s -X POST http://127.0.0.1:18080/api/device/file/stop \
+  -H 'Content-Type: application/json' -d '{"notify_device":1}'
 ```
 
 ### 6.2 Xmodem-128
@@ -418,8 +481,28 @@ curl -s -X POST http://127.0.0.1:18080/api/device/shell/cmd \
 
 错误：`PARAM_NOT_FOUND` 504/404 类；`PARAM_SET_FAILED` 500（校验不通过或超时）。
 
----
+### 8.3 参数定时轮询（origin/dev tool 定时读）
 
+后台线程按 `interval_ms` 轮询 `param get`，DeviceManager 状态可查询；空闲时可安全 stop。
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| POST | `/api/device/param/poll/start` | `{name, interval_ms=1000}`；重复 start 会更新目标 |
+| POST | `/api/device/param/poll/stop` | 停止轮询 |
+| GET | `/api/device/param/poll/status` | `{enabled, name, interval_ms, ...}` |
+
+```bash
+curl -s -X POST http://127.0.0.1:18080/api/device/param/poll/start \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"interval","interval_ms":1000}'
+curl -s http://127.0.0.1:18080/api/device/param/poll/status
+curl -s -X POST http://127.0.0.1:18080/api/device/param/poll/stop
+```
+
+UI「参数调节」页提供「开始轮询 / 停止轮询」按钮。
+
+
+---
 ## 9. HTTP Mock
 
 ### 9.1 能力
@@ -427,6 +510,8 @@ curl -s -X POST http://127.0.0.1:18080/api/device/shell/cmd \
 - 真实 `ThreadingHTTPServer`，绑定 `127.0.0.1`，支持 HTTP/HTTPS。
 - 记录每条请求：`method / path / query / body / body_hex / headers / client`。
 - 可配置默认响应：`body / content_type / status_code`；可选 per-path 覆盖（服务层 `set_path_response`）。
+- **`${SERVER_TIME}` 占位符**：响应 body 中出现该字符串时，服务端替换为本地时间（authority：origin/dev `tool/http_server.py`）。
+- **文件日志**：`file_log=true` 时追加写入 `python/device/mock_http.log`（状态接口可查路径）。
 - Mock 自带 `GET /_requests` → JSON 日志。
 - HTTPS：**必须使用 dev 分支 `tool/` 目录证书**（`tool/mock_https_cert.pem` + `tool/mock_https_key.pem`，与 `origin/dev` 同名同内容；包内副本 `python/device/certs/` 为同一文件的拷贝）。路径查找顺序、指纹核对方法与禁令见 **§9.4**。运行时 openssl 自签被禁止；证书缺失时明确 `RuntimeError`，绝不静默生成。
 
@@ -440,7 +525,14 @@ curl -s -X POST http://127.0.0.1:18080/api/device/shell/cmd \
 3. **请求日志** 显示代理结果 + Mock 记录条数。
 4. **停止服务器** → `POST /api/device/http/stop`。
 
-> UI 中的「初始化客户端 / 反初始化」按钮无对应后端端点，**不构成已实现功能**；请用 Mock + 设备固件 HTTP 客户端，或用 proxy 验证 Mock 配置。
+**协议模式（设备侧 HTTP，CMD 0x50–0x53）**：UI「HTTP 调试」页可切换协议模式，通过 b_protocol 驱动设备 HTTP 客户端（非主机 proxy）：
+
+1. **初始化** → `POST /api/device/http/init`（CMD 0x52，param=`b'\x00'`）
+2. **请求** → `POST /api/device/http/request` `{method, url, headers?, body?, timeout}` → CMD 0x50，设备回 0x51 `status+body`
+3. **反初始化** → `POST /api/device/http/deinit`（CMD 0x53）
+
+headers 为 `Header: value` 文本（多行 `\r\n` 连接）或 UI 中的键值列表；body 可为空。此路径在 **pty + MockBabyOSDevice** 上有真实验收（`test_devtool_gaps.py`）。
+
 
 ### 9.3 API
 
@@ -451,6 +543,9 @@ curl -s -X POST http://127.0.0.1:18080/api/device/shell/cmd \
 | GET | `/api/device/http/status` | `{running, port, base_url, https, status_code, request_count}` |
 | GET | `/api/device/http/requests` | `{count, requests:[...]}` |
 | POST | `/api/device/http/proxy` | 主机侧真实请求；非 HTTP method → 400 |
+| POST | `/api/device/http/init` | CMD 0x52 设备 HTTP 客户端初始化 |
+| POST | `/api/device/http/deinit` | CMD 0x53 设备 HTTP 客户端反初始化 |
+| POST | `/api/device/http/request` | CMD 0x50→0x51 设备侧请求；返回 `{status, body, cmd}` |
 
 ```bash
 # 启动 Mock
@@ -532,11 +627,134 @@ curl -s http://127.0.0.1:18080/api/device/http/status
 
 ---
 
-## 10. AutoML 完整手册
+### 9.5 Mock 占位符与文件日志
+
+| 项 | 说明 |
+|---|---|
+| `${SERVER_TIME}` | 响应 body（str 或 bytes）中出现时替换为服务端时间；**bytes/str 分支分别处理**，避免类型混检导致连接被静默关闭 |
+| `file_log` | `http/start` 传 `file_log=true` 或 DeviceManager 启动 Mock 时开启；写 `python/device/mock_http.log` |
+| 状态字段 | `status.file_log = {enabled, path}`；`GET /api/device/http/status` 可见 |
+
+```bash
+curl -s -X POST http://127.0.0.1:18080/api/device/http/start \
+  -H 'Content-Type: application/json' \
+  -d '{"port":0,"body":"{\"ts\":\"${SERVER_TIME}\"}","content_type":"application/json","file_log":true}'
+```
+
+---
+
+## 10. 网络 / 语音 / 物模型
+
+对应 origin/dev tool 的配网、网卡查询、语音与物模型能力。均走 b_protocol，需 Python 持有串口；UI 页「网络与语音」。
+
+### 10.1 配网 SETCFGNET（0x30）
+
+| 项 | 值 |
+|---|---|
+| param | `type(1) + ssid[32] + passwd[64]` |
+| type | `0`=AP，`1`=BLE |
+| ssid/passwd | C 字符串（不足补 0，超长截断） |
+
+```bash
+curl -s -X POST http://127.0.0.1:18080/api/device/net/set_cfgnet \
+  -H 'Content-Type: application/json' \
+  -d '{"type":0,"ssid":"HomeAP","passwd":"pw123456","timeout":2.0}'
+```
+
+### 10.2 网卡信息 GET_NETINFO（0x31）
+
+回复：`ssid[32] + ip(4) + gw(4) + mask(4)`，IP 为 LE u32，API 输出点分十进制字符串。
+
+```bash
+curl -s -X POST http://127.0.0.1:18080/api/device/net/get_info \
+  -H 'Content-Type: application/json' -d '{"timeout":2.0}'
+# {"ok":true,"ssid":"...","ip":"192.168.2.1","gw":"192.168.1.1","mask":"255.255.255.0"}
+```
+
+### 10.3 语音（0x40–0x44）
+
+| CMD | API | 参数/回复 |
+|---|---|---|
+| 0x40 | `/api/device/voice/set_switch` | `{on:0|1}` |
+| 0x41 | `/api/device/voice/set_volume` | `{volume:0–100}`（越界钳制到 0/100） |
+| 0x42 | `/api/device/voice/get_volume` | 回复 1B 音量 |
+| 0x43 | `/api/device/voice/get_stat` | `{state:0|1|2, name:idle|listening|playing}` |
+| 0x44 | `/api/device/voice/tts` | `{content:"..."}` UTF-8 |
+
+```bash
+curl -s -X POST http://127.0.0.1:18080/api/device/voice/set_volume \
+  -H 'Content-Type: application/json' -d '{"volume":77}'
+curl -s -X POST http://127.0.0.1:18080/api/device/voice/get_stat \
+  -H 'Content-Type: application/json' -d '{}'
+curl -s -X POST http://127.0.0.1:18080/api/device/voice/tts \
+  -H 'Content-Type: application/json' -d '{"content":"Hello BabyOS"}'
+```
+
+### 10.4 物模型调用（0x9）
+
+```bash
+curl -s -X POST http://127.0.0.1:18080/api/device/tsl/invoke \
+  -H 'Content-Type: application/json' \
+  -d '{"content":"{\"id\":\"1\",\"method\":\"power\"}","timeout":2.0}'
+```
+
+返回 `{ok, device_id, cmd, param_hex}`；设备侧收到的原始内容在 pty mock 中记录为 `last_tsl`。
+
+验收：`test/device_features/test_devtool_gaps.py`（pty 真实双向通讯，非 UI 壳）。
+
+---
+
+## 11. 配网 Web 主机工具（Keil / OpenOCD / 串口抓包）
+
+对齐 origin/dev tool 的配网工程主机侧流程：Keil UV4（或 make）编译 → OpenOCD 烧录 → pyserial 抓取串口日志。配置存 INI（`webconfig_tool.ini` 或环境变量 `BABYOS_WEBCONFIG_INI`）。
+
+UI 页「配网 Web 调试」；实现：`python/device/webconfig_tool.py` + `/api/device/webconfig/*`。
+
+### 11.1 配置项
+
+| 键 | 说明 |
+|---|---|
+| `project_dir` | 工程目录 |
+| `project_file_rel` | 工程文件相对路径（Keil `.uvprojx`） |
+| `target_name` | Keil 目标名 |
+| `keil_uv4` | `UV4.exe` 路径 |
+| `openocd_dir` | OpenOCD 安装目录 |
+| `log_dir_rel` | auto_log 输出相对目录（默认 `Doc`） |
+| `serial_port` / `serial_baud` | 抓包串口 |
+| `log_seconds` | 抓包时长 |
+
+### 11.2 构建 / 烧录 / 抓包
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/api/device/webconfig/status` | 工具/工程是否就绪 |
+| POST | `/api/device/webconfig/status` | 保存配置（`save=true` 时写 INI） |
+| POST | `/api/device/webconfig/build` | UV4 `-j0 -r proj -t target -o log` 或 `make -C project_dir` |
+| POST | `/api/device/webconfig/flash` | OpenOCD `program hex verify reset exit` |
+| POST | `/api/device/webconfig/log/start` | pyserial → `Doc/auto_log_*.txt` |
+| POST | `/api/device/webconfig/log/stop` | 停止抓包 |
+| GET | `/api/device/webconfig/log/status` | 抓包状态 |
+
+**构建失败口径**：hex 缺失/过期，或编译日志中 `Error(s)` 计数非 0 → 结构化 `{ok:false, error}`，不静默成功。工具缺失时返回明确错误字段（`keil_uv4_exists` / `project_exists` / `can_build` / `can_flash`），不抛裸异常。
+
+```bash
+curl -s http://127.0.0.1:18080/api/device/webconfig/status
+curl -s -X POST http://127.0.0.1:18080/api/device/webconfig/build \
+  -H 'Content-Type: application/json' -d '{}'
+curl -s -X POST http://127.0.0.1:18080/api/device/webconfig/flash \
+  -H 'Content-Type: application/json' -d '{}'
+```
+
+验收：`test_devtool_gaps.py::TestWebConfigTool`（缺工具 → 结构化错误；INI roundtrip）。
+
+---
+
+## 12. AutoML 完整手册
+
 
 AutoML 路径：工程 → 数据 → 标注 → 特征 → 训练 → 导出 C bundle → 固件集成（深度绑定 `bos/algorithm`）。
 
-### 10.1 创建工程（UI）
+### 12.1 创建工程（UI）
 
 1. 工程页 → **+ 新建项目**。
 2. 填写：
@@ -548,7 +766,7 @@ AutoML 路径：工程 → 数据 → 标注 → 特征 → 训练 → 导出 C 
 
 对应 API：`POST /api/projects` body=`{name, mode, task_type, sampling_rate}`。
 
-### 10.2 数据导入（CSV / 模板）
+### 12.2 数据导入（CSV / 模板）
 
 **模板**
 
@@ -584,7 +802,7 @@ AutoML 路径：工程 → 数据 → 标注 → 特征 → 训练 → 导出 C 
 
 训练进行中导入/删文件 → 409 `TRAINING_ACTIVE`。
 
-### 10.3 标注与分段（时序）
+### 12.3 标注与分段（时序）
 
 | 操作 | API |
 |---|---|
@@ -596,7 +814,7 @@ AutoML 路径：工程 → 数据 → 标注 → 特征 → 训练 → 导出 C 
 
 表格模式：数据导入时 `label_col` 即标签，无需分段。
 
-### 10.4 特征工程
+### 12.4 特征工程
 
 UI「特征」页 → 配置 → **计算特征**。
 
@@ -643,7 +861,7 @@ UI「特征」页 → 配置 → **计算特征**。
 
 > `feature_ids` 必须是 **函数名**（如 `mean`），不是通道名。数值口径：std/moments 为总体口径（除 N）。
 
-### 10.5 训练
+### 12.5 训练
 
 UI「训练」页 → **开始训练** / **停止训练**；查看 leaderboard / 最佳模型 / 特征重要性。
 
@@ -685,7 +903,7 @@ UI「训练」页 → **开始训练** / **停止训练**；查看 leaderboard /
 
 进程重启时启动对账：残留 `running` → `interrupted`。
 
-### 10.6 导出 C bundle（真实文件名）
+### 12.6 导出 C bundle（真实文件名）
 
 UI「导出」页 → **导出 C 代码** → `POST /api/projects/{pid}/export`。
 
@@ -714,7 +932,7 @@ GET  /api/projects/{pid}/export/download/<filename>.zip
 GET  /api/projects/{pid}/export/dir
 ```
 
-### 10.7 固件集成
+### 12.7 固件集成
 
 #### （1）Kconfig / b_config.h
 
@@ -810,7 +1028,7 @@ int id = algo_<name>_predict(features, ALGO_<NAME>_N_FEATURES, NULL);
 - 需要类别名时用 `algo_<name>_class_names[id]`。
 - PT 任务内跨 yield 状态必须 `static`（见仓库 CLAUDE.md）。
 
-### 10.8 深度绑定：`bAlgo*` 原语
+### 12.8 深度绑定：`bAlgo*` 原语
 
 导出代码 **不是** Python 移植，而是编排固件算法库：
 
@@ -855,7 +1073,7 @@ bAlgoMlSoftmax(out, z, nc);
 | FFT 表（大表） | `.bss` / `.fastram` |
 | `predict` / `feat_extract` | `.text` |
 
-### 10.9 AutoML API 速查
+### 12.9 AutoML API 速查
 
 | 方法 | 路径 |
 |---|---|
@@ -864,13 +1082,13 @@ bAlgoMlSoftmax(out, z, nc);
 | POST | `/api/projects/import`（`.bosml`） |
 | POST | `/api/projects/{pid}/archive`（导出 `.bosml`） |
 | GET | `/api/projects/trash` 等回收站接口 |
-| POST | `/api/projects/{pid}/dataset` 等（见 §10.2–10.6） |
+| POST | `/api/projects/{pid}/dataset` 等（见 §12.2–12.6） |
 
 ---
 
-## 11. 测试与排错
+## 13. 测试与排错
 
-### 11.1 虚拟串口（pty）全量验收 —— 串口/协议主路径
+### 13.1 虚拟串口（pty）全量验收 —— 串口/协议主路径
 
 **硬性规则：串口和协议相关功能的验收必须走虚拟串口（pty 成对字节通道）的真实双向通讯。** 结构：
 
@@ -900,6 +1118,16 @@ python/.venv/bin/python -m pytest \
 
 **实测结果：virtual-serial 用例 83 / 通过 83**（`test_virtual_serial.py` 37 + `test_virtual_serial_protocol.py` 25 + `test_api_virtual_serial.py` 21）。
 
+**主机工具对齐套件（0x6 停止/合并、0x9/0x30/0x31/0x40–0x44、0x50–0x53、SERVER_TIME、轮询、日志、Webconfig）：**
+
+```bash
+cd tool/babyos-studio/python
+python -m pytest ../test/device_features/test_devtool_gaps.py -v
+# 实测：17 passed（schema: babyos_devtool_gaps_v1）
+python -m pytest ../test/device_features/test_device_services.py -q   # 76 passed
+python -m pytest ../test/device_features/test_protocol_core.py -q     # 33 passed
+```
+
 **覆盖矩阵（全部走 pty 真实通讯）：**
 
 | 能力 | SDK/协议层 | API 层（DeviceManager → UartService → pty） | 实测 |
@@ -909,6 +1137,14 @@ python/.venv/bin/python -m pytest \
 | CMD 0x2 UTC | `TestProtocolCmds::test_cmd_0x2_utc` | `test_protocol_set_time_cmd_0x2` | 通过 |
 | CMD 0x3/0x4/0x5 OTA | `TestOtaSuccess` + `TestOtaFailure{CrcError,LenInvalid,NameMismatch,Timeout}` | `TestApiTransfers::test_ota_start_status_cmd_0x3_0x4_0x5` | 通过 |
 | CMD 0x6 文件传输 | `TestFileTransferCmd6` + `test_virtual_serial.py::test_file_xfer_cmd_0x6` | `TestApiTransfers::test_file_start_status_cmd_0x6` | 通过 |
+| CMD 0x6 停止全零 + 目录合并 | `test_devtool_gaps.py::test_0x6_file_transfer_start_stop_zeros` | DeviceManager `stop_transfer(notify_device)` / `merge_folder` | 通过（17/17） |
+| CMD 0x9 物模型 | `test_devtool_gaps.py::test_0x9_tsl_invoke` | `/api/device/tsl/invoke` | 通过 |
+| CMD 0x30/0x31 配网/网卡 | `test_devtool_gaps.py::test_0x30_cfgnet_and_0x31_netinfo` | `/api/device/net/*` | 通过 |
+| CMD 0x40–0x44 语音/TTS | `test_devtool_gaps.py::test_voice_0x40_0x41_0x42_0x43_0x44` | `/api/device/voice/*` | 通过 |
+| CMD 0x50–0x53 设备 HTTP | `test_devtool_gaps.py::test_http_0x50_0x53` | `/api/device/http/init\|deinit\|request` | 通过 |
+| Mock `${SERVER_TIME}` + 文件日志 | `test_devtool_gaps.py::test_server_time_placeholder_and_file_log` | `http_mock.py` | 通过 |
+| 参数轮询 / 日志落盘 | `test_devtool_gaps.py::test_param_polling_stop_when_idle` / `test_log_to_file` | DeviceManager 线程 | 通过 |
+| 配网 Web 工具错误口径 | `test_devtool_gaps.py::TestWebConfigTool` | `webconfig_tool.py` | 通过 |
 | CMD 0x7 UID | `TestProtocolCmds::test_cmd_0x7_get_uid` | `TestApiProtocolCommands::test_uid_get_cmd_0x7` | 通过 |
 | CMD 0x8 SN | `TestProtocolCmds::test_cmd_0x8_write_sn` | `TestApiProtocolCommands::test_sn_write_cmd_0x8` | 通过 |
 | CMD 0xA DEVINFO | `TestProtocolCmds::test_cmd_0xA_device_info` | `TestApiProtocolCommands::test_info_get_cmd_0xA` | 通过 |
@@ -928,7 +1164,8 @@ python/.venv/bin/python -m pytest \
 | `test_api_virtual_serial.py` | **主验收（pty）** | FastAPI TestClient → `/api/device/*` → DeviceManager → UartService → pty → mock 设备；结构化错误；HTTPS dev 证书 |
 | `mock_babyos_device.py` | 设备侧 fixture | pty 另一端真实解析协议帧并回包（含 shell 文本、Xmodem/Ymodem 接收） |
 | `test_protocol_core.py` | 补充（纯函数） | 帧 pack/parse、校验和、TEA、负载、CRC32、Ymodem CRC16 向量、SN |
-| `test_device_services.py` | 补充（含 FakeUart 等内存 mock） | 服务层单测；**不是**串口/协议主验收路径 |
+| `test_device_services.py` | 补充（含 FakeUart 等内存 mock） | 服务层单测；**不是**串口/协议主验收路径；HttpMock 响应路径回归 |
+| `test_devtool_gaps.py` | **主验收（pty）+ 主机工具** | 0x6 停止/合并、0x9/0x30/0x31/0x40–0x44/0x50–0x53、SERVER_TIME、轮询、日志、Webconfig、API 路由表 |
 | `test_device_api.py` | 补充（内存 mock） | FastAPI 路由契约；主验收以 `test_api_virtual_serial.py` 为准 |
 | `test_e2e_pty.py` | 补充（早期 PTY 环回） | 与 `mock_babyos_device.py` 的端到端探索性用例 |
 
@@ -949,11 +1186,11 @@ cd tool/babyos-studio/python
 # test/automl_e2e/ 下的 test_export_pipeline.py / test_feature_parity.py 等
 ```
 
-### 11.2 无串口硬件时如何验证「真实功能」
+### 13.2 无串口硬件时如何验证「真实功能」
 
 | 功能 | 无硬件验证方式（主路径优先） |
 |---|---|
-| 串口/协议全量（0x1–0xA、Shell、Xmodem/Ymodem、TEA、API 链路） | **虚拟串口 pty 全量验收**（§11.1 三个测试文件，83 用例） |
+| 串口/协议全量（0x1–0xA、Shell、Xmodem/Ymodem、TEA、API 链路） | **虚拟串口 pty 全量验收**（§13.1 测试文件，83 用例） |
 | HTTPS 证书 | dev 分支 `tool/` 证书指纹核对 + live TLS（§9.4） |
 | b_protocol 帧（补充） | `test_protocol_core.py` 向量 + `pack/parse` 往返 |
 | OTA / 0x6 文件（补充） | pty 用例之外，`test_device_api.py` 契约用作对照 |
@@ -964,7 +1201,7 @@ cd tool/babyos-studio/python
 
 有硬件时：打开真实串口后，协议测试应返回 `param_text="BabyOS"`；OTA/文件 result_code 应为 `0`。
 
-### 11.3 常见问题
+### 13.3 常见问题
 
 | 现象 | 处理 |
 |---|---|
@@ -989,7 +1226,7 @@ cd tool/babyos-studio/python
 
 ---
 
-## 12. 功能状态表
+## 14. 功能状态表
 
 | 功能 | 状态 | 真实实现位置 | 无硬件验证 |
 |---|---|---|---|
@@ -997,7 +1234,8 @@ cd tool/babyos-studio/python
 | b_protocol 帧 pack/parse/TEA | 已实现 | `b_protocol.py` | pty 用例 + 单元测试向量 |
 | 协议测试 0x1 / 设时间 0x2 | 已实现 | `protocol_client.py` + pty 设备 mock | **虚拟串口 pty** |
 | OTA 0x3/0x4/0x5 | 已实现 | `start_ota` + async job API | **虚拟串口 pty**（成功 + CRC/长度/名称/超时失败路径） |
-| 文件传输 0x6 + 0x4/0x5 | 已实现（API） | `start_file_transfer` + `/api/device/file/*` | **虚拟串口 pty** |
+| 文件传输 0x6 + 0x4/0x5 + 全零停止 | 已实现 | `start_file_transfer` / `stop_transfer(notify_device)` + UI 文件传输页 | **虚拟串口 pty**（`test_devtool_gaps`） |
+| 目录合并 allfile.bin（0xAA01/0xAA02） | 已实现 | `file_util.py` + `/api/device/file/merge_folder` + UI 合并按钮 | 单元 + pty 传输链路 |
 | Xmodem-128 | 已实现 | `xmodem_ydmodem.py` | **虚拟串口 pty**（边界 128/129/256） |
 | Ymodem-1K | 已实现 | 同上 | **虚拟串口 pty**（1024 整倍 / pad / name+size） |
 | UID 0x7 / SN 0x8 / DEVINFO 0xA | 已实现 | `protocol_client.py` + `sn_util.py` | **虚拟串口 pty** |
@@ -1006,9 +1244,15 @@ cd tool/babyos-studio/python
 | **HTTPS 证书（dev 分支 tool 目录）** | **已实现（真实，强制）** | 仓库 `tool/mock_https_{cert,key}.pem` + 包内 `python/device/certs/`；解析 `_resolve_https_cert()`（§9.4） | 指纹核对 origin/dev + live TLS（`TestHttpsCertsFromDev` / `TestHttpsCertsOriginDev` / `TestApiHttpsDevCerts`）；**禁止运行时 openssl 自签** |
 | HTTP Mock + 请求日志 | 已实现 | `http_mock.py` | 本机真实 HTTP |
 | 主机 HTTP 代理代发 | 已实现 | `/api/device/http/proxy` | 本机真实 HTTP |
-| 设备侧 HTTP 触发（协议命令） | **未实现为 b_protocol** | 由固件 bHttp/工程代码发起 | 需固件 |
-| UI「HTTP 初始化/反初始化客户端」按钮 | **无后端端点** | 仅 UI 按钮 | 不可用 |
-| 虚拟串口（pty）全量验收套件 | **已实现（真实）** | `test_virtual_serial*.py` + `mock_babyos_device.py` | **83/83 通过**（见 §11.1） |
+| 设备侧 HTTP（协议 0x50–0x53） | **已实现** | `protocol_client.http_*` + `/api/device/http/init\|deinit\|request` | **虚拟串口 pty**（`test_devtool_gaps::test_http_0x50_0x53`） |
+| Mock `${SERVER_TIME}` + 文件日志 | **已实现** | `http_mock.py` + `http/start file_log` | pytest（真实 HTTP 客户端） |
+| 物模型 0x9 | 已实现 | `/api/device/tsl/invoke` | **虚拟串口 pty** |
+| 配网 0x30 / 网卡信息 0x31 | 已实现 | `/api/device/net/*` | **虚拟串口 pty** |
+| 语音 0x40–0x44 | 已实现 | `/api/device/voice/*` | **虚拟串口 pty** |
+| 参数定时轮询 | 已实现 | DeviceManager 线程 + `/api/device/param/poll/*` | pty + 状态接口 |
+| 串口日志落盘 | 已实现 | `/api/device/log/*` + UI 串口页 | pty 写文件 |
+| 配网 Web 构建/烧录/抓包 | 已实现 | `webconfig_tool.py` + `/api/device/webconfig/*` | 结构化错误测试（无 Keil 时） |
+| 虚拟串口（pty）全量验收套件 | **已实现（真实）** | `test_virtual_serial*.py` + `mock_babyos_device.py` | **83/83 通过**（见 §13.1） |
 | AutoML 工程/数据/标注/特征/训练 | 已实现 | `/api/projects/*` | CSV + pytest |
 | C bundle 导出 + 自检 | 已实现 | `generator.py` / `export_service.py` | `export_report.json` |
 | 深度绑定 `bAlgoSignal*`/`bAlgoFft*`/`bAlgoMl*` | 已实现 | `feature_cgen.py` / `model_cgen.py` + 固件头文件 | `test/automl_e2e` |
@@ -1035,9 +1279,10 @@ tool/babyos-studio/
 │   ├── app/
 │   │   ├── api/        # projects, datasets, labels, features, training, export, device, ...
 │   │   └── services/   # automl, trainer, feature_service, export/, ...
-│   └── device/         # b_protocol, protocol_client, uart, shell, http_mock, xmodem
+│   └── device/         # b_protocol, protocol_client, uart, shell, http_mock,
+│                       # xmodem, file_util, webconfig_tool
 ├── test/
-│   ├── device_features/
+│   ├── device_features/  # pty 主验收 + test_devtool_gaps + service/unit
 │   └── test_regression.py 等
 ├── start_dev.sh / start_dev.bat
 └── package.json
