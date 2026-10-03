@@ -39,6 +39,14 @@
           <span class="menu-icon">🔄</span>
           <span>Xmodem/Ymodem</span>
         </a>
+        <a href="#" class="menu-item" data-page="file">
+          <span class="menu-icon">📦</span>
+          <span>文件传输</span>
+        </a>
+        <a href="#" class="menu-item" data-page="netvoice">
+          <span class="menu-icon">📡</span>
+          <span>网络/语音/物模型</span>
+        </a>
         <a href="#" class="menu-item" data-page="http">
           <span class="menu-icon">🌐</span>
           <span>HTTP 调试</span>
@@ -50,6 +58,10 @@
         <a href="#" class="menu-item" data-page="device">
           <span class="menu-icon">📱</span>
           <span>设备信息</span>
+        </a>
+        <a href="#" class="menu-item" data-page="webconfig">
+          <span class="menu-icon">🛠️</span>
+          <span>配网 Web 调试</span>
         </a>
         <div class="menu-divider"></div>
         <a href="#" class="menu-item" id="gitee-link">
@@ -87,20 +99,35 @@
             <div class="card-title">Xmodem/Ymodem</div>
             <div class="card-desc">文件传输协议</div>
           </div>
+          <div class="card" data-page="file">
+            <div class="card-icon" style="color:#409eff">📦</div>
+            <div class="card-title">文件传输</div>
+            <div class="card-desc">CMD 0x6 协议传文件、目录合并</div>
+          </div>
+          <div class="card" data-page="netvoice">
+            <div class="card-icon" style="color:#67c23a">📡</div>
+            <div class="card-title">网络/语音/物模型</div>
+            <div class="card-desc">配网、语音、TTS、物模型调用</div>
+          </div>
           <div class="card" data-page="http">
             <div class="card-icon" style="color:#909399">🌐</div>
             <div class="card-title">HTTP 调试</div>
-            <div class="card-desc">Mock 服务器、请求触发</div>
+            <div class="card-desc">Mock 服务器、协议触发 HTTP</div>
           </div>
           <div class="card" data-page="params">
             <div class="card-icon" style="color:#909399">⚙️</div>
             <div class="card-title">参数调节</div>
-            <div class="card-desc">Shell 参数读写</div>
+            <div class="card-desc">Shell 参数读写、定时轮询</div>
           </div>
           <div class="card" data-page="device">
             <div class="card-icon" style="color:#909399">📱</div>
             <div class="card-title">设备信息</div>
             <div class="card-desc">UID、SN、设备信息</div>
+          </div>
+          <div class="card" data-page="webconfig">
+            <div class="card-icon" style="color:#e6a23c">🛠️</div>
+            <div class="card-title">配网 Web 调试</div>
+            <div class="card-desc">Keil 编译、OpenOCD 烧录、串口日志</div>
           </div>
           <div class="card" id="gitee-card">
             <div class="card-icon" style="color:#c71d23">🔗</div>
@@ -597,6 +624,20 @@
           <div class="log-area" id="serial-log"></div>
           <button class="btn" id="btn-clear-log">清空</button>
         </div>
+        <div class="section">
+          <h3>日志落盘</h3>
+          <p class="hint">将 DeviceManager 全部日志追加写入文件（开发调试用）</p>
+          <div class="form-row">
+            <label>日志文件:</label>
+            <input type="text" id="logfile-path" placeholder="例如 /tmp/babynos_studio.log" style="flex:1">
+            <button class="btn" id="btn-logfile-pick">选择路径</button>
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-logfile-start">开始落盘</button>
+            <button class="btn" id="btn-logfile-stop">停止落盘</button>
+            <span id="logfile-status" class="status-text">未落盘</span>
+          </div>
+        </div>
       </div>
 
       <!-- OTA 升级 -->
@@ -669,6 +710,118 @@
         </div>
       </div>
 
+      <!-- 文件传输 CMD 0x6 -->
+      <div id="page-file" class="page">
+        <h2>文件传输 (CMD 0x6)</h2>
+        <div class="section">
+          <h3>传输文件</h3>
+          <p class="hint">协议流: 主机发 0x6(size+crc+dev_no+offset) → 设备 0x4 请求数据 → 主机 0x4 回包 → 设备 0x5 结果。停止 = 0x6 全零帧。</p>
+          <div class="form-row">
+            <label>文件:</label>
+            <input type="text" id="file-path" readonly style="flex:1" placeholder="单文件或合并后的 allfile.bin">
+            <button class="btn" id="btn-select-file">选择文件</button>
+          </div>
+          <div class="form-row">
+            <label>dev_no:</label>
+            <input type="text" id="file-devno" value="0" style="width:80px">
+            <label>offset:</label>
+            <input type="text" id="file-offset" value="0" style="width:80px">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-file-start">开始传输</button>
+            <button class="btn" id="btn-file-stop">停止 (0x6 全零)</button>
+          </div>
+          <div class="form-row">
+            <label>进度:</label>
+            <div class="progress-bar">
+              <div class="progress-fill" id="file-progress" style="width:0%"></div>
+            </div>
+            <span id="file-progress-text">0%</span>
+          </div>
+        </div>
+        <div class="section">
+          <h3>目录合并 (allfile.bin)</h3>
+          <p class="hint">按文件名排序合并: 记录 0xAA01+名称 + 0xAA02+数据，可直接作为 CMD 0x6 传输文件。</p>
+          <div class="form-row">
+            <label>目录:</label>
+            <input type="text" id="file-folder" readonly style="flex:1" placeholder="选择包含多个小文件的目录">
+            <button class="btn" id="btn-select-folder">选择目录</button>
+          </div>
+          <div class="form-row">
+            <label>输出名:</label>
+            <input type="text" id="file-out-name" value="allfile.bin" style="width:160px">
+            <button class="btn btn-primary" id="btn-file-merge">合并目录</button>
+          </div>
+          <div class="log-area" id="file-merge-log" style="min-height:60px"></div>
+        </div>
+      </div>
+
+      <!-- 网络 / 语音 / 物模型 -->
+      <div id="page-netvoice" class="page">
+        <h2>网络 / 语音 / 物模型</h2>
+        <div class="section">
+          <h3>配网与网络信息</h3>
+          <div class="form-row">
+            <label>类型:</label>
+            <select id="cfgnet-type">
+              <option value="0">AP (0)</option>
+              <option value="1">BLE (1)</option>
+            </select>
+            <label>SSID:</label>
+            <input type="text" id="cfgnet-ssid" style="width:160px">
+            <label>密码:</label>
+            <input type="text" id="cfgnet-passwd" style="width:160px">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-cfgnet-set">设置配网 (0x30)</button>
+            <button class="btn" id="btn-netinfo-get">获取网络信息 (0x31)</button>
+          </div>
+          <div class="form-row">
+            <label>SSID:</label>
+            <input type="text" id="netinfo-ssid" readonly style="width:160px">
+            <label>IP:</label>
+            <input type="text" id="netinfo-ip" readonly style="width:120px">
+            <label>网关:</label>
+            <input type="text" id="netinfo-gw" readonly style="width:120px">
+            <label>掩码:</label>
+            <input type="text" id="netinfo-mask" readonly style="width:120px">
+          </div>
+        </div>
+        <div class="section">
+          <h3>语音</h3>
+          <div class="form-row">
+            <label>开关:</label>
+            <button class="btn" id="btn-voice-on">开启 (0x40)</button>
+            <button class="btn" id="btn-voice-off">关闭</button>
+            <label>音量:</label>
+            <input type="text" id="voice-volume" value="50" style="width:60px">
+            <button class="btn" id="btn-voice-volume-set">设置音量 (0x41)</button>
+          </div>
+          <div class="form-row">
+            <button class="btn" id="btn-voice-volume-get">读音量 (0x42)</button>
+            <button class="btn" id="btn-voice-stat">语音状态 (0x43)</button>
+            <span id="voice-stat-text" class="status-text">-</span>
+          </div>
+          <div class="form-row">
+            <label>TTS 内容:</label>
+            <input type="text" id="tts-content" style="flex:1" placeholder="Hello BabyOS">
+            <button class="btn btn-primary" id="btn-tts-send">发送 TTS (0x44)</button>
+          </div>
+        </div>
+        <div class="section">
+          <h3>物模型 TSL</h3>
+          <div class="form-row">
+            <label>内容:</label>
+            <input type="text" id="tsl-content" style="flex:1" placeholder='{"id":"1","version":"1.0"}'>
+            <button class="btn btn-primary" id="btn-tsl-invoke">调用 (0x09)</button>
+          </div>
+        </div>
+        <div class="section">
+          <h3>输出</h3>
+          <div class="log-area" id="netvoice-log"></div>
+        </div>
+      </div>
+
       <!-- HTTP 调试 -->
       <div id="page-http" class="page">
         <h2>HTTP 调试</h2>
@@ -678,6 +831,7 @@
             <label>端口:</label>
             <input type="text" id="http-port" value="8080" style="width:80px">
             <label><input type="checkbox" id="use-https"> HTTPS (固定自签证书)</label>
+            <label><input type="checkbox" id="http-file-log" checked> 文件日志</label>
             <button class="btn btn-primary" id="btn-http-server">启动服务器</button>
             <span id="http-server-status" class="status-text">未运行</span>
           </div>
@@ -690,10 +844,18 @@
             <input type="text" id="http-content-type" value="application/json" style="width:200px">
             <label>状态码:</label>
             <input type="text" id="http-status-code" value="200" style="width:60px">
+            <span id="http-filelog-status" class="status-text"></span>
           </div>
         </div>
         <div class="section">
-          <h3>触发设备发送 HTTP 请求</h3>
+          <h3>触发 HTTP 请求</h3>
+          <div class="form-row">
+            <label>模式:</label>
+            <select id="http-mode">
+              <option value="protocol">设备协议 (0x50–0x53)</option>
+              <option value="proxy">主机代发 (proxy)</option>
+            </select>
+          </div>
           <div class="form-row">
             <label>URL:</label>
             <input type="text" id="http-url" value="http://192.168.1.100:8080/test" style="flex:1">
@@ -710,9 +872,13 @@
             <input type="text" id="http-body" style="flex:1">
           </div>
           <div class="form-row">
-            <button class="btn" id="btn-http-init">初始化客户端</button>
+            <label>Headers:</label>
+            <input type="text" id="http-headers" style="flex:1" placeholder="Content-Type: application/json&#10;User-Agent: BabyOS">
+          </div>
+          <div class="form-row">
+            <button class="btn" id="btn-http-init">初始化客户端 (0x52)</button>
             <button class="btn btn-primary" id="btn-http-send">发送请求</button>
-            <button class="btn" id="btn-http-deinit">反初始化</button>
+            <button class="btn" id="btn-http-deinit">反初始化 (0x53)</button>
           </div>
         </div>
         <div class="section">
@@ -749,6 +915,21 @@
           </div>
         </div>
         <div class="section">
+          <h3>定时轮询</h3>
+          <p class="hint">每 interval_ms 毫秒执行一次 shell `param &lt;name&gt;`（origin/dev 工具行为）</p>
+          <div class="form-row">
+            <label>参数名:</label>
+            <input type="text" id="param-poll-name" style="width:200px">
+            <label>间隔(ms):</label>
+            <input type="text" id="param-poll-interval" value="1000" style="width:80px">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-param-poll-start">开始轮询</button>
+            <button class="btn" id="btn-param-poll-stop">停止轮询</button>
+            <span id="param-poll-status" class="status-text">未轮询</span>
+          </div>
+        </div>
+        <div class="section">
           <h3>响应输出</h3>
           <div class="log-area" id="param-output"></div>
         </div>
@@ -779,6 +960,63 @@
             <input type="text" id="device-model" readonly style="width:200px">
             <button class="btn" id="btn-get-device-info">获取设备信息</button>
           </div>
+        </div>
+      </div>
+
+      <!-- 配网 Web 调试 (Keil / OpenOCD / 串口日志) -->
+      <div id="page-webconfig" class="page">
+        <h2>配网 Web 调试</h2>
+        <div class="section">
+          <h3>工具配置</h3>
+          <p class="hint">配置保存在 python/device/webconfig_tool.ini（可用环境变量 BABYOS_WEBCONFIG_INI 覆盖）</p>
+          <div class="form-row">
+            <label>工程目录:</label>
+            <input type="text" id="wc-project-dir" style="flex:1">
+          </div>
+          <div class="form-row">
+            <label>Keil UV4:</label>
+            <input type="text" id="wc-keil" style="flex:1">
+          </div>
+          <div class="form-row">
+            <label>OpenOCD 目录:</label>
+            <input type="text" id="wc-openocd" style="flex:1">
+          </div>
+          <div class="form-row">
+            <label>工程文件(相对):</label>
+            <input type="text" id="wc-project-file" style="flex:1">
+            <label>Target:</label>
+            <input type="text" id="wc-target" value="BabyOS" style="width:120px">
+          </div>
+          <div class="form-row">
+            <button class="btn" id="btn-wc-save">保存配置</button>
+            <button class="btn" id="btn-wc-refresh">刷新状态</button>
+          </div>
+          <div class="log-area" id="wc-status-log" style="min-height:80px"></div>
+        </div>
+        <div class="section">
+          <h3>编译 / 烧录 / 串口日志</h3>
+          <div class="form-row">
+            <label>串口:</label>
+            <select id="wc-serial-port"></select>
+            <button class="btn" id="btn-wc-refresh-port">刷新</button>
+            <label>波特率:</label>
+            <input type="text" id="wc-serial-baud" value="115200" style="width:80px">
+            <label>秒:</label>
+            <input type="text" id="wc-log-seconds" value="30" style="width:60px">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" id="btn-wc-build">编译 (Keil/make)</button>
+            <button class="btn" id="btn-wc-flash">烧录 (OpenOCD)</button>
+            <button class="btn" id="btn-wc-log-start">开始日志</button>
+            <button class="btn" id="btn-wc-log-stop">停止日志</button>
+          </div>
+          <div class="form-row">
+            <span id="wc-log-status" class="status-text">日志未运行</span>
+          </div>
+        </div>
+        <div class="section">
+          <h3>工具输出</h3>
+          <div class="log-area" id="wc-output"></div>
         </div>
       </div>
     </main>

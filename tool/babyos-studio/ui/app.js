@@ -842,6 +842,17 @@ function _doNavigateTo(page, projectId) {
   if (page === 'home') {
     updateSerialStatusDisplay();
   }
+
+  // 配网 Web 调试：进入时刷新工具状态 + 串口列表
+  if (page === 'webconfig') {
+    _refreshWebconfigStatus().catch(() => {});
+    _refreshWcPorts().catch(() => {});
+  }
+
+  // 参数页：同步轮询状态
+  if (page === 'params') {
+    _syncParamPollUi().catch(() => {});
+  }
 }
 
 // 绑定菜单点击
@@ -3641,12 +3652,18 @@ document.getElementById('btn-http-server')?.addEventListener('click', async () =
       const content_type = document.getElementById('http-content-type')?.value || 'application/json';
       const status_code = parseInt(document.getElementById('http-status-code')?.value || '200') || 200;
       const https = !!document.getElementById('use-https')?.checked;
+      const file_log = !!document.getElementById('http-file-log')?.checked;
       const r = await apiPost('/api/device/http/start', {
-        port, body, content_type, status_code, https
+        port, body, content_type, status_code, https, file_log
       });
       httpServerRunning = true;
       httpMockBaseUrl = r?.base_url || '';
-      addLog(`HTTP Mock 服务器已启动: ${httpMockBaseUrl} (https=${https})`, 'HTTP');
+      const fl = r?.status?.file_log;
+      if (fl && fl.enabled && fl.path) {
+        const el = document.getElementById('http-filelog-status');
+        if (el) el.textContent = `文件日志: ${fl.path}`;
+      }
+      addLog(`HTTP Mock 服务器已启动: ${httpMockBaseUrl} (https=${https}, file_log=${file_log})`, 'HTTP');
       showToast(`Mock 已启动 ${httpMockBaseUrl}`, '#67c23a');
     }
     await _syncHttpServerUi();
@@ -3670,29 +3687,77 @@ document.getElementById('btn-http-clear')?.addEventListener('click', () => {
   if (logEl) logEl.innerHTML = '';
 });
 
+document.getElementById('btn-http-init')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  _appendHttpLog('>> CMD 0x52 HTTP_INIT', 'HTTP');
+  try {
+    const r = await apiPost('/api/device/http/init', {});
+    _appendHttpLog(`<< ACK device_id=0x${(r.device_id >>> 0).toString(16)} cmd=0x${r.cmd.toString(16)}`, 'HTTP');
+    showToast('设备 HTTP 客户端已初始化', '#67c23a');
+  } catch (e) {
+    _appendHttpLog(`<< init 失败: ${e.message}`, 'HTTP');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-http-deinit')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  _appendHttpLog('>> CMD 0x53 HTTP_DEINIT', 'HTTP');
+  try {
+    const r = await apiPost('/api/device/http/deinit', {});
+    _appendHttpLog(`<< ACK device_id=0x${(r.device_id >>> 0).toString(16)} cmd=0x${r.cmd.toString(16)}`, 'HTTP');
+    showToast('设备 HTTP 客户端已反初始化', '#909399');
+  } catch (e) {
+    _appendHttpLog(`<< deinit 失败: ${e.message}`, 'HTTP');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
 document.getElementById('btn-http-send')?.addEventListener('click', async () => {
-  // 说明:
-  //  1) 设备侧 HTTP 请求由固件 bHttp / 工程代码发起，不是 b_protocol 命令；
-  //     此处无法用协议帧"命令设备发 HTTP"。
-  //  2) 主机侧提供"本机代发请求"用于联调 Mock：POST /api/device/http/proxy
-  //     会真实发出 HTTP 请求到指定 URL（通常是 Mock base_url），Mock 请求日志
-  //     会记录该流量，便于验证 Mock 响应配置。
   const url = document.getElementById('http-url')?.value.trim();
   const method = document.getElementById('http-method')?.value || 'GET';
   const body = document.getElementById('http-body')?.value;
+  const headersRaw = document.getElementById('http-headers')?.value || '';
+  const mode = document.getElementById('http-mode')?.value || 'protocol';
   if (!url) { showToast('请输入 URL', '#e6a23c'); return; }
 
-  // 若 Mock 在运行且 URL 未显式指定到 Mock，自动提示使用 Mock base_url
+  const headers = {};
+  headersRaw.split(/\r?\n/).forEach(line => {
+    const t = line.trim();
+    if (!t) return;
+    const i = t.indexOf(':');
+    if (i > 0) headers[t.slice(0, i).trim()] = t.slice(i + 1).trim();
+  });
+
+  if (mode === 'protocol') {
+    if (!(await _requirePythonSerial())) return;
+    if (httpMockBaseUrl && !url.startsWith(httpMockBaseUrl)) {
+      addLog(`提示: Mock 运行于 ${httpMockBaseUrl}，当前 URL 为 ${url}（设备侧需固件自行请求该地址）`, 'HTTP');
+    }
+    _appendHttpLog(`>> [协议 0x50] ${method} ${url}${body ? ' body=' + body : ''}`, 'HTTP');
+    try {
+      const r = await apiPost('/api/device/http/request', {
+        method, url, headers, body: body || null, timeout: 5.0
+      });
+      _appendHttpLog(`<< [协议 0x51] status=${r.status} body=${(r.body || '').slice(0, 200)}`, 'HTTP');
+      showToast(`设备 HTTP ${r.status}`, r.status < 400 ? '#67c23a' : '#e6a23c');
+    } catch (e) {
+      _appendHttpLog(`<< 协议请求失败: ${e.message}`, 'HTTP');
+      showToast(e.message, '#f56c6c');
+    }
+    return;
+  }
+
+  // 主机侧代理代发（联调 Mock）
   if (httpMockBaseUrl && !url.startsWith(httpMockBaseUrl)) {
-    addLog(`提示: Mock 运行于 ${httpMockBaseUrl}，当前 URL 为 ${url}（设备侧需固件自行请求该地址）`, 'HTTP');
+    addLog(`提示: Mock 运行于 ${httpMockBaseUrl}，当前 URL 为 ${url}`, 'HTTP');
   }
   _appendHttpLog(`>> [主机代发] ${method} ${url}${body ? ' body=' + body : ''}`, 'HTTP');
   try {
     const r = await apiPost('/api/device/http/proxy', {
-      url, method, body: body || null, timeout: 5.0, verify_tls: false
+      url, method, body: body || null, headers, timeout: 5.0, verify_tls: false
     });
     _appendHttpLog(`<< [主机代发] ${r.status_code} len=${r.body_len} body=${(r.body || '').slice(0, 200)}`, 'HTTP');
-    // 拉取 Mock 请求日志（若该请求打到了 Mock）
     try {
       const reqs = await apiGet('/api/device/http/requests');
       if (reqs?.count) {
@@ -3841,6 +3906,514 @@ document.getElementById('btn-get-device-info')?.addEventListener('click', async 
     addLog(`设备信息: version=${r.version} model=${r.model}`, 'Device');
   } catch (e) {
     addLog(`获取设备信息失败: ${e.message}`, 'Device');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 日志落盘 — POST /api/device/log/start|stop
+// ---------------------------------------------------------------------------
+function _logfileLog(text) {
+  const el = document.getElementById('logfile-status');
+  if (el) el.textContent = text;
+}
+
+async function _syncLogFileUi() {
+  try {
+    const st = await apiGet('/api/device/log/status');
+    if (st?.enabled) {
+      _logfileLog(`落盘中: ${st.path}`);
+      const btn = document.getElementById('btn-logfile-start');
+      if (btn) btn.textContent = '落盘中';
+    } else {
+      _logfileLog('未落盘');
+      const btn = document.getElementById('btn-logfile-start');
+      if (btn) btn.textContent = '开始落盘';
+    }
+  } catch (_) { /* backend down */ }
+}
+
+document.getElementById('btn-logfile-pick')?.addEventListener('click', async () => {
+  const p = await window.electronAPI?.dialog.saveFile({
+    filters: [{ name: 'Log Files', extensions: ['log', 'txt'] }]
+  });
+  if (p) document.getElementById('logfile-path').value = p;
+});
+
+document.getElementById('btn-logfile-start')?.addEventListener('click', async () => {
+  const path = document.getElementById('logfile-path')?.value.trim();
+  if (!path) { showToast('请先选择日志文件路径', '#e6a23c'); return; }
+  try {
+    const r = await apiPost('/api/device/log/start', { path });
+    addLog(`日志落盘已启动: ${r.path}`, 'Log');
+    await _syncLogFileUi();
+  } catch (e) {
+    addLog(`日志落盘启动失败: ${e.message}`, 'Log');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-logfile-stop')?.addEventListener('click', async () => {
+  try {
+    const r = await apiPost('/api/device/log/stop', {});
+    addLog(`日志落盘已停止 (was=${JSON.stringify(r.was)})`, 'Log');
+    await _syncLogFileUi();
+  } catch (e) {
+    addLog(`日志落盘停止失败: ${e.message}`, 'Log');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+_syncLogFileUi();
+
+// ---------------------------------------------------------------------------
+// 文件传输 CMD 0x6 — POST /api/device/file/start|stop|merge_folder
+// ---------------------------------------------------------------------------
+function _fileLog(text) {
+  const el = document.getElementById('file-merge-log');
+  if (!el) { addLog(text, 'File'); return; }
+  el.innerHTML += `<div>${escapeHtml(text)}</div>`;
+  el.scrollTop = el.scrollHeight;
+  addLog(text, 'File');
+}
+
+function _setFileProgress(pct, text) {
+  const fill = document.getElementById('file-progress');
+  const label = document.getElementById('file-progress-text');
+  const p = Math.max(0, Math.min(100, pct | 0));
+  if (fill) fill.style.width = p + '%';
+  if (label) label.textContent = text || (p + '%');
+}
+
+document.getElementById('btn-select-file')?.addEventListener('click', async () => {
+  const path = await window.electronAPI?.dialog.openFile();
+  if (path) document.getElementById('file-path').value = path;
+});
+
+document.getElementById('btn-select-folder')?.addEventListener('click', async () => {
+  const path = await window.electronAPI?.dialog.openDirectory();
+  if (path) document.getElementById('file-folder').value = path;
+});
+
+document.getElementById('btn-file-merge')?.addEventListener('click', async () => {
+  const folder = document.getElementById('file-folder')?.value.trim();
+  const out_name = document.getElementById('file-out-name')?.value.trim() || 'allfile.bin';
+  if (!folder) { showToast('请选择目录', '#e6a23c'); return; }
+  try {
+    const r = await apiPost('/api/device/file/merge_folder', { folder_path: folder, out_name });
+    _fileLog(`合并完成: ${r.file_count} 文件 → ${r.path} size=${r.size} crc=0x${(r.crc32 >>> 0).toString(16)}`);
+    document.getElementById('file-path').value = r.path;
+    showToast(`合并 ${r.file_count} 个文件`, '#67c23a');
+  } catch (e) {
+    _fileLog(`合并失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+let _filePollTimer = null;
+async function _pollFileStatus(jobId) {
+  try {
+    const st = await apiGet('/api/device/file/status' + (jobId ? `?job_id=${encodeURIComponent(jobId)}` : ''));
+    const job = st?.job;
+    if (job) {
+      _setFileProgress(job.progress || 0, `${job.progress || 0}% (${job.state})`);
+      if (job.state === 'done') {
+        addLog(`文件传输完成: ok=${job.ok} result=${job.result_code} file=${job.path}`, 'File');
+        showToast(job.ok ? '文件传输成功' : '文件传输失败', job.ok ? '#67c23a' : '#f56c6c');
+        clearInterval(_filePollTimer); _filePollTimer = null;
+        return;
+      }
+      if (job.state === 'error' || job.state === 'cancelled') {
+        addLog(`文件传输结束: ${job.state} ${job.error || ''}`, 'File');
+        showToast(job.error || `文件传输 ${job.state}`, '#f56c6c');
+        clearInterval(_filePollTimer); _filePollTimer = null;
+        return;
+      }
+    }
+  } catch (e) {
+    addLog(`文件传输状态轮询失败: ${e.message}`, 'File');
+  }
+}
+
+document.getElementById('btn-file-start')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const path = document.getElementById('file-path')?.value.trim();
+  const dev_no = parseInt(document.getElementById('file-devno')?.value || '0', 10) || 0;
+  const offset = parseInt(document.getElementById('file-offset')?.value || '0', 10) || 0;
+  if (!path) { showToast('请选择文件', '#e6a23c'); return; }
+  try {
+    const r = await apiPost('/api/device/file/start', { path, dev_no, offset, timeout: 30.0 });
+    addLog(`文件传输已接受: job=${r.job_id} path=${path} dev_no=${dev_no} offset=${offset}`, 'File');
+    _setFileProgress(0, '0% (starting)');
+    if (_filePollTimer) clearInterval(_filePollTimer);
+    _filePollTimer = setInterval(() => _pollFileStatus(r.job_id), 400);
+    showToast('文件传输已启动', '#409eff');
+  } catch (e) {
+    addLog(`文件传输启动失败: ${e.message}`, 'File');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-file-stop')?.addEventListener('click', async () => {
+  try {
+    const r = await apiPost('/api/device/file/stop', { notify_device: true });
+    addLog(`文件传输已停止 (notified=${r.notified_device})`, 'File');
+    if (_filePollTimer) {
+      clearInterval(_filePollTimer); _filePollTimer = null;
+    }
+    _setFileProgress(0, 'stopped');
+  } catch (e) {
+    addLog(`文件传输停止失败: ${e.message}`, 'File');
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 网络 / 语音 / 物模型 — 0x30–0x44 / 0x09
+// ---------------------------------------------------------------------------
+function _netLog(text) {
+  const el = document.getElementById('netvoice-log');
+  if (!el) { addLog(text, 'Net'); return; }
+  el.innerHTML += `<div>${escapeHtml(text)}</div>`;
+  el.scrollTop = el.scrollHeight;
+  addLog(text, 'Net');
+}
+
+document.getElementById('btn-cfgnet-set')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const cfg_type = parseInt(document.getElementById('cfgnet-type')?.value || '0', 10);
+  const ssid = document.getElementById('cfgnet-ssid')?.value || '';
+  const passwd = document.getElementById('cfgnet-passwd')?.value || '';
+  _netLog(`>> CMD 0x30 SETCFGNET type=${cfg_type} ssid=${ssid}`);
+  try {
+    const r = await apiPost('/api/device/net/set_cfgnet', { cfg_type, ssid, passwd });
+    _netLog(`<< ACK device_id=0x${(r.device_id >>> 0).toString(16)} cmd=0x${r.cmd.toString(16)}`);
+    showToast('配网模式已设置', '#67c23a');
+  } catch (e) {
+    _netLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-netinfo-get')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  _netLog('>> CMD 0x31 GET_NETINFO');
+  try {
+    const r = await apiPost('/api/device/net/get_info', {});
+    const ssidEl = document.getElementById('netinfo-ssid');
+    const ipEl = document.getElementById('netinfo-ip');
+    const gwEl = document.getElementById('netinfo-gw');
+    const maskEl = document.getElementById('netinfo-mask');
+    if (ssidEl) ssidEl.value = r.ssid || '';
+    if (ipEl) ipEl.value = r.ip || '';
+    if (gwEl) gwEl.value = r.gateway || r.gw || '';
+    if (maskEl) maskEl.value = r.netmask || r.mask || '';
+    _netLog(`<< ssid=${r.ssid} ip=${r.ip} gw=${r.gateway || r.gw} mask=${r.netmask || r.mask}`);
+  } catch (e) {
+    _netLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+async function _voiceSwitch(on) {
+  if (!(await _requirePythonSerial())) return;
+  _netLog(`>> CMD 0x40 SET_VOICE_SWITCH on=${on}`);
+  try {
+    const r = await apiPost('/api/device/voice/set_switch', { on });
+    _netLog(`<< ACK cmd=0x${r.cmd.toString(16)} on=${r.on}`);
+    showToast(`语音开关已设置 on=${r.on}`, '#67c23a');
+  } catch (e) {
+    _netLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+}
+document.getElementById('btn-voice-on')?.addEventListener('click', () => _voiceSwitch(1));
+document.getElementById('btn-voice-off')?.addEventListener('click', () => _voiceSwitch(0));
+
+document.getElementById('btn-voice-volume-set')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const volume = parseInt(document.getElementById('voice-volume')?.value || '0', 10) || 0;
+  _netLog(`>> CMD 0x41 SET_VOICE_VOLUME volume=${volume}`);
+  try {
+    const r = await apiPost('/api/device/voice/set_volume', { volume });
+    _netLog(`<< ACK volume=${r.volume}`);
+    showToast(`音量已设置 ${r.volume}`, '#67c23a');
+  } catch (e) {
+    _netLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-voice-volume-get')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  _netLog('>> CMD 0x42 GET_VOICE_VOLUME');
+  try {
+    const r = await apiPost('/api/device/voice/get_volume', {});
+    document.getElementById('voice-volume').value = r.volume;
+    _netLog(`<< volume=${r.volume}`);
+  } catch (e) {
+    _netLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-voice-stat')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  _netLog('>> CMD 0x43 GET_VOICE_STAT');
+  try {
+    const r = await apiPost('/api/device/voice/get_stat', {});
+    const names = { 0: 'idle', 1: 'listening', 2: 'playing' };
+    const label = names[r.state] || String(r.state);
+    const el = document.getElementById('voice-stat-text');
+    if (el) el.textContent = `${r.state} (${label})`;
+    _netLog(`<< state=${r.state} (${label})`);
+  } catch (e) {
+    _netLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-tts-send')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const content = document.getElementById('tts-content')?.value || '';
+  if (!content.trim()) { showToast('请输入 TTS 内容', '#e6a23c'); return; }
+  _netLog(`>> CMD 0x44 TTS "${content}"`);
+  try {
+    const r = await apiPost('/api/device/voice/tts', { content, timeout: 2.0 });
+    _netLog(`<< ACK cmd=0x${r.cmd.toString(16)}`);
+    showToast('TTS 内容已发送', '#67c23a');
+  } catch (e) {
+    _netLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-tsl-invoke')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const content = document.getElementById('tsl-content')?.value || '';
+  if (!content.trim()) { showToast('请输入物模型内容', '#e6a23c'); return; }
+  _netLog(`>> CMD 0x09 TSL "${content}"`);
+  try {
+    const r = await apiPost('/api/device/tsl/invoke', { content, timeout: 2.0 });
+    _netLog(`<< ACK cmd=0x${r.cmd.toString(16)} param=${r.param_hex || ''}`);
+    showToast('物模型调用已发送', '#67c23a');
+  } catch (e) {
+    _netLog(`<< 失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 参数定时轮询
+// ---------------------------------------------------------------------------
+async function _syncParamPollUi() {
+  try {
+    const st = await apiGet('/api/device/param/poll/status');
+    const el = document.getElementById('param-poll-status');
+    if (!el) return;
+    if (st?.enabled) {
+      el.textContent = `轮询中 ${st.name} @${st.interval_ms}ms last=${st.last_value ?? '-'}`;
+      el.className = 'status-text running';
+    } else {
+      el.textContent = '未轮询';
+      el.className = 'status-text';
+    }
+  } catch (_) { /* backend down */ }
+}
+
+document.getElementById('btn-param-poll-start')?.addEventListener('click', async () => {
+  if (!(await _requirePythonSerial())) return;
+  const name = document.getElementById('param-poll-name')?.value.trim();
+  const interval_ms = parseInt(document.getElementById('param-poll-interval')?.value || '1000', 10) || 1000;
+  if (!name) { showToast('请输入参数名', '#e6a23c'); return; }
+  try {
+    await apiPost('/api/device/param/poll/start', { name, interval_ms });
+    _paramLog(`>> 开始轮询 param ${name} 每 ${interval_ms}ms`);
+    await _syncParamPollUi();
+  } catch (e) {
+    _paramLog(`<< 轮询启动失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-param-poll-stop')?.addEventListener('click', async () => {
+  try {
+    await apiPost('/api/device/param/poll/stop', {});
+    _paramLog('>> 停止参数轮询');
+    await _syncParamPollUi();
+  } catch (e) {
+    _paramLog(`<< 轮询停止失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 配网 Web 调试 — Keil / OpenOCD / 串口日志
+// ---------------------------------------------------------------------------
+function _wcLog(text) {
+  const el = document.getElementById('wc-output');
+  if (!el) { addLog(text, 'WebConfig'); return; }
+  el.innerHTML += `<div>${escapeHtml(text)}</div>`;
+  el.scrollTop = el.scrollHeight;
+  addLog(text, 'WebConfig');
+}
+
+function _wcFillFromStatus(st) {
+  const cfg = st?.cfg || {};
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val != null && val !== '') el.value = val;
+  };
+  set('wc-project-dir', cfg.project_dir);
+  set('wc-keil', cfg.keil_uv4);
+  set('wc-openocd', cfg.openocd_dir);
+  set('wc-project-file', cfg.project_file_rel);
+  set('wc-target', cfg.target_name);
+  const lines = [
+    `config: ${st.config_path || ''} loaded=${st.config_loaded}`,
+    `Keil UV4: ${cfg.keil_uv4 || ''} exists=${st.keil_uv4_exists}`,
+    `project: ${st.project_file || ''} exists=${st.project_exists}`,
+    `hex: ${st.hex_file || ''}`,
+    `OpenOCD: ${st.openocd_exe || ''} exists=${st.openocd_exists}`,
+    `Makefile: ${st.makefile || ''} exists=${st.makefile_exists}`,
+    `pyserial=${st.pyserial} can_build=${st.can_build} can_flash=${st.can_flash}`,
+  ];
+  const logEl = document.getElementById('wc-status-log');
+  if (logEl) logEl.innerHTML = lines.map(l => `<div>${escapeHtml(l)}</div>`).join('');
+}
+
+async function _refreshWebconfigStatus() {
+  const st = await apiGet('/api/device/webconfig/status');
+  _wcFillFromStatus(st);
+  return st;
+}
+
+async function _refreshWcPorts() {
+  try {
+    const info = await apiGet('/api/device/serial/ports');
+    const select = document.getElementById('wc-serial-port');
+    if (!select) return;
+    select.innerHTML = '';
+    (info.ports || []).forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p;
+      opt.textContent = p;
+      select.appendChild(opt);
+    });
+  } catch (e) {
+    _wcLog(`刷新串口失败: ${e.message}`);
+  }
+}
+
+/**
+ * Collect webconfig form fields.
+ * mode 'save'  → save:true, empty string means CLEAR the field
+ * mode 'action'→ build/flash/log only (save:false, do not wipe config)
+ */
+function _wcCollect(mode) {
+  const save = mode !== 'action';
+  const s = (id) => {
+    const el = document.getElementById(id);
+    return el ? (el.value ?? '') : null;
+  };
+  const n = (id, def) => {
+    const v = parseInt(s(id) || String(def), 10);
+    return Number.isFinite(v) ? v : def;
+  };
+  const payload = {
+    serial_port: s('wc-serial-port') || null,
+    serial_baud: n('wc-serial-baud', 115200),
+    log_seconds: n('wc-log-seconds', 30),
+    save,
+  };
+  if (save) {
+    // Keep raw values (including '') so the API can clear path fields.
+    payload.project_dir = s('wc-project-dir');
+    payload.keil_uv4 = s('wc-keil');
+    payload.openocd_dir = s('wc-openocd');
+    payload.project_file_rel = s('wc-project-file');
+    payload.target_name = s('wc-target');
+  }
+  return payload;
+}
+
+document.getElementById('btn-wc-save')?.addEventListener('click', async () => {
+  try {
+    const body = _wcCollect('save');
+    const r = await apiPost('/api/device/webconfig/status', body);
+    _wcLog(`配置已保存: ${JSON.stringify(r.updated || {})}`);
+    await _refreshWebconfigStatus();
+    showToast('配置已保存', '#67c23a');
+  } catch (e) {
+    _wcLog(`保存配置失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-wc-refresh')?.addEventListener('click', async () => {
+  try {
+    await _refreshWebconfigStatus();
+  } catch (e) {
+    _wcLog(`刷新状态失败: ${e.message}`);
+  }
+});
+
+document.getElementById('btn-wc-refresh-port')?.addEventListener('click', _refreshWcPorts);
+
+document.getElementById('btn-wc-build')?.addEventListener('click', async () => {
+  _wcLog('>> 编译开始 ...');
+  try {
+    const body = Object.assign(_wcCollect('action'), { timeout_sec: 300 });
+    const r = await apiPost('/api/device/webconfig/build', body);
+    _wcLog(`<< 编译成功 tool=${r.tool || 'keil'} hex=${r.hex || ''}`);
+    (r.logs || []).slice(-20).forEach(l => _wcLog(l));
+    showToast('编译成功', '#67c23a');
+  } catch (e) {
+    _wcLog(`<< 编译失败: ${e.message}`);
+    const logs = e.logs || e.data?.logs || [];
+    logs.slice(-20).forEach(l => _wcLog(l));
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-wc-flash')?.addEventListener('click', async () => {
+  _wcLog('>> 烧录开始 ...');
+  try {
+    const body = Object.assign(_wcCollect('action'), { timeout_sec: 120 });
+    const r = await apiPost('/api/device/webconfig/flash', body);
+    _wcLog(`<< 烧录成功 hex=${r.hex || ''}`);
+    (r.logs || []).slice(-20).forEach(l => _wcLog(l));
+    showToast('烧录成功', '#67c23a');
+  } catch (e) {
+    _wcLog(`<< 烧录失败: ${e.message}`);
+    const logs = e.logs || e.data?.logs || [];
+    logs.slice(-20).forEach(l => _wcLog(l));
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-wc-log-start')?.addEventListener('click', async () => {
+  try {
+    const body = _wcCollect('action');
+    body.serial_port = document.getElementById('wc-serial-port')?.value || null;
+    const r = await apiPost('/api/device/webconfig/log/start', body);
+    _wcLog(`<< 日志开始: port=${r.port} baud=${r.baud} seconds=${r.seconds} -> ${r.path}`);
+    const el = document.getElementById('wc-log-status');
+    if (el) el.textContent = `日志中 → ${r.path}`;
+  } catch (e) {
+    _wcLog(`<< 日志启动失败: ${e.message}`);
+    showToast(e.message, '#f56c6c');
+  }
+});
+
+document.getElementById('btn-wc-log-stop')?.addEventListener('click', async () => {
+  try {
+    const r = await apiPost('/api/device/webconfig/log/stop', {});
+    _wcLog(`<< 日志已停止 path=${r.path || ''} bytes=${r.info?.bytes || 0}`);
+    const el = document.getElementById('wc-log-status');
+    if (el) el.textContent = '日志已停止';
+  } catch (e) {
+    _wcLog(`<< 日志停止失败: ${e.message}`);
     showToast(e.message, '#f56c6c');
   }
 });
