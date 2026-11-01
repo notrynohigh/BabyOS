@@ -9,7 +9,7 @@ config HW_VERSION
 
 config FW_VERSION
     int "Firmware version"
-    default 80600
+    default 80700
     help
         Firmware version number.
 
