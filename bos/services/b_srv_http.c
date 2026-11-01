@@ -96,10 +96,7 @@
 typedef enum
 {
     B_HTTP_STA_INIT,
-    B_HTTP_STA_CONNECTING,
-    B_HTTP_STA_CONNECTED,
     B_HTTP_STA_RECV_DATA,
-    B_HTTP_STA_DISCONNECT,
     B_HTTP_STA_DEINIT,
     B_HTTP_STA_DESTROY,
 } bHttpState_t;
@@ -131,6 +128,11 @@ typedef struct
     uint8_t              truncated_wait_iters;
 #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
     bSSLHandle_t ssl;
+    /* HTTPS 握手迭代计数 (跨 PT yield 持久, PT 局部变量 yield 后值不保).
+       对端永远不回 ServerHello (服务端未启动 / 非 TLS 服务) 时 mbedTLS
+       每轮 WANT_READ, 无上限的 while(1) 会死循环空转: state 回不到
+       DEINIT, bHttpRequest 永久 "client busy". 用它做总时长上限. */
+    uint16_t             hs_iters;
 #endif
 } bHttpClientCtx_t;
 #endif
@@ -185,6 +187,7 @@ struct _bHttpServerConn_s
     int                  body_off;   // body 在 rbuf 内的起点 offset
     int                  body_len;   // body 累积长度
     uint8_t              headers_done;  // 0=未完, 1=header 完, 2=message 完
+    uint8_t              uri_too_long;  // _bHttpOnUrl 置位: URL 超 _HTTP_PATH_LEN_MAX, 回 414
     bHttpReqType_t       method;
     /* 响应头: handler 跑完后动态 bMalloc 拼, send 完 bFree */
     char                *resp_hdr;
@@ -193,6 +196,7 @@ struct _bHttpServerConn_s
        每个 sub-task 各持一份, 跨 yield 持久, 不互相串包. */
     int                  send_off;          // header 发送进度, 跨 PT_WAIT_UNTIL yield 保留
     int                  body_send_off;     // body 发送进度, 跨 PT_WAIT_UNTIL yield 保留
+    uint8_t              send_retry;        // 连续 0 字节写入计数, 跨 PT_WAIT_UNTIL yield 保留
     bHttpSendCtx_t       send_ctx;
 };
 #endif
@@ -207,13 +211,12 @@ struct _bHttpServerConn_s
  */
 
 #if (defined(_HTTP_CLIENT_ENABLE) && (_HTTP_CLIENT_ENABLE == 1))
-static bHttpClientCtx_t *s_http_client = NULL;
-B_TASK_CREATE_ATTR(bHttpClientTask);
+// 注: 无 file-static 单例指针 —— 客户端句柄由 bHttpInit 返回给调用方持有,
+// 框架内部不需要全局追踪 (旧 s_http_client 只写不读, 已清除).
 #endif
 
 #if (defined(_HTTP_SERVER_ENABLE) && (_HTTP_SERVER_ENABLE == 1))
 static bHttpServer_t *s_http_server = NULL;
-B_TASK_CREATE_ATTR(bHttpServerTask);
 #endif
 
 /**
@@ -278,20 +281,28 @@ static int _bHttpParseUrl(const char *url, char *host, char *path, uint16_t *por
     {
         end = url + strlen(url);
     }
-    if ((end - start) > _HTTP_HOST_LEN_MAX)
+    // host 长度上限只约束纯 host 部分, 不把端口算进去. 旧实现把 "host:port"
+    // 整体与 _HTTP_HOST_LEN_MAX 比较, 例如 "192.168.3.50:8080" 共 16 字符,
+    // _HTTP_HOST_LEN_MAX 配得小于 16 时带端口的 URL 会莫名解析失败.
+    const char *colon   = memchr(start, ':', (size_t)(end - start));
+    const char *hostend = (colon != NULL) ? colon : end;
+    if ((hostend - start) > _HTTP_HOST_LEN_MAX || hostend == start)
     {
+        // hostend == start: 空 host (如 "http://" / "http:///path"), 拒绝
         return -1;
     }
-    strncpy(host, start, end - start);
-    host[end - start] = '\0';
+    strncpy(host, start, hostend - start);
+    host[hostend - start] = '\0';
 
-    // 解析端口号，并从host中去除端口部分
-    const char *portStart = strchr(host, ':');
-    if (portStart != NULL)
+    // 解析端口号 (colon+1 指向 url 串内 "端口/path" 处, atoi 遇非数字自动停止)
+    if (colon != NULL)
     {
-        *port = atoi(portStart + 1);
-        // 将host截断到':'之前，bConnect只接收纯host
-        host[portStart - host] = '\0';
+        *port = atoi(colon + 1);
+        if (*port == 0)
+        {
+            // 端口缺失或非数字 (如 "http://host:" / "http://host:abc"), 拒绝
+            return -1;
+        }
     }
     else
     {
@@ -334,6 +345,9 @@ static int _bHttpBuildRequest(bHttpClientCtx_t *http, bHttpReqType_t type, const
             break;
         case B_HTTP_DELETE:
             method_str = "DELETE";
+            break;
+        case B_HTTP_HEAD:
+            method_str = "HEAD";   // FIX #8: HEAD 请求 (无 body)
             break;
         case B_HTTP_GET:
         default:
@@ -406,7 +420,11 @@ static void _bHttpResult(bHttpClientCtx_t *http, bHttpEvent_t evt, void *param)
     if (evt < 0 || evt == B_HTTP_EVENT_RECV_DATA || evt == B_HTTP_EVENT_DESTROY)
     {
         // 流式模型: 一帧请求/响应完成后释放动态 buf
-        if (http->request != NULL)
+        //
+        // request 保留不释放: 它是 autoloop 自动重试的请求快照 (方法/head/body
+        // 全在里面), 重试路径原样重发即可. 仅在 DESTROY (bHttpDeInit) 时释放;
+        // 外部再次 bHttpRequest 时由 _bHttpBuildRequest 释放旧的.
+        if (evt == B_HTTP_EVENT_DESTROY && http->request != NULL)
         {
             bFree(http->request);
             http->request = NULL;
@@ -486,11 +504,29 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
             if (http->sockfd > 0)
             {
                 SOCKET_SHUTDOWN(pt, http->sockfd);
-                _bHttpResult(http, B_HTTP_EVENT_DESTROY, NULL);
             }
+            // FIX #6: 无论 sockfd 是否有效都调 _bHttpResult:
+            //   - 回调能收到 B_HTTP_EVENT_DESTROY 事件
+            //   - _bHttpResult(DESTROY) 负责释放残留的 request/precv/ssl
+            // 之前 sockfd<=0 时直接 bFree(http), request/precv 会泄漏.
+            _bHttpResult(http, B_HTTP_EVENT_DESTROY, NULL);
             bTaskRemove(http->task_id);
             bFree(http);
             break;
+        }
+
+        // 硬性防护: 任何情况下 host/path 为空都不允许进入后续连接/发送流程.
+        //   - request == NULL: bHttpRequest 半途失败 (build OOM / ssl init 失败),
+        //     顶层 16s 超时落到 bSocket/bConnect 成功后会对 NULL request 调
+        //     strlen -> 崩溃.
+        //   - host[0] == '\0': host/path 被清空但 request 还挂旧快照的异常组合
+        //     (如解析失败后快照未释放的历史路径). 此时跑流程只会对空 host 发
+        //     起无效连接并打 [HTTP] http://:0, 永不恢复 idle.
+        // 注意: 正常 autoloop 重试不受此防护影响 —— 能走到这里的 autoloop 路径
+        // 必然 host 和 request 同时有效.
+        if (http->request == NULL || http->host[0] == '\0')
+        {
+            continue;  // 回到顶部 16s 等待, 不发起空连接
         }
 
         http->sockfd = bSocket(B_TRANS_CONN_TCP, _bHttpTransCb, http);
@@ -543,6 +579,17 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
 #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
         if (http->is_https && http->ssl != NULL)
         {
+            // CRIT-HTTPS-HS-TIMEOUT fix: 旧实现 while(1) 无迭代上限. 对端不是
+            // TLS server (服务端未启动 / 普通 TCP 服务) 时, ClientHello 发出后
+            // 永远收不到 ServerHello, mbedTLS 每轮返回 WANT_READ ->
+            // bSSLHandshake 返回 1 -> 10ms 空转死循环. state 永远回不到 DEINIT,
+            // 业务层每次 bHttpRequest 都撞 "client busy"; 且 _bHttpTransCb 忽略
+            // B_TRANS_DISCONNECT, 对端 close 也救不回来 (断开后 bRecv 对 empty
+            // recv_head 返回 0, mbedTLS 仍报 WANT_READ).
+            // 修复: 加总时长上限, 超时按 B_HTTP_EVENT_SSL_FAIL 走 http_restart,
+            // 正常释放 socket/ssl + 回调 + autoloop 15s 后重试.
+            http->hs_iters   = 0;
+            const int MAX_HS_ITER = 1000;  // 1000 * 10ms = 10s 上限
             while (1)
             {
                 ret = bSSLHandshake(http->ssl, http->sockfd);
@@ -556,6 +603,15 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
                 else if (ret == 0)
                 {
                     break;
+                }
+
+                http->hs_iters++;
+                if (http->hs_iters >= MAX_HS_ITER)
+                {
+                    b_log_w("[HTTP] ssl handshake timeout\r\n");
+                    event = B_HTTP_EVENT_SSL_FAIL;
+                    param = NULL;
+                    goto http_restart;
                 }
 
                 // 握手进行中，固定让出 10ms
@@ -656,7 +712,16 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
         else
 #endif
         {
-            bSend(http->sockfd, (uint8_t *)http->request, strlen(http->request), NULL);
+            // FIX #5: 检查 bSend 返回值. 之前丢弃返回值, 发送失败 (ret<=0) 时会
+            // 傻等 5s RECV_TIMEOUT 才报错.
+            int sret = bSend(http->sockfd, (uint8_t *)http->request, strlen(http->request), NULL);
+            if (sret <= 0)
+            {
+                b_log_e("[HTTP] send request failed: %d\r\n", sret);
+                event = B_HTTP_EVENT_ERROR;
+                param = NULL;
+                goto http_restart;
+            }
         }
 
         http->parser.data = http;
@@ -855,8 +920,8 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
                         param = NULL;
                         goto http_restart;
                     }
-                    // 非 HTTPS 路径 bRecv 一次就够, 退出内层.
-                    break;
+                    // 与 HTTPS 共用下方 parse 块. 内层循环自然 drain 到 recv_head
+                    // 空 (readlen==0 走 else break) 再回外层 PT_WAIT_UNTIL 等可读.
                 }
 
                 if (readlen > 0)
@@ -871,8 +936,14 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
                         // 整个 HTTP 响应已收完. 跳出内层, 走 RECV_DATA.
                         break;
                     }
-                    if (parse_len < 0)
+                    // FIX #1: http_parser_execute 返回 size_t 的已消费字节数, 出错时
+                    // 返回 < readlen (而非负数), 原判断 parse_len < 0 恒为假, 协议错
+                    // 响应永远不会即时上报 ERROR. 改为与 truncated 路径 (pl2<rl2) 和
+                    // 服务端 (parsed!=rlen) 一致的消费数比较 + errno 检查.
+                    if (parse_len < (int)readlen && http->parser.http_errno != HPE_OK)
                     {
+                        b_log_e("[HTTP] parse err errno=%d parsed=%d/%u\r\n",
+                                http->parser.http_errno, parse_len, (unsigned)readlen);
                         event = B_HTTP_EVENT_ERROR;
                         param = NULL;
                         goto http_restart;
@@ -941,8 +1012,9 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
         // 旧代码靠 _bHttpResult 内部置 state，但如果走 event==B_HTTP_EVENT_CONNECTED
         // 分支，_bHttpResult 不会清 state，导致 bTaskRestart 后下一轮顶部读到非
         // DEINIT，直接重连，而 bHttpRequest 处却卡在 busy。
-        // 这里先关闭 socket、重置状态，再 _bHttpResult 回调。回调里如果判定要
-        // 释放资源（非 CONNECTED 路径），会把 request/precv 等清空。
+        // 这里先关闭 socket、重置状态，再 _bHttpResult 回调。回调里会释放 precv/
+        // ssl 等资源; request 保留作为 autoloop 自动重试的请求快照 (见 FIX #10),
+        // 仅 DESTROY 时释放.
         if (http->sockfd > 0)
         {
             SOCKET_SHUTDOWN(pt, http->sockfd);
@@ -967,16 +1039,20 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
             // 重试, 让 PT 顶部继续走.
             if (http->state == B_HTTP_STA_DEINIT)
             {
-                // CRIT-HTTPS-AUTOLOOP-SSL fix: 上一次循环结束时 _bHttpResult 调
-                // bSSLDeinit(http->ssl) 并把 http->ssl = NULL. autoloop 只调
-                // _bHttpBuildRequest 不走 bHttpRequest, ssl 不会被重建. 下次
-                // CIPSTART/CIPSEND 成功后, _bHttpClientTask 检测 http->ssl == NULL
-                // 走明文路径, HTTPS 请求变明文 HTTP 发出去, server 立即 CLOSED.
-                // 修复: autoloop 重新走完整初始化路径 — 调 _bHttpBuildRequest
-                // (URL/host 不变, 重建请求串) + bSSLInit (重建 SSL ctx). 这样
-                // 与外部 bHttpRequest 路径行为对齐, 不会丢 SSL 上下文.
-                if (_bHttpBuildRequest(http, B_HTTP_GET, NULL, NULL) == 0)
+                // FIX #10: 旧 autoloop 调 _bHttpBuildRequest(http, B_HTTP_GET, NULL, NULL)
+                // 重发, 原请求的方法/自定义 head/body 全部丢失. 现在 request 在
+                // _bHttpResult 里保留为"上次请求快照", 这里原样重发即可.
+                // request 为 NULL 属于异常 (如上次 bHttpRequest 半途失败已释放),
+                // 跳过本次自动重试, 等下一轮周期.
+                if (http->request != NULL)
                 {
+                    // CRIT-HTTPS-AUTOLOOP-SSL fix: 上一次循环结束时 _bHttpResult 调
+                    // bSSLDeinit(http->ssl) 并把 http->ssl = NULL. autoloop 不走
+                    // bHttpRequest, ssl 不会被重建. 下次 CIPSTART/CIPSEND 成功后,
+                    // _bHttpClientTask 检测 http->ssl == NULL 走明文路径, HTTPS 请求
+                    // 变明文 HTTP 发出去, server 立即 CLOSED.
+                    // 修复: autoloop 重新走完整初始化路径 — bSSLInit (重建 SSL ctx).
+                    // 这样与外部 bHttpRequest 路径行为对齐, 不会丢 SSL 上下文.
 #if (defined(_SSL_ENABLE) && (_SSL_ENABLE == 1))
                     if (http->is_https)
                     {
@@ -992,15 +1068,9 @@ PT_THREAD(_bHttpClientTask)(struct pt *pt, void *arg)
                         {
                             // bSSLInit 失败 (mbedtls_ssl_setup 或前置步骤 OOM). 不
                             // bTaskRestart — 那样会让 state 永远停在 DEINIT, 下一次
-                            // 顶层 PT_WAIT_UNTIL_FOREVER 永远挂起, 整个 HTTP client
-                            // 死锁. 正确做法: 释放 request, 让顶层循环跑下一轮, state
-                            // 保持 DEINIT → 等下一轮 _HTTP_AUTOLOOP_INTERVAL_MS 再试.
+                            // 顶层 PT_WAIT_UNTIL 16s 超时后永远挂起, 整个 HTTP client
+                            // 死锁. 正确做法: 保持 state=DEINIT, 让顶层循环跑下一轮.
                             b_log_e("[HTTP] ssl init failed (autoloop)\r\n");
-                            if (http->request != NULL)
-                            {
-                                bFree(http->request);
-                                http->request = NULL;
-                            }
                             // 立即做一次 15s delay (退避), 避免顶层 PT_WAIT_UNTIL
                             // 16s 超时后立刻又触发本路径形成 CPU 100% 忙等. 让 task
                             // 让出 CPU 给其他 polling func 跑, 然后顶层挂起等下一次
@@ -1174,12 +1244,14 @@ static int _bHttpOnUrl(http_parser *p, const char *at, size_t length)
 {
     bHttpConnCtx_t *ctx = (bHttpConnCtx_t *)p->data;
     // http_parser 可能在 url 没解析完前就多次调 on_url (例如 chunked 收包).
-    // 累积追加到 url_buf. 总长超过 _HTTP_PATH_LEN_MAX 返 414.
+    // 累积追加到 url_buf. 总长超过 _HTTP_PATH_LEN_MAX 时置 uri_too_long 标志
+    // 并返 1 (parser 报 HPE_CB_url 错), 由接收循环据此回 414.
     if (ctx->url_buf[0] == '\0')
     {
         // 第一次: 整段 url (在 rbuf 内的指针)
         if (length >= sizeof(ctx->url_buf))
         {
+            ctx->uri_too_long = 1;
             return 1;
         }
         memcpy(ctx->url_buf, at, length);
@@ -1191,6 +1263,7 @@ static int _bHttpOnUrl(http_parser *p, const char *at, size_t length)
         size_t cur = strlen(ctx->url_buf);
         if (cur + length >= sizeof(ctx->url_buf))
         {
+            ctx->uri_too_long = 1;
             return 1;
         }
         memcpy(ctx->url_buf + cur, at, length);
@@ -1206,6 +1279,7 @@ static int _bHttpOnHeadersComplete(http_parser *p)
     switch (p->method)
     {
         case 1: ctx->method = B_HTTP_GET; break;
+        case 2: ctx->method = B_HTTP_HEAD; break;  // FIX #8: HEAD 不再落 GET, 响应不回 body
         case 3: ctx->method = B_HTTP_POST; break;
         case 4: ctx->method = B_HTTP_PUT; break;
         case 0: ctx->method = B_HTTP_DELETE; break;
@@ -1251,7 +1325,9 @@ static void _bHttpServerAcceptCb(bTransEvent_t event, void *param, void *arg)
     for (int i = 0; i < SERVER_MAX_CONNECTIONS; i++)
     {
         uint8_t idx = (s_http_rr + i) % SERVER_MAX_CONNECTIONS;
-        if (SOCKFD_IS_INVALID(server->slots[idx].client_fd))
+        // FIX #9: slot->ctx == NULL 表示 sub-task 创建失败 (OOM 提前 break) 或
+        // 已回收, 该槽没有 worker 服务, 不能接受连接 (否则连接会挂到 stop 才释放).
+        if (SOCKFD_IS_INVALID(server->slots[idx].client_fd) && server->slots[idx].ctx != NULL)
         {
             server->slots[idx].client_fd = client_fd;
             s_http_rr                    = (idx + 1) % SERVER_MAX_CONNECTIONS;
@@ -1337,6 +1413,7 @@ PT_THREAD(_bHttpClientConnTask)(struct pt *pt, void *arg)
         ctx->resp_hdr     = NULL;
         ctx->resp_hdr_len = 0;
         ctx->headers_done = 0;
+        ctx->uri_too_long = 0;
         ctx->method       = B_HTTP_GET;
         ctx->url_buf[0]   = '\0';
         http_parser_init(&ctx->parser, HTTP_REQUEST);
@@ -1350,7 +1427,15 @@ PT_THREAD(_bHttpClientConnTask)(struct pt *pt, void *arg)
         // 3. 流式接收: rbuf 按需扩张, http_parser 同步增量解析
         while (ctx->headers_done < 2)
         {
-            PT_WAIT_UNTIL(pt, bSockIsReadable(ctx->client_fd) == 1, 5000);
+            // FIX #3: stop_requested 纳入等待条件, 服务停止时不必干等 5s 超时,
+            // 也不用等到帧处理完才自检退出. server task 停止流程会先 bShutdown
+            // 活跃 client_fd, 这里条件同样会醒.
+            PT_WAIT_UNTIL(pt, bSockIsReadable(ctx->client_fd) == 1 || ctx->server->stop_requested,
+                          5000);
+            if (ctx->server->stop_requested)
+            {
+                goto conn_done;  // 服务停止, 尽快让出并走向自检退出
+            }
             if (PT_WAIT_IS_TIMEOUT(pt))
             {
                 b_log_w("[HTTPSRV] recv timeout, slot=%p\r\n", ctx->slot);
@@ -1396,15 +1481,15 @@ PT_THREAD(_bHttpClientConnTask)(struct pt *pt, void *arg)
             if ((unsigned)parsed != (unsigned)rlen &&
                 ctx->parser.http_errno != HPE_OK)
             {
-                // 解析出错: 发 400
+                // 解析出错: URL 超长 (_bHttpOnUrl 置位) 回 414, 其余协议错回 400
                 b_log_w("[HTTPSRV] parse err, slot=%p errno=%d parsed=%u/%u\r\n",
                         ctx->slot, ctx->parser.http_errno,
                         (unsigned)parsed, (unsigned)ctx->rbuf_len);
                 bHttpResponse_t err = {
-                    .status_code  = 400,
+                    .status_code  = ctx->uri_too_long ? 414 : 400,
                     .content_type = "text/plain",
-                    .body         = "Bad Request",
-                    .body_len     = 11,
+                    .body         = ctx->uri_too_long ? "URI Too Long" : "Bad Request",
+                    .body_len     = ctx->uri_too_long ? 12 : 11,
                 };
                 // PT 上下文调 PT 版: 内部 PT_WAIT_UNTIL 让出, 不再 busy-wait.
                 // REVIEW-V3 #1 fix: per-conn send ctx (见上行注释).
@@ -1450,18 +1535,23 @@ PT_THREAD(_bHttpClientConnTask)(struct pt *pt, void *arg)
 
         // 6. inline send, PT_WAIT_UNTIL 让出 CPU
         //    发送进度必须跨 yield 保留, 放到 ctx 字段中, 而不是局部变量.
-        ctx->send_off = 0;
+        //    retry 同理 (PT 局部变量跨 yield 值会丢, 停滞保护会失效).
+        ctx->send_off  = 0;
+        ctx->send_retry = 0;
         if (ctx->resp_hdr && ctx->resp_hdr_len > 0)
         {
-            uint8_t retry = 0;
             while (ctx->send_off < ctx->resp_hdr_len)
             {
-                PT_WAIT_UNTIL(pt, bSockIsWriteable(ctx->client_fd) == 1,
+                PT_WAIT_UNTIL(pt, bSockIsWriteable(ctx->client_fd) == 1 || ctx->server->stop_requested,
                               _HTTP_SEND_CHUNK_TIMEOUT_MS);
                 if (PT_WAIT_IS_TIMEOUT(pt))
                 {
                     b_log_w("[HTTPSRV] send header timeout, slot=%p\r\n", ctx->slot);
                     break;
+                }
+                if (ctx->server->stop_requested)
+                {
+                    break;  // FIX #3: 服务停止, 不再写
                 }
                 uint16_t w = 0;
                 int ret = bSend(ctx->client_fd, (uint8_t *)ctx->resp_hdr + ctx->send_off,
@@ -1474,26 +1564,35 @@ PT_THREAD(_bHttpClientConnTask)(struct pt *pt, void *arg)
                 if (w > 0)
                 {
                     ctx->send_off += w;
-                    retry = 0;
+                    ctx->send_retry = 0;
                 }
-                else if (++retry >= 5)
+                else if (++ctx->send_retry >= 5)
                 {
                     b_log_w("[HTTPSRV] send header stalled, slot=%p\r\n", ctx->slot);
                     break;
                 }
             }
         }
-        if (resp.body && resp.body_len > 0 && ctx->send_off >= ctx->resp_hdr_len)
+        // FIX #4: 原条件 ctx->send_off >= ctx->resp_hdr_len 在 header 构建失败
+        // (resp_hdr==NULL/len==0) 时为 0>=0 恒真, 会把 body 当裸 TCP 数据发出.
+        // 现在要求 header 必须构建成功. FIX #8: HEAD 请求只回 header (含正确
+        // Content-Length), 不回 body.
+        if (resp.body && resp.body_len > 0 && ctx->resp_hdr != NULL &&
+            ctx->send_off >= ctx->resp_hdr_len && ctx->method != B_HTTP_HEAD)
         {
             ctx->body_send_off = 0;
-            uint8_t retry = 0;
+            ctx->send_retry = 0;
             while (ctx->body_send_off < (int)resp.body_len)
             {
-                PT_WAIT_UNTIL(pt, bSockIsWriteable(ctx->client_fd) == 1,
+                PT_WAIT_UNTIL(pt, bSockIsWriteable(ctx->client_fd) == 1 || ctx->server->stop_requested,
                               _HTTP_SEND_CHUNK_TIMEOUT_MS);
                 if (PT_WAIT_IS_TIMEOUT(pt))
                 {
                     b_log_w("[HTTPSRV] send body timeout, slot=%p\r\n", ctx->slot);
+                    break;
+                }
+                if (ctx->server->stop_requested)
+                {
                     break;
                 }
                 uint16_t w = 0;
@@ -1507,9 +1606,9 @@ PT_THREAD(_bHttpClientConnTask)(struct pt *pt, void *arg)
                 if (w > 0)
                 {
                     ctx->body_send_off += w;
-                    retry = 0;
+                    ctx->send_retry = 0;
                 }
-                else if (++retry >= 5)
+                else if (++ctx->send_retry >= 5)
                 {
                     b_log_w("[HTTPSRV] send body stalled, slot=%p\r\n", ctx->slot);
                     break;
@@ -1642,6 +1741,14 @@ PT_THREAD(_bHttpServerTask)(struct pt *pt, void *arg)
                 bShutdown(server->slots[i].client_fd);
                 server->slots[i].client_fd = -1;
             }
+            // FIX #3: 活跃连接已被 sub-task 从 slot 取走 (slot->client_fd == -1),
+            // 扫 slot 看不到它, 必须从 ctx 侧 shutdown, 否则 sub-task 卡在 recv
+            // 等到 5s 超时, 且 1s 兜底强制回收后该 trans 句柄永久泄漏.
+            if (server->slots[i].ctx != NULL &&
+                !SOCKFD_IS_INVALID(server->slots[i].ctx->client_fd))
+            {
+                bShutdown(server->slots[i].ctx->client_fd);
+            }
         }
 
         // 等 sub-task 自报停 (worker = NULL). 单核 PT 调度下需要多次 bExec()
@@ -1728,7 +1835,6 @@ bHttpFd_t bHttpInit(pHttpCb_t cb, void *user_data)
         return -3;
     }
 
-    s_http_client = http;
     return (bHttpFd_t)(intptr_t)http;
 }
 
@@ -1754,7 +1860,15 @@ int bHttpRequest(bHttpFd_t httpfd, bHttpReqType_t type, const char *url, const c
 
     if (_bHttpParseUrl(url, http->host, http->path, &http->port, &http->is_https) < 0)
     {
-        b_log_e("[HTTP] parse url failed\r\n");
+        b_log_e("[HTTP] parse url failed: %s\r\n", url);
+        // host/path 已被上面的 memset 清空, 而 request 可能还保留上一次请求成功后的
+        // autoloop 重试快照 (非 NULL). 不释放的话, 顶层防护 (request==NULL) 拦不住,
+        // 会每 16s 对空 host 空转一圈并打 [HTTP] http://:0, 永不恢复 idle.
+        if (http->request != NULL)
+        {
+            bFree(http->request);
+            http->request = NULL;
+        }
         return -3;
     }
 
@@ -1794,7 +1908,6 @@ int bHttpDeInit(bHttpFd_t httpfd)
     }
     bHttpClientCtx_t *http = (bHttpClientCtx_t *)(intptr_t)httpfd;
     http->state            = B_HTTP_STA_DESTROY;
-    s_http_client          = NULL;
     return 0;
 }
 #endif
@@ -1931,6 +2044,7 @@ char bHttpSendResponsePTEx(struct pt *pt, int client_fd, const bHttpResponse_t *
     ctx->off       = 0;
     ctx->body_off  = 0;
     ctx->timed_out = 0;
+    ctx->retry     = 0;
 
     // 2. 发 header (PT_WAIT_UNTIL 让出 CPU, 不 busy-wait)
     while (ctx->off < ctx->header_len)
@@ -1944,15 +2058,32 @@ char bHttpSendResponsePTEx(struct pt *pt, int client_fd, const bHttpResponse_t *
         uint16_t wlen = 0;
         uint16_t chunk = (uint16_t)(ctx->header_len - ctx->off);
         int ret = bSend(client_fd, (uint8_t *)ctx->header_buf + ctx->off, chunk, &wlen);
+        // FIX #2: peer RST 后 bSend 返回 -1, 原实现只判 ret>0&&wlen>0, off 不前进,
+        // 若 bSockIsWriteable 恒真会 PT 死循环饿死调度器. 现在 ret<0 立即结束,
+        // 连续 0 字节写入 retry>=5 次也结束 (retry 是 ctx 字段, 跨 yield 持久).
+        if (ret < 0)
+        {
+            b_log_w("[HTTPSRV] PTEx send header err %d\r\n", ret);
+            ctx->timed_out = 1;
+            break;
+        }
         if (ret > 0 && wlen > 0)
         {
             ctx->off += wlen;
+            ctx->retry = 0;
+        }
+        else if (++ctx->retry >= 5)
+        {
+            b_log_w("[HTTPSRV] PTEx send header stalled\r\n");
+            ctx->timed_out = 1;
+            break;
         }
     }
 
     // 3. 发 body (resp->body 由调用方保证生命周期: handler 路径下要保留到返回后)
     if (resp->body && resp->body_len > 0 && !ctx->timed_out)
     {
+        ctx->retry = 0;
         while (ctx->body_off < (int)resp->body_len)
         {
             PT_WAIT_UNTIL(pt, bSockIsWriteable(client_fd) == 1, _HTTP_SEND_CHUNK_TIMEOUT_MS);
@@ -1964,9 +2095,23 @@ char bHttpSendResponsePTEx(struct pt *pt, int client_fd, const bHttpResponse_t *
             uint16_t wlen = 0;
             uint16_t chunk = (uint16_t)(resp->body_len - ctx->body_off);
             int ret = bSend(client_fd, (uint8_t *)(resp->body + ctx->body_off), chunk, &wlen);
+            // FIX #2: 同 header 循环, ret<0 / 停滞保护
+            if (ret < 0)
+            {
+                b_log_w("[HTTPSRV] PTEx send body err %d\r\n", ret);
+                ctx->timed_out = 1;
+                break;
+            }
             if (ret > 0 && wlen > 0)
             {
                 ctx->body_off += wlen;
+                ctx->retry = 0;
+            }
+            else if (++ctx->retry >= 5)
+            {
+                b_log_w("[HTTPSRV] PTEx send body stalled\r\n");
+                ctx->timed_out = 1;
+                break;
             }
         }
     }

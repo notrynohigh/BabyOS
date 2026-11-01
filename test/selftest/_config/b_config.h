@@ -14,6 +14,7 @@
 #define WDT_TIMEOUT_S 60
 #define VENDOR_UBUNTU 1
 #define _BOS_ALGO_ENABLE 1
+#define _ALGO_ML_ENABLE 1
 #define _ALGO_BASE64_ENABLE 1
 #define _ALGO_SHA1_ENABLE 1
 #define _ALGO_SORT_ENABLE 1
