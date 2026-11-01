@@ -1,2 +1,0 @@
-PyQt5>=5.12
-pyserial>=3.0

@@ -32,14 +32,9 @@ $(SOURCE_ROOT)/bos/services/*.c \
 $(SOURCE_ROOT)/bos/hal/*.c \
 $(SOURCE_ROOT)/bos/modules/*.c \
 $(SOURCE_ROOT)/bos/utils/*.c \
-$(SOURCE_ROOT)/bos/thirdparty/fatfs/*.c \
-$(SOURCE_ROOT)/bos/thirdparty/flexiblebutton/*.c \
-$(SOURCE_ROOT)/bos/thirdparty/littlefs/*.c \
-$(SOURCE_ROOT)/bos/drivers/sfud/*.c \
-$(SOURCE_ROOT)/bos/thirdparty/ugui/*.c \
-$(SOURCE_ROOT)/bos/thirdparty/coremark/*.c \
 $(SOURCE_ROOT)/bos/thirdparty/cjson/*.c  \
-$(SOURCE_ROOT)/bos/thirdparty/http-parser/*.c
+$(SOURCE_ROOT)/bos/thirdparty/http-parser/*.c \
+$(SOURCE_ROOT)/bos/thirdparty/mbedtls/bos_mbedtls/*.c
 
 BOS_DRV_SOURCE_DIR = \
 $(SOURCE_ROOT)/bos/drivers/b_drv_testmac.c

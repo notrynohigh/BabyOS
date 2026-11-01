@@ -1,6 +1,9 @@
-#ifndef __B_CONFIG_H__ 
-#define __B_CONFIG_H__ 
+#ifndef __B_CONFIG_H__
+#define __B_CONFIG_H__
 
+#define LFS_CONFIG "b_lfs_config.h"
+
+#define _UNITY_ENABLE 1
 
 #define HW_VERSION 211212
 #define FW_VERSION 80106
@@ -11,6 +14,7 @@
 #define WDT_TIMEOUT_S 60
 #define VENDOR_UBUNTU 1
 #define _BOS_ALGO_ENABLE 1
+#define _ALGO_ML_ENABLE 1
 #define _ALGO_BASE64_ENABLE 1
 #define _ALGO_SHA1_ENABLE 1
 #define _ALGO_SORT_ENABLE 1
@@ -50,7 +54,9 @@
 #define _ERROR_MANAGE_ENABLE 1
 #define _FS_ENABLE 1
 #define FS_FATFS 1
-#define FS_MOUNT_NUMBER 1
+#define FS_LITTLEFS 1
+#define FS_MOUNT_NUMBER 2
+#define _FS_MKFS_ENABLE 1
 #define FS_BLOCK_SIZE 1
 #define ERROR_Q_LENGTH 10
 #define _MODBUS_ENABLE 1
@@ -140,8 +146,9 @@
 #define _BOS_SERVICES_ENABLE 1
 #define _PROTOCOL_SERVICE_ENABLE 1
 #define _TCPIP_SERVICE_ENABLE 1
-#define _TCPIP_SERVICE_HTTP_ENABLE 1
-#define _TCPIP_SERVICE_NTP_ENABLE 1
+#define _HTTP_SERVICE_ENABLE 1
+#define _HTTP_CLIENT_ENABLE 1
+#define _NTP_SERVICE_ENABLE 1
 #define _NTP_SERVER_1 "ntp1.aliyun.com"
 #define _NTP_SERVER_2 "ntp2.aliyun.com"
 #define _NTP_SERVER_3 "ntp3.aliyun.com"

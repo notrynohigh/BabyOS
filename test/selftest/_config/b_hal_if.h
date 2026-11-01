@@ -26,8 +26,8 @@
     }
 
 #define HAL_KEY_IF                                                                              \
-    {B_HAL_GPIOC, B_HAL_PIN4, 0}, {B_HAL_GPIOB, B_HAL_PIN10, 0}, {B_HAL_GPIOC, B_HAL_PIN13, 0}, \
-        {B_HAL_GPIOA, B_HAL_PIN0, 0}
+    {B_HAL_GPIOC, B_HAL_PIN4, 1}, {B_HAL_GPIOB, B_HAL_PIN10, 1}, {B_HAL_GPIOC, B_HAL_PIN13, 1}, \
+        {B_HAL_GPIOA, B_HAL_PIN0, 1}
 
 #define HAL_DS18B20_IF {B_HAL_GPIOA, B_HAL_PIN4}
 

@@ -1,8 +1,11 @@
-#选择厂商
+# MCU Configuration
+menu "MCU Configuration"
+
+#======================================== Vendor Selection ========================================
 choice
-    prompt "Select Vendor"
+    prompt "Select MCU Vendor"
 config VENDOR_UBUNTU
-    bool "ubuntu"
+    bool "Ubuntu (x86 simulation)"
 config VENDOR_ST
     bool "STMicroelectronics"
 config VENDOR_NATION
@@ -12,133 +15,168 @@ config VENDOR_MM
 config VENDOR_HC
     bool "HDSC"
 config VENDOR_WCH
-    bool "WinChipHead"
+    bool "WinChipHead (WCH)"
 config VENDOR_HOLTEK
-    bool "holtek"
+    bool "Holtek"
 config VENDOR_ARTERY
     bool "Artery"
 config VENDOR_HK
-    bool "HK"  
+    bool "HK (Hangshun)"
 config VENDOR_ESPRESSIF
-    bool "ESPRESSIF" 
+    bool "Espressif (ESP32)"
 config VENDOR_PY
-    bool "PY"  	
+    bool "Puya (Puyuan)"
 config VENDOR_CW
-    bool "CW"  
+    bool "Chipstar (Xinyuan)"
 endchoice
 
-#选择ST的芯片
+#======================================== ST Chips ========================================
+if VENDOR_ST
+
 choice
     prompt "Select ST Chip"
-    depends on VENDOR_ST
 config STM32F10X_LD
-    bool "STM32F10X_LD"
+    bool "STM32F10x LD (Low Density)"
 config STM32F10X_MD
-    bool "STM32F10X_MD"
+    bool "STM32F10x MD (Medium Density)"
 config STM32F10X_HD
-    bool "STM32F10X_HD"
+    bool "STM32F10x HD (High Density)"
 config STM32F10X_CL
-    bool "STM32F10X_CL"
+    bool "STM32F10x CL (Connectivity Line)"
 config STM32G0X0
-    bool "STM32G0X0"
+    bool "STM32G0x0"
 config STM32L41X_L46X
-    bool "STM32L41X_L46X"
+    bool "STM32L41x/L46x"
 config STM32F40X
-    bool "STM32F40X"  
+    bool "STM32F40x"
 config STM32G4XX
-    bool "STM32G4XX"
+    bool "STM32G4xx"
 config STM32H5XX
-    bool "STM32H5XX"    	
+    bool "STM32H5xx"
 config STM32L0X3
-    bool "STM32L0X3"   
+    bool "STM32L0x3"
 config STM32G0B1
-    bool "STM32G0B1"	
+    bool "STM32G0B1"
 endchoice
 
-#选择国民技术的芯片
+endif
+
+#======================================== Nationstech Chips ========================================
+if VENDOR_NATION
+
 choice
-    prompt "Select Nation Chip"
-    depends on VENDOR_NATION
+    prompt "Select Nationstech Chip"
 config NATION_L40X
     bool "NATION_L40X"
 config NATION_G45X
     bool "NATION_G45X"
 endchoice
 
-#选择灵动微技术的芯片
+endif
+
+#======================================== Mindmotion Chips ========================================
+if VENDOR_MM
+
 choice
     prompt "Select Mindmotion Chip"
-    depends on VENDOR_MM
 config MM32SPIN2X
     bool "MM32SPIN2X"
 config MM32SPIN0X
     bool "MM32SPIN0X"
 endchoice
 
-#选择华大半导体技术的芯片
+endif
+
+#======================================== HDSC Chips ========================================
+if VENDOR_HC
+
 choice
     prompt "Select HDSC Chip"
-    depends on VENDOR_HC
 config HC32L13X
     bool "HC32L13X"
 config HC32L07X
     bool "HC32L07X"
 config HC32L17X
-    bool "HC32L17X"    
+    bool "HC32L17X"
 endchoice
 
-#选择沁恒微电子的芯片
+endif
+
+#======================================== WinChipHead Chips ========================================
+if VENDOR_WCH
+
 choice
     prompt "Select WinChipHead Chip"
-    depends on VENDOR_WCH
 config CH32F103
     bool "CH32F103"
 endchoice
 
-#选择合泰的芯片
+endif
+
+#======================================== Holtek Chips ========================================
+if VENDOR_HOLTEK
+
 choice
-    prompt "Select holtek Chip"
-    depends on VENDOR_HOLTEK
+    prompt "Select Holtek Chip"
 config TH32F50343
     bool "TH32F50343"
 endchoice
 
-#选择雅特力的芯片
+endif
+
+#======================================== Artery Chips ========================================
+if VENDOR_ARTERY
+
 choice
-    prompt "Select artery Chip"
-    depends on VENDOR_ARTERY
+    prompt "Select Artery Chip"
 config AT32F403A
     bool "AT32F403A"
 endchoice
 
-#选择航顺的芯片
+endif
+
+#======================================== HK (Hangshun) Chips ========================================
+if VENDOR_HK
+
 choice
     prompt "Select HK Chip"
-    depends on VENDOR_HK
 config HK32F103
     bool "HK32F103"
 endchoice
 
-#选择ESPRESSIF的芯片
+endif
+
+#======================================== Espressif Chips ========================================
+if VENDOR_ESPRESSIF
+
 choice
-    prompt "Select ESPRESSIF Chip"
-    depends on VENDOR_ESPRESSIF
+    prompt "Select Espressif Chip"
 config ESP32C3
-    bool "ESP32C3"
+    bool "ESP32-C3"
 endchoice
 
-#选择普冉的芯片
+endif
+
+#======================================== Puya Chips ========================================
+if VENDOR_PY
+
 choice
-    prompt "Select PUYA Chip"
-    depends on VENDOR_PY
+    prompt "Select Puya Chip"
 config PY32F002B
     bool "PY32F002B"
 endchoice
 
-#选择芯源的芯片
+endif
+
+#======================================== Chipstar (Xinyuan) Chips ========================================
+if VENDOR_CW
+
 choice
-    prompt "Select CW Chip"
-    depends on VENDOR_CW
+    prompt "Select Chipstar Chip"
 config CW32L010
     bool "CW32L010"
 endchoice
+
+endif
+
+endmenu

@@ -1,237 +1,263 @@
-#第三方代码配置
+# Thirdparty Components Configuration
 menu "Thirdparty Configuration"
 
+#======================================== CmBackTrace ========================================
 config _CMBACKTRACE_ENABLE
-    bool "CmbackTrace Enable/Disable"
+    bool "CmBackTrace (ARM crash dump)"
     default n
+
+if _CMBACKTRACE_ENABLE
 
 choice
-    prompt "ARM Cortex M ?"
-    depends on _CMBACKTRACE_ENABLE
+    prompt "ARM Cortex-M core"
 config TRACE_ARM_CORTEX_M0
-    bool "ARM_CORTEX_M0"
+    bool "Cortex-M0"
 config TRACE_ARM_CORTEX_M3
-    bool "ARM_CORTEX_M3"
+    bool "Cortex-M3"
 config TRACE_ARM_CORTEX_M4
-    bool "ARM_CORTEX_M4"
+    bool "Cortex-M4"
 config TRACE_ARM_CORTEX_M7
-    bool "ARM_CORTEX_M7"
+    bool "Cortex-M7"
 config TRACE_ARM_CORTEX_M33
-    bool "ARM_CORTEX_M33"
+    bool "Cortex-M33"
 endchoice
 
+endif
+
+#======================================== NR Micro Shell ========================================
 config _NR_MICRO_SHELL_ENABLE
-    bool "NR Micro Shell Enable/Disable"
+    bool "NR Micro Shell"
     default n
 
+if _NR_MICRO_SHELL_ENABLE
+
 config NR_SHELL_USER_NAME
-    string "The user's name"
+    string "Shell prompt username"
     default "nr@bos:"
-    depends on _NR_MICRO_SHELL_ENABLE
 
 config NR_ANSI_LINE_SIZE
-    int "ANSI command line buffer size"
+    int "Command line buffer size"
     default 100
-    depends on _NR_MICRO_SHELL_ENABLE
 
 config NR_SHELL_USER_NAME_MAX_LENGTH
     int "Maximum username length"
     default 30
-    depends on _NR_MICRO_SHELL_ENABLE
 
 config NR_SHELL_CMD_NAME_MAX_LENGTH
-    int "Maximum Cmd length"
+    int "Maximum command name length"
     default 16
-    depends on _NR_MICRO_SHELL_ENABLE    
 
 config NR_SHELL_CMD_PARAS_MAX_NUM
-    int "Maximum number of parameters in a command"
+    int "Maximum parameters per command"
     default 10
-    depends on _NR_MICRO_SHELL_ENABLE
 
 config NR_SHELL_MAX_CMD_HISTORY_NUM
-    int "History commands 0-3"
+    int "Command history count (0-3)"
     default 1
-    depends on _NR_MICRO_SHELL_ENABLE
     range 0 3
 
 config NR_SHELL_CMD_HISTORY_BUF_LENGTH
-    int "History command cache length"
+    int "Command history buffer length"
     default 100
-    depends on _NR_MICRO_SHELL_ENABLE
 
 config NR_SHELL_END_OF_LINE
-    int "End of line 0(\\n) 1(\\r) 2(\\r\\n)"
+    int "Line ending (0: \n, 1: \r, 2: \r\n)"
     default 1
-    depends on _NR_MICRO_SHELL_ENABLE
     range 0 2
 
 config NR_SHLL_FULL_ANSI
-    bool "Support all ANSI codes enable/disable"
+    bool "Full ANSI escape codes"
     default y
-    depends on _NR_MICRO_SHELL_ENABLE
 
 config NR_SHELL_ECHO_ENABLE
-    bool "Echo enable/disable"
+    bool "Echo input characters"
     default y
-    depends on _NR_MICRO_SHELL_ENABLE
 
+endif
 
+#======================================== Flexible Button ========================================
 config _FLEXIBLEBUTTON_ENABLE
-    bool "FlexibleButton Enable/Disable"
+    bool "Flexible Button"
     default n
+
+if _FLEXIBLEBUTTON_ENABLE
 
 config FLEX_BTN_SCAN_FREQ_HZ
-    int "How often flex_button_scan () is called"
+    int "Button scan frequency (Hz)"
     default 50
-    depends on _FLEXIBLEBUTTON_ENABLE
 
 config FLEX_BTN_SHORT_XMS
-    int "Short Press Time, default xms"
+    int "Short press threshold (ms)"
     default 1000
-    depends on _FLEXIBLEBUTTON_ENABLE
 
 config FLEX_BTN_LONG_XMS
-    int "Long Press Time, default xms"
+    int "Long press threshold (ms)"
     default 3000
-    depends on _FLEXIBLEBUTTON_ENABLE
 
 config FLEX_BTN_LLONG_XMS
-    int "LongLong Press Time, default xms"
+    int "Long-long press threshold (ms)"
     default 5000
-    depends on _FLEXIBLEBUTTON_ENABLE    
 
 config MULTIPLE_CLICKS_INTERVAL_XMS
-    int "Multiple clicks interval, default xms"
+    int "Multiple clicks interval (ms)"
     default 300
-    depends on _FLEXIBLEBUTTON_ENABLE  
 
+endif
 
+#======================================== uGUI ========================================
 config _UGUI_ENABLE
-    bool "UGUI Enable/Disable"
+    bool "uGUI"
     default n
+
+if _UGUI_ENABLE
 
 choice
     prompt "Font"
-    depends on _UGUI_ENABLE
 config GUI_FONT_6X8
-    bool "FONT_6X8"
+    bool "6x8"
 config GUI_FONT_8X12
-    bool "FONT_8X12"
+    bool "8x12"
 config GUI_FONT_12X16
-    bool "FONT_12X16"
+    bool "12x16"
 config GUI_FONT_XBF
-    bool "FONT_XBF"
+    bool "XBF (external)"
 endchoice
+
+if GUI_FONT_XBF
+
+config XBF_FILE_ADDR
+    hex "XBF font file address"
+    default 0x0
+
+endif
 
 choice
     prompt "Encoding"
-    depends on _UGUI_ENABLE
 config ENCODING_UTF_8
     bool "UTF-8"
 config ENCODING_UNICODE
     bool "UNICODE"
 endchoice
 
-config XBF_FILE_ADDR
-    hex "XBF Base Address"
-    default 0x0
-    depends on _UGUI_ENABLE
+endif
 
+#======================================== cJSON ========================================
 config _CJSON_ENABLE
-    bool "CJSON Enable/Disable"
+    bool "cJSON"
     default n
+
+if _CJSON_ENABLE
 
 config CJSON_MEM_USE_BMALLOC
-    bool "use bMalloc and bFree ?"
+    bool "Use bMalloc/bFree"
     default y
-    depends on _CJSON_ENABLE
     select _MEMP_ENABLE
 
+endif
+
+#======================================== CoreMark ========================================
 config _COREMARK_ENABLE
-    bool "COREMARK Enable/Disable"
+    bool "CoreMark Benchmark"
     default n
+
+if _COREMARK_ENABLE
 
 config HAS_FLOAT
-    bool "HAS_FLOAT"
+    bool "Has floating point"
     default y
-    depends on _COREMARK_ENABLE
 
 config COMPILER_VERSION
-    string "compiler version"
+    string "Compiler version"
     default "ARMCC V5.06"
-    depends on _COREMARK_ENABLE
 
 config COMPILER_FLAGS
-    string "compiler flags"
+    string "Compiler flags"
     default "-O3"
-    depends on _COREMARK_ENABLE
 
+endif
+
+#======================================== Unity (Unit Testing) ========================================
 config _UNITY_ENABLE
-    bool "Unity Enable/Disable"
+    bool "Unity (Unit Testing)"
     default n
 
+#======================================== ARM-2D ========================================
 config _ARM_2D_ENABLE
-    bool "ARM-2D Enable/Disable"
+    bool "ARM-2D"
     default n
 
+#======================================== QRCode ========================================
 config _QRCODE_ENABLE
-    bool "QRcode Enable/Disable"
+    bool "QRCode"
     default n
 
+#======================================== HTTP Parser ========================================
 config _HTTP_PARSER_ENABLE
-    bool "Http-Parser Enable/Disable"
+    bool "HTTP Parser"
     default n
 
+#======================================== TinyUSB ========================================
 config _TINYUSB_ENABLE
-    bool "Tiny-USB Enable/Disable"
+    bool "TinyUSB"
     default n
+
+if _TINYUSB_ENABLE
 
 config CFG_TUSB_CONFIG_FILE
     string "Custom configuration file"
     default "b_usb_config.h"
-    depends on _TINYUSB_ENABLE
 
+endif
+
+#======================================== mbedTLS ========================================
 config _MBEDTLS_ENABLE
-    bool "MbedTls Enable/Disable"
+    bool "mbedTLS"
     default n
     select _MEMP_ENABLE
+
+if _MBEDTLS_ENABLE
 
 config MBEDTLS_CONFIG_FILE
-    string "MbedTls config file"
+    string "mbedTLS config file"
     default "b_mbedtls_config.h"
-    depends on _MBEDTLS_ENABLE
 
 config MBEDTLS_DEBUG_LEVEL
-    int "Debug Info Level (0~4: No debug ~ Verbose)"
-    default 1
-    depends on _MBEDTLS_ENABLE
+    int "Debug level (0-4)"
+    default 0
     range 0 4
 
+endif
+
+#======================================== LVGL ========================================
 config _LVGL_ENABLE
-    bool "LVGL Enable/Disable"
+    bool "LVGL"
     default n
     select _MEMP_ENABLE
+
+if _LVGL_ENABLE
 
 config LV_CONF_INCLUDE_SIMPLE
-    bool "simply include lv_conf.h is enabled"
+    bool "Simply include lv_conf.h"
     default y
-    depends on _LVGL_ENABLE
 
+endif
+
+#======================================== Lua ========================================
 config _LUA_ENABLE
-    bool "LUA Enable/Disable"
+    bool "Lua Scripting"
     default n
     select _MEMP_ENABLE
 
+if _LUA_ENABLE
+
 config _LUA_MATH_ENABLE
-    bool "lmath Enable/Disable"
+    bool "Lua math library"
     default n
-    depends on _LUA_ENABLE
 
 config _LUA_UTF8_ENABLE
-    bool "lutf8 Enable/Disable"
+    bool "Lua UTF-8 support"
     default n
-    depends on _LUA_ENABLE
-    
+
+endif
 
 endmenu

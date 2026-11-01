@@ -1,7 +1,7 @@
 /**
  *!
  * \file        b_srv_mqtt.h
- * \version     v0.0.1
+ * \version     v0.0.2
  * \date        2023/08/27
  * \author      Bean(notrynohigh@outlook.com)
  *******************************************************************************

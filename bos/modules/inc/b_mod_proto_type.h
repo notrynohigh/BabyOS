@@ -194,10 +194,10 @@ typedef enum
     B_PROTO_INFO_MODBUS_SLAVE_ADDR,      // 获取当前设备的从机地址  uint8_t
     B_PROTO_INFO_MODBUS_REG_VALUE,       // 获取modbus寄存器的值（做从机时使用）
                                          // in: 寄存器地址  out:寄存器值 共用buf
-    B_PROTO_INFO_MCU_UID,    // 获取MCU UID，放数据至buf： UID长度(1byte)UID内容(nbytes)
-    B_PROTO_INFO_DEVICE_SN,  // 设备SN，放数据至buf： SN长度(1byte)SN内容(nbytes)
-    B_PROTO_INFO_DEVICE_VERSION,  // 设备版本 char *
-    B_PROTO_INFO_DEVICE_NAME,     // 设备型号（名称） char *
+    B_PROTO_INFO_MCU_UID,                // 获取MCU UID，放数据至buf： UID长度(1byte)UID内容(nbytes)
+    B_PROTO_INFO_DEVICE_SN,              // 设备SN，放数据至buf： SN长度(1byte)SN内容(nbytes)
+    B_PROTO_INFO_DEVICE_VERSION,         // 设备版本 char *
+    B_PROTO_INFO_DEVICE_NAME,            // 设备型号（名称） char *
 
     B_PROTO_INFO_GET_SSID,  // 获取设备当前连接的SSID char *
     B_PROTO_INFO_GET_IP,    // 获取设备的IP   uint32_t
@@ -228,11 +228,20 @@ typedef struct
     struct list_head     list;
 } bProtocolAttr_t;
 
+/**
+ * \brief 协议实例结构体。
+ *        存储在 .b_srv_protocol 段中，段扫描通过 sizeof(bProtocolInstance_t) 步进。
+ *        x86_64 平台 .rodata 段按 32 字节对齐，导致 struct 3×ptr=24 不匹配，
+ *        插入 reserved[8] 补齐到 32 字节，保证 section scan 正确。
+ */
 typedef struct
 {
     const char     *name;
     bProtoParse_t   parse;
     bProtoPackage_t package;
+#if defined(__x86_64__) || defined(__aarch64__) || defined(__LP64__) || defined(_WIN64)
+    uint8_t reserved[8];
+#endif
 } bProtocolInstance_t;
 
 #define bPROTOCOL_REG_INSTANCE(proto_name, _parse, _package)                                     \

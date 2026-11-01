@@ -108,7 +108,7 @@ SECTIONS
     KEEP(*(SORT(.b_mod_state*)))
     PROVIDE(__stop_b_mod_state = .);
     . = ALIGN(4);
-  } 
+  }
 
   .b_mod_param :
   {
@@ -123,7 +123,7 @@ SECTIONS
   {
     . = ALIGN(4);
     PROVIDE(__start_b_srv_protocol = .);
-    KEEP(*(SORT(.b_srv_protocol*)))
+    KEEP(*(.b_srv_protocol*))
     PROVIDE(__stop_b_srv_protocol = .);
     . = ALIGN(4);
   } 

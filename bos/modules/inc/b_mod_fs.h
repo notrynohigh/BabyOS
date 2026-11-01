@@ -39,14 +39,32 @@ extern "C" {
 #include <stdint.h>
 
 #include "b_config.h"
+#include "thirdparty/littlefs/lfs_util.h"
 
 #if (defined(_FS_ENABLE) && (_FS_ENABLE == 1))
 
-#if (defined(FS_FATFS))
+/* Unified FS selection: each macro is 0 or 1, never both 1. */
+#if !defined(FS_FATFS) && !defined(FS_LITTLEFS)
+#error "b_mod_fs.h: either FS_FATFS or FS_LITTLEFS must be defined"
+#endif
+
+#if defined(FS_FATFS)
+#define FS_FATFS_ 1
+#else
+#define FS_FATFS_ 0
+#endif
+
+#if defined(FS_LITTLEFS)
+#define FS_LITTLEFS_ 1
+#else
+#define FS_LITTLEFS_ 0
+#endif
+
+#if FS_FATFS_
 #include "thirdparty/fatfs/ff.h"
 #endif
 
-#if (defined(FS_LITTLEFS))
+#if FS_LITTLEFS_
 #include "thirdparty/littlefs/lfs.h"
 #endif
 
@@ -80,15 +98,21 @@ typedef struct
 
 typedef struct
 {
-#if defined(FS_FATFS)
-    FIL bfile;
+    void *fs_context; /* stores bFS_t* during file open */
+    union
+    {
+#if FS_FATFS_
+        FIL bfile;
 #endif
-#if defined(FS_LITTLEFS)
-    struct lfs_file_config cfg;
-    lfs_file_t             bfile;
-    uint8_t                buf[LFS_CACHE_SIZE];
+#if FS_LITTLEFS_
+        struct
+        {
+            struct lfs_file_config cfg;
+            lfs_file_t             lfp_file; /* LITTLEFS file handle */
+            uint8_t                buf[LFS_CACHE_SIZE];
+        } lfs_ctx;
 #endif
-    void *reserved;
+    };
 } bFSFile_t;
 
 /**
@@ -111,7 +135,16 @@ typedef struct
 #define BFS_SEEK_CUR (0x2)
 #define BFS_SEEK_END (0x3)
 
+#define BFS_MKFS_FATFS (1)
+#define BFS_MKFS_LITTLEFS (2)
+
 #define BFS_FD_IS_VALID(f) ((f) > 0)
+
+/**
+ * \brief Portable file descriptor type for filesystem operations.
+ * On 64-bit platforms, this must be large enough to hold a pointer.
+ */
+typedef intptr_t bFSFd_t;
 
 /**
  * \}
@@ -129,12 +162,12 @@ int bFSUnmount(uint8_t index);
 int bFSMkfs(uint8_t index);
 int bFSGetInfo(uint8_t index, uint32_t *ptotal_size, uint32_t *pfree_size);
 
-int bFSOpen(bFSFile_t *fil, const char *path, int flag);
-int bFSWrite(int fd, uint8_t *pbuf, uint32_t len);
-int bFSRead(int fd, uint8_t *pbuf, uint32_t len);
-int bFSClose(int fd);
-int bFSLseek(int fd, int32_t offset, int whence);
-int bFSFileGetInfo(int fd, uint32_t *pfile_size);
+bFSFd_t bFSOpen(bFSFile_t *fil, const char *path, int flag);
+int     bFSWrite(bFSFd_t fd, uint8_t *pbuf, uint32_t len);
+int     bFSRead(bFSFd_t fd, uint8_t *pbuf, uint32_t len);
+int     bFSClose(bFSFd_t fd);
+int     bFSLseek(bFSFd_t fd, int32_t offset, int whence);
+int     bFSFileGetInfo(bFSFd_t fd, uint32_t *pfile_size);
 
 int bFSGetPartitionState(uint8_t index);
 int bFSGetPartitionInfo(uint8_t index, const bFSPartition_t **p_partition);

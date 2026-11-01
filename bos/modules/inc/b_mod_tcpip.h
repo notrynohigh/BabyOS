@@ -81,6 +81,19 @@ typedef struct
     } assigned_ip;
 } bNetCardInfo_t;
 
+typedef struct
+{
+    uint32_t dev_no;            // 设备号
+    uint8_t  priority;          // 优先级
+    uint8_t  is_linked : 1;     // 是否已连接
+    uint8_t  is_ignore_ip : 1;  // 是否使用DHCP
+    uint8_t  is_dhcp : 1;       // 是否使用DHCP
+    uint8_t  reserved : 5;      // 保留位
+    uint32_t ipaddr;            // IP地址
+    uint32_t netmask;           // 子网掩码
+    uint32_t gateway;           // 网关
+} bNetcardStaInfo_t;
+
 typedef enum
 {
     B_TRANS_CONN_TCP,
@@ -109,6 +122,12 @@ typedef enum
     DNS_PARSE_SUCCESS = 0,
     DNS_PARSE_FAILED  = -1,
 } bDnsResult_t;
+
+/**
+ * \brief Portable socket descriptor type for TCP/IP operations.
+ * On 64-bit platforms, this must be large enough to hold a pointer.
+ */
+typedef intptr_t bSocketFd_t;
 
 /**
  * \}
@@ -146,17 +165,17 @@ int      bTcpIpGetMac(uint8_t mac[6]);
 uint8_t  bTcpIpPhyIsLinked(void);
 uint32_t bTcpIpGetCurrentDevNo(void);
 
-int     bSocket(bTransType_t type, pbTransCb_t cb, void *user_data);
-int     bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data);
-int     bConnect(int sockfd, char *remote, uint16_t port);
-int     bBind(int sockfd, uint16_t port);
-int     bListen(int sockfd, int backlog);
-int     bRecv(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
-int     bSend(int sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
-int     bShutdown(int sockfd);  // 建议使用 SOCKET_SHUTDOWN 一直等到关闭完成
-uint8_t bSockIsReadable(int sockfd);
-uint8_t bSockIsWriteable(int sockfd);
-uint8_t bSocketIsConnected(int sockfd);
+bSocketFd_t bSocket(bTransType_t type, pbTransCb_t cb, void *user_data);
+bSocketFd_t bSocket2(uint32_t dev_no, bTransType_t type, pbTransCb_t cb, void *user_data);
+int         bConnect(bSocketFd_t sockfd, char *remote, uint16_t port);
+int         bBind(bSocketFd_t sockfd, uint16_t port);
+int         bListen(bSocketFd_t sockfd, int backlog);
+int         bRecv(bSocketFd_t sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *rlen);
+int         bSend(bSocketFd_t sockfd, uint8_t *pbuf, uint16_t buf_len, uint16_t *wlen);
+int         bShutdown(bSocketFd_t sockfd);
+uint8_t     bSockIsReadable(bSocketFd_t sockfd);
+uint8_t     bSockIsWriteable(bSocketFd_t sockfd);
+uint8_t     bSocketIsConnected(bSocketFd_t sockfd);
 
 uint32_t bIPStr2Uint32(const char *ip);
 

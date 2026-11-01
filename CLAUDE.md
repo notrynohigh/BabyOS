@@ -4,74 +4,302 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BabyOS is a C-based embedded framework for MCU projects. It provides modular management of functional modules and peripheral drivers to shorten development cycles and reduce repetitive work. The official documentation is at https://babyos.cn/doc/.
+BabyOS is a C-based embedded framework for MCU projects. Modular management of functional modules and peripheral drivers. Official docs: https://babyos.cn/doc/.
 
-**Compiler requirement:** C99 support required.
-**Custom linker sections required:** `.driver_init`, `.bos_polling`, `.b_mod_shell`, `.b_mod_state` (and others defined in `bos/b_section.h`).
+- **C99 required**
+- **Custom linker sections**: `.driver_init`, `.bos_polling`, `.b_mod_shell`, `.b_mod_state` (see `bos/b_section.h`)
+- **MCU-first**: never `#ifdef __linux__` etc. in common logic — write pure MCU code uniformly
 
-## Build Commands
+## Build & Test
 
 ```bash
-# Configure (launches Kconfig menuconfig, generates b_config.h)
-python _config/b_config.py <bos_path>    # Linux/macOS
-python _config/b_config.bat               # Windows
+# Per-test menuconfig (writes _config/b_config.h)
+cd test/<name> && make menuconfig
+cd test/<name> && make           # build
+cd test/<name> && make clean     # clean
 
-# Build (standard GNU Make)
-make
-make clean
+# On-host regression suite (Linux + Unity)
+cd test/selftest && make && ./build/BabyOS
 ```
 
-Each test module in `test/` also has its own `Makefile` — build them individually from their directories.
+Each `test/<name>/` has its own `Makefile` and `_config/` (with `b_device_list.h`, `b_hal_if.c`, `Kconfig`, generated `b_config.h`). Tests link against `test/babyos.ld` (a PC linker script, **not** for MCUs).
+
+`tool/` holds Python utilities for protocol testing (`b_protocol.py`, `xmodem_ydmodem.py`, `http_server.py`) — **NOT compiled into firmware**.
+
+For the host-side desktop debugging tool (Electron + AutoML backend), see **§ BabyOS Studio (Desktop Tooling)** below.
+
+## BabyOS Studio (Desktop Tooling)
+
+`tool/babyos-studio/` is the unified **host-side debugging tool** — an Electron desktop app with a Python FastAPI backend for AutoML and device communication. It bundles every diagnostic surface for BabyOS firmware into one installer. **It is never compiled into firmware** (host-only).
+
+**Capabilities:**
+- Serial control (data send/receive over real COM ports via `pyserial`)
+- Unified serial log page: every UART TX/RX byte (all features) is journaled in `UartService` (ring buffer, `journal_since()` incremental fetch) and viewable in one place, with optional record-to-file (`start_record()`/`stop_record()`; API under `/api/device/serial/journal*`)
+- OTA firmware upgrade with chunked transfer + CRC32
+- Xmodem-128 / Ymodem-1K file transfer
+- HTTP mock server + request replay
+- KV parameter read/write + timed polling
+- Device info (UID/SN queries)
+- **AutoML**: project lifecycle → dataset import → label/edit → feature engineering → model training → C-export
+- Quick links to BabyOS Gitee repo
+
+**Develop / run:**
+```bash
+cd tool/babyos-studio
+./start_dev.sh        # Linux/macOS — checks Node + Python, sets up venv, launches Electron
+start_dev.bat         # Windows
+```
+
+**Build installers:**
+```bash
+cd tool/babyos-studio
+npm install
+npm run build           # all platforms
+npm run build:win       # NSIS .exe
+npm run build:mac       # DMG
+npm run build:linux     # AppImage
+```
+
+**Run Python tests:**
+```bash
+cd tool/babyos-studio/python
+source .venv/bin/activate
+pytest test_automl.py -v                    # AutoML pipeline tests
+pytest test_api_pipeline.py -v              # API endpoint tests
+pytest ../test/test_regression.py -v        # Regression test suite
+```
+
+**Tech stack:** Electron 28 · vanilla HTML/CSS/JS UI · `serialport` (Node) · FastAPI + httpx (Python) · `pyserial` (UART) · scikit-learn/xgboost/lightgbm (ML).
+
+**Layout:**
+- `electron/` — main + preload (`electron/main.js`, `electron/preload.js`)
+- `ui/` — `index.html`, `style.css`, `app.js`
+- `python/app/api/` — FastAPI routers (`projects.py`, `datasets.py`, `labels.py`, `features.py`, `training.py`, `export.py`, `segments.py`, `templates.py`)
+- `python/app/services/` — ML services (`automl.py`, `trainer.py`, `simple_nn.py`, `scaler.py`, `*_service.py`)
+- `python/device/` — Device communication (UART driver, protocol stack, OTA/Xmodem/HTTP tools)
+- `python/` — top-level test scripts targeting `http://127.0.0.1:18080` (e.g. `python test_automl.py`)
+- `test/` — pytest suites under `test/datasets/` (regression / table-classification / time-series-classification)
+
+**Device tools architecture:**
+- `python/device/uart_service.py` — Singleton UART service wrapping `UartDriver` and `b_protocol`
+- `python/device/serial_page.py` — Serial port control, protocol test, set time
+- `python/device/ota_page.py` — OTA firmware upgrade with chunked transfer
+- `python/device/xmodem_page.py` — Xmodem/Ymodem file transfer
+- `python/device/http_page.py` — Mock HTTP server + device HTTP request trigger
+- `python/device/params_page.py` — Shell parameter read/write with polling
+- `python/device/device_page.py` — UID, SN, device info queries
+
+> The BabyOS_Example repo has its own `tool/` directory with ad-hoc experiment scripts (`repro_*.py`, `verify_*.py`) — those are unrelated to this tool and live outside the firmware build.
 
 ## Architecture
 
-BabyOS uses a layered architecture:
+```
+Services (HTTP, MQTT, OTA, NTP, file transfer, config-web)
+    ↓
+Modules (KV, FS, GUI, WiFi, SSL, USB, Modbus, state, shell, button, IAP, tcpip, ...)
+    ↓
+Core (device abstraction, tasks, timers, queues, semaphores, select)
+    ↓
+HAL (GPIO/UART/SPI/I2C/DMA/QSPI/SDIO/Ethernet/Flash/Watchdog/RNG)
+    ↓
+Drivers / MCU-specific porting
+
+Algorithm modules (bos/algorithm/, gated by Kconfig — see below) live alongside core
+and can be called from anywhere via their public headers (e.g. algo_ml.h).
+
+Utils (bos/utils/) provide Kconfig-gated helpers (fifo, log, utc, at, memp, tools)
+that sit beside the core and are used by modules/services.
+
+MCU vendor porting lives in bos/mcu/ (st, at, espressif, ch, hdsc, nation, ... plus
+mcu.py); each vendor dir implements the HAL for that chip family.
+```
+
+## Algorithm Modules (`bos/algorithm/`)
+
+Pure-C building blocks, each gated by a Kconfig flag (e.g. `_ALGO_ML_ENABLE`). Every flag `depends on _BOS_ALGO_ENABLE`, so enable that master switch first:
+
+| Module | Header | Kconfig flag | Purpose |
+|---|---|---|---|
+| CRC | `algo_crc.h` | `_ALGO_CRC_ENABLE` | CRC8/16/32 variants |
+| MD5 / SHA1 / HMAC / Base64 / UTF-8 | `algo_md5.h`, `algo_hmac_sha1.h`, `algo_base64.h`, `algo_utf8_unicode.h` | per-module | Hashing / encoding |
+| Sort | `algo_sort.h` | `_ALGO_SORT_ENABLE` | qsort / heap helpers |
+| Signal | `algo_signal.h` | `_ALGO_SIGNAL_ENABLE` | Signal-processing helpers (filtering, stats) |
+| FFT | `algo_fft.h` | `_ALGO_FFT_ENABLE` | FFT for on-device spectral features |
+| **ML** | `algo_ml.h` | `_ALGO_ML_ENABLE` | Tiny on-device ML: feature normalization, simple inference, model loading — paired with BabyOS Studio's AutoML export pipeline |
+
+The ML module is the firmware-side counterpart of BabyOS Studio's AutoML: train on host → export weights/params via Studio → embed via `algo_ml.h` API → run inference on MCU.
+
+## Architecture & Programming Constraints (READ FIRST)
+
+### 1. `bInit()` / `bExec()` are USER-LEVEL only
+
+`bInit()` and `bExec()` are called **only from user `main()`**. BabyOS-internal code MUST NOT call them — the framework does not call its own scheduler. To run a polling function, register it with `BOS_REG_POLLING_FUNC()` and let the user's `main()`'s `bExec()` loop drive it.
+
+```c
+// WRONG — framework calling its own scheduler
+void bHttpServerStop(void) { bExec(); }   // ❌ never
+
+// RIGHT — register a polling function for the user to drive
+BOS_REG_POLLING_FUNC(my_task);            // ✅
+```
+
+### 2. PT (Protothread) API: yielding & delay
+
+PT is a cooperative scheduler using `switch`-based state machines (`bos/thirdparty/pt/pt.h`, wrapped in `bos/core/inc/b_task.h`). Tasks declared with `PT_THREAD(name)(struct pt *pt, void *arg)` return a `char` and use `PT_BEGIN/PT_END/PT_WAIT_UNTIL/PT_YIELD/PT_DELAY_MS`.
+
+Yielding / delay rules:
+- **PT context** (`PT_BEGIN`/`PT_END`): use `bTaskYield(pt)` (=`PT_YIELD`), `bTaskDelayMs(pt, ms)` (=`PT_DELAY_MS`), `PT_WAIT_UNTIL(pt, cond, timeout_ms)`. These work because PT expands into `switch`+`case` labels that persist state across yields.
+- **Non-PT context** (e.g., a public API like `bHttpServerStop()` called from main thread): **cannot** call any PT macro. Doing so produces "case label not within a switch" errors. Use only synchronous non-PT APIs (`bShutdown()`, `bSend()`, etc.) and let a registered polling task do the actual cleanup in its PT context.
+- **Non-PT functions called from PT**: cannot use `bTaskYield()` (it references the PT context's `PT_YIELD_FLAG`). Either yield via `PT_YIELD(pt)` directly, or expose a separate PT version: `bHttpSendResponsePT(pt, fd, &resp)` invoked via `PT_WAIT_THREAD(pt, bHttpSendResponsePT(pt, fd, &resp))`.
+
+### 3. PT state across yields
+
+Variables inside a `PT_THREAD` function are **destroyed every yield** unless declared `static`. State that must survive between yields (recv buffer offset, send chunk index, timeout state machine) MUST be `static`. Local stack variables become garbage after the first yield.
+
+```c
+PT_THREAD(_bMyTask)(struct pt *pt, void *arg) {
+    static int  s_off = 0;          // ✅ persists across yields
+    static char s_buf[64];          // ✅
+    int tmp = bHalGetSysTick();     // ⚠ tmp is local; recompute each entry if needed
+    PT_BEGIN(pt);
+    ...
+    PT_END(pt);
+}
+```
+
+### 4. MCU resource constraints
+
+- **No large stack arrays**. Anything ≥64 B should be `static` or heap-allocated (`bMalloc`/`bRealloc`).
+- **No VLAs**.
+- **No busy-wait / spin**. Any "wait for X" loop must yield via PT (`PT_WAIT_UNTIL`, `PT_DELAY_MS`) with a timeout. Pure spin loops starve the entire PT scheduler on single-core MCUs.
+- **No platform `#ifdef`** (`__linux__`, `__APPLE__`, `_WIN32`, etc.) in common logic code. If a function is unsafe for MCU, mark it deprecated / host-only via doc, or restructure into PT-safe + non-PT-safe variants instead of guarding it out.
+
+### 5. Coding standards
+
+- All `bHal*` `int`-returning functions must have their return value checked.
+- All `bRead/bWrite/bCtl/bConnect/bSend/bRecv` must check returns (`!= expected_len`, `< 0`, etc.).
+- Division by variables that could be zero must be guarded.
+- GPIO wait loops must have timeout protection (`TICK_DIFF_BIT32` vs `MS2TICKS`).
+- Never modify `bos/thirdparty/` — vendored code.
+
+## Coding Standards — Error Handling Examples
+
+```c
+// HAL
+if (bHalI2CMemRead(_if, reg, 1, data, len) != 0) { return -1; }
+
+// Device I/O
+if (bRead(fd, buf, len) != expected_len) { bClose(fd); return -1; }
+
+// Network
+if (bSend(sockfd, buf, len, NULL) <= 0) { /* handle */ }
+
+// Guard divide-by-zero
+if (sector_size == 0) { return -1; }
+
+// GPIO timeout
+uint32_t tick = bHalGetSysTick();
+while (bHalGpioReadPin(port, pin)) {
+    if (TICK_DIFF_BIT32(tick, bHalGetSysTick()) > MS2TICKS(1000)) return -1;
+}
+```
+
+## Known Pitfalls
+
+**Section scan stride mismatch**: `sizeof(struct)` is used as loop stride. Works for pointer-based sections; **does not** work for `.b_srv_protocol` (stores full structs). On x86_64 Linux, `.rodata` aligns to 32 B but `bProtocolInstance_t` is 24 B (3 pointers) — must pad with `reserved[8]` on 64-bit. Verify `sizeof(struct)` matches binary entry spacing on x86_64 before adding new struct-based sections. See `test/selftest/claude_task.md`.
+
+**Encrypt loop silent failures** (`b_mod_kv.c`): return immediately on first error, do not continue.
+
+**Windows `ctypes.CDLL` + `tempfile.TemporaryDirectory` lock** (`tool/babyos-studio/python/app/services/export_service.py`, `.../export/selfcheck.py`): `ctypes.CDLL("_selfcheck.so")` calls `LoadLibrary` on Windows and keeps the file mapped until `FreeLibrary`. When the surrounding tempdir context exits, `rmtree` raises `NotADirectoryError: [WinError 267]` on the locked file. Use `ignore_cleanup_errors=True` on the tempdir (Py 3.10+) **and** wrap each CDLL site in `try/finally` that calls `ctypes.windll.kernel32.FreeLibrary(lib._handle)` on `sys.platform == "win32"`. Without this, `%TEMP%\automl_export_*` orphans pile up and the global FastAPI exception handler swallows successful-export results as 422.
+
+**YMODEM CRC precedence**: `crc = (crc ^ pbuf[i]) << 8` (parens required).
+
+**`bWifiModule.dev_no`**: must be wrapped with `#if (defined(_WIFI_ENABLE) && (_WIFI_ENABLE == 1))`.
+
+**HTTP `bHttpSendResponse`**: deprecated on bare-metal. Use `bHttpSendResponsePT(pt, fd, resp)` from PT context instead (`bos/services/b_srv_http.h`).
+
+**NTP socket fd leak**: `_bNtpTask` has no public close API; relies on `B_TRANS_DISCONNECT` callback to mark socket freed via `s_ntp_disconnected` before resetting `s_ntp.sockfd`.
+
+**NTP 2036 era**: `b_srv_ntp.c` handles era rollover by checking high bit and ORing `0xFFFFFFFF00000000ULL` before subtracting the NTP-to-Unix offset.
+
+**Config-web `_bParseParams(NULL, ...)`**: underflows `dest_len - 1`. Guard with `if (dest == NULL || dest_len == 0) return;`.
+
+**`algo_ml` argmax tie-break** (`bos/algorithm/algo_ml.c`): uses strict `>`, so an exact tie returns the **smallest** index (sklearn-aligned). Don't assume leftmost-wins-of-the-last-occurrence semantics.
+
+**`algo_ml` softmax numerical stability** (`bos/algorithm/algo_ml.c`): subtracts the max element before `exp()`. Any new port must keep this — without it, large logits produce NaN on `float`.
+
+## Network Module Architecture
 
 ```
-Services (MQTT, OTA, TCP/IP, HTTP, file transfer)
-    ↓
-Modules (KV, FS, GUI, WiFi, USB, Modbus, state machine, etc.)
-    ↓
-Core (device abstraction, protothread tasks, timers, queues, semaphores)
-    ↓
-HAL (GPIO, UART, SPI, I2C, DMA, QSPI, SDIO, Ethernet, Flash, Watchdog, RNG)
-    ↓
-Drivers / MCU-specific code
+bTcpIpInit() → registers netcards via bNetCardInfo_t array
+bWifiInit()  → initializes WiFi separately, stores dev_no in bWifiModule
 ```
 
-## Key Design Patterns
+Key types:
+- **`bNetCardInfo_t`** (`bos/modules/inc/b_mod_tcpip.h`) — *registration* info: `dev_no`, `priority`, `ignore_ip`, `assigned_ip{ip, mask, gateway}`.
+- **`bNetcardStaInfo_t`** (`bos/modules/inc/b_mod_tcpip.h`) — *runtime query* result: `dev_no`, `priority`, **bitfield** `is_linked:1 / is_ignore_ip:1 / is_dhcp:1 / is_ethnet:1 / is_wifi:1`, plus `ipaddr/netmask/gateway`.
+- **`bNetcardType_t`** (`bos/drivers/inc/b_driver_cmd.h`) — driver-side enum: `B_NETCARD_TYPE_UNKNOWN=0`, `B_NETCARD_TYPE_WIFI=1`, `B_NETCARD_TYPE_ETH=2`.
 
-**Device abstraction** (`bOpen`/`bRead`/`bWrite`/`bCtl`/`bClose`): All hardware and virtual devices are accessed through a unified file-descriptor API defined in `bos/core/inc/b_device.h`.
+Query API (`b_mod_tcpip.h`):
+```c
+uint8_t  bTcpIpGetNetcardCount(void);
+int      bTcpIpGetNetcardInfo(uint8_t index, bNetcardStaInfo_t *info);
+int      bTcpIpSetActiveNetcard(uint32_t dev_no);
+uint32_t bTcpIpGetCurrentDevNo(void);
+// bTcpIpGetNetcardTypeByDevNo() is NOT implemented. Distinguish via info.is_wifi / info.is_ethnet,
+// or compare dev_no against bWifiModule.dev_no.
+```
 
-**Section-based registration** (`bos/b_section.h`): Drivers and modules register themselves via macros (`bDRIVER_REG_INIT()`, `BOS_REG_POLLING_FUNC()`) that place structs/function pointers into custom linker sections. The core scans these sections at boot. Supports GCC, Keil, IAR, and Renesas compilers.
+## TCP/IP Service (`b_srv_tcpip`)
 
-**Protothreads** (`bos/thirdparty/pt/pt.h`): Task scheduling is based on lightweight protothreads (cooperative, no separate stacks), defined in `b_task.h`.
+Wrapper for netcard registration:
+```c
+#include "services/inc/b_srv_tcpip.h"
+bTcpipSrvInit(netcard_info, 2);
+```
 
-## Configuration System
+## NTP Service (`b_srv_ntp`)
 
-`b_config.py` generates `b_config.h` from Kconfig rules. Enable/disable modules, algorithms, services, drivers, and hardware-specific options through `make menuconfig` or the Python script. Key config prefixes: `_BOS_MODULES_ENABLE`, `_BOS_SERVICES_ENABLE`, `_BOS_ALGO_ENABLE`, `TICK_FRZ_HZ`.
+Function name is **`bSntpStart`** (with the `S`). Use `bSntpStop()` to stop synchronization before reboot.
+```c
+bSntpStart(3600);  // re-sync every hour
+bSntpStop();        // stop NTP task and release socket
+```
+Server addresses: `_NTP_SERVER_1/2/3` in `bos/services/Kconfig` (defaults: `ntp1.aliyun.com`, etc.). Enable with `_NTP_SERVICE_ENABLE = 1`.
 
-## Source Layout
+## HTTP Service (`b_srv_http`)
 
-| Directory | Purpose |
-|-----------|---------|
-| `bos/algorithm/` | CRC, MD5, SHA1, Base64, sort, UTF-8 |
-| `bos/core/` | Device abstraction, tasks, timers, queues, semaphores |
-| `bos/hal/` | Hardware Abstraction Layer interfaces |
-| `bos/drivers/` | 40+ hardware drivers (sensors, displays, etc.) |
-| `bos/mcu/` | MCU-specific porting code (ST, ESP32-C3, Renesas R5F, etc.) |
-| `bos/modules/` | Software modules (KV, FS, GUI, TCP/IP, SSL, WiFi, USB, IAP, Modbus) |
-| `bos/services/` | High-level services (MQTT, OTA, NTP, HTTP client) |
-| `bos/thirdparty/` | Bundled third-party libs (lwIP, mbedtls, LVGL, LittleFS, FatFS, TinyUSB, Unity, etc.) |
-| `bos/utils/` | FIFO, logging, AT command parser, memory pool, UTC time |
-| `_config/` | Configuration tool (`b_config.py`), HAL interface definitions, generated `b_config.h` |
-| `test/` | Unit tests for hardware-independent modules (queue, KV, cJSON, UTC, MQTT, SSL, coremark, etc.) |
+Unified client + server. **Use PT-aware API**: `bHttpSendResponsePT(pt, fd, &resp)` invoked via `PT_WAIT_THREAD`. The non-PT `bHttpSendResponse` is host-only (deprecated on bare-metal).
 
-Hardware-independent tests live in `test/` and run on Linux with GCC + pthread. Hardware-dependent examples are in the companion repository: https://gitee.com/notrynohigh/BabyOS_Example
+Server streaming constants (override per-project in `b_config.h` to size BSS for your MCU):
+```c
+_HTTP_MAX_REQ_SIZE          512   // BSS rbuf per connection
+_HTTP_RECV_CHUNK_SIZE       256   // max bytes consumed per bExec()
+_HTTP_SEND_CHUNK_TIMEOUT_MS 5000  // per-chunk send deadline
+```
+
+**`bHttpServerStop()`** is non-blocking: it sets `stop_requested` on the server, shuts down listen fd + client fds (synchronous), and returns immediately. The actual cleanup of sub-tasks / ctx happens in `_bHttpServerTask` (registered polling function) on the next `bExec()` round. The user's `main()` must keep running `bExec()` and must not free the server memory until `_bHttpServerTask` has finished cleanup (the global `s_http_server` pointer will be cleared to `NULL`).
+
+## Config Web Service (`b_srv_config_web`)
+
+> **Note:** The `b_srv_config_web` service is not yet merged into the current branch. The following API description is kept as a forward reference for the upcoming feature branch.
+
+```c
+bConfigWebServiceStart(80, config_cb, user_data);
+```
+Endpoints: `GET /`, `POST /api/wifi`, `POST /api/eth`, `GET /api/status`, `GET /api/netcards`, `POST /api/setnetcard`. **Note:** `_CONFIG_WEB_SERVICE_ENABLE` already `select`s `_HTTP_SERVICE_ENABLE` in Kconfig — enabling Config-Web implicitly enables HTTP.
+
+Caveats (see `tool/review_config-web.md`): `/api/eth` does not validate IP octets; `/api/wifi` SSID/pass buffers can silently truncate long %XX values; `_bUrlDecode` accepts control/high-bit chars; always check `result` arg of `config_cb`.
+
+## Code Review Reports
+
+Each merged feature branch should produce a report under `tool/review_<branch>.md` listing bugs by severity with file:line, failure scenarios, and fix suggestions. New Claude instances working on a branch should read its report first.
+
+- `tool/review_config-web.md` — bugs found in `feat: 添加配网Web服务`.
 
 ## HAL Porting
 
-To port BabyOS to a new MCU, implement the HAL functions declared in `_config/b_hal_if.h` and `bos/hal/inc/b_hal.h`: `bHalInit()`, `bHalDelayMs()`, `bHalGetSysTick()`, and GPIO/UART/SPI/I2C/DMA/QSPI/SDIO/Ethernet/Flash/Watchdog/RNG interfaces.
+Implement HAL functions declared in `_config/b_hal_if.h` and `bos/hal/inc/b_hal.h`: `bHalInit()`, `bHalDelayMs()`, `bHalGetSysTick()`, and GPIO/UART/SPI/I2C/DMA/QSPI/SDIO/Ethernet/Flash/Watchdog/RNG interfaces.
 
 ## Usage Pattern
 
@@ -79,15 +307,13 @@ To port BabyOS to a new MCU, implement the HAL functions declared in `_config/b_
 #include "b_os.h"
 
 int main(void) {
-    bInit();                         // Initialize BabyOS
+    bInit();
     int fd = bOpen(SPIFLASH, BCORE_FLAG_RW);
     bRead(fd, buf, len);
-    bWrite(fd, buf, len);
-    bCtl(fd, CMD, param);
     bClose(fd);
 
     while (1) {
-        bExec();                      // Poll registered functions
+        bExec();   // drives all registered polling functions
     }
 }
 ```

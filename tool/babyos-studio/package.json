@@ -1,0 +1,56 @@
+{
+  "name": "babyos-studio",
+  "version": "1.0.0",
+  "description": "BabyOS 统一调试工具 — 串口控制、OTA升级、AutoML 一站式桌面应用",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "cross-env ELECTRON_DEV=true electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "dependencies": {
+    "serialport": "^12.0.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.0"
+  },
+  "build": {
+    "appId": "com.babyos.studio",
+    "productName": "BabyOS Studio",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "electron/**/*",
+      "ui/**/*",
+      "python/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "python/dist",
+        "to": "python",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

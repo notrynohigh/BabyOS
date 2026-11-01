@@ -58,6 +58,7 @@
  * \{
  */
 #define DRIVER_NAME MCUMAC
+#define DRIVER_PRIVATE_TYPE bMCUMACPrivate_t
 /**
  * \}
  */
@@ -122,8 +123,18 @@ static int _bMCUMACRead(bDriverInterface_t *pdrv, uint32_t off, uint8_t *pbuf, u
 
 static int _bMCUMACCtl(bDriverInterface_t *pdrv, uint8_t cmd, void *param)
 {
+    bDRIVER_GET_PRIVATE(_priv, DRIVER_PRIVATE_TYPE, pdrv);
     switch (cmd)
     {
+        case bCMD_GET_DRIVER_NETIF:
+        {
+            if (param == NULL)
+            {
+                return -1;
+            }
+            ((bDriverNetif_t *)param)->private = _priv;
+        }
+        break;
         case bCMD_GET_MAC_ADDRESS:
         {
             if (param == NULL)

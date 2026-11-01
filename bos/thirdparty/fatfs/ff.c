@@ -3668,6 +3668,7 @@ FRESULT f_mount (
 	}
 
 	if (fs) {
+		fs->winsect = (LBA_t)0 - 1;		/* Invalidate sector window */
 		fs->fs_type = 0;				/* Clear new fs object */
 #if FF_FS_REENTRANT						/* Create sync object for the new volume */
 		if (!ff_cre_syncobj((BYTE)vol, &fs->sobj)) return FR_INT_ERR;

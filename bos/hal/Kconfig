@@ -1,23 +1,35 @@
-menu "Hal Configuration"
+# HAL Configuration
+menu "HAL Configuration"
+
 config TICK_FRQ_HZ
-    int "Tick Frequncy HZ"
+    int "System tick frequency (Hz)"
     default 1000
+    help
+        System tick timer frequency for task scheduling.
 
 config USER_TICK_ENABLE
-    bool "Use the user-provided interface to get ticks."
+    bool "Use user-provided tick interface"
     default n
+    help
+        Enable custom tick counter implementation.
 
 config _HALIF_VARIABLE_ENABLE
-    bool "Hardware Interface Variable Enable/Disable"
+    bool "HAL interface variable enable"
+    default n
+    help
+        Enable runtime HAL interface configuration.
+
+#======================================== Watchdog ========================================
+config _WDT_ENABLE
+    bool "Watchdog"
     default n
 
-config _WDT_ENABLE
-    bool "Watchdog Enable/Disable"
-    default n
+if _WDT_ENABLE
 
 config WDT_TIMEOUT_S
-    int "Watchdog timeout (s)"
+    int "Watchdog timeout (seconds)"
     default 60
-    depends on _WDT_ENABLE
+
+endif
 
 endmenu

@@ -176,9 +176,9 @@ typedef void (*pbPoling_t)(void);
 #define bSECTION_ITEM_REGISTER_FLASH(section_name, data_type, var_name) \
     BOS_SECTION_ITEM_REGISTER(section_name, const data_type var_name)
 
-#define bSECTION_FOR_EACH(section_name, data_type, variable)                     \
-    for (data_type *variable = BOS_SECTION_ITEM_GET(section_name, data_type, 0); \
-         (int)variable != (int)BOS_SECTION_END_ADDR(section_name); variable++)
+#define bSECTION_FOR_EACH(section_name, data_type, variable)                          \
+    for (data_type *variable = BOS_SECTION_ITEM_GET(section_name, data_type, 0);      \
+         (uintptr_t)variable != (uintptr_t)BOS_SECTION_END_ADDR(section_name); variable++)
 
 /**
  * \}

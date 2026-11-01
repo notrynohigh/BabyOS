@@ -205,6 +205,8 @@ int utf8_to_unicode(const uint8_t *utf8, uint32_t *unicode)
 
     *unicode          = 0x0;
     int      utfbytes = utf8_to_unicode_size(*utf8);
+    if (utfbytes > 4)
+        return 0;
     uint8_t *ptmp     = (uint8_t *)unicode;
 
     switch (utfbytes)
@@ -216,9 +218,9 @@ int utf8_to_unicode(const uint8_t *utf8, uint32_t *unicode)
         case 2:
             b1 = *utf8;
             b2 = *(utf8 + 1);
-            if ((b2 & 0xE0) != 0x80)
+            if ((b2 & 0xC0) != 0x80)
                 return 0;
-            *ptmp       = (b1 << 6) + (b2 & 0x3F);
+            *ptmp       = (b1 & 0x1F) << 6 | (b2 & 0x3F);
             *(ptmp + 1) = (b1 >> 2) & 0x07;
             break;
         case 3:

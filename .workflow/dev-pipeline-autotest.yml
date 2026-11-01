@@ -1,0 +1,37 @@
+version: '1.0'
+name: dev-pipeline-autotest
+displayName: dev-pipeline-autotest
+triggers:
+  trigger: auto
+  push:
+    branches:
+      precise:
+        - dev
+  pr:
+    branches:
+      precise:
+        - dev
+stages:
+  - name: stage-build
+    displayName: 编译+自测试
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@gcc
+        name: build_and_test
+        displayName: 编译并运行自测试
+        gccVersion: 12.1.0
+        commands:
+          - cd test/selftest
+          - make
+          - ./build/BabyOS 2>&1 | tee test_output.log
+          - 'if grep -q "Result: ALL PASSED" test_output.log; then echo "=== TEST PASSED ===" && exit 0; else echo "=== TEST FAILED ===" && cat test_output.log && exit 1; fi'
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - test/selftest/build/BabyOS
+        caches: []
+        notify: []
+        strategy:
+          retry: '0'

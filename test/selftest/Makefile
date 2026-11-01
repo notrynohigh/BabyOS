@@ -11,7 +11,7 @@ TARGET = BabyOS
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -O3
+OPT = -O0 -fno-pie
 
 
 #######################################
@@ -106,7 +106,7 @@ C_INCLUDES =  \
 # compile gcc flags
 ASFLAGS = $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -std=c99
+CFLAGS = $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -std=c99 -fno-stack-protector -fno-pie -D_SELFTEST_BUILD_
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -gdwarf-2
@@ -122,12 +122,20 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 #######################################
 # link script
 LDSCRIPT = $(SOURCE_ROOT)/test/babyos.ld
-LDFLAGS = -T$(LDSCRIPT) -lpthread -lm
+LDFLAGS = -T$(LDSCRIPT) -lpthread -lm -no-pie
+
+# On Linux the linked binary is `build/BabyOS`; on Windows gcc adds `.exe`.
+# Detect host and let the linker write to whichever name applies.
+ifeq ($(OS),Windows_NT)
+TARGET_EXT := .exe
+else
+TARGET_EXT :=
+endif
 # libraries  
 
 
-# default action: build all -specs=nano.specs  
-all: $(BUILD_DIR)/$(TARGET)
+# default action: build all -specs=nano.specs
+all: $(BUILD_DIR)/$(TARGET)$(TARGET_EXT)
 
 
 #######################################
@@ -146,7 +154,7 @@ $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/$(TARGET): $(OBJECTS) Makefile
+$(BUILD_DIR)/$(TARGET)$(TARGET_EXT): $(OBJECTS) Makefile
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 	$(SZ) $@
 	

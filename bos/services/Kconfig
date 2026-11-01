@@ -1,84 +1,133 @@
-#服务配置
+# Services Configuration
 menu "Services Configuration"
 
 config _BOS_SERVICES_ENABLE
     bool "Services Enable/Disable"
     default y
 
-config _PROTOCOL_SERVICE_ENABLE
-    bool "Protocol Service Enable/Disable"
+#======================================== TCP/IP ========================================
+config _TCPIP_SERVICE_ENABLE
+    bool "TCP/IP Service"
     default n
     depends on _BOS_SERVICES_ENABLE
-
-config _TCPIP_SERVICE_ENABLE
-    bool "TCPIP Service Enable/Disable"
-    default n
-    depends on _BOS_SERVICES_ENABLE 
     select _MEMP_ENABLE
     select _TCPIP_ENABLE
+    help
+        TCP/IP stack initialization wrapper for netcard registration.
 
-config _TCPIP_SERVICE_HTTP_ENABLE
-    bool "Http Enable/Disable"
+#======================================== HTTP Service ========================================
+config _HTTP_SERVICE_ENABLE
+    bool "HTTP Service"
     default n
-    depends on _TCPIP_SERVICE_ENABLE 
+    depends on _BOS_SERVICES_ENABLE
+    help
+        HTTP client and server functionality.
+
+if _HTTP_SERVICE_ENABLE
+
+# HTTP Client
+config _HTTP_CLIENT_ENABLE
+    bool "HTTP Client"
+    default n
+    select _TCPIP_SERVICE_ENABLE
     select _HTTP_PARSER_ENABLE
+    help
+        Enable HTTP client for making requests.
 
-config _TCPIP_SERVICE_NTP_ENABLE
-    bool "NTP Enable/Disable"
-    default n
-    depends on _TCPIP_SERVICE_ENABLE     
-
-config _NTP_SERVER_1
-    string "ntp server 1"
-    default "ntp1.aliyun.com"
-    depends on _TCPIP_SERVICE_NTP_ENABLE
-
-config _NTP_SERVER_2
-    string "ntp server 2"
-    default "ntp2.aliyun.com"
-    depends on _TCPIP_SERVICE_NTP_ENABLE    
-
-config _NTP_SERVER_3
-    string "ntp server 3"
-    default "ntp3.aliyun.com"
-    depends on _TCPIP_SERVICE_NTP_ENABLE    
+if _HTTP_CLIENT_ENABLE
 
 config _HTTP_HOST_LEN_MAX
-    int "The maximum length of a URL host"
+    int "Maximum URL host length"
     default 64
-    depends on _TCPIP_SERVICE_HTTP_ENABLE 
+    help
+        Maximum length of hostname (e.g., example.com).
 
 config _HTTP_PATH_LEN_MAX
-    int "The maximum length of a URL path"
+    int "Maximum URL path length"
     default 128
-    depends on _TCPIP_SERVICE_HTTP_ENABLE
+    help
+        Maximum length of URL path (e.g., /api/data).
 
+endif
 
-config _OTA_SERVICE_ENABLE
-    bool "OTA Service Enable/Disable"
+# HTTP Server
+config _HTTP_SERVER_ENABLE
+    bool "HTTP Server"
     default n
-    depends on _BOS_SERVICES_ENABLE 
-    select _PROTOCOL_SERVICE_ENABLE
-    select _IAP_ENABLE
+    select _TCPIP_SERVICE_ENABLE
+    select _HTTP_PARSER_ENABLE
+    help
+        Enable HTTP server for handling requests.
 
-config OTA_TIMEOUT_S
-    int "OTA Timeout (s)"
-    default 30
-    depends on _OTA_SERVICE_ENABLE
+endif
 
-config _MQTT_SERVICE_ENABLE
-    bool "MQTT Enable/Disable"
+#======================================== NTP Service ========================================
+config _NTP_SERVICE_ENABLE
+    bool "NTP Service"
     default n
     depends on _BOS_SERVICES_ENABLE
-    select _MEMP_ENABLE
-    select _TCPIP_ENABLE
+    select _TCPIP_SERVICE_ENABLE
+    help
+        Network Time Protocol synchronization.
+
+if _NTP_SERVICE_ENABLE
+
+config _NTP_SERVER_1
+    string "NTP Server 1"
+    default "ntp1.aliyun.com"
+
+config _NTP_SERVER_2
+    string "NTP Server 2"
+    default "ntp2.aliyun.com"
+
+config _NTP_SERVER_3
+    string "NTP Server 3"
+    default "ntp3.aliyun.com"
+
+endif
+
+#======================================== Protocol ========================================
+config _PROTOCOL_SERVICE_ENABLE
+    bool "Protocol Service"
+    default n
+    depends on _BOS_SERVICES_ENABLE
+    help
+        Generic protocol service for communication.
+
+#======================================== OTA ========================================
+config _OTA_SERVICE_ENABLE
+    bool "OTA Service"
+    default n
+    depends on _BOS_SERVICES_ENABLE
+    select _PROTOCOL_SERVICE_ENABLE
+    select _IAP_ENABLE
+    help
+        Over-The-Air firmware update service.
+
+if _OTA_SERVICE_ENABLE
+
+config OTA_TIMEOUT_S
+    int "OTA timeout (seconds)"
+    default 30
+
+endif
+
+#======================================== MQTT ========================================
+config _MQTT_SERVICE_ENABLE
+    bool "MQTT Service"
+    default n
+    depends on _BOS_SERVICES_ENABLE
+    select _TCPIP_SERVICE_ENABLE
+    help
+        MQTT client for IoT communication.
+
+if _MQTT_SERVICE_ENABLE
 
 choice
-    prompt "Select Mqtt Broker"
+    prompt "MQTT Broker"
     default BABYOS_MQTT_BROKER
-    depends on _MQTT_SERVICE_ENABLE
 config BABYOS_MQTT_BROKER
-    bool "BabyOS Mqtt Broker"
+    bool "BabyOS MQTT Broker"
 config RESERVED_BROKER
     bool "Reserved"
 endchoice
@@ -86,40 +135,45 @@ endchoice
 if BABYOS_MQTT_BROKER
 
 config MQTT_CLIENT_ID
-    string "Mqtt Client Id"
+    string "MQTT Client ID"
     default "babyos"
 
 config MQTT_BROKER_URL
-    string "Mqtt Broker Url"
+    string "MQTT Broker URL"
     default "mqtt://babyos.cn:1883"
 
 config MQTT_USER_NAME
-    string "Mqtt User Name"
+    string "MQTT Username"
     default "babyos"
 
 config MQTT_USER_PASSWD
-    string "Mqtt User Passwd"
+    string "MQTT Password"
     default "babyos"
 
 config MQTT_SUB_TOPIC_DEFAULT
-    string "Default MQTT Subscription Topic"
+    string "Default subscription topic"
     default "ogugO0zq_Qi7O3HxQn9G4X2rhH"
 
 config MQTT_QOS_DEFAULT
-    int "Default MQTT QOS"
+    int "Default QoS (0-2)"
     default 0
+    range 0 2
 
 config MQTT_KEEP_ALIVE
-    int "MQTT Keep Alive"
-    default 60 
+    int "Keep alive interval (seconds)"
+    default 60
 
 endif
 
+endif
 
+#======================================== File Transfer ========================================
 config _TRANSFILE_SERVICE_ENABLE
-    bool "Transfile Service Enable/Disable"
+    bool "File Transfer Service"
     default n
-    depends on _BOS_SERVICES_ENABLE 
+    depends on _BOS_SERVICES_ENABLE
     select _PROTOCOL_SERVICE_ENABLE
+    help
+        YMODEM/XMODEM file transfer service.
 
 endmenu
