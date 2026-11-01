@@ -410,11 +410,14 @@ class WebConfigLogIn(WebConfigActionIn):
 @router.get("/serial/ports")
 def serial_ports():
     dm = _dm()
+    # 前端据此区分“真的没有串口”和“后端缺 pyserial 看不见串口”
+    pa = getattr(dm.uart, 'pyserial_available', None)
     return {
         "ports": dm.list_ports(),
         "open": dm.is_open(),
         "current": dm.uart.port if dm.is_open() else "",
         "baudrate": dm.uart.baudrate if dm.is_open() else 0,
+        "pyserial": pa() if callable(pa) else None,
     }
 
 
@@ -428,8 +431,11 @@ def serial_open(body: SerialOpenIn):
     # Re-open cancels in-flight transfers/polling first (open_port does this).
     ok = dm.open_port(body.path, body.baud, encrypt=body.encrypt)
     if not ok:
+        reason = getattr(dm.uart, 'last_error', '') or ''
         raise AppError(500, "PORT_OPEN_FAILED",
-                       "串口打开失败: %s @%s" % (body.path, body.baud))
+                       "串口打开失败: %s @%s%s" % (
+                           body.path, body.baud,
+                           (" — " + reason) if reason else ""))
     return {
         "ok": True,
         "port": dm.uart.port,
@@ -445,6 +451,61 @@ def serial_close():
     was_open = dm.is_open()
     dm.close_port()
     return {"ok": True, "was_open": was_open, "open": dm.is_open()}
+
+
+# ---------------------------------------------------------------------------
+# serial journal (串口通讯日志汇总) + record-to-file
+# ---------------------------------------------------------------------------
+
+class SerialRecordIn(BaseModel):
+    enable: bool
+    path: Optional[str] = None
+
+
+@router.get("/serial/journal")
+def serial_journal(since: int = 0, limit: int = 500):
+    dm = _dm()
+    js = getattr(dm.uart, 'journal_since', None)
+    if not callable(js):
+        raise AppError(501, "NOT_SUPPORTED", "UART 不支持日志记录")
+    if limit <= 0 or limit > 3000:
+        limit = 500
+    return js(since, limit)
+
+
+@router.post("/serial/journal/clear")
+def serial_journal_clear():
+    dm = _dm()
+    jc = getattr(dm.uart, 'journal_clear', None)
+    if callable(jc):
+        jc()
+    return {"ok": True}
+
+
+@router.get("/serial/journal/record")
+def serial_record_status():
+    rs = getattr(_dm().uart, 'record_status', None)
+    if not callable(rs):
+        return {"enabled": False, "path": ""}
+    return rs()
+
+
+@router.post("/serial/journal/record")
+def serial_record(body: SerialRecordIn):
+    dm = _dm()
+    if body.enable:
+        sr = getattr(dm.uart, 'start_record', None)
+        if not callable(sr):
+            raise AppError(501, "NOT_SUPPORTED", "UART 不支持日志落盘")
+        try:
+            path = sr(body.path or '')
+        except (IOError, OSError, ValueError) as exc:
+            raise AppError(400, "RECORD_START_FAILED", str(exc))
+        return {"enabled": True, "path": path}
+    st = getattr(dm.uart, 'stop_record', None)
+    if callable(st):
+        st()
+    return {"enabled": False, "path": ""}
 
 
 # ---------------------------------------------------------------------------
@@ -778,7 +839,8 @@ def param_list():
     dm = _dm()
     _require_no_transfer(dm, "参数列表")
     names = dm.param_list(timeout=1.0)
-    return {"ok": True, "names": names, "count": len(names)}
+    return {"ok": True, "names": names, "count": len(names),
+            "raw": dm.last_shell_raw}
 
 
 @router.post("/param/get")
@@ -791,8 +853,10 @@ def param_get(body: ParamGetIn):
     value = dm.param_get(body.name.strip(), timeout=body.timeout)
     if value is None:
         raise AppError(504, "PARAM_NOT_FOUND",
-                       "参数 %s 不存在或读取超时" % body.name.strip())
-    return {"ok": True, "name": body.name.strip(), "value": value}
+                       "参数 %s 不存在或读取超时" % body.name.strip(),
+                       extra={"raw": dm.last_shell_raw})
+    return {"ok": True, "name": body.name.strip(), "value": value,
+            "raw": dm.last_shell_raw}
 
 
 @router.post("/param/set")
@@ -806,9 +870,10 @@ def param_set(body: ParamSetIn):
                       timeout=body.timeout, verify=body.verify)
     if not ok:
         raise AppError(500, "PARAM_SET_FAILED",
-                       "参数 %s 设置失败（写入或校验未通过）" % body.name.strip())
+                       "参数 %s 设置失败（写入或校验未通过）" % body.name.strip(),
+                       extra={"raw": dm.last_shell_raw})
     return {"ok": True, "name": body.name.strip(), "value": body.value,
-            "verified": bool(body.verify)}
+            "verified": bool(body.verify), "raw": dm.last_shell_raw}
 
 
 # ---------------------------------------------------------------------------

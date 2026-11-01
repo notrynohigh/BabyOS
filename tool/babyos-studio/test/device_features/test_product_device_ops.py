@@ -51,6 +51,7 @@ for _p in (_PY_ROOT, _HERE):
 from mock_babyos_device import (  # noqa: E402
     open_api_over_pty,
     DEFAULT_SHELL_PARAMS,
+    REAL_LINK_KINDS,
 )
 
 MOCK_DEV_ID = 0x0000ABCD
@@ -135,7 +136,7 @@ class _PtyApiBase(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty',
+        self.assertIn(self.link.kind, REAL_LINK_KINDS,
                          'product ops tests require real pty')
         self.device = self.link.device
 

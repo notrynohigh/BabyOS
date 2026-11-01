@@ -49,7 +49,8 @@ from device.shell_client import ShellClient  # noqa: E402
 from device.xmodem_ydmodem import XmodemSender, YmodemSender, XferState  # noqa: E402
 from device.uart_service import UartService  # noqa: E402
 
-from mock_babyos_device import (  # noqa: E402
+from mock_babyos_device import (
+    REAL_LINK_KINDS,  # noqa: E402
     MockBabyOSDevice,
     XmodemReceiver,
     YmodemReceiver,
@@ -142,7 +143,7 @@ class _VSBase(unittest.TestCase):
                                         open_host_uart=True,
                                         require_pty=self.require_pty)
         if self.require_pty:
-            self.assertEqual(self.chan.kind, 'pty',
+            self.assertIn(self.chan.kind, REAL_LINK_KINDS,
                              'virtual-serial acceptance requires pty')
         _VS_KINDS.append('channel:' + self.chan.kind)
         kwargs = dict(device_id=MOCK_DEV_ID, uid=MOCK_UID,
@@ -502,7 +503,7 @@ class TestVirtualSerialDeviceManager(unittest.TestCase):
         link = open_api_over_pty(encrypt=False, open_host_uart=False,
                                  bind_device_manager=False)
         self.addCleanup(link.close)
-        self.assertEqual(link.kind, 'pty')
+        self.assertIn(link.kind, REAL_LINK_KINDS)
 
         dm = DeviceManager.get()
         ok = dm.open_port(link.host_port, 115200, encrypt=False)
@@ -596,7 +597,7 @@ class TestVirtualSerialFastApi(unittest.TestCase):
         self.link = open_api_over_pty(encrypt=False, open_host_uart=False,
                                       bind_device_manager=False)
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty')
+        self.assertIn(self.link.kind, REAL_LINK_KINDS)
 
         from app.main import create_app
         from fastapi.testclient import TestClient
@@ -767,7 +768,7 @@ class TestCreateByteChannelPolicy(unittest.TestCase):
     def test_prefers_pty(self):
         ch = create_byte_channel(prefer='pty', require_pty=True)
         try:
-            self.assertEqual(ch.kind, 'pty')
+            self.assertIn(ch.kind, REAL_LINK_KINDS)
             self.assertTrue(ch.host_port and ch.host_port != 'socketpair')
         finally:
             ch.close()
@@ -776,7 +777,7 @@ class TestCreateByteChannelPolicy(unittest.TestCase):
     def test_require_pty_marks_kind(self):
         ch = create_byte_channel(prefer='auto', require_pty=True)
         try:
-            self.assertEqual(ch.kind, 'pty')
+            self.assertIn(ch.kind, REAL_LINK_KINDS)
         finally:
             ch.close()
         _record(True, 'channel_require_pty_kind')
@@ -795,7 +796,10 @@ class TestHttpsCertsFromDev(unittest.TestCase):
     def _sha(self, path: str) -> str:
         import hashlib
         with open(path, 'rb') as f:
-            return hashlib.sha256(f.read()).hexdigest()
+            data = f.read()
+        # CRLF→LF normalised: pins are LF-canonical; Windows autocrlf
+        # checkout must not count as content mismatch.
+        return hashlib.sha256(data.replace(b'\r\n', b'\n')).hexdigest()
 
     def test_repo_tool_certs_match_origin_dev(self):
         repo = os.path.abspath(os.path.join(_STUDIO, '..', '..'))

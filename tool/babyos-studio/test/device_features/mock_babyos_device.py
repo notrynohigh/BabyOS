@@ -54,16 +54,26 @@ Python 3.8 compatible. Real byte I/O only — no stubs.
 
 from __future__ import print_function
 
-import fcntl
 import os
 import socket
 import struct
 import sys
-import termios
 import threading
 import time
-import tty
 from typing import Any, Callable, Dict, List, Optional, Tuple
+
+# POSIX-only modules (pty raw-mode / non-blocking flags). Windows has no pty;
+# the TCP bridge channel (kind='tcp') provides the virtual-serial link there.
+try:
+    import fcntl
+    import termios
+    import tty
+    _HAS_POSIX_TTY = True
+except ImportError:
+    fcntl = None
+    termios = None
+    tty = None
+    _HAS_POSIX_TTY = False
 
 # Make python/ importable when executed from test/device_features/
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -80,6 +90,8 @@ from device.xmodem_ydmodem import (  # noqa: E402
 )
 
 # Command aliases (same values as b_protocol)
+REAL_LINK_KINDS = ('pty', 'tcp')  # host-openable virtual serial link kinds
+
 CMD_TEST = bp.CMD_TEST
 CMD_UTC = bp.CMD_UTC
 CMD_FW_INFO = bp.CMD_FW_INFO
@@ -120,6 +132,10 @@ DEFAULT_SHELL_PARAMS = {
     'g_param_test_val2': -999,
     'g_volume': 50,
 }
+
+# nr_micro_shell prompt (bos/thirdparty/Kconfig NR_SHELL_USER_NAME default) —
+# printed after every command line and used as end-of-response marker.
+SHELL_PROMPT = 'nr@bos:'
 
 
 # ---------------------------------------------------------------------------
@@ -278,15 +294,16 @@ def pty_open() -> Tuple[int, int]:
 
 
 def _set_raw_nonblock(fd: int) -> None:
-    try:
-        tty.setraw(fd)
-    except Exception:
-        pass
-    try:
-        fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-        fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
-    except Exception:
-        pass
+    if _HAS_POSIX_TTY:
+        try:
+            tty.setraw(fd)
+        except Exception:
+            pass
+        try:
+            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+            fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+        except Exception:
+            pass
 
 
 def _create_pty_channel(open_host_uart: bool = True) -> ByteChannel:
@@ -344,38 +361,168 @@ def _create_socketpair_channel() -> ByteChannel:
     return ByteChannel('socketpair', uart, b, _close, host_port='socketpair')
 
 
+def _create_tcp_bridge_channel(open_host_uart: bool = True) -> ByteChannel:
+    """
+    Windows-compatible virtual serial link: local TCP bridge over a socketpair.
+
+      host side  : pyserial 'socket://127.0.0.1:<port>' (UartService.open)
+      bridge     : accepts one TCP client, relays bytes both directions
+      device end : MockBabyOSDevice on the other socketpair end
+
+    This stands in for the POSIX pty pair where no pty exists (Windows): the
+    full walk FastAPI /serial/open → UartService → wire → MockBabyOSDevice
+    still exercises the real host stack, only the transport is TCP loopback
+    instead of a pty master/slave pair.
+    """
+    dev_sock, bridge_sock = socket.socketpair()
+    try:
+        dev_sock.setblocking(False)
+    except Exception:
+        pass
+    listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    listener.bind(('127.0.0.1', 0))
+    listener.listen(1)
+    port = int(listener.getsockname()[1])
+    host_port = 'socket://127.0.0.1:%d' % port
+    client_holder: List[socket.socket] = []
+
+    def _pump(src: socket.socket, dst: socket.socket) -> None:
+        # host→device pump for ONE client connection. Never shutdown the
+        # shared bridge_sock here — the channel survives host reconnects.
+        try:
+            while True:
+                data = src.recv(65536)
+                if not data:
+                    break
+                dst.sendall(data)
+        except OSError:
+            pass
+
+    def _device_to_client() -> None:
+        # Single persistent pump for the device→host direction. There must
+        # never be two threads reading bridge_sock concurrently (a stale
+        # reader would steal device replies after a host reconnect).
+        while True:
+            try:
+                data = bridge_sock.recv(65536)
+            except OSError:
+                return
+            if not data:
+                return
+            client = client_holder[0] if client_holder else None
+            if client is None:
+                continue
+            try:
+                client.sendall(data)
+            except OSError:
+                pass
+
+    def _accept_loop() -> None:
+        # Serial semantics: one client at a time, but the host may close and
+        # reopen (e.g. uart.close() → uart.open() in the open/close cycle
+        # test), so keep accepting new connections until the listener closes.
+        while True:
+            try:
+                client, _addr = listener.accept()
+            except OSError:
+                return
+            old = client_holder[0] if client_holder else None
+            client_holder[:] = [client]
+            if old is not None:
+                try:
+                    old.shutdown(socket.SHUT_RDWR)
+                except OSError:
+                    pass
+                try:
+                    old.close()
+                except Exception:
+                    pass
+            # host→device direction: one pump per client connection
+            threading.Thread(target=_pump, args=(client, bridge_sock),
+                             name='tcp-bridge-c2d', daemon=True).start()
+
+    threading.Thread(target=_device_to_client,
+                     name='tcp-bridge-d2c', daemon=True).start()
+    accept_thread = threading.Thread(target=_accept_loop,
+                                     name='tcp-bridge-accept', daemon=True)
+    accept_thread.start()
+
+    def _close() -> None:
+        try:
+            listener.close()
+        except Exception:
+            pass
+        for s in [dev_sock, bridge_sock] + list(client_holder):
+            try:
+                s.close()
+            except Exception:
+                pass
+
+    uart = None  # type: Any
+    if open_host_uart:
+        from device.uart_service import UartService
+        uart = UartService()
+        if not uart.open(host_port, 115200, timeout=0.02, write_timeout=1.0):
+            _close()
+            raise RuntimeError('UartService.open failed on %s' % host_port)
+
+    return ByteChannel('tcp', uart, dev_sock, _close, host_port=host_port)
+
+
 def create_byte_channel(prefer: str = 'pty',
                         open_host_uart: bool = True,
                         require_pty: bool = False) -> ByteChannel:
     """
     Create a host↔device byte channel.
 
-    prefer='pty' tries pty first (studio UartService path), then socketpair.
-    prefer='socketpair' skips pty.
-    prefer='auto' tries pty then socketpair.
+    prefer='pty' tries pty first (studio UartService path), then tcp bridge,
+    then socketpair. prefer='tcp' uses the TCP bridge. prefer='socketpair'
+    skips both. prefer='auto' tries pty → tcp → socketpair.
+
+    Transports:
+      pty        POSIX pseudo-terminal pair (kind='pty')
+      tcp        127.0.0.1 TCP bridge over a socketpair (kind='tcp') —
+                 Windows virtual serial; host opens 'socket://127.0.0.1:<port>'
+      socketpair in-process AF_UNIX pipe only (kind='socketpair') — no
+                 host-port name, cannot be opened via the serial API
 
     open_host_uart:
-      True  → open UartService on the pty slave now (ProtocolClient path)
+      True  → open UartService on the channel host port now (ProtocolClient
+              path; socketpair kind cannot do this)
       False → leave host_port for DeviceManager/TestClient to open
 
     require_pty=True:
-      Raise if a real pty pair cannot be created (acceptance tests).
-      kind will always be 'pty' on success.
+      Require a REAL host-openable virtual serial link (kind 'pty' or 'tcp'),
+      raising if neither can be created. On POSIX this is always a pty; on
+      Windows it is the TCP bridge. kind will never be 'socketpair'.
 
-    Returns a ByteChannel. Raises if both transports fail.
+    Returns a ByteChannel. Raises if no usable transport is available.
     """
     errors = []  # type: List[str]
     if require_pty:
+        if prefer in ('pty', 'auto'):
+            try:
+                return _create_pty_channel(open_host_uart=open_host_uart)
+            except Exception as exc:
+                errors.append('pty: %s' % exc)
         try:
-            return _create_pty_channel(open_host_uart=open_host_uart)
+            return _create_tcp_bridge_channel(open_host_uart=open_host_uart)
         except Exception as exc:
-            raise RuntimeError('require_pty: pty unavailable: %s' % exc)
+            errors.append('tcp: %s' % exc)
+        raise RuntimeError('no real virtual serial link available: %s'
+                           % '; '.join(errors))
     if prefer in ('pty', 'auto'):
         try:
             return _create_pty_channel(open_host_uart=open_host_uart)
         except Exception as exc:
             errors.append('pty: %s' % exc)
-    if prefer in ('socketpair', 'auto', 'pty'):
+    if prefer in ('tcp', 'auto', 'pty'):
+        try:
+            return _create_tcp_bridge_channel(open_host_uart=open_host_uart)
+        except Exception as exc:
+            errors.append('tcp: %s' % exc)
+    if prefer in ('socketpair', 'auto', 'pty', 'tcp'):
         try:
             return _create_socketpair_channel()
         except Exception as exc:
@@ -836,9 +983,23 @@ class MockBabyOSDevice:
         if self._thread is not None:
             return
         self._stop.clear()
+        self._drain_endpoint()
         self._thread = threading.Thread(target=self._run, name='MockBabyOSDevice')
         self._thread.daemon = True
         self._thread.start()
+
+    def _drain_endpoint(self) -> None:
+        """
+        Discard bytes that arrived while the device thread was not running.
+
+        Models a real reboot: a restarted device must not parse pre-reboot
+        traffic (e.g. a cancelled transfer's frames still sitting in the
+        socket/pty buffer), otherwise stale frames corrupt the new session.
+        """
+        self.rx_buf.clear()
+        for _ in range(64):
+            if not self.endpoint.read(8192):
+                break
 
     def stop(self, timeout: float = 2.0) -> None:
         self._stop.set()
@@ -1245,8 +1406,10 @@ class MockBabyOSDevice:
             line = bytes(self._shell_rx[:idx]).decode('utf-8', errors='replace').strip()
             del self._shell_rx[:idx + 1]
             resp = self._handle_shell_line(line)
-            if resp:
-                self.endpoint.write(resp.encode('utf-8'))
+            # nr_micro_shell prints its prompt after every command line —
+            # ShellClient treats it as the end-of-response marker.
+            out = (resp or '') + SHELL_PROMPT
+            self.endpoint.write(out.encode('utf-8'))
             with self._lock:
                 self.shell_log.append((line, resp))
 
@@ -1561,7 +1724,9 @@ def open_api_over_pty(encrypt: bool = False,
         POST /api/device/serial/open {"path": link.host_port, ...}
 
     require_pty=True:
-      Fail hard if a real pty pair cannot be created (acceptance default).
+      Fail hard if a real host-openable virtual serial link cannot be created
+      (acceptance default). On POSIX this is a pty pair (kind='pty'); on
+      Windows it is the TCP bridge (kind='tcp').
 
     Returns PtyLink. Caller must close() (or use as context manager).
     """
@@ -1571,9 +1736,10 @@ def open_api_over_pty(encrypt: bool = False,
     chan = create_byte_channel(prefer='pty',
                                open_host_uart=open_host_uart,
                                require_pty=require_pty)
-    if require_pty and chan.kind != 'pty':
+    if require_pty and chan.kind not in REAL_LINK_KINDS:
         chan.close()
-        raise RuntimeError('open_api_over_pty requires pty, got %s' % chan.kind)
+        raise RuntimeError('open_api_over_pty requires a real virtual serial '
+                           'link, got %s' % chan.kind)
     logs = []  # type: List[str]
     kwargs.setdefault('log_fn', logs.append)
     device = MockBabyOSDevice(chan.device_endpoint(), **kwargs)

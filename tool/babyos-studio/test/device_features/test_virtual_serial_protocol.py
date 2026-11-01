@@ -61,7 +61,8 @@ from device.uart_service import UartService  # noqa: E402
 from device.xmodem_ydmodem import (  # noqa: E402
     XmodemSender, YmodemSender, XferState,
 )
-from mock_babyos_device import (  # noqa: E402
+from mock_babyos_device import (
+    REAL_LINK_KINDS,  # noqa: E402
     MockBabyOSDevice,
     create_byte_channel,
     open_api_over_pty,
@@ -326,6 +327,12 @@ def _verify_origin_dev_certs():
             pkg_cert = f.read()
         with open(info['pkg_key'], 'rb') as f:
             pkg_key = f.read()
+        # CRLF→LF normalise disk bytes before comparing with LF git blobs
+        # (Windows autocrlf checkout — content is identical).
+        disk_cert = disk_cert.replace(b'\r\n', b'\n')
+        disk_key = disk_key.replace(b'\r\n', b'\n')
+        pkg_cert = pkg_cert.replace(b'\r\n', b'\n')
+        pkg_key = pkg_key.replace(b'\r\n', b'\n')
         assert disk_cert == dev_cert, 'repo tool cert != origin/dev'
         assert disk_key == dev_key, 'repo tool key != origin/dev'
         assert pkg_cert == dev_cert, 'package cert != origin/dev'
@@ -364,9 +371,10 @@ class _PtyBase(unittest.TestCase):
             open_host_uart=True,
             require_pty=self.require_pty,
         )
-        self.assertEqual(
-            self.chan.kind, 'pty',
-            'acceptance requires kind=pty, got %s' % self.chan.kind)
+        self.assertIn(
+            self.chan.kind, REAL_LINK_KINDS,
+            'acceptance requires a real virtual serial link, got %s'
+            % self.chan.kind)
         self.channel_kind = self.chan.kind
         self.assertTrue(self.chan.host_uart is not None
                         and isinstance(self.chan.host_uart, UartService))
@@ -414,7 +422,11 @@ class TestSerialOpenClose(_PtyBase):
     def test_open_close_cycle_over_pty(self):
         uart = self.chan.host_uart
         self.assertTrue(uart.is_open)
-        self.assertTrue(os.path.exists(self.chan.host_port))
+        if self.chan.kind == 'pty':
+            # pty slave device node exists on disk; a TCP bridge URL does not
+            self.assertTrue(os.path.exists(self.chan.host_port))
+        else:
+            self.assertTrue(self.chan.host_port.startswith('socket://'))
         port = self.chan.host_port
 
         uart.close()
@@ -876,7 +888,7 @@ class TestDeviceManagerOverPty(unittest.TestCase):
         self.link = open_api_over_pty(
             encrypt=False, open_host_uart=False, bind_device_manager=False)
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty')
+        self.assertIn(self.link.kind, REAL_LINK_KINDS)
         self.channel_kind = self.link.kind
         self._marked = False
 

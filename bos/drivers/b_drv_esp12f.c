@@ -64,7 +64,7 @@
 
 #define DRIVER_PRIVATE_TYPE bEsp12fPrivate_t
 
-#define DRIVER_ESP12F_DEBUG_ENABLE 0
+#define DRIVER_ESP12F_DEBUG_ENABLE 1
 
 #ifndef ESP12F_CMD_TIMEOUT
 #define WIFIMODULE_CMD_TIMEOUT (5000)
@@ -368,9 +368,30 @@ static void _bWifiSetPcbStatus(DRIVER_PRIVATE_TYPE *_priv, uint8_t pcb_index, ui
 //------------------------与模组相关，解析AT指令收到数据------------------------------------------------
 //----------------------------------------------------------------------------------------------------
 
+static void _bEsp12fIpdDispatch(DRIVER_PRIVATE_TYPE *_priv, int32_t conn_index,
+                                const char *payload, int32_t recv_len)
+{
+    if (conn_index >= 0 && conn_index < WIFIMODULE_PCB_NUM_MAX &&
+        _priv->pcb_ctx[conn_index].state >= WIFI_PCB_STATE_CONNECTED &&
+        _priv->pcb_ctx[conn_index].state < WIFI_PCB_STATE_WAIT_DISCONNECT)
+    {
+#if DRIVER_ESP12F_DEBUG_ENABLE
+        b_log("recv:%d bytes\r\n    %s\r\n", recv_len, payload);
+        b_log_hex((uint8_t *)payload, recv_len);
+        b_log("\r\n");
+#endif
+        bTcpIpNewDataArg_t new_data;
+        new_data.pcb     = _priv->pcb_ctx[conn_index].pcb;
+        new_data.pbuf    = (uint8_t *)payload;
+        new_data.len     = recv_len;
+        new_data.release = NULL;
+        _bWifiInvokeTcpIpCb(_priv, B_TCPIP_E_NEW_DATA, &new_data);
+    }
+}
+
 static void _bEsp12fDataParse(bDriverInterface_t *pdrv, char *pdata, uint16_t len)
 {
-    int32_t     conn_index = 0, recv_len = 0, tmp = 0;
+    int32_t     conn_index = 0, recv_len = 0;
     const char *pstr = NULL;
     int         ret  = 0;
     bDRIVER_GET_PRIVATE(_priv, DRIVER_PRIVATE_TYPE, pdrv);
@@ -396,31 +417,42 @@ static void _bEsp12fDataParse(bDriverInterface_t *pdrv, char *pdata, uint16_t le
     }
     else if ((len >= strlen(WIFI_IP_RECV_DATA_STR)) && (strstr(pdata, WIFI_IP_RECV_DATA_STR) != 0))
     {
-        ret = bParseString(pdata, ",", 1, &conn_index, &pstr);
-        ret += bParseString(pdata, ",", 2, &recv_len, &pstr);
-        const char *data_str = pstr;
-        if ((pstr != NULL) && (ret == 0) && (conn_index < WIFIMODULE_PCB_NUM_MAX))
+        // FIX: 一个 UART 帧内可能融合多个完整 +IPD (服务器把 headers/body 分两个
+        // TCP 包发时, 两包常被打包进同一 UART 帧), 原实现只解析第一个, 其余全部丢
+        // 弃. 改为循环解析帧内所有完整 +IPD; 声明长度超过帧剩余时丢弃该 +IPD,
+        // 防止 over-read. +IPD 头/载荷被 UART 拆到两帧的情况仍丢弃 (不做跨帧重组).
+        const char *scan = pdata;
+        while ((scan != NULL) && ((pstr = strstr(scan, WIFI_IP_RECV_DATA_STR)) != NULL))
         {
-            ret = bParseString(data_str, ":", 0, &recv_len, &pstr);
-            ret += bParseString(data_str, ":", 1, &tmp, &pstr);
-            if (ret == 0 && recv_len > 0 && pstr != NULL)
+            const char *data_str = NULL;
+            const char *tmp_p    = NULL;
+            conn_index = 0;
+            recv_len   = 0;
+            ret        = bParseString(pstr, ",", 1, &conn_index, &pstr);  // conn (字段1 纯数字)
+            if ((ret != 0) || (pstr == NULL))
             {
-                if (_priv->pcb_ctx[conn_index].state >= WIFI_PCB_STATE_CONNECTED &&
-                    _priv->pcb_ctx[conn_index].state < WIFI_PCB_STATE_WAIT_DISCONNECT)
-                {
-#if DRIVER_ESP12F_DEBUG_ENABLE
-                    b_log("recv:%d bytes\r\n    %s\r\n", recv_len, pstr);
-                    b_log_hex(pstr, recv_len);
-                    b_log("\r\n");
-#endif
-                    bTcpIpNewDataArg_t new_data;
-                    new_data.pcb     = _priv->pcb_ctx[conn_index].pcb;
-                    new_data.pbuf    = (uint8_t *)pstr;
-                    new_data.len     = recv_len;
-                    new_data.release = NULL;
-                    _bWifiInvokeTcpIpCb(_priv, B_TCPIP_E_NEW_DATA, &new_data);
-                }
+                break;  // 帧尾半个头, 丢弃
             }
+            // 定位 len 字段: 用字段1 (不是字段2). 字段2 会被载荷/融合 +IPD 里的
+            // 逗号截断导致错位; 字段1 起点固定, 数字是否有效无所谓, 下面重取.
+            ret = bParseString(pstr, ",", 1, &recv_len, &pstr);
+            if ((ret != 0) || (pstr == NULL))
+            {
+                break;
+            }
+            ret = bParseString(pstr, ":", 0, &recv_len, &tmp_p);  // 从 len 字段开头取数字
+            data_str = strchr(pstr, ':');                         // 载荷起点
+            if ((ret != 0) || (recv_len <= 0) || (data_str == NULL))
+            {
+                break;
+            }
+            data_str += 1;
+            if ((size_t)recv_len > (size_t)len - (size_t)(data_str - pdata))
+            {
+                break;  // 载荷未收齐, 丢弃防 over-read
+            }
+            _bEsp12fIpdDispatch(_priv, conn_index, data_str, recv_len);
+            scan = data_str + recv_len;
         }
     }
     else if ((len >= strlen(WIFI_IP_DISCONNECT_STR)) &&
@@ -499,6 +531,9 @@ static void _bAtSendData(const uint8_t *pbuf, uint16_t len, void *user_data)
 static int _bHalUartIdleCb(uint8_t *pbuf, uint16_t len, void *user_data)
 {
     bDRIVER_GET_PRIVATE(_priv, DRIVER_PRIVATE_TYPE, (bDriverInterface_t *)user_data);
+#if DRIVER_ESP12F_DEBUG_ENABLE
+    b_log("(%d) [%d] %s\r\n", bHalGetSysTick(), len, pbuf);
+#endif
     bAtFeedData(&_priv->at_ctx.at, pbuf, len);
     return 0;
 }

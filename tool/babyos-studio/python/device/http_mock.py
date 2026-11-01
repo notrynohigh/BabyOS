@@ -27,6 +27,7 @@ import datetime
 import hashlib
 import json
 import os
+import socket
 import ssl
 import threading
 import time
@@ -143,11 +144,19 @@ def mock_log_status() -> Dict[str, Any]:
 
 
 def _sha256_file(path: str) -> str:
+    """Content fingerprint with CRLF→LF normalisation.
+
+    Pins are computed over canonical (LF) bytes. On Windows, core.autocrlf
+    checks PEMs out with CRLF, which must NOT count as a content mismatch —
+    otherwise HTTPS can never start on a Windows checkout (issue: HTTP page
+    "enable HTTPS → start" always failed with cert content mismatch).
+    """
     h = hashlib.sha256()
     try:
         with open(path, 'rb') as f:
-            for chunk in iter(lambda: f.read(65536), b''):
-                h.update(chunk)
+            data = f.read()
+        data = data.replace(b'\r\n', b'\n')
+        h.update(data)
     except Exception:
         return ''
     return h.hexdigest()
@@ -263,6 +272,46 @@ def _headers_to_dict(handler: BaseHTTPRequestHandler) -> Dict[str, str]:
     return out
 
 
+# Per-connection I/O deadline (TLS handshake / request read / response write).
+# Without it a client that connects and never sends anything blocks its handler
+# thread forever, and with handshake-on-accept the whole accept loop stalls.
+_CONN_IO_TIMEOUT = 30.0
+
+
+class _ThreadingHttpServer(ThreadingHTTPServer):
+    """
+    ThreadingHTTPServer with per-connection TLS wrap on ACCEPTED sockets.
+
+    Wrapping the LISTENING socket makes SSLSocket.accept() run the TLS
+    handshake inline — one client that connects and stalls (browser warning
+    screen, crashed device, port probe) blocks the accept loop and the mock
+    stops answering every subsequent connection. Wrapping each accepted socket
+    with do_handshake_on_connect=False keeps accept() non-blocking; the
+    handshake happens lazily on first read inside the per-connection handler
+    thread, bounded by _CONN_IO_TIMEOUT.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.ssl_context: Optional[ssl.SSLContext] = kwargs.pop(
+            'ssl_context', None)
+        super().__init__(*args, **kwargs)
+
+    def get_request(self) -> Any:
+        sock, addr = self.socket.accept()
+        try:
+            sock.settimeout(_CONN_IO_TIMEOUT)
+            if self.ssl_context is not None:
+                sock = self.ssl_context.wrap_socket(
+                    sock, server_side=True, do_handshake_on_connect=False)
+        except Exception:
+            try:
+                sock.close()
+            except Exception:
+                pass
+            raise
+        return sock, addr
+
+
 class _MockHandler(BaseHTTPRequestHandler):
     """Request handler bound to a parent HttpMock instance via server.mock."""
 
@@ -364,6 +413,24 @@ class _MockHandler(BaseHTTPRequestHandler):
         self._record_and_respond()
 
 
+def _lan_ipv4() -> Optional[str]:
+    """Best-effort LAN IPv4 of this host (the route devices will dial).
+
+    UDP connect sends no packets — it only picks the outbound interface.
+    Returns None when offline / loopback-only, so callers can fall back
+    to 127.0.0.1.
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+        return None if not ip or ip.startswith('127.') else ip
+    except Exception:
+        return None
+    finally:
+        s.close()
+
+
 class HttpMock:
     """
     Real ThreadingHTTPServer-backed HTTP mock.
@@ -413,11 +480,30 @@ class HttpMock:
         return self._https
 
     @property
+    def bind_host(self) -> str:
+        """Listener address — 0.0.0.0 so LAN devices can reach the mock."""
+        return '0.0.0.0'
+
+    @property
     def base_url(self) -> str:
+        """URL a device on the network should request (LAN IP when known)."""
         if not self._port:
             return ''
         scheme = 'https' if self._https else 'http'
-        return '%s://127.0.0.1:%d' % (scheme, self._port)
+        host = _lan_ipv4() or '127.0.0.1'
+        return '%s://%s:%d' % (scheme, host, self._port)
+
+    @property
+    def urls(self) -> List[str]:
+        """All reachable URLs — LAN first, then loopback for host-side tests."""
+        if not self._port:
+            return []
+        scheme = 'https' if self._https else 'http'
+        out = []
+        for host in (_lan_ipv4(), '127.0.0.1'):
+            if host and host not in out:
+                out.append('%s://%s:%d' % (scheme, host, self._port))
+        return out
 
     def start(self, port: int = 0, body: Any = b'{"ok":true}',
               content_type: str = 'application/json',
@@ -462,7 +548,8 @@ class HttpMock:
             _mock_log_append('[MockHttp] start port=%s https=%s' % (
                 port, self._https))
 
-        server = ThreadingHTTPServer(('127.0.0.1', int(port)), _MockHandler)
+        server = _ThreadingHttpServer((self.bind_host, int(port)), _MockHandler,
+                                      ssl_context=None)
         server.mock = self  # type: ignore[attr-defined]
         # allow fast restart on Linux
         try:
@@ -473,7 +560,9 @@ class HttpMock:
             cert, key = _resolve_https_cert()
             ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
             ctx.load_cert_chain(certfile=cert, keyfile=key)
-            server.socket = ctx.wrap_socket(server.socket, server_side=True)
+            # TLS is applied per accepted connection (see _ThreadingHttpServer)
+            # so a stalled handshake never blocks the accept loop.
+            server.ssl_context = ctx
             self._https_cert = cert
             self._https_key = key
         # capture bound port locally — never return a shared attr that a
@@ -639,6 +728,8 @@ class HttpMock:
             'running': self.is_running,
             'port': self._port,
             'base_url': self.base_url,
+            'urls': self.urls,
+            'bind_host': self.bind_host,
             'https': self._https,
             'status_code': self._status_code,
             'content_type': self._content_type,

@@ -30,6 +30,20 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.on('serial:data', handler);
       return () => ipcRenderer.removeListener('serial:data', handler);
     },
+
+    /** 监听串口运行期错误（拔线等） @param {function(string)} callback */
+    onError: (callback) => {
+      const handler = (_event, msg) => callback(msg);
+      ipcRenderer.on('serial:error', handler);
+      return () => ipcRenderer.removeListener('serial:error', handler);
+    },
+
+    /** 监听串口被关闭（异常断开或外部关闭） @param {function()} callback */
+    onClosed: (callback) => {
+      const handler = () => callback();
+      ipcRenderer.on('serial:closed', handler);
+      return () => ipcRenderer.removeListener('serial:closed', handler);
+    },
   },
 
   // ---------------------------------------------------------------------------
@@ -62,6 +76,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   python: {
     /** 获取后端状态 @returns {{ running: boolean, port: number }} */
     status: () => ipcRenderer.invoke('python:status'),
+
+    /** 手动重启后端 @returns {{ ok: boolean, already: boolean }} */
+    restart: () => ipcRenderer.invoke('python:restart'),
 
     /** 监听后端日志 */
     onLog: (callback) => {

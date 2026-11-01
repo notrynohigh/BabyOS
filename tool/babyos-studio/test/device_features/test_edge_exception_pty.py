@@ -74,6 +74,7 @@ from mock_babyos_device import (  # noqa: E402
     MockBabyOSDevice,
     create_byte_channel,
     open_api_over_pty,
+    REAL_LINK_KINDS,
 )
 
 MOCK_UID = b'\x11\x22\x33\x44\x55\x66\x77\x88\x99\xAA\xBB\xCC'
@@ -208,9 +209,9 @@ class _PtyBase(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty',
-                         'edge/exception main path requires real pty, got %s'
-                         % self.link.kind)
+        self.assertIn(self.link.kind, REAL_LINK_KINDS,
+                      'edge/exception main path requires real link, got %s'
+                      % self.link.kind)
         if self.link.kind not in _CHANNEL_KINDS:
             _CHANNEL_KINDS.append(self.link.kind)
         self.device = self.link.device
@@ -621,7 +622,7 @@ class TestApiEdgeExceptions(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty')
+        self.assertIn(self.link.kind, REAL_LINK_KINDS)
         if self.link.kind not in _CHANNEL_KINDS:
             _CHANNEL_KINDS.append(self.link.kind)
 

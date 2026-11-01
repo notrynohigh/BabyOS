@@ -72,6 +72,7 @@ from mock_babyos_device import (  # noqa: E402
     create_byte_channel,
     open_api_over_pty,
     DEFAULT_SHELL_PARAMS,
+    REAL_LINK_KINDS,
 )
 
 MOCK_UID = b'\x11\x22\x33\x44\x55\x66\x77\x88\x99\xAA\xBB\xCC'
@@ -189,9 +190,9 @@ class _PtySdkBase(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty',
-                         'edge/exception main path requires real pty, got %s'
-                         % self.link.kind)
+        self.assertIn(self.link.kind, REAL_LINK_KINDS,
+                      'edge/exception main path requires real link, got %s'
+                      % self.link.kind)
         if self.link.kind not in _CHANNEL_KINDS:
             _CHANNEL_KINDS.append(self.link.kind)
         self.device = self.link.device
@@ -994,7 +995,7 @@ class TestApiStructuredEdgesPty(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty')
+        self.assertIn(self.link.kind, REAL_LINK_KINDS)
         if self.link.kind not in _CHANNEL_KINDS:
             _CHANNEL_KINDS.append(self.link.kind)
 
@@ -1287,7 +1288,7 @@ def _build_test_schema(result):
         pty_fail == 0 and pty_pass > 0
         and result.wasSuccessful()
         and _PTY_COUNT['total'] > 0
-        and all(k == 'pty' for k in _CHANNEL_KINDS)
+        and all(k in REAL_LINK_KINDS for k in _CHANNEL_KINDS)
     )
     return {
         'schema': TEST_SCHEMA_ID,

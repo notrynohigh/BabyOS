@@ -68,10 +68,12 @@ SERIAL_OPEN = '/api/device/serial/open'
 
 
 def _sha256_file(path):
+    # CRLF→LF normalised: pins are LF-canonical; Windows autocrlf checkout
+    # must not count as content mismatch (parity with device/http_mock.py).
     h = hashlib.sha256()
     with open(path, 'rb') as f:
-        for chunk in iter(lambda: f.read(65536), b''):
-            h.update(chunk)
+        data = f.read()
+    h.update(data.replace(b'\r\n', b'\n'))
     return h.hexdigest()
 
 
@@ -185,7 +187,7 @@ class _PtyProductBase(_ProductBase):
     def setUp(self):
         super(_PtyProductBase, self).setUp()
 
-        from mock_babyos_device import open_api_over_pty
+        from mock_babyos_device import REAL_LINK_KINDS, open_api_over_pty
         self.logs = []
         self.link = open_api_over_pty(
             encrypt=False,
@@ -195,7 +197,7 @@ class _PtyProductBase(_ProductBase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty',
+        self.assertIn(self.link.kind, REAL_LINK_KINDS,
                          'product HTTP protocol path requires real pty')
 
         r = self.client.post(SERIAL_OPEN, json={
@@ -222,7 +224,10 @@ class TestServerTimePlaceholderProduct(_ProductBase):
             file_log=True,
         )
         base = data['base_url']
-        self.assertTrue(base.startswith('http://127.0.0.1:'), base)
+        self.assertTrue(base.startswith('http://'), base)
+        # base_url prefers the LAN IP (that is what devices dial); host-side
+        # requests must use the loopback URL for network independence.
+        base = 'http://127.0.0.1:%d' % data['port']
 
         r = self.client.post(MOCK_PROXY, json={
             'url': base + '/product-str-st',
@@ -266,7 +271,9 @@ class TestServerTimePlaceholderProduct(_ProductBase):
                 file_log=False,
             )
             base = mock.base_url
-            self.assertTrue(base.startswith('http://127.0.0.1:'), base)
+            self.assertTrue(base.startswith('http://'), base)
+            # host-side request via loopback (base_url prefers the LAN IP)
+            base = 'http://127.0.0.1:%d' % mock.port
 
             import httpx
             try:
@@ -323,7 +330,9 @@ class TestServerTimePlaceholderProduct(_ProductBase):
         self.mock_stopped = True  # cleanup already handled via dm
         self.assertGreater(port, 0)
         base = dm.http_mock.base_url
-        self.assertTrue(base.startswith('http://127.0.0.1:'), base)
+        self.assertTrue(base.startswith('http://'), base)
+        # host-side request via loopback (base_url prefers the LAN IP)
+        base = 'http://127.0.0.1:%d' % port
 
         import httpx
         with httpx.Client(verify=False, timeout=5.0) as c:
@@ -608,10 +617,14 @@ class TestHttpsCertsAndLiveTlsProduct(_ProductBase):
             self.assertTrue(os.path.isfile(p), p)
             self.assertEqual(_sha256_file(p), expected, p)
 
-        # LIVE TLS handshake via httpx verify against mock cert file
+        # LIVE TLS handshake via httpx verify against mock cert file.
+        # The pinned mock cert only covers localhost / 127.0.0.1 (SAN), so
+        # the strict-verify handshake must use the loopback URL even though
+        # `base` (LAN IP) is what real devices dial.
         import httpx
+        loopback_base = 'https://127.0.0.1:%d' % st.get('port')
         with httpx.Client(verify=cert, timeout=5.0) as c:
-            resp = c.get(base + '/https-ping')
+            resp = c.get(loopback_base + '/https-ping')
         self.assertEqual(resp.status_code, 200, resp.text)
         self.assertIn('https', resp.text)
         self.assertIn('product-https', resp.text)
@@ -636,6 +649,91 @@ class TestHttpsCertsAndLiveTlsProduct(_ProductBase):
         self.assertTrue(stop_body.get('was_running'))
         st2 = stop_body.get('status') or {}
         self.assertFalse(st2.get('running'))
+
+
+class TestStalledConnectionsDoNotBlockAccept(_ProductBase):
+    """
+    Regression: clients that connect but never complete the TLS handshake
+    (browser parked on a certificate warning, crashed device, port probe)
+    must not block the accept loop. Previously the LISTENING socket was
+    TLS-wrapped, so SSLSocket.accept() ran the handshake inline and one
+    stalled client made the mock stop answering every later connection.
+    """
+
+    def _hang_sockets(self, port, n):
+        import socket
+        hangers = []
+        for _ in range(n):
+            s = socket.create_connection(('127.0.0.1', port), timeout=3.0)
+            s.settimeout(3.0)
+            hangers.append(s)
+        return hangers
+
+    def _rst(self, s):
+        import socket
+        import struct
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
+                    struct.pack('ii', 1, 0))
+        s.close()
+
+    def test_https_silent_hangers_do_not_block_new_connections(self):
+        import httpx
+        data = self._start_mock(body='{"ok":1}', https=True, file_log=False)
+        st = data.get('status') or {}
+        port = int(st.get('port') or 0)
+        self.assertGreater(port, 0)
+        loopback = 'https://127.0.0.1:%d' % port
+
+        def ping():
+            with httpx.Client(verify=False, timeout=3.0) as c:
+                return c.get(loopback + '/ping').status_code
+
+        self.assertEqual(ping(), 200)
+
+        # 5 clients connect and send nothing — the old code blocked the
+        # accept loop here and every subsequent request timed out.
+        hangers = self._hang_sockets(port, 5)
+        try:
+            self.assertEqual(ping(), 200,
+                             'silent clients must not block new connections')
+        finally:
+            for s in hangers:
+                try:
+                    s.close()
+                except Exception:
+                    pass
+
+        # aborted handshakes (RST mid-ClientHello) must not break it either
+        import socket
+        for i in range(6):
+            try:
+                s = socket.create_connection(('127.0.0.1', port), timeout=3.0)
+                if i % 2:
+                    s.sendall(b'\x16\x03\x01\x00')  # half a ClientHello
+                self._rst(s)
+            except Exception:
+                pass
+            self.assertEqual(ping(), 200,
+                             'aborted handshake #%d broke the server' % i)
+
+    def test_http_silent_hangers_do_not_block_new_connections(self):
+        import httpx
+        data = self._start_mock(body='{"ok":1}', https=False, file_log=False)
+        st = data.get('status') or {}
+        port = int(st.get('port') or 0)
+        self.assertGreater(port, 0)
+
+        hangers = self._hang_sockets(port, 5)
+        try:
+            with httpx.Client(timeout=3.0) as c:
+                r = c.get('http://127.0.0.1:%d/ping' % port)
+            self.assertEqual(r.status_code, 200)
+        finally:
+            for s in hangers:
+                try:
+                    s.close()
+                except Exception:
+                    pass
 
 
 # ---------------------------------------------------------------------------

@@ -74,9 +74,11 @@ typedef enum
     B_HTTP_POST,
     B_HTTP_PUT,
     B_HTTP_DELETE,
+    B_HTTP_HEAD,
 } bHttpReqType_t;
-#define HTTPREQ_TYPE_IS_VALID(t) \
-    ((t) == B_HTTP_GET || (t) == B_HTTP_POST || (t) == B_HTTP_PUT || (t) == B_HTTP_DELETE)
+#define HTTPREQ_TYPE_IS_VALID(t)                         \
+    ((t) == B_HTTP_GET || (t) == B_HTTP_POST || (t) == B_HTTP_PUT || (t) == B_HTTP_DELETE \
+     || (t) == B_HTTP_HEAD)
 
 /**
  * @brief HTTP响应信息
@@ -241,6 +243,7 @@ typedef struct
     int    off;          // header 已发送 offset
     int    body_off;     // body 已发送 offset
     uint8_t timed_out;   // chunk timeout 标志, 防 PT 死循环
+    uint8_t retry;       // 连续 0 字节写入计数, 跨 PT_WAIT_UNTIL yield 持久, 防 send 停滞死循环
 } bHttpSendCtx_t;
 
 /**

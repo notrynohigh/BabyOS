@@ -169,6 +169,13 @@ if not exist "python\.venv\.deps_installed" (
 ) else (
     echo [OK] Python 依赖已安装
 )
+
+REM 依赖自愈：requirements.txt 后续新增的依赖，旧 venv 因 .deps_installed 标记会跳过安装
+python\.venv\Scripts\python.exe -c "import serial" 2>nul
+if errorlevel 1 (
+    echo [INFO] 检测到缺少 pyserial，正在补装 ...
+    python\.venv\Scripts\pip.exe install pyserial
+)
 echo.
 
 :python_done

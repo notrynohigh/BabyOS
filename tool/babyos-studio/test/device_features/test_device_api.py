@@ -43,6 +43,27 @@ from fastapi.testclient import TestClient  # noqa: E402
 from app.main import create_app  # noqa: E402
 from app.api import device as device_api  # noqa: E402
 from device.device_manager import DeviceManager  # noqa: E402
+
+
+def _route_paths(app) -> set:
+    """
+    All route paths of an app, flattening Starlette 1.x lazy included
+    routers (_IncludedRouter keeps the child router on `.original_router`
+    and does not materialise its routes into `app.routes`).
+    """
+    paths = set()
+
+    def _walk(routes):
+        for r in routes:
+            p = getattr(r, 'path', None)
+            if p:
+                paths.add(p)
+            inner = getattr(r, 'original_router', None)
+            if inner is not None:
+                _walk(inner.routes)
+
+    _walk(app.routes)
+    return paths
 from device.sn_util import sn_bytes  # noqa: E402
 from test_device_services import (  # noqa: E402
     FakeDevice,
@@ -561,8 +582,11 @@ class TestHttpMockEndpoints(DeviceApiTestCase):
         body = r.json()
         self.assertTrue(body['ok'])
         base = body['base_url']
-        self.assertTrue(base.startswith('http://127.0.0.1:'))
+        # base_url may advertise the LAN IPv4 (for device access) — host-side
+        # requests must go through the loopback address.
+        self.assertTrue(base.startswith('http://'), base)
         port = body['port']
+        loopback_base = 'http://127.0.0.1:%d' % port
         self.assertGreater(port, 0)
         self.assertTrue(body['status']['running'])
 
@@ -577,7 +601,7 @@ class TestHttpMockEndpoints(DeviceApiTestCase):
         # real HTTP traffic against the mock
         import httpx
         with httpx.Client(timeout=3.0) as c:
-            resp = c.post(base + '/api/test', content=b'hello')
+            resp = c.post(loopback_base + '/api/test', content=b'hello')
             self.assertEqual(resp.status_code, 200)
             self.assertEqual(resp.json(), {'mock': 1})
 
@@ -714,7 +738,7 @@ class TestAggregateEndpoints(DeviceApiTestCase):
         self.assertTrue(any('open_port' in line for line in logs['logs']))
 
     def test_routes_all_registered(self):
-        paths = {getattr(r, 'path', '') for r in self.app.routes}
+        paths = _route_paths(self.app)
         required = [
             '/api/device/serial/ports',
             '/api/device/serial/open',
@@ -759,7 +783,7 @@ class TestAggregateEndpoints(DeviceApiTestCase):
         self.assertIn('from .api import', src)
 
         # module-level app exposes the same routes
-        module_paths = {getattr(r, 'path', '') for r in module_app.routes}
+        module_paths = _route_paths(module_app)
         self.assertIn('/api/device/status', module_paths)
         self.assertIn('/api/device/serial/open', module_paths)
         self.assertIn('/api/device/protocol/test', module_paths)

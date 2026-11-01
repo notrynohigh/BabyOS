@@ -30,7 +30,6 @@ Run:
 from __future__ import print_function
 
 import os
-import pty
 import shutil
 import stat
 import sys
@@ -46,6 +45,28 @@ for _p in (_PY_ROOT, _HERE):
         sys.path.insert(0, _p)
 
 from device.webconfig_tool import WebConfigTool  # noqa: E402
+
+
+def _open_virtual_serial():
+    """
+    Open a real host-openable virtual serial link.
+
+    POSIX: pty master/slave pair. Windows (no pty): TCP bridge over a
+    socketpair — the host opens 'socket://127.0.0.1:<port>' through pyserial
+    (serial_for_url). Returns (channel, port_name, device_write_fn); the
+    caller must channel.close() (register with addCleanup).
+    """
+    from mock_babyos_device import create_byte_channel
+    chan = create_byte_channel(prefer='auto', open_host_uart=False,
+                               require_pty=True)
+
+    def device_write(data):
+        if chan.kind == 'pty':
+            os.write(chan.device_obj, data)
+        else:  # 'tcp' — socketpair end owned by the mock device side
+            chan.device_obj.sendall(data)
+
+    return chan, chan.host_port, device_write
 
 
 # ---------------------------------------------------------------------------
@@ -80,12 +101,23 @@ def _assert_structured_error(testcase, r, status, code):
 
 
 def _write_script(path, body, mode=0o755):
+    """
+    Write an executable fake host tool. Returns the path to invoke.
+
+    POSIX: the script is written verbatim (shebang shell script).
+    Windows: a #!/bin/sh script cannot be exec'd (WinError 193), so the body
+    must be a batch script and it is written with a .bat suffix — Windows
+    subprocess runs .bat files directly (CreateProcess delegates to cmd).
+    """
+    if _ON_WINDOWS and not path.lower().endswith(('.bat', '.cmd')):
+        path = path + '.bat'
     parent = os.path.dirname(path)
     if parent and not os.path.isdir(parent):
         os.makedirs(parent, exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:
         f.write(body)
-    os.chmod(path, mode)
+    if not _ON_WINDOWS:
+        os.chmod(path, mode)
     return path
 
 
@@ -168,6 +200,60 @@ echo "OpenOCD: probe fail" >&2
 exit 1
 '''
 
+_ON_WINDOWS = os.name == 'nt'
+
+# Windows equivalents: subprocess CAN exec a .bat directly (CreateProcess
+# delegates to cmd), but a #!/bin/sh script named .exe cannot run at all
+# (WinError 193). So on Windows the fakes are written as .bat files.
+UV4_BATCH_TEMPLATE = '''@echo off
+setlocal
+set "MODE={mode}"
+set "LOG="
+:argloop
+if "%~1"=="" goto argdone
+if /i "%~1"=="-o" set "LOG=%~2"
+shift
+goto argloop
+:argdone
+if not defined LOG (echo UV4: missing -o log path 1>&2 & exit /b 2)
+for %%F in ("%LOG%") do set "OUT_DIR=%%~dpF"
+set "TMPD=%OUT_DIR:~0,-1%"
+for %%F in ("%TMPD%") do set "TARGET=%%~nxF"
+if not exist "%OUT_DIR%" mkdir "%OUT_DIR%"
+set "HEX=%OUT_DIR%%TARGET%.hex"
+if /i "%MODE%"=="success" goto m_success
+if /i "%MODE%"=="errors" goto m_errors
+if /i "%MODE%"=="hex_missing" goto m_hexmissing
+if /i "%MODE%"=="stale_hex" goto m_stale
+echo UV4: unknown MODE=%MODE% 1>&2
+exit /b 3
+:m_success
+echo :020000040000FA> "%HEX%"
+echo 0 Error(s), 0 Warning(s)> "%LOG%"
+exit /b 0
+:m_errors
+echo :020000040000FA> "%HEX%"
+echo 3 Error(s), 0 Warning(s)> "%LOG%"
+exit /b 0
+:m_hexmissing
+echo 0 Error(s), 0 Warning(s)> "%LOG%"
+exit /b 0
+:m_stale
+rem Do not touch pre-created hex; rewrite log only.
+echo 0 Error(s), 0 Warning(s)> "%LOG%"
+exit /b 0
+'''
+
+OPENOCD_OK_BATCH = '''@echo off
+echo OpenOCD: fake program OK args=%*
+exit /b 0
+'''
+
+OPENOCD_FAIL_BATCH = '''@echo off
+echo OpenOCD: probe fail 1>&2
+exit /b 1
+'''
+
 STATUS_KEYS = (
     'config_path', 'config_loaded', 'cfg', 'keil_uv4_exists',
     'project_file', 'project_exists', 'hex_file', 'openocd_exe',
@@ -183,7 +269,8 @@ def _make_keil_project(wd, mode='success', target='BabyOS'):
     proj = os.path.join(proj_dir, 'app.uvprojx')
     _write_file(proj, b'<Project/>')
     keil = os.path.join(proj_dir, 'UV4.exe')
-    _write_script(keil, UV4_SCRIPT_TEMPLATE.format(mode=mode))
+    template = UV4_BATCH_TEMPLATE if _ON_WINDOWS else UV4_SCRIPT_TEMPLATE
+    keil = _write_script(keil, template.format(mode=mode))
     return proj_dir, keil, proj
 
 
@@ -211,7 +298,11 @@ def _make_openocd_tree(wd, with_hex=True, with_cfg=True, script=OPENOCD_OK):
 
     oc_dir = os.path.join(wd, 'openocd')
     oc_exe = os.path.join(oc_dir, 'bin', 'openocd')
-    _write_script(oc_exe, script)
+    if _ON_WINDOWS and script == OPENOCD_OK:
+        script = OPENOCD_OK_BATCH
+    elif _ON_WINDOWS and script == OPENOCD_FAIL:
+        script = OPENOCD_FAIL_BATCH
+    oc_exe = _write_script(oc_exe, script)
     scripts_sub = os.path.join('share', 'openocd', 'scripts')
     stlink = os.path.join(oc_dir, scripts_sub, 'interface', 'stlink.cfg')
     target_cfg = os.path.join(oc_dir, scripts_sub, 'target', 'stm32l4x.cfg')
@@ -370,6 +461,7 @@ class TestBuildMake(_WcBase):
             'project_dir': proj_dir,
             'project_file_rel': 'app.uvprojx',
             'target_name': 'BabyOS',
+            'keil_uv4': '',  # force the make path even when Keil is installed
         })
         st = self.wc.status()
         self.assertTrue(st['makefile_exists'])
@@ -387,7 +479,8 @@ class TestBuildMake(_WcBase):
     def test_make_failure_rc_nonzero_structured_error(self):
         proj_dir, hex_path = _make_project(self.wd, makefile=MAKE_FAIL,
                                            with_hex=False)
-        self.wc.save_config({'project_dir': proj_dir})
+        self.wc.save_config({'project_dir': proj_dir,
+                             'keil_uv4': ''})
         res = self.wc.build(timeout_sec=30)
         self.assertFalse(res.get('ok'))
         self.assertIn('error', res)
@@ -397,7 +490,8 @@ class TestBuildMake(_WcBase):
         """Product spec: build fails when hex is missing even if rc==0."""
         proj_dir, hex_path = _make_project(self.wd, makefile=MAKE_RC0_NO_HEX,
                                            with_hex=False)
-        self.wc.save_config({'project_dir': proj_dir})
+        self.wc.save_config({'project_dir': proj_dir,
+                             'keil_uv4': ''})
         res = self.wc.build(timeout_sec=30)
         self.assertFalse(res.get('ok'),
                          'product spec requires hex produced; got %r' % (res,))
@@ -510,10 +604,8 @@ class TestSerialLog(_WcBase):
     def test_serial_log_real_pty_start_capture_stop(self):
         st = self.wc.status()
         self.assertTrue(st.get('pyserial'), 'pyserial required for this test')
-        master, slave = pty.openpty()
-        self.addCleanup(os.close, master)
-        self.addCleanup(os.close, slave)
-        slave_path = os.ttyname(slave)
+        chan, slave_path, dev_write = _open_virtual_serial()
+        self.addCleanup(chan.close)
 
         out_path = os.path.join(self.wd, 'auto_log.txt')
         started = self.wc.start_log(port=slave_path, baud=115200, seconds=3,
@@ -523,7 +615,7 @@ class TestSerialLog(_WcBase):
 
         self.assertTrue(_wait(lambda: self.wc._serial_info.get('running') is True,
                               timeout=2.0))
-        os.write(master, b'HELLO_BABYOS_WEBCONFIG\n')
+        dev_write(b'HELLO_BABYOS_WEBCONFIG\n')
         self.assertTrue(
             _wait(lambda: (self.wc._serial_info.get('bytes') or 0) > 0,
                   timeout=3.0),
@@ -538,10 +630,8 @@ class TestSerialLog(_WcBase):
         self.assertIn(b'HELLO_BABYOS_WEBCONFIG', data)
 
     def test_serial_log_already_running_structured_error(self):
-        master, slave = pty.openpty()
-        self.addCleanup(os.close, master)
-        self.addCleanup(os.close, slave)
-        slave_path = os.ttyname(slave)
+        chan, slave_path, dev_write = _open_virtual_serial()
+        self.addCleanup(chan.close)
         out_path = os.path.join(self.wd, 'auto_log2.txt')
         r1 = self.wc.start_log(port=slave_path, baud=115200, seconds=5,
                                out_path=out_path)
@@ -554,10 +644,8 @@ class TestSerialLog(_WcBase):
 
     def test_log_status_shape(self):
         self.assertIsInstance(self.wc.log_status(), dict)
-        master, slave = pty.openpty()
-        self.addCleanup(os.close, master)
-        self.addCleanup(os.close, slave)
-        slave_path = os.ttyname(slave)
+        chan, slave_path, dev_write = _open_virtual_serial()
+        self.addCleanup(chan.close)
         out_path = os.path.join(self.wd, 'auto_log3.txt')
         r = self.wc.start_log(port=slave_path, baud=115200, seconds=2,
                               out_path=out_path)
@@ -706,6 +794,7 @@ class TestApiWebConfigRoutes(_ApiBase):
         proj_dir, hex_path = _make_project(self.wd, makefile=MAKE_SUCCESS)
         r = self.client.post('/api/device/webconfig/build', json=self._cfg_body(
             project_dir=proj_dir, target_name='BabyOS',
+            keil_uv4='',
         ))
         self.assertEqual(r.status_code, 200, r.text)
         body = r.json()
@@ -717,6 +806,7 @@ class TestApiWebConfigRoutes(_ApiBase):
         proj_dir, hex_path = _make_project(self.wd, makefile=MAKE_FAIL)
         r = self.client.post('/api/device/webconfig/build', json=self._cfg_body(
             project_dir=proj_dir, target_name='BabyOS',
+            keil_uv4='',
         ))
         _assert_structured_error(self, r, 400, 'WEBCONFIG_BUILD_FAILED')
 
@@ -806,10 +896,8 @@ class TestApiWebConfigRoutes(_ApiBase):
         _assert_structured_error(self, r, 400, 'WEBCONFIG_LOG_FAILED')
 
     def test_log_start_stop_status_real_pty_via_api(self):
-        master, slave = pty.openpty()
-        self.addCleanup(os.close, master)
-        self.addCleanup(os.close, slave)
-        slave_path = os.ttyname(slave)
+        chan, slave_path, dev_write = _open_virtual_serial()
+        self.addCleanup(chan.close)
         out_path = os.path.join(self.wd, 'api_auto_log.txt')
 
         r = self.client.post('/api/device/webconfig/log/start', json=self._cfg_body(
@@ -825,7 +913,7 @@ class TestApiWebConfigRoutes(_ApiBase):
         self.assertTrue(_wait(
             lambda: self.client.get('/api/device/webconfig/log/status').json()
             .get('running') is True, timeout=2.0))
-        os.write(master, b'API_LOG_LINE\n')
+        dev_write(b'API_LOG_LINE\n')
         self.assertTrue(
             _wait(lambda: (self.client.get('/api/device/webconfig/log/status')
                            .json().get('bytes') or 0) > 0, timeout=3.0),

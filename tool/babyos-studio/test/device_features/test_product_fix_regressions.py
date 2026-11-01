@@ -175,8 +175,9 @@ class TestWebconfigFixes(_WcBase):
         self.assertTrue(res.get('ok'), res)
 
     def test_save_config_empty_string_clears_path(self):
-        self.wc.save_config({'project_dir': '/tmp/x', 'target_name': 'T'})
-        self.assertEqual(self.wc.cfg['project_dir'], os.path.abspath('/tmp/x'))
+        abs_x = os.path.join(tempfile.gettempdir(), 'x')
+        self.wc.save_config({'project_dir': abs_x, 'target_name': 'T'})
+        self.assertEqual(self.wc.cfg['project_dir'], os.path.abspath(abs_x))
         self.wc.save_config({'project_dir': '', 'target_name': ''})
         self.assertEqual(self.wc.cfg['project_dir'], '')
         self.assertEqual(self.wc.cfg['target_name'], '')
@@ -188,11 +189,20 @@ class TestWebconfigFixes(_WcBase):
         self.assertIn('busy', str(res.get('error')).lower())
 
     def test_start_log_concurrent_second_fails(self):
-        import pty
-        master, slave = pty.openpty()
-        self.addCleanup(os.close, master)
-        self.addCleanup(os.close, slave)
-        slave_path = os.ttyname(slave)
+        from mock_babyos_device import create_byte_channel
+        chan = create_byte_channel(prefer='auto', open_host_uart=False,
+                                   require_pty=True)
+        self.addCleanup(chan.close)
+        if chan.kind == 'pty':
+            slave_path = chan.host_port
+
+            def dev_write(data):
+                os.write(chan.device_obj, data)
+        else:  # 'tcp' — host reaches the bridge via pyserial socket:// URL
+            slave_path = chan.host_port
+
+            def dev_write(data):
+                chan.device_obj.sendall(data)
         out1 = os.path.join(self.wd, 'log1.txt')
         out2 = os.path.join(self.wd, 'log2.txt')
         r1 = self.wc.start_log(port=slave_path, seconds=3, out_path=out1)
@@ -200,7 +210,7 @@ class TestWebconfigFixes(_WcBase):
         r2 = self.wc.start_log(port=slave_path, seconds=3, out_path=out2)
         self.assertFalse(r2.get('ok'))
         self.assertIn('already running', str(r2.get('error')))
-        os.write(master, b'X\n')
+        dev_write(b'X\n')
         self.assertTrue(_wait(lambda: (self.wc.log_status().get('bytes') or 0) > 0,
                               timeout=3.0))
         self.wc.stop_log()

@@ -56,6 +56,7 @@ from device.protocol_client import (  # noqa: E402
     CMD_TEST,
 )
 from mock_babyos_device import (  # noqa: E402
+    REAL_LINK_KINDS,
     MockBabyOSDevice,
     create_byte_channel,
     open_api_over_pty,
@@ -133,10 +134,12 @@ def _matrix_add(case_id, path_kind, status, detail=''):
 
 
 def _sha256_file(path):
+    # CRLF→LF normalised: pins are LF-canonical; Windows autocrlf checkout
+    # must not count as content mismatch (parity with device/http_mock.py).
     h = hashlib.sha256()
     with open(path, 'rb') as f:
-        for chunk in iter(lambda: f.read(65536), b''):
-            h.update(chunk)
+        data = f.read()
+    h.update(data.replace(b'\r\n', b'\n'))
     return h.hexdigest()
 
 
@@ -281,6 +284,12 @@ def _verify_origin_dev_certs():
             pkg_cert = f.read()
         with open(_PKG_KEY, 'rb') as f:
             pkg_key = f.read()
+        # CRLF→LF normalise disk bytes: git blobs are LF-canonical while a
+        # Windows autocrlf checkout serves CRLF (content is identical).
+        disk_cert = disk_cert.replace(b'\r\n', b'\n')
+        disk_key = disk_key.replace(b'\r\n', b'\n')
+        pkg_cert = pkg_cert.replace(b'\r\n', b'\n')
+        pkg_key = pkg_key.replace(b'\r\n', b'\n')
         if dev_cert is not None:
             assert disk_cert == dev_cert, 'repo tool cert != origin/dev'
         if dev_key is not None:
@@ -361,7 +370,7 @@ class _EdgePtyBase(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty',
+        self.assertIn(self.link.kind, REAL_LINK_KINDS,
                          'edge/exception main path requires real pty')
         _matrix_add('channel_pty_setup', 'pty', 'PASS',
                     'host_port=%s' % self.link.host_port)
@@ -578,7 +587,10 @@ class TestEdgeHttpsCertsPty(_EdgePtyBase):
         self.assertEqual(status.get('https_cert_sha256'), DEV_CERT_SHA256)
         self.assertEqual(status.get('https_key_sha256'), DEV_KEY_SHA256)
         base_url = status.get('base_url') or ''
-        self.assertTrue(base_url.startswith('https://127.0.0.1:'), base_url)
+        self.assertTrue(base_url.startswith('https://'), base_url)
+        # base_url prefers the LAN IP; the pinned mock cert only covers
+        # localhost / 127.0.0.1 (SAN) — host-side TLS must use loopback.
+        base_url = 'https://127.0.0.1:%d' % int(status.get('port') or 0)
 
         # Second start while running → structured 409, not bare 500 / hang
         r2 = self.client.post('/api/device/http/start', json={
@@ -632,6 +644,10 @@ class TestEdgeHttpsCertsPty(_EdgePtyBase):
             disk_cert = f.read()
         with open(repo_key, 'rb') as f:
             disk_key = f.read()
+        # CRLF→LF normalise disk bytes before comparing with LF git blobs
+        # (Windows autocrlf checkout — content is identical).
+        disk_cert = disk_cert.replace(b'\r\n', b'\n')
+        disk_key = disk_key.replace(b'\r\n', b'\n')
         if _git_show('tool/mock_https_cert.pem') is not None:
             self.assertEqual(disk_cert,
                              _git_show('tool/mock_https_cert.pem'))
@@ -657,7 +673,10 @@ class TestEdgeHttpsCertsPty(_EdgePtyBase):
         self.assertEqual(status.get('https_cert_sha256'), DEV_CERT_SHA256)
         self.assertEqual(status.get('https_key_sha256'), DEV_KEY_SHA256)
         base_url = status.get('base_url') or ''
-        self.assertTrue(base_url.startswith('https://127.0.0.1:'), base_url)
+        self.assertTrue(base_url.startswith('https://'), base_url)
+        # base_url prefers the LAN IP; the pinned mock cert only covers
+        # localhost / 127.0.0.1 (SAN) — host-side TLS must use loopback.
+        base_url = 'https://127.0.0.1:%d' % int(status.get('port') or 0)
         port = int(status.get('port') or 0)
         self.assertTrue(port > 0)
 

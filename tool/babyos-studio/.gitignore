@@ -3,3 +3,9 @@ node_modules/
 python/.venv/
 python/__pycache__/
 *.pyc
+
+# E2E 临时产物
+test/ui_e2e/table_label_steps.json
+test/ui_e2e/table_label_result.json
+python/device/logs/
+python/device/mock_http.log

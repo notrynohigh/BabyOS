@@ -459,6 +459,8 @@ const Waveform = {
 // ---------------------------------------------------------------------------
 let serialOpen = false;
 let serialPortPath = '';
+let serialBaud = 115200;    // 打开时记录，供 Electron→Python 切换复用
+let serialEncrypt = false;
 let currentProject = null;
 let currentProjectMode = 'timeseries'; // 'timeseries' | 'table'
 let _projectSamplingRate = 100;  // 项目采样率缓存，供 updateWindowInfo 等使用
@@ -469,7 +471,8 @@ function updateSerialStatusDisplay() {
   const el = document.getElementById('serial-status');
   if (el) {
     if (serialOpen) {
-      el.textContent = `已连接: ${serialPortPath}`;
+      const mode = pythonSerialOwned ? 'Python' : 'Electron原始模式';
+      el.textContent = `已连接: ${serialPortPath} (${mode})`;
       el.className = 'status-text running';
     } else {
       el.textContent = '未连接';
@@ -712,12 +715,26 @@ function _extractErrMsg(data, status) {
   return `请求失败 (${status})`;
 }
 
+/** 构造带 raw/代码信息的 Error（参数页面需要把设备原文回显到响应窗口）。 */
+function _makeApiError(result) {
+  const err = new Error(_extractErrMsg(result?.data, result?.status));
+  const detail = result?.data?.detail;
+  if (detail && typeof detail === 'object') {
+    err.code = detail.code || '';
+    err.raw = detail.raw || '';
+  } else {
+    err.code = '';
+    err.raw = '';
+  }
+  return err;
+}
+
 async function apiGet(url) {
   debug(`GET ${url}`);
   const result = await window.electronAPI?.http.request(url, 'GET');
   debug(`Response: ok=${result?.ok}, status=${result?.status}`);
   if (!result?.ok) {
-    throw new Error(_extractErrMsg(result?.data, result?.status));
+    throw _makeApiError(result);
   }
   return result.data;
 }
@@ -727,7 +744,7 @@ async function apiPost(url, body) {
   const result = await window.electronAPI?.http.request(url, 'POST', body);
   debug(`Response: ok=${result?.ok}, status=${result?.status}`);
   if (!result?.ok) {
-    throw new Error(_extractErrMsg(result?.data, result?.status));
+    throw _makeApiError(result);
   }
   return result.data;
 }
@@ -894,6 +911,9 @@ function addLog(text, source = 'System') {
   line.innerHTML = `<span style="color:#6a9955">[${time}]</span> <span style="color:#569cd6">[${source}]</span> ${escapeHtml(text)}`;
   logEl.appendChild(line);
   logEl.scrollTop = logEl.scrollHeight;
+  // 细条收起时在标题栏回显最新一条
+  const latest = document.getElementById('log-latest');
+  if (latest) latest.textContent = `[${source}] ${text}`;
 }
 
 function escapeHtml(text) {
@@ -1188,6 +1208,7 @@ async function loadProjectData(page, pid) {
           document.getElementById('labels-table-panel')?.style.setProperty('display', '');
           document.getElementById('labels-two-col')?.style.setProperty('grid-template-columns', '1fr');
           await loadTableLabelSummary(pid);
+          await refreshNextStepGate(pid);
         } else {
           // Timeseries mode: show waveform/segments
           document.getElementById('labels-ts-panel')?.style.setProperty('display', '');
@@ -1714,6 +1735,7 @@ async function addLabel() {
     if (input) input.value = '';
     loadLabels(currentProject);
     loadSegFormLabels(currentProject);
+    refreshNextStepGate(currentProject);
   } catch (err) {
     addLog(`添加标注失败: ${err.message}`, 'AutoML');
   } finally {
@@ -1730,6 +1752,7 @@ async function deleteLabel(pid, labelId) {
     loadLabels(pid);
     loadSegFormLabels(pid);
     loadSegments(pid);
+    refreshNextStepGate(pid);
   } catch (err) {
     addLog(`删除标注失败: ${err.message}`, 'AutoML');
   }
@@ -1776,13 +1799,33 @@ async function loadSegments(pid) {
     }
 
     // Enable/disable btn-next-to-features based on labels + segments
-    const btnFeatures = document.getElementById('btn-next-to-features');
-    if (btnFeatures) {
-      btnFeatures.disabled = !(labels && labels.length > 0 && segs && segs.length > 0);
-      btnFeatures.title = btnFeatures.disabled ? '请先添加标注和分段' : '';
-    }
+    _setNextToFeaturesGate(labels, segs);
   } catch (err) {
     addLog(`加载分段失败: ${err.message}`, 'AutoML');
+  }
+}
+
+// 统一的"下一步: 特征"门控: 标注页两种模式 (时序/表格) 共用一个判定,
+// 避免表格模式因不调用 loadSegments() 而永远停在 disabled 状态。
+function _setNextToFeaturesGate(labels, segs) {
+  const btnFeatures = document.getElementById('btn-next-to-features');
+  if (!btnFeatures) return;
+  const ready = !!(labels && labels.length > 0 && segs && segs.length > 0);
+  btnFeatures.disabled = !ready;
+  btnFeatures.title = ready ? '' : '请先添加标注和分段';
+}
+
+// 从后端重新拉取 labels + segments 并刷新门控 (供表格模式及标注增删后调用)
+async function refreshNextStepGate(pid) {
+  if (!pid) return;
+  try {
+    const [labels, segs] = await Promise.all([
+      apiGet(`/api/projects/${pid}/labels`),
+      apiGet(`/api/projects/${pid}/segments`),
+    ]);
+    _setNextToFeaturesGate(labels, segs);
+  } catch (err) {
+    addLog(`更新下一步状态失败: ${err.message}`, 'AutoML');
   }
 }
 
@@ -3256,10 +3299,14 @@ async function refreshPorts() {
   try {
     const info = await apiGet('/api/device/serial/ports');
     const ports = info?.ports || [];
-    serialOpen = !!info?.open;
+    if (info?.pyserial === false) {
+      addLog('Python 后端缺少 pyserial，串口不可用 — 请重新运行 start_dev 或手动 pip install pyserial', 'WARN');
+      showToast('Python 后端缺少 pyserial 串口库，请重新运行 start_dev', '#f56c6c');
+    }
     if (info?.open && info?.current) {
-      serialPortPath = info.current;
+      serialOpen = true;
       pythonSerialOwned = true;
+      serialPortPath = info.current;
       const btn = document.getElementById('btn-open-serial');
       if (btn) btn.textContent = '关闭串口';
       const st = document.getElementById('serial-status');
@@ -3268,7 +3315,20 @@ async function refreshPorts() {
         st.className = 'status-text running';
       }
       updateSerialStatusDisplay();
+    } else if (pythonSerialOwned) {
+      // 后端句柄已不在（后端重启/异常断开）——同步为关闭，避免前端状态说谎
+      pythonSerialOwned = false;
+      serialOpen = false;
+      const btn = document.getElementById('btn-open-serial');
+      if (btn) btn.textContent = '打开串口';
+      const st = document.getElementById('serial-status');
+      if (st) {
+        st.textContent = '未连接';
+        st.className = 'status-text';
+      }
+      updateSerialStatusDisplay();
     }
+    // else: 未打开，或端口由 Electron 原始模式持有 —— 保持现状不清除
     const select = document.getElementById('serial-port');
     if (select) {
       select.innerHTML = '';
@@ -3357,6 +3417,8 @@ document.getElementById('btn-open-serial')?.addEventListener('click', async () =
       serialOpen = true;
       pythonSerialOwned = true;
       serialPortPath = result?.port || port;
+      serialBaud = result?.baudrate || baud;
+      serialEncrypt = encrypt;
       document.getElementById('btn-open-serial').textContent = '关闭串口';
       document.getElementById('serial-status').textContent =
         `已连接: ${serialPortPath} @ ${result?.baudrate || baud}`;
@@ -3366,7 +3428,24 @@ document.getElementById('btn-open-serial')?.addEventListener('click', async () =
         (encrypt ? ' [TEA加密]' : ''), 'Serial');
       return;
     } catch (e) {
+      // 区分两类失败：
+      //  A. 后端不可达（进程崩溃/端口被占退出）→ 触发自动重启，明确提示，不回退
+      //     （Electron 原始模式会让用户误以为协议功能可用，且占用端口阻碍后端恢复）
+      //  B. 后端在线但拒绝打开（端口被占用等）→ 错误信息里已带真实原因，仍可回退原始模式
+      let backendDown = false;
+      try {
+        const st = await window.electronAPI?.python?.status();
+        backendDown = !!st && !st.running;
+      } catch (_) { /* 状态查询失败按在线处理 */ }
+      if (backendDown) {
+        addLog(`Python 后端未运行，串口打开失败: ${e.message}`, 'WARN');
+        addLog('正在重启 Python 后端，请几秒后重试', 'Serial');
+        showToast('Python 后端未运行，正在重启… 请稍后重试打开串口', '#e6a23c');
+        try { await window.electronAPI?.python?.restart(); } catch (_) {}
+        return;
+      }
       addLog(`Python 打开串口失败，回退 Electron: ${e.message}`, 'WARN');
+      showToast(`Python 打开失败: ${e.message}（已回退 Electron 原始模式，协议/传输不可用）`, '#e6a23c');
     }
     // 回退: Electron serial（仅原始收发，不支持 b_protocol）
     const result = await window.electronAPI.serial.open({ path: port, baudRate: baud });
@@ -3374,8 +3453,10 @@ document.getElementById('btn-open-serial')?.addEventListener('click', async () =
       serialOpen = true;
       pythonSerialOwned = false;
       serialPortPath = port;
+      serialBaud = baud;
+      serialEncrypt = encrypt;
       document.getElementById('btn-open-serial').textContent = '关闭串口';
-      document.getElementById('serial-status').textContent = `已连接: ${port}`;
+      document.getElementById('serial-status').textContent = `已连接: ${port} (Electron原始模式)`;
       document.getElementById('serial-status').className = 'status-text running';
       updateSerialStatusDisplay();
       addLog(`串口已打开(Electron原始模式): ${port} @ ${baud} — 协议功能不可用`, 'Serial');
@@ -3399,6 +3480,310 @@ window.electronAPI?.serial.onData((data) => {
   addLog(`[RX] ${text}`, 'UART');
 });
 
+// Electron 持有的串口在运行期出错/被断开（拔线等）——同步 UI，避免"假连接"
+window.electronAPI?.serial.onError?.((msg) => {
+  if (pythonSerialOwned) return;
+  addLog(`串口错误: ${msg}`, 'WARN');
+});
+
+window.electronAPI?.serial.onClosed?.(() => {
+  // 主动关闭时 serialOpen 已被关闭流程清零；仍 true 说明是异常断开
+  if (!serialOpen || pythonSerialOwned) return;
+  serialOpen = false;
+  const btn = document.getElementById('btn-open-serial');
+  if (btn) btn.textContent = '打开串口';
+  const st = document.getElementById('serial-status');
+  if (st) {
+    st.textContent = '未连接';
+    st.className = 'status-text';
+  }
+  updateSerialStatusDisplay();
+  addLog('串口已断开 (Electron)', 'WARN');
+  showToast('串口已断开', '#e6a23c');
+});
+
+// ---------------------------------------------------------------------------
+// 串口日志 — 后端 UART journal 增量轮询
+// 所有经 Python 后端的 TX/RX（协议/OTA/Xmodem/文件传输/参数/Shell）汇聚于此，
+// 同时渲染到「串口日志」全页与底部「串口通讯」停靠标签——停靠标签与其他页面
+// 同屏共存，可一边看传输状态一边看通讯日志。
+// ---------------------------------------------------------------------------
+let _slogSeq = 0;
+let _slogPaused = false;
+let _slogEntries = [];        // {seq, ts, dir, hex, text, nodes:{[elId]: node}} — HEX 切换时重渲染
+const _SLOG_MAX = 3000;
+
+function _slogFmtTs(ts) {
+  const d = new Date(ts * 1000);
+  const p = (n, w) => String(n).padStart(w || 2, '0');
+  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}.${p(d.getMilliseconds(), 3)}`;
+}
+
+function _slogLineHtml(e) {
+  // 默认文本显示；HEX 为可选模式
+  const hexMode = document.getElementById('slog-hex')?.checked === true;
+  let payload;
+  if (hexMode) {
+    payload = escapeHtml(e.hex);
+  } else {
+    // CRLF / CR / LF 统一为换行，配合 CSS pre-wrap 渲染为真实换行
+    payload = escapeHtml((e.text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n'));
+  }
+  const color = e.dir === 'TX' ? '#569cd6' : '#6a9955';
+  return `<span class="slog-meta"><span style="color:#888">[${_slogFmtTs(e.ts)}]</span> ` +
+    `<span style="color:${color}">[${e.dir}]</span></span> ${payload}`;
+}
+
+// 全页视图 + 底部停靠视图（两者共用同一份 entries，各自持有 DOM 节点）
+function _slogViewEls() {
+  return ['seriallog-log', 'seriallog-dock-log']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+}
+
+function _slogRenderEntry(e) {
+  const html = _slogLineHtml(e);
+  e.nodes = e.nodes || {};
+  for (const el of _slogViewEls()) {
+    let node = e.nodes[el.id];
+    if (!node) {
+      node = document.createElement('div');
+      node.className = 'slog-line';
+      e.nodes[el.id] = node;
+      el.appendChild(node);
+    }
+    node.innerHTML = html;
+  }
+}
+
+function _slogAppend(list) {
+  for (const e of list) {
+    const last = _slogEntries[_slogEntries.length - 1];
+    // 同方向 50ms 内的连续突发合并为一行（轮询可能把一帧拆成多条）
+    if (last && last.dir === e.dir && (e.ts - last.ts) < 0.05) {
+      last.hex += ' ' + e.hex;
+      last.text += e.text;
+      last.ts = e.ts;
+      _slogRenderEntry(last);
+      continue;
+    }
+    _slogRenderEntry(e);
+    _slogEntries.push(e);
+  }
+  while (_slogEntries.length > _SLOG_MAX) {
+    const old = _slogEntries.shift();
+    Object.values(old.nodes || {}).forEach(n => n.remove?.());
+  }
+  if (document.getElementById('slog-autoscroll')?.checked !== false) {
+    for (const el of _slogViewEls()) el.scrollTop = el.scrollHeight;
+  }
+}
+
+function _slogClearViews() {
+  _slogEntries = [];
+  for (const el of _slogViewEls()) el.innerHTML = '';
+}
+
+async function _pollSlog() {
+  if (_slogPaused) return;  // 暂停时不取数——后端环形缓冲保留，恢复后补齐
+  try {
+    const r = await apiGet(`/api/device/serial/journal?since=${_slogSeq}&limit=500`);
+    if (r?.truncated) _slogClearViews();
+    if (r?.entries?.length) _slogAppend(r.entries);
+    if (typeof r?.next === 'number') _slogSeq = r.next;
+  } catch (e) { /* 后端不可达 — 下一周期重试 */ }
+}
+setInterval(_pollSlog, 400);
+
+function _slogSetPaused(v) {
+  _slogPaused = v;
+  const label = v ? '继续' : '暂停';
+  ['btn-slog-pause', 'btn-slog-pause-dock'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.textContent = label;
+  });
+}
+
+['btn-slog-pause', 'btn-slog-pause-dock'].forEach(id => {
+  document.getElementById(id)?.addEventListener('click', () => _slogSetPaused(!_slogPaused));
+});
+
+async function _slogDoClear() {
+  try { await apiPost('/api/device/serial/journal/clear', {}); } catch (e) { /* 忽略 */ }
+  _slogSeq = 0;
+  _slogClearViews();
+}
+
+['btn-slog-clear', 'btn-slog-clear-dock'].forEach(id => {
+  document.getElementById(id)?.addEventListener('click', _slogDoClear);
+});
+
+let _slogRecordPath = '';
+
+function _slogRecordUi(st) {
+  const el = document.getElementById('slog-record-status');
+  // 两处「记录到本地」勾选框保持同步
+  ['slog-record', 'slog-record-dock'].forEach(id => {
+    const cb = document.getElementById(id);
+    if (cb) cb.checked = !!st?.enabled;
+  });
+  if (st?.enabled) {
+    if (el) {
+      el.textContent = `记录中: ${st.path}`;
+      el.className = 'status-text running';
+    }
+  } else {
+    if (el) {
+      el.textContent = '未记录';
+      el.className = 'status-text';
+    }
+  }
+}
+
+async function _slogRecordToggle(enable) {
+  if (enable) {
+    const r = await apiPost('/api/device/serial/journal/record',
+      { enable: true, path: _slogRecordPath || null });
+    _slogRecordPath = r.path;
+    _slogRecordUi(r);
+    addLog(`串口日志记录已开始: ${r.path}`, 'Serial');
+  } else {
+    const r = await apiPost('/api/device/serial/journal/record', { enable: false });
+    _slogRecordUi(r);
+    addLog('串口日志记录已停止', 'Serial');
+  }
+}
+
+['slog-record', 'slog-record-dock'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', async (ev) => {
+    try {
+      await _slogRecordToggle(ev.target.checked);
+    } catch (e) {
+      if (ev?.target) ev.target.checked = false;
+      _slogRecordUi({ enabled: false, path: '' });
+      showToast(`记录操作失败: ${e.message}`, '#f56c6c');
+    }
+  });
+});
+
+document.getElementById('btn-slog-record-path')?.addEventListener('click', async () => {
+  const p = await window.electronAPI?.dialog.saveFile({
+    filters: [{ name: 'Log Files', extensions: ['log', 'txt'] }]
+  });
+  if (p) _slogRecordPath = p;
+});
+
+// 进入页面/启动时同步落盘状态（后端可能已在记录）
+async function _syncSlogRecord() {
+  try {
+    _slogRecordUi(await apiGet('/api/device/serial/journal/record'));
+  } catch (_) { /* 后端不可达 */ }
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _syncSlogRecord);
+} else {
+  _syncSlogRecord();
+}
+
+// ---------------------------------------------------------------------------
+// 串口通讯控制台：拖高 / 收起 / 尺寸记忆（MCU 调试主日志面板）
+// ---------------------------------------------------------------------------
+function _serialConsoleSetHeight(px, persist = true) {
+  const el = document.getElementById('serial-console');
+  if (!el) return;
+  const max = Math.max(200, Math.floor((window.innerHeight || 900) * 0.7));
+  const h = Math.max(80, Math.min(Math.round(px), max));
+  el.style.height = h + 'px';
+  el.classList.remove('collapsed');
+  const icon = document.getElementById('serial-console-toggle-icon');
+  if (icon) icon.textContent = '▾';
+  if (persist) {
+    try {
+      localStorage.setItem('serial-console-height', String(h));
+      localStorage.setItem('serial-console-collapsed', '0');
+    } catch (e) {}
+  }
+}
+
+function _serialConsoleToggleCollapsed(force) {
+  const el = document.getElementById('serial-console');
+  if (!el) return;
+  const collapsed = force !== undefined ? !!force : !el.classList.contains('collapsed');
+  el.classList.toggle('collapsed', collapsed);
+  const icon = document.getElementById('serial-console-toggle-icon');
+  if (icon) icon.textContent = collapsed ? '▸' : '▾';
+  try {
+    localStorage.setItem('serial-console-collapsed', collapsed ? '1' : '0');
+  } catch (e) {}
+}
+
+// 恢复上次尺寸 / 收起状态
+(() => {
+  const el = document.getElementById('serial-console');
+  if (!el) return;
+  try {
+    const h = parseInt(localStorage.getItem('serial-console-height') || '', 10);
+    if (h > 0) el.style.height = h + 'px';
+    if (localStorage.getItem('serial-console-collapsed') === '1') {
+      el.classList.add('collapsed');
+      const icon = document.getElementById('serial-console-toggle-icon');
+      if (icon) icon.textContent = '▸';
+    }
+  } catch (e) {}
+})();
+
+// 拖动顶部把手调整高度
+document.getElementById('serial-console-resize')?.addEventListener('mousedown', (e) => {
+  e?.preventDefault?.();
+  const el = document.getElementById('serial-console');
+  if (!el) return;
+  const startY = e.clientY;
+  const startH = parseInt(el.style.height || '', 10) || el.offsetHeight || 320;
+  const onMove = (ev) => _serialConsoleSetHeight(startH + (startY - (ev?.clientY || 0)), false);
+  const onUp = () => {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    try {
+      localStorage.setItem('serial-console-height',
+        String(parseInt(el.style.height, 10) || startH));
+    } catch (e2) {}
+  };
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+});
+
+// 点标题栏收起/展开（点控制条按钮/勾选不触发）
+document.getElementById('serial-console-header')?.addEventListener('click', (e) => {
+  if (e?.target && (e.target.closest?.('.log-actions') || e.target.closest?.('button')
+      || e.target.closest?.('label'))) return;
+  _serialConsoleToggleCollapsed();
+});
+
+// HEX / 自动滚动：页面与控制台勾选框互为镜像
+function _slogApplyHex(v) {
+  ['slog-hex', 'slog-hex-dock'].forEach(id => {
+    const cb = document.getElementById(id);
+    if (cb) cb.checked = v;
+  });
+  for (const e of _slogEntries) _slogRenderEntry(e);
+}
+
+function _slogApplyAutoscroll(v) {
+  ['slog-autoscroll', 'slog-autoscroll-dock'].forEach(id => {
+    const cb = document.getElementById(id);
+    if (cb) cb.checked = v;
+  });
+}
+
+['slog-hex', 'slog-hex-dock'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change',
+    (ev) => _slogApplyHex(!!ev?.target?.checked));
+});
+['slog-autoscroll', 'slog-autoscroll-dock'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change',
+    (ev) => _slogApplyAutoscroll(!!ev?.target?.checked));
+});
+
 document.getElementById('btn-clear-log')?.addEventListener('click', () => {
   document.getElementById('serial-log').innerHTML = '';
 });
@@ -3412,12 +3797,62 @@ function _serialLogLine(text, cls = 'RX') {
 }
 
 async function _requirePythonSerial() {
-  if (!pythonSerialOwned || !serialOpen) {
-    showToast('请先通过 Python 打开串口', '#e6a23c');
-    addLog('协议功能需要 Python 持有的串口句柄，请先打开串口', 'WARN');
-    return false;
+  // 1) 以后端真实状态为准同步一次（前端标志可能因刷新/后端重启而过期）
+  try {
+    const info = await apiGet('/api/device/serial/ports');
+    if (info?.open) {
+      serialOpen = true;
+      pythonSerialOwned = true;
+      serialPortPath = info.current || serialPortPath;
+      return true;
+    }
+    pythonSerialOwned = false;
+  } catch (e) {
+    // 后端不可达 — 继续按前端标志判断
   }
-  return true;
+
+  // 2) 串口被 Electron 原始模式持有 — 自动切换为 Python 模式后放行
+  if (serialOpen && !pythonSerialOwned && serialPortPath && window.electronAPI) {
+    addLog(`串口当前为 Electron 原始模式，正在切换到 Python 模式: ${serialPortPath} @ ${serialBaud}`, 'Serial');
+    try {
+      await window.electronAPI.serial.close();
+      const r = await apiPost('/api/device/serial/open', {
+        path: serialPortPath, baud: serialBaud, encrypt: serialEncrypt
+      });
+      serialOpen = true;
+      pythonSerialOwned = true;
+      serialPortPath = r?.port || serialPortPath;
+      serialBaud = r?.baudrate || serialBaud;
+      document.getElementById('btn-open-serial').textContent = '关闭串口';
+      const st = document.getElementById('serial-status');
+      if (st) {
+        st.textContent = `已连接: ${serialPortPath} @ ${serialBaud}`;
+        st.className = 'status-text running';
+      }
+      updateSerialStatusDisplay();
+      addLog(`串口已切换到 Python 模式: ${serialPortPath} @ ${serialBaud}`, 'Serial');
+      return true;
+    } catch (e) {
+      // 切换失败 — 端口已关闭，同步 UI 为未连接
+      serialOpen = false;
+      pythonSerialOwned = false;
+      const btn = document.getElementById('btn-open-serial');
+      if (btn) btn.textContent = '打开串口';
+      const st = document.getElementById('serial-status');
+      if (st) {
+        st.textContent = '未连接';
+        st.className = 'status-text';
+      }
+      updateSerialStatusDisplay();
+      addLog(`切换 Python 模式失败，串口已关闭: ${e.message}`, 'WARN');
+      showToast(`切换 Python 串口失败: ${e.message}，请重新打开串口`, '#f56c6c');
+      return false;
+    }
+  }
+
+  showToast('请先通过 Python 打开串口', '#e6a23c');
+  addLog('协议功能需要 Python 持有的串口句柄，请先打开串口', 'WARN');
+  return false;
 }
 
 document.getElementById('btn-test')?.addEventListener('click', async () => {
@@ -3618,18 +4053,27 @@ document.getElementById('btn-ymodem-cancel')?.addEventListener('click', async ()
 // ---------------------------------------------------------------------------
 let httpServerRunning = false;
 let httpMockBaseUrl = '';
+let httpMockUrls = [];
+
+function _httpLocalUrl() {
+  return httpMockUrls.find(u => u.indexOf('127.0.0.1') >= 0) || '';
+}
 
 async function _syncHttpServerUi() {
   try {
     const st = await apiGet('/api/device/http/status');
     httpServerRunning = !!st?.running;
     httpMockBaseUrl = st?.base_url || '';
+    httpMockUrls = st?.urls && st.urls.length ? st.urls : (st?.base_url ? [st.base_url] : []);
     const btn = document.getElementById('btn-http-server');
     const status = document.getElementById('http-server-status');
     if (btn) btn.textContent = httpServerRunning ? '停止服务器' : '启动服务器';
     if (status) {
+      // LAN 地址给设备用；本机 127.0.0.1 供主机侧自测
+      const local = _httpLocalUrl();
+      const extra = (local && local !== httpMockBaseUrl) ? ` ｜本机 ${local}` : '';
       status.textContent = httpServerRunning
-        ? `运行中 ${st.base_url || ''}`
+        ? `运行中 ${httpMockBaseUrl}${extra}`
         : '未运行';
       status.className = httpServerRunning ? 'status-text running' : 'status-text';
     }
@@ -3644,6 +4088,7 @@ document.getElementById('btn-http-server')?.addEventListener('click', async () =
       const r = await apiPost('/api/device/http/stop', {});
       httpServerRunning = false;
       httpMockBaseUrl = '';
+      httpMockUrls = [];
       addLog('HTTP Mock 服务器已停止', 'HTTP');
       showToast('Mock 服务器已停止', '#909399');
     } else {
@@ -3658,12 +4103,16 @@ document.getElementById('btn-http-server')?.addEventListener('click', async () =
       });
       httpServerRunning = true;
       httpMockBaseUrl = r?.base_url || '';
+      httpMockUrls = (r?.status?.urls && r.status.urls.length)
+        ? r.status.urls : (httpMockBaseUrl ? [httpMockBaseUrl] : []);
       const fl = r?.status?.file_log;
       if (fl && fl.enabled && fl.path) {
         const el = document.getElementById('http-filelog-status');
         if (el) el.textContent = `文件日志: ${fl.path}`;
       }
-      addLog(`HTTP Mock 服务器已启动: ${httpMockBaseUrl} (https=${https}, file_log=${file_log})`, 'HTTP');
+      const local = _httpLocalUrl();
+      const extra = (local && local !== httpMockBaseUrl) ? ` ｜本机 ${local}` : '';
+      addLog(`HTTP Mock 服务器已启动: ${httpMockBaseUrl}${extra} (https=${https}, file_log=${file_log})`, 'HTTP');
       showToast(`Mock 已启动 ${httpMockBaseUrl}`, '#67c23a');
     }
     await _syncHttpServerUi();
@@ -3731,8 +4180,8 @@ document.getElementById('btn-http-send')?.addEventListener('click', async () => 
 
   if (mode === 'protocol') {
     if (!(await _requirePythonSerial())) return;
-    if (httpMockBaseUrl && !url.startsWith(httpMockBaseUrl)) {
-      addLog(`提示: Mock 运行于 ${httpMockBaseUrl}，当前 URL 为 ${url}（设备侧需固件自行请求该地址）`, 'HTTP');
+    if (httpMockUrls.length && !httpMockUrls.some(u => url.startsWith(u))) {
+      addLog(`提示: Mock 运行于 ${httpMockUrls.join(' / ')}，当前 URL 为 ${url}（设备侧需固件自行请求该地址）`, 'HTTP');
     }
     _appendHttpLog(`>> [协议 0x50] ${method} ${url}${body ? ' body=' + body : ''}`, 'HTTP');
     try {
@@ -3749,8 +4198,8 @@ document.getElementById('btn-http-send')?.addEventListener('click', async () => 
   }
 
   // 主机侧代理代发（联调 Mock）
-  if (httpMockBaseUrl && !url.startsWith(httpMockBaseUrl)) {
-    addLog(`提示: Mock 运行于 ${httpMockBaseUrl}，当前 URL 为 ${url}`, 'HTTP');
+  if (httpMockUrls.length && !httpMockUrls.some(u => url.startsWith(u))) {
+    addLog(`提示: Mock 运行于 ${httpMockUrls.join(' / ')}，当前 URL 为 ${url}`, 'HTTP');
   }
   _appendHttpLog(`>> [主机代发] ${method} ${url}${body ? ' body=' + body : ''}`, 'HTTP');
   try {
@@ -3788,15 +4237,29 @@ function _paramLog(text) {
   addLog(text, 'Shell');
 }
 
+/** 回显设备原文（与串口通讯控制台同一份字节），再附上解析结果。 */
+function _paramLogReply(raw) {
+  const text = (raw == null || raw === '')
+    ? '(无输出)'
+    : String(raw).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n+$/, '');
+  _paramLog(`<< ${text}`);
+}
+
 function _fillParamDatalist(names) {
-  const dl = document.getElementById('param-list');
-  if (!dl) return;
-  dl.innerHTML = '';
+  // 只有「列出全部」会重写下拉框可选项。用 <select> 而不是 <input list=datalist>：
+  // 原生 datalist 会按输入框里的文字做前缀过滤，读取/设置后输入框里留着
+  // 刚操作的参数名，下拉框就“只剩”它；select 的下拉永远列出全部可选项。
+  const sel = document.getElementById('param-name');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '';
   (names || []).forEach(n => {
     const opt = document.createElement('option');
     opt.value = n;
-    dl.appendChild(opt);
+    opt.textContent = n;
+    sel.appendChild(opt);
   });
+  if (prev && (names || []).indexOf(prev) >= 0) sel.value = prev;
 }
 
 document.getElementById('btn-param-list')?.addEventListener('click', async () => {
@@ -3804,10 +4267,12 @@ document.getElementById('btn-param-list')?.addEventListener('click', async () =>
   _paramLog('>> param');
   try {
     const r = await apiPost('/api/device/param/list', {});
-    _paramLog(`<< (${r.count}) ${r.names.join(', ') || '(空)'}`);
+    _paramLogReply(r.raw);
+    _paramLog(`解析 (${r.count}) ${r.names.join(', ') || '(空)'}`);
     _fillParamDatalist(r.names);
   } catch (e) {
-    _paramLog(`<< 失败: ${e.message}`);
+    if (e.raw) _paramLogReply(e.raw);
+    _paramLog(`失败: ${e.message}`);
     showToast(e.message, '#f56c6c');
   }
 });
@@ -3819,9 +4284,16 @@ document.getElementById('btn-param-get')?.addEventListener('click', async () => 
   _paramLog(`>> param ${name}`);
   try {
     const r = await apiPost('/api/device/param/get', { name });
-    _paramLog(`<< ${r.name}=${r.value}`);
+    _paramLogReply(r.raw);
+    _paramLog(`解析 ${r.name}=${r.value}`);
+    // 读回的最新值回填参数值输入框（0 是合法值，必须写入）
+    const valEl = document.getElementById('param-value');
+    if (valEl && r.value !== undefined && r.value !== null) {
+      valEl.value = String(r.value);
+    }
   } catch (e) {
-    _paramLog(`<< 失败: ${e.message}`);
+    if (e.raw) _paramLogReply(e.raw);
+    _paramLog(`失败: ${e.message}`);
     showToast(e.message, '#f56c6c');
   }
 });
@@ -3836,9 +4308,11 @@ document.getElementById('btn-param-set')?.addEventListener('click', async () => 
   try {
     const numeric = /^-?\d+$/.test(value) ? parseInt(value, 10) : value;
     const r = await apiPost('/api/device/param/set', { name, value: numeric });
-    _paramLog(`<< 设置成功 ${r.name}=${r.value} (verify=${r.verified})`);
+    if (r.raw) _paramLogReply(r.raw);
+    _paramLog(`解析 设置成功 ${r.name}=${r.value} (verify=${r.verified})`);
   } catch (e) {
-    _paramLog(`<< 失败: ${e.message}`);
+    if (e.raw) _paramLogReply(e.raw);
+    _paramLog(`失败: ${e.message}`);
     showToast(e.message, '#f56c6c');
   }
 });
@@ -3850,9 +4324,10 @@ document.getElementById('btn-param-send')?.addEventListener('click', async () =>
   _paramLog(`>> ${cmd}`);
   try {
     const r = await apiPost('/api/device/shell/cmd', { cmd });
-    _paramLog(`<< ${r.response || '(无输出)'}`);
+    _paramLogReply(r.response);
   } catch (e) {
-    _paramLog(`<< 失败: ${e.message}`);
+    if (e.raw) _paramLogReply(e.raw);
+    _paramLog(`失败: ${e.message}`);
     showToast(e.message, '#f56c6c');
   }
 });
@@ -3861,10 +4336,11 @@ function sendShellCmd(cmd) {
   // 兼容旧调用点：转发到 shell/cmd API
   apiPost('/api/device/shell/cmd', { cmd }).then(r => {
     _paramLog(`>> ${cmd}`);
-    _paramLog(`<< ${r.response || '(无输出)'}`);
+    _paramLogReply(r.response);
   }).catch(e => {
     _paramLog(`>> ${cmd}`);
-    _paramLog(`<< 失败: ${e.message}`);
+    if (e.raw) _paramLogReply(e.raw);
+    _paramLog(`失败: ${e.message}`);
   });
 }
 
@@ -4480,6 +4956,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const _retryInterval = 5000;
   function _checkPythonStatus() {
     window.electronAPI?.python.status().then(status => {
+      const wasRunning = pythonRunning;
+      // 后端从"运行中"变为"已退出"——其持有的串口句柄随之丢失，
+      // 立即同步前端状态，避免状态栏显示"假连接"
+      if (wasRunning && !status.running && pythonSerialOwned) {
+        pythonSerialOwned = false;
+        serialOpen = false;
+        const btn = document.getElementById('btn-open-serial');
+        if (btn) btn.textContent = '打开串口';
+        const st = document.getElementById('serial-status');
+        if (st) {
+          st.textContent = '未连接';
+          st.className = 'status-text';
+        }
+        updateSerialStatusDisplay();
+        addLog('Python 后端已退出，串口连接已断开，请待后端恢复后重新打开串口', 'WARN');
+      }
       pythonRunning = status.running;
 
       const el = document.getElementById('python-status');
@@ -4489,20 +4981,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (status.running) {
-        loadProjects();
-        return; // Stop retrying
+        if (!wasRunning) loadProjects();  // 仅在恢复/首次上线时拉取，不每轮刷新
+        // 后端恢复后继续慢速巡检，以便下次崩溃能再被感知
+        _pythonCheckRetries = _maxPythonRetries;
+        setTimeout(_checkPythonStatus, 15000);
+        return;
       }
 
       // Auto-retry if backend not yet started
       _pythonCheckRetries++;
       if (_pythonCheckRetries < _maxPythonRetries) {
         setTimeout(_checkPythonStatus, _retryInterval);
+      } else {
+        // 初始重试用完后转入慢速巡检：主进程会自动重启崩溃的后端，
+        // 这里负责把状态指示刷新回来
+        setTimeout(_checkPythonStatus, 15000);
       }
     }).catch(err => {
       debug(`检查 Python 状态失败: ${err.message}`);
       _pythonCheckRetries++;
       if (_pythonCheckRetries < _maxPythonRetries) {
         setTimeout(_checkPythonStatus, _retryInterval);
+      } else {
+        setTimeout(_checkPythonStatus, 15000);
       }
     });
   }
@@ -4674,19 +5175,23 @@ document.addEventListener('DOMContentLoaded', () => {
     addLog('已刷新系统状态', 'System');
   });
 
-  // 日志面板折叠/展开
+  // Studio 日志细条：默认收起（次要信息），仅当用户上次明确展开过才恢复展开
   const logHeader = document.getElementById('log-header');
   const logPanel = document.getElementById('log-panel');
   const logToggleIcon = document.getElementById('log-toggle-icon');
   if (logHeader && logPanel) {
-    // 恢复折叠状态
     try {
-      if (localStorage.getItem('log-panel-collapsed') === '1') {
+      if (localStorage.getItem('log-panel-collapsed') !== '0') {
         logPanel.classList.add('collapsed');
         if (logToggleIcon) logToggleIcon.textContent = '▸';
+      } else {
+        logPanel.classList.remove('collapsed');
+        if (logToggleIcon) logToggleIcon.textContent = '▾';
       }
     } catch (e) {}
-    logHeader.addEventListener('click', () => {
+    logHeader.addEventListener('click', (e) => {
+      // 操作按钮的点击不折叠面板
+      if (e.target && e.target.closest?.('.log-actions')) return;
       const isCollapsed = logPanel.classList.toggle('collapsed');
       if (logToggleIcon) logToggleIcon.textContent = isCollapsed ? '▸' : '▾';
       try { localStorage.setItem('log-panel-collapsed', isCollapsed ? '1' : '0'); } catch (e) {}

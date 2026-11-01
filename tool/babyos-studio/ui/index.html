@@ -31,6 +31,10 @@
           <span class="menu-icon">🔌</span>
           <span>串口控制</span>
         </a>
+        <a href="#" class="menu-item" data-page="seriallog">
+          <span class="menu-icon">📟</span>
+          <span>串口日志</span>
+        </a>
         <a href="#" class="menu-item" data-page="ota">
           <span class="menu-icon">📤</span>
           <span>OTA 升级</span>
@@ -88,6 +92,11 @@
             <div class="card-icon" style="color:#67c23a">🔌</div>
             <div class="card-title">串口控制</div>
             <div class="card-desc">串口连接、协议测试</div>
+          </div>
+          <div class="card" data-page="seriallog">
+            <div class="card-icon" style="color:#569cd6">📟</div>
+            <div class="card-title">串口日志</div>
+            <div class="card-desc">实时 TX/RX 通讯日志、落盘记录</div>
           </div>
           <div class="card" data-page="ota">
             <div class="card-icon" style="color:#e6a23c">📤</div>
@@ -640,6 +649,27 @@
         </div>
       </div>
 
+      <!-- 串口日志（汇总所有功能的 UART TX/RX） -->
+      <div id="page-seriallog" class="page">
+        <h2>串口日志</h2>
+        <div class="section">
+          <h3>实时通讯日志</h3>
+          <p class="hint">所有经 Python 后端收发的串口数据（协议测试 / OTA / Xmodem / 文件传输 / 参数 / Shell）实时汇总于此。底部面板的「串口通讯」标签与此页内容同步，可在其他页面（如传输状态）同屏查看</p>
+          <div class="form-row">
+            <button class="btn" id="btn-slog-pause">暂停</button>
+            <button class="btn" id="btn-slog-clear">清空</button>
+            <label><input type="checkbox" id="slog-hex"> HEX 显示</label>
+            <label><input type="checkbox" id="slog-autoscroll" checked> 自动滚动</label>
+          </div>
+          <div class="form-row">
+            <label><input type="checkbox" id="slog-record"> 记录到本地</label>
+            <button class="btn" id="btn-slog-record-path">选择路径</button>
+            <span id="slog-record-status" class="status-text">未记录</span>
+          </div>
+          <div class="log-area" id="seriallog-log" style="height:520px"></div>
+        </div>
+      </div>
+
       <!-- OTA 升级 -->
       <div id="page-ota" class="page">
         <h2>OTA 升级</h2>
@@ -896,8 +926,7 @@
           <p class="hint">用法: param [name [value]] — param 列出全部 | param name 读取 | param name value 设置</p>
           <div class="form-row">
             <label>参数名称:</label>
-            <input type="text" id="param-name" list="param-list" style="width:200px">
-            <datalist id="param-list"></datalist>
+            <select id="param-name" style="width:200px"></select>
           </div>
           <div class="form-row">
             <label>参数值:</label>
@@ -1021,11 +1050,29 @@
       </div>
     </main>
 
-    <!-- 底部日志面板 -->
-    <footer class="log-panel" id="log-panel">
+    <!-- 串口通讯控制台：MCU 调试主日志面板（拖高/收起，尺寸记忆，所有页面可见） -->
+    <footer class="serial-console" id="serial-console">
+      <div class="console-resize" id="serial-console-resize" title="拖动调整高度"></div>
+      <div class="log-header" id="serial-console-header" style="cursor:pointer;">
+        <span id="serial-console-toggle-icon" style="transition:transform 0.2s;">▾</span>
+        <span class="console-title">📟 串口通讯</span>
+        <div class="log-actions">
+          <button class="btn btn-sm" id="btn-slog-pause-dock">暂停</button>
+          <button class="btn btn-sm" id="btn-slog-clear-dock">清空</button>
+          <label class="console-check"><input type="checkbox" id="slog-hex-dock"> HEX</label>
+          <label class="console-check"><input type="checkbox" id="slog-autoscroll-dock" checked> 自动滚动</label>
+          <label class="console-check"><input type="checkbox" id="slog-record-dock"> 记录到本地</label>
+        </div>
+      </div>
+      <div class="log-content" id="seriallog-dock-log"></div>
+    </footer>
+
+    <!-- Studio 应用日志：次要信息，默认收起为细条，点击展开 -->
+    <footer class="log-panel collapsed" id="log-panel">
       <div class="log-header" id="log-header" style="cursor:pointer;">
-        <span id="log-toggle-icon" style="transition:transform 0.2s;">▾</span>
+        <span id="log-toggle-icon" style="transition:transform 0.2s;">▸</span>
         <span>📋 日志输出</span>
+        <span class="log-latest" id="log-latest"></span>
         <div class="log-actions">
           <button class="btn btn-sm" id="btn-log-clear">清空</button>
           <button class="btn btn-sm" id="btn-log-export">导出</button>

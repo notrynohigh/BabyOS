@@ -63,7 +63,7 @@ from device.protocol_client import (  # noqa: E402
     INVALID_ID,
 )
 from device.shell_client import ShellClient  # noqa: E402
-from device.http_mock import HttpMock  # noqa: E402
+from device.http_mock import HttpMock, _lan_ipv4  # noqa: E402
 from device.device_manager import DeviceManager, get_device_manager  # noqa: E402
 
 
@@ -277,7 +277,14 @@ class FakeDevice:
 
 
 class FakeShellDevice:
-    """Shell-text device: responds to 'param ...' commands like b_mod_param.c."""
+    """Shell-text device: responds to 'param ...' commands like b_mod_param.c.
+
+    Firmware-faithful in one more way: nr_micro_shell prints its prompt
+    (default "nr@bos:") after EVERY command line — it is the end-of-response
+    marker ShellClient relies on.
+    """
+
+    PROMPT = 'nr@bos:'
 
     def __init__(self, uart: FakeUart,
                  params: dict = None) -> None:
@@ -305,6 +312,8 @@ class FakeShellDevice:
             text = raw.decode('utf-8', errors='replace').strip('\n')
             self.commands.append(text)
             self._handle(text)
+            # prompt terminates the response (nr_micro_shell behavior)
+            self._emit(self.PROMPT)
 
     def _emit(self, text: str) -> None:
         payload = text.encode('utf-8')
@@ -736,6 +745,82 @@ class TestShellClient(unittest.TestCase):
         st = self.sh.status()
         self.assertEqual(st['line_ending'], '\r')
         self.assertGreaterEqual(st['commands_sent'], 0)
+        self.assertEqual(st['prompt'], 'nr@bos:')
+
+
+# ---------------------------------------------------------------------------
+# Shell response framing — COM4 联调缺陷回归
+# ---------------------------------------------------------------------------
+
+class TestShellResponseFraming(unittest.TestCase):
+    """响应切帧：以 nr@bos: 提示符作为结束标记（真实硬件 COM4 缺陷复现）。
+
+    历史缺陷：
+      - 上一条回复的提示符尾字节 ':' 残留在缓冲区 → 被当成下一条回复，
+        解析结果为空，但串口日志（独立链路）显示设备回文正常
+      - 回文分片且分片间隔大于 idle gap → 在 ": bet" 处截断，只解析出部分参数名
+      - 提示符跨包到达 "nr@bos" | ":" → 必须等到完整提示符才结束
+      - 提示符粘连在数据上 "foo:42nr@bos:" → 剥离后仍要能解析
+    """
+
+    def setUp(self):
+        # 裸 UART：回文由测试自己按时间注入，不接 FakeShellDevice
+        self.uart = FakeUart()
+        self.sh = ShellClient(self.uart, default_timeout=1.0)
+
+    def _reply_later(self, delay, payload):
+        timer = threading.Timer(delay, self.uart.inject, args=(payload,))
+        timer.daemon = True
+        timer.start()
+        self.addCleanup(timer.join, 1.0)
+
+    def test_default_prompt_is_nr_at_bos(self):
+        self.assertEqual(self.sh.prompt, 'nr@bos:')
+
+    def test_stale_straggler_is_discarded_before_command(self):
+        # 上一次交换的提示符只剩尾字节 ':' 留在缓冲区
+        self.uart.inject(b':')
+        self._reply_later(0.2, b'param\r\n: alpha\r\n: beta\r\n: gamma\r\nnr@bos:')
+        names = self.sh.param_list(timeout=2.0)
+        self.assertEqual(names, ['alpha', 'beta', 'gamma'])
+
+    def test_inflight_straggler_glued_to_echo_is_not_a_name(self):
+        # ':' 在 clear_rx 之后才到，粘到回显行上形成 ":param" — 不是参数名
+        self._reply_later(0.05, b':param\r\n: alpha\r\n: beta\r\nnr@bos:')
+        names = self.sh.param_list(timeout=2.0)
+        self.assertEqual(names, ['alpha', 'beta'])
+
+    def test_mid_response_gap_does_not_truncate(self):
+        # 分片间隔远超 idle gap：旧实现在 ": bet" 处截断
+        self._reply_later(0.05, b'param\r\n: alpha\r\n: bet')
+        self._reply_later(0.35, b'a\r\n: gamma\r\nnr@bos:')
+        names = self.sh.param_list(timeout=2.0)
+        self.assertEqual(names, ['alpha', 'beta', 'gamma'])
+
+    def test_split_prompt_completes_response(self):
+        self._reply_later(0.05, b'param\r\n: alpha\r\nnr@bos')
+        self._reply_later(0.35, b':')
+        names = self.sh.param_list(timeout=2.0)
+        self.assertEqual(names, ['alpha'])
+        self.assertTrue(self.sh.last_response.endswith('nr@bos:'))
+
+    def test_glued_prompt_still_parses(self):
+        self._reply_later(0.05, b'param\r\n: alpha\r\n: betanr@bos:')
+        names = self.sh.param_list(timeout=2.0)
+        self.assertEqual(names, ['alpha', 'beta'])
+
+    def test_param_get_glued_prompt(self):
+        self._reply_later(0.05, b'param foo\r\nfoo:42nr@bos:')
+        self.assertEqual(self.sh.param_get('foo', timeout=2.0), 42)
+
+    def test_parse_list_rejects_spaceless_glued_line(self):
+        # 固件格式是 ": %s"（冒号+空格）；":param" 这类粘连行必须丢弃
+        self.assertEqual(ShellClient._parse_list(':param\r\n: alpha\r\n'),
+                         ['alpha'])
+
+    def test_parse_list_keeps_firmware_format(self):
+        self.assertEqual(ShellClient._parse_list(': alpha\r\n: beta\r\n'),
+                         ['alpha', 'beta'])
 
 
 # ---------------------------------------------------------------------------
@@ -754,8 +839,35 @@ class TestHttpMock(unittest.TestCase):
                                status_code=200)
         self.assertGreater(port, 0)
         self.assertTrue(self.mock.is_running)
-        self.assertEqual(self.mock.base_url, 'http://127.0.0.1:%d' % port)
+        self.assertEqual(self.mock.bind_host, '0.0.0.0')
+        self.assertTrue(self.mock.base_url.endswith(':%d' % port))
+        self.assertIn('http://127.0.0.1:%d' % port, self.mock.urls)
+        self.assertEqual(self.mock.base_url, self.mock.urls[0])
         self.addCleanup(self.mock.stop)
+
+    def test_listens_on_all_interfaces(self):
+        """局域网设备要能访问 Mock：监听 0.0.0.0，URL 报告 LAN 地址。"""
+        import urllib.request
+        port = self.mock.start(port=0, body=b'{"ok":true}')
+        self.assertEqual(self.mock.bind_host, '0.0.0.0')
+        self.assertEqual(self.mock._server.server_address[0], '0.0.0.0')
+        # 本机回环仍可访问（主机侧自测路径）
+        with urllib.request.urlopen('http://127.0.0.1:%d/ping' % port,
+                                    timeout=2.0):
+            pass
+        st = self.mock.status()
+        self.assertEqual(st['bind_host'], '0.0.0.0')
+        self.assertIn('http://127.0.0.1:%d' % port, st['urls'])
+        # 在线时 LAN 地址必须可访问且作为 base_url 告知设备
+        lan = _lan_ipv4()
+        if lan:
+            with urllib.request.urlopen('http://%s:%d/ping' % (lan, port),
+                                        timeout=2.0):
+                pass
+            self.assertTrue(self.mock.base_url.startswith('http://%s:' % lan))
+            self.assertIn('http://%s:%d' % (lan, port), st['urls'])
+        else:
+            self.assertEqual(self.mock.base_url, 'http://127.0.0.1:%d' % port)
 
     def test_get_records_and_returns_body(self):
         import urllib.request

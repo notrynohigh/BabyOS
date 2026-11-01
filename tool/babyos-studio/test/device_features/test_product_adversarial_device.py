@@ -30,7 +30,10 @@ for _p in (_PY_ROOT, _HERE):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from mock_babyos_device import open_api_over_pty  # noqa: E402
+from mock_babyos_device import (  # noqa: E402
+    open_api_over_pty,
+    REAL_LINK_KINDS,
+)
 
 MOCK_DEV_ID = 0x0000ABCD
 
@@ -94,7 +97,7 @@ class _PtyApiBase(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty')
+        self.assertIn(self.link.kind, REAL_LINK_KINDS)
         self.device = self.link.device
 
         from app.main import create_app

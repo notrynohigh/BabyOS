@@ -64,7 +64,8 @@ from device.protocol_client import (  # noqa: E402
 )
 from device.sn_util import sn_bytes as _sn_bytes  # noqa: E402
 
-from mock_babyos_device import (  # noqa: E402
+from mock_babyos_device import (
+    REAL_LINK_KINDS,  # noqa: E402
     open_api_over_pty,
     DEFAULT_SHELL_PARAMS,
 )
@@ -230,7 +231,7 @@ class _ApiEdgeBase(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty',
+        self.assertIn(self.link.kind, REAL_LINK_KINDS,
                          'API edge suite requires real pty, got %s'
                          % self.link.kind)
         if self.link.kind not in _CHANNEL_KINDS:

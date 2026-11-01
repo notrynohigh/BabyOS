@@ -34,6 +34,7 @@ For the host-side desktop debugging tool (Electron + AutoML backend), see **§ B
 
 **Capabilities:**
 - Serial control (data send/receive over real COM ports via `pyserial`)
+- Unified serial log page: every UART TX/RX byte (all features) is journaled in `UartService` (ring buffer, `journal_since()` incremental fetch) and viewable in one place, with optional record-to-file (`start_record()`/`stop_record()`; API under `/api/device/serial/journal*`)
 - OTA firmware upgrade with chunked transfer + CRC32
 - Xmodem-128 / Ymodem-1K file transfer
 - HTTP mock server + request replay
@@ -105,17 +106,25 @@ Drivers / MCU-specific porting
 
 Algorithm modules (bos/algorithm/, gated by Kconfig — see below) live alongside core
 and can be called from anywhere via their public headers (e.g. algo_ml.h).
+
+Utils (bos/utils/) provide Kconfig-gated helpers (fifo, log, utc, at, memp, tools)
+that sit beside the core and are used by modules/services.
+
+MCU vendor porting lives in bos/mcu/ (st, at, espressif, ch, hdsc, nation, ... plus
+mcu.py); each vendor dir implements the HAL for that chip family.
 ```
 
 ## Algorithm Modules (`bos/algorithm/`)
 
-Pure-C building blocks, each gated by a Kconfig flag (e.g. `_ALGO_ML_ENABLE`):
+Pure-C building blocks, each gated by a Kconfig flag (e.g. `_ALGO_ML_ENABLE`). Every flag `depends on _BOS_ALGO_ENABLE`, so enable that master switch first:
 
 | Module | Header | Kconfig flag | Purpose |
 |---|---|---|---|
 | CRC | `algo_crc.h` | `_ALGO_CRC_ENABLE` | CRC8/16/32 variants |
 | MD5 / SHA1 / HMAC / Base64 / UTF-8 | `algo_md5.h`, `algo_hmac_sha1.h`, `algo_base64.h`, `algo_utf8_unicode.h` | per-module | Hashing / encoding |
 | Sort | `algo_sort.h` | `_ALGO_SORT_ENABLE` | qsort / heap helpers |
+| Signal | `algo_signal.h` | `_ALGO_SIGNAL_ENABLE` | Signal-processing helpers (filtering, stats) |
+| FFT | `algo_fft.h` | `_ALGO_FFT_ENABLE` | FFT for on-device spectral features |
 | **ML** | `algo_ml.h` | `_ALGO_ML_ENABLE` | Tiny on-device ML: feature normalization, simple inference, model loading — paired with BabyOS Studio's AutoML export pipeline |
 
 The ML module is the firmware-side counterpart of BabyOS Studio's AutoML: train on host → export weights/params via Studio → embed via `algo_ml.h` API → run inference on MCU.

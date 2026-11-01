@@ -99,6 +99,12 @@ class DeviceManager:
         self._poll_last_at: Optional[float] = None
         self._poll_error = ''
 
+        # Shell command/response is a single UART exchange — the param poll
+        # thread and UI actions must not interleave writes/reads (each would
+        # steal the other's response while the serial journal shows both).
+        self._shell_lock = threading.RLock()
+        self.last_shell_raw: str = ''
+
         # UART log-to-file (origin/dev mainwindow _on_open_log_file)
         self._log_file = None
         self._log_file_path = ''
@@ -378,23 +384,34 @@ class DeviceManager:
     # ------------------------------------------------------------------
 
     def param_list(self, timeout: float = 1.0) -> List[str]:
-        sh = self.ensure_shell()
-        names = sh.param_list(timeout=timeout)
-        self.last_param_list = names
-        return names
+        with self._shell_lock:
+            sh = self.ensure_shell()
+            names = sh.param_list(timeout=timeout)
+            self.last_shell_raw = sh.last_response
+            self.last_param_list = names
+            return names
 
     def param_get(self, name: str, timeout: float = 1.0) -> Optional[int]:
-        sh = self.ensure_shell()
-        return sh.param_get(name, timeout=timeout)
+        with self._shell_lock:
+            sh = self.ensure_shell()
+            value = sh.param_get(name, timeout=timeout)
+            self.last_shell_raw = sh.last_response
+            return value
 
     def param_set(self, name: str, value: Any, timeout: float = 1.0,
                   verify: bool = True) -> bool:
-        sh = self.ensure_shell()
-        return sh.param_set(name, value, timeout=timeout, verify=verify)
+        with self._shell_lock:
+            sh = self.ensure_shell()
+            ok = sh.param_set(name, value, timeout=timeout, verify=verify)
+            self.last_shell_raw = sh.last_response
+            return ok
 
     def shell_command(self, cmd: str, timeout: float = 1.0) -> str:
-        sh = self.ensure_shell()
-        return sh.send_command(cmd, timeout=timeout)
+        with self._shell_lock:
+            sh = self.ensure_shell()
+            text = sh.send_command(cmd, timeout=timeout)
+            self.last_shell_raw = text
+            return text
 
     # ------------------------------------------------------------------
     # param timed polling

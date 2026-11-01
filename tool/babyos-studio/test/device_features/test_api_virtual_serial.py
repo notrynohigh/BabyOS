@@ -58,7 +58,8 @@ from device.protocol_client import (  # noqa: E402
 )
 from device.sn_util import sn_bytes as _sn_bytes  # noqa: E402
 
-from mock_babyos_device import (  # noqa: E402
+from mock_babyos_device import (
+    REAL_LINK_KINDS,  # noqa: E402
     MockBabyOSDevice,
     create_byte_channel,
     open_api_over_pty,
@@ -93,10 +94,12 @@ def _record(ok: bool, kind: str) -> None:
 
 
 def _sha256_file(path: str) -> str:
+    # CRLF→LF normalised: pins are LF-canonical; Windows autocrlf checkout
+    # must not count as content mismatch (parity with device/http_mock.py).
     h = hashlib.sha256()
     with open(path, 'rb') as f:
-        for chunk in iter(lambda: f.read(65536), b''):
-            h.update(chunk)
+        data = f.read()
+    h.update(data.replace(b'\r\n', b'\n'))
     return h.hexdigest()
 
 
@@ -209,7 +212,7 @@ class _ApiBase(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty',
+        self.assertIn(self.link.kind, REAL_LINK_KINDS,
                          'API virtual-serial acceptance requires real pty')
         _VS_KINDS.append('channel:' + self.link.kind)
 
@@ -834,7 +837,10 @@ class TestApiHttpsDevCerts(unittest.TestCase):
         self.assertTrue(st.get('https'))
         self.assertEqual(st.get('https_cert_sha256'), DEV_CERT_SHA256)
         base_url = st.get('base_url') or ''
-        self.assertTrue(base_url.startswith('https://127.0.0.1:'), base_url)
+        self.assertTrue(base_url.startswith('https://'), base_url)
+        # base_url prefers the LAN IP; the pinned mock cert only covers
+        # localhost / 127.0.0.1 (SAN) — host-side TLS must use loopback.
+        base_url = 'https://127.0.0.1:%d' % int(st.get('port') or 0)
 
         # 1) Real TLS request verified against the on-disk dev cert
         import httpx

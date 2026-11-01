@@ -96,6 +96,11 @@ if [ -n "$PYTHON_CMD" ]; then
     else
         log_ok "Python 依赖已安装"
     fi
+    # 依赖自愈：requirements.txt 后续新增的依赖，旧 venv 因 .deps_installed 标记会跳过安装
+    if ! "$PYTHON_DIR/.venv/bin/python" -c "import serial" 2>/dev/null; then
+        log_info "检测到缺少 pyserial，正在补装 ..."
+        "$PYTHON_DIR/.venv/bin/pip" install -q pyserial
+    fi
 fi
 
 # 3. 安装 Node.js 依赖

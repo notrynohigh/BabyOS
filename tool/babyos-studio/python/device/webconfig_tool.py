@@ -219,6 +219,10 @@ class WebConfigTool:
             oc_root = oc_dir if os.path.isabs(oc_dir) else os.path.abspath(oc_dir)
             oc_exe = os.path.join(oc_root, 'bin', 'openocd.exe')
             if not os.path.isfile(oc_exe):
+                # Windows portable installs may ship a .bat shim instead of
+                # a real .exe (same for the test harness's fake OpenOCD).
+                oc_exe = os.path.join(oc_root, 'bin', 'openocd.bat')
+            if not os.path.isfile(oc_exe):
                 oc_exe = os.path.join(oc_root, 'bin', 'openocd')
         makefile = ''
         root = self._root_abs()
@@ -465,9 +469,14 @@ class WebConfigTool:
                 out_path = os.path.join(
                     log_dir, 'auto_log_%s.txt' % datetime.now().strftime('%Y%m%d_%H%M%S'))
             # Open serial synchronously so a bad port is a structured error,
-            # not a silent background failure.
+            # not a silent background failure. pyserial URL schemes
+            # (socket://...) go through serial_for_url (same rule as
+            # device/uart_service.py).
             try:
-                ser = serial.Serial(port, baud, timeout=1)
+                if '://' in port:
+                    ser = serial.serial_for_url(port, baud, timeout=1)
+                else:
+                    ser = serial.Serial(port, baud, timeout=1)
             except Exception as exc:
                 self._log('[error] 打开串口失败: %s' % exc)
                 return {'ok': False, 'error': str(exc), 'logs': self.get_logs()}

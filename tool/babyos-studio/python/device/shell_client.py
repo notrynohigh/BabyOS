@@ -13,6 +13,14 @@ Authority:
   - test/selftest/test_modules.c param shell cases
   - bos/thirdparty/nr_micro_shell (line-oriented, CR-terminated)
 
+Response framing (important — see test_ui_product_e2e / COM4 field bug):
+  nr_micro_shell prints the prompt ("nr@bos:" by default, Kconfig
+  NR_SHELL_USER_NAME) after every command.  The prompt is the natural
+  end-of-response marker.  It often arrives split across UART chunks
+  ("nr@bos" | ":"), and a slow b_log loop can pause >50ms mid-response,
+  so an idle-gap-only reader truncates the reply and parses garbage while
+  the serial journal (independent path) shows the device replied fine.
+
 Python 3.8 compatible. Real UART I/O only.
 """
 
@@ -30,13 +38,19 @@ class ShellClient:
     uart must provide write(data) -> int and read_available() -> bytes.
     """
 
+    #: Kconfig NR_SHELL_USER_NAME default (bos/thirdparty/Kconfig)
+    DEFAULT_PROMPT = 'nr@bos:'
+
     def __init__(self, uart: Any, line_ending: str = '\r',
-                 default_timeout: float = 1.0) -> None:
+                 default_timeout: float = 1.0,
+                 prompt: Optional[str] = None) -> None:
         if uart is None:
             raise ValueError('uart is required')
         self._uart = uart
         self._line_ending = line_ending
         self._default_timeout = float(default_timeout)
+        # None → framework default prompt; '' disables prompt termination
+        self._prompt = self.DEFAULT_PROMPT if prompt is None else str(prompt)
         self._rx_text = ''          # decoded leftovers
         self._raw_log: List[bytes] = []  # raw frames written
 
@@ -59,11 +73,20 @@ class ShellClient:
         return self._uart.write(data)
 
     def read_response(self, timeout: Optional[float] = None,
-                      idle_gap: float = 0.05,
-                      poll_interval: float = 0.01) -> str:
+                      idle_gap: float = 0.15,
+                      poll_interval: float = 0.01,
+                      end_marker: Optional[str] = None) -> str:
         """
-        Collect shell output until `timeout` expires or an idle gap of
-        `idle_gap` seconds passes after the last received byte.
+        Collect shell output until `end_marker` (shell prompt) is seen,
+        `timeout` expires, or — when no `end_marker` is given — an idle gap
+        of `idle_gap` seconds passes after the last received byte.
+
+        nr_micro_shell ends EVERY command with its prompt, so when the
+        prompt is known it is the only reliable end of response: an
+        idle-gap stop can cut the reply mid-token ("param_t" | "est_1")
+        whenever the firmware pauses between b_log lines.  The prompt may
+        itself arrive split ("nr@bos" | ":"), which is why only the full
+        marker ends the read.
 
         Returns decoded text (utf-8, errors=replace). Empty string on
         timeout with no data.
@@ -74,6 +97,7 @@ class ShellClient:
         chunks: List[bytes] = []
         last_rx = 0.0
         got_any = False
+        text = ''
 
         while True:
             now = time.time()
@@ -87,24 +111,43 @@ class ShellClient:
                 chunks.append(data)
                 got_any = True
                 last_rx = time.time()
+                if end_marker:
+                    text = b''.join(chunks).decode('utf-8', errors='replace')
+                    if end_marker in text:
+                        break
                 # keep draining while data flows
                 continue
-            if got_any and (time.time() - last_rx) >= idle_gap:
+            if not end_marker and got_any and (time.time() - last_rx) >= idle_gap:
                 break
             time.sleep(poll_interval)
 
-        if chunks:
+        if not text and chunks:
             text = b''.join(chunks).decode('utf-8', errors='replace')
-        else:
-            text = ''
         self._rx_text = text
         return text
 
     def send_command(self, cmd: str, timeout: Optional[float] = None,
-                     idle_gap: float = 0.05) -> str:
-        """Write cmd + line_ending, then collect the response text."""
+                     idle_gap: float = 0.15) -> str:
+        """
+        Write cmd + line_ending, then collect the response text.
+
+        Pending RX bytes are discarded first: the previous exchange's
+        prompt straggler (e.g. the trailing ':' of a split "nr@bos:") would
+        otherwise be consumed as this command's response and cut it short —
+        the serial journal still shows the device's real reply, so the UI
+        looks like it "failed to parse a correct response".
+        """
+        self.clear_rx()
         self.write(cmd)
-        return self.read_response(timeout=timeout, idle_gap=idle_gap)
+        return self.read_response(timeout=timeout, idle_gap=idle_gap,
+                                  end_marker=self._prompt or None)
+
+    @staticmethod
+    def _strip_prompt(text: str, prompt: str) -> str:
+        """Remove prompt occurrences so a glued 'name:123nr@bos:' parses."""
+        if prompt and prompt in text:
+            return text.replace(prompt, '')
+        return text
 
     def clear_rx(self) -> None:
         """Discard any pending UART bytes and internal text buffer."""
@@ -120,17 +163,24 @@ class ShellClient:
 
     @staticmethod
     def _parse_list(text: str) -> List[str]:
-        """Parse ': name' lines produced by `param` with no args."""
+        """Parse ': name' lines produced by `param` with no args.
+
+        Firmware format (b_mod_param.c): b_log(": %s\\r\\n", name) — a
+        colon, a space, then the name.  Requiring the space rejects
+        straggler-glued garbage such as ':param' (a leftover ':' byte
+        glued onto the echoed command line).
+        """
         names: List[str] = []
         for raw_line in text.replace('\r\n', '\n').replace('\r', '\n').split('\n'):
             line = raw_line.strip()
-            if not line:
+            if not line.startswith(':'):
                 continue
-            # firmware: b_log(": %s\r\n", name)
-            if line.startswith(':'):
-                name = line[1:].strip()
-                if name:
-                    names.append(name)
+            body = line[1:]
+            if not body[:1].isspace():
+                continue
+            name = body.strip()
+            if name:
+                names.append(name)
         return names
 
     @staticmethod
@@ -162,14 +212,14 @@ class ShellClient:
     def param_list(self, timeout: Optional[float] = None) -> List[str]:
         """`param` — list registered parameter names."""
         text = self.send_command('param', timeout=timeout)
-        return self._parse_list(text)
+        return self._parse_list(self._strip_prompt(text, self._prompt))
 
     def param_get(self, name: str, timeout: Optional[float] = None) -> Optional[int]:
         """`param <name>` — read one parameter. None if unavailable."""
         if not name:
             return None
         text = self.send_command('param %s' % name, timeout=timeout)
-        return self._parse_get(text, name)
+        return self._parse_get(self._strip_prompt(text, self._prompt), name)
 
     def param_set(self, name: str, value: Any,
                   timeout: Optional[float] = None,
@@ -189,12 +239,14 @@ class ShellClient:
         text_value = str(value).strip()
         if text_value == '':
             return False
+        self.clear_rx()
         n = self.write('param %s %s' % (name, text_value))
         if n is None or n < 0:
             return False
-        # drain any immediate echo / log
+        # drain echo + trailing prompt (firmware prints no result line)
         self.read_response(timeout=0.2 if timeout is None else min(0.2, timeout),
-                           idle_gap=0.03)
+                           idle_gap=0.03,
+                           end_marker=self._prompt or None)
         if not verify:
             return True
         try:
@@ -214,6 +266,10 @@ class ShellClient:
         return self._rx_text
 
     @property
+    def prompt(self) -> str:
+        return self._prompt
+
+    @property
     def raw_log(self) -> List[bytes]:
         return list(self._raw_log)
 
@@ -222,4 +278,5 @@ class ShellClient:
             'line_ending': self._line_ending,
             'default_timeout': self._default_timeout,
             'commands_sent': len(self._raw_log),
+            'prompt': self._prompt,
         }

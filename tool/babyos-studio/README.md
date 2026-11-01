@@ -507,7 +507,7 @@ UI「参数调节」页提供「开始轮询 / 停止轮询」按钮。
 
 ### 9.1 能力
 
-- 真实 `ThreadingHTTPServer`，绑定 `127.0.0.1`，支持 HTTP/HTTPS。
+- 真实 `ThreadingHTTPServer`，监听 `0.0.0.0`（局域网设备可直接访问），支持 HTTP/HTTPS。`status()` 返回 `bind_host` 与 `urls`（LAN 地址在前，回环在后）。
 - 记录每条请求：`method / path / query / body / body_hex / headers / client`。
 - 可配置默认响应：`body / content_type / status_code`；可选 per-path 覆盖（服务层 `set_path_response`）。
 - **`${SERVER_TIME}` 占位符**：响应 body 中出现该字符串时，服务端替换为本地时间（authority：origin/dev `tool/http_server.py`）。
@@ -521,7 +521,7 @@ UI「参数调节」页提供「开始轮询 / 停止轮询」按钮。
    `{port=0, body, content_type, status_code, https=false}`  
    `port=0` 表示随机端口，状态显示 `base_url`。
 2. **发送请求** → **主机代发** `POST /api/device/http/proxy` `{url, method, body?, headers?, timeout, verify_tls}`。  
-   这是本机真实 HTTP 请求，用于联调 Mock；**设备侧 HTTP 仍由固件发起**，请让固件请求 `http://127.0.0.1:<mock_port>/...`（或实验室可达地址）。
+   这是本机真实 HTTP 请求，用于联调 Mock；**设备侧 HTTP 仍由固件发起**。Mock 监听 `0.0.0.0`，状态栏显示 `运行中 <LAN URL> ｜本机 <127.0.0.1 URL>` — 固件请填 **LAN URL**（同一局域网可直达），`127.0.0.1` 仅主机侧自测。
 3. **请求日志** 显示代理结果 + Mock 记录条数。
 4. **停止服务器** → `POST /api/device/http/stop`。
 
@@ -1201,6 +1201,25 @@ cd tool/babyos-studio/python
 
 有硬件时：打开真实串口后，协议测试应返回 `param_text="BabyOS"`；OTA/文件 result_code 应为 `0`。
 
+参数页真机冒烟（默认 COM4，需要设备跑 `b_mod_param` 演示参数）：
+
+```bash
+cd tool/babyos-studio && python/.venv/Scripts/python.exe test/ui_e2e/run_param_hw_e2e.py
+```
+
+覆盖「列出全部参数必须解析出全部名字」「读取参数」「raw shell 发送」，并核对响应输出
+`<<` 原文块是串口通讯 RX 流的精确子串（两者内容一致），最后自动关闭串口。
+
+AutoML 表格分类标注页 E2E（无需硬件；锁定「导入带 label 列的 CSV 后下一步按钮必须解锁」）：
+
+```bash
+cd tool/babyos-studio && python/.venv/Scripts/python.exe test/ui_e2e/run_table_label_e2e.py
+```
+
+起后端 + 预置表格分类项目导入 `sample_datasets/sensor_fault_diagnosis.csv`，真实 Electron
+窗口核验：数据摘要渲染（行数/特征列/标签分布）、4 个标注列出、`btn-next-to-features`
+解锁且点击可跳转特征页。
+
 ### 13.3 常见问题
 
 | 现象 | 处理 |
@@ -1212,7 +1231,7 @@ cd tool/babyos-studio/python
 | Ymodem 校验失败 | 使用 BabyOS 传输 CRC16（`0x2672` 向量），**不要**用标准 XMODEM `0x31C3` |
 | SN 写入异常 | 确认未二次包长度前缀；UID 为原始字节 md5 |
 | param 设置失败 | 固件是否启用 shell；值是否为 `atoi` 可解析整数；打开 `verify` 看回读 |
-| HTTP Mock 设备访问不到 | Mock 只绑 `127.0.0.1`；设备需能路由到主机 IP，或改固件 HTTP 目标；实验室可用 proxy 验证 Mock 配置 |
+| HTTP Mock 设备访问不到 | Mock 已监听 `0.0.0.0`，固件请填状态栏的 **LAN URL**（非 `127.0.0.1`）；仍不通查设备与主机是否同网段/防火墙放行该端口；实验室可用 proxy 验证 Mock 配置 |
 | HTTPS Mock 失败 | 确认仓库 `tool/mock_https_{cert,key}.pem` 或包内 `python/device/certs/` 证书存在，且与 `origin/dev` **内容**一致（指纹核对方法见 §9.4）；缺失或内容不匹配都会明确 `RuntimeError`，**不会**静默 openssl 自签。环境变量 `BABYOS_MOCK_HTTPS_CERT` / `BABYOS_MOCK_HTTPS_KEY`（须成对）仅能改**路径**，内容仍必须等于 dev tool 证书 |
 | 训练中改数据/特征 409 | 等待或取消训练 |
 | 导出 TREE_TOO_DEEP / WIN_LEN 超限 | 树深 >128（`ALGO_ML_TREE_MAX_DEPTH`）在 `model_cgen` 以 `ValueError(TREE_TOO_DEEP:…)` 抛出，导出失败（HTTP 422，`detail.code=UNHANDLED`，detail 含 TREE_TOO_DEEP）。FFT 点数 >1024（`ALGO_FFT_MAX_N`）**无导出期硬拦截**：固件 `bAlgoFft` 运行时返回错误，导出自检③特征链会因 `feat_extract` 非 0 而失败。频域特征要求 N 为 2 的幂（`FREQ_NEEDS_POW2` 422） |

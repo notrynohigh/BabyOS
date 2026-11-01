@@ -46,6 +46,7 @@ from device.file_util import merge_folder, parse_merged_file  # noqa: E402
 from device.protocol_client import DEVICE_ID_HOST  # noqa: E402
 from mock_babyos_device import (  # noqa: E402
     open_api_over_pty,
+    REAL_LINK_KINDS,
     CMD_TRANS_FILE,
     CMD_TSL_INVOKE,
     CMD_SETCFGNET_MODE,
@@ -431,7 +432,7 @@ class TestProductProtocolApiOverPty(unittest.TestCase):
             require_pty=True,
         )
         self.addCleanup(self.link.close)
-        self.assertEqual(self.link.kind, 'pty',
+        self.assertIn(self.link.kind, REAL_LINK_KINDS,
                          'product protocol tests require real pty')
         self.device = self.link.device
 

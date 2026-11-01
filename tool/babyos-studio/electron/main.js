@@ -47,7 +47,12 @@ function createWindow() {
 // ---------------------------------------------------------------------------
 // Python 后端管理（AutoML 专用，可选）
 // ---------------------------------------------------------------------------
+let pythonStopping = false;       // 主动停止（退出应用）时不触发自动重启
+let pythonRestartAttempts = 0;    // 连续异常退出的重启次数（健康检查成功后清零）
+const PYTHON_MAX_RESTARTS = 5;
+
 function startPythonBackend() {
+  if (pythonStopping) return;
   const pythonDir = path.join(__dirname, '..', 'python');
   const appDir = path.join(pythonDir, 'app');
   const mainPy = path.join(appDir, 'main.py');
@@ -100,12 +105,30 @@ function startPythonBackend() {
   pythonProcess.on('exit', (code) => {
     console.log(`[Python] 进程退出 code=${code}`);
     pythonProcess = null;
+    if (pythonStopping) return;
+    // 异常退出（端口被占、依赖缺失、崩溃……）——通知 UI 并有限次自动重启
+    mainWindow?.webContents.send('python-log',
+      `Python 后端已退出 (code=${code})，功能不可用`);
+    if (pythonRestartAttempts < PYTHON_MAX_RESTARTS) {
+      pythonRestartAttempts++;
+      const delay = Math.min(2000 * pythonRestartAttempts, 10000);
+      console.log(`[Python] ${delay}ms 后自动重启 (${pythonRestartAttempts}/${PYTHON_MAX_RESTARTS})`);
+      mainWindow?.webContents.send('python-log',
+        `Python 后端 ${delay / 1000}s 后自动重启 (${pythonRestartAttempts}/${PYTHON_MAX_RESTARTS})`);
+      setTimeout(() => {
+        if (!pythonStopping && !pythonProcess) startPythonBackend();
+      }, delay);
+    } else {
+      mainWindow?.webContents.send('python-log',
+        'Python 后端多次重启失败，请检查日志后重启应用');
+    }
   });
 
   console.log(`[BabyOS Studio] Python 后端启动中... http://127.0.0.1:${PYTHON_PORT}`);
 }
 
 function stopPythonBackend() {
+  pythonStopping = true;
   if (pythonProcess) {
     // Windows: SIGTERM is ignored, kill() always TerminateProcess. POSIX: graceful.
     pythonProcess.kill();
@@ -148,21 +171,45 @@ function registerIpcHandlers() {
         return { ok: false, error: 'serialport 未安装' };
       }
     }
+    // 关闭旧句柄（await 真正关完，避免新旧句柄抢同一端口）
+    if (serialPort) {
+      try {
+        if (serialPort.isOpen) {
+          await new Promise((resolve) => serialPort.close(() => resolve()));
+        }
+      } catch (_) { /* 忽略关闭异常 */ }
+      serialPort = null;
+    }
+    // autoOpen:false + await open() —— 默认 autoOpen 是异步的，
+    // 打开失败（端口被占/不存在）不会 throw，错误从 'error' 事件走，
+    // 之前直接 return ok:true 导致"假打开"
+    const port = new SerialPort({
+      path: options.path,
+      baudRate: options.baudRate || 115200,
+      dataBits: 8,
+      stopBits: 1,
+      parity: 'none',
+      autoOpen: false,
+    });
     try {
-      if (serialPort && serialPort.isOpen) {
-        serialPort.close();
-      }
-      serialPort = new SerialPort({
-        path: options.path,
-        baudRate: options.baudRate || 115200,
-        dataBits: 8,
-        stopBits: 1,
-        parity: 'none',
+      await new Promise((resolve, reject) => {
+        port.open((err) => (err ? reject(err) : resolve()));
       });
-      return { ok: true };
     } catch (err) {
+      try { port.close(() => {}); } catch (_) { /* 未打开时 close 会报错，忽略 */ }
       return { ok: false, error: err.message };
     }
+    serialPort = port;
+    port.on('data', (data) => {
+      mainWindow?.webContents.send('serial:data', Array.from(data));
+    });
+    port.on('error', (err) => {
+      mainWindow?.webContents.send('serial:error', err.message);
+    });
+    port.on('close', () => {
+      mainWindow?.webContents.send('serial:closed');
+    });
+    return { ok: true };
   });
 
   ipcMain.handle('serial:close', async () => {
@@ -183,7 +230,9 @@ function registerIpcHandlers() {
         return { ok: false, error: '串口未打开' };
       }
       const buf = Buffer.from(data);
-      serialPort.write(buf);
+      await new Promise((resolve, reject) => {
+        serialPort.write(buf, (err) => (err ? reject(err) : resolve()));
+      });
       return { ok: true, bytes: buf.length };
     } catch (err) {
       return { ok: false, error: err.message };
@@ -444,7 +493,19 @@ function registerIpcHandlers() {
         req.on('timeout', () => { req.destroy(); resolve(); });
       });
     } catch (e) { /* 忽略 */ }
+    if (running) pythonRestartAttempts = 0;  // 健康后端重置重启预算
     return { running, port: PYTHON_PORT };
+  });
+
+  // 手动重启后端（UI 状态检查/串口打开失败时调用）
+  ipcMain.handle('python:restart', async () => {
+    if (pythonProcess) {
+      return { ok: true, already: true };  // 进程还在（可能只是 uvicorn 启动中）
+    }
+    pythonStopping = false;
+    pythonRestartAttempts = 0;
+    startPythonBackend();
+    return { ok: true, already: false };
   });
 }
 
